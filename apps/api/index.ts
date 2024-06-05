@@ -16,5 +16,7 @@ app.use(logger())
 // * Mounting versioned APIs
 app.route('/api/v1', appV1)
 
+export * from './prisma/generated/zod'
+export * from '@/v1/validation'
 export type AppType = typeof app
 export { app }

@@ -1,0 +1,16 @@
+{
+  "name": "6pm",
+  "version": "0.0.0",
+  "license": "GPL-3.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "api:dev": "pnpm --filter @6pm/api run dev"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.0"
+  },
+  "packageManager": "pnpm@9"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "@6pm/api",
+  "version": "0.0.0",
+  "license": "GPL-3.0",
+  "private": true,
+  "scripts": {
+    "start": "vercel dev",
+    "deploy": "vercel"
+  },
+  "dependencies": {
+    "hono": "^4.4.3"
+  },
+  "devDependencies": {
+    "vercel": "^34.2.5"
+  }
+}

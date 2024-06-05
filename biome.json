@@ -64,6 +64,7 @@
 				"useRegexLiterals": "error"
 			},
 			"correctness": {
+				"noUnusedImports": "warn",
 				"noChildrenProp": "error",
 				"noConstAssign": "error",
 				"noConstantCondition": "warn",

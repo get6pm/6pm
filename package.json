@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "api:dev": "pnpm --filter @6pm/api run dev"
+    "api:start": "pnpm --filter @6pm/api run start"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.0"

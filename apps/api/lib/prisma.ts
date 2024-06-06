@@ -1,18 +1,20 @@
 import { PrismaClient } from '@prisma/client'
 
-// eslint-disable-next-line import/no-mutable-exports
+// biome-ignore lint/style/useConst: <explanation>
 let prisma: PrismaClient
 
-if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient()
-} else {
-  const globalWithPrisma = global as typeof globalThis & {
-    prisma: PrismaClient
-  }
-  if (!globalWithPrisma.prisma) {
-    globalWithPrisma.prisma = new PrismaClient()
-  }
-  prisma = globalWithPrisma.prisma
-}
+prisma = new PrismaClient()
+
+// if (process.env.NODE_ENV === 'production') {
+//   prisma = new PrismaClient()
+// } else {
+//   const globalWithPrisma = global as typeof globalThis & {
+//     prisma: PrismaClient
+//   }
+//   if (!globalWithPrisma.prisma) {
+//     globalWithPrisma.prisma = new PrismaClient()
+//   }
+//   prisma = globalWithPrisma.prisma
+// }
 
 export default prisma

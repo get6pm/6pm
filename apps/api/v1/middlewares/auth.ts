@@ -1,6 +1,8 @@
 import type { User } from '@/prisma/generated/zod'
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth'
+import type { Context } from 'hono'
 import { createMiddleware } from 'hono/factory'
+import { HTTPException } from 'hono/http-exception'
 import { findUserById } from '../services/user.service'
 
 declare module 'hono' {
@@ -29,3 +31,13 @@ export const authMiddleware = createMiddleware(async (c, next) => {
 
   await next()
 })
+
+export const getAuthUser = (c: Context) => c.get('user')
+
+export const getAuthUserStrict = (c: Context) => {
+  const user = getAuthUser(c)
+  if (!user) {
+    throw new HTTPException(401, { message: 'unauthorized' })
+  }
+  return user
+}

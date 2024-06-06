@@ -1,17 +1,24 @@
-import { zValidator } from '@hono/zod-validator'
+import { getAuth } from '@hono/clerk-auth'
 import { Hono } from 'hono'
-import { zLogin } from '../validation'
+import { HTTPException } from 'hono/http-exception'
+import { findUserById } from '../services/user.service'
 
-const authApp = new Hono()
+const router = new Hono()
 
-authApp.get('/login', zValidator('query', zLogin), (c) => {
-  const { email, password } = c.req.valid('query')
-  return c.json({
-    message: 'Login',
-    email,
-    password,
-    env: process.env.NODE_ENV,
-  })
+router.get('/me', async (c) => {
+  const auth = getAuth(c)
+
+  if (!auth?.userId) {
+    throw new HTTPException(401, { message: 'unauthorized' })
+  }
+
+  const user = await findUserById(auth.userId)
+
+  if (!user) {
+    throw new HTTPException(401, { message: 'unauthorized' })
+  }
+
+  return c.json(user)
 })
 
-export default authApp
+export default router

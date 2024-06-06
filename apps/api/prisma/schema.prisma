@@ -14,7 +14,165 @@ datasource db {
 }
 
 model User {
-  id    String  @id @default(cuid())
-  email String  @unique
-  name  String?
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email                        String                        @unique
+  name                         String?
+  walletAccounts               UserWalletAccount[]
+  budgetUsers                  BudgetUser[]
+  transactions                 Transaction[]
+  createdBudgetUserInvitations BudgetUserInvitation[]
+  createdFromInvitation        BudgetUserInvitationResponse?
+}
+
+model UserWalletAccount {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name              String
+  icon              String?
+  description       String?
+  lastDigits        String?
+  preferredCurrency String
+
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  transactions Transaction[]
+}
+
+model Budget {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name              String
+  description       String?
+  preferredCurrency String
+  type              BudgetType @default(SPENDING)
+
+  periodConfig BudgetPeriodConfig?
+  budgetUsers  BudgetUser[]
+  transactions Transaction[]
+  invitations  BudgetUserInvitation[]
+}
+
+enum BudgetType {
+  SPENDING
+  SAVING
+  INVESTING
+  DEBT
+}
+
+model BudgetPeriodConfig {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type      BudgetPeriodType
+  amount    Decimal
+  currency  String
+  startDate DateTime?
+  endDate   DateTime?
+
+  budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  budgetId String @unique
+}
+
+enum BudgetPeriodType {
+  MONTHLY
+  QUARTERLY
+  YEARLY
+  CUSTOM
+}
+
+model BudgetUser {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  permission BudgetUserPermission
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+  budgetId String
+  budget   Budget @relation(fields: [budgetId], references: [id])
+
+  @@unique([userId, budgetId])
+}
+
+enum BudgetUserPermission {
+  OWNER
+  MEMBER
+}
+
+model BudgetUserInvitation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email      String?
+  token      String                @default(uuid())
+  expiresAt  DateTime
+  permission BudgetUserPermission?
+
+  createdByUserId String
+  createdByUser   User                           @relation(fields: [createdByUserId], references: [id])
+  budgetId        String
+  budget          Budget                         @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  responses       BudgetUserInvitationResponse[]
+
+  @@unique([token, budgetId])
+}
+
+model BudgetUserInvitationResponse {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  acceptedAt DateTime?
+  declinedAt DateTime?
+
+  invitationId  String
+  invitation    BudgetUserInvitation @relation(fields: [invitationId], references: [id])
+  createdUserId String?              @unique
+  createdUser   User?                @relation(fields: [createdUserId], references: [id])
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  amount   Decimal
+  currency String
+  date     DateTime
+  note     String?
+
+  categoryId      String?
+  category        Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  budgetId        String?
+  budget          Budget?           @relation(fields: [budgetId], references: [id])
+  walletAccountId String
+  walletAccount   UserWalletAccount @relation(fields: [walletAccountId], references: [id])
+  createdByUserId String
+  createdByUser   User              @relation(fields: [createdByUserId], references: [id])
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String
+  description String?
+  icon        String?
+  color       String?
+
+  parent       Category?     @relation("CategoryToCategory", fields: [parentId], references: [id], onDelete: SetNull)
+  parentId     String?
+  children     Category[]    @relation("CategoryToCategory")
+  transactions Transaction[]
 }

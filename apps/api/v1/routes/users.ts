@@ -1,12 +1,13 @@
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
+import { getAuthUser } from '../middlewares/auth'
 import { createUser } from '../services/user.service'
 import { zCreateUser } from '../validation'
 
 const router = new Hono()
 
 router.post('/', zValidator('json', zCreateUser), async (c) => {
-  const existingUser = c.get('user')
+  const existingUser = getAuthUser(c)
 
   if (existingUser) {
     return c.json({ message: 'user already exists' }, 409)

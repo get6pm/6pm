@@ -41,7 +41,7 @@ export const UserWalletAccountScalarFieldEnumSchema = z.enum(['id','createdAt','
 
 export const BudgetScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','name','description','preferredCurrency','type']);
 
-export const BudgetPeriodConfigScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','type','amount','currency','startDate','endDate','budgetId']);
+export const BudgetPeriodConfigScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','type','amount','startDate','endDate','budgetId']);
 
 export const BudgetUserScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','permission','userId','budgetId']);
 
@@ -188,7 +188,6 @@ export const BudgetPeriodConfigSchema = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   amount: z.instanceof(Prisma.Decimal, { message: "Field 'amount' must be a Decimal. Location: ['Models', 'BudgetPeriodConfig']"}),
-  currency: z.string(),
   startDate: z.coerce.date().nullable(),
   endDate: z.coerce.date().nullable(),
   budgetId: z.string(),
@@ -520,7 +519,6 @@ export const BudgetPeriodConfigSelectSchema: z.ZodType<Prisma.BudgetPeriodConfig
   updatedAt: z.boolean().optional(),
   type: z.boolean().optional(),
   amount: z.boolean().optional(),
-  currency: z.boolean().optional(),
   startDate: z.boolean().optional(),
   endDate: z.boolean().optional(),
   budgetId: z.boolean().optional(),
@@ -938,7 +936,6 @@ export const BudgetPeriodConfigWhereInputSchema: z.ZodType<Prisma.BudgetPeriodCo
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   type: z.union([ z.lazy(() => EnumBudgetPeriodTypeFilterSchema),z.lazy(() => BudgetPeriodTypeSchema) ]).optional(),
   amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  currency: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   startDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   endDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   budgetId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
@@ -951,7 +948,6 @@ export const BudgetPeriodConfigOrderByWithRelationInputSchema: z.ZodType<Prisma.
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   type: z.lazy(() => SortOrderSchema).optional(),
   amount: z.lazy(() => SortOrderSchema).optional(),
-  currency: z.lazy(() => SortOrderSchema).optional(),
   startDate: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   endDate: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   budgetId: z.lazy(() => SortOrderSchema).optional(),
@@ -980,7 +976,6 @@ export const BudgetPeriodConfigWhereUniqueInputSchema: z.ZodType<Prisma.BudgetPe
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   type: z.union([ z.lazy(() => EnumBudgetPeriodTypeFilterSchema),z.lazy(() => BudgetPeriodTypeSchema) ]).optional(),
   amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  currency: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   startDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   endDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   budget: z.union([ z.lazy(() => BudgetRelationFilterSchema),z.lazy(() => BudgetWhereInputSchema) ]).optional(),
@@ -992,7 +987,6 @@ export const BudgetPeriodConfigOrderByWithAggregationInputSchema: z.ZodType<Pris
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   type: z.lazy(() => SortOrderSchema).optional(),
   amount: z.lazy(() => SortOrderSchema).optional(),
-  currency: z.lazy(() => SortOrderSchema).optional(),
   startDate: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   endDate: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   budgetId: z.lazy(() => SortOrderSchema).optional(),
@@ -1012,7 +1006,6 @@ export const BudgetPeriodConfigScalarWhereWithAggregatesInputSchema: z.ZodType<P
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   type: z.union([ z.lazy(() => EnumBudgetPeriodTypeWithAggregatesFilterSchema),z.lazy(() => BudgetPeriodTypeSchema) ]).optional(),
   amount: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  currency: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   startDate: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
   endDate: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
   budgetId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
@@ -1701,7 +1694,6 @@ export const BudgetPeriodConfigCreateInputSchema: z.ZodType<Prisma.BudgetPeriodC
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => BudgetPeriodTypeSchema),
   amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
-  currency: z.string(),
   startDate: z.coerce.date().optional().nullable(),
   endDate: z.coerce.date().optional().nullable(),
   budget: z.lazy(() => BudgetCreateNestedOneWithoutPeriodConfigInputSchema)
@@ -1713,7 +1705,6 @@ export const BudgetPeriodConfigUncheckedCreateInputSchema: z.ZodType<Prisma.Budg
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => BudgetPeriodTypeSchema),
   amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
-  currency: z.string(),
   startDate: z.coerce.date().optional().nullable(),
   endDate: z.coerce.date().optional().nullable(),
   budgetId: z.string()
@@ -1725,7 +1716,6 @@ export const BudgetPeriodConfigUpdateInputSchema: z.ZodType<Prisma.BudgetPeriodC
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  currency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   endDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   budget: z.lazy(() => BudgetUpdateOneRequiredWithoutPeriodConfigNestedInputSchema).optional()
@@ -1737,7 +1727,6 @@ export const BudgetPeriodConfigUncheckedUpdateInputSchema: z.ZodType<Prisma.Budg
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  currency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   endDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   budgetId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1749,7 +1738,6 @@ export const BudgetPeriodConfigCreateManyInputSchema: z.ZodType<Prisma.BudgetPer
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => BudgetPeriodTypeSchema),
   amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
-  currency: z.string(),
   startDate: z.coerce.date().optional().nullable(),
   endDate: z.coerce.date().optional().nullable(),
   budgetId: z.string()
@@ -1761,7 +1749,6 @@ export const BudgetPeriodConfigUpdateManyMutationInputSchema: z.ZodType<Prisma.B
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  currency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   endDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
@@ -1772,7 +1759,6 @@ export const BudgetPeriodConfigUncheckedUpdateManyInputSchema: z.ZodType<Prisma.
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  currency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   endDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   budgetId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2469,7 +2455,6 @@ export const BudgetPeriodConfigCountOrderByAggregateInputSchema: z.ZodType<Prism
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   type: z.lazy(() => SortOrderSchema).optional(),
   amount: z.lazy(() => SortOrderSchema).optional(),
-  currency: z.lazy(() => SortOrderSchema).optional(),
   startDate: z.lazy(() => SortOrderSchema).optional(),
   endDate: z.lazy(() => SortOrderSchema).optional(),
   budgetId: z.lazy(() => SortOrderSchema).optional()
@@ -2485,7 +2470,6 @@ export const BudgetPeriodConfigMaxOrderByAggregateInputSchema: z.ZodType<Prisma.
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   type: z.lazy(() => SortOrderSchema).optional(),
   amount: z.lazy(() => SortOrderSchema).optional(),
-  currency: z.lazy(() => SortOrderSchema).optional(),
   startDate: z.lazy(() => SortOrderSchema).optional(),
   endDate: z.lazy(() => SortOrderSchema).optional(),
   budgetId: z.lazy(() => SortOrderSchema).optional()
@@ -2497,7 +2481,6 @@ export const BudgetPeriodConfigMinOrderByAggregateInputSchema: z.ZodType<Prisma.
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   type: z.lazy(() => SortOrderSchema).optional(),
   amount: z.lazy(() => SortOrderSchema).optional(),
-  currency: z.lazy(() => SortOrderSchema).optional(),
   startDate: z.lazy(() => SortOrderSchema).optional(),
   endDate: z.lazy(() => SortOrderSchema).optional(),
   budgetId: z.lazy(() => SortOrderSchema).optional()
@@ -4224,7 +4207,6 @@ export const BudgetPeriodConfigCreateWithoutBudgetInputSchema: z.ZodType<Prisma.
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => BudgetPeriodTypeSchema),
   amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
-  currency: z.string(),
   startDate: z.coerce.date().optional().nullable(),
   endDate: z.coerce.date().optional().nullable()
 }).strict();
@@ -4235,7 +4217,6 @@ export const BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema: z.ZodTyp
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => BudgetPeriodTypeSchema),
   amount: z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
-  currency: z.string(),
   startDate: z.coerce.date().optional().nullable(),
   endDate: z.coerce.date().optional().nullable()
 }).strict();
@@ -4358,7 +4339,6 @@ export const BudgetPeriodConfigUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  currency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   endDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
@@ -4369,7 +4349,6 @@ export const BudgetPeriodConfigUncheckedUpdateWithoutBudgetInputSchema: z.ZodTyp
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  currency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   startDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   endDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();

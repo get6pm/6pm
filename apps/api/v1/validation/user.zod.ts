@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 export const zCreateUser = z.object({
+  id: z.string().optional(),
   email: z.string().email(),
-  password: z.string().min(6),
   name: z.string().min(3),
 })
 

@@ -9,11 +9,15 @@ export async function findUserById(id: string) {
   })
 }
 
-export async function createUser(
-  data: CreateUser & {
-    id?: string
-  },
-) {
+export async function findUserByEmail(email: string) {
+  return await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  })
+}
+
+export async function createUser(data: CreateUser) {
   return await prisma.user.create({
     data,
   })

@@ -1123,18 +1123,35 @@ export const BudgetUserInvitationOrderByWithRelationInputSchema: z.ZodType<Prism
 export const BudgetUserInvitationWhereUniqueInputSchema: z.ZodType<Prisma.BudgetUserInvitationWhereUniqueInput> = z.union([
   z.object({
     id: z.string().cuid(),
-    token_budgetId: z.lazy(() => BudgetUserInvitationTokenBudgetIdCompoundUniqueInputSchema)
+    token_budgetId: z.lazy(() => BudgetUserInvitationTokenBudgetIdCompoundUniqueInputSchema),
+    email_budgetId: z.lazy(() => BudgetUserInvitationEmailBudgetIdCompoundUniqueInputSchema)
+  }),
+  z.object({
+    id: z.string().cuid(),
+    token_budgetId: z.lazy(() => BudgetUserInvitationTokenBudgetIdCompoundUniqueInputSchema),
+  }),
+  z.object({
+    id: z.string().cuid(),
+    email_budgetId: z.lazy(() => BudgetUserInvitationEmailBudgetIdCompoundUniqueInputSchema),
   }),
   z.object({
     id: z.string().cuid(),
   }),
   z.object({
     token_budgetId: z.lazy(() => BudgetUserInvitationTokenBudgetIdCompoundUniqueInputSchema),
+    email_budgetId: z.lazy(() => BudgetUserInvitationEmailBudgetIdCompoundUniqueInputSchema),
+  }),
+  z.object({
+    token_budgetId: z.lazy(() => BudgetUserInvitationTokenBudgetIdCompoundUniqueInputSchema),
+  }),
+  z.object({
+    email_budgetId: z.lazy(() => BudgetUserInvitationEmailBudgetIdCompoundUniqueInputSchema),
   }),
 ])
 .and(z.object({
   id: z.string().cuid().optional(),
   token_budgetId: z.lazy(() => BudgetUserInvitationTokenBudgetIdCompoundUniqueInputSchema).optional(),
+  email_budgetId: z.lazy(() => BudgetUserInvitationEmailBudgetIdCompoundUniqueInputSchema).optional(),
   AND: z.union([ z.lazy(() => BudgetUserInvitationWhereInputSchema),z.lazy(() => BudgetUserInvitationWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => BudgetUserInvitationWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => BudgetUserInvitationWhereInputSchema),z.lazy(() => BudgetUserInvitationWhereInputSchema).array() ]).optional(),
@@ -2598,6 +2615,11 @@ export const BudgetUserInvitationResponseOrderByRelationAggregateInputSchema: z.
 
 export const BudgetUserInvitationTokenBudgetIdCompoundUniqueInputSchema: z.ZodType<Prisma.BudgetUserInvitationTokenBudgetIdCompoundUniqueInput> = z.object({
   token: z.string(),
+  budgetId: z.string()
+}).strict();
+
+export const BudgetUserInvitationEmailBudgetIdCompoundUniqueInputSchema: z.ZodType<Prisma.BudgetUserInvitationEmailBudgetIdCompoundUniqueInput> = z.object({
+  email: z.string(),
   budgetId: z.string()
 }).strict();
 

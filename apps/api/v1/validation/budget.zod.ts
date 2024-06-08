@@ -1,8 +1,8 @@
+import { z } from 'zod'
 import {
   BudgetPeriodTypeSchema,
   BudgetTypeSchema,
-} from '@/prisma/generated/zod'
-import { z } from 'zod'
+} from '../../prisma/generated/zod'
 
 export const zCreateBudget = z.object({
   name: z.string(),

@@ -1,7 +1,7 @@
-import { BudgetUserPermissionSchema } from '@/prisma/generated/zod'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { z } from 'zod'
+import { BudgetUserPermissionSchema } from '../../prisma/generated/zod'
 import { getAuthUser, getAuthUserStrict } from '../middlewares/auth'
 import {
   canUserDeleteBudgetInvitation,

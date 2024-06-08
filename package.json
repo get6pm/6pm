@@ -4,6 +4,8 @@
   "license": "GPL-3.0",
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
+    "api:dev": "pnpm --filter @6pm/api run dev",
+    "api:build": "pnpm --filter @6pm/api run build",
     "api:start": "pnpm --filter @6pm/api run start"
   },
   "devDependencies": {

@@ -2,13 +2,26 @@
   "name": "6pm",
   "version": "0.0.0",
   "license": "GPL-3.0",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "api:dev": "pnpm --filter @6pm/api run dev",
     "api:build": "pnpm --filter @6pm/api run build",
-    "api:start": "pnpm --filter @6pm/api run start"
+    "api:start": "pnpm --filter @6pm/api run start",
+    "mobile:start": "pnpm --filter @6pm/mobile run start"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.0"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@babel/*",
+        "expo-modules-*",
+        "typescript"
+      ]
+    }
   }
 }

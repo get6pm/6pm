@@ -125,6 +125,7 @@ model BudgetUserInvitation {
   responses       BudgetUserInvitationResponse[]
 
   @@unique([token, budgetId])
+  @@unique([email, budgetId])
 }
 
 model BudgetUserInvitationResponse {

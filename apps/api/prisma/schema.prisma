@@ -26,6 +26,7 @@ model User {
   transactions                 Transaction[]
   createdBudgetUserInvitations BudgetUserInvitation[]
   createdFromInvitation        BudgetUserInvitationResponse?
+  categories                   Category[]
 }
 
 model UserWalletAccount {
@@ -171,6 +172,9 @@ model Category {
   description String?
   icon        String?
   color       String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   parent       Category?     @relation("CategoryToCategory", fields: [parentId], references: [id], onDelete: SetNull)
   parentId     String?

@@ -2,9 +2,7 @@ import { getAuth } from '@hono/clerk-auth'
 import { Hono } from 'hono'
 import { findUserById } from '../services/user.service'
 
-const router = new Hono()
-
-router.get('/me', async (c) => {
+const router = new Hono().get('/me', async (c) => {
   const auth = getAuth(c)
 
   if (!auth?.userId) {

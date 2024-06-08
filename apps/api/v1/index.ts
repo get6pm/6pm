@@ -8,10 +8,10 @@ import walletsApp from './routes/wallets'
 
 export const hono = new Hono()
 
-hono.use('*', authMiddleware)
+  .use('*', authMiddleware)
 
-hono.route('/auth', authApp)
-hono.route('/budgets', budgetsApp)
-hono.route('/users', usersApp)
-hono.route('/transactions', transactionsApp)
-hono.route('/wallets', walletsApp)
+  .route('/auth', authApp)
+  .route('/budgets', budgetsApp)
+  .route('/users', usersApp)
+  .route('/transactions', transactionsApp)
+  .route('/wallets', walletsApp)

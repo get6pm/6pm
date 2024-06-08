@@ -18,94 +18,94 @@ import { zCreateWallet, zUpdateWallet } from '../validation'
 
 const router = new Hono()
 
-router.get('/wallets', async (c) => {
-  const user = getAuthUserStrict(c)
-
-  const wallets = (await findUserWallets({ user })).map(walletWithBalance)
-
-  return c.json(wallets, 200)
-})
-
-router.post('/wallets', zValidator('json', zCreateWallet), async (c) => {
-  const user = getAuthUserStrict(c)
-
-  if (!(await canUserCreateWallet({ user }))) {
-    return c.json({ message: 'forbidden' }, 403)
-  }
-
-  const data = c.req.valid('json')
-
-  const wallet = await createWallet({ user, data })
-
-  return c.json(walletWithBalance(wallet), 201)
-})
-
-router.put(
-  '/wallets/:walletId',
-  zValidator('param', object({ walletId: string() })),
-  zValidator('json', zUpdateWallet),
-  async (c) => {
+  .get('/wallets', async (c) => {
     const user = getAuthUserStrict(c)
-    const { walletId } = c.req.valid('param')
 
-    const wallet = await findUserWallet({ user, walletId })
+    const wallets = (await findUserWallets({ user })).map(walletWithBalance)
 
-    if (!wallet) {
-      return c.json({ message: 'wallet not found' }, 404)
-    }
+    return c.json(wallets, 200)
+  })
 
-    if (!(await canUserUpdateWallet({ user, walletId }))) {
+  .post('/wallets', zValidator('json', zCreateWallet), async (c) => {
+    const user = getAuthUserStrict(c)
+
+    if (!(await canUserCreateWallet({ user }))) {
       return c.json({ message: 'forbidden' }, 403)
     }
 
     const data = c.req.valid('json')
 
-    const updatedWallet = await updateWallet({ walletId, data })
+    const wallet = await createWallet({ user, data })
 
-    return c.json(walletWithBalance(updatedWallet), 200)
-  },
-)
+    return c.json(walletWithBalance(wallet), 201)
+  })
 
-router.delete(
-  '/wallets/:walletId',
-  zValidator('param', object({ walletId: string() })),
-  async (c) => {
-    const user = getAuthUserStrict(c)
-    const { walletId } = c.req.valid('param')
+  .put(
+    '/wallets/:walletId',
+    zValidator('param', object({ walletId: string() })),
+    zValidator('json', zUpdateWallet),
+    async (c) => {
+      const user = getAuthUserStrict(c)
+      const { walletId } = c.req.valid('param')
 
-    const wallet = await findUserWallet({ user, walletId })
+      const wallet = await findUserWallet({ user, walletId })
 
-    if (!wallet) {
-      return c.json({ message: 'wallet not found' }, 404)
-    }
+      if (!wallet) {
+        return c.json({ message: 'wallet not found' }, 404)
+      }
 
-    if (!(await canUserDeleteWallet({ user, walletId }))) {
-      return c.json({ message: 'forbidden' }, 403)
-    }
+      if (!(await canUserUpdateWallet({ user, walletId }))) {
+        return c.json({ message: 'forbidden' }, 403)
+      }
 
-    await deleteWallet({ walletId })
+      const data = c.req.valid('json')
 
-    return c.json(wallet, 200)
-  },
-)
+      const updatedWallet = await updateWallet({ walletId, data })
 
-router.get(
-  '/wallets/:walletId/balance',
-  zValidator('param', object({ walletId: string() })),
-  async (c) => {
-    const user = getAuthUserStrict(c)
-    const { walletId } = c.req.valid('param')
+      return c.json(walletWithBalance(updatedWallet), 200)
+    },
+  )
 
-    const wallet = await findUserWallet({ user, walletId })
+  .delete(
+    '/wallets/:walletId',
+    zValidator('param', object({ walletId: string() })),
+    async (c) => {
+      const user = getAuthUserStrict(c)
+      const { walletId } = c.req.valid('param')
 
-    if (!wallet) {
-      return c.json({ message: 'wallet not found' }, 404)
-    }
+      const wallet = await findUserWallet({ user, walletId })
 
-    const balance = await getWalletBalance({ wallet })
+      if (!wallet) {
+        return c.json({ message: 'wallet not found' }, 404)
+      }
 
-    return c.json({ wallet, balance }, 200)
-  },
-)
+      if (!(await canUserDeleteWallet({ user, walletId }))) {
+        return c.json({ message: 'forbidden' }, 403)
+      }
+
+      await deleteWallet({ walletId })
+
+      return c.json(wallet, 200)
+    },
+  )
+
+  .get(
+    '/wallets/:walletId/balance',
+    zValidator('param', object({ walletId: string() })),
+    async (c) => {
+      const user = getAuthUserStrict(c)
+      const { walletId } = c.req.valid('param')
+
+      const wallet = await findUserWallet({ user, walletId })
+
+      if (!wallet) {
+        return c.json({ message: 'wallet not found' }, 404)
+      }
+
+      const balance = await getWalletBalance({ wallet })
+
+      return c.json({ wallet, balance }, 200)
+    },
+  )
 
 export default router

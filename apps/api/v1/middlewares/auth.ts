@@ -1,8 +1,8 @@
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth'
+import type { User } from '@prisma/client'
 import type { Context } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import { HTTPException } from 'hono/http-exception'
-import type { User } from '../../prisma/generated/zod'
 import { findUserById } from '../services/user.service'
 
 declare module 'hono' {

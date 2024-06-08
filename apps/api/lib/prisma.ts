@@ -1,9 +1,11 @@
+// import { Pool } from '@neondatabase/serverless'
+// import { PrismaNeon } from '@prisma/adapter-neon'
 import { PrismaClient } from '@prisma/client'
 
-// biome-ignore lint/style/useConst: <explanation>
-let prisma: PrismaClient
+// const neon = new Pool({ connectionString: process.env.POSTGRES_PRISMA_URL })
+// const adapter = new PrismaNeon(neon)
 
-prisma = new PrismaClient()
+const prisma = new PrismaClient()
 
 // if (process.env.NODE_ENV === 'production') {
 //   prisma = new PrismaClient()

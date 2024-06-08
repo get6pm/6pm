@@ -1,5 +1,11 @@
+import { dayjsExtended } from '@/lib/dayjs'
 import prisma from '@/lib/prisma'
-import { type Budget, BudgetUserPermission, type User } from '@prisma/client'
+import {
+  type Budget,
+  BudgetPeriodType,
+  BudgetUserPermission,
+  type User,
+} from '@prisma/client'
 import type { CreateBudget, UpdateBudget } from '../validation'
 import { inviteUserToBudget } from './budget-invitation.service'
 
@@ -89,6 +95,46 @@ export async function findBudget({ budgetId }: { budgetId: string }) {
   })
 }
 
+/**
+ * Given an anchor date and period type,
+ * calculate the start and end dates of the budget period.
+ * Example:
+ * - anchorDate: 2022-01-15
+ * - periodType: MONTHLY
+ * - startDate: 2022-01-01
+ * - endDate: 2022-01-31
+ */
+function calculateBudgetPeriodStartEndDates({
+  anchorDate,
+  type,
+}: {
+  anchorDate: Date
+  type: BudgetPeriodType
+}) {
+  switch (type) {
+    case BudgetPeriodType.MONTHLY:
+      return {
+        startDate: dayjsExtended(anchorDate).startOf('month').toDate(),
+        endDate: dayjsExtended(anchorDate).endOf('month').toDate(),
+      }
+    case BudgetPeriodType.QUARTERLY:
+      return {
+        startDate: dayjsExtended(anchorDate).startOf('quarter').toDate(),
+        endDate: dayjsExtended(anchorDate).endOf('quarter').toDate(),
+      }
+    case BudgetPeriodType.YEARLY:
+      return {
+        startDate: dayjsExtended(anchorDate).startOf('year').toDate(),
+        endDate: dayjsExtended(anchorDate).endOf('year').toDate(),
+      }
+    default:
+      return {
+        startDate: null,
+        endDate: null,
+      }
+  }
+}
+
 export async function createBudget({
   user,
   data,
@@ -105,6 +151,11 @@ export async function createBudget({
     inviteeEmails = [],
   } = data
 
+  const periodConfig = calculateBudgetPeriodStartEndDates({
+    anchorDate: new Date(),
+    type: period.type,
+  })
+
   const budget = await prisma.budget.create({
     data: {
       name,
@@ -115,8 +166,8 @@ export async function createBudget({
         create: {
           type: period.type,
           amount: period.amount,
-          startDate: period.startDate,
-          endDate: period.endDate,
+          startDate: period.endDate ?? periodConfig.startDate,
+          endDate: period.endDate ?? periodConfig.endDate,
         },
       },
       budgetUsers: {

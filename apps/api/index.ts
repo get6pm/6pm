@@ -13,7 +13,7 @@ const app = new Hono({ strict: true })
   .use(logger())
 
   // * Mounting versioned APIs
-  .route('/api/v1', appV1)
+  .route('/v1', appV1)
 
 export * from './v1/validation'
 export * from './prisma/generated/zod'

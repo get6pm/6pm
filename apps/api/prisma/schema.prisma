@@ -74,7 +74,6 @@ model BudgetPeriodConfig {
 
   type      BudgetPeriodType
   amount    Decimal
-  currency  String
   startDate DateTime?
   endDate   DateTime?
 

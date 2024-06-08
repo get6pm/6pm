@@ -121,6 +121,16 @@ export async function generateBudgetInvitation({
   return invitation
 }
 
+export async function findBudgetInvitation({
+  invitationId,
+}: {
+  invitationId: string
+}): Promise<BudgetUserInvitation | null> {
+  return prisma.budgetUserInvitation.findUnique({
+    where: { id: invitationId },
+  })
+}
+
 export async function findBudgetInvitations({
   budgetId,
   permission,

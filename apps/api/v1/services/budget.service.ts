@@ -166,7 +166,7 @@ export async function createBudget({
         create: {
           type: period.type,
           amount: period.amount,
-          startDate: period.endDate ?? periodConfig.startDate,
+          startDate: period.startDate ?? periodConfig.startDate,
           endDate: period.endDate ?? periodConfig.endDate,
         },
       },

@@ -199,3 +199,21 @@ export async function findBudgetsOfUser({
     },
   })
 }
+
+export async function createBudgetUser({
+  userId,
+  budgetId,
+  permission,
+}: {
+  userId: string
+  budgetId: string
+  permission: BudgetUserPermission
+}) {
+  return prisma.budgetUser.create({
+    data: {
+      userId,
+      budgetId,
+      permission,
+    },
+  })
+}

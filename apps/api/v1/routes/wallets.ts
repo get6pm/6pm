@@ -21,7 +21,9 @@ const router = new Hono()
   .get('/wallets', async (c) => {
     const user = getAuthUserStrict(c)
 
-    const wallets = (await findUserWallets({ user })).map(walletWithBalance)
+    const wallets = await Promise.all(
+      (await findUserWallets({ user })).map(walletWithBalance),
+    )
 
     return c.json(wallets, 200)
   })
@@ -37,7 +39,7 @@ const router = new Hono()
 
     const wallet = await createWallet({ user, data })
 
-    return c.json(walletWithBalance(wallet), 201)
+    return c.json(await walletWithBalance(wallet), 201)
   })
 
   .put(
@@ -62,7 +64,7 @@ const router = new Hono()
 
       const updatedWallet = await updateWallet({ walletId, data })
 
-      return c.json(walletWithBalance(updatedWallet), 200)
+      return c.json(await walletWithBalance(updatedWallet), 200)
     },
   )
 

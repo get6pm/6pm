@@ -5,7 +5,11 @@ import { getAuthUserStrict } from '../middlewares/auth'
 import { canUserReadBudget, findBudget } from '../services/budget.service'
 import {
   canUserCreateTransaction,
+  canUserReadTransaction,
+  canUserUpdateTransaction,
   createTransaction,
+  findTransaction,
+  updateTransaction,
 } from '../services/transaction.service'
 import { findUserWallet } from '../services/wallet.service'
 import {
@@ -75,7 +79,45 @@ router.put(
   ),
   zValidator('json', zUpdateTransaction),
   async (c) => {
-    return c.json({ message: 'not implemented' })
+    const { transactionId } = c.req.valid('param')
+    const user = getAuthUserStrict(c)
+    const data = c.req.valid('json')
+    const { budgetId, walletAccountId: walletId } = data
+
+    const transaction = await findTransaction({ transactionId })
+
+    if (
+      !(transaction && (await canUserReadTransaction({ user, transaction })))
+    ) {
+      return c.json({ message: 'transaction not found' }, 404)
+    }
+
+    const wallet = walletId ? await findUserWallet({ user, walletId }) : null
+    if (walletId && !wallet) {
+      return c.json({ message: 'wallet not found' }, 404)
+    }
+
+    if (
+      !(await canUserUpdateTransaction({
+        user,
+        transaction,
+        walletAccount: wallet,
+      }))
+    ) {
+      return c.json({ message: 'user cannot update transaction' }, 403)
+    }
+
+    const budget = budgetId ? await findBudget({ budgetId }) : null
+    if (budgetId && (!budget || !(await canUserReadBudget({ user, budget })))) {
+      return c.json({ message: 'budget not found' }, 404)
+    }
+
+    const updatedTransaction = await updateTransaction({
+      transactionId,
+      data,
+    })
+
+    return c.json(updatedTransaction)
   },
 )
 

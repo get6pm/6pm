@@ -16,6 +16,6 @@ export const zUpdateTransaction = z.object({
   currency: z.string().optional(),
   note: z.string().optional(),
   budgetId: z.string().optional(),
-  walletId: z.string().optional(),
+  walletAccountId: z.string().optional(),
 })
 export type UpdateTransaction = z.infer<typeof zUpdateTransaction>

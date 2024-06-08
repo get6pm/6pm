@@ -5,9 +5,11 @@ import { getAuthUserStrict } from '../middlewares/auth'
 import { canUserReadBudget, findBudget } from '../services/budget.service'
 import {
   canUserCreateTransaction,
+  canUserDeleteTransaction,
   canUserReadTransaction,
   canUserUpdateTransaction,
   createTransaction,
+  deleteTransaction,
   findTransaction,
   updateTransaction,
 } from '../services/transaction.service'
@@ -130,7 +132,24 @@ router.delete(
     }),
   ),
   async (c) => {
-    return c.json({ message: 'not implemented' })
+    const { transactionId } = c.req.valid('param')
+    const user = getAuthUserStrict(c)
+
+    const transaction = await findTransaction({ transactionId })
+
+    if (
+      !(transaction && (await canUserReadTransaction({ user, transaction })))
+    ) {
+      return c.json({ message: 'transaction not found' }, 404)
+    }
+
+    if (!(await canUserDeleteTransaction({ user, transaction }))) {
+      return c.json({ message: 'user cannot delete transaction' }, 403)
+    }
+
+    await deleteTransaction({ transactionId })
+
+    return c.json(transaction)
   },
 )
 

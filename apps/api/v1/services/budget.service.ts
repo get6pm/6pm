@@ -1,11 +1,11 @@
-import { dayjsExtended } from '@/lib/dayjs'
-import prisma from '@/lib/prisma'
 import {
   type Budget,
   BudgetPeriodType,
   BudgetUserPermission,
   type User,
 } from '@prisma/client'
+import { dayjsExtended } from '../../lib/dayjs'
+import prisma from '../../lib/prisma'
 import type { CreateBudget, UpdateBudget } from '../validation'
 import { inviteUserToBudget } from './budget-invitation.service'
 

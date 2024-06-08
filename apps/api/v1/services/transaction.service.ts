@@ -1,10 +1,10 @@
-import prisma from '@/lib/prisma'
 import type {
   Budget,
   Transaction,
   User,
   UserWalletAccount,
 } from '@prisma/client'
+import prisma from '../../lib/prisma'
 import type {
   CreateTransaction,
   UpdateTransaction,

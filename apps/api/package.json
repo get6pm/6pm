@@ -4,25 +4,36 @@
   "license": "GPL-3.0",
   "private": true,
   "scripts": {
-    "start": "vercel dev",
-    "deploy": "vercel",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "prisma:migrate": "prisma migrate dev",
     "prisma:generate": "prisma generate",
     "prisma:reset": "prisma migrate reset --force",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@clerk/backend": "^1.2.2",
     "@hono/clerk-auth": "^2.0.0",
+    "@hono/node-server": "^1.11.2",
     "@hono/zod-validator": "^0.2.2",
+    "@neondatabase/serverless": "^0.9.3",
+    "@prisma/adapter-neon": "^5.15.0",
     "@prisma/client": "^5.15.0",
     "dayjs": "^1.11.11",
-    "hono": "^4.4.3",
+    "hono": "^4.4.4",
+    "next": "^14.2.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/node": "18.11.18",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
     "prisma": "^5.15.0",
-    "vercel": "^34.2.5",
+    "typescript": "^5.4.5",
     "zod-prisma-types": "^3.1.8"
   }
 }

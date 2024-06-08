@@ -1,7 +1,7 @@
 import { zValidator } from '@hono/zod-validator'
+import { BudgetUserPermission } from '@prisma/client'
 import { Hono } from 'hono'
 import { z } from 'zod'
-import { BudgetUserPermissionSchema } from '../../prisma/generated/zod'
 import { getAuthUser, getAuthUserStrict } from '../middlewares/auth'
 import {
   canUserDeleteBudgetInvitation,
@@ -49,7 +49,7 @@ const router = new Hono()
     zValidator(
       'query',
       z.object({
-        permission: BudgetUserPermissionSchema.optional(),
+        permission: z.nativeEnum(BudgetUserPermission).optional(),
       }),
     ),
     async (c) => {
@@ -171,7 +171,7 @@ const router = new Hono()
       'json',
       z.object({
         email: z.string().email(),
-        permission: BudgetUserPermissionSchema.optional(),
+        permission: z.nativeEnum(BudgetUserPermission).optional(),
       }),
     ),
     async (c) => {

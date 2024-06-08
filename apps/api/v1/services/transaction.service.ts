@@ -86,6 +86,16 @@ export async function canUserUpdateTransaction({
   return false
 }
 
+export async function canUserDeleteTransaction({
+  user,
+  transaction,
+}: {
+  user: User
+  transaction: Transaction
+}) {
+  return canUserUpdateTransaction({ user, transaction, walletAccount: null })
+}
+
 export async function findTransaction({
   transactionId,
 }: {
@@ -130,4 +140,16 @@ export async function updateTransaction({
   })
 
   return transaction
+}
+
+export async function deleteTransaction({
+  transactionId,
+}: {
+  transactionId: string
+}) {
+  await prisma.transaction.delete({
+    where: {
+      id: transactionId,
+    },
+  })
 }

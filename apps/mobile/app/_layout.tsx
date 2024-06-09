@@ -12,8 +12,10 @@ import {
 } from '@expo-google-fonts/be-vietnam-pro'
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
+import * as WebBrowser from "expo-web-browser";
 
 import 'react-native-reanimated'
+import { useWarmUpBrowser } from '@/hooks/use-warm-up-browser'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { queryClient } from '@/lib/client'
 import {
@@ -36,12 +38,15 @@ cssInterop(Svg, {
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
 
+WebBrowser.maybeCompleteAuthSession();
+
 // biome-ignore lint/style/useNamingConvention: <explanation>
 export const unstable_settings = {
   initialRouteName: '(app)',
 }
 
 export default function RootLayout() {
+  useWarmUpBrowser();
   const colorScheme = useColorScheme()
   const [fontsLoaded] = useFonts({
     BeVietnamPro_300Light,

@@ -2,14 +2,20 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/Avatar'
 import { Badge } from '@/components/Badge'
 import { Button } from '@/components/Button'
 import { IconButton } from '@/components/IconButton'
+import { MenuItem } from '@/components/common/menu-item'
+import { useLocale } from '@/locales/provider'
 import { useAuth, useUser } from '@clerk/clerk-expo'
+import { t } from '@lingui/macro'
+import { useLingui } from '@lingui/react'
 import { Link } from 'expo-router'
-import { LogOutIcon, PencilIcon, SwatchBookIcon } from 'lucide-react-native'
+import { ChevronRightIcon, EarthIcon, LogOutIcon, PencilIcon, SwatchBookIcon } from 'lucide-react-native'
 import { Alert, ScrollView, Text, View } from 'react-native'
 
 export default function SettingsScreen() {
   const { signOut } = useAuth()
   const { user } = useUser()
+  const { i18n } = useLingui()
+  const { language } = useLocale()
 
   return (
     <ScrollView contentContainerClassName="py-4 gap-4" className="bg-card">
@@ -40,30 +46,44 @@ export default function SettingsScreen() {
       </View>
       <View className="gap-2 mt-4">
         <Text className="font-sans mx-6 text-muted-foreground">
-          App settings
+          {t(i18n)`App settings`}
         </Text>
         <Link href="/appearance" asChild>
-          <Button
-            label="Appearance"
-            variant="ghost"
-            labelClasses="font-regular"
-            leftIcon={SwatchBookIcon}
-            className="justify-start gap-6 px-6 flex-1"
+          <MenuItem
+            label={t(i18n)`Appearance`}
+            icon={SwatchBookIcon}
+            rightSection={<ChevronRightIcon className='w-6 h-6 text-primary' />}
+          />
+        </Link>
+        <Link href="/language" asChild>
+          <MenuItem
+            label={t(i18n)`Language`}
+            icon={EarthIcon}
+            rightSection={
+              <View className="flex flex-row items-center gap-2">
+                <Text className='text-muted-foreground font-sans'>
+                  {t(i18n)`${language}`}
+                </Text>
+                <ChevronRightIcon className='w-6 h-6 text-primary' />
+              </View>
+            }
           />
         </Link>
       </View>
       <View className="gap-2 mt-4">
-        <Text className="font-sans mx-6 text-muted-foreground">Others</Text>
+        <Text className="font-sans mx-6 text-muted-foreground">
+          {t(i18n)`Others`}
+        </Text>
         <Button
-          label="Sign out"
+          label={t(i18n)`Sign out`}
           variant="ghost"
-          onPress={() => Alert.alert('Are you sure you want to sign out?', '', [
+          onPress={() => Alert.alert(t(i18n)`Are you sure you want to sign out?`, '', [
             {
-              text: 'Cancel',
+              text: t(i18n)`Cancel`,
               style: 'cancel',
             },
             {
-              text: 'Sign out',
+              text: t(i18n)`Sign out`,
               style: 'destructive',
               onPress: () => signOut(),
             },

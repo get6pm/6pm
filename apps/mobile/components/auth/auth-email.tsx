@@ -5,6 +5,8 @@ import { useState } from 'react'
 import { View } from 'react-native'
 
 import { useCreateUserMutation } from '@/mutations/user'
+import { t } from '@lingui/macro'
+import { useLingui } from '@lingui/react'
 import { XCircleIcon } from 'lucide-react-native'
 import { FormProvider, useForm } from 'react-hook-form'
 import { IconButton } from '../IconButton'
@@ -18,6 +20,8 @@ import {
 } from './emailSchema'
 
 export function AuthEmail() {
+  const { i18n } = useLingui()
+
   const authEmailForm = useForm<EmailFormValues>({
     resolver: zodResolver(emailFormSchema),
   })
@@ -80,7 +84,7 @@ export function AuthEmail() {
         }
       } else {
         authEmailForm.setError('emailAddress', {
-          message: err?.errors?.[0]?.message || 'An error occurred',
+          message: err?.errors?.[0]?.message || t(i18n)`An error occurred`,
         })
       }
     }
@@ -127,8 +131,8 @@ export function AuthEmail() {
         <View className="gap-4">
           <InputField
             name="emailAddress"
-            label="Email"
-            placeholder="Enter your email address"
+            label={t(i18n)`Email`}
+            placeholder={t(i18n)`Enter your email address`}
             keyboardType="email-address"
             autoCapitalize="none"
             autoFocus
@@ -151,7 +155,7 @@ export function AuthEmail() {
           />
           {!verifying && (
             <SubmitButton
-              label="Continue"
+              label={t(i18n)`Continue`}
               onPress={authEmailForm.handleSubmit(onContinue)}
               disabled={verifying}
             />
@@ -163,15 +167,15 @@ export function AuthEmail() {
           <View className="gap-4 mt-3">
             <InputField
               name="code"
-              label="Verification code"
-              placeholder="Enter the code sent to your email"
+              label={t(i18n)`Verification code`}
+              placeholder={t(i18n)`Enter the code sent to your email`}
               keyboardType="number-pad"
               autoCapitalize="none"
               autoFocus
               onEndEditing={verifyEmailForm.handleSubmit(onVerify)}
             />
             <SubmitButton
-              label={mode === 'signUp' ? 'Sign up' : 'Sign in'}
+              label={mode === 'signUp' ? t(i18n)`Sign up` : t(i18n)`Sign in`}
               onPress={verifyEmailForm.handleSubmit(onVerify)}
             />
           </View>

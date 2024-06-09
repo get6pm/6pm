@@ -1,6 +1,7 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import { TouchableOpacity } from 'react-native'
 
+import { forwardRef } from 'react'
 import type { SvgProps } from 'react-native-svg'
 import { cn } from '../lib/utils'
 
@@ -17,9 +18,10 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4',
       },
       size: {
-        default: 'h-12 w-12',
+        default: 'h-10 w-10',
+        lg: 'h-12 w-12',
         sm: 'h-8 w-8',
-        lg: 'h-14 w-14',
+        xl: 'h-14 w-14',
       },
     },
     defaultVariants: {
@@ -40,9 +42,10 @@ const iconVariants = cva('text-center font-medium font-sans', {
       link: 'text-primary-foreground underline',
     },
     size: {
-      default: 'text-base',
+      default: 'w-5 h-5',
       sm: 'w-5 h-5',
-      lg: 'text-xl',
+      lg: 'w-6 h-6',
+      xl: 'w-6 h-6',
     },
   },
   defaultVariants: {
@@ -57,7 +60,8 @@ export interface IconButtonProps
   icon: React.ComponentType<SvgProps>
   iconClasses?: string
 }
-function IconButton({
+
+const IconButton = forwardRef(function ({
   icon: Icon,
   iconClasses,
   className,
@@ -65,9 +69,10 @@ function IconButton({
   size,
   disabled,
   ...props
-}: IconButtonProps) {
+}: IconButtonProps, ref: React.ForwardedRef<TouchableOpacity>) {
   return (
     <TouchableOpacity
+      ref={ref}
       activeOpacity={0.8}
       className={cn(buttonVariants({ variant, size, className }), {
         'opacity-50': disabled,
@@ -80,6 +85,6 @@ function IconButton({
       />
     </TouchableOpacity>
   )
-}
+})
 
 export { IconButton, buttonVariants, iconVariants }

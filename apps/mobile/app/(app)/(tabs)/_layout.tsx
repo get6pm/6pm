@@ -1,37 +1,56 @@
+import { useColorScheme } from '@/hooks/useColorScheme'
+import { theme } from '@/lib/theme'
 import { Tabs } from 'expo-router'
-
-import { TabBarIcon } from '@/components/navigation/TabBarIcon'
+import { CogIcon, LandPlotIcon, ScanTextIcon, WalletIcon } from 'lucide-react-native'
 
 export default function TabLayout() {
+  const colorScheme = useColorScheme()
   return (
     <Tabs
       screenOptions={{
-        // tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
+        headerShadowVisible: false,
+        tabBarActiveTintColor: theme[colorScheme ?? 'light'].primary,
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          borderTopWidth: 0,
+        },
+        headerTitleStyle: {
+          fontFamily: 'Be Vietnam Pro',
+          fontSize: 16,
+          color: theme[colorScheme ?? 'light'].primary,
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
+          headerShown: false,
           tabBarShowLabel: false,
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? 'home' : 'home-outline'}
-              color={color}
-            />
-          ),
+          tabBarIcon: ({ color }) => <WalletIcon color={color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="budgets"
         options={{
+          headerTitle: 'Budgets',
           tabBarShowLabel: false,
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? 'code-slash' : 'code-slash-outline'}
-              color={color}
-            />
-          ),
+          tabBarIcon: ({ color }) => <LandPlotIcon color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="scanner"
+        options={{
+          headerTitle: 'Scanner',
+          tabBarShowLabel: false,
+          tabBarIcon: ({ color }) => <ScanTextIcon color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          headerTitle: 'Settings',
+          tabBarShowLabel: false,
+          tabBarIcon: ({ color }) => <CogIcon color={color} />,
         }}
       />
     </Tabs>

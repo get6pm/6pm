@@ -17,10 +17,17 @@ const Input = forwardRef<React.ElementRef<typeof TextInput>, InputProps>(
     <View className={cn('flex flex-col gap-1.5', className)}>
       {label && <Text className={cn('text-base', labelClasses)}>{label}</Text>}
       <View>
+        {leftSection && (
+          <View className="absolute left-2 top-1/2 transform -translate-y-1/2">
+            {leftSection}
+          </View>
+        )}
         <TextInput
           className={cn(
             inputClasses,
             'border border-border placeholder-input py-2.5 px-4 rounded-lg font-sans',
+            leftSection && 'pl-10',
+            rightSection && 'pr-10',
           )}
           {...props}
         />

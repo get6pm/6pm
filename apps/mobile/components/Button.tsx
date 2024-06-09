@@ -1,6 +1,7 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import { Text, TouchableOpacity } from 'react-native'
 
+import { forwardRef } from 'react'
 import type { SvgProps } from 'react-native-svg'
 import { cn } from '../lib/utils'
 
@@ -59,7 +60,8 @@ export interface ButtonProps
   leftIcon?: React.ComponentType<SvgProps>
   rightIcon?: React.ComponentType<SvgProps>
 }
-function Button({
+
+const Button = forwardRef(function ({
   label,
   labelClasses,
   className,
@@ -69,9 +71,10 @@ function Button({
   rightIcon: RightIcon,
   disabled,
   ...props
-}: ButtonProps) {
+}: ButtonProps, ref: React.ForwardedRef<TouchableOpacity>) {
   return (
     <TouchableOpacity
+      ref={ref}
       activeOpacity={0.8}
       className={cn(
         buttonVariants({ variant, size, className }),
@@ -105,6 +108,6 @@ function Button({
       )}
     </TouchableOpacity>
   )
-}
+})
 
 export { Button, buttonVariants, buttonTextVariants }

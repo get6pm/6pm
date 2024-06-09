@@ -20,13 +20,13 @@ export default function LoginScreen() {
       automaticallyAdjustKeyboardInsets
       keyboardShouldPersistTaps="handled"
     >
-      <Text className="text-3xl font-semibold font-sans">
+      <Text className="text-3xl text-primary font-semibold font-sans">
         Manage your expense seamlessly
       </Text>
       <Text className="text-muted-foreground font-sans">
         Let <Text className="text-primary">6pm</Text> a good time to spend
       </Text>
-      <AuthIllustration className="h-[326px] my-16" />
+      <AuthIllustration className="h-[326px] my-16 text-primary" />
       <View className="flex flex-col gap-3">
         <AppleAuthButton />
         <GoogleAuthButton />

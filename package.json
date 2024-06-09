@@ -10,6 +10,7 @@
     "api:dev": "pnpm --filter @6pm/api run dev",
     "api:build": "pnpm --filter @6pm/api run build",
     "api:start": "pnpm --filter @6pm/api run start",
+    "mobile": "pnpm --filter @6pm/mobile",
     "mobile:start": "pnpm --filter @6pm/mobile run start"
   },
   "devDependencies": {

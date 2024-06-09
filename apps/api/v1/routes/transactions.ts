@@ -11,6 +11,7 @@ import {
   createTransaction,
   deleteTransaction,
   findTransaction,
+  listTransactions,
   updateTransaction,
 } from '../services/transaction.service'
 import { findUserWallet } from '../services/wallet.service'
@@ -26,19 +27,61 @@ const router = new Hono()
     zValidator(
       'query',
       z.object({
-        order_by: z.enum(['date']).optional(),
-        order: z.enum(['asc', 'desc']).optional(),
         wallet_id: z.string().optional(),
         budget_id: z.string().optional(),
-        from_date: z.string().optional(),
-        to_date: z.string().optional(),
-        take: z.number().optional(),
-        skip: z.number().optional(),
-        cursor: z.string().optional(),
+        before: z.date().optional(),
+        after: z.date().optional(),
+        first: z.number().optional(),
+        last: z.number().optional(),
       }),
     ),
     async (c) => {
-      return c.json([])
+      const user = getAuthUserStrict(c)
+      const {
+        wallet_id: walletAccountId,
+        budget_id: budgetId,
+        before,
+        after,
+        first,
+        last,
+      } = c.req.valid('query')
+
+      const query: {
+        createdByUserId?: string
+        budgetId?: string
+        walletAccountId?: string
+      } = {
+        budgetId,
+        walletAccountId,
+      }
+
+      // If both budget and wallet are not provided, user can only see their own transactions
+      if (!budgetId && !walletAccountId) {
+        query.createdByUserId = user.id
+      }
+
+      // If budget is provided, user must be a member of the budget
+      if (budgetId) {
+        const budget = await findBudget({ budgetId })
+        if (!budget || !(await canUserReadBudget({ user, budget }))) {
+          return c.json({ message: 'budget not found' }, 404)
+        }
+      }
+
+      // If wallet is provided, user must have access to the wallet
+      if (walletAccountId) {
+        const wallet = await findUserWallet({ user, walletId: walletAccountId })
+        if (!wallet) {
+          return c.json({ message: 'wallet not found' }, 404)
+        }
+      }
+
+      return c.json(
+        await listTransactions({
+          query,
+          pagination: { before, after, first, last },
+        }),
+      )
     },
   )
 

@@ -153,3 +153,55 @@ export async function deleteTransaction({
     },
   })
 }
+
+export async function listTransactions({
+  query,
+  pagination,
+}: {
+  query: {
+    createdByUserId?: string
+    budgetId?: string
+    walletAccountId?: string
+  }
+  pagination: {
+    before?: Date
+    last?: number
+    after?: Date
+    first?: number
+  }
+}) {
+  const transactions = await prisma.transaction.findMany({
+    where: {
+      ...query,
+      createdAt: {
+        ...(pagination.before && {
+          lt: pagination.before,
+        }),
+        ...(pagination.after && {
+          gt: pagination.after,
+        }),
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    take: pagination.first || pagination.last,
+  })
+
+  const totalCount = await prisma.transaction.count({
+    where: query,
+  })
+
+  const paginationMeta = {
+    hasMore: transactions.length > (pagination.first || pagination.last || 0),
+    totalCount,
+    ...(pagination.first && {
+      before: transactions[0]?.createdAt,
+    }),
+    ...(pagination.last && {
+      after: transactions[transactions.length - 1]?.createdAt,
+    }),
+  }
+
+  return { transactions, meta: { paginationMeta } }
+}

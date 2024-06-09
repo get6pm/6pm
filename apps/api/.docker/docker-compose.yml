@@ -1,0 +1,12 @@
+# Use postgres/example user/password credentials
+version: '3.9'
+name: 6pm
+services:
+  db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"

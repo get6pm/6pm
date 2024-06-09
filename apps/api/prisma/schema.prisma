@@ -7,13 +7,14 @@ generator zod {
   provider                  = "zod-prisma-types"
   createRelationValuesTypes = true
   output                    = "../../../packages/validation/src/prisma"
-  useMultipleFiles          = true
+  useMultipleFiles          = false
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_PRISMA_URL") // uses connection pooling
-  directUrl = env("DATABASE_URL_NON_POOLING") // uses a direct connection
+  provider          = "postgresql"
+  url               = env("DATABASE_PRISMA_URL") // uses connection pooling
+  directUrl         = env("DATABASE_URL_NON_POOLING") // uses a direct connection
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
@@ -170,6 +171,7 @@ model Category {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  type        CategoryType
   name        String
   description String?
   icon        String?
@@ -182,4 +184,9 @@ model Category {
   parentId     String?
   children     Category[]    @relation("CategoryToCategory")
   transactions Transaction[]
+}
+
+enum CategoryType {
+  INCOME
+  EXPENSE
 }

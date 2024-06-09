@@ -1,5 +1,5 @@
 import { type VariantProps, cva } from 'class-variance-authority'
-import { Text, TouchableOpacity } from 'react-native'
+import { TouchableOpacity } from 'react-native'
 
 import type { SvgProps } from 'react-native-svg'
 import { cn } from '../lib/utils'
@@ -13,13 +13,13 @@ const buttonVariants = cva(
         secondary: 'bg-secondary',
         outline: 'border-border border',
         destructive: 'bg-destructive',
-        ghost: 'bg-slate-700',
+        ghost: 'bg-transparent',
         link: 'text-primary underline-offset-4',
       },
       size: {
-        default: 'h-12 px-4',
-        sm: 'h-8 px-2',
-        lg: 'h-14 px-8',
+        default: 'h-12 w-12',
+        sm: 'h-8 w-8',
+        lg: 'h-14 w-14',
       },
     },
     defaultVariants: {
@@ -29,19 +29,19 @@ const buttonVariants = cva(
   },
 )
 
-const buttonTextVariants = cva('text-center font-medium font-sans', {
+const iconVariants = cva('text-center font-medium font-sans', {
   variants: {
     variant: {
       default: 'text-primary-foreground',
       secondary: 'text-secondary-foreground',
       outline: 'text-primary',
       destructive: 'text-destructive-foreground',
-      ghost: 'text-primary-foreground',
+      ghost: 'text-primary',
       link: 'text-primary-foreground underline',
     },
     size: {
       default: 'text-base',
-      sm: 'text-sm',
+      sm: 'w-5 h-5',
       lg: 'text-xl',
     },
   },
@@ -51,60 +51,35 @@ const buttonTextVariants = cva('text-center font-medium font-sans', {
   },
 })
 
-export interface ButtonProps
+export interface IconButtonProps
   extends React.ComponentPropsWithoutRef<typeof TouchableOpacity>,
   VariantProps<typeof buttonVariants> {
-  label: string
-  labelClasses?: string
-  leftIcon?: React.ComponentType<SvgProps>
-  rightIcon?: React.ComponentType<SvgProps>
+  icon: React.ComponentType<SvgProps>
+  iconClasses?: string
 }
-function Button({
-  label,
-  labelClasses,
+function IconButton({
+  icon: Icon,
+  iconClasses,
   className,
   variant,
   size,
-  leftIcon: LeftIcon,
-  rightIcon: RightIcon,
   disabled,
   ...props
-}: ButtonProps) {
+}: IconButtonProps) {
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      className={cn(
-        buttonVariants({ variant, size, className }),
-        { 'opacity-50': disabled },
-      )}
+      className={cn(buttonVariants({ variant, size, className }), {
+        'opacity-50': disabled,
+      })}
       disabled={disabled}
       {...props}
     >
-      {LeftIcon && (
-        <LeftIcon
-          className={cn(
-            'w-5 h-5',
-            buttonTextVariants({ variant, size, className: labelClasses }),
-          )}
-        />
-      )}
-      <Text
-        className={cn(
-          buttonTextVariants({ variant, size, className: labelClasses }),
-        )}
-      >
-        {label}
-      </Text>
-      {RightIcon && (
-        <RightIcon
-          className={cn(
-            'w-5 h-5',
-            buttonTextVariants({ variant, size, className: labelClasses }),
-          )}
-        />
-      )}
+      <Icon
+        className={cn(iconVariants({ variant, size, className: iconClasses }))}
+      />
     </TouchableOpacity>
   )
 }
 
-export { Button, buttonVariants, buttonTextVariants }
+export { IconButton, buttonVariants, iconVariants }

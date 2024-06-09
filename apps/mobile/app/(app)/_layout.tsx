@@ -1,13 +1,15 @@
 import { useAuth } from '@clerk/clerk-expo'
-import { Redirect, Stack } from 'expo-router'
-import { Text } from 'react-native'
+import { Redirect, SplashScreen, Stack } from 'expo-router'
+import { useEffect } from 'react'
 
 export default function AuthenticatedLayout() {
   const { isLoaded, isSignedIn } = useAuth()
 
-  if (!isLoaded) {
-    return <Text>Loading...</Text>
-  }
+  useEffect(() => {
+    if (isLoaded) {
+      SplashScreen.hideAsync()
+    }
+  }, [isLoaded])
 
   if (!isSignedIn) {
     return <Redirect href={'/login'} />

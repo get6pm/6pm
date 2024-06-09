@@ -7,11 +7,11 @@ export default function AuthenticatedLayout() {
 
   useEffect(() => {
     if (isLoaded) {
-      SplashScreen.hideAsync()
+      setTimeout(() => SplashScreen.hideAsync(), 1000)
     }
   }, [isLoaded])
 
-  if (!isSignedIn) {
+  if (!isSignedIn && isLoaded) {
     return <Redirect href={'/login'} />
   }
 

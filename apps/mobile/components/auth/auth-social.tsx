@@ -1,3 +1,4 @@
+import { useCreateUserMutation } from '@/mutations/user'
 import { useOAuth } from '@clerk/clerk-expo'
 import type { SvgProps } from 'react-native-svg'
 import { Button } from '../Button'
@@ -7,63 +8,55 @@ import { GoogleLogo } from '../svg-assets/google-logo'
 type AuthSocialProps = {
   label: string
   icon: React.ComponentType<SvgProps>
-  onPress?: () => void
+  strategy: 'oauth_google' | 'oauth_apple'
 }
 
-export function AuthSocial({ label, icon: Icon, onPress }: AuthSocialProps) {
+export function AuthSocial({ label, icon: Icon, strategy }: AuthSocialProps) {
+  const { startOAuthFlow } = useOAuth({ strategy })
+  const { mutateAsync: createUser } = useCreateUserMutation()
+
+  const onPress = async () => {
+    try {
+      const { createdSessionId, setActive, signUp } = await startOAuthFlow()
+
+      if (createdSessionId) {
+        setActive?.({ session: createdSessionId })
+        if (signUp?.createdUserId) {
+          setTimeout(async () => await createUser({
+            email: signUp.emailAddress!,
+            name: signUp.firstName ?? '',
+          }), 1000)
+        }
+      } else {
+        // Use signIn or signUp for next steps such as MFA
+      }
+    } catch (err) {
+      console.error('OAuth error', err)
+    }
+  }
+
   return (
     <Button label={label} leftIcon={Icon} variant="outline" onPress={onPress} />
   )
 }
 
 export function GoogleAuthButton() {
-  const { startOAuthFlow } = useOAuth({ strategy: 'oauth_google' })
-
-  const onPress = async () => {
-    try {
-      const { createdSessionId, setActive } = await startOAuthFlow()
-
-      if (createdSessionId) {
-        setActive?.({ session: createdSessionId })
-      } else {
-        // Use signIn or signUp for next steps such as MFA
-      }
-    } catch (err) {
-      console.error('OAuth error', err)
-    }
-  }
 
   return (
     <AuthSocial
       label="Sign in with Google"
       icon={GoogleLogo}
-      onPress={onPress}
+      strategy="oauth_google"
     />
   )
 }
 
 export function AppleAuthButton() {
-  const { startOAuthFlow } = useOAuth({ strategy: 'oauth_apple' })
-
-  const onPress = async () => {
-    try {
-      const { createdSessionId, setActive } = await startOAuthFlow()
-
-      if (createdSessionId) {
-        setActive?.({ session: createdSessionId })
-      } else {
-        // Use signIn or signUp for next steps such as MFA
-      }
-    } catch (err) {
-      console.error('OAuth error', err)
-    }
-  }
-
   return (
     <AuthSocial
       label="Sign in with Apple"
       icon={AppleLogo}
-      onPress={onPress}
+      strategy="oauth_apple"
     />
   )
 }

@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { View } from 'react-native'
 
+import { useCreateUserMutation } from '@/mutations/user'
 import { XCircleIcon } from 'lucide-react-native'
 import { FormProvider, useForm } from 'react-hook-form'
 import { IconButton } from '../IconButton'
@@ -26,6 +27,8 @@ export function AuthEmail() {
 
   const [verifying, setVerifying] = useState(false)
   const [mode, setMode] = useState<'signUp' | 'signIn'>('signUp')
+
+  const { mutateAsync: createUser } = useCreateUserMutation()
 
   const {
     isLoaded: isSignUpLoaded,
@@ -92,6 +95,10 @@ export function AuthEmail() {
         if (signUpAttempt.status === 'complete') {
           await setActiveSignUp({ session: signUpAttempt.createdSessionId })
           // signed up
+          await createUser({
+            email: signUpAttempt.emailAddress!,
+            name: signUpAttempt.firstName ?? '',
+          })
         } else {
           console.error(signUpAttempt)
         }

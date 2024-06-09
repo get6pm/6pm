@@ -1,23 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/Avatar'
 import { Button } from '@/components/Button'
-import { getHonoClient } from '@/lib/client'
+import { useMeQuery } from '@/queries/auth'
 import { useAuth } from '@clerk/clerk-expo'
-import { useQuery } from '@tanstack/react-query'
 import { ScrollView, Text, View } from 'react-native'
 
 export default function TabTwoScreen() {
   const { signOut } = useAuth()
-  const { data } = useQuery({
-    queryKey: ['me'],
-    queryFn: async () => {
-      const hc = await getHonoClient()
-      const res = await hc.v1.auth.me.$get()
-      if (!res.ok) {
-        throw new Error(await res.text())
-      }
-      return await res.json()
-    },
-  })
+  const { data } = useMeQuery()
 
   return (
     <ScrollView contentContainerClassName="flex-1 p-4">

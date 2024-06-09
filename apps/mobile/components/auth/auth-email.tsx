@@ -1,13 +1,29 @@
-import { getHonoClient } from '@/lib/client'
 import { useSignIn, useSignUp } from '@clerk/clerk-expo'
 import type { EmailCodeFactor } from '@clerk/types'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
-import { Button } from '../Button'
-import { Input } from '../Input'
+import { View } from 'react-native'
+
+import { XCircleIcon } from 'lucide-react-native'
+import { FormProvider, useForm } from 'react-hook-form'
+import { IconButton } from '../IconButton'
+import { InputField } from '../form-fields/input-field'
+import { SubmitButton } from '../form-fields/submit-button'
+import {
+  type EmailFormValues,
+  type VerifyEmailFormValues,
+  emailFormSchema,
+  verifyEmailFormSchema,
+} from './emailSchema'
 
 export function AuthEmail() {
-  const [emailAddress, setEmailAddress] = useState('')
-  const [code, setCode] = useState('')
+  const authEmailForm = useForm<EmailFormValues>({
+    resolver: zodResolver(emailFormSchema),
+  })
+  const verifyEmailForm = useForm<VerifyEmailFormValues>({
+    resolver: zodResolver(verifyEmailFormSchema),
+  })
+
   const [verifying, setVerifying] = useState(false)
   const [mode, setMode] = useState<'signUp' | 'signIn'>('signUp')
 
@@ -26,7 +42,7 @@ export function AuthEmail() {
     return null
   }
 
-  const onContinue = async () => {
+  const onContinue = async ({ emailAddress }: EmailFormValues) => {
     try {
       await signUp.create({
         emailAddress,
@@ -60,13 +76,14 @@ export function AuthEmail() {
           console.log('error', JSON.stringify(e, null, 2))
         }
       } else {
-        // biome-ignore lint/suspicious/noConsoleLog: <explanation>
-        console.log('error', JSON.stringify(err, null, 2))
+        authEmailForm.setError('emailAddress', {
+          message: err?.errors?.[0]?.message || 'An error occurred',
+        })
       }
     }
   }
 
-  const onVerify = async () => {
+  const onVerify = async ({ code }: VerifyEmailFormValues) => {
     try {
       if (mode === 'signUp') {
         const signUpAttempt = await signUp.attemptEmailAddressVerification({
@@ -75,14 +92,6 @@ export function AuthEmail() {
         if (signUpAttempt.status === 'complete') {
           await setActiveSignUp({ session: signUpAttempt.createdSessionId })
           // signed up
-          // create user
-          const hc = await getHonoClient()
-          await hc.v1.users.$post({
-            json: {
-              email: emailAddress,
-              name: '***',
-            },
-          })
         } else {
           console.error(signUpAttempt)
         }
@@ -105,32 +114,62 @@ export function AuthEmail() {
     }
   }
 
-  if (verifying) {
-    return (
-      <>
-        <Input
-          placeholder="Enter the code"
-          keyboardType="number-pad"
-          value={code}
-          onChangeText={setCode}
-          autoFocus
-        />
-        <Button label="Verify" onPress={onVerify} />
-      </>
-    )
-  }
-
   return (
     <>
-      <Input
-        placeholder="Enter your email address"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoFocus
-        value={emailAddress}
-        onChangeText={setEmailAddress}
-      />
-      <Button label="Continue" onPress={onContinue} />
+      <FormProvider {...authEmailForm}>
+        <View className="gap-4">
+          <InputField
+            name="emailAddress"
+            label="Email"
+            placeholder="Enter your email address"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoFocus
+            editable={!verifying}
+            onEndEditing={authEmailForm.handleSubmit(onContinue)}
+            rightSection={
+              verifying && (
+                <IconButton
+                  icon={XCircleIcon}
+                  size="sm"
+                  variant="ghost"
+                  iconClasses="text-muted-foreground"
+                  onPress={() => {
+                    setVerifying(false)
+                    authEmailForm.reset()
+                  }}
+                />
+              )
+            }
+          />
+          {!verifying && (
+            <SubmitButton
+              label="Continue"
+              onPress={authEmailForm.handleSubmit(onContinue)}
+              disabled={verifying}
+            />
+          )}
+        </View>
+      </FormProvider>
+      {verifying && (
+        <FormProvider {...verifyEmailForm}>
+          <View className="gap-4 mt-3">
+            <InputField
+              name="code"
+              label="Verification code"
+              placeholder="Enter the code sent to your email"
+              keyboardType="number-pad"
+              autoCapitalize="none"
+              autoFocus
+              onEndEditing={verifyEmailForm.handleSubmit(onVerify)}
+            />
+            <SubmitButton
+              label={mode === 'signUp' ? 'Sign up' : 'Sign in'}
+              onPress={verifyEmailForm.handleSubmit(onVerify)}
+            />
+          </View>
+        </FormProvider>
+      )}
     </>
   )
 }

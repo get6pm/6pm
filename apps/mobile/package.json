@@ -17,6 +17,7 @@
   "dependencies": {
     "@6pm/api": "workspace:^",
     "@clerk/clerk-expo": "^1.2.0",
+    "@expo-google-fonts/be-vietnam-pro": "^0.2.3",
     "@expo/vector-icons": "^14.0.0",
     "@react-navigation/native": "^6.0.2",
     "@tanstack/react-query": "^5.40.1",

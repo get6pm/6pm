@@ -27,7 +27,7 @@ const buttonVariants = cva(
   }
 );
 
-const buttonTextVariants = cva('text-center font-medium', {
+const buttonTextVariants = cva('text-center font-medium font-sans', {
   variants: {
     variant: {
       default: 'text-primary-foreground',
@@ -50,7 +50,7 @@ const buttonTextVariants = cva('text-center font-medium', {
 
 interface ButtonProps
   extends React.ComponentPropsWithoutRef<typeof TouchableOpacity>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   label: string;
   labelClasses?: string;
 }

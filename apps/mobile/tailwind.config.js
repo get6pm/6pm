@@ -14,6 +14,10 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Be Vietnam Pro'],
+        mono: ['Space Mono']
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

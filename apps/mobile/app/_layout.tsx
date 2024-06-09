@@ -1,4 +1,11 @@
-import { useFonts } from 'expo-font';
+import {
+  useFonts,
+  BeVietnamPro_300Light,
+  BeVietnamPro_400Regular,
+  BeVietnamPro_500Medium,
+  BeVietnamPro_600SemiBold,
+  BeVietnamPro_700Bold,
+} from '@expo-google-fonts/be-vietnam-pro';
 import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -22,17 +29,22 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [fontLoaded] = useFonts({
+  const [fontsLoaded] = useFonts({
+    BeVietnamPro_300Light,
+    BeVietnamPro_400Regular,
+    BeVietnamPro_500Medium,
+    BeVietnamPro_600SemiBold,
+    BeVietnamPro_700Bold,
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
   useEffect(() => {
-    if (fontLoaded) {
+    if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [fontLoaded]);
+  }, [fontsLoaded]);
 
-  if (!fontLoaded) {
+  if (!fontsLoaded) {
     return null;
   }
 

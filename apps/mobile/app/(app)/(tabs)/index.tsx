@@ -2,6 +2,6 @@ import { Text } from 'react-native';
 
 export default function HomeScreen() {
   return (
-    <Text>Home Screen</Text>
+    <Text className="font-sans">Home Screen</Text>
   );
 }

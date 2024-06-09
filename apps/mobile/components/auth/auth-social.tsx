@@ -1,5 +1,7 @@
 import { useCreateUserMutation } from '@/mutations/user'
 import { useOAuth } from '@clerk/clerk-expo'
+import { t } from '@lingui/macro'
+import { useLingui } from '@lingui/react'
 import type { SvgProps } from 'react-native-svg'
 import { Button } from '../Button'
 import { AppleLogo } from '../svg-assets/apple-logo'
@@ -41,10 +43,10 @@ export function AuthSocial({ label, icon: Icon, strategy }: AuthSocialProps) {
 }
 
 export function GoogleAuthButton() {
-
+  const { i18n } = useLingui()
   return (
     <AuthSocial
-      label="Sign in with Google"
+      label={t(i18n)`Sign in with Google`}
       icon={GoogleLogo}
       strategy="oauth_google"
     />
@@ -52,9 +54,10 @@ export function GoogleAuthButton() {
 }
 
 export function AppleAuthButton() {
+  const { i18n } = useLingui()
   return (
     <AuthSocial
-      label="Sign in with Apple"
+      label={t(i18n)`Sign in with Apple`}
       icon={AppleLogo}
       strategy="oauth_apple"
     />

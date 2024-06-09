@@ -1,0 +1,149 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2024-06-10 04:34+0700\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: vi\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:65
+msgid "{language}"
+msgstr ""
+
+#: apps/mobile/app/(auth)/login.tsx:26
+msgid "<0><1>Manage your expense seamlessly</1><2>Let <3>6pm</3> a good time to spend</2></0>"
+msgstr "<0><1>Quản lý chi tiêu trong lòng bàn tay</1><2>Không lo cháy túi mỗi <3>6pm</3></2></0>"
+
+#: apps/mobile/app/(auth)/login.tsx:49
+msgid "<0>By continuing, you acknowledge that you understand and agree to the <1><2>Terms & Conditions</2></1> and <3><4>Privacy Policy</4></3></0>"
+msgstr "<0>Bằng cách tiếp tục, bạn đã hiểu và đồng ý với <1><2>Điều khoản sử dụng</2></1> và <3><4>Chính sách bảo mật</4></3> của 6pm.</0>"
+
+#: apps/mobile/components/home/header.tsx:30
+msgid "All Accounts"
+msgstr "Tất cả tài khoản"
+
+#: apps/mobile/components/auth/auth-email.tsx:87
+msgid "An error occurred"
+msgstr "Có lỗi xảy ra"
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:49
+msgid "App settings"
+msgstr "Cài đặt ứng dụng"
+
+#: apps/mobile/app/(app)/appearance.tsx:15
+msgid "App theme"
+msgstr "Chủ đề ứng dụng"
+
+#: apps/mobile/app/(app)/_layout.tsx:44
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:53
+msgid "Appearance"
+msgstr "Giao diện"
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:80
+msgid "Are you sure you want to sign out?"
+msgstr "Bạn có chắc chắn muốn đăng xuất?"
+
+#: apps/mobile/components/common/toolbar.tsx:14
+msgid "Ask AI anything..."
+msgstr "Hỏi AI bất kỳ gì..."
+
+#: apps/mobile/app/(app)/(tabs)/_layout.tsx:42
+msgid "Budgets"
+msgstr "Ngân sách"
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:82
+msgid "Cancel"
+msgstr "Huỷ"
+
+#: apps/mobile/app/(app)/appearance.tsx:18
+msgid "Choose a preferred theme for the 6pm"
+msgstr "Chọn chủ đề giao diện cho 6pm"
+
+#: apps/mobile/components/auth/auth-email.tsx:158
+msgid "Continue"
+msgstr "Tiếp tục"
+
+#: apps/mobile/app/(auth)/login.tsx:41
+msgid "Continue with Email"
+msgstr "Tiếp tục với Email"
+
+#: apps/mobile/app/(app)/appearance.tsx:33
+msgid "Dark"
+msgstr "Tối"
+
+#: apps/mobile/components/auth/auth-email.tsx:134
+msgid "Email"
+msgstr "Email"
+
+#: apps/mobile/app/(app)/language.tsx:20
+msgid "English"
+msgstr "Tiếng Anh"
+
+#: apps/mobile/components/auth/auth-email.tsx:171
+msgid "Enter the code sent to your email"
+msgstr "Nhập mã xác nhận gửi đến email của bạn"
+
+#: apps/mobile/components/auth/auth-email.tsx:135
+msgid "Enter your email address"
+msgstr "Nhập địa chỉ email của bạn"
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:60
+#: apps/mobile/app/(app)/language.tsx:17
+msgid "Language"
+msgstr "Ngôn ngữ"
+
+#: apps/mobile/app/(app)/appearance.tsx:28
+msgid "Light"
+msgstr "Sáng"
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:75
+msgid "Others"
+msgstr "Khác"
+
+#: apps/mobile/app/(app)/(tabs)/_layout.tsx:50
+msgid "Scanner"
+msgstr "Quét hoá đơn"
+
+#: apps/mobile/app/(app)/(tabs)/_layout.tsx:58
+msgid "Settings"
+msgstr "Cài đặt"
+
+#: apps/mobile/components/auth/auth-email.tsx:178
+msgid "Sign in"
+msgstr "Đăng nhập"
+
+#: apps/mobile/components/auth/auth-social.tsx:60
+msgid "Sign in with Apple"
+msgstr "Tiếp tục với Apple"
+
+#: apps/mobile/components/auth/auth-social.tsx:49
+msgid "Sign in with Google"
+msgstr "Tiếp tục với Google"
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:78
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:86
+msgid "Sign out"
+msgstr "Đăng xuất"
+
+#: apps/mobile/components/auth/auth-email.tsx:178
+msgid "Sign up"
+msgstr "Đăng ký"
+
+#: apps/mobile/app/(app)/appearance.tsx:38
+msgid "System"
+msgstr "Hệ thống"
+
+#: apps/mobile/components/auth/auth-email.tsx:170
+msgid "Verification code"
+msgstr "Mã xác nhận"
+
+#: apps/mobile/app/(app)/language.tsx:28
+msgid "Vietnamese"
+msgstr "Tiếng Việt"

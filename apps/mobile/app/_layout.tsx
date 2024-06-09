@@ -17,6 +17,7 @@ import 'react-native-reanimated'
 import { useWarmUpBrowser } from '@/hooks/use-warm-up-browser'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { queryClient } from '@/lib/client'
+import { LocaleProvider } from '@/locales/provider'
 import {
   DarkTheme,
   DefaultTheme,
@@ -67,26 +68,28 @@ export default function RootLayout() {
         publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
         tokenCache={tokenCache}
       >
-        <ThemeProvider
-          value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-        >
-          <SafeAreaProvider>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen
-                name="(aux)/privacy-policy"
-                options={{
-                  presentation: 'modal',
-                }}
-              />
-              <Stack.Screen
-                name="(aux)/terms-of-service"
-                options={{
-                  presentation: 'modal',
-                }}
-              />
-            </Stack>
-          </SafeAreaProvider>
-        </ThemeProvider>
+        <LocaleProvider>
+          <ThemeProvider
+            value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+          >
+            <SafeAreaProvider>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen
+                  name="(aux)/privacy-policy"
+                  options={{
+                    presentation: 'modal',
+                  }}
+                />
+                <Stack.Screen
+                  name="(aux)/terms-of-service"
+                  options={{
+                    presentation: 'modal',
+                  }}
+                />
+              </Stack>
+            </SafeAreaProvider>
+          </ThemeProvider>
+        </LocaleProvider>
       </ClerkProvider>
     </QueryClientProvider>
   )

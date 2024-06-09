@@ -2,27 +2,27 @@
   "name": "6pm",
   "version": "0.0.0",
   "license": "GPL-3.0",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "api:dev": "pnpm --filter @6pm/api run dev",
     "api:build": "pnpm --filter @6pm/api run build",
     "api:start": "pnpm --filter @6pm/api run start",
     "mobile": "pnpm --filter @6pm/mobile",
-    "mobile:start": "pnpm --filter @6pm/mobile run start"
+    "mobile:start": "pnpm --filter @6pm/mobile run start",
+    "li:extract": "lingui extract",
+    "li:compile": "lingui compile --typescript",
+    "li": "pnpm li:extract && pnpm li:compile"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.8.0"
+    "@babel/core": "^7.20.0",
+    "@biomejs/biome": "^1.8.0",
+    "@lingui/cli": "^4.11.1",
+    "@lingui/macro": "^4.11.1",
+    "babel-plugin-macros": "^3.1.0"
   },
   "pnpm": {
     "peerDependencyRules": {
-      "ignoreMissing": [
-        "@babel/*",
-        "expo-modules-*",
-        "typescript"
-      ]
+      "ignoreMissing": ["@babel/*", "expo-modules-*", "typescript"]
     }
   },
   "packageManager": "pnpm@9.2.0+sha512.98a80fd11c2e7096747762304106432b3ddc67dcf54b5a8c01c93f68a2cd5e05e6821849522a06fb76284d41a2660d5e334f2ee3bbf29183bf2e739b1dafa771"

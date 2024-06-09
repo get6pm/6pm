@@ -1,10 +1,13 @@
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
+import { t } from '@lingui/macro'
+import { useLingui } from '@lingui/react'
 import { Tabs } from 'expo-router'
 import { CogIcon, LandPlotIcon, ScanTextIcon, WalletIcon } from 'lucide-react-native'
 
 export default function TabLayout() {
   const colorScheme = useColorScheme()
+  const { i18n } = useLingui()
   return (
     <Tabs
       screenOptions={{
@@ -36,7 +39,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="budgets"
         options={{
-          headerTitle: 'Budgets',
+          headerTitle: t(i18n)`Budgets`,
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <LandPlotIcon color={color} />,
         }}
@@ -44,7 +47,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="scanner"
         options={{
-          headerTitle: 'Scanner',
+          headerTitle: t(i18n)`Scanner`,
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <ScanTextIcon color={color} />,
         }}
@@ -52,7 +55,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          headerTitle: 'Settings',
+          headerTitle: t(i18n)`Settings`,
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <CogIcon color={color} />,
         }}

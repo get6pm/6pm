@@ -13,12 +13,16 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         tabBarStyle: {
           borderTopWidth: 0,
+          backgroundColor: theme[colorScheme ?? 'light'].background,
         },
         headerTitleStyle: {
-          fontFamily: 'Be Vietnam Pro',
+          fontFamily: 'Be Vietnam Pro Medium',
           fontSize: 16,
           color: theme[colorScheme ?? 'light'].primary,
         },
+        headerStyle: {
+          backgroundColor: theme[colorScheme ?? 'light'].background,
+        }
       }}
     >
       <Tabs.Screen

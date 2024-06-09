@@ -81,6 +81,9 @@ importers:
       '@clerk/clerk-expo':
         specifier: ^1.2.0
         version: 1.2.0(@types/react@18.2.79)(expo-auth-session@5.5.2(expo@51.0.11(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))))(expo-web-browser@13.0.3(expo@51.0.11(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))))(react-dom@18.3.1(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1)
+      '@expo-google-fonts/be-vietnam-pro':
+        specifier: ^0.2.3
+        version: 0.2.3
       '@expo/vector-icons':
         specifier: ^14.0.0
         version: 14.0.2
@@ -1115,6 +1118,9 @@ packages:
 
   '@emotion/weak-memoize@0.3.1':
     resolution: {integrity: sha512-EsBwpc7hBUJWAsNPBmJy4hxWx12v6bshQsldrVmjxJoc3isbxhOrF2IcCpaXxfvq03NwkI7sbsOLXbYuqF/8Ww==}
+
+  '@expo-google-fonts/be-vietnam-pro@0.2.3':
+    resolution: {integrity: sha512-Iz2nrIX+Zp6efrs1TyLyarugVDEnYYmcjepD2VDclELLmU2AyQWndyutae7pcjlECJKBlGcgNJnsXuIsU+bT2Q==}
 
   '@expo/bunyan@4.0.0':
     resolution: {integrity: sha512-Ydf4LidRB/EBI+YrB+cVLqIseiRfjUI/AeHBgjGMtq3GroraDu81OV7zqophRgupngoL3iS3JUMDMnxO7g39qA==}
@@ -6946,6 +6952,8 @@ snapshots:
   '@emotion/utils@1.2.1': {}
 
   '@emotion/weak-memoize@0.3.1': {}
+
+  '@expo-google-fonts/be-vietnam-pro@0.2.3': {}
 
   '@expo/bunyan@4.0.0':
     dependencies:

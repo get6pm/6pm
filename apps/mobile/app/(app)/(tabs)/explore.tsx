@@ -40,7 +40,7 @@ export default function TabTwoScreen() {
           <AvatarFallback>SS</AvatarFallback>
         </Avatar>
       </View>
-      <Text>{data?.email ? `Logged as ${data.email}` : 'loading...'}</Text>
+      <Text className="font-sans">{data?.email ? `Logged as ${data.email}` : 'loading...'}</Text>
       <Button label="Sign Out" onPress={() => signOut()} />
     </ScrollView>
   );

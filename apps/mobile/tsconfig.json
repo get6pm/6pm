@@ -1,5 +1,6 @@
 {
   "extends": "expo/tsconfig.base",
+  "references": [{ "path": "../api" }],
   "compilerOptions": {
     "jsx": "preserve",
     "strict": true,

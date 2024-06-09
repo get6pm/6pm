@@ -10,8 +10,7 @@ import {
   BeVietnamPro_700Bold,
   useFonts,
 } from '@expo-google-fonts/be-vietnam-pro'
-import { Stack } from 'expo-router'
-import * as SplashScreen from 'expo-splash-screen'
+import { SplashScreen, Stack } from 'expo-router'
 import * as WebBrowser from "expo-web-browser";
 
 import 'react-native-reanimated'

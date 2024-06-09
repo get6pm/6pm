@@ -1,7 +1,7 @@
-import { forwardRef, useState } from 'react';
-import { Image, Text, View } from 'react-native';
+import { forwardRef, useState } from 'react'
+import { Image, Text, View } from 'react-native'
 
-import { cn } from '../lib/utils';
+import { cn } from '../lib/utils'
 
 const Avatar = forwardRef<
   React.ElementRef<typeof View>,
@@ -11,21 +11,21 @@ const Avatar = forwardRef<
     ref={ref}
     className={cn(
       'relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full',
-      className
+      className,
     )}
     {...props}
   />
-));
-Avatar.displayName = 'Avatar';
+))
+Avatar.displayName = 'Avatar'
 
 const AvatarImage = forwardRef<
   React.ElementRef<typeof Image>,
   React.ComponentPropsWithoutRef<typeof Image>
 >(({ className, ...props }, ref) => {
-  const [hasError, setHasError] = useState(false);
+  const [hasError, setHasError] = useState(false)
 
   if (hasError) {
-    return null;
+    return null
   }
   return (
     <Image
@@ -34,9 +34,9 @@ const AvatarImage = forwardRef<
       className={cn('aspect-square h-full w-full', className)}
       {...props}
     />
-  );
-});
-AvatarImage.displayName = 'AvatarImage';
+  )
+})
+AvatarImage.displayName = 'AvatarImage'
 
 const AvatarFallback = forwardRef<
   React.ElementRef<typeof View>,
@@ -46,7 +46,7 @@ const AvatarFallback = forwardRef<
     ref={ref}
     className={cn(
       'flex h-full w-full items-center justify-center rounded-full bg-muted',
-      className
+      className,
     )}
     {...props}
   >
@@ -54,7 +54,7 @@ const AvatarFallback = forwardRef<
       {children}
     </Text>
   </View>
-));
-AvatarFallback.displayName = 'AvatarFallback';
+))
+AvatarFallback.displayName = 'AvatarFallback'
 
-export { Avatar, AvatarImage, AvatarFallback };
+export { Avatar, AvatarImage, AvatarFallback }

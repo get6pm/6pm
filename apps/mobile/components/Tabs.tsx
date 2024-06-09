@@ -1,29 +1,30 @@
-import { createContext, useContext, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { createContext, useContext, useState } from 'react'
+import { Text, TouchableOpacity, View } from 'react-native'
 
-import { cn } from '../lib/utils';
+import { cn } from '../lib/utils'
 
 interface TabsContextProps {
-  activeTab: string;
-  setActiveTab: (id: string) => void;
+  activeTab: string
+  setActiveTab: (id: string) => void
 }
 const TabsContext = createContext<TabsContextProps>({
   activeTab: '',
+  // biome-ignore lint/suspicious/noEmptyBlockStatements: <explanation>
   setActiveTab: () => {},
-});
+})
 
 interface TabsProps {
-  defaultValue: string;
-  children: React.ReactNode;
+  defaultValue: string
+  children: React.ReactNode
 }
 function Tabs({ defaultValue, children }: TabsProps) {
-  const [activeTab, setActiveTab] = useState(defaultValue);
+  const [activeTab, setActiveTab] = useState(defaultValue)
 
   return (
     <TabsContext.Provider value={{ activeTab, setActiveTab }}>
       {children}
     </TabsContext.Provider>
-  );
+  )
 }
 
 function TabsList({
@@ -35,14 +36,14 @@ function TabsList({
       className={cn('flex flex-row justify-center', className)}
       {...props}
     />
-  );
+  )
 }
 
 interface TabsTriggerProps
   extends React.ComponentPropsWithoutRef<typeof TouchableOpacity> {
-  value: string;
-  title: string;
-  textClasses?: string;
+  value: string
+  title: string
+  textClasses?: string
 }
 function TabsTrigger({
   value,
@@ -51,7 +52,7 @@ function TabsTrigger({
   textClasses,
   ...props
 }: TabsTriggerProps) {
-  const { activeTab, setActiveTab } = useContext(TabsContext);
+  const { activeTab, setActiveTab } = useContext(TabsContext)
 
   return (
     <TouchableOpacity
@@ -66,33 +67,34 @@ function TabsTrigger({
         className={cn(
           'font-medium text-center text-muted-foreground',
           { 'text-background': activeTab === value },
-          textClasses
+          textClasses,
         )}
       >
         {title}
       </Text>
     </TouchableOpacity>
-  );
+  )
 }
 
 interface TabsContentProps extends React.ComponentPropsWithoutRef<typeof View> {
-  value: string;
+  value: string
 }
 function TabsContent({ value, className, ...props }: TabsContentProps) {
-  const { activeTab } = useContext(TabsContext);
+  const { activeTab } = useContext(TabsContext)
 
-  if (value === activeTab)
+  if (value === activeTab) {
     return (
       <View
         className={cn(
           'border border-border mt-2 px-4 py-4 rounded-xl',
-          className
+          className,
         )}
         {...props}
       />
-    );
+    )
+  }
 
-  return null;
+  return null
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent };
+export { Tabs, TabsList, TabsTrigger, TabsContent }

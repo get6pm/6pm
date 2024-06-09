@@ -108,7 +108,7 @@
         "noArguments": "error",
         "noCommaOperator": "error",
         "noDefaultExport": "off",
-        "noImplicitBoolean": "error",
+        "noImplicitBoolean": "off",
         "noNegationElse": "off",
         "noParameterAssign": "error",
         "noRestrictedGlobals": {

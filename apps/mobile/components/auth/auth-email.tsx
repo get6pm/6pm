@@ -1,18 +1,26 @@
-import { useSignIn, useSignUp } from "@clerk/clerk-expo"
-import { Input } from "../Input"
-import { Button } from "../Button"
-import { useState } from "react";
-import type { EmailCodeFactor } from '@clerk/types';
-import { getHonoClient } from "@/lib/client";
+import { getHonoClient } from '@/lib/client'
+import { useSignIn, useSignUp } from '@clerk/clerk-expo'
+import type { EmailCodeFactor } from '@clerk/types'
+import { useState } from 'react'
+import { Button } from '../Button'
+import { Input } from '../Input'
 
 export function AuthEmail() {
-  const [emailAddress, setEmailAddress] = useState("");
-  const [code, setCode] = useState("");
-  const [verifying, setVerifying] = useState(false);
-  const [mode, setMode] = useState<"signUp" | "signIn">("signUp");
+  const [emailAddress, setEmailAddress] = useState('')
+  const [code, setCode] = useState('')
+  const [verifying, setVerifying] = useState(false)
+  const [mode, setMode] = useState<'signUp' | 'signIn'>('signUp')
 
-  const { isLoaded: isSignUpLoaded, signUp, setActive: setActiveSignUp } = useSignUp()
-  const { isLoaded: isSignInLoaded, signIn, setActive: setActiveSignIn } = useSignIn()
+  const {
+    isLoaded: isSignUpLoaded,
+    signUp,
+    setActive: setActiveSignUp,
+  } = useSignUp()
+  const {
+    isLoaded: isSignInLoaded,
+    signIn,
+    setActive: setActiveSignIn,
+  } = useSignIn()
 
   if (!isSignUpLoaded || !isSignInLoaded) {
     return null
@@ -24,7 +32,8 @@ export function AuthEmail() {
         emailAddress,
       })
       await signUp.prepareEmailAddressVerification()
-      setVerifying(true);
+      setVerifying(true)
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (err: any) {
       if (err?.errors?.[0]?.code === 'form_identifier_exists') {
         // If the email address already exists, try to sign in instead
@@ -34,18 +43,24 @@ export function AuthEmail() {
             identifier: emailAddress,
           })
 
-          const emailCodeFactor = supportedFirstFactors.find(i => i.strategy === 'email_code')
+          const emailCodeFactor = supportedFirstFactors.find(
+            (i) => i.strategy === 'email_code',
+          )
           if (emailCodeFactor) {
             await signIn.prepareFirstFactor({
               strategy: 'email_code',
-              emailAddressId: (emailCodeFactor as EmailCodeFactor).emailAddressId,
+              emailAddressId: (emailCodeFactor as EmailCodeFactor)
+                .emailAddressId,
             })
-            setVerifying(true);
+            setVerifying(true)
           }
-        } catch (err: any) {
-          console.log('error', JSON.stringify(err, null, 2))
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        } catch (e: any) {
+          // biome-ignore lint/suspicious/noConsoleLog: <explanation>
+          console.log('error', JSON.stringify(e, null, 2))
         }
       } else {
+        // biome-ignore lint/suspicious/noConsoleLog: <explanation>
         console.log('error', JSON.stringify(err, null, 2))
       }
     }
@@ -54,31 +69,38 @@ export function AuthEmail() {
   const onVerify = async () => {
     try {
       if (mode === 'signUp') {
-        const signUpAttempt = await signUp.attemptEmailAddressVerification({ code })
+        const signUpAttempt = await signUp.attemptEmailAddressVerification({
+          code,
+        })
         if (signUpAttempt.status === 'complete') {
-          await setActiveSignUp({ session: signUpAttempt.createdSessionId });
-          console.log('signed up')
+          await setActiveSignUp({ session: signUpAttempt.createdSessionId })
+          // signed up
           // create user
           const hc = await getHonoClient()
           await hc.v1.users.$post({
             json: {
               email: emailAddress,
-              name: "***"
-            }
+              name: '***',
+            },
           })
         } else {
-          console.error(signUpAttempt);
+          console.error(signUpAttempt)
         }
       } else {
-        const signInAttempt = await signIn.attemptFirstFactor({ strategy: 'email_code', code })
+        const signInAttempt = await signIn.attemptFirstFactor({
+          strategy: 'email_code',
+          code,
+        })
         if (signInAttempt.status === 'complete') {
-          await setActiveSignIn({ session: signInAttempt.createdSessionId });
-          console.log('signed in')
+          await setActiveSignIn({ session: signInAttempt.createdSessionId })
+          // signed in
         } else {
-          console.error(signInAttempt);
+          console.error(signInAttempt)
         }
       }
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (err: any) {
+      // biome-ignore lint/suspicious/noConsoleLog: <explanation>
       console.log('error', JSON.stringify(err, null, 2))
     }
   }

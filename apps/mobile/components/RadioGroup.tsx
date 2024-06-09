@@ -1,37 +1,37 @@
-import { Circle, CircleDot } from 'lucide-react-native';
-import { createContext, useContext, useState } from 'react';
-import { Text, TouchableOpacity, useColorScheme } from 'react-native';
+import { Circle, CircleDot } from 'lucide-react-native'
+import { createContext, useContext, useState } from 'react'
+import { Text, TouchableOpacity, useColorScheme } from 'react-native'
 
-import { cn } from '../lib/utils';
-import { theme } from '../lib/theme';
+import { theme } from '../lib/theme'
+import { cn } from '../lib/utils'
 
 interface RadioGroupContextType {
-  value: string;
-  setValue: (value: string) => void;
+  value: string
+  setValue: (value: string) => void
 }
 const RadioGroupContext = createContext<RadioGroupContextType | undefined>(
-  undefined
-);
+  undefined,
+)
 
 interface RadioGroupProps {
-  defaultValue: string;
-  children: React.ReactNode;
+  defaultValue: string
+  children: React.ReactNode
 }
 function RadioGroup({ defaultValue, children }: RadioGroupProps) {
-  const [value, setValue] = useState<string>(defaultValue);
+  const [value, setValue] = useState<string>(defaultValue)
 
   return (
     <RadioGroupContext.Provider value={{ value, setValue }}>
       {children}
     </RadioGroupContext.Provider>
-  );
+  )
 }
 
 interface RadioGroupItemProps
   extends React.ComponentPropsWithoutRef<typeof TouchableOpacity> {
-  value: string;
-  label?: string;
-  labelClasses?: string;
+  value: string
+  label?: string
+  labelClasses?: string
 }
 function RadioGroupItem({
   value,
@@ -40,14 +40,14 @@ function RadioGroupItem({
   labelClasses,
   ...props
 }: RadioGroupItemProps) {
-  const context = useContext(RadioGroupContext);
+  const context = useContext(RadioGroupContext)
   if (!context) {
-    throw new Error('RadioGroupItem must be used within a RadioGroup');
+    throw new Error('RadioGroupItem must be used within a RadioGroup')
   }
-  const { value: selectedValue, setValue } = context;
+  const { value: selectedValue, setValue } = context
 
-  const colorScheme = useColorScheme();
-  const currentTheme = colorScheme === 'dark' ? theme.dark : theme.light;
+  const colorScheme = useColorScheme()
+  const currentTheme = colorScheme === 'dark' ? theme.dark : theme.light
 
   return (
     <TouchableOpacity
@@ -64,19 +64,19 @@ function RadioGroupItem({
         <Text className={cn('text-primary', labelClasses)}>{label}</Text>
       )}
     </TouchableOpacity>
-  );
+  )
 }
 
 interface RadioGroupLabelProps
   extends React.ComponentPropsWithoutRef<typeof TouchableOpacity> {
-  value: string;
+  value: string
 }
 function RadioGroupLabel({ value, className, ...props }: RadioGroupLabelProps) {
-  const context = useContext(RadioGroupContext);
+  const context = useContext(RadioGroupContext)
   if (!context) {
-    throw new Error('RadioGroupLabel must be used within a RadioGroup');
+    throw new Error('RadioGroupLabel must be used within a RadioGroup')
   }
-  const { setValue } = context;
+  const { setValue } = context
 
   return (
     <TouchableOpacity
@@ -84,7 +84,7 @@ function RadioGroupLabel({ value, className, ...props }: RadioGroupLabelProps) {
       onPress={() => setValue(value)}
       {...props}
     />
-  );
+  )
 }
 
-export { RadioGroup, RadioGroupItem, RadioGroupLabel };
+export { RadioGroup, RadioGroupItem, RadioGroupLabel }

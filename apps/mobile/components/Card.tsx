@@ -1,6 +1,6 @@
-import { Text, View } from 'react-native';
+import { Text, View } from 'react-native'
 
-import { cn } from '../lib/utils';
+import { cn } from '../lib/utils'
 
 function Card({
   className,
@@ -11,14 +11,14 @@ function Card({
       className={cn('rounded-xl border border-border', className)}
       {...props}
     />
-  );
+  )
 }
 
 function CardHeader({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<typeof View>) {
-  return <View className={cn('p-4', className)} {...props} />;
+  return <View className={cn('p-4', className)} {...props} />
 }
 
 function CardTitle({
@@ -29,11 +29,11 @@ function CardTitle({
     <Text
       className={cn(
         'text-2xl font-semibold tracking-tight text-primary',
-        className
+        className,
       )}
       {...props}
     />
-  );
+  )
 }
 
 function CardDescription({
@@ -45,14 +45,14 @@ function CardDescription({
       className={cn('text-sm text-muted-foreground', className)}
       {...props}
     />
-  );
+  )
 }
 
 function CardContent({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<typeof View>) {
-  return <View className={cn('p-4 pt-0', className)} {...props} />;
+  return <View className={cn('p-4 pt-0', className)} {...props} />
 }
 
 // TODO: style
@@ -65,15 +65,15 @@ function CardFooter({
       className={cn(className, 'flex flex-row items-center p-4 pt-0')}
       {...props}
     />
-  );
+  )
 }
 
 interface SimpleCardProps {
-  className?: string;
-  title?: string;
-  description?: string;
-  content?: string;
-  footer?: string;
+  className?: string
+  title?: string
+  description?: string
+  content?: string
+  footer?: string
 }
 function SimpleCard({
   className,
@@ -105,7 +105,7 @@ function SimpleCard({
         </CardFooter>
       )}
     </Card>
-  );
+  )
 }
 
 export {
@@ -116,4 +116,4 @@ export {
   CardContent,
   CardFooter,
   SimpleCard,
-};
+}

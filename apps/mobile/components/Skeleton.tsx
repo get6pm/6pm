@@ -1,13 +1,13 @@
-import { useEffect, useRef } from 'react';
-import { Animated, type View } from 'react-native';
+import { useEffect, useRef } from 'react'
+import { Animated, type View } from 'react-native'
 
-import { cn } from '../lib/utils';
+import { cn } from '../lib/utils'
 
 function Skeleton({
   className,
   ...props
 }: { className?: string } & React.ComponentPropsWithoutRef<typeof View>) {
-  const fadeAnim = useRef(new Animated.Value(0.5)).current;
+  const fadeAnim = useRef(new Animated.Value(0.5)).current
 
   useEffect(() => {
     Animated.loop(
@@ -22,9 +22,9 @@ function Skeleton({
           duration: 1000,
           useNativeDriver: true,
         }),
-      ])
-    ).start();
-  }, [fadeAnim]);
+      ]),
+    ).start()
+  }, [fadeAnim])
 
   return (
     <Animated.View
@@ -32,7 +32,7 @@ function Skeleton({
       style={[{ opacity: fadeAnim }]}
       {...props}
     />
-  );
+  )
 }
 
-export { Skeleton };
+export { Skeleton }

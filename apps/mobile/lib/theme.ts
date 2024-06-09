@@ -7,4 +7,4 @@ export const theme = {
     background: 'hsl(224, 71% 4%)',
     foreground: 'hsl(213, 31% 91%)',
   },
-};
+}

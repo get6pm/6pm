@@ -15,5 +15,14 @@ export default function AuthenticatedLayout() {
     return <Redirect href={'/login'} />
   }
 
-  return <Stack />
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name="new-record"
+        options={{
+          presentation: 'modal',
+        }}
+      />
+    </Stack>
+  )
 }

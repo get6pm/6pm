@@ -4,12 +4,12 @@ import { Text, View } from 'react-native'
 import { cn } from '../lib/utils'
 
 const badgeVariants = cva(
-  'flex flex-row items-center rounded-full px-2 py-1 text-xs font-semibold',
+  'flex flex-row items-center rounded-full px-2 py-0.5 text-xs font-semibold',
   {
     variants: {
       variant: {
         default: 'bg-primary',
-        secondary: 'bg-secondary',
+        secondary: 'bg-secondary border border-border',
         destructive: 'bg-destructive',
         success: 'bg-green-500 dark:bg-green-700',
       },
@@ -24,7 +24,7 @@ const badgeTextVariants = cva('font-medium text-center text-xs', {
   variants: {
     variant: {
       default: 'text-primary-foreground',
-      secondary: 'text-secondary-foreground',
+      secondary: 'text-muted-foreground',
       destructive: 'text-destructive-foreground',
       success: 'text-green-100',
     },
@@ -36,7 +36,7 @@ const badgeTextVariants = cva('font-medium text-center text-xs', {
 
 export interface BadgeProps
   extends React.ComponentPropsWithoutRef<typeof View>,
-    VariantProps<typeof badgeVariants> {
+  VariantProps<typeof badgeVariants> {
   label: string
   labelClasses?: string
 }

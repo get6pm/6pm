@@ -1,7 +1,8 @@
 import { cn } from '@/lib/utils'
 import { forwardRef } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Pressable, View } from 'react-native'
 import type { SvgProps } from 'react-native-svg'
+import { Text } from '../ui/text'
 
 type MenuItemProps = {
   label: string
@@ -25,8 +26,8 @@ export const MenuItem = forwardRef(function (
       )}
     >
       <View className="flex flex-row items-center gap-6">
-        {Icon && <Icon className="w-5 h-5 text-primary" />}
-        <Text className="text-primary font-sans">{label}</Text>
+        {Icon && <Icon className="w-5 h-5 text-foreground" />}
+        <Text>{label}</Text>
       </View>
       {rightSection}
     </Pressable>

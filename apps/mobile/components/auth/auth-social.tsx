@@ -3,9 +3,10 @@ import { useOAuth } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import type { SvgProps } from 'react-native-svg'
-import { Button } from '../Button'
 import { AppleLogo } from '../svg-assets/apple-logo'
 import { GoogleLogo } from '../svg-assets/google-logo'
+import { Button } from '../ui/button'
+import { Text } from '../ui/text'
 
 type AuthSocialProps = {
   label: string
@@ -38,7 +39,10 @@ export function AuthSocial({ label, icon: Icon, strategy }: AuthSocialProps) {
   }
 
   return (
-    <Button label={label} leftIcon={Icon} variant="outline" onPress={onPress} />
+    <Button variant="outline" onPress={onPress}>
+      <Icon className="w-5 h-5 text-primary" />
+      <Text>{label}</Text>
+    </Button>
   )
 }
 

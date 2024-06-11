@@ -47,7 +47,7 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   useWarmUpBrowser();
-  const colorScheme = useColorScheme()
+  const { colorScheme } = useColorScheme()
   const [fontsLoaded] = useFonts({
     BeVietnamPro_300Light,
     BeVietnamPro_400Regular,

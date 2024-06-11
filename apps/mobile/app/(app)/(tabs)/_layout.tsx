@@ -6,7 +6,7 @@ import { Tabs } from 'expo-router'
 import { CogIcon, LandPlotIcon, ScanTextIcon, WalletIcon } from 'lucide-react-native'
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme()
+  const { colorScheme } = useColorScheme()
   const { i18n } = useLingui()
   return (
     <Tabs

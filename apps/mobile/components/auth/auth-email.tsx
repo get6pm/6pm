@@ -9,9 +9,10 @@ import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { XCircleIcon } from 'lucide-react-native'
 import { FormProvider, useForm } from 'react-hook-form'
-import { IconButton } from '../IconButton'
 import { InputField } from '../form-fields/input-field'
 import { SubmitButton } from '../form-fields/submit-button'
+import { Button } from '../ui/button'
+import { Text } from '../ui/text'
 import {
   type EmailFormValues,
   type VerifyEmailFormValues,
@@ -140,25 +141,26 @@ export function AuthEmail() {
             onEndEditing={authEmailForm.handleSubmit(onContinue)}
             rightSection={
               verifying && (
-                <IconButton
-                  icon={XCircleIcon}
-                  size="sm"
+                <Button
+                  size="icon"
                   variant="ghost"
-                  iconClasses="text-muted-foreground"
                   onPress={() => {
                     setVerifying(false)
                     authEmailForm.reset()
                   }}
-                />
+                >
+                  <XCircleIcon className="w-5 h-5 text-muted-foreground" />
+                </Button>
               )
             }
           />
           {!verifying && (
             <SubmitButton
-              label={t(i18n)`Continue`}
               onPress={authEmailForm.handleSubmit(onContinue)}
               disabled={verifying}
-            />
+            >
+              <Text>{t(i18n)`Continue`}</Text>
+            </SubmitButton>
           )}
         </View>
       </FormProvider>
@@ -175,9 +177,10 @@ export function AuthEmail() {
               onEndEditing={verifyEmailForm.handleSubmit(onVerify)}
             />
             <SubmitButton
-              label={mode === 'signUp' ? t(i18n)`Sign up` : t(i18n)`Sign in`}
               onPress={verifyEmailForm.handleSubmit(onVerify)}
-            />
+            >
+              <Text>{mode === 'signUp' ? t(i18n)`Sign up` : t(i18n)`Sign in`}</Text>
+            </SubmitButton>
           </View>
         </FormProvider>
       )}

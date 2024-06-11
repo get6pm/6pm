@@ -1,5 +1,5 @@
 import { useFormState } from 'react-hook-form'
-import { Button, type ButtonProps } from '../Button'
+import { Button, type ButtonProps } from '../ui/button'
 
 type SubmitButtonProps = ButtonProps
 

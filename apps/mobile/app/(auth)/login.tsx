@@ -1,17 +1,18 @@
-import { Button } from '@/components/Button'
-import { Separator } from '@/components/Separator'
 import { AuthEmail } from '@/components/auth/auth-email'
 import {
   AppleAuthButton,
   GoogleAuthButton,
 } from '@/components/auth/auth-social'
 import { AuthIllustration } from '@/components/svg-assets/auth-illustration'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { Text } from '@/components/ui/text'
 import { Trans, t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { Link } from 'expo-router'
 import { MailIcon } from 'lucide-react-native'
 import { useState } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 
 export default function LoginScreen() {
   const [withEmail, setWithEmail] = useState(false)
@@ -38,23 +39,24 @@ export default function LoginScreen() {
         <AppleAuthButton />
         <GoogleAuthButton />
         <Button
-          label={t(i18n)`Continue with Email`}
-          leftIcon={MailIcon}
           variant="outline"
           onPress={() => setWithEmail(true)}
-        />
+        >
+          <MailIcon className="w-5 h-5 text-primary" />
+          <Text>{t(i18n)`Continue with Email`}</Text>
+        </Button>
         <Separator className="w-[70%] mx-auto my-3" />
         {withEmail && <AuthEmail />}
       </View>
       <Trans>
         <Text className="font-sans text-muted-foreground text-xs text-center mx-auto px-4 mt-4">
           By continuing, you acknowledge that you understand and agree to the{' '}
-          <Link href="/terms-of-service" asChild className="text-primary">
-            <Text>Terms & Conditions</Text>
+          <Link href="/terms-of-service">
+            <Text className="text-primary text-xs">Terms & Conditions</Text>
           </Link>{' '}
           and{' '}
-          <Link href="/privacy-policy" asChild className="text-primary">
-            <Text>Privacy Policy</Text>
+          <Link href="/privacy-policy">
+            <Text className="text-primary text-xs">Privacy Policy</Text>
           </Link>
         </Text>
       </Trans>

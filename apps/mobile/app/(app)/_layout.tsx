@@ -8,7 +8,7 @@ import { useEffect } from 'react'
 
 export default function AuthenticatedLayout() {
   const { isLoaded, isSignedIn } = useAuth()
-  const colorScheme = useColorScheme()
+  const { colorScheme } = useColorScheme()
   const { i18n } = useLingui()
 
   useEffect(() => {

@@ -1,10 +1,11 @@
 import { MenuItem } from '@/components/common/menu-item'
+import { Text } from '@/components/ui/text'
 import { useLocale } from '@/locales/provider'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { useRouter } from 'expo-router'
 import { CheckCircleIcon } from 'lucide-react-native'
-import { ScrollView, Text } from 'react-native'
+import { ScrollView } from 'react-native'
 
 export default function LanguageScreen() {
   const { i18n } = useLingui()
@@ -13,7 +14,7 @@ export default function LanguageScreen() {
 
   return (
     <ScrollView className="bg-card">
-      <Text className="font-sans font-medium text-primary text-lg m-6 mx-auto">
+      <Text className="font-medium text-lg m-6 mx-auto">
         {t(i18n)`Language`}
       </Text>
       <MenuItem

@@ -1,9 +1,10 @@
-import { Tabs, TabsList, TabsTrigger } from '@/components/Tabs'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Text } from '@/components/ui/text'
+import { useColorScheme } from '@/hooks/useColorScheme'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { MoonStarIcon, SmartphoneIcon, SunIcon } from 'lucide-react-native'
-import { useColorScheme } from 'nativewind'
-import { ScrollView, Text } from 'react-native'
+import { MoonStarIcon, SunIcon } from 'lucide-react-native'
+import { ScrollView } from 'react-native'
 
 export default function AppearanceScreen() {
   const { colorScheme, setColorScheme } = useColorScheme()
@@ -18,26 +19,19 @@ export default function AppearanceScreen() {
         {t(i18n)`Choose a preferred theme for the 6pm`}
       </Text>
       <Tabs
-        defaultValue={colorScheme || 'light'}
+        value={colorScheme || 'light'}
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        onChange={(value: any) => setColorScheme(value)}
+        onValueChange={(value: any) => setColorScheme(value)}
       >
         <TabsList>
-          <TabsTrigger
-            value="light"
-            title={t(i18n)`Light`}
-            icon={SunIcon}
-          />
-          <TabsTrigger
-            value="dark"
-            title={t(i18n)`Dark`}
-            icon={MoonStarIcon}
-          />
-          <TabsTrigger
-            value="system"
-            title={t(i18n)`System`}
-            icon={SmartphoneIcon}
-          />
+          <TabsTrigger value="light">
+            <SunIcon className="w-5 h-5 text-muted-foreground" />
+            <Text>{t(i18n)`Light`}</Text>
+          </TabsTrigger>
+          <TabsTrigger value="dark">
+            <MoonStarIcon className="w-5 h-5 text-muted-foreground" />
+            <Text>{t(i18n)`Dark`}</Text>
+          </TabsTrigger>
         </TabsList>
       </Tabs>
     </ScrollView>

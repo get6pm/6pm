@@ -1,15 +1,15 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/Avatar'
-import { Badge } from '@/components/Badge'
-import { Button } from '@/components/Button'
-import { IconButton } from '@/components/IconButton'
 import { MenuItem } from '@/components/common/menu-item'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { useLocale } from '@/locales/provider'
 import { useAuth, useUser } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { Link } from 'expo-router'
 import { ChevronRightIcon, EarthIcon, LogOutIcon, PencilIcon, SwatchBookIcon } from 'lucide-react-native'
-import { Alert, ScrollView, Text, View } from 'react-native'
+import { Alert, ScrollView, View } from 'react-native'
 
 export default function SettingsScreen() {
   const { signOut } = useAuth()
@@ -22,7 +22,7 @@ export default function SettingsScreen() {
       <View className="bg-muted rounded-lg mx-6 px-4 py-3 justify-end h-40">
         <View className="flex flex-row items-center gap-2 justify-between">
           <View className="flex flex-row items-center gap-3">
-            <Avatar className="w-12 h-12">
+            <Avatar alt='avatar' className="w-12 h-12">
               <AvatarImage
                 source={{
                   uri: user?.imageUrl,
@@ -32,16 +32,19 @@ export default function SettingsScreen() {
             </Avatar>
             <View>
               <Badge
-                variant="secondary"
-                label="Free"
+                variant="outline"
                 className="self-start rounded-md mb-1"
-              />
+              >
+                <Text className="text-xs font-medium">Free</Text>
+              </Badge>
               <Text className="font-medium text-primary">
                 {user?.fullName ?? user?.primaryEmailAddress?.emailAddress}
               </Text>
             </View>
           </View>
-          <IconButton icon={PencilIcon} size="sm" variant="ghost" />
+          <Button size="icon" variant="ghost">
+            <PencilIcon className="w-5 h-5 text-primary" />
+          </Button>
         </View>
       </View>
       <View className="gap-2 mt-4">
@@ -75,7 +78,6 @@ export default function SettingsScreen() {
           {t(i18n)`Others`}
         </Text>
         <Button
-          label={t(i18n)`Sign out`}
           variant="ghost"
           onPress={() => Alert.alert(t(i18n)`Are you sure you want to sign out?`, '', [
             {
@@ -88,10 +90,13 @@ export default function SettingsScreen() {
               onPress: () => signOut(),
             },
           ])}
-          labelClasses="text-red-500 font-regular"
-          leftIcon={LogOutIcon}
           className="justify-start gap-6 px-6"
-        />
+        >
+          <LogOutIcon className="w-5 h-5 text-red-500" />
+          <Text className="text-red-500 font-regular group-active:text-red-500">
+            {t(i18n)`Sign out`}
+          </Text>
+        </Button>
       </View>
     </ScrollView>
   )

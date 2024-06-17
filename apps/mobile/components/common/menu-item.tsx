@@ -10,18 +10,21 @@ type MenuItemProps = {
   rightSection?: React.ReactNode
   onPress?: () => void
   className?: string
+  disabled?: boolean
 }
 
-export const MenuItem = forwardRef(function (
-  { label, icon: Icon, rightSection, onPress, className }: MenuItemProps,
+export const MenuItem = forwardRef(function(
+  { label, icon: Icon, rightSection, onPress, className, disabled }: MenuItemProps,
   ref: React.ForwardedRef<React.ElementRef<typeof Pressable>>,
 ) {
   return (
     <Pressable
       onPress={onPress}
       ref={ref}
+      disabled={disabled}
       className={cn(
         "flex flex-row items-center gap-4 px-6 justify-between h-12 active:bg-muted",
+        disabled && "opacity-50",
         className,
       )}
     >

@@ -1,3 +1,4 @@
+import type { CreateUser } from '@6pm/validation'
 import {
   type Budget,
   type BudgetUserInvitation,
@@ -5,7 +6,6 @@ import {
   type User,
 } from '@prisma/client'
 import prisma from '../../lib/prisma'
-import type { CreateUser } from '../validation'
 import { createBudgetUser, isUserBudgetOwner } from './budget.service'
 import { createUser, findUserByEmail } from './user.service'
 

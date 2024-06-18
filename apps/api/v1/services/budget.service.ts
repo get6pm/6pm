@@ -1,3 +1,4 @@
+import type { CreateBudget, UpdateBudget } from '@6pm/validation'
 import {
   type Budget,
   BudgetPeriodType,
@@ -6,7 +7,6 @@ import {
 } from '@prisma/client'
 import { dayjsExtended } from '../../lib/dayjs'
 import prisma from '../../lib/prisma'
-import type { CreateBudget, UpdateBudget } from '../validation'
 import { inviteUserToBudget } from './budget-invitation.service'
 
 export async function canUserCreateBudget({

@@ -1,3 +1,7 @@
+import {
+  zCreateTransaction,
+  zUpdateTransaction,
+} from '@6pm/validation'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { z } from 'zod'
@@ -15,10 +19,6 @@ import {
   updateTransaction,
 } from '../services/transaction.service'
 import { findUserWallet } from '../services/wallet.service'
-import {
-  zCreateTransaction,
-  zUpdateTransaction,
-} from '../validation/transaction.zod'
 
 const router = new Hono()
 

@@ -1,3 +1,4 @@
+import type { CreateTransaction, UpdateTransaction } from '@6pm/validation'
 import type {
   Budget,
   Transaction,
@@ -5,10 +6,6 @@ import type {
   UserWalletAccount,
 } from '@prisma/client'
 import prisma from '../../lib/prisma'
-import type {
-  CreateTransaction,
-  UpdateTransaction,
-} from '../validation/transaction.zod'
 import {
   findBudget,
   isUserBudgetMember,

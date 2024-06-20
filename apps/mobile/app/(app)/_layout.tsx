@@ -1,9 +1,12 @@
+import { BackButton } from '@/components/common/back-button'
+import { Button } from '@/components/ui/button'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
 import { useAuth } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { Redirect, SplashScreen, Stack } from 'expo-router'
+import { Link, Redirect, SplashScreen, Stack } from 'expo-router'
+import { PlusIcon } from 'lucide-react-native'
 import { useEffect } from 'react'
 
 export default function AuthenticatedLayout() {
@@ -22,35 +25,63 @@ export default function AuthenticatedLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{
+      headerShown: true,
+      headerBackTitleVisible: false,
+      headerTintColor: theme[colorScheme ?? 'light'].primary,
+      headerShadowVisible: false,
+      headerTitleStyle: {
+        fontFamily: 'Be Vietnam Pro Medium',
+        fontSize: 16,
+        color: theme[colorScheme ?? 'light'].primary,
+      },
+      headerStyle: {
+        backgroundColor: theme[colorScheme ?? 'light'].background,
+      },
+      headerLeft: () => <BackButton />,
+    }}>
+      <Stack.Screen
+        name="(tabs)"
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen
         name="new-record"
         options={{
           presentation: 'modal',
+          headerShown: false
         }}
       />
       <Stack.Screen
         name="language"
         options={{
           presentation: 'modal',
+          headerTitle: t(i18n)`Language`,
         }}
       />
       <Stack.Screen
         name="appearance"
+        options={{ headerTitle: t(i18n)`Appearance` }}
+      />
+      <Stack.Screen
+        name="wallet/accounts"
         options={{
-          headerShown: true,
-          headerBackTitleVisible: false,
-          headerTintColor: theme[colorScheme ?? 'light'].primary,
-          headerTitle: t(i18n)`Appearance`,
-          headerShadowVisible: false,
-          headerTitleStyle: {
-            fontFamily: 'Be Vietnam Pro Medium',
-            fontSize: 16,
-            color: theme[colorScheme ?? 'light'].primary,
-          },
-          headerStyle: {
-            backgroundColor: theme[colorScheme ?? 'light'].background,
-          }
+          headerTitle: t(i18n)`Wallet accounts`,
+          headerRight: () => (
+            <Link href="/wallet/new-account" asChild>
+              <Button size='icon' variant='ghost'>
+                <PlusIcon className='size-6 text-primary' />
+              </Button>
+            </Link>
+          )
+        }}
+      />
+      <Stack.Screen
+        name="wallet/new-account"
+        options={{
+          // presentation: 'modal',
+          headerTitle: t(i18n)`New account`
         }}
       />
     </Stack>

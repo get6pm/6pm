@@ -82,7 +82,7 @@ export default function SettingsScreen() {
           {t(i18n)`General`}
         </Text>
         <View>
-          <Link href="/wallet-accounts" asChild disabled>
+          <Link href="/wallet/accounts" asChild>
             <MenuItem
               label={t(i18n)`Wallet accounts`}
               icon={WalletCardsIcon}

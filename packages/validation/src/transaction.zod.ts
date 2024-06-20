@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const zCreateTransaction = z.object({
-  date: z.date(),
+  date: z.date({ coerce: true }),
   amount: z.number(),
   currency: z.string(),
   note: z.string().optional(),
@@ -11,7 +11,7 @@ export const zCreateTransaction = z.object({
 export type CreateTransaction = z.infer<typeof zCreateTransaction>
 
 export const zUpdateTransaction = z.object({
-  date: z.date().optional(),
+  date: z.date({ coerce: true }).optional(),
   amount: z.number().optional(),
   currency: z.string().optional(),
   note: z.string().optional(),

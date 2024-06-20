@@ -1,5 +1,4 @@
 import { MenuItem } from '@/components/common/menu-item'
-import { Text } from '@/components/ui/text'
 import { useLocale } from '@/locales/provider'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -14,12 +13,13 @@ export default function LanguageScreen() {
 
   return (
     <ScrollView className="bg-card">
-      <Text className="font-medium text-lg m-6 mx-auto">
-        {t(i18n)`Language`}
-      </Text>
       <MenuItem
         label={t(i18n)`English`}
-        rightSection={language === 'en' && <CheckCircleIcon className='w-5 h-5 text-primary' />}
+        rightSection={
+          language === 'en' && (
+            <CheckCircleIcon className="w-5 h-5 text-primary" />
+          )
+        }
         onPress={() => {
           setLanguage('en')
           router.back()
@@ -27,7 +27,11 @@ export default function LanguageScreen() {
       />
       <MenuItem
         label={t(i18n)`Vietnamese`}
-        rightSection={language === 'vi' && <CheckCircleIcon className='w-5 h-5 text-primary' />}
+        rightSection={
+          language === 'vi' && (
+            <CheckCircleIcon className="w-5 h-5 text-primary" />
+          )
+        }
         onPress={() => {
           setLanguage('vi')
           router.back()

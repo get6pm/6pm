@@ -156,11 +156,11 @@ model Transaction {
   categoryId      String?
   category        Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   budgetId        String?
-  budget          Budget?           @relation(fields: [budgetId], references: [id])
+  budget          Budget?           @relation(fields: [budgetId], references: [id], onDelete: SetNull)
   walletAccountId String
-  walletAccount   UserWalletAccount @relation(fields: [walletAccountId], references: [id])
+  walletAccount   UserWalletAccount @relation(fields: [walletAccountId], references: [id], onDelete: Cascade)
   createdByUserId String
-  createdByUser   User              @relation(fields: [createdByUserId], references: [id])
+  createdByUser   User              @relation(fields: [createdByUserId], references: [id], onDelete: Cascade)
 }
 
 model Category {

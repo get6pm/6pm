@@ -84,6 +84,13 @@ export default function AuthenticatedLayout() {
           headerTitle: t(i18n)`New account`
         }}
       />
+      <Stack.Screen
+        name="wallet/[walletId]"
+        options={{
+          // presentation: 'modal',
+          headerTitle: t(i18n)`Edit account`
+        }}
+      />
     </Stack>
   )
 }

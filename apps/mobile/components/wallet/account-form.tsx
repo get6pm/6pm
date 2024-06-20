@@ -14,9 +14,10 @@ import { SelectCurrencyField } from './select-currency-field'
 
 type AccountFormProps = {
   onSubmit: (data: AccountFormValues) => void
+  defaultValues?: AccountFormValues
 }
 
-export const AccountForm = ({ onSubmit }: AccountFormProps) => {
+export const AccountForm = ({ onSubmit, defaultValues }: AccountFormProps) => {
   const { i18n } = useLingui()
   const nameInputRef = useRef<TextInput>(null)
   const balanceInputRef = useRef<TextInput>(null)
@@ -27,6 +28,7 @@ export const AccountForm = ({ onSubmit }: AccountFormProps) => {
       name: '',
       preferredCurrency: 'USD', // TODO: get from user settings
       icon: 'CreditCard',
+      ...defaultValues,
     },
   })
 
@@ -39,7 +41,7 @@ export const AccountForm = ({ onSubmit }: AccountFormProps) => {
           label={t(i18n)`Name`}
           placeholder={t(i18n)`Wallet account name`}
           autoCapitalize="none"
-          autoFocus
+          autoFocus={!defaultValues}
           className="!pl-[62px]"
           leftSection={
             <SelectAccountIconField

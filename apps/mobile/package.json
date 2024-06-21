@@ -26,6 +26,7 @@
     "@lingui/macro": "^4.11.1",
     "@lingui/react": "^4.11.1",
     "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "^1.0.4",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-navigation/native": "^6.0.2",

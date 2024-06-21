@@ -1,4 +1,4 @@
-import { useCreateUserMutation } from '@/mutations/user'
+import { createUser } from '@/mutations/user'
 import { useOAuth } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -16,7 +16,6 @@ type AuthSocialProps = {
 
 export function AuthSocial({ label, icon: Icon, strategy }: AuthSocialProps) {
   const { startOAuthFlow } = useOAuth({ strategy })
-  const { mutateAsync: createUser } = useCreateUserMutation()
 
   const onPress = async () => {
     try {
@@ -25,10 +24,14 @@ export function AuthSocial({ label, icon: Icon, strategy }: AuthSocialProps) {
       if (createdSessionId) {
         setActive?.({ session: createdSessionId })
         if (signUp?.createdUserId) {
-          setTimeout(async () => await createUser({
-            email: signUp.emailAddress!,
-            name: signUp.firstName ?? '',
-          }), 1000)
+          setTimeout(
+            async () =>
+              await createUser({
+                email: signUp.emailAddress!,
+                name: signUp.firstName ?? '',
+              }),
+            1000,
+          )
         }
       } else {
         // Use signIn or signUp for next steps such as MFA

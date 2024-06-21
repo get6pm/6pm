@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { View } from 'react-native'
 
-import { useCreateUserMutation } from '@/mutations/user'
+import { createUser } from '@/mutations/user'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { XCircleIcon } from 'lucide-react-native'
@@ -32,8 +32,6 @@ export function AuthEmail() {
 
   const [verifying, setVerifying] = useState(false)
   const [mode, setMode] = useState<'signUp' | 'signIn'>('signUp')
-
-  const { mutateAsync: createUser } = useCreateUserMutation()
 
   const {
     isLoaded: isSignUpLoaded,
@@ -176,10 +174,10 @@ export function AuthEmail() {
               autoFocus
               onEndEditing={verifyEmailForm.handleSubmit(onVerify)}
             />
-            <SubmitButton
-              onPress={verifyEmailForm.handleSubmit(onVerify)}
-            >
-              <Text>{mode === 'signUp' ? t(i18n)`Sign up` : t(i18n)`Sign in`}</Text>
+            <SubmitButton onPress={verifyEmailForm.handleSubmit(onVerify)}>
+              <Text>
+                {mode === 'signUp' ? t(i18n)`Sign up` : t(i18n)`Sign in`}
+              </Text>
             </SubmitButton>
           </View>
         </FormProvider>

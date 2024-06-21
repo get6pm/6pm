@@ -11,13 +11,14 @@ import {
   useFonts,
 } from '@expo-google-fonts/be-vietnam-pro'
 import { SplashScreen, Stack } from 'expo-router'
-import * as WebBrowser from "expo-web-browser";
+import * as WebBrowser from 'expo-web-browser'
 
 import 'react-native-reanimated'
 import { useWarmUpBrowser } from '@/hooks/use-warm-up-browser'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { queryClient } from '@/lib/client'
 import { LocaleProvider } from '@/locales/provider'
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import {
   DarkTheme,
   DefaultTheme,
@@ -25,6 +26,7 @@ import {
 } from '@react-navigation/native'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { cssInterop } from 'nativewind'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Svg } from 'react-native-svg'
 
@@ -38,7 +40,7 @@ cssInterop(Svg, {
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
 
-WebBrowser.maybeCompleteAuthSession();
+WebBrowser.maybeCompleteAuthSession()
 
 // biome-ignore lint/style/useNamingConvention: <explanation>
 export const unstable_settings = {
@@ -46,7 +48,7 @@ export const unstable_settings = {
 }
 
 export default function RootLayout() {
-  useWarmUpBrowser();
+  useWarmUpBrowser()
   const { colorScheme } = useColorScheme()
   const [fontsLoaded] = useFonts({
     BeVietnamPro_300Light,
@@ -73,20 +75,18 @@ export default function RootLayout() {
             value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
           >
             <SafeAreaProvider>
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen
-                  name="(aux)/privacy-policy"
-                  options={{
-                    presentation: 'modal',
-                  }}
-                />
-                <Stack.Screen
-                  name="(aux)/terms-of-service"
-                  options={{
-                    presentation: 'modal',
-                  }}
-                />
-              </Stack>
+              <GestureHandlerRootView>
+                <BottomSheetModalProvider>
+                  <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen
+                      name="(aux)"
+                      options={{
+                        presentation: 'modal',
+                      }}
+                    />
+                  </Stack>
+                </BottomSheetModalProvider>
+              </GestureHandlerRootView>
             </SafeAreaProvider>
           </ThemeProvider>
         </LocaleProvider>

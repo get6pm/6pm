@@ -1,5 +1,5 @@
+import type { CreateUser } from '@6pm/validation'
 import prisma from '../../lib/prisma'
-import type { CreateUser } from '../validation'
 
 export async function findUserById(id: string) {
   return await prisma.user.findUnique({

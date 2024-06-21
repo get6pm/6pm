@@ -1,6 +1,6 @@
+import type { CreateWallet, UpdateWallet } from '@6pm/validation'
 import type { User, UserWalletAccount } from '@prisma/client'
 import prisma from '../../lib/prisma'
-import type { CreateWallet, UpdateWallet } from '../validation'
 
 export async function findUserWallet({
   user,

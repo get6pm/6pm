@@ -1,8 +1,8 @@
+import { zCreateUser } from '@6pm/validation'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { getAuthUser } from '../middlewares/auth'
 import { createUser } from '../services/user.service'
-import { zCreateUser } from '../validation'
 
 const router = new Hono().post(
   '/',

@@ -1,3 +1,4 @@
+import { zCreateBudget, zCreateUser, zUpdateBudget } from '@6pm/validation'
 import { zValidator } from '@hono/zod-validator'
 import { BudgetUserPermission } from '@prisma/client'
 import { Hono } from 'hono'
@@ -25,7 +26,6 @@ import {
   findBudgetsOfUser,
   updateBudget,
 } from '../services/budget.service'
-import { zCreateBudget, zCreateUser, zUpdateBudget } from '../validation'
 
 const zBudgetParamValidator = zValidator(
   'param',

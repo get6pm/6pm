@@ -1,4 +1,5 @@
 import { AddNewButton } from '@/components/common/add-new-button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Text } from '@/components/ui/text'
 import { WalletAccountItem } from '@/components/wallet/wallet-account-item'
 import { useWallets } from '@/queries/wallet'
@@ -33,9 +34,17 @@ export default function WalletAccountsScreen() {
         />
       }
       ListEmptyComponent={
-        <Text className="font-sans text-muted-foreground text-center mt-6 mb-9">
-          {t(i18n)`empty`}
-        </Text>
+        isLoading ? (
+          <>
+            <Skeleton className='mx-6 mb-5 mt-3 h-4 rounded-full' />
+            <Skeleton className='mx-6 mb-5 mt-3 h-4 rounded-full' />
+            <Skeleton className='mx-6 mb-5 mt-3 h-4 rounded-full' />
+          </>
+        ) : (
+          <Text className="font-sans text-muted-foreground text-center mt-6 mb-9">
+            {t(i18n)`empty`}
+          </Text>
+        )
       }
     />
   )

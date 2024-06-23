@@ -15,6 +15,5 @@ const app = new Hono({ strict: true })
   // * Mounting versioned APIs
   .route('/v1', appV1)
 
-export * from './prisma/generated/zod'
 export { app }
 export type AppType = typeof app

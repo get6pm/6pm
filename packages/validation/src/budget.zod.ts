@@ -1,13 +1,14 @@
 import { z } from 'zod'
+import { BudgetPeriodTypeSchema, BudgetTypeSchema } from './prisma'
 
 export const zCreateBudget = z.object({
   name: z.string(),
   description: z.string().optional(),
   preferredCurrency: z.string(),
-  type: z.enum(['SPENDING', 'SAVING', 'INVESTING', 'DEBT']),
+  type: BudgetTypeSchema,
   inviteeEmails: z.array(z.string().email()).optional(),
   period: z.object({
-    type: z.enum(['MONTHLY', 'QUARTERLY', 'YEARLY', 'CUSTOM']),
+    type: BudgetPeriodTypeSchema,
     amount: z.number().min(0),
     startDate: z.date().optional(),
     endDate: z.date().optional(),
@@ -19,9 +20,9 @@ export const zUpdateBudget = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
   preferredCurrency: z.string().optional(),
-  type: z.enum(['SPENDING', 'SAVING', 'INVESTING', 'DEBT']).optional(),
+  type: BudgetTypeSchema,
   period: z.object({
-    type: z.enum(['MONTHLY', 'QUARTERLY', 'YEARLY', 'CUSTOM']).optional(),
+    type: BudgetPeriodTypeSchema.optional(),
     amount: z.number().min(0).optional(),
     startDate: z.date().optional(),
     endDate: z.date().optional(),

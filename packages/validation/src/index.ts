@@ -1,3 +1,4 @@
+export * from './prisma'
 export * from './auth.zod'
 export * from './budget.zod'
 export * from './user.zod'

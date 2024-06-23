@@ -6,6 +6,8 @@ generator client {
 generator zod {
   provider                  = "zod-prisma-types"
   createRelationValuesTypes = true
+  output                    = "../../../packages/validation/src/prisma"
+  useMultipleFiles          = true
 }
 
 datasource db {

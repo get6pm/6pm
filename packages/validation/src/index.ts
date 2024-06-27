@@ -1,6 +1,7 @@
 export * from './prisma'
 export * from './auth.zod'
 export * from './budget.zod'
+export * from './category.zod'
 export * from './user.zod'
 export * from './wallet.zod'
 export * from './transaction.zod'

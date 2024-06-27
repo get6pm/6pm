@@ -91,7 +91,7 @@ export default function SettingsScreen() {
               }
             />
           </Link>
-          <Link href="/categories" asChild>
+          <Link href="/category" asChild>
             <MenuItem
               label={t(i18n)`Categories`}
               icon={ShapesIcon}

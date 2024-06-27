@@ -1,15 +1,16 @@
 import { cn } from '@/lib/utils'
+import { forwardRef } from 'react'
 import { useController } from 'react-hook-form'
-import { Text, type TextInputProps, View, type TextInput } from 'react-native'
+import { Text, type TextInput, type TextInputProps, View } from 'react-native'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import { forwardRef } from 'react'
 
 type InputFieldProps = TextInputProps & {
   name: string
   label?: string
   leftSection?: React.ReactNode
   rightSection?: React.ReactNode
+  disabled?: boolean
 }
 
 export const InputField = forwardRef(
@@ -20,6 +21,7 @@ export const InputField = forwardRef(
       leftSection,
       rightSection,
       className,
+      disabled,
       ...props
     }: InputFieldProps,
     ref: React.Ref<TextInput>,
@@ -47,6 +49,7 @@ export const InputField = forwardRef(
               leftSection && 'pl-10',
               rightSection && 'pr-10',
             )}
+            editable={!disabled}
             {...props}
           />
           {rightSection && (

@@ -15,11 +15,13 @@ import { SelectCategoryIconField } from './select-category-icon-field'
 type CategoryFormProps = {
   onSubmit: (data: CategoryFormValues) => void
   defaultValues?: Partial<CategoryFormValues>
+  hiddenFields?: Array<'type'>
 }
 
 export const CategoryForm = ({
   onSubmit,
   defaultValues,
+  hiddenFields = [],
 }: CategoryFormProps) => {
   const { i18n } = useLingui()
   const nameInputRef = useRef<TextInput>(null)
@@ -28,11 +30,14 @@ export const CategoryForm = ({
     resolver: zodResolver(zCategoryFormValues),
     defaultValues: {
       name: '',
-      type: 'EXPENSE',
       icon: 'CreditCard',
       ...defaultValues,
+      type: defaultValues?.type || 'EXPENSE',
     },
   })
+  const type = categoryForm.watch('type')
+
+  const isTypeHidden = hiddenFields.includes('type')
 
   return (
     <FormProvider {...categoryForm}>
@@ -45,34 +50,47 @@ export const CategoryForm = ({
           autoCapitalize="none"
           autoFocus={!defaultValues}
           className="!pl-[62px]"
+          disabled={categoryForm.formState.isLoading}
           leftSection={
             <SelectCategoryIconField
+              type={type}
+              disabled={categoryForm.formState.isLoading}
               onSelect={() => nameInputRef.current?.focus()}
             />
           }
         />
 
-        <Text className="font-medium">{t(i18n)`Type`}</Text>
-        <Controller
-          control={categoryForm.control}
-          name="type"
-          render={({ field }) => (
-            <Tabs
-              value={field.value}
-              className="-mt-3"
-              onValueChange={field.onChange}
-            >
-              <TabsList>
-                <TabsTrigger value="EXPENSE">
-                  <Text>{t(i18n)`Expense`}</Text>
-                </TabsTrigger>
-                <TabsTrigger value="INCOME">
-                  <Text>{t(i18n)`Income`}</Text>
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          )}
-        />
+        {!isTypeHidden && (
+          <>
+            <Text className="font-medium">{t(i18n)`Type`}</Text>
+            <Controller
+              control={categoryForm.control}
+              name="type"
+              render={({ field }) => (
+                <Tabs
+                  value={field.value}
+                  className="-mt-3"
+                  onValueChange={field.onChange}
+                >
+                  <TabsList>
+                    <TabsTrigger
+                      disabled={categoryForm.formState.isLoading}
+                      value="EXPENSE"
+                    >
+                      <Text>{t(i18n)`Expense`}</Text>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      disabled={categoryForm.formState.isLoading}
+                      value="INCOME"
+                    >
+                      <Text>{t(i18n)`Income`}</Text>
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              )}
+            />
+          </>
+        )}
 
         <SubmitButton
           onPress={categoryForm.handleSubmit(onSubmit)}

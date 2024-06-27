@@ -134,7 +134,7 @@ const router = new Hono()
 
     await deleteBudget({ budgetId })
 
-    return c.json(budget)
+    return c.json(budget, 204)
   })
 
   /** Generate sharable invitation link */

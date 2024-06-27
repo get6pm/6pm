@@ -14,7 +14,7 @@ import { SelectCategoryIconField } from './select-category-icon-field'
 
 type CategoryFormProps = {
   onSubmit: (data: CategoryFormValues) => void
-  defaultValues?: CategoryFormValues
+  defaultValues?: Partial<CategoryFormValues>
 }
 
 export const CategoryForm = ({

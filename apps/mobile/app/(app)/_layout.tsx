@@ -25,21 +25,23 @@ export default function AuthenticatedLayout() {
   }
 
   return (
-    <Stack screenOptions={{
-      headerShown: true,
-      headerBackTitleVisible: false,
-      headerTintColor: theme[colorScheme ?? 'light'].primary,
-      headerShadowVisible: false,
-      headerTitleStyle: {
-        fontFamily: 'Be Vietnam Pro Medium',
-        fontSize: 16,
-        color: theme[colorScheme ?? 'light'].primary,
-      },
-      headerStyle: {
-        backgroundColor: theme[colorScheme ?? 'light'].background,
-      },
-      headerLeft: () => <BackButton />,
-    }}>
+    <Stack
+      screenOptions={{
+        headerShown: true,
+        headerBackTitleVisible: false,
+        headerTintColor: theme[colorScheme ?? 'light'].primary,
+        headerShadowVisible: false,
+        headerTitleStyle: {
+          fontFamily: 'Be Vietnam Pro Medium',
+          fontSize: 16,
+          color: theme[colorScheme ?? 'light'].primary,
+        },
+        headerStyle: {
+          backgroundColor: theme[colorScheme ?? 'light'].background,
+        },
+        headerLeft: () => <BackButton />,
+      }}
+    >
       <Stack.Screen
         name="(tabs)"
         options={{
@@ -50,7 +52,7 @@ export default function AuthenticatedLayout() {
         name="new-record"
         options={{
           presentation: 'modal',
-          headerShown: false
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -70,25 +72,45 @@ export default function AuthenticatedLayout() {
           headerTitle: t(i18n)`Wallet accounts`,
           headerRight: () => (
             <Link href="/wallet/new-account" asChild>
-              <Button size='icon' variant='ghost'>
-                <PlusIcon className='size-6 text-primary' />
+              <Button size="icon" variant="ghost">
+                <PlusIcon className="size-6 text-primary" />
               </Button>
             </Link>
-          )
+          ),
         }}
       />
       <Stack.Screen
         name="wallet/new-account"
         options={{
           presentation: 'modal',
-          headerTitle: t(i18n)`New account`
+          headerTitle: t(i18n)`New account`,
         }}
       />
       <Stack.Screen
         name="wallet/[walletId]"
         options={{
           presentation: 'modal',
-          headerTitle: t(i18n)`Edit account`
+          headerTitle: t(i18n)`Edit account`,
+        }}
+      />
+      <Stack.Screen
+        name="categories/index"
+        options={{
+          headerTitle: t(i18n)`Categories`,
+          headerRight: () => (
+            <Link href="/categories/new-category" asChild>
+              <Button size="icon" variant="ghost">
+                <PlusIcon className="size-6 text-primary" />
+              </Button>
+            </Link>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="categories/new-category"
+        options={{
+          presentation: 'modal',
+          headerTitle: t(i18n)`New category`,
         }}
       />
     </Stack>

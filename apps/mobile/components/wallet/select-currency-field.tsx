@@ -3,6 +3,7 @@ import { useRef } from 'react'
 
 import { useController } from 'react-hook-form'
 import { Keyboard } from 'react-native'
+import { FullWindowOverlay } from 'react-native-screens'
 import { CurrencySheetList } from '../common/currency-sheet'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
@@ -44,14 +45,15 @@ export function SelectCurrencyField({
             enableTouchThrough
           />
         )}
+        containerComponent={(props) => <FullWindowOverlay>{props.children}</FullWindowOverlay>}
       >
         <CurrencySheetList
           value={value}
           onSelect={(currency) => {
             onChange(currency.code)
-            sheetRef.current?.close()
             onBlur()
             onSelect?.(currency.code)
+            setTimeout(() => sheetRef.current?.close(), 200)
           }}
         />
       </BottomSheetModal>

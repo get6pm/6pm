@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import { WALLET_ICONS } from '@/lib/icons/wallet-icons'
 import { useController } from 'react-hook-form'
 import { Keyboard } from 'react-native'
+import { FullWindowOverlay } from 'react-native-screens'
 import GenericIcon from '../common/generic-icon'
 import { IconGridSheet } from '../common/icon-grid-sheet'
 import { Button } from '../ui/button'
@@ -45,15 +46,16 @@ export function SelectAccountIconField({
             enableTouchThrough
           />
         )}
+        containerComponent={(props) => <FullWindowOverlay>{props.children}</FullWindowOverlay>}
       >
         <IconGridSheet
           icons={WALLET_ICONS}
           value={value}
           onSelect={(icon) => {
             onChange(icon)
-            sheetRef.current?.close()
             onBlur()
             onSelect?.(icon)
+            setTimeout(() => sheetRef.current?.close(), 200)
           }}
         />
       </BottomSheetModal>

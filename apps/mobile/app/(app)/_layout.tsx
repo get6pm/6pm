@@ -80,14 +80,14 @@ export default function AuthenticatedLayout() {
       <Stack.Screen
         name="wallet/new-account"
         options={{
-          // presentation: 'modal',
+          presentation: 'modal',
           headerTitle: t(i18n)`New account`
         }}
       />
       <Stack.Screen
         name="wallet/[walletId]"
         options={{
-          // presentation: 'modal',
+          presentation: 'modal',
           headerTitle: t(i18n)`Edit account`
         }}
       />

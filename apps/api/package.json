@@ -12,7 +12,8 @@
     "prisma:generate": "prisma generate",
     "prisma:reset": "prisma migrate reset --force",
     "prisma:studio": "prisma studio",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "check": "biome check"
   },
   "dependencies": {
     "@6pm/validation": "workspace:^",

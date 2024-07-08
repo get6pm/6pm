@@ -1,10 +1,7 @@
 import Svg, { type SvgProps, Path } from 'react-native-svg'
 
 export const Logo = (props: SvgProps) => (
-  <Svg
-    viewBox="0 0 765 765"
-    fill="none"
-    {...props}>
+  <Svg viewBox="0 0 765 765" fill="none" {...props}>
     <Path
       fill="#E4E4E7"
       fillRule="evenodd"

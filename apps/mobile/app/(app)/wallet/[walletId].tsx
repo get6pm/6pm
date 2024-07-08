@@ -55,25 +55,31 @@ export default function EditAccountScreen() {
     navigation.setOptions({
       headerRight: () => (
         <Button
-          size='icon'
-          variant='ghost'
+          size="icon"
+          variant="ghost"
           onPress={() =>
-            Alert.alert(t(i18n)`Delete wallet account will also delete all related transactions!`, '', [
-              {
-                text: t(i18n)`Cancel`,
-                style: 'cancel',
-              },
-              {
-                text: t(i18n)`Delete`,
-                style: 'destructive',
-                onPress: () => mutateDelete(walletId as string),
-              },
-            ])
+            Alert.alert(
+              t(
+                i18n,
+              )`Delete wallet account will also delete all related transactions!`,
+              '',
+              [
+                {
+                  text: t(i18n)`Cancel`,
+                  style: 'cancel',
+                },
+                {
+                  text: t(i18n)`Delete`,
+                  style: 'destructive',
+                  onPress: () => mutateDelete(walletId as string),
+                },
+              ],
+            )
           }
         >
-          <Trash2Icon className='size-6 text-primary' />
+          <Trash2Icon className="size-6 text-primary" />
         </Button>
-      )
+      ),
     })
   }, [])
 
@@ -90,12 +96,13 @@ export default function EditAccountScreen() {
     >
       <AccountForm
         onSubmit={({ balance, ...data }) => {
-          const adjustedBalance = (balance ?? 0) - ((walletAccount.balance as number) ?? 0)
+          const adjustedBalance =
+            (balance ?? 0) - ((walletAccount.balance as number) ?? 0)
           mutateUpdate({
             id: walletId as string,
             data: {
               ...data,
-              balance: adjustedBalance
+              balance: adjustedBalance,
             },
           })
         }}

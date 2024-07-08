@@ -2,8 +2,8 @@ import { type LucideProps, icons } from 'lucide-react-native'
 import type { FC } from 'react'
 
 /**
-* TODO: Only export the icons that are used to reduce the bundle size
-*/
+ * TODO: Only export the icons that are used to reduce the bundle size
+ */
 
 const GenericIcon: FC<
   LucideProps & {

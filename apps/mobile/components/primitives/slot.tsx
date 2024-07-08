@@ -32,10 +32,10 @@ const Pressable = React.forwardRef<
   >(isTextChildren(children) ? <></> : children, {
     ...mergeProps(pressableSlotProps, children.props),
     ref: forwardedRef
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      ? composeRefs(forwardedRef, (children as any).ref)
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      : (children as any).ref,
+      ? // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        composeRefs(forwardedRef, (children as any).ref)
+      : // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        (children as any).ref,
   })
 })
 
@@ -57,10 +57,10 @@ const View = React.forwardRef<React.ElementRef<typeof RNView>, RNViewProps>(
     >(isTextChildren(children) ? <></> : children, {
       ...mergeProps(viewSlotProps, children.props),
       ref: forwardedRef
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        ? composeRefs(forwardedRef, (children as any).ref)
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        : (children as any).ref,
+        ? // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          composeRefs(forwardedRef, (children as any).ref)
+        : // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          (children as any).ref,
     })
   },
 )
@@ -83,10 +83,10 @@ const Text = React.forwardRef<React.ElementRef<typeof RNText>, RNTextProps>(
     >(isTextChildren(children) ? <></> : children, {
       ...mergeProps(textSlotProps, children.props),
       ref: forwardedRef
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        ? composeRefs(forwardedRef, (children as any).ref)
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        : (children as any).ref,
+        ? // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          composeRefs(forwardedRef, (children as any).ref)
+        : // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          (children as any).ref,
     })
   },
 )
@@ -115,10 +115,10 @@ const Image = React.forwardRef<
   >(isTextChildren(children) ? <></> : children, {
     ...mergeProps(imageSlotProps, children.props),
     ref: forwardedRef
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      ? composeRefs(forwardedRef, (children as any).ref)
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      : (children as any).ref,
+      ? // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        composeRefs(forwardedRef, (children as any).ref)
+      : // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        (children as any).ref,
   })
 })
 
@@ -136,7 +136,7 @@ function composeRefs<T>(...refs: (React.Ref<T> | undefined)[]) {
       if (typeof ref === 'function') {
         ref(node)
       } else if (ref != null) {
-        ; (ref as React.MutableRefObject<T>).current = node
+        ;(ref as React.MutableRefObject<T>).current = node
       }
     })
 }

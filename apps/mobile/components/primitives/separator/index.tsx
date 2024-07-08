@@ -1,12 +1,12 @@
-import * as Slot from '@/components/primitives/slot';
-import type { SlottableViewProps, ViewRef } from '@/components/primitives/types';
-import * as React from 'react';
-import { View } from 'react-native';
-import type { SeparatorRootProps } from './types';
+import * as Slot from '@/components/primitives/slot'
+import type { SlottableViewProps, ViewRef } from '@/components/primitives/types'
+import * as React from 'react'
+import { View } from 'react-native'
+import type { SeparatorRootProps } from './types'
 
 const Root = React.forwardRef<ViewRef, SlottableViewProps & SeparatorRootProps>(
   ({ asChild, decorative, orientation = 'horizontal', ...props }, ref) => {
-    const Component = asChild ? Slot.View : View;
+    const Component = asChild ? Slot.View : View
     return (
       <Component
         role={decorative ? 'presentation' : 'separator'}
@@ -14,10 +14,10 @@ const Root = React.forwardRef<ViewRef, SlottableViewProps & SeparatorRootProps>(
         ref={ref}
         {...props}
       />
-    );
-  }
-);
+    )
+  },
+)
 
-Root.displayName = 'RootSeparator';
+Root.displayName = 'RootSeparator'
 
-export { Root };
+export { Root }

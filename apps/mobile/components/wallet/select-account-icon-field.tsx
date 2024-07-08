@@ -46,7 +46,9 @@ export function SelectAccountIconField({
             enableTouchThrough
           />
         )}
-        containerComponent={(props) => <FullWindowOverlay>{props.children}</FullWindowOverlay>}
+        containerComponent={(props) => (
+          <FullWindowOverlay>{props.children}</FullWindowOverlay>
+        )}
       >
         <IconGridSheet
           icons={WALLET_ICONS}

@@ -1,14 +1,22 @@
-import { i18n } from "@lingui/core"
+import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getLocales } from 'expo-localization';
-import { createContext, useContext, useEffect, useLayoutEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { getLocales } from 'expo-localization'
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react'
 import { Text } from 'react-native'
-import { messages as enMessages } from './en/messages';
-import { messages as viMessages } from './vi/messages';
+import { messages as enMessages } from './en/messages'
+import { messages as viMessages } from './vi/messages'
 
-const deviceLanguage = getLocales()[0]?.languageCode ?? 'en';
-const defaultLanguage = ['en', 'vi'].includes(deviceLanguage) ? deviceLanguage : 'en';
+const deviceLanguage = getLocales()[0]?.languageCode ?? 'en'
+const defaultLanguage = ['en', 'vi'].includes(deviceLanguage)
+  ? deviceLanguage
+  : 'en'
 
 const messages = {
   en: enMessages,
@@ -19,12 +27,12 @@ i18n.load(messages)
 i18n.activate(defaultLanguage)
 
 export const LocaleContext = createContext<{
-  language: string;
-  setLanguage: (language: string) => void;
+  language: string
+  setLanguage: (language: string) => void
 }>({
   language: defaultLanguage,
   // biome-ignore lint/suspicious/noEmptyBlockStatements: <explanation>
-  setLanguage: () => { },
+  setLanguage: () => {},
 })
 
 export function LocaleProvider({
@@ -36,7 +44,9 @@ export function LocaleProvider({
 
   useLayoutEffect(() => {
     async function main() {
-      const persistedLanguage = await AsyncStorage.getItem('@preferred_language')
+      const persistedLanguage = await AsyncStorage.getItem(
+        '@preferred_language',
+      )
       if (persistedLanguage) {
         setLanguage(persistedLanguage)
       }

@@ -1,16 +1,19 @@
-import * as Switch from '@radix-ui/react-switch';
-import * as React from 'react';
-import { Pressable, View, type GestureResponderEvent } from 'react-native';
-import * as Slot from '@/components/primitives/slot';
+import * as Slot from '@/components/primitives/slot'
 import type {
   PressableRef,
   SlottablePressableProps,
   SlottableViewProps,
   ViewRef,
-} from '@/components/primitives/types';
-import type { SwitchRootProps } from './types';
+} from '@/components/primitives/types'
+import * as Switch from '@radix-ui/react-switch'
+import * as React from 'react'
+import { type GestureResponderEvent, Pressable, View } from 'react-native'
+import type { SwitchRootProps } from './types'
 
-const Root = React.forwardRef<PressableRef, SlottablePressableProps & SwitchRootProps>(
+const Root = React.forwardRef<
+  PressableRef,
+  SlottablePressableProps & SwitchRootProps
+>(
   (
     {
       asChild,
@@ -21,23 +24,28 @@ const Root = React.forwardRef<PressableRef, SlottablePressableProps & SwitchRoot
       onKeyDown: onKeyDownProp,
       ...props
     },
-    ref
+    ref,
   ) => {
     function onPress(ev: GestureResponderEvent) {
-      onCheckedChange(!checked);
-      onPressProp?.(ev);
+      onCheckedChange(!checked)
+      onPressProp?.(ev)
     }
 
     function onKeyDown(ev: React.KeyboardEvent) {
-      onKeyDownProp?.(ev);
+      onKeyDownProp?.(ev)
       if (ev.key === ' ') {
-        onCheckedChange(!checked);
+        onCheckedChange(!checked)
       }
     }
 
-    const Component = asChild ? Slot.Pressable : Pressable;
+    const Component = asChild ? Slot.Pressable : Pressable
     return (
-      <Switch.Root checked={checked} onCheckedChange={onCheckedChange} disabled={disabled} asChild>
+      <Switch.Root
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+        disabled={disabled}
+        asChild
+      >
         <Component
           ref={ref}
           disabled={disabled}
@@ -47,21 +55,23 @@ const Root = React.forwardRef<PressableRef, SlottablePressableProps & SwitchRoot
           {...props}
         />
       </Switch.Root>
-    );
-  }
-);
+    )
+  },
+)
 
-Root.displayName = 'RootWebSwitch';
+Root.displayName = 'RootWebSwitch'
 
-const Thumb = React.forwardRef<ViewRef, SlottableViewProps>(({ asChild, ...props }, ref) => {
-  const Component = asChild ? Slot.View : View;
-  return (
-    <Switch.Thumb asChild>
-      <Component ref={ref} {...props} />
-    </Switch.Thumb>
-  );
-});
+const Thumb = React.forwardRef<ViewRef, SlottableViewProps>(
+  ({ asChild, ...props }, ref) => {
+    const Component = asChild ? Slot.View : View
+    return (
+      <Switch.Thumb asChild>
+        <Component ref={ref} {...props} />
+      </Switch.Thumb>
+    )
+  },
+)
 
-Thumb.displayName = 'ThumbWebSwitch';
+Thumb.displayName = 'ThumbWebSwitch'
 
-export { Root, Thumb };
+export { Root, Thumb }

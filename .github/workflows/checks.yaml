@@ -5,8 +5,8 @@ on:
   - workflow_dispatch
 
 jobs:
-  build_api:
-    name: Build API
+  build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
@@ -39,8 +39,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build
+      - name: Build API
         run: pnpm api:build
+
+      - name: Expo export
+        env:
+          EXPO_USE_METRO_WORKSPACE_ROOT: 1
+        run: pnpm --filter @6pm/mobile run export
 
   lint:
     name: Lint

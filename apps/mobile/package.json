@@ -8,6 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "export": "expo export",
     "test": "jest --watchAll",
     "lint": "expo lint",
     "check": "biome check"

@@ -26,8 +26,8 @@ export async function updateWallet({
   id,
   data,
 }: {
-  id: string;
-  data: AccountFormValues;
+  id: string
+  data: AccountFormValues
 }) {
   const { balance, ...walletData } = data
   const hc = await getHonoClient()

@@ -1,4 +1,4 @@
-import * as Application from 'expo-application';
+import * as Application from 'expo-application'
 
 import { Logo } from '@/components/common/logo'
 import { MenuItem } from '@/components/common/menu-item'
@@ -91,7 +91,7 @@ export default function SettingsScreen() {
               }
             />
           </Link>
-          <Link href="/categories" asChild disabled>
+          <Link href="/categories" asChild>
             <MenuItem
               label={t(i18n)`Categories`}
               icon={ShapesIcon}
@@ -178,7 +178,9 @@ export default function SettingsScreen() {
             <MenuItem
               label={t(i18n)`Send feedback`}
               icon={MessageSquareQuoteIcon}
-              rightSection={<ChevronRightIcon className="w-5 h-5 text-primary" />}
+              rightSection={
+                <ChevronRightIcon className="w-5 h-5 text-primary" />
+              }
             />
           </Link>
           <MenuItem
@@ -226,7 +228,8 @@ export default function SettingsScreen() {
       <View className="items-center gap-3">
         <Logo className="w-16 h-16 mx-auto" />
         <Text className="font-medium text-muted-foreground text-sm">
-          {t(i18n)`ver.`}{Application.nativeApplicationVersion}
+          {t(i18n)`ver.`}
+          {Application.nativeApplicationVersion}
         </Text>
         <View className="flex-row gap-6">
           <Link href="/terms-of-service">

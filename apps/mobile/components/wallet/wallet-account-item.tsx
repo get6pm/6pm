@@ -1,4 +1,4 @@
-import type { UserWalletAccount } from '@6pm/api'
+import type { UserWalletAccount } from '@6pm/validation'
 import { Link } from 'expo-router'
 import { ChevronRightIcon } from 'lucide-react-native'
 import type { FC } from 'react'
@@ -13,10 +13,14 @@ type WalletAccountItemProps = {
 
 export const WalletAccountItem: FC<WalletAccountItemProps> = ({ data }) => {
   return (
-    <Link asChild push href={{
-      pathname: "/wallet/[walletId]",
-      params: { walletId: data.id }
-    }}>
+    <Link
+      asChild
+      push
+      href={{
+        pathname: '/wallet/[walletId]',
+        params: { walletId: data.id },
+      }}
+    >
       <MenuItem
         label={data.name}
         icon={() => (

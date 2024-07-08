@@ -67,6 +67,7 @@ export async function getWalletBalance({
 }: { wallet: UserWalletAccount }) {
   const balance = await prisma.transaction.aggregate({
     where: { walletAccountId: wallet.id },
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     _sum: { amount: true },
   })
 

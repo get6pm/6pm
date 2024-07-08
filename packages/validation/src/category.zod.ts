@@ -13,7 +13,6 @@ export const zCreateCategory = z.object({
 export type CreateCategory = z.infer<typeof zCreateCategory>
 
 export const zUpdateCategory = z.object({
-  type: CategoryTypeSchema.optional(),
   name: z
     .string()
     .min(1, {

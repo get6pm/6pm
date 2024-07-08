@@ -1,16 +1,16 @@
-import { currencies } from "@6pm/currency";
-import { BottomSheetFlatList, BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { t } from "@lingui/macro";
-import { useLingui } from "@lingui/react";
-import { SearchIcon } from "lucide-react-native";
-import { useState } from "react";
-import { View } from "react-native";
-import { Text } from "../ui/text";
-import { MenuItem } from "./menu-item";
+import { currencies } from '@6pm/currency'
+import { BottomSheetFlatList, BottomSheetTextInput } from '@gorhom/bottom-sheet'
+import { t } from '@lingui/macro'
+import { useLingui } from '@lingui/react'
+import { SearchIcon } from 'lucide-react-native'
+import { useState } from 'react'
+import { View } from 'react-native'
+import { Text } from '../ui/text'
+import { MenuItem } from './menu-item'
 
 type CurrencySheetListProps = {
-  onSelect: (currency: typeof currencies[number]) => void;
-  value: string;
+  onSelect: (currency: (typeof currencies)[number]) => void
+  value: string
 }
 
 export function CurrencySheetList({ onSelect, value }: CurrencySheetListProps) {
@@ -19,7 +19,10 @@ export function CurrencySheetList({ onSelect, value }: CurrencySheetListProps) {
 
   const filteredCurrencies = currencies.filter((currency) => {
     const search = searchValue.toLowerCase()
-    return currency.name.toLowerCase().includes(search) || currency.code.toLowerCase().includes(search)
+    return (
+      currency.name.toLowerCase().includes(search) ||
+      currency.code.toLowerCase().includes(search)
+    )
   })
 
   return (
@@ -36,7 +39,7 @@ export function CurrencySheetList({ onSelect, value }: CurrencySheetListProps) {
           <BottomSheetTextInput
             placeholder={t(i18n)`Search currency...`}
             placeholderClassName="text-muted-foreground font-sans"
-            className='mb-3 pl-11 web:flex h-11 web:w-full rounded-md border border-input bg-background px-3 web:py-2 text-sm lg:text-sm native:text-base native:leading-[1.25] text-foreground placeholder:text-muted-foreground web:ring-offset-background file:border-0 file:bg-transparent file:font-medium web:focus-visible:outline-none web:focus-visible:ring-2 font-sans web:focus-visible:ring-ring web:focus-visible:ring-offset-2'
+            className="mb-3 pl-11 web:flex h-11 web:w-full rounded-md border border-input bg-background px-3 web:py-2 text-sm lg:text-sm native:text-base native:leading-[1.25] text-foreground placeholder:text-muted-foreground web:ring-offset-background file:border-0 file:bg-transparent file:font-medium web:focus-visible:outline-none web:focus-visible:ring-2 font-sans web:focus-visible:ring-ring web:focus-visible:ring-offset-2"
             value={searchValue}
             onChangeText={setSearchValue}
           />
@@ -47,11 +50,7 @@ export function CurrencySheetList({ onSelect, value }: CurrencySheetListProps) {
           label={item.name}
           onPress={() => onSelect(item)}
           className={item.code === value ? 'bg-muted' : ''}
-          rightSection={
-            <Text>
-              {item.code}
-            </Text>
-          }
+          rightSection={<Text>{item.code}</Text>}
         />
       )}
     />

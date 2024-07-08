@@ -79,7 +79,9 @@ const Trigger = React.forwardRef<
     const { onValueChange, value: rootValue, nativeID } = useRootContext()
 
     function onPress(ev: GestureResponderEvent) {
-      if (disabled) { return }
+      if (disabled) {
+        return
+      }
       onValueChange(tabValue)
       onPressProp?.(ev)
     }

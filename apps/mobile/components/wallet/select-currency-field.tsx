@@ -45,7 +45,9 @@ export function SelectCurrencyField({
             enableTouchThrough
           />
         )}
-        containerComponent={(props) => <FullWindowOverlay>{props.children}</FullWindowOverlay>}
+        containerComponent={(props) => (
+          <FullWindowOverlay>{props.children}</FullWindowOverlay>
+        )}
       >
         <CurrencySheetList
           value={value}

@@ -1,6 +1,6 @@
-import { useRouter } from "expo-router";
-import { ArrowLeftIcon } from "lucide-react-native";
-import { Button } from "../ui/button";
+import { useRouter } from 'expo-router'
+import { ArrowLeftIcon } from 'lucide-react-native'
+import { Button } from '../ui/button'
 
 export function BackButton() {
   const router = useRouter()
@@ -8,8 +8,8 @@ export function BackButton() {
     return null
   }
   return (
-    <Button size='icon' variant='ghost' onPress={router.back}>
-      <ArrowLeftIcon className='w-6 h-6 text-primary' />
+    <Button size="icon" variant="ghost" onPress={router.back}>
+      <ArrowLeftIcon className="w-6 h-6 text-primary" />
     </Button>
   )
 }

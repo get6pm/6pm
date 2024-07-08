@@ -25,7 +25,7 @@ export default function LoginScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <Trans>
-        <View className='gap-4'>
+        <View className="gap-4">
           <Text className="text-3xl text-primary font-semibold font-sans">
             Manage your expense seamlessly
           </Text>
@@ -38,10 +38,7 @@ export default function LoginScreen() {
       <View className="flex flex-col gap-3">
         <AppleAuthButton />
         <GoogleAuthButton />
-        <Button
-          variant="outline"
-          onPress={() => setWithEmail(true)}
-        >
+        <Button variant="outline" onPress={() => setWithEmail(true)}>
           <MailIcon className="w-5 h-5 text-primary" />
           <Text>{t(i18n)`Continue with Email`}</Text>
         </Button>

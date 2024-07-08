@@ -1,7 +1,4 @@
-import {
-  zCreateTransaction,
-  zUpdateTransaction,
-} from '@6pm/validation'
+import { zCreateTransaction, zUpdateTransaction } from '@6pm/validation'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { z } from 'zod'

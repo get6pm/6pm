@@ -77,13 +77,12 @@ export async function updateCategory({
   category: Category
   data: UpdateCategory
 }) {
-  const { name, type, color, description, icon } = data
+  const { name, color, description, icon } = data
 
   const updatedCategory = await prisma.category.update({
     where: { id: category.id },
     data: {
       name,
-      type,
       color,
       description,
       icon,

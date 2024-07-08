@@ -8,7 +8,9 @@ import { Alert, View } from 'react-native'
 
 export default function CreateCategoryScreen() {
   const router = useRouter()
-  const { type } = useLocalSearchParams<{ type?: CategoryTypeType }>()
+  const { type = 'EXPENSE' } = useLocalSearchParams<{
+    type?: CategoryTypeType
+  }>()
   const queryClient = useQueryClient()
   const { mutateAsync } = useMutation({
     mutationFn: createCategory,

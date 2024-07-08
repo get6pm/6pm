@@ -14,7 +14,7 @@ export const CategoryItem: FC<CategoryItemProps> = ({ category }) => {
       asChild
       push
       href={{
-        pathname: '/categories/[categoryId]',
+        pathname: '/category/[categoryId]',
         params: { categoryId: category.id },
       }}
     >

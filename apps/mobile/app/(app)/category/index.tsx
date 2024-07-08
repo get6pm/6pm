@@ -54,7 +54,7 @@ export default function CategoriesScreen() {
             label={t(i18n)`New ${section.key.toLowerCase()}`}
             onPress={() =>
               router.push({
-                pathname: '/categories/new-category',
+                pathname: '/category/new-category',
                 params: { type: section.key },
               })
             }

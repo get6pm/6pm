@@ -94,11 +94,11 @@ export default function AuthenticatedLayout() {
         }}
       />
       <Stack.Screen
-        name="categories/index"
+        name="category/index"
         options={{
           headerTitle: t(i18n)`Categories`,
           headerRight: () => (
-            <Link href="/categories/new-category" asChild>
+            <Link href="/category/new-category" asChild>
               <Button size="icon" variant="ghost">
                 <PlusIcon className="size-6 text-primary" />
               </Button>
@@ -107,10 +107,17 @@ export default function AuthenticatedLayout() {
         }}
       />
       <Stack.Screen
-        name="categories/new-category"
+        name="category/new-category"
         options={{
           presentation: 'modal',
           headerTitle: t(i18n)`New category`,
+        }}
+      />
+      <Stack.Screen
+        name="category/[categoryId]"
+        options={{
+          // presentation: 'modal',
+          headerTitle: t(i18n)`Edit category`,
         }}
       />
     </Stack>

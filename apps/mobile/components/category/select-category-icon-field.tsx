@@ -1,17 +1,27 @@
 import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 
-import { WALLET_ICONS } from '@/lib/icons/wallet-icons'
+import {
+  CATEGORY_EXPENSE_ICONS,
+  CATEGORY_INCOME_ICONS,
+} from '@/lib/icons/category-icons'
+import { sleep } from '@/lib/utils'
+import type { CategoryTypeType } from '@6pm/validation'
 import { useController } from 'react-hook-form'
 import { Keyboard } from 'react-native'
+import { FullWindowOverlay } from 'react-native-screens'
 import GenericIcon from '../common/generic-icon'
 import { IconGridSheet } from '../common/icon-grid-sheet'
 import { Button } from '../ui/button'
 
 export function SelectCategoryIconField({
   onSelect,
+  disabled,
+  type,
 }: {
   onSelect?: (currency: string) => void
+  disabled?: boolean
+  type: CategoryTypeType
 }) {
   const sheetRef = useRef<BottomSheetModal>(null)
   const {
@@ -19,10 +29,16 @@ export function SelectCategoryIconField({
     // fieldState,
   } = useController({ name: 'icon' })
 
+  const icons = useMemo(
+    () => (type === 'EXPENSE' ? CATEGORY_EXPENSE_ICONS : CATEGORY_INCOME_ICONS),
+    [type],
+  )
+
   return (
     <>
       <Button
         variant="ghost"
+        disabled={disabled}
         onPress={() => {
           Keyboard.dismiss()
           sheetRef.current?.present()
@@ -36,6 +52,7 @@ export function SelectCategoryIconField({
         index={0}
         enableDynamicSizing
         enablePanDownToClose
+        enableDismissOnClose
         keyboardBehavior="extend"
         backdropComponent={(props) => (
           <BottomSheetBackdrop
@@ -45,13 +62,17 @@ export function SelectCategoryIconField({
             enableTouchThrough
           />
         )}
+        containerComponent={(props) => (
+          <FullWindowOverlay>{props.children}</FullWindowOverlay>
+        )}
       >
         <IconGridSheet
-          icons={WALLET_ICONS}
+          icons={icons}
           value={value}
-          onSelect={(icon) => {
-            onChange(icon)
+          onSelect={async (icon) => {
             sheetRef.current?.close()
+            await sleep(500)
+            onChange(icon)
             onBlur()
             onSelect?.(icon)
           }}

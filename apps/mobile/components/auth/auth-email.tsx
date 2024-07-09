@@ -136,7 +136,7 @@ export function AuthEmail() {
             autoCapitalize="none"
             autoFocus
             editable={!verifying}
-            onEndEditing={authEmailForm.handleSubmit(onContinue)}
+            onSubmitEditing={authEmailForm.handleSubmit(onContinue)}
             rightSection={
               verifying && (
                 <Button

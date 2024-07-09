@@ -116,7 +116,7 @@ export default function AuthenticatedLayout() {
       <Stack.Screen
         name="category/[categoryId]"
         options={{
-          // presentation: 'modal',
+          presentation: 'modal',
           headerTitle: t(i18n)`Edit category`,
         }}
       />

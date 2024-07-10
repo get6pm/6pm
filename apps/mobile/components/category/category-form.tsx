@@ -1,8 +1,12 @@
+import {
+  CATEGORY_EXPENSE_ICONS,
+  CATEGORY_INCOME_ICONS,
+} from '@/lib/icons/category-icons'
 import { type CategoryFormValues, zCategoryFormValues } from '@6pm/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { View } from 'react-native'
 import type { TextInput } from 'react-native'
@@ -30,12 +34,23 @@ export const CategoryForm = ({
     resolver: zodResolver(zCategoryFormValues),
     defaultValues: {
       name: '',
-      icon: 'CreditCard',
+      icon:
+        defaultValues?.type === 'INCOME'
+          ? CATEGORY_INCOME_ICONS[0]
+          : CATEGORY_EXPENSE_ICONS[0],
       ...defaultValues,
       type: defaultValues?.type || 'EXPENSE',
     },
   })
   const type = categoryForm.watch('type')
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    categoryForm.setValue(
+      'icon',
+      type === 'INCOME' ? CATEGORY_INCOME_ICONS[0] : CATEGORY_EXPENSE_ICONS[0],
+    )
+  }, [type])
 
   const isTypeHidden = hiddenFields.includes('type')
 

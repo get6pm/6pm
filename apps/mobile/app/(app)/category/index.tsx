@@ -7,11 +7,13 @@ import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { useRouter } from 'expo-router'
 import { SectionList } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function CategoriesScreen() {
   const { i18n } = useLingui()
   const router = useRouter()
   const { data: categories = [], isLoading, refetch } = useCategories()
+  const { bottom } = useSafeAreaInsets()
 
   const incomeCategories = categories.filter(
     (category) => category.type === 'INCOME',
@@ -27,14 +29,15 @@ export default function CategoriesScreen() {
 
   return (
     <SectionList
-      className="py-3 bg-card flex-1"
+      className="bg-card flex-1"
+      contentContainerStyle={{ paddingBottom: bottom }}
       refreshing={isLoading}
       onRefresh={refetch}
       sections={sections}
       keyExtractor={(item) => item.id}
       renderItem={({ item: category }) => <CategoryItem category={category} />}
       renderSectionHeader={({ section: { title } }) => (
-        <Text className="text-muted-foreground mx-6">{title}</Text>
+        <Text className="text-muted-foreground mx-6 bg-card py-2">{title}</Text>
       )}
       renderSectionFooter={({ section }) => (
         <>

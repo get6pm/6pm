@@ -14,6 +14,7 @@ import { SplashScreen, Stack } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
 
 import 'react-native-reanimated'
+import { ToastRoot } from '@/components/common/toast'
 import { useWarmUpBrowser } from '@/hooks/use-warm-up-browser'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { queryClient } from '@/lib/client'
@@ -85,6 +86,7 @@ export default function RootLayout() {
                       }}
                     />
                   </Stack>
+                  <ToastRoot />
                 </BottomSheetModalProvider>
               </GestureHandlerRootView>
             </SafeAreaProvider>

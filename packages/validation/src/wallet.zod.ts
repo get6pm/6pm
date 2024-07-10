@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { UserWalletAccountSchema } from './prisma'
 
 export const zCreateWallet = z.object({
   name: z.string(),
@@ -22,3 +23,11 @@ export const zAccountFormValues = zCreateWallet.extend({
   balance: z.number({ coerce: true }).positive().optional(),
 })
 export type AccountFormValues = z.infer<typeof zAccountFormValues>
+
+export const WalletAccountWithBalanceSchema = UserWalletAccountSchema.extend({
+  balance: z.number({ coerce: true }).optional(),
+})
+
+export type WalletAccountWithBalance = z.infer<
+  typeof WalletAccountWithBalanceSchema
+>

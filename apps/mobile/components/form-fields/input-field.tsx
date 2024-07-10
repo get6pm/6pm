@@ -45,7 +45,7 @@ export const InputField = forwardRef(
             ref={ref}
             onChangeText={onChange}
             onBlur={onBlur}
-            value={value}
+            value={value?.toString()}
             className={cn(
               className,
               leftSection && 'pl-10',

@@ -1,6 +1,6 @@
 import { sleep } from '@/lib/utils'
 import { useWallets } from '@/queries/wallet'
-import type { UserWalletAccount } from '@6pm/validation'
+import type { WalletAccountWithBalance } from '@6pm/validation'
 import {
   BottomSheetBackdrop,
   BottomSheetFlatList,
@@ -20,7 +20,7 @@ import { Text } from '../ui/text'
 export function SelectAccountField({
   onSelect,
 }: {
-  onSelect?: (walletAccount: UserWalletAccount) => void
+  onSelect?: (walletAccount: WalletAccountWithBalance) => void
 }) {
   const { bottom } = useSafeAreaInsets()
   const { data: walletAccounts, isLoading } = useWallets()

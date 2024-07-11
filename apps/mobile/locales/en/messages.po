@@ -13,76 +13,131 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:65
+#: apps/mobile/components/transaction/transaction-item.tsx:29
+msgid "{0}"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:135
 msgid "{language}"
 msgstr ""
 
-#: apps/mobile/app/(auth)/login.tsx:26
+#: apps/mobile/app/(auth)/login.tsx:27
 msgid "<0><1>Manage your expense seamlessly</1><2>Let <3>6pm</3> a good time to spend</2></0>"
 msgstr ""
 
-#: apps/mobile/app/(auth)/login.tsx:49
+#: apps/mobile/app/(auth)/login.tsx:48
 msgid "<0>By continuing, you acknowledge that you understand and agree to the <1><2>Terms & Conditions</2></1> and <3><4>Privacy Policy</4></3></0>"
 msgstr ""
 
-#: apps/mobile/components/home/header.tsx:30
+#: apps/mobile/components/wallet/account-form.tsx:59
+msgid "0.00"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/index.tsx:100
+msgid "Add your first transaction here"
+msgstr ""
+
+#: apps/mobile/components/home/header.tsx:33
 msgid "All Accounts"
 msgstr ""
 
-#: apps/mobile/components/auth/auth-email.tsx:87
+#: apps/mobile/components/auth/auth-email.tsx:86
 msgid "An error occurred"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:49
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:116
 msgid "App settings"
 msgstr ""
 
-#: apps/mobile/app/(app)/appearance.tsx:15
+#: apps/mobile/app/(app)/appearance.tsx:16
 msgid "App theme"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:44
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:53
+#: apps/mobile/app/(app)/_layout.tsx:67
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:121
 msgid "Appearance"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:80
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:207
 msgid "Are you sure you want to sign out?"
 msgstr ""
 
-#: apps/mobile/components/common/toolbar.tsx:14
+#: apps/mobile/components/common/toolbar.tsx:15
 msgid "Ask AI anything..."
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/_layout.tsx:42
+#: apps/mobile/components/wallet/account-form.tsx:58
+msgid "Balance"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/_layout.tsx:47
 msgid "Budgets"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:82
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:209
+#: apps/mobile/app/(app)/wallet/[walletId].tsx:68
 msgid "Cancel"
 msgstr ""
 
-#: apps/mobile/app/(app)/appearance.tsx:18
+#: apps/mobile/app/(app)/_layout.tsx:99
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:96
+msgid "Categories"
+msgstr ""
+
+#: apps/mobile/components/category/category-form.tsx:64
+msgid "Category name"
+msgstr ""
+
+#: apps/mobile/app/(app)/appearance.tsx:19
 msgid "Choose a preferred theme for the 6pm"
 msgstr ""
 
-#: apps/mobile/components/auth/auth-email.tsx:158
+#: apps/mobile/components/auth/auth-email.tsx:160
 msgid "Continue"
 msgstr ""
 
-#: apps/mobile/app/(auth)/login.tsx:41
+#: apps/mobile/app/(auth)/login.tsx:43
 msgid "Continue with Email"
+msgstr ""
+
+#: apps/mobile/components/home/wallet-statistics.tsx:25
+msgid "Current balance"
 msgstr ""
 
 #: apps/mobile/app/(app)/appearance.tsx:33
 msgid "Dark"
 msgstr ""
 
-#: apps/mobile/components/auth/auth-email.tsx:134
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:144
+msgid "Default currency"
+msgstr ""
+
+#: apps/mobile/app/(app)/wallet/[walletId].tsx:72
+msgid "Delete"
+msgstr ""
+
+#: apps/mobile/app/(app)/wallet/[walletId].tsx:62
+msgid "Delete wallet account will also delete all related transactions!"
+msgstr ""
+
+#: apps/mobile/app/(app)/_layout.tsx:93
+msgid "Edit account"
+msgstr ""
+
+#: apps/mobile/app/(app)/_layout.tsx:120
+msgid "Edit category"
+msgstr ""
+
+#: apps/mobile/components/auth/auth-email.tsx:133
 msgid "Email"
 msgstr ""
 
-#: apps/mobile/app/(app)/language.tsx:20
+#: apps/mobile/app/(app)/category/index.tsx:53
+#: apps/mobile/app/(app)/wallet/accounts.tsx:39
+msgid "empty"
+msgstr ""
+
+#: apps/mobile/app/(app)/language.tsx:17
 msgid "English"
 msgstr ""
 
@@ -90,60 +145,207 @@ msgstr ""
 msgid "Enter the code sent to your email"
 msgstr ""
 
-#: apps/mobile/components/auth/auth-email.tsx:135
+#: apps/mobile/components/auth/auth-email.tsx:134
 msgid "Enter your email address"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:60
-#: apps/mobile/app/(app)/language.tsx:17
+#: apps/mobile/components/category/category-form.tsx:95
+msgid "Expense"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:82
+msgid "General"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:72
+msgid "Get 6pm Pro"
+msgstr ""
+
+#: apps/mobile/components/category/category-form.tsx:101
+msgid "Income"
+msgstr ""
+
+#: apps/mobile/app/(app)/_layout.tsx:62
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:130
 msgid "Language"
 msgstr ""
 
-#: apps/mobile/app/(app)/appearance.tsx:28
+#: apps/mobile/app/(app)/appearance.tsx:29
 msgid "Light"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:75
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:157
+msgid "Login using FaceID"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:105
+msgid "Magic inbox"
+msgstr ""
+
+#: apps/mobile/components/category/category-form.tsx:63
+#: apps/mobile/components/wallet/account-form.tsx:41
+msgid "Name"
+msgstr ""
+
+#: apps/mobile/app/(app)/category/index.tsx:57
+msgid "New {0}"
+msgstr ""
+
+#: apps/mobile/app/(app)/_layout.tsx:86
+#: apps/mobile/app/(app)/wallet/accounts.tsx:26
+msgid "New account"
+msgstr ""
+
+#: apps/mobile/app/(app)/_layout.tsx:113
+msgid "New category"
+msgstr ""
+
+#: apps/mobile/components/transaction/transaction-form.tsx:84
+msgid "No budget selected"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:174
 msgid "Others"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/_layout.tsx:50
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:242
+msgid "Privacy policy"
+msgstr ""
+
+#: apps/mobile/app/(aux)/_layout.tsx:33
+msgid "Privacy Policy"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:199
+msgid "Proudly open source"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:164
+msgid "Push notifications"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:187
+msgid "Rate 6pm on App Store"
+msgstr ""
+
+#: apps/mobile/components/category/category-form.tsx:115
+#: apps/mobile/components/transaction/select-date-field.tsx:46
+#: apps/mobile/components/transaction/transaction-form.tsx:113
+#: apps/mobile/components/wallet/account-form.tsx:73
+msgid "Save"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/_layout.tsx:55
 msgid "Scanner"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/_layout.tsx:58
+#: apps/mobile/components/common/currency-sheet.tsx:40
+msgid "Search currency..."
+msgstr ""
+
+#: apps/mobile/components/transaction/select-account-field.tsx:57
+msgid "Select account"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:179
+msgid "Send feedback"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/_layout.tsx:63
 msgid "Settings"
 msgstr ""
 
-#: apps/mobile/components/auth/auth-email.tsx:178
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:193
+msgid "Share with friends"
+msgstr ""
+
+#: apps/mobile/components/auth/auth-email.tsx:179
 msgid "Sign in"
 msgstr ""
 
-#: apps/mobile/components/auth/auth-social.tsx:60
+#: apps/mobile/components/auth/auth-social.tsx:67
 msgid "Sign in with Apple"
 msgstr ""
 
-#: apps/mobile/components/auth/auth-social.tsx:49
+#: apps/mobile/components/auth/auth-social.tsx:56
 msgid "Sign in with Google"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:78
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:86
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:213
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:223
 msgid "Sign out"
 msgstr ""
 
-#: apps/mobile/components/auth/auth-email.tsx:178
+#: apps/mobile/components/auth/auth-email.tsx:179
 msgid "Sign up"
 msgstr ""
 
 #: apps/mobile/app/(app)/appearance.tsx:38
-msgid "System"
+#~ msgid "System"
+#~ msgstr ""
+
+#: apps/mobile/app/(aux)/_layout.tsx:40
+msgid "Terms & Conditions"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:237
+msgid "Terms of use"
+msgstr ""
+
+#: apps/mobile/lib/date.tsx:10
+msgid "Today"
+msgstr ""
+
+#: apps/mobile/lib/date.tsx:18
+msgid "Tomorrow"
+msgstr ""
+
+#: apps/mobile/app/(app)/new-record.tsx:25
+msgid "Transaction created"
+msgstr ""
+
+#: apps/mobile/components/transaction/transaction-form.tsx:89
+msgid "transaction note"
+msgstr ""
+
+#: apps/mobile/components/category/category-form.tsx:80
+msgid "Type"
+msgstr ""
+
+#: apps/mobile/components/transaction/select-category-field.tsx:65
+#: apps/mobile/components/transaction/transaction-item.tsx:31
+msgid "Uncategorized"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:75
+msgid "Unlocks full AI power and more!"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:231
+msgid "ver."
 msgstr ""
 
 #: apps/mobile/components/auth/auth-email.tsx:170
 msgid "Verification code"
 msgstr ""
 
-#: apps/mobile/app/(app)/language.tsx:28
+#: apps/mobile/app/(app)/language.tsx:29
 msgid "Vietnamese"
+msgstr ""
+
+#: apps/mobile/components/wallet/account-form.tsx:42
+msgid "Wallet account name"
+msgstr ""
+
+#: apps/mobile/app/(app)/_layout.tsx:72
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:87
+msgid "Wallet accounts"
+msgstr ""
+
+#: apps/mobile/components/transaction/select-account-field.tsx:90
+msgid "Wallet Accounts"
+msgstr ""
+
+#: apps/mobile/lib/date.tsx:14
+msgid "Yesterday"
 msgstr ""

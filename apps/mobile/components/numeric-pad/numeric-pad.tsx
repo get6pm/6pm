@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils'
 import { DeleteIcon } from 'lucide-react-native'
 import { View } from 'react-native'
+import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
@@ -50,15 +51,15 @@ export function NumericPad({
   }
 
   return (
-    <View
+    <Animated.View
       className={cn(
-        'flex-wrap bg-card flex-row border-t border-border items-center content-center p-2',
+        'flex-wrap bg-card flex-row border-t border-border items-center content-center py-1.5 px-2',
         className,
       )}
       style={{ paddingBottom: bottom }}
     >
       {buttonKeys.map((buttonKey) => (
-        <View key={buttonKey} className="w-[33.33%] p-2">
+        <View key={buttonKey} className="w-[33.33%] p-1.5">
           <Button
             disabled={disabled}
             onPress={() => handleKeyPress(buttonKey)}
@@ -69,7 +70,7 @@ export function NumericPad({
           </Button>
         </View>
       ))}
-      <View className="w-[33.33%] p-2">
+      <View className="w-[33.33%] p-1.5">
         <Button
           disabled={disabled}
           onPress={handleDelete}
@@ -80,6 +81,6 @@ export function NumericPad({
           <DeleteIcon className="size-8 text-primary" />
         </Button>
       </View>
-    </View>
+    </Animated.View>
   )
 }

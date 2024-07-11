@@ -19,3 +19,6 @@ export const zUpdateTransaction = z.object({
   walletAccountId: z.string().optional(),
 })
 export type UpdateTransaction = z.infer<typeof zUpdateTransaction>
+
+export const zTransactionFormValues = zCreateTransaction
+export type TransactionFormValues = z.infer<typeof zTransactionFormValues>

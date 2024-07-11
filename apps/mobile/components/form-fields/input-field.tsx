@@ -11,6 +11,7 @@ type InputFieldProps = TextInputProps & {
   leftSection?: React.ReactNode
   rightSection?: React.ReactNode
   disabled?: boolean
+  wrapperClassName?: string
 }
 
 export const InputField = forwardRef(
@@ -21,6 +22,7 @@ export const InputField = forwardRef(
       leftSection,
       rightSection,
       className,
+      wrapperClassName,
       disabled,
       ...props
     }: InputFieldProps,
@@ -31,7 +33,7 @@ export const InputField = forwardRef(
       fieldState,
     } = useController({ name })
     return (
-      <View className="gap-1">
+      <View className={cn('gap-1', wrapperClassName)}>
         {!!label && <Label nativeID={`label-${name}`}>{label}</Label>}
         <View>
           {leftSection && (

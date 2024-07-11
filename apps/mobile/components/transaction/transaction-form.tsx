@@ -5,7 +5,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { Calendar, LandPlot, XIcon } from 'lucide-react-native'
+import { LandPlot, XIcon } from 'lucide-react-native'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { ScrollView, View } from 'react-native'
 import Animated, {
@@ -20,6 +20,7 @@ import { Button } from '../ui/button'
 import { Text } from '../ui/text'
 import { SelectAccountField } from './select-account-field'
 import { SelectCategoryField } from './select-category-field'
+import { SelectDateField } from './select-date-field'
 
 type TransactionFormProps = {
   onSubmit: (data: TransactionFormValues) => void
@@ -63,10 +64,7 @@ export const TransactionForm = ({
         contentContainerClassName="flex-1 justify-between bg-muted"
       >
         <View className="flex-row justify-between items-center p-6 pb-0">
-          <Button variant="outline" className="!px-3">
-            <Calendar className="w-5 h-5 text-primary" />
-            <Text>Today</Text>
-          </Button>
+          <SelectDateField />
           <Button size="icon" variant="secondary" onPress={onCancel}>
             <XIcon className="size-6 text-primary" />
           </Button>

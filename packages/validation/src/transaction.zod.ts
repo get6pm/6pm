@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { CategorySchema, TransactionSchema } from './prisma'
 
 export const zCreateTransaction = z.object({
   date: z.date({ coerce: true }),
@@ -24,3 +25,10 @@ export type UpdateTransaction = z.infer<typeof zUpdateTransaction>
 
 export const zTransactionFormValues = zCreateTransaction
 export type TransactionFormValues = z.infer<typeof zTransactionFormValues>
+
+export const TransactionPopulatedSchema = TransactionSchema.extend({
+  category: CategorySchema.nullable().optional(),
+  amount: z.number({ coerce: true }),
+})
+
+export type TransactionPopulated = z.infer<typeof TransactionPopulatedSchema>

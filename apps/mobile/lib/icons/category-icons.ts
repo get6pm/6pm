@@ -71,3 +71,8 @@ export const CATEGORY_INCOME_ICONS: Array<keyof typeof icons> = [
   'BriefcaseBusiness',
   'Building2',
 ].reverse() as Array<keyof typeof icons>
+
+export const TRANSACTION_ICONS: Record<string, keyof typeof icons> = {
+  'Initial balance': 'WalletMinimal',
+  'Adjust balance': 'TrendingUp',
+}

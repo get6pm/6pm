@@ -26,6 +26,7 @@ import {
   ThemeProvider,
 } from '@react-navigation/native'
 import { QueryClientProvider } from '@tanstack/react-query'
+import { LinearGradient } from 'expo-linear-gradient'
 import { cssInterop } from 'nativewind'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -35,6 +36,11 @@ cssInterop(Svg, {
   className: {
     target: 'style',
     nativeStyleToProp: { width: true, height: true },
+  },
+})
+cssInterop(LinearGradient, {
+  className: {
+    target: 'style',
   },
 })
 

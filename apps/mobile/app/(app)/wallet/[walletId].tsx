@@ -109,7 +109,7 @@ export default function EditAccountScreen() {
         defaultValues={{
           name: walletAccount.name,
           preferredCurrency: walletAccount.preferredCurrency,
-          balance: walletAccount.balance as number,
+          balance: walletAccount.balance,
           icon: walletAccount.icon ?? 'CreditCard',
           description: walletAccount.description ?? '',
           lastDigits: walletAccount.lastDigits ?? '',

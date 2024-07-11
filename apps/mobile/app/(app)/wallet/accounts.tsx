@@ -17,13 +17,7 @@ export default function WalletAccountsScreen() {
       className="bg-card"
       contentContainerClassName="py-3"
       data={walletAccounts}
-      renderItem={({ item }) => (
-        <WalletAccountItem
-          // Date is typed as string in rpc output, not sure why
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          data={item as any}
-        />
-      )}
+      renderItem={({ item }) => <WalletAccountItem data={item} />}
       keyExtractor={(item) => item.id}
       refreshing={isLoading}
       onRefresh={refetch}

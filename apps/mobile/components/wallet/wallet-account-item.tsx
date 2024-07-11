@@ -1,4 +1,4 @@
-import type { UserWalletAccount } from '@6pm/validation'
+import type { WalletAccountWithBalance } from '@6pm/validation'
 import { Link } from 'expo-router'
 import { ChevronRightIcon } from 'lucide-react-native'
 import type { FC } from 'react'
@@ -8,7 +8,7 @@ import { MenuItem } from '../common/menu-item'
 import { Text } from '../ui/text'
 
 type WalletAccountItemProps = {
-  data: UserWalletAccount & { balance: number }
+  data: WalletAccountWithBalance
 }
 
 export const WalletAccountItem: FC<WalletAccountItemProps> = ({ data }) => {

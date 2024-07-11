@@ -1,4 +1,5 @@
 import { getHonoClient } from '@/lib/client'
+import { UserWalletAccountSchema } from '@6pm/validation'
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import { useQuery } from '@tanstack/react-query'
 
@@ -11,7 +12,11 @@ export const walletQueries = createQueryKeys('wallet', {
       if (!res.ok) {
         throw new Error(await res.text())
       }
-      return await res.json()
+      const rawResult = await res.json()
+      const result = rawResult.map((item) =>
+        UserWalletAccountSchema.parse(item),
+      )
+      return result
     },
   }),
 })

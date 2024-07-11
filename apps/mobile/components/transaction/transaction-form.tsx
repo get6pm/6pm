@@ -5,13 +5,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import {
-  Calendar,
-  CreditCard,
-  LandPlot,
-  ShapesIcon,
-  XIcon,
-} from 'lucide-react-native'
+import { Calendar, LandPlot, ShapesIcon, XIcon } from 'lucide-react-native'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { ScrollView, View } from 'react-native'
 import Animated, {
@@ -24,6 +18,7 @@ import { NumericPad } from '../numeric-pad'
 import { TextTicker } from '../text-ticker'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
+import { SelectAccountField } from './select-account-field'
 
 type TransactionFormProps = {
   onSubmit: (data: TransactionFormValues) => void
@@ -50,7 +45,7 @@ export const TransactionForm = ({
     defaultValues: {
       date: new Date(),
       amount: 0,
-      currency: 'VND',
+      currency: 'USD',
       note: '',
       ...defaultValues,
     },
@@ -102,13 +97,14 @@ export const TransactionForm = ({
         <Animated.View style={translateStyle}>
           <View className="flex-row items-center justify-between bg-card border-t border-border p-2">
             <View className="flex-row items-center gap-2">
-              <Button
-                variant="secondary"
-                className="border border-border !px-3"
-              >
-                <CreditCard className="w-5 h-5 text-primary" />
-                <Text>{t(i18n)`Credit Card`}</Text>
-              </Button>
+              <SelectAccountField
+                onSelect={(walletAccount) => {
+                  transactionForm.setValue(
+                    'currency',
+                    walletAccount.preferredCurrency,
+                  )
+                }}
+              />
               <Button
                 variant="secondary"
                 className="border border-border !px-3"

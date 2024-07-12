@@ -6,11 +6,11 @@
     Manage your expense seamlessly
     <br />
     <br />
-    <a href="https://t.me/+GxxX3uOH-4tkZDll">Telegram</a>
+    <a href="https://discord.gg/RsANf429aQ">Discord</a>
     ·
-    <a href="https://6pm.ai">Website</a>
+    <a href="https://get6pm.com">Website</a>
     ·
-    <a href="https://github.com/sixpm-ai/6pm/issues">Issues</a>
+    <a href="https://github.com/get6pm/6pm/issues">Issues</a>
   </p>
 </p>
 

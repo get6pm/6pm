@@ -16,7 +16,7 @@
 
 ## Under active development
 
-> We are focusing on a stable MVP release in the coming weeks. In the meantime, join our <a href="https://t.me/+GxxX3uOH-4tkZDll">Telegram</a> to say hi and stay updated on the latest developments.
+> We are focusing on a stable MVP release in the coming weeks. In the meantime, join our <a href="https://discord.gg/RsANf429aQ">Discord</a> to say hi and stay updated on the latest developments.
 
 ## About 6pm
 

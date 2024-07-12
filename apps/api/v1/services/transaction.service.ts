@@ -170,7 +170,7 @@ export async function listTransactions({
   const transactions = await prisma.transaction.findMany({
     where: {
       ...query,
-      createdAt: {
+      date: {
         ...(pagination.before && {
           lt: pagination.before,
         }),
@@ -180,9 +180,12 @@ export async function listTransactions({
       },
     },
     orderBy: {
-      createdAt: 'desc',
+      date: 'desc',
     },
     take: pagination.first || pagination.last,
+    include: {
+      category: true,
+    },
   })
 
   const totalCount = await prisma.transaction.count({
@@ -193,10 +196,10 @@ export async function listTransactions({
     hasMore: transactions.length > (pagination.first || pagination.last || 0),
     totalCount,
     ...(pagination.first && {
-      before: transactions[0]?.createdAt,
+      before: transactions[0]?.date,
     }),
     ...(pagination.last && {
-      after: transactions[transactions.length - 1]?.createdAt,
+      after: transactions[transactions.length - 1]?.date,
     }),
   }
 

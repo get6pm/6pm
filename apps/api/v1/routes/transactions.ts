@@ -26,10 +26,10 @@ const router = new Hono()
       z.object({
         wallet_id: z.string().optional(),
         budget_id: z.string().optional(),
-        before: z.date().optional(),
-        after: z.date().optional(),
-        first: z.number().optional(),
-        last: z.number().optional(),
+        before: z.date({ coerce: true }).optional(),
+        after: z.date({ coerce: true }).optional(),
+        first: z.number({ coerce: true }).optional(),
+        last: z.number({ coerce: true }).optional(),
       }),
     ),
     async (c) => {

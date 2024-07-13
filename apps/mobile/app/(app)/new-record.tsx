@@ -1,10 +1,11 @@
 import { toast } from '@/components/common/toast'
 import { TransactionForm } from '@/components/transaction/transaction-form'
 import { createTransaction } from '@/mutations/transaction'
-import { useWallets } from '@/queries/wallet'
+import { transactionQueries } from '@/queries/transaction'
+import { useWallets, walletQueries } from '@/queries/wallet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import { LoaderIcon } from 'lucide-react-native'
 import { Alert, View } from 'react-native'
@@ -13,7 +14,7 @@ export default function NewRecordScreen() {
   const router = useRouter()
   const { data: walletAccounts } = useWallets()
   const { i18n } = useLingui()
-  // const queryClient = useQueryClient()
+  const queryClient = useQueryClient()
   const { mutateAsync } = useMutation({
     mutationFn: createTransaction,
     onError(error) {
@@ -24,9 +25,12 @@ export default function NewRecordScreen() {
       toast.success(t(i18n)`Transaction created`)
     },
     async onSettled() {
-      // await queryClient.invalidateQueries({
-      //   queryKey: transactionQueries.list._def,
-      // })
+      await queryClient.invalidateQueries({
+        queryKey: transactionQueries.all,
+      })
+      await queryClient.invalidateQueries({
+        queryKey: walletQueries.list._def,
+      })
     },
   })
 

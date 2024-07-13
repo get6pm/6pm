@@ -3,6 +3,7 @@ import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { getAuthUserStrict } from '../middlewares/auth'
+import { generateTransactionDataFromFile } from '../services/ai.service'
 import { canUserReadBudget, findBudget } from '../services/budget.service'
 import {
   canUserCreateTransaction,
@@ -195,5 +196,24 @@ const router = new Hono()
       return c.json(transaction)
     },
   )
+
+  .post('/ai', async (c) => {
+    const body = await c.req.parseBody()
+    const file = body.file as File | undefined
+
+    if (!file) {
+      return c.json({ message: 'file not found' }, 400)
+    }
+
+    try {
+      const transactionData = await generateTransactionDataFromFile({ file })
+      return c.json(transactionData)
+    } catch {
+      return c.json(
+        { message: 'Unable to process the file. Please try again.' },
+        500,
+      )
+    }
+  })
 
 export default router

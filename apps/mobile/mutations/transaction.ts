@@ -5,7 +5,10 @@ import { z } from 'zod'
 export async function createTransaction(data: TransactionFormValues) {
   const hc = await getHonoClient()
   const result = await hc.v1.transactions.$post({
-    json: data,
+    json: {
+      ...data,
+      amount: -data.amount,
+    },
   })
 
   if (result.ok) {

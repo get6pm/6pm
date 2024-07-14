@@ -21,9 +21,9 @@ export default function NewAccountScreen() {
         walletQueries.list().queryKey,
       )
       // Optimistically update to the new value
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      queryClient.setQueryData(walletQueries.list().queryKey, (old: any) => [
-        ...old,
+      queryClient.setQueryData(walletQueries.list().queryKey, (old = []) => [
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        ...(old as any),
         newWallet,
       ])
       // Return a context object with the snapshotted value

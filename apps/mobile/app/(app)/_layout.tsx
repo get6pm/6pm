@@ -49,7 +49,7 @@ export default function AuthenticatedLayout() {
         }}
       />
       <Stack.Screen
-        name="new-record"
+        name="transaction/new-record"
         options={{
           presentation: 'modal',
           headerShown: false,

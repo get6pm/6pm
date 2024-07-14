@@ -1,8 +1,10 @@
 import { cn } from '@/lib/utils'
+import * as Haptics from 'expo-haptics'
 import { DeleteIcon } from 'lucide-react-native'
 import { View } from 'react-native'
 import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
 
@@ -38,15 +40,19 @@ export function NumericPad({
       return
     }
 
+    Haptics.selectionAsync()
+
     onValueChange?.(newValue)
   }
 
   function handleDelete() {
+    Haptics.selectionAsync()
     const newValue = Math.floor(value / 10)
     onValueChange?.(newValue)
   }
 
   function handleClear() {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     onValueChange?.(0)
   }
 

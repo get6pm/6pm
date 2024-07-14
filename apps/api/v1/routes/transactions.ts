@@ -20,6 +20,13 @@ import {
 } from '../services/transaction.service'
 import { canUserReadWallet, findUserWallet } from '../services/wallet.service'
 
+const zTransactionParamValidator = zValidator(
+  'param',
+  z.object({
+    transactionId: z.string(),
+  }),
+)
+
 const router = new Hono()
 
   .get(
@@ -157,14 +164,24 @@ const router = new Hono()
     return c.json(transaction, 201)
   })
 
+  .get('/:transactionId', zTransactionParamValidator, async (c) => {
+    const user = getAuthUserStrict(c)
+    const { transactionId } = c.req.valid('param')
+
+    const transaction = await findTransaction({ transactionId })
+
+    if (
+      !(transaction && (await canUserReadTransaction({ user, transaction })))
+    ) {
+      return c.json({ message: 'transaction not found' }, 404)
+    }
+
+    return c.json(transaction)
+  })
+
   .put(
     '/:transactionId',
-    zValidator(
-      'param',
-      z.object({
-        transactionId: z.string(),
-      }),
-    ),
+    zTransactionParamValidator,
     zValidator('json', zUpdateTransaction),
     async (c) => {
       const { transactionId } = c.req.valid('param')
@@ -236,35 +253,26 @@ const router = new Hono()
     },
   )
 
-  .delete(
-    '/:transactionId',
-    zValidator(
-      'param',
-      z.object({
-        transactionId: z.string(),
-      }),
-    ),
-    async (c) => {
-      const { transactionId } = c.req.valid('param')
-      const user = getAuthUserStrict(c)
+  .delete('/:transactionId', zTransactionParamValidator, async (c) => {
+    const { transactionId } = c.req.valid('param')
+    const user = getAuthUserStrict(c)
 
-      const transaction = await findTransaction({ transactionId })
+    const transaction = await findTransaction({ transactionId })
 
-      if (
-        !(transaction && (await canUserReadTransaction({ user, transaction })))
-      ) {
-        return c.json({ message: 'transaction not found' }, 404)
-      }
+    if (
+      !(transaction && (await canUserReadTransaction({ user, transaction })))
+    ) {
+      return c.json({ message: 'transaction not found' }, 404)
+    }
 
-      if (!(await canUserDeleteTransaction({ user, transaction }))) {
-        return c.json({ message: 'user cannot delete transaction' }, 403)
-      }
+    if (!(await canUserDeleteTransaction({ user, transaction }))) {
+      return c.json({ message: 'user cannot delete transaction' }, 403)
+    }
 
-      await deleteTransaction({ transactionId })
+    await deleteTransaction({ transactionId })
 
-      return c.json(transaction)
-    },
-  )
+    return c.json(transaction)
+  })
 
   .post('/ai', async (c) => {
     const body = await c.req.parseBody()

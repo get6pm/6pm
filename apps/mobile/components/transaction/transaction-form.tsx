@@ -73,7 +73,7 @@ export const TransactionForm = ({
           <View className="w-full h-24 justify-end mb-4">
             <TextTicker
               value={amount}
-              className="font-semibold text-6xl leading-tight text-center"
+              className="font-semibold text-6xl text-foreground leading-tight text-center"
               suffix={currency}
               suffixClassName="font-semibold ml-2 text-muted-foreground overflow-visible"
             />

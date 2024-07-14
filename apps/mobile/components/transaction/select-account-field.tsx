@@ -15,6 +15,8 @@ import { Keyboard } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { FullWindowOverlay } from 'react-native-screens'
 
+import { useColorScheme } from '@/hooks/useColorScheme'
+import { theme } from '@/lib/theme'
 import GenericIcon from '../common/generic-icon'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
@@ -26,6 +28,7 @@ export function SelectAccountField({
 }) {
   const { bottom } = useSafeAreaInsets()
   const { data: walletAccounts, isLoading } = useWallets()
+  const { colorScheme } = useColorScheme()
 
   const sheetRef = useRef<BottomSheetModal>(null)
   const { i18n } = useLingui()
@@ -66,6 +69,7 @@ export function SelectAccountField({
         enableDynamicSizing
         enablePanDownToClose
         keyboardBehavior="extend"
+        backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
             {...props}

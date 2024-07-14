@@ -1,6 +1,8 @@
 import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useRef } from 'react'
 
+import { useColorScheme } from '@/hooks/useColorScheme'
+import { theme } from '@/lib/theme'
 import { useController } from 'react-hook-form'
 import { Keyboard } from 'react-native'
 import { FullWindowOverlay } from 'react-native-screens'
@@ -14,6 +16,7 @@ export function SelectCurrencyField({
   onSelect?: (currency: string) => void
 }) {
   const sheetRef = useRef<BottomSheetModal>(null)
+  const { colorScheme } = useColorScheme()
   const {
     field: { onChange, onBlur, value },
     // fieldState,
@@ -36,6 +39,7 @@ export function SelectCurrencyField({
         index={0}
         snapPoints={['50%', '87%']}
         enablePanDownToClose
+        backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
         keyboardBehavior="extend"
         backdropComponent={(props) => (
           <BottomSheetBackdrop

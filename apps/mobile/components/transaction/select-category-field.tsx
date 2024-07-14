@@ -13,6 +13,8 @@ import { useRef } from 'react'
 import { useController } from 'react-hook-form'
 import { FlatList, Keyboard, View } from 'react-native'
 
+import { useColorScheme } from '@/hooks/useColorScheme'
+import { theme } from '@/lib/theme'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { FullWindowOverlay } from 'react-native-screens'
 import GenericIcon from '../common/generic-icon'
@@ -26,6 +28,7 @@ export function SelectCategoryField({
 }) {
   const { bottom } = useSafeAreaInsets()
   const { data: categories = [], isLoading } = useCategories()
+  const { colorScheme } = useColorScheme()
 
   const sheetRef = useRef<BottomSheetModal>(null)
   const { i18n } = useLingui()
@@ -74,6 +77,7 @@ export function SelectCategoryField({
         enableDynamicSizing
         enablePanDownToClose
         keyboardBehavior="extend"
+        backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
             {...props}

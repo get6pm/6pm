@@ -5,8 +5,8 @@ export const theme = {
     foreground: 'hsl(240, 6%, 10%)',
   },
   dark: {
-    primary: 'hsl(0 0% 100%)',
-    background: 'hsl(240, 6%, 10%)',
-    foreground: 'hsl(213, 31%, 91%)',
+    primary: 'hsl(0 0% 98%)',
+    background: 'hsl(240 10% 3.9%)',
+    foreground: 'hsl(213 31% 91%)',
   },
 }

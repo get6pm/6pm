@@ -1,7 +1,9 @@
 import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useRef } from 'react'
 
+import { useColorScheme } from '@/hooks/useColorScheme'
 import { WALLET_ICONS } from '@/lib/icons/wallet-icons'
+import { theme } from '@/lib/theme'
 import { useController } from 'react-hook-form'
 import { Keyboard } from 'react-native'
 import { FullWindowOverlay } from 'react-native-screens'
@@ -14,6 +16,7 @@ export function SelectAccountIconField({
 }: {
   onSelect?: (currency: string) => void
 }) {
+  const { colorScheme } = useColorScheme()
   const sheetRef = useRef<BottomSheetModal>(null)
   const {
     field: { onChange, onBlur, value },
@@ -37,6 +40,7 @@ export function SelectAccountIconField({
         index={0}
         enableDynamicSizing
         enablePanDownToClose
+        backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
         keyboardBehavior="extend"
         backdropComponent={(props) => (
           <BottomSheetBackdrop

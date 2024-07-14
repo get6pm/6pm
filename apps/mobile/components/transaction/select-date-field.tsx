@@ -1,4 +1,6 @@
+import { useColorScheme } from '@/hooks/useColorScheme'
 import { formatDateShort } from '@/lib/date'
+import { theme } from '@/lib/theme'
 import { sleep } from '@/lib/utils'
 import {
   BottomSheetBackdrop,
@@ -57,6 +59,7 @@ export function SelectDateField({
   onSelect?: (date?: Date) => void
 }) {
   const { bottom } = useSafeAreaInsets()
+  const { colorScheme } = useColorScheme()
   const sheetRef = useRef<BottomSheetModal>(null)
   const {
     field: { onChange, onBlur, value },
@@ -82,6 +85,7 @@ export function SelectDateField({
         enableDynamicSizing
         enablePanDownToClose
         keyboardBehavior="extend"
+        backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
             {...props}

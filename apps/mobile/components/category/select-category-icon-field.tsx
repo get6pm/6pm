@@ -1,10 +1,12 @@
 import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useMemo, useRef } from 'react'
 
+import { useColorScheme } from '@/hooks/useColorScheme'
 import {
   CATEGORY_EXPENSE_ICONS,
   CATEGORY_INCOME_ICONS,
 } from '@/lib/icons/category-icons'
+import { theme } from '@/lib/theme'
 import { sleep } from '@/lib/utils'
 import type { CategoryTypeType } from '@6pm/validation'
 import { useController } from 'react-hook-form'
@@ -24,6 +26,8 @@ export function SelectCategoryIconField({
   type: CategoryTypeType
 }) {
   const sheetRef = useRef<BottomSheetModal>(null)
+  const { colorScheme } = useColorScheme()
+
   const {
     field: { onChange, onBlur, value },
     // fieldState,
@@ -54,6 +58,7 @@ export function SelectCategoryIconField({
         enablePanDownToClose
         enableDismissOnClose
         keyboardBehavior="extend"
+        backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
             {...props}

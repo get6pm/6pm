@@ -56,6 +56,13 @@ export default function AuthenticatedLayout() {
         }}
       />
       <Stack.Screen
+        name="transaction/[transactionId]"
+        options={{
+          presentation: 'modal',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="language"
         options={{
           presentation: 'modal',

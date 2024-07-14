@@ -2,9 +2,11 @@ import { zCreateTransaction, zUpdateTransaction } from '@6pm/validation'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { z } from 'zod'
+import { getLogger } from '../../lib/log'
 import { getAuthUserStrict } from '../middlewares/auth'
 import { generateTransactionDataFromFile } from '../services/ai.service'
 import { canUserReadBudget, findBudget } from '../services/budget.service'
+import { canUserReadCategory, findCategory } from '../services/category.service'
 import {
   canUserCreateTransaction,
   canUserDeleteTransaction,
@@ -16,7 +18,7 @@ import {
   listTransactions,
   updateTransaction,
 } from '../services/transaction.service'
-import { findUserWallet } from '../services/wallet.service'
+import { canUserReadWallet, findUserWallet } from '../services/wallet.service'
 
 const router = new Hono()
 
@@ -84,29 +86,72 @@ const router = new Hono()
   )
 
   .post('/', zValidator('json', zCreateTransaction), async (c) => {
+    const logger = getLogger(`${c.req.method} ${c.req.path}`)
     const user = getAuthUserStrict(c)
     const data = c.req.valid('json')
-    const { budgetId, walletAccountId: walletId } = data
+    const { budgetId, walletAccountId: walletId, categoryId } = data
+
+    logger.debug('Creating transaction %o', data)
 
     const budget = budgetId ? await findBudget({ budgetId }) : null
     if (budgetId && (!budget || !(await canUserReadBudget({ user, budget })))) {
+      logger.error(`Budget not found or user doesn't have read access %o`, {
+        budgetId,
+        budget,
+      })
       return c.json({ message: 'budget not found' }, 404)
     }
+    logger.debug('Budget found %o', { budgetId, budget })
 
     const wallet = await findUserWallet({ user, walletId })
-    if (!wallet) {
+    if (!wallet || !(await canUserReadWallet({ user, walletId }))) {
+      logger.error(`Wallet not found or user doesn't have read access %o`, {
+        walletId,
+        wallet,
+      })
       return c.json({ message: 'wallet not found' }, 404)
     }
+    logger.debug('Wallet found %o', { walletId, wallet })
+
+    const category =
+      (categoryId && (await findCategory({ id: categoryId }))) || null
+    if (
+      categoryId &&
+      (!category || !(await canUserReadCategory({ user, category })))
+    ) {
+      logger.error(`Category not found or user doesn't have read access %o`, {
+        categoryId,
+        category,
+      })
+      return c.json({ message: 'category not found' }, 404)
+    }
+    logger.debug('Category found %o', { categoryId, category })
 
     if (
       !(await canUserCreateTransaction({ user, budget, walletAccount: wallet }))
     ) {
+      logger.error(`User doesn't have permission to create transaction %o`, {
+        user,
+        budget,
+        wallet,
+      })
       return c.json({ message: 'user cannot create transaction' }, 403)
     }
 
+    const createTransactionData = {
+      ...data,
+      amount:
+        (category &&
+          (category?.type === 'INCOME'
+            ? Math.abs(data.amount)
+            : -Math.abs(data.amount))) ||
+        data.amount,
+    }
+    logger.debug('Creating transaction with data %o', createTransactionData)
+
     const transaction = await createTransaction({
       user,
-      data,
+      data: createTransactionData,
     })
 
     return c.json(transaction, 201)
@@ -136,7 +181,10 @@ const router = new Hono()
       }
 
       const wallet = walletId ? await findUserWallet({ user, walletId }) : null
-      if (walletId && !wallet) {
+      if (
+        walletId &&
+        (!wallet || !(await canUserReadWallet({ user, walletId })))
+      ) {
         return c.json({ message: 'wallet not found' }, 404)
       }
 
@@ -158,9 +206,30 @@ const router = new Hono()
         return c.json({ message: 'budget not found' }, 404)
       }
 
+      const categoryId = data.categoryId || transaction.categoryId
+
+      const category =
+        (categoryId && (await findCategory({ id: categoryId }))) || null
+      if (
+        categoryId &&
+        (!category || !(await canUserReadCategory({ user, category })))
+      ) {
+        return c.json({ message: 'category not found' }, 404)
+      }
+
+      const transactionAmount =
+        data.amount && category
+          ? category?.type === 'INCOME'
+            ? Math.abs(data.amount)
+            : -Math.abs(data.amount)
+          : transaction.amount
+
       const updatedTransaction = await updateTransaction({
         transactionId,
-        data,
+        data: {
+          ...data,
+          amount: transactionAmount as number,
+        },
       })
 
       return c.json(updatedTransaction)

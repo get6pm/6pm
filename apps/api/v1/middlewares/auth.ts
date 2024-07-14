@@ -32,7 +32,7 @@ export const authMiddleware = createMiddleware(async (c, next) => {
   await next()
 })
 
-export const getAuthUser = (c: Context) => c.get('user')
+export const getAuthUser = (c: Context) => c.get('user') as User | null
 
 export const getAuthUserStrict = (c: Context) => {
   const user = getAuthUser(c)

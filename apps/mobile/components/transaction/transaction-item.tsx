@@ -53,7 +53,8 @@ export const TransactionItem: FC<TransactionItemProps> = ({ transaction }) => {
         <Text
           className={cn(
             'font-semibold shrink-0',
-            transaction.amount > 0 && 'text-green-500',
+            transaction.amount > 0 && 'text-amount-positive',
+            transaction.amount < 0 && 'text-amount-negative',
           )}
         >
           {Math.abs(transaction.amount).toLocaleString()}{' '}

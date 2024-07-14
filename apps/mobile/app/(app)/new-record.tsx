@@ -1,11 +1,9 @@
-import { toast } from '@/components/common/toast'
 import { TransactionForm } from '@/components/transaction/transaction-form'
 import { createTransaction } from '@/mutations/transaction'
 import { transactionQueries } from '@/queries/transaction'
 import { useWallets, walletQueries } from '@/queries/wallet'
-import { t } from '@lingui/macro'
-import { useLingui } from '@lingui/react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import * as Haptics from 'expo-haptics'
 import { useRouter } from 'expo-router'
 import { LoaderIcon } from 'lucide-react-native'
 import { Alert, View } from 'react-native'
@@ -13,16 +11,18 @@ import { Alert, View } from 'react-native'
 export default function NewRecordScreen() {
   const router = useRouter()
   const { data: walletAccounts } = useWallets()
-  const { i18n } = useLingui()
+  // const { i18n } = useLingui()
   const queryClient = useQueryClient()
   const { mutateAsync } = useMutation({
     mutationFn: createTransaction,
     onError(error) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
       Alert.alert(error.message)
     },
     onSuccess() {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
       router.back()
-      toast.success(t(i18n)`Transaction created`)
+      // toast.success(t(i18n)`Transaction created`)
     },
     async onSettled() {
       await queryClient.invalidateQueries({

@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
+import * as Haptics from 'expo-haptics'
 import { Link } from 'expo-router'
 import { PlusIcon, Sparkles } from 'lucide-react-native'
 import { TouchableOpacity, View } from 'react-native'
@@ -21,7 +22,7 @@ export function Toolbar() {
           <Sparkles className="w-5 h-5 text-muted-foreground" />
         </View>
       </TouchableOpacity>
-      <Link href="/new-record" asChild>
+      <Link href="/new-record" asChild onPress={Haptics.selectionAsync}>
         <Button size="icon" className="h-11 w-11">
           <PlusIcon className="size-6 text-primary-foreground" />
         </Button>

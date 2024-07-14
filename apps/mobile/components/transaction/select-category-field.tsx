@@ -8,9 +8,11 @@ import {
 } from '@gorhom/bottom-sheet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
+import * as Haptics from 'expo-haptics'
 import { useRef } from 'react'
 import { useController } from 'react-hook-form'
 import { FlatList, Keyboard, View } from 'react-native'
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { FullWindowOverlay } from 'react-native-screens'
 import GenericIcon from '../common/generic-icon'
@@ -52,6 +54,7 @@ export function SelectCategoryField({
         className="border border-border !px-3 max-w-[160px]"
         disabled={isLoading}
         onPress={() => {
+          Haptics.selectionAsync()
           Keyboard.dismiss()
           sheetRef.current?.present()
         }}
@@ -112,6 +115,7 @@ export function SelectCategoryField({
                       className="h-20 flex flex-1 w-full gap-2 px-2 flex-col flex-grow"
                       variant={value === item ? 'secondary' : 'ghost'}
                       onPress={async () => {
+                        Haptics.selectionAsync()
                         sheetRef.current?.close()
                         await sleep(500)
                         onChange(item.id)

@@ -8,10 +8,11 @@ import {
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import DateTimePicker from '@react-native-community/datetimepicker'
+import * as Haptics from 'expo-haptics'
 import { Calendar } from 'lucide-react-native'
 import { useRef, useState } from 'react'
 import { useController } from 'react-hook-form'
-import { View } from 'react-native'
+import { Keyboard, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { FullWindowOverlay } from 'react-native-screens'
 import { Button } from '../ui/button'
@@ -40,6 +41,7 @@ function SpinnerDatePicker({
       <Button
         className="mx-6"
         onPress={() => {
+          Haptics.selectionAsync()
           onChange(date)
         }}
       >
@@ -66,6 +68,8 @@ export function SelectDateField({
         variant="outline"
         className="!px-3"
         onPress={() => {
+          Haptics.selectionAsync()
+          Keyboard.dismiss()
           sheetRef.current?.present()
         }}
       >

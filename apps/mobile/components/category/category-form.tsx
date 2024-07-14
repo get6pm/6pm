@@ -46,11 +46,14 @@ export const CategoryForm = ({
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    if (defaultValues?.icon) {
+      return
+    }
     categoryForm.setValue(
       'icon',
       type === 'INCOME' ? CATEGORY_INCOME_ICONS[0] : CATEGORY_EXPENSE_ICONS[0],
     )
-  }, [type])
+  }, [type, defaultValues?.icon])
 
   const isTypeHidden = hiddenFields.includes('type')
 

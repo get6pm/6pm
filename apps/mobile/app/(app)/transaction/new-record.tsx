@@ -25,12 +25,14 @@ export default function NewRecordScreen() {
       // toast.success(t(i18n)`Transaction created`)
     },
     async onSettled() {
-      await queryClient.invalidateQueries({
-        queryKey: transactionQueries.all,
-      })
-      await queryClient.invalidateQueries({
-        queryKey: walletQueries.list._def,
-      })
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: transactionQueries.all,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: walletQueries.list._def,
+        }),
+      ])
     },
   })
 

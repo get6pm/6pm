@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { AccountForm } from '@/components/wallet/account-form'
 import { deleteWallet, updateWallet } from '@/mutations/wallet'
+import { transactionQueries } from '@/queries/transaction'
 import { useWallets, walletQueries } from '@/queries/wallet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -26,9 +27,14 @@ export default function EditAccountScreen() {
       router.back()
     },
     async onSettled() {
-      await queryClient.invalidateQueries({
-        queryKey: walletQueries._def,
-      })
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: walletQueries._def,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: transactionQueries.all,
+        }),
+      ])
     },
     throwOnError: true,
   })

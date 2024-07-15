@@ -98,9 +98,12 @@ export async function deleteCategory({ categoryId }: { categoryId: string }) {
   })
 }
 
-export async function findCategory({ id }: { id: string }) {
+export async function findCategory({
+  id,
+  userId,
+}: { id: string; userId?: string }) {
   return prisma.category.findUnique({
-    where: { id },
+    where: { id, userId },
   })
 }
 

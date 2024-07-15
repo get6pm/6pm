@@ -100,6 +100,16 @@ export async function canUserDeleteWallet({
   return await canUserUpdateWallet({ user, walletId })
 }
 
+export async function canUserReadWallet({
+  user,
+  walletId,
+}: {
+  user: User
+  walletId: string
+}) {
+  return await canUserUpdateWallet({ user, walletId })
+}
+
 export async function walletWithBalance(wallet: UserWalletAccount) {
   const balance = await getWalletBalance({ wallet })
   return { ...wallet, balance }

@@ -1,5 +1,10 @@
-import { getHonoClient } from '@/lib/client'
-import { type TransactionFormValues, TransactionSchema } from '@6pm/validation'
+import { clerk, getHonoClient } from '@/lib/client'
+import {
+  type TransactionFormValues,
+  TransactionSchema,
+  zUpdateTransaction,
+} from '@6pm/validation'
+import * as FileSystem from 'expo-file-system'
 import { z } from 'zod'
 
 export async function createTransaction(data: TransactionFormValues) {
@@ -58,4 +63,35 @@ export async function deleteTransaction(id: string) {
   await hc.v1.transactions[':transactionId'].$delete({
     param: { transactionId: id },
   })
+}
+
+export async function getAITransactionData(fileUri: string) {
+  const token = await clerk.session?.getToken()
+
+  const result = await FileSystem.uploadAsync(
+    `${process.env.EXPO_PUBLIC_API_URL!}v1/transactions/ai`,
+    fileUri,
+    {
+      fieldName: 'file',
+      httpMethod: 'POST',
+      uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+      headers: {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  )
+
+  const body = JSON.parse(result.body)
+
+  const transaction = zUpdateTransaction.parse({
+    ...body,
+    date: body?.datetime,
+  })
+
+  if (!transaction.amount) {
+    throw new Error('Cannot extract transaction data')
+  }
+
+  return transaction
 }

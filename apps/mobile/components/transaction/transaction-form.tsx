@@ -97,9 +97,11 @@ export const TransactionForm = ({
             name="note"
             placeholder={t(i18n)`transaction note`}
             autoCapitalize="none"
-            className="truncate line-clamp-1 bg-transparent border-0"
+            className="truncate line-clamp-1 bg-transparent h-8 border-0"
             placeholderClassName="!text-muted"
-            wrapperClassName="absolute left-4 right-4 bottom-2"
+            wrapperClassName="absolute left-4 right-4 bottom-4"
+            numberOfLines={1}
+            multiline={false}
           />
         </View>
         <Animated.View style={translateStyle}>
@@ -117,11 +119,7 @@ export const TransactionForm = ({
             </View>
             <SubmitButton
               onPress={transactionForm.handleSubmit(onSubmit)}
-              disabled={
-                transactionForm.formState.isLoading ||
-                !amount ||
-                !transactionForm.formState.isDirty
-              }
+              disabled={transactionForm.formState.isLoading || !amount}
             >
               <Text>{t(i18n)`Save`}</Text>
             </SubmitButton>

@@ -1,5 +1,14 @@
 [
   {
+    "name": "Vietnamese Dong",
+    "symbol": "₫",
+    "symbolNative": "₫",
+    "decimalDigits": 0,
+    "rounding": 0,
+    "code": "VND",
+    "namePlural": "Vietnamese dong"
+  },
+  {
     "name": "US Dollar",
     "symbol": "$",
     "symbolNative": "$",
@@ -1006,15 +1015,6 @@
     "rounding": 0,
     "code": "VEF",
     "namePlural": "Venezuelan bolívars"
-  },
-  {
-    "name": "Vietnamese Dong",
-    "symbol": "₫",
-    "symbolNative": "₫",
-    "decimalDigits": 0,
-    "rounding": 0,
-    "code": "VND",
-    "namePlural": "Vietnamese dong"
   },
   {
     "name": "CFA Franc BEAC",

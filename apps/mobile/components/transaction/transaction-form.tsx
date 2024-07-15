@@ -5,7 +5,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { LandPlot, XIcon } from 'lucide-react-native'
+import { LandPlot, Trash2Icon, XIcon } from 'lucide-react-native'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { ScrollView, View } from 'react-native'
 import Animated, {
@@ -26,12 +26,14 @@ type TransactionFormProps = {
   onSubmit: (data: TransactionFormValues) => void
   defaultValues?: Partial<TransactionFormValues>
   onCancel?: () => void
+  onDelete?: () => void
 }
 
 export const TransactionForm = ({
   onSubmit,
   defaultValues,
   onCancel,
+  onDelete,
 }: TransactionFormProps) => {
   const { i18n } = useLingui()
 
@@ -65,9 +67,16 @@ export const TransactionForm = ({
       >
         <View className="flex-row justify-between items-center p-6 pb-0">
           <SelectDateField />
-          <Button size="icon" variant="secondary" onPress={onCancel}>
-            <XIcon className="size-6 text-primary" />
-          </Button>
+          <View className="flex-row items-center gap-4">
+            {onDelete && (
+              <Button size="icon" variant="secondary" onPress={onDelete}>
+                <Trash2Icon className="size-6 text-primary" />
+              </Button>
+            )}
+            <Button size="icon" variant="secondary" onPress={onCancel}>
+              <XIcon className="size-6 text-primary" />
+            </Button>
+          </View>
         </View>
         <View className="flex-1 items-center justify-center pb-12">
           <View className="w-full h-24 justify-end mb-4">
@@ -108,7 +117,11 @@ export const TransactionForm = ({
             </View>
             <SubmitButton
               onPress={transactionForm.handleSubmit(onSubmit)}
-              disabled={transactionForm.formState.isLoading || !amount}
+              disabled={
+                transactionForm.formState.isLoading ||
+                !amount ||
+                !transactionForm.formState.isDirty
+              }
             >
               <Text>{t(i18n)`Save`}</Text>
             </SubmitButton>

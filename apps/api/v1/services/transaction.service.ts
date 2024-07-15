@@ -102,6 +102,9 @@ export async function findTransaction({
     where: {
       id: transactionId,
     },
+    include: {
+      category: true,
+    },
   })
 }
 
@@ -116,6 +119,9 @@ export async function createTransaction({
     data: {
       ...data,
       createdByUserId: user.id,
+    },
+    include: {
+      category: true,
     },
   })
 
@@ -134,6 +140,9 @@ export async function updateTransaction({
       id: transactionId,
     },
     data,
+    include: {
+      category: true,
+    },
   })
 
   return transaction

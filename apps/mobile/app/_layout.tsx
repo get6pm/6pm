@@ -20,17 +20,40 @@ import { useColorScheme } from '@/hooks/useColorScheme'
 import { queryClient } from '@/lib/client'
 import { LocaleProvider } from '@/locales/provider'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import NetInfo from '@react-native-community/netinfo'
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native'
-import { QueryClientProvider } from '@tanstack/react-query'
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
+import { focusManager, onlineManager } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { LinearGradient } from 'expo-linear-gradient'
 import { cssInterop } from 'nativewind'
+import { useEffect } from 'react'
+import { AppState, type AppStateStatus, Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Svg } from 'react-native-svg'
+
+// Online status management
+onlineManager.setEventListener((setOnline) => {
+  return NetInfo.addEventListener((state) => {
+    setOnline(!!state.isConnected)
+  })
+})
+
+function onAppStateChange(status: AppStateStatus) {
+  if (Platform.OS !== 'web') {
+    focusManager.setFocused(status === 'active')
+  }
+}
+
+const asyncStoragePersister = createAsyncStoragePersister({
+  storage: AsyncStorage,
+})
 
 cssInterop(Svg, {
   className: {
@@ -67,12 +90,21 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   })
 
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', onAppStateChange)
+
+    return () => subscription.remove()
+  }, [])
+
   if (!fontsLoaded) {
     return null
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: asyncStoragePersister }}
+    >
       <ClerkProvider
         publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
         tokenCache={tokenCache}
@@ -99,6 +131,6 @@ export default function RootLayout() {
           </ThemeProvider>
         </LocaleProvider>
       </ClerkProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   )
 }

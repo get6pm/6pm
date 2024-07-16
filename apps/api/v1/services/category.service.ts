@@ -54,10 +54,11 @@ export async function createCategory({
   user: User
   data: CreateCategory
 }) {
-  const { name, type, color, description, icon } = data
+  const { id, name, type, color, description, icon } = data
 
   const category = await prisma.category.create({
     data: {
+      id,
       name,
       type,
       color,

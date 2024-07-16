@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { CategoryTypeSchema } from './prisma'
 
 export const zCreateCategory = z.object({
+  id: z.string().cuid2().optional(),
   type: CategoryTypeSchema,
   name: z.string().min(1, {
     message: 'Category name is required',

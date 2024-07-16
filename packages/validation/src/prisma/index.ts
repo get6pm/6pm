@@ -54,6 +54,8 @@ export const TransactionScalarFieldEnumSchema = z.enum(['id','createdAt','update
 
 export const CategoryScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','type','name','description','icon','color','userId','parentId']);
 
+export const CachedGptResponseScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','query','response']);
+
 export const SortOrderSchema = z.enum(['asc','desc']);
 
 export const QueryModeSchema = z.enum(['default','insensitive']);
@@ -389,6 +391,20 @@ export const CategoryWithRelationsSchema: z.ZodType<CategoryWithRelations> = Cat
 }))
 
 /////////////////////////////////////////
+// CACHED GPT RESPONSE SCHEMA
+/////////////////////////////////////////
+
+export const CachedGptResponseSchema = z.object({
+  id: z.string().cuid(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  query: z.string(),
+  response: z.string(),
+})
+
+export type CachedGptResponse = z.infer<typeof CachedGptResponseSchema>
+
+/////////////////////////////////////////
 // SELECT & INCLUDE
 /////////////////////////////////////////
 
@@ -701,6 +717,17 @@ export const CategorySelectSchema: z.ZodType<Prisma.CategorySelect> = z.object({
   children: z.union([z.boolean(),z.lazy(() => CategoryFindManyArgsSchema)]).optional(),
   transactions: z.union([z.boolean(),z.lazy(() => TransactionFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => CategoryCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// CACHED GPT RESPONSE
+//------------------------------------------------------
+
+export const CachedGptResponseSelectSchema: z.ZodType<Prisma.CachedGptResponseSelect> = z.object({
+  id: z.boolean().optional(),
+  createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
+  query: z.boolean().optional(),
+  response: z.boolean().optional(),
 }).strict()
 
 
@@ -1490,6 +1517,61 @@ export const CategoryScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Cate
   parentId: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
 }).strict();
 
+export const CachedGptResponseWhereInputSchema: z.ZodType<Prisma.CachedGptResponseWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => CachedGptResponseWhereInputSchema),z.lazy(() => CachedGptResponseWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => CachedGptResponseWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => CachedGptResponseWhereInputSchema),z.lazy(() => CachedGptResponseWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  query: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  response: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+}).strict();
+
+export const CachedGptResponseOrderByWithRelationInputSchema: z.ZodType<Prisma.CachedGptResponseOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  query: z.lazy(() => SortOrderSchema).optional(),
+  response: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CachedGptResponseWhereUniqueInputSchema: z.ZodType<Prisma.CachedGptResponseWhereUniqueInput> = z.object({
+  id: z.string().cuid()
+})
+.and(z.object({
+  id: z.string().cuid().optional(),
+  AND: z.union([ z.lazy(() => CachedGptResponseWhereInputSchema),z.lazy(() => CachedGptResponseWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => CachedGptResponseWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => CachedGptResponseWhereInputSchema),z.lazy(() => CachedGptResponseWhereInputSchema).array() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  query: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  response: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+}).strict());
+
+export const CachedGptResponseOrderByWithAggregationInputSchema: z.ZodType<Prisma.CachedGptResponseOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  query: z.lazy(() => SortOrderSchema).optional(),
+  response: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => CachedGptResponseCountOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => CachedGptResponseMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => CachedGptResponseMinOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const CachedGptResponseScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.CachedGptResponseScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => CachedGptResponseScalarWhereWithAggregatesInputSchema),z.lazy(() => CachedGptResponseScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => CachedGptResponseScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => CachedGptResponseScalarWhereWithAggregatesInputSchema),z.lazy(() => CachedGptResponseScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  query: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  response: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+}).strict();
+
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
   id: z.string().cuid().optional(),
   createdAt: z.coerce.date().optional(),
@@ -2225,6 +2307,62 @@ export const CategoryUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CategoryUn
   parentId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
+export const CachedGptResponseCreateInputSchema: z.ZodType<Prisma.CachedGptResponseCreateInput> = z.object({
+  id: z.string().cuid().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  query: z.string(),
+  response: z.string()
+}).strict();
+
+export const CachedGptResponseUncheckedCreateInputSchema: z.ZodType<Prisma.CachedGptResponseUncheckedCreateInput> = z.object({
+  id: z.string().cuid().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  query: z.string(),
+  response: z.string()
+}).strict();
+
+export const CachedGptResponseUpdateInputSchema: z.ZodType<Prisma.CachedGptResponseUpdateInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  query: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  response: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const CachedGptResponseUncheckedUpdateInputSchema: z.ZodType<Prisma.CachedGptResponseUncheckedUpdateInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  query: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  response: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const CachedGptResponseCreateManyInputSchema: z.ZodType<Prisma.CachedGptResponseCreateManyInput> = z.object({
+  id: z.string().cuid().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  query: z.string(),
+  response: z.string()
+}).strict();
+
+export const CachedGptResponseUpdateManyMutationInputSchema: z.ZodType<Prisma.CachedGptResponseUpdateManyMutationInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  query: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  response: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const CachedGptResponseUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CachedGptResponseUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  query: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  response: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
 export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
   equals: z.string().optional(),
   in: z.string().array().optional(),
@@ -2889,6 +3027,30 @@ export const EnumCategoryTypeWithAggregatesFilterSchema: z.ZodType<Prisma.EnumCa
   _count: z.lazy(() => NestedIntFilterSchema).optional(),
   _min: z.lazy(() => NestedEnumCategoryTypeFilterSchema).optional(),
   _max: z.lazy(() => NestedEnumCategoryTypeFilterSchema).optional()
+}).strict();
+
+export const CachedGptResponseCountOrderByAggregateInputSchema: z.ZodType<Prisma.CachedGptResponseCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  query: z.lazy(() => SortOrderSchema).optional(),
+  response: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CachedGptResponseMaxOrderByAggregateInputSchema: z.ZodType<Prisma.CachedGptResponseMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  query: z.lazy(() => SortOrderSchema).optional(),
+  response: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CachedGptResponseMinOrderByAggregateInputSchema: z.ZodType<Prisma.CachedGptResponseMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  query: z.lazy(() => SortOrderSchema).optional(),
+  response: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const UserWalletAccountCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.UserWalletAccountCreateNestedManyWithoutUserInput> = z.object({
@@ -6852,6 +7014,68 @@ export const CategoryFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.CategoryFindU
   relationLoadStrategy: RelationLoadStrategySchema.optional(),
 }).strict() ;
 
+export const CachedGptResponseFindFirstArgsSchema: z.ZodType<Prisma.CachedGptResponseFindFirstArgs> = z.object({
+  select: CachedGptResponseSelectSchema.optional(),
+  where: CachedGptResponseWhereInputSchema.optional(),
+  orderBy: z.union([ CachedGptResponseOrderByWithRelationInputSchema.array(),CachedGptResponseOrderByWithRelationInputSchema ]).optional(),
+  cursor: CachedGptResponseWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ CachedGptResponseScalarFieldEnumSchema,CachedGptResponseScalarFieldEnumSchema.array() ]).optional(),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CachedGptResponseFindFirstOrThrowArgsSchema: z.ZodType<Prisma.CachedGptResponseFindFirstOrThrowArgs> = z.object({
+  select: CachedGptResponseSelectSchema.optional(),
+  where: CachedGptResponseWhereInputSchema.optional(),
+  orderBy: z.union([ CachedGptResponseOrderByWithRelationInputSchema.array(),CachedGptResponseOrderByWithRelationInputSchema ]).optional(),
+  cursor: CachedGptResponseWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ CachedGptResponseScalarFieldEnumSchema,CachedGptResponseScalarFieldEnumSchema.array() ]).optional(),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CachedGptResponseFindManyArgsSchema: z.ZodType<Prisma.CachedGptResponseFindManyArgs> = z.object({
+  select: CachedGptResponseSelectSchema.optional(),
+  where: CachedGptResponseWhereInputSchema.optional(),
+  orderBy: z.union([ CachedGptResponseOrderByWithRelationInputSchema.array(),CachedGptResponseOrderByWithRelationInputSchema ]).optional(),
+  cursor: CachedGptResponseWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ CachedGptResponseScalarFieldEnumSchema,CachedGptResponseScalarFieldEnumSchema.array() ]).optional(),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CachedGptResponseAggregateArgsSchema: z.ZodType<Prisma.CachedGptResponseAggregateArgs> = z.object({
+  where: CachedGptResponseWhereInputSchema.optional(),
+  orderBy: z.union([ CachedGptResponseOrderByWithRelationInputSchema.array(),CachedGptResponseOrderByWithRelationInputSchema ]).optional(),
+  cursor: CachedGptResponseWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const CachedGptResponseGroupByArgsSchema: z.ZodType<Prisma.CachedGptResponseGroupByArgs> = z.object({
+  where: CachedGptResponseWhereInputSchema.optional(),
+  orderBy: z.union([ CachedGptResponseOrderByWithAggregationInputSchema.array(),CachedGptResponseOrderByWithAggregationInputSchema ]).optional(),
+  by: CachedGptResponseScalarFieldEnumSchema.array(),
+  having: CachedGptResponseScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const CachedGptResponseFindUniqueArgsSchema: z.ZodType<Prisma.CachedGptResponseFindUniqueArgs> = z.object({
+  select: CachedGptResponseSelectSchema.optional(),
+  where: CachedGptResponseWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CachedGptResponseFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.CachedGptResponseFindUniqueOrThrowArgs> = z.object({
+  select: CachedGptResponseSelectSchema.optional(),
+  where: CachedGptResponseWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
 export const UserCreateArgsSchema: z.ZodType<Prisma.UserCreateArgs> = z.object({
   select: UserSelectSchema.optional(),
   include: UserIncludeSchema.optional(),
@@ -7300,4 +7524,50 @@ export const CategoryUpdateManyArgsSchema: z.ZodType<Prisma.CategoryUpdateManyAr
 
 export const CategoryDeleteManyArgsSchema: z.ZodType<Prisma.CategoryDeleteManyArgs> = z.object({
   where: CategoryWhereInputSchema.optional(),
+}).strict() ;
+
+export const CachedGptResponseCreateArgsSchema: z.ZodType<Prisma.CachedGptResponseCreateArgs> = z.object({
+  select: CachedGptResponseSelectSchema.optional(),
+  data: z.union([ CachedGptResponseCreateInputSchema,CachedGptResponseUncheckedCreateInputSchema ]),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CachedGptResponseUpsertArgsSchema: z.ZodType<Prisma.CachedGptResponseUpsertArgs> = z.object({
+  select: CachedGptResponseSelectSchema.optional(),
+  where: CachedGptResponseWhereUniqueInputSchema,
+  create: z.union([ CachedGptResponseCreateInputSchema,CachedGptResponseUncheckedCreateInputSchema ]),
+  update: z.union([ CachedGptResponseUpdateInputSchema,CachedGptResponseUncheckedUpdateInputSchema ]),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CachedGptResponseCreateManyArgsSchema: z.ZodType<Prisma.CachedGptResponseCreateManyArgs> = z.object({
+  data: z.union([ CachedGptResponseCreateManyInputSchema,CachedGptResponseCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const CachedGptResponseCreateManyAndReturnArgsSchema: z.ZodType<Prisma.CachedGptResponseCreateManyAndReturnArgs> = z.object({
+  data: z.union([ CachedGptResponseCreateManyInputSchema,CachedGptResponseCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const CachedGptResponseDeleteArgsSchema: z.ZodType<Prisma.CachedGptResponseDeleteArgs> = z.object({
+  select: CachedGptResponseSelectSchema.optional(),
+  where: CachedGptResponseWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CachedGptResponseUpdateArgsSchema: z.ZodType<Prisma.CachedGptResponseUpdateArgs> = z.object({
+  select: CachedGptResponseSelectSchema.optional(),
+  data: z.union([ CachedGptResponseUpdateInputSchema,CachedGptResponseUncheckedUpdateInputSchema ]),
+  where: CachedGptResponseWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CachedGptResponseUpdateManyArgsSchema: z.ZodType<Prisma.CachedGptResponseUpdateManyArgs> = z.object({
+  data: z.union([ CachedGptResponseUpdateManyMutationInputSchema,CachedGptResponseUncheckedUpdateManyInputSchema ]),
+  where: CachedGptResponseWhereInputSchema.optional(),
+}).strict() ;
+
+export const CachedGptResponseDeleteManyArgsSchema: z.ZodType<Prisma.CachedGptResponseDeleteManyArgs> = z.object({
+  where: CachedGptResponseWhereInputSchema.optional(),
 }).strict() ;

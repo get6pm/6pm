@@ -190,3 +190,12 @@ enum CategoryType {
   INCOME
   EXPENSE
 }
+
+model CachedGptResponse {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  query    String
+  response String
+}

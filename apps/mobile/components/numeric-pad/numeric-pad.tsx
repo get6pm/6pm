@@ -40,13 +40,10 @@ export function NumericPad({
       return
     }
 
-    Haptics.selectionAsync()
-
     onValueChange?.(newValue)
   }
 
   function handleDelete() {
-    Haptics.selectionAsync()
     const newValue = Math.floor(value / 10)
     onValueChange?.(newValue)
   }
@@ -71,6 +68,7 @@ export function NumericPad({
             onPress={() => handleKeyPress(buttonKey)}
             variant="ghost"
             size="lg"
+            onPressIn={Haptics.selectionAsync}
           >
             <Text className="!text-2xl">{buttonKey}</Text>
           </Button>
@@ -83,6 +81,7 @@ export function NumericPad({
           onLongPress={handleClear}
           variant="secondary"
           size="lg"
+          onPressIn={Haptics.selectionAsync}
         >
           <DeleteIcon className="size-8 text-primary" />
         </Button>

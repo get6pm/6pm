@@ -1,12 +1,14 @@
+import { Button } from '@/components/ui/button'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { Tabs } from 'expo-router'
+import { Link, Tabs } from 'expo-router'
 import {
+  // BarChartBigIcon,
   CogIcon,
   LandPlotIcon,
-  ScanTextIcon,
+  PlusIcon,
   WalletIcon,
 } from 'lucide-react-native'
 
@@ -47,16 +49,23 @@ export default function TabLayout() {
           headerTitle: t(i18n)`Budgets`,
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <LandPlotIcon color={color} />,
+          headerRight: () => (
+            <Link href="/budget/new-budget" asChild>
+              <Button size="icon" variant="ghost" className="mr-4">
+                <PlusIcon className="size-6 text-primary" />
+              </Button>
+            </Link>
+          ),
         }}
       />
-      <Tabs.Screen
-        name="scanner"
+      {/* <Tabs.Screen
+        name="reports"
         options={{
-          headerTitle: t(i18n)`Scanner`,
+          headerTitle: t(i18n)`Reports`,
           tabBarShowLabel: false,
-          tabBarIcon: ({ color }) => <ScanTextIcon color={color} />,
+          tabBarIcon: ({ color }) => <BarChartBigIcon color={color} />,
         }}
-      />
+      /> */}
       <Tabs.Screen
         name="settings"
         options={{

@@ -2,12 +2,18 @@ import { TransactionForm } from '@/components/transaction/transaction-form'
 import { deleteTransaction, updateTransaction } from '@/mutations/transaction'
 import { transactionQueries, useTransactionDetail } from '@/queries/transaction'
 import { walletQueries } from '@/queries/wallet'
+import {
+  type TransactionFormValues,
+  zTransactionFormValues,
+} from '@6pm/validation'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { LoaderIcon } from 'lucide-react-native'
+import { useForm } from 'react-hook-form'
 import { Alert, View } from 'react-native'
 
 export default function EditRecordScreen() {
@@ -16,6 +22,20 @@ export default function EditRecordScreen() {
   const { data: transaction } = useTransactionDetail(transactionId!)
   const router = useRouter()
   const queryClient = useQueryClient()
+
+  const transactionForm = useForm<TransactionFormValues>({
+    resolver: zodResolver(zTransactionFormValues),
+    defaultValues: {
+      walletAccountId: transaction?.walletAccountId,
+      currency: transaction?.currency,
+      amount: Math.abs(transaction?.amount ?? 0),
+      date: transaction?.date,
+      note: transaction?.note ?? '',
+      budgetId: transaction?.budgetId ?? undefined,
+      categoryId: transaction?.categoryId ?? undefined,
+    },
+  })
+
   const { mutateAsync } = useMutation({
     mutationFn: updateTransaction,
     onError(error) {
@@ -89,17 +109,9 @@ export default function EditRecordScreen() {
 
   return (
     <TransactionForm
+      form={transactionForm}
       onSubmit={(values) => mutateAsync({ id: transaction.id, data: values })}
       onCancel={router.back}
-      defaultValues={{
-        walletAccountId: transaction.walletAccountId,
-        currency: transaction.currency,
-        amount: Math.abs(transaction.amount),
-        date: transaction.date,
-        note: transaction.note ?? '',
-        budgetId: transaction.budgetId ?? undefined,
-        categoryId: transaction.categoryId ?? undefined,
-      }}
       onDelete={handleDelete}
     />
   )

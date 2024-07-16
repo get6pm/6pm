@@ -1,13 +1,14 @@
-import {
-  type TransactionFormValues,
-  zTransactionFormValues,
-} from '@6pm/validation'
-import { zodResolver } from '@hookform/resolvers/zod'
+import type { TransactionFormValues } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import * as Haptics from 'expo-haptics'
-import { LandPlot, Trash2Icon, XIcon } from 'lucide-react-native'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { LandPlot, ScanTextIcon, Trash2Icon, XIcon } from 'lucide-react-native'
+import {
+  Controller,
+  FormProvider,
+  type UseFormReturn,
+  useWatch,
+} from 'react-hook-form'
 import { ScrollView, View } from 'react-native'
 import Animated, {
   useAnimatedKeyboard,
@@ -25,16 +26,51 @@ import { SelectDateField } from './select-date-field'
 
 type TransactionFormProps = {
   onSubmit: (data: TransactionFormValues) => void
-  defaultValues?: Partial<TransactionFormValues>
   onCancel?: () => void
   onDelete?: () => void
+  onOpenScanner?: () => void
+  form: UseFormReturn<TransactionFormValues>
+}
+
+function TransactionAmount() {
+  const [amount, currency] = useWatch({ name: ['amount', 'currency'] })
+  return (
+    <TextTicker
+      value={amount}
+      className="font-semibold text-6xl text-foreground leading-tight text-center"
+      suffix={currency}
+      suffixClassName="font-semibold ml-2 text-muted-foreground overflow-visible"
+    />
+  )
+}
+
+function FormSubmitButton({
+  form,
+  onSubmit,
+}: {
+  form: UseFormReturn<TransactionFormValues>
+  onSubmit: (data: TransactionFormValues) => void
+}) {
+  const { i18n } = useLingui()
+  const amount = useWatch({ name: 'amount' })
+
+  return (
+    <SubmitButton
+      onPress={form.handleSubmit(onSubmit)}
+      onPressIn={Haptics.selectionAsync}
+      disabled={form.formState.isLoading || !amount}
+    >
+      <Text>{t(i18n)`Save`}</Text>
+    </SubmitButton>
+  )
 }
 
 export const TransactionForm = ({
+  form,
   onSubmit,
-  defaultValues,
   onCancel,
   onDelete,
+  onOpenScanner,
 }: TransactionFormProps) => {
   const { i18n } = useLingui()
 
@@ -45,48 +81,34 @@ export const TransactionForm = ({
     }
   })
 
-  const transactionForm = useForm<TransactionFormValues>({
-    resolver: zodResolver(zTransactionFormValues),
-    defaultValues: {
-      date: new Date(),
-      amount: 0,
-      currency: 'USD',
-      note: '',
-      ...defaultValues,
-    },
-  })
-
-  const amount = transactionForm.watch('amount')
-  const currency = transactionForm.watch('currency')
-
   return (
-    <FormProvider {...transactionForm}>
+    <FormProvider {...form}>
       <ScrollView
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         automaticallyAdjustKeyboardInsets
         contentContainerClassName="flex-1 justify-between bg-muted"
       >
-        <View className="flex-row justify-between items-center p-6 pb-0">
+        <View className="flex-row justify-between items-center p-4 pb-0">
+          <Button size="icon" variant="secondary" onPress={onCancel}>
+            <XIcon className="size-6 text-primary" />
+          </Button>
           <SelectDateField />
           <View className="flex-row items-center gap-4">
-            {onDelete && (
+            {onDelete ? (
               <Button size="icon" variant="secondary" onPress={onDelete}>
                 <Trash2Icon className="size-6 text-primary" />
               </Button>
+            ) : (
+              <Button size="icon" variant="ghost" onPress={onOpenScanner}>
+                <ScanTextIcon className="size-6 text-primary" />
+              </Button>
             )}
-            <Button size="icon" variant="secondary" onPress={onCancel}>
-              <XIcon className="size-6 text-primary" />
-            </Button>
           </View>
         </View>
         <View className="flex-1 items-center justify-center pb-12">
           <View className="w-full h-24 justify-end mb-4">
-            <TextTicker
-              value={amount}
-              className="font-semibold text-6xl text-foreground leading-tight text-center"
-              suffix={currency}
-              suffixClassName="font-semibold ml-2 text-muted-foreground overflow-visible"
-            />
+            <TransactionAmount />
           </View>
           <Button variant="outline" size="sm" className="rounded-full">
             <LandPlot className="w-5 h-5 text-primary" />
@@ -110,25 +132,16 @@ export const TransactionForm = ({
             <View className="flex-row items-center gap-2">
               <SelectAccountField
                 onSelect={(walletAccount) => {
-                  transactionForm.setValue(
-                    'currency',
-                    walletAccount.preferredCurrency,
-                  )
+                  form.setValue('currency', walletAccount.preferredCurrency)
                 }}
               />
               <SelectCategoryField />
             </View>
-            <SubmitButton
-              onPress={transactionForm.handleSubmit(onSubmit)}
-              onPressIn={Haptics.selectionAsync}
-              disabled={transactionForm.formState.isLoading || !amount}
-            >
-              <Text>{t(i18n)`Save`}</Text>
-            </SubmitButton>
+            <FormSubmitButton form={form} onSubmit={onSubmit} />
           </View>
           <Controller
             name="amount"
-            control={transactionForm.control}
+            control={form.control}
             render={({ field: { onChange, value } }) => (
               <NumericPad value={value} onValueChange={onChange} />
             )}

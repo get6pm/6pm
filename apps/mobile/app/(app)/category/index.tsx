@@ -2,7 +2,7 @@ import { CategoryItem } from '@/components/category/category-item'
 import { AddNewButton } from '@/components/common/add-new-button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Text } from '@/components/ui/text'
-import { useCategories } from '@/queries/category'
+import { useCategoryList } from '@/stores/category/hooks'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { useRouter } from 'expo-router'
@@ -12,15 +12,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 export default function CategoriesScreen() {
   const { i18n } = useLingui()
   const router = useRouter()
-  const { data: categories = [], isLoading, refetch } = useCategories()
+  const { incomeCategories, expenseCategories, isRefetching, refetch } =
+    useCategoryList()
   const { bottom } = useSafeAreaInsets()
-
-  const incomeCategories = categories.filter(
-    (category) => category.type === 'INCOME',
-  )
-  const expenseCategories = categories.filter(
-    (category) => category.type === 'EXPENSE',
-  )
 
   const sections = [
     { key: 'INCOME', title: 'Incomes', data: incomeCategories },
@@ -31,7 +25,7 @@ export default function CategoriesScreen() {
     <SectionList
       className="bg-card flex-1"
       contentContainerStyle={{ paddingBottom: bottom }}
-      refreshing={isLoading}
+      refreshing={isRefetching}
       onRefresh={refetch}
       sections={sections}
       keyExtractor={(item) => item.id}
@@ -42,7 +36,7 @@ export default function CategoriesScreen() {
       renderSectionFooter={({ section }) => (
         <>
           {!section.data.length &&
-            (isLoading ? (
+            (isRefetching ? (
               <>
                 <Skeleton className="mx-6 mb-5 mt-3 h-4 rounded-full" />
                 <Skeleton className="mx-6 mb-5 mt-3 h-4 rounded-full" />

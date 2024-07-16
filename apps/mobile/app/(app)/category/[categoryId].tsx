@@ -1,34 +1,15 @@
 import { CategoryForm } from '@/components/category/category-form'
 import { Text } from '@/components/ui/text'
-import { updateCategory } from '@/mutations/category'
-import { categoryQueries, useCategories } from '@/queries/category'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useCategory, useUpdateCategory } from '@/stores/category/hooks'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { Alert, ScrollView, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 
 export default function EditCategoryScreen() {
-  const { categoryId } = useLocalSearchParams<{ categoryId: string }>()
-  const { data: categories = [] } = useCategories()
-  const queryClient = useQueryClient()
   const router = useRouter()
+  const { categoryId } = useLocalSearchParams<{ categoryId: string }>()
+  const { category } = useCategory(categoryId!)
 
-  const { mutateAsync: mutateUpdate } = useMutation({
-    mutationFn: updateCategory,
-    onError(error) {
-      Alert.alert(error.message)
-    },
-    onSuccess() {
-      router.back()
-    },
-    async onSettled() {
-      await queryClient.invalidateQueries({
-        queryKey: categoryQueries.list._def,
-      })
-    },
-    throwOnError: true,
-  })
-
-  const category = categories.find((category) => category.id === categoryId)
+  const { mutateAsync: mutateUpdate } = useUpdateCategory()
 
   if (!category) {
     return (
@@ -39,9 +20,15 @@ export default function EditCategoryScreen() {
   }
 
   return (
-    <ScrollView className="bg-card px-6 py-3">
+    <ScrollView
+      className="bg-card px-6 py-3"
+      keyboardShouldPersistTaps="handled"
+    >
       <CategoryForm
-        onSubmit={(values) => mutateUpdate({ id: category.id, data: values })}
+        onSubmit={async (values) => {
+          mutateUpdate({ id: category.id, data: values })
+          router.back()
+        }}
         hiddenFields={['type']}
         defaultValues={{
           name: category?.name,

@@ -6,7 +6,11 @@ import { getLogger } from '../../lib/log'
 import { getAuthUserStrict } from '../middlewares/auth'
 import { generateTransactionDataFromFile } from '../services/ai.service'
 import { canUserReadBudget, findBudget } from '../services/budget.service'
-import { canUserReadCategory, findCategory } from '../services/category.service'
+import {
+  canUserReadCategory,
+  findCategoriesOfUser,
+  findCategory,
+} from '../services/category.service'
 import {
   canUserCreateTransaction,
   canUserDeleteTransaction,
@@ -275,6 +279,7 @@ const router = new Hono()
   })
 
   .post('/ai', async (c) => {
+    const user = getAuthUserStrict(c)
     const body = await c.req.parseBody()
     const file = body.file as File | undefined
 
@@ -282,8 +287,13 @@ const router = new Hono()
       return c.json({ message: 'file not found' }, 400)
     }
 
+    const userCategories = await findCategoriesOfUser({ user })
+
     try {
-      const transactionData = await generateTransactionDataFromFile({ file })
+      const transactionData = await generateTransactionDataFromFile({
+        file,
+        categories: userCategories,
+      })
       return c.json(transactionData)
     } catch {
       return c.json(

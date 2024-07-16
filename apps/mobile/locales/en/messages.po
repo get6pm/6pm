@@ -53,7 +53,7 @@ msgstr ""
 msgid "App theme"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:67
+#: apps/mobile/app/(app)/_layout.tsx:74
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:121
 msgid "Appearance"
 msgstr ""
@@ -62,7 +62,7 @@ msgstr ""
 msgid "Are you sure you want to sign out?"
 msgstr ""
 
-#: apps/mobile/components/common/toolbar.tsx:15
+#: apps/mobile/components/common/toolbar.tsx:16
 msgid "Ask AI anything..."
 msgstr ""
 
@@ -74,17 +74,22 @@ msgstr ""
 msgid "Budgets"
 msgstr ""
 
+#: apps/mobile/app/(app)/(tabs)/scanner.tsx:129
+msgid "Camera permissions are not granted"
+msgstr ""
+
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:209
-#: apps/mobile/app/(app)/wallet/[walletId].tsx:68
+#: apps/mobile/app/(app)/transaction/[transactionId].tsx:70
+#: apps/mobile/app/(app)/wallet/[walletId].tsx:74
 msgid "Cancel"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:99
+#: apps/mobile/app/(app)/_layout.tsx:106
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:96
 msgid "Categories"
 msgstr ""
 
-#: apps/mobile/components/category/category-form.tsx:64
+#: apps/mobile/components/category/category-form.tsx:67
 msgid "Category name"
 msgstr ""
 
@@ -112,19 +117,20 @@ msgstr ""
 msgid "Default currency"
 msgstr ""
 
-#: apps/mobile/app/(app)/wallet/[walletId].tsx:72
+#: apps/mobile/app/(app)/transaction/[transactionId].tsx:74
+#: apps/mobile/app/(app)/wallet/[walletId].tsx:78
 msgid "Delete"
 msgstr ""
 
-#: apps/mobile/app/(app)/wallet/[walletId].tsx:62
+#: apps/mobile/app/(app)/wallet/[walletId].tsx:68
 msgid "Delete wallet account will also delete all related transactions!"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:93
+#: apps/mobile/app/(app)/_layout.tsx:100
 msgid "Edit account"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:120
+#: apps/mobile/app/(app)/_layout.tsx:127
 msgid "Edit category"
 msgstr ""
 
@@ -149,7 +155,7 @@ msgstr ""
 msgid "Enter your email address"
 msgstr ""
 
-#: apps/mobile/components/category/category-form.tsx:95
+#: apps/mobile/components/category/category-form.tsx:98
 msgid "Expense"
 msgstr ""
 
@@ -161,11 +167,15 @@ msgstr ""
 msgid "Get 6pm Pro"
 msgstr ""
 
-#: apps/mobile/components/category/category-form.tsx:101
+#: apps/mobile/app/(app)/(tabs)/scanner.tsx:131
+msgid "Grant camera permissions"
+msgstr ""
+
+#: apps/mobile/components/category/category-form.tsx:104
 msgid "Income"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:62
+#: apps/mobile/app/(app)/_layout.tsx:69
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:130
 msgid "Language"
 msgstr ""
@@ -182,7 +192,7 @@ msgstr ""
 msgid "Magic inbox"
 msgstr ""
 
-#: apps/mobile/components/category/category-form.tsx:63
+#: apps/mobile/components/category/category-form.tsx:66
 #: apps/mobile/components/wallet/account-form.tsx:41
 msgid "Name"
 msgstr ""
@@ -191,16 +201,16 @@ msgstr ""
 msgid "New {0}"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:86
+#: apps/mobile/app/(app)/_layout.tsx:93
 #: apps/mobile/app/(app)/wallet/accounts.tsx:26
 msgid "New account"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:113
+#: apps/mobile/app/(app)/_layout.tsx:120
 msgid "New category"
 msgstr ""
 
-#: apps/mobile/components/transaction/transaction-form.tsx:84
+#: apps/mobile/components/transaction/transaction-form.tsx:93
 msgid "No budget selected"
 msgstr ""
 
@@ -216,6 +226,10 @@ msgstr ""
 msgid "Privacy Policy"
 msgstr ""
 
+#: apps/mobile/app/(app)/(tabs)/scanner.tsx:145
+msgid "Processing transaction..."
+msgstr ""
+
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:199
 msgid "Proudly open source"
 msgstr ""
@@ -228,9 +242,9 @@ msgstr ""
 msgid "Rate 6pm on App Store"
 msgstr ""
 
-#: apps/mobile/components/category/category-form.tsx:115
-#: apps/mobile/components/transaction/select-date-field.tsx:46
-#: apps/mobile/components/transaction/transaction-form.tsx:113
+#: apps/mobile/components/category/category-form.tsx:118
+#: apps/mobile/components/transaction/select-date-field.tsx:50
+#: apps/mobile/components/transaction/transaction-form.tsx:124
 #: apps/mobile/components/wallet/account-form.tsx:73
 msgid "Save"
 msgstr ""
@@ -243,7 +257,7 @@ msgstr ""
 msgid "Search currency..."
 msgstr ""
 
-#: apps/mobile/components/transaction/select-account-field.tsx:57
+#: apps/mobile/components/transaction/select-account-field.tsx:63
 msgid "Select account"
 msgstr ""
 
@@ -284,12 +298,20 @@ msgstr ""
 #~ msgid "System"
 #~ msgstr ""
 
+#: apps/mobile/app/(app)/(tabs)/scanner.tsx:166
+msgid "Take a picture of your transaction"
+msgstr ""
+
 #: apps/mobile/app/(aux)/_layout.tsx:40
 msgid "Terms & Conditions"
 msgstr ""
 
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:237
 msgid "Terms of use"
+msgstr ""
+
+#: apps/mobile/app/(app)/transaction/[transactionId].tsx:64
+msgid "This will delete the transaction. Are you sure you want to continue?"
 msgstr ""
 
 #: apps/mobile/lib/date.tsx:10
@@ -301,18 +323,18 @@ msgid "Tomorrow"
 msgstr ""
 
 #: apps/mobile/app/(app)/new-record.tsx:25
-msgid "Transaction created"
-msgstr ""
+#~ msgid "Transaction created"
+#~ msgstr ""
 
-#: apps/mobile/components/transaction/transaction-form.tsx:89
+#: apps/mobile/components/transaction/transaction-form.tsx:98
 msgid "transaction note"
 msgstr ""
 
-#: apps/mobile/components/category/category-form.tsx:80
+#: apps/mobile/components/category/category-form.tsx:83
 msgid "Type"
 msgstr ""
 
-#: apps/mobile/components/transaction/select-category-field.tsx:65
+#: apps/mobile/components/transaction/select-category-field.tsx:71
 #: apps/mobile/components/transaction/transaction-item.tsx:31
 msgid "Uncategorized"
 msgstr ""
@@ -337,12 +359,12 @@ msgstr ""
 msgid "Wallet account name"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:72
+#: apps/mobile/app/(app)/_layout.tsx:79
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:87
 msgid "Wallet accounts"
 msgstr ""
 
-#: apps/mobile/components/transaction/select-account-field.tsx:90
+#: apps/mobile/components/transaction/select-account-field.tsx:97
 msgid "Wallet Accounts"
 msgstr ""
 

@@ -48,7 +48,9 @@ export const TransactionItem: FC<TransactionItemProps> = ({ transaction }) => {
             name={iconName as any}
             className="size-5 text-foreground"
           />
-          <Text>{transactionName}</Text>
+          <Text numberOfLines={1} className="flex-1">
+            {transactionName}
+          </Text>
         </View>
         <Text
           className={cn(

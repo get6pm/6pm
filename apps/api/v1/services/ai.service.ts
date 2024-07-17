@@ -1,6 +1,8 @@
 import type { CategoryType } from '@prisma/client'
 import { OpenAI } from 'openai'
 import { getLogger } from '../../lib/log'
+import { createAiCache, findAiCacheByQuery } from './ai-cache.service'
+import { hashFile } from './file.service'
 
 const ASSISTANT_ID = process.env.OPENAI_ASSISTANT_ID!
 
@@ -54,6 +56,23 @@ export async function generateTransactionDataFromFile({
   }[]
 }) {
   const log = getLogger(`ai.service:${generateTransactionDataFromFile.name}`)
+  const additionalInstructions = `note must be in ${noteLanguage} language but do not translate names. Categories: ${JSON.stringify(categories?.map((cat) => ({ id: cat.id, name: cat.name, icon: cat.icon, type: cat.type })) || [])}`
+
+  // If cached, return cached response
+  const fileHash = await hashFile(inputFile)
+  const cacheQuery = `transaction_file:${JSON.stringify({
+    fileHash,
+    additionalInstructions,
+  })}`
+
+  log.debug('Checking cache for query: %s', cacheQuery)
+
+  const cachedResponse = await findAiCacheByQuery({ query: cacheQuery })
+
+  if (cachedResponse) {
+    log.info('Found cached response for query: %s', cacheQuery)
+    return JSON.parse(cachedResponse.response)
+  }
 
   const file = await uploadVisionFile({ file: inputFile })
 
@@ -70,8 +89,6 @@ export async function generateTransactionDataFromFile({
 
   log.info('Created thread with uploaded file. Thread ID: %s', thread.id)
   log.debug('Created thread with uploaded file. Thread details: %o', thread)
-
-  const additionalInstructions = `note must be in ${noteLanguage} language but do not translate names. Categories: ${JSON.stringify(categories?.map((cat) => ({ id: cat.id, name: cat.name, icon: cat.icon, type: cat.type })) || [])}`
 
   log.debug(
     'Running assistant on thread.\nAssistant ID: %s\nAdditional instructions: %s',
@@ -105,6 +122,12 @@ export async function generateTransactionDataFromFile({
     log.info('AI transaction data: %o', aiTransactionData)
 
     cleanup()
+
+    // save to cache
+    createAiCache({
+      query: cacheQuery,
+      response: JSON.stringify(aiTransactionData),
+    })
 
     return aiTransactionData
   }

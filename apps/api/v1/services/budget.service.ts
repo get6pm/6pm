@@ -143,6 +143,7 @@ export async function createBudget({
   data: CreateBudget
 }) {
   const {
+    id,
     name,
     type,
     description,
@@ -158,6 +159,7 @@ export async function createBudget({
 
   const budget = await prisma.budget.create({
     data: {
+      id,
       name,
       type,
       description,

@@ -5,6 +5,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
+import * as Haptics from 'expo-haptics'
 import { LandPlot, Trash2Icon, XIcon } from 'lucide-react-native'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { ScrollView, View } from 'react-native'
@@ -119,6 +120,7 @@ export const TransactionForm = ({
             </View>
             <SubmitButton
               onPress={transactionForm.handleSubmit(onSubmit)}
+              onPressIn={Haptics.selectionAsync}
               disabled={transactionForm.formState.isLoading || !amount}
             >
               <Text>{t(i18n)`Save`}</Text>

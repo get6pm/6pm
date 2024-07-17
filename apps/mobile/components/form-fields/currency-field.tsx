@@ -3,25 +3,24 @@ import { useRef } from 'react'
 
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
-import { useController } from 'react-hook-form'
+import { cn } from '@/lib/utils'
 import { Keyboard } from 'react-native'
 import { FullWindowOverlay } from 'react-native-screens'
 import { CurrencySheetList } from '../common/currency-sheet'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
 
-export function SelectCurrencyField({
-  onSelect,
+export function CurrencyField({
+  value,
+  onChange,
+  className,
 }: {
-  onSelect?: (currency: string) => void
+  value: string
+  onChange?: (currency: string) => void
+  className?: string
 }) {
   const sheetRef = useRef<BottomSheetModal>(null)
   const { colorScheme } = useColorScheme()
-  const {
-    field: { onChange, onBlur, value },
-    // fieldState,
-  } = useController({ name: 'preferredCurrency' })
-
   return (
     <>
       <Button
@@ -30,7 +29,10 @@ export function SelectCurrencyField({
           Keyboard.dismiss()
           sheetRef.current?.present()
         }}
-        className="!border-r !h-11 !py-0 !px-0 !w-16 border-input rounded-r-none"
+        className={cn(
+          '!border-r !h-11 !py-0 !px-0 !w-16 border-input rounded-r-none',
+          className,
+        )}
       >
         <Text className="text-primary font-normal text-sm">{value}</Text>
       </Button>
@@ -56,9 +58,7 @@ export function SelectCurrencyField({
         <CurrencySheetList
           value={value}
           onSelect={(currency) => {
-            onChange(currency.code)
-            onBlur()
-            onSelect?.(currency.code)
+            onChange?.(currency.code)
             setTimeout(() => sheetRef.current?.close(), 200)
           }}
         />

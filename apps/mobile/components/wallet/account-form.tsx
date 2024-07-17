@@ -3,14 +3,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { useRef } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { View } from 'react-native'
 import type { TextInput } from 'react-native'
+import { CurrencyField } from '../form-fields/currency-field'
 import { InputField } from '../form-fields/input-field'
 import { SubmitButton } from '../form-fields/submit-button'
 import { Text } from '../ui/text'
 import { SelectAccountIconField } from './select-account-icon-field'
-import { SelectCurrencyField } from './select-currency-field'
 
 type AccountFormProps = {
   onSubmit: (data: AccountFormValues) => void
@@ -60,8 +60,18 @@ export const AccountForm = ({ onSubmit, defaultValues }: AccountFormProps) => {
           className="!pl-[62px]"
           keyboardType="number-pad"
           leftSection={
-            <SelectCurrencyField
-              onSelect={() => balanceInputRef.current?.focus()}
+            <Controller
+              name="preferredCurrency"
+              control={accountForm.control}
+              render={({ field: { onChange, value } }) => (
+                <CurrencyField
+                  value={value}
+                  onChange={(selected) => {
+                    onChange(selected)
+                    balanceInputRef.current?.focus()
+                  }}
+                />
+              )}
             />
           }
         />

@@ -1,3 +1,4 @@
+import type { CategoryType } from '@prisma/client'
 import { OpenAI } from 'openai'
 import { getLogger } from '../../lib/log'
 
@@ -40,7 +41,18 @@ export async function deleteFile({ fileId }: { fileId: string }) {
 
 export async function generateTransactionDataFromFile({
   file: inputFile,
-}: { file: File }) {
+  noteLanguage = 'English',
+  categories,
+}: {
+  file: File
+  noteLanguage?: string
+  categories?: {
+    id: string
+    name: string
+    icon?: string | null
+    type?: CategoryType
+  }[]
+}) {
   const log = getLogger(`ai.service:${generateTransactionDataFromFile.name}`)
 
   const file = await uploadVisionFile({ file: inputFile })
@@ -58,12 +70,18 @@ export async function generateTransactionDataFromFile({
 
   log.info('Created thread with uploaded file. Thread ID: %s', thread.id)
   log.debug('Created thread with uploaded file. Thread details: %o', thread)
-  log.debug('Running assistant on thread. Assistant ID: %s', ASSISTANT_ID)
+
+  const additionalInstructions = `note must be in ${noteLanguage} language but do not translate names. Categories: ${JSON.stringify(categories?.map((cat) => ({ id: cat.id, name: cat.name, icon: cat.icon, type: cat.type })) || [])}`
+
+  log.debug(
+    'Running assistant on thread.\nAssistant ID: %s\nAdditional instructions: %s',
+    ASSISTANT_ID,
+    additionalInstructions,
+  )
 
   const run = await openai.beta.threads.runs.createAndPoll(thread.id, {
     assistant_id: ASSISTANT_ID,
-    // TODO: PUT USER CATEGORIES HERE LATER
-    // additional_instructions: '<PUT USER CATEGORIES HERE LATER>',
+    additional_instructions: additionalInstructions,
   })
 
   log.info('Ran assistant on thread. Run ID: %s', run.id)
@@ -81,19 +99,17 @@ export async function generateTransactionDataFromFile({
     const messages = await openai.beta.threads.messages.list(run.thread_id)
     const firstMessage = messages.data[0].content[0]
 
-    log.debug('First message: %o', firstMessage)
-
     const aiTransactionData =
       firstMessage.type === 'text' ? JSON.parse(firstMessage.text.value) : null
 
     log.info('AI transaction data: %o', aiTransactionData)
 
-    await cleanup()
+    cleanup()
 
     return aiTransactionData
   }
 
   log.error('Assistant run failed. Run details: %o', run)
-  await cleanup()
+  cleanup()
   throw new Error('Assistant run failed')
 }

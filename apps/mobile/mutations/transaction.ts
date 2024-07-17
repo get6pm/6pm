@@ -86,12 +86,8 @@ export async function getAITransactionData(fileUri: string) {
 
   const transaction = zUpdateTransaction.parse({
     ...body,
-    date: body?.datetime,
+    date: body?.date ? new Date(body.date) : undefined,
   })
-
-  if (!transaction.amount) {
-    throw new Error('Cannot extract transaction data')
-  }
 
   return transaction
 }

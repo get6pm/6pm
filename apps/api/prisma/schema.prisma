@@ -151,10 +151,11 @@ model Transaction {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  amount   Decimal
-  currency String
-  date     DateTime
-  note     String?
+  amount      Decimal
+  amountInVnd Decimal
+  currency    String
+  date        DateTime
+  note        String?
 
   categoryId      String?
   category        Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)

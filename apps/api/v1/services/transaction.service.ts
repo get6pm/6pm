@@ -5,12 +5,16 @@ import type {
   User,
   UserWalletAccount,
 } from '@prisma/client'
+import { Decimal } from '@prisma/client/runtime/library'
 import prisma from '../../lib/prisma'
 import {
   findBudget,
   isUserBudgetMember,
   isUserBudgetOwner,
 } from './budget.service'
+import { getExchangeRate } from './exchange-rates.service'
+
+const VND = 'VND'
 
 export async function canUserCreateTransaction({
   user,
@@ -115,9 +119,29 @@ export async function createTransaction({
   user: User
   data: CreateTransaction
 }) {
+  const { amount, currency, date } = data
+
+  let amountInVnd = amount
+
+  if (currency !== VND) {
+    const vndRate = await getExchangeRate({
+      fromCurrency: currency,
+      toCurrency: VND,
+      // YYYY-MM-DD
+      date: date.toISOString().split('T')[0],
+    })
+
+    if (!vndRate) {
+      throw new Error('Exchange rate not found')
+    }
+
+    amountInVnd = amount * vndRate.rate
+  }
+
   const transaction = await prisma.transaction.create({
     data: {
       ...data,
+      amountInVnd,
       createdByUserId: user.id,
     },
     include: {
@@ -135,11 +159,51 @@ export async function updateTransaction({
   transactionId: string
   data: UpdateTransaction
 }) {
-  const transaction = await prisma.transaction.update({
+  let transaction = await findTransaction({ transactionId })
+
+  if (!transaction) {
+    throw new Error('Transaction not found')
+  }
+
+  let amountInVnd = transaction.amountInVnd
+
+  if (
+    data.date !== transaction.date ||
+    data.currency !== transaction.currency ||
+    (typeof data.amount === 'number' &&
+      !transaction.amount.eq(new Decimal(data.amount)))
+  ) {
+    const date = data.date || transaction.date
+    const amount =
+      typeof data.amount === 'number'
+        ? new Decimal(data.amount)
+        : transaction.amount
+    const currency = data.currency || transaction.currency
+
+    if (currency !== VND) {
+      const vndRate = await getExchangeRate({
+        fromCurrency: currency,
+        toCurrency: VND,
+        // YYYY-MM-DD
+        date: date.toISOString().split('T')[0],
+      })
+
+      if (!vndRate) {
+        throw new Error('Exchange rate not found')
+      }
+
+      amountInVnd = amount.mul(vndRate.rate)
+    }
+  }
+
+  transaction = await prisma.transaction.update({
     where: {
       id: transactionId,
     },
-    data,
+    data: {
+      ...data,
+      amountInVnd,
+    },
     include: {
       category: true,
     },

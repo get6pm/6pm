@@ -1,8 +1,8 @@
 import { getHonoClient } from '@/lib/client'
 import {
   type BudgetFormValues,
+  type BudgetPopulated,
   BudgetSchema,
-  type BudgetWithRelations,
 } from '@6pm/validation'
 import { createId } from '@paralleldrive/cuid2'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -60,7 +60,7 @@ export const useBudgetList = () => {
 
 export const useBudget = (budgetId: string) => {
   const budgets = useBudgetStore().budgets
-  const budget: BudgetWithRelations | null = useMemo(
+  const budget: BudgetPopulated | null = useMemo(
     () => budgets.find((budget) => budget.id === budgetId) || null,
     [budgets, budgetId],
   )
@@ -135,15 +135,21 @@ export const useCreateBudget = () => {
       throw result
     },
     onMutate({ id, data }) {
-      const budget: BudgetWithRelations = {
+      const budget: BudgetPopulated = {
         id: id!,
         createdAt: new Date(),
         updatedAt: new Date(),
         description: '',
-        budgetUsers: [],
-        invitations: [],
-        transactions: [],
         ...data,
+        periodConfig: {
+          id: createId(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          budgetId: id!,
+          startDate: data.period.startDate ?? null,
+          endDate: data.period.endDate ?? null,
+          ...data.period,
+        },
       }
 
       updateBudgetInStore(budget)

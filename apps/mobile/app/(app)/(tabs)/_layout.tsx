@@ -48,6 +48,12 @@ export default function TabLayout() {
         name="budgets"
         options={{
           headerTitle: t(i18n)`Budgets`,
+          headerTitleStyle: {
+            fontFamily: 'Be Vietnam Pro Medium',
+            fontSize: 16,
+            color: theme[colorScheme ?? 'light'].primary,
+            marginLeft: 5,
+          },
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <LandPlotIcon color={color} />,
           headerRight: () => (

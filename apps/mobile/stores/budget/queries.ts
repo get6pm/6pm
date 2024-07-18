@@ -1,14 +1,11 @@
 import { getHonoClient } from '@/lib/client'
-import {
-  type BudgetWithRelations,
-  BudgetWithRelationsSchema,
-} from '@6pm/validation'
+import { type BudgetPopulated, BudgetPopulatedSchema } from '@6pm/validation'
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 
 export const budgetQueries = createQueryKeys('budgets', {
   all: ({
     setBudgetsState,
-  }: { setBudgetsState: (budgets: BudgetWithRelations[]) => void }) => ({
+  }: { setBudgetsState: (budgets: BudgetPopulated[]) => void }) => ({
     queryKey: [{}],
     queryFn: async () => {
       const hc = await getHonoClient()
@@ -20,8 +17,7 @@ export const budgetQueries = createQueryKeys('budgets', {
       }
 
       const items = await res.json()
-      const budgets = items.map((item) => BudgetWithRelationsSchema.parse(item))
-
+      const budgets = items.map((item) => BudgetPopulatedSchema.parse(item))
       setBudgetsState(budgets)
 
       return budgets

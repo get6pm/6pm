@@ -1,5 +1,10 @@
 import { z } from 'zod'
-import { BudgetPeriodTypeSchema, BudgetTypeSchema } from './prisma'
+import {
+  BudgetPeriodConfigSchema,
+  BudgetPeriodTypeSchema,
+  BudgetSchema,
+  BudgetTypeSchema,
+} from './prisma'
 
 export const zCreateBudget = z.object({
   id: z.string().cuid2().optional(),
@@ -47,3 +52,11 @@ export type UpdateBudget = z.infer<typeof zUpdateBudget>
 
 export const zBudgetFormValues = zCreateBudget
 export type BudgetFormValues = z.infer<typeof zBudgetFormValues>
+
+export const BudgetPopulatedSchema = BudgetSchema.extend({
+  id: z.string(),
+  periodConfig: BudgetPeriodConfigSchema.extend({
+    amount: z.number({ coerce: true }).min(0),
+  }),
+})
+export type BudgetPopulated = z.infer<typeof BudgetPopulatedSchema>

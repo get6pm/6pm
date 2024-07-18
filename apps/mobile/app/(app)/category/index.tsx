@@ -17,8 +17,8 @@ export default function CategoriesScreen() {
   const { bottom } = useSafeAreaInsets()
 
   const sections = [
-    { key: 'INCOME', title: 'Incomes', data: incomeCategories },
-    { key: 'EXPENSE', title: 'Expenses', data: expenseCategories },
+    { key: 'INCOME', title: t(i18n)`Incomes`, data: incomeCategories },
+    { key: 'EXPENSE', title: t(i18n)`Expenses`, data: expenseCategories },
   ]
 
   return (

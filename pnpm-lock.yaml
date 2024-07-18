@@ -26,6 +26,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@6pm/utilities':
+        specifier: workspace:^
+        version: link:../../packages/utilities
       '@6pm/validation':
         specifier: workspace:^
         version: link:../../packages/validation
@@ -47,9 +50,6 @@ importers:
       '@vercel/blob':
         specifier: ^0.23.4
         version: 0.23.4
-      dayjs:
-        specifier: ^1.11.11
-        version: 1.11.11
       got:
         specifier: ^14.4.1
         version: 14.4.1
@@ -58,7 +58,7 @@ importers:
         version: 4.4.8
       next:
         specifier: ^14.2.4
-        version: 14.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 14.2.4(@babel/core@7.24.7)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       openai:
         specifier: ^4.52.7
         version: 4.52.7
@@ -345,6 +345,18 @@ importers:
         version: 5.3.3
 
   packages/currency: {}
+
+  packages/utilities:
+    dependencies:
+      '@6pm/validation':
+        specifier: workspace:^
+        version: link:../validation
+      '@prisma/client':
+        specifier: ^5.16.0
+        version: 5.16.0(prisma@5.16.0)
+      dayjs:
+        specifier: ^1.11.11
+        version: 1.11.11
 
   packages/validation:
     dependencies:
@@ -13448,7 +13460,7 @@ snapshots:
 
   nested-error-stacks@2.0.1: {}
 
-  next@14.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  next@14.2.4(@babel/core@7.24.7)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@next/env': 14.2.4
       '@swc/helpers': 0.5.5
@@ -13458,7 +13470,7 @@ snapshots:
       postcss: 8.4.31
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      styled-jsx: 5.1.1(react@18.3.1)
+      styled-jsx: 5.1.1(@babel/core@7.24.7)(babel-plugin-macros@3.1.0)(react@18.3.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 14.2.4
       '@next/swc-darwin-x64': 14.2.4
@@ -14666,10 +14678,13 @@ snapshots:
 
   structured-headers@0.4.1: {}
 
-  styled-jsx@5.1.1(react@18.3.1):
+  styled-jsx@5.1.1(@babel/core@7.24.7)(babel-plugin-macros@3.1.0)(react@18.3.1):
     dependencies:
       client-only: 0.0.1
       react: 18.3.1
+    optionalDependencies:
+      '@babel/core': 7.24.7
+      babel-plugin-macros: 3.1.0
 
   styleq@0.1.3: {}
 

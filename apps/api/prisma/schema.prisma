@@ -199,3 +199,16 @@ model CachedGptResponse {
   query    String
   response String
 }
+
+model CurrencyExchangeRate {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fromCurrency String
+  toCurrency   String
+  rate         Decimal
+  date         String // YYYY-MM-DD
+
+  @@unique([fromCurrency, toCurrency, date])
+}

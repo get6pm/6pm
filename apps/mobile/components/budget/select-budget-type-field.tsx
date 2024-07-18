@@ -1,0 +1,102 @@
+import { BudgetTypeSchema } from '@6pm/validation'
+import { t } from '@lingui/macro'
+import { useLingui } from '@lingui/react'
+import { useMemo } from 'react'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import GenericIcon from '../common/generic-icon'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select'
+
+type SelectBudgetTypeFieldProps = {
+  value: string
+  onSelect: (type?: string) => void
+  sideOffset?: number
+}
+
+export function SelectBudgetTypeField({
+  value,
+  onSelect,
+  sideOffset,
+}: SelectBudgetTypeFieldProps) {
+  const { i18n } = useLingui()
+  const insets = useSafeAreaInsets()
+  const contentInsets = {
+    top: insets.top,
+    bottom: insets.bottom + Math.abs(sideOffset || 0),
+    left: 21,
+    right: 21,
+  }
+
+  const options = useMemo(
+    () => [
+      {
+        value: BudgetTypeSchema.Enum.SPENDING,
+        label: t(i18n)`Spending`,
+        icon: 'HandCoins',
+      },
+      {
+        value: BudgetTypeSchema.Enum.SAVING,
+        label: t(i18n)`Saving`,
+        icon: 'PiggyBank',
+      },
+      {
+        value: BudgetTypeSchema.Enum.INVESTING,
+        label: t(i18n)`Investing`,
+        icon: 'TrendingUp',
+      },
+      {
+        value: BudgetTypeSchema.Enum.DEBT,
+        label: t(i18n)`Debt`,
+        icon: 'Landmark',
+      },
+    ],
+    [i18n],
+  )
+
+  return (
+    <Select
+      defaultValue={options[0]}
+      value={options.find((option) => option.value === value)}
+      onValueChange={(selected) => onSelect(selected?.value)}
+    >
+      <SelectTrigger>
+        <GenericIcon
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          name={options.find((option) => option.value === value)?.icon as any}
+          className="w-5 h-5 text-foreground absolute left-3"
+        />
+        <SelectValue
+          className="font-sans text-foreground left-8"
+          placeholder={t(i18n)`Select budget type`}
+        >
+          {value}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent
+        sideOffset={(sideOffset || 0) + 6}
+        insets={contentInsets}
+        alignOffset={10}
+        portalHost="budget-form"
+        className="w-full"
+      >
+        <SelectGroup>
+          {options.map((option) => (
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              label={option.label}
+            >
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  )
+}

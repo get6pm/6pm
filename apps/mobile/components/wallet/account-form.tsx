@@ -40,7 +40,6 @@ export const AccountForm = ({ onSubmit, defaultValues }: AccountFormProps) => {
           name="name"
           label={t(i18n)`Name`}
           placeholder={t(i18n)`Wallet account name`}
-          autoCapitalize="none"
           autoFocus={!defaultValues}
           className="!pl-[62px]"
           leftSection={

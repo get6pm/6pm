@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { Text } from '@/components/ui/text'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
 import { t } from '@lingui/macro'
@@ -51,11 +52,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <LandPlotIcon color={color} />,
           headerRight: () => (
             <Link href="/budget/new-budget" asChild>
-              <Button size="icon" variant="ghost" className="mr-4">
+              <Button size="sm" variant="secondary" className="mr-6 h-10">
                 <PlusIcon className="size-6 text-primary" />
+                <Text>{t(i18n)`New budget`}</Text>
               </Button>
             </Link>
           ),
+          headerTitleAlign: 'left',
         }}
       />
       {/* <Tabs.Screen

@@ -250,6 +250,9 @@ export async function findBudgetsOfUser({
         },
       },
     },
+    include: {
+      periodConfig: true,
+    },
   })
 }
 

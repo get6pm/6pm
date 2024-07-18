@@ -86,6 +86,7 @@ model BudgetPeriodConfig {
 }
 
 enum BudgetPeriodType {
+  WEEKLY
   MONTHLY
   QUARTERLY
   YEARLY

@@ -68,7 +68,7 @@ export const BudgetTypeSchema = z.enum(['SPENDING','SAVING','INVESTING','DEBT'])
 
 export type BudgetTypeType = `${z.infer<typeof BudgetTypeSchema>}`
 
-export const BudgetPeriodTypeSchema = z.enum(['MONTHLY','QUARTERLY','YEARLY','CUSTOM']);
+export const BudgetPeriodTypeSchema = z.enum(['WEEKLY','MONTHLY','QUARTERLY','YEARLY','CUSTOM']);
 
 export type BudgetPeriodTypeType = `${z.infer<typeof BudgetPeriodTypeSchema>}`
 

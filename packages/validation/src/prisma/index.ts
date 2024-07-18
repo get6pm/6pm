@@ -56,6 +56,8 @@ export const CategoryScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt
 
 export const CachedGptResponseScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','query','response']);
 
+export const CurrencyExchangeRateScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','fromCurrency','toCurrency','rate','date']);
+
 export const SortOrderSchema = z.enum(['asc','desc']);
 
 export const QueryModeSchema = z.enum(['default','insensitive']);
@@ -405,6 +407,22 @@ export const CachedGptResponseSchema = z.object({
 export type CachedGptResponse = z.infer<typeof CachedGptResponseSchema>
 
 /////////////////////////////////////////
+// CURRENCY EXCHANGE RATE SCHEMA
+/////////////////////////////////////////
+
+export const CurrencyExchangeRateSchema = z.object({
+  id: z.string().cuid(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  fromCurrency: z.string(),
+  toCurrency: z.string(),
+  rate: z.instanceof(Prisma.Decimal, { message: "Field 'rate' must be a Decimal. Location: ['Models', 'CurrencyExchangeRate']"}),
+  date: z.string(),
+})
+
+export type CurrencyExchangeRate = z.infer<typeof CurrencyExchangeRateSchema>
+
+/////////////////////////////////////////
 // SELECT & INCLUDE
 /////////////////////////////////////////
 
@@ -728,6 +746,19 @@ export const CachedGptResponseSelectSchema: z.ZodType<Prisma.CachedGptResponseSe
   updatedAt: z.boolean().optional(),
   query: z.boolean().optional(),
   response: z.boolean().optional(),
+}).strict()
+
+// CURRENCY EXCHANGE RATE
+//------------------------------------------------------
+
+export const CurrencyExchangeRateSelectSchema: z.ZodType<Prisma.CurrencyExchangeRateSelect> = z.object({
+  id: z.boolean().optional(),
+  createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
+  fromCurrency: z.boolean().optional(),
+  toCurrency: z.boolean().optional(),
+  rate: z.boolean().optional(),
+  date: z.boolean().optional(),
 }).strict()
 
 
@@ -1572,6 +1603,83 @@ export const CachedGptResponseScalarWhereWithAggregatesInputSchema: z.ZodType<Pr
   response: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
+export const CurrencyExchangeRateWhereInputSchema: z.ZodType<Prisma.CurrencyExchangeRateWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => CurrencyExchangeRateWhereInputSchema),z.lazy(() => CurrencyExchangeRateWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => CurrencyExchangeRateWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => CurrencyExchangeRateWhereInputSchema),z.lazy(() => CurrencyExchangeRateWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  fromCurrency: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  toCurrency: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  rate: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  date: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+}).strict();
+
+export const CurrencyExchangeRateOrderByWithRelationInputSchema: z.ZodType<Prisma.CurrencyExchangeRateOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  fromCurrency: z.lazy(() => SortOrderSchema).optional(),
+  toCurrency: z.lazy(() => SortOrderSchema).optional(),
+  rate: z.lazy(() => SortOrderSchema).optional(),
+  date: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CurrencyExchangeRateWhereUniqueInputSchema: z.ZodType<Prisma.CurrencyExchangeRateWhereUniqueInput> = z.union([
+  z.object({
+    id: z.string().cuid(),
+    fromCurrency_toCurrency_date: z.lazy(() => CurrencyExchangeRateFromCurrencyToCurrencyDateCompoundUniqueInputSchema)
+  }),
+  z.object({
+    id: z.string().cuid(),
+  }),
+  z.object({
+    fromCurrency_toCurrency_date: z.lazy(() => CurrencyExchangeRateFromCurrencyToCurrencyDateCompoundUniqueInputSchema),
+  }),
+])
+.and(z.object({
+  id: z.string().cuid().optional(),
+  fromCurrency_toCurrency_date: z.lazy(() => CurrencyExchangeRateFromCurrencyToCurrencyDateCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => CurrencyExchangeRateWhereInputSchema),z.lazy(() => CurrencyExchangeRateWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => CurrencyExchangeRateWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => CurrencyExchangeRateWhereInputSchema),z.lazy(() => CurrencyExchangeRateWhereInputSchema).array() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  fromCurrency: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  toCurrency: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  rate: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  date: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+}).strict());
+
+export const CurrencyExchangeRateOrderByWithAggregationInputSchema: z.ZodType<Prisma.CurrencyExchangeRateOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  fromCurrency: z.lazy(() => SortOrderSchema).optional(),
+  toCurrency: z.lazy(() => SortOrderSchema).optional(),
+  rate: z.lazy(() => SortOrderSchema).optional(),
+  date: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => CurrencyExchangeRateCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => CurrencyExchangeRateAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => CurrencyExchangeRateMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => CurrencyExchangeRateMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => CurrencyExchangeRateSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const CurrencyExchangeRateScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.CurrencyExchangeRateScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => CurrencyExchangeRateScalarWhereWithAggregatesInputSchema),z.lazy(() => CurrencyExchangeRateScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => CurrencyExchangeRateScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => CurrencyExchangeRateScalarWhereWithAggregatesInputSchema),z.lazy(() => CurrencyExchangeRateScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  fromCurrency: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  toCurrency: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  rate: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  date: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+}).strict();
+
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
   id: z.string().cuid().optional(),
   createdAt: z.coerce.date().optional(),
@@ -2363,6 +2471,76 @@ export const CachedGptResponseUncheckedUpdateManyInputSchema: z.ZodType<Prisma.C
   response: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
+export const CurrencyExchangeRateCreateInputSchema: z.ZodType<Prisma.CurrencyExchangeRateCreateInput> = z.object({
+  id: z.string().cuid().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  fromCurrency: z.string(),
+  toCurrency: z.string(),
+  rate: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  date: z.string()
+}).strict();
+
+export const CurrencyExchangeRateUncheckedCreateInputSchema: z.ZodType<Prisma.CurrencyExchangeRateUncheckedCreateInput> = z.object({
+  id: z.string().cuid().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  fromCurrency: z.string(),
+  toCurrency: z.string(),
+  rate: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  date: z.string()
+}).strict();
+
+export const CurrencyExchangeRateUpdateInputSchema: z.ZodType<Prisma.CurrencyExchangeRateUpdateInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  fromCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  toCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  rate: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  date: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const CurrencyExchangeRateUncheckedUpdateInputSchema: z.ZodType<Prisma.CurrencyExchangeRateUncheckedUpdateInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  fromCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  toCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  rate: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  date: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const CurrencyExchangeRateCreateManyInputSchema: z.ZodType<Prisma.CurrencyExchangeRateCreateManyInput> = z.object({
+  id: z.string().cuid().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  fromCurrency: z.string(),
+  toCurrency: z.string(),
+  rate: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  date: z.string()
+}).strict();
+
+export const CurrencyExchangeRateUpdateManyMutationInputSchema: z.ZodType<Prisma.CurrencyExchangeRateUpdateManyMutationInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  fromCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  toCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  rate: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  date: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const CurrencyExchangeRateUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CurrencyExchangeRateUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  fromCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  toCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  rate: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  date: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
 export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
   equals: z.string().optional(),
   in: z.string().array().optional(),
@@ -3051,6 +3229,50 @@ export const CachedGptResponseMinOrderByAggregateInputSchema: z.ZodType<Prisma.C
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   query: z.lazy(() => SortOrderSchema).optional(),
   response: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CurrencyExchangeRateFromCurrencyToCurrencyDateCompoundUniqueInputSchema: z.ZodType<Prisma.CurrencyExchangeRateFromCurrencyToCurrencyDateCompoundUniqueInput> = z.object({
+  fromCurrency: z.string(),
+  toCurrency: z.string(),
+  date: z.string()
+}).strict();
+
+export const CurrencyExchangeRateCountOrderByAggregateInputSchema: z.ZodType<Prisma.CurrencyExchangeRateCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  fromCurrency: z.lazy(() => SortOrderSchema).optional(),
+  toCurrency: z.lazy(() => SortOrderSchema).optional(),
+  rate: z.lazy(() => SortOrderSchema).optional(),
+  date: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CurrencyExchangeRateAvgOrderByAggregateInputSchema: z.ZodType<Prisma.CurrencyExchangeRateAvgOrderByAggregateInput> = z.object({
+  rate: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CurrencyExchangeRateMaxOrderByAggregateInputSchema: z.ZodType<Prisma.CurrencyExchangeRateMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  fromCurrency: z.lazy(() => SortOrderSchema).optional(),
+  toCurrency: z.lazy(() => SortOrderSchema).optional(),
+  rate: z.lazy(() => SortOrderSchema).optional(),
+  date: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CurrencyExchangeRateMinOrderByAggregateInputSchema: z.ZodType<Prisma.CurrencyExchangeRateMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  fromCurrency: z.lazy(() => SortOrderSchema).optional(),
+  toCurrency: z.lazy(() => SortOrderSchema).optional(),
+  rate: z.lazy(() => SortOrderSchema).optional(),
+  date: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const CurrencyExchangeRateSumOrderByAggregateInputSchema: z.ZodType<Prisma.CurrencyExchangeRateSumOrderByAggregateInput> = z.object({
+  rate: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const UserWalletAccountCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.UserWalletAccountCreateNestedManyWithoutUserInput> = z.object({
@@ -7076,6 +7298,68 @@ export const CachedGptResponseFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.Cach
   relationLoadStrategy: RelationLoadStrategySchema.optional(),
 }).strict() ;
 
+export const CurrencyExchangeRateFindFirstArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateFindFirstArgs> = z.object({
+  select: CurrencyExchangeRateSelectSchema.optional(),
+  where: CurrencyExchangeRateWhereInputSchema.optional(),
+  orderBy: z.union([ CurrencyExchangeRateOrderByWithRelationInputSchema.array(),CurrencyExchangeRateOrderByWithRelationInputSchema ]).optional(),
+  cursor: CurrencyExchangeRateWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ CurrencyExchangeRateScalarFieldEnumSchema,CurrencyExchangeRateScalarFieldEnumSchema.array() ]).optional(),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateFindFirstOrThrowArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateFindFirstOrThrowArgs> = z.object({
+  select: CurrencyExchangeRateSelectSchema.optional(),
+  where: CurrencyExchangeRateWhereInputSchema.optional(),
+  orderBy: z.union([ CurrencyExchangeRateOrderByWithRelationInputSchema.array(),CurrencyExchangeRateOrderByWithRelationInputSchema ]).optional(),
+  cursor: CurrencyExchangeRateWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ CurrencyExchangeRateScalarFieldEnumSchema,CurrencyExchangeRateScalarFieldEnumSchema.array() ]).optional(),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateFindManyArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateFindManyArgs> = z.object({
+  select: CurrencyExchangeRateSelectSchema.optional(),
+  where: CurrencyExchangeRateWhereInputSchema.optional(),
+  orderBy: z.union([ CurrencyExchangeRateOrderByWithRelationInputSchema.array(),CurrencyExchangeRateOrderByWithRelationInputSchema ]).optional(),
+  cursor: CurrencyExchangeRateWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ CurrencyExchangeRateScalarFieldEnumSchema,CurrencyExchangeRateScalarFieldEnumSchema.array() ]).optional(),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateAggregateArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateAggregateArgs> = z.object({
+  where: CurrencyExchangeRateWhereInputSchema.optional(),
+  orderBy: z.union([ CurrencyExchangeRateOrderByWithRelationInputSchema.array(),CurrencyExchangeRateOrderByWithRelationInputSchema ]).optional(),
+  cursor: CurrencyExchangeRateWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateGroupByArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateGroupByArgs> = z.object({
+  where: CurrencyExchangeRateWhereInputSchema.optional(),
+  orderBy: z.union([ CurrencyExchangeRateOrderByWithAggregationInputSchema.array(),CurrencyExchangeRateOrderByWithAggregationInputSchema ]).optional(),
+  by: CurrencyExchangeRateScalarFieldEnumSchema.array(),
+  having: CurrencyExchangeRateScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateFindUniqueArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateFindUniqueArgs> = z.object({
+  select: CurrencyExchangeRateSelectSchema.optional(),
+  where: CurrencyExchangeRateWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateFindUniqueOrThrowArgs> = z.object({
+  select: CurrencyExchangeRateSelectSchema.optional(),
+  where: CurrencyExchangeRateWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
 export const UserCreateArgsSchema: z.ZodType<Prisma.UserCreateArgs> = z.object({
   select: UserSelectSchema.optional(),
   include: UserIncludeSchema.optional(),
@@ -7570,4 +7854,50 @@ export const CachedGptResponseUpdateManyArgsSchema: z.ZodType<Prisma.CachedGptRe
 
 export const CachedGptResponseDeleteManyArgsSchema: z.ZodType<Prisma.CachedGptResponseDeleteManyArgs> = z.object({
   where: CachedGptResponseWhereInputSchema.optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateCreateArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateCreateArgs> = z.object({
+  select: CurrencyExchangeRateSelectSchema.optional(),
+  data: z.union([ CurrencyExchangeRateCreateInputSchema,CurrencyExchangeRateUncheckedCreateInputSchema ]),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateUpsertArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateUpsertArgs> = z.object({
+  select: CurrencyExchangeRateSelectSchema.optional(),
+  where: CurrencyExchangeRateWhereUniqueInputSchema,
+  create: z.union([ CurrencyExchangeRateCreateInputSchema,CurrencyExchangeRateUncheckedCreateInputSchema ]),
+  update: z.union([ CurrencyExchangeRateUpdateInputSchema,CurrencyExchangeRateUncheckedUpdateInputSchema ]),
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateCreateManyArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateCreateManyArgs> = z.object({
+  data: z.union([ CurrencyExchangeRateCreateManyInputSchema,CurrencyExchangeRateCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateCreateManyAndReturnArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateCreateManyAndReturnArgs> = z.object({
+  data: z.union([ CurrencyExchangeRateCreateManyInputSchema,CurrencyExchangeRateCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateDeleteArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateDeleteArgs> = z.object({
+  select: CurrencyExchangeRateSelectSchema.optional(),
+  where: CurrencyExchangeRateWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateUpdateArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateUpdateArgs> = z.object({
+  select: CurrencyExchangeRateSelectSchema.optional(),
+  data: z.union([ CurrencyExchangeRateUpdateInputSchema,CurrencyExchangeRateUncheckedUpdateInputSchema ]),
+  where: CurrencyExchangeRateWhereUniqueInputSchema,
+  relationLoadStrategy: RelationLoadStrategySchema.optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateUpdateManyArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateUpdateManyArgs> = z.object({
+  data: z.union([ CurrencyExchangeRateUpdateManyMutationInputSchema,CurrencyExchangeRateUncheckedUpdateManyInputSchema ]),
+  where: CurrencyExchangeRateWhereInputSchema.optional(),
+}).strict() ;
+
+export const CurrencyExchangeRateDeleteManyArgsSchema: z.ZodType<Prisma.CurrencyExchangeRateDeleteManyArgs> = z.object({
+  where: CurrencyExchangeRateWhereInputSchema.optional(),
 }).strict() ;

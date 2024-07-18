@@ -2,7 +2,7 @@ import * as Application from 'expo-application'
 
 import { Logo } from '@/components/common/logo'
 import { MenuItem } from '@/components/common/menu-item'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { UserAvatar } from '@/components/common/user-avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
@@ -44,14 +44,7 @@ export default function SettingsScreen() {
         <View className="flex flex-1" />
         <View className="flex flex-row px-4 py-3 items-center gap-2 justify-between">
           <View className="flex flex-row items-center gap-3">
-            <Avatar alt="avatar" className="w-12 h-12">
-              <AvatarImage
-                source={{
-                  uri: user?.imageUrl,
-                }}
-              />
-              <AvatarFallback>QK</AvatarFallback>
-            </Avatar>
+            <UserAvatar user={user!} fallbackClassName="bg-card" />
             <View>
               <Badge variant="outline" className="self-start rounded-md mb-1">
                 <Text className="text-xs font-medium">Free</Text>

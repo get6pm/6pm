@@ -2,6 +2,7 @@ import { useWallets } from '@/queries/wallet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { Pressable, View } from 'react-native'
+import { AmountFormat } from '../common/amount-format'
 import { Skeleton } from '../ui/skeleton'
 import { Text } from '../ui/text'
 
@@ -28,10 +29,7 @@ export function WalletStatistics() {
       {isLoading ? (
         <Skeleton className="w-44 h-10" />
       ) : (
-        <Text className="font-semibold text-4xl">
-          {currentBalance?.toLocaleString() || '0.00'}{' '}
-          <Text className="text-muted-foreground font-normal">VND</Text>
-        </Text>
+        <AmountFormat amount={currentBalance} size="xl" displayNegativeSign />
       )}
     </View>
   )

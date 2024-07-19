@@ -1,11 +1,11 @@
 import { TRANSACTION_ICONS } from '@/lib/icons/category-icons'
-import { cn } from '@/lib/utils'
 import type { TransactionPopulated } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { Link } from 'expo-router'
 import { type FC, useMemo } from 'react'
 import { Pressable, View } from 'react-native'
+import { AmountFormat } from '../common/amount-format'
 import GenericIcon from '../common/generic-icon'
 import { Text } from '../ui/text'
 
@@ -52,18 +52,12 @@ export const TransactionItem: FC<TransactionItemProps> = ({ transaction }) => {
             {transactionName}
           </Text>
         </View>
-        <Text
-          className={cn(
-            'font-semibold shrink-0',
-            transaction.amount > 0 && 'text-amount-positive',
-            transaction.amount < 0 && 'text-amount-negative',
-          )}
-        >
-          {Math.abs(transaction.amount).toLocaleString()}{' '}
-          <Text className="text-muted-foreground text-[10px] font-normal">
-            {transaction.currency}
-          </Text>
-        </Text>
+        <AmountFormat
+          amount={transaction.amount}
+          currency={transaction.currency}
+          size="sm"
+          displayPositiveColor
+        />
       </Pressable>
     </Link>
   )

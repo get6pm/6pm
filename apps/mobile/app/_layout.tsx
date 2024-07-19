@@ -1,7 +1,7 @@
 import '../global.css'
 
 import { tokenCache } from '@/lib/cache'
-import { ClerkProvider } from '@clerk/clerk-expo'
+import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
 import {
   BeVietnamPro_300Light,
   BeVietnamPro_400Regular,
@@ -101,36 +101,38 @@ export default function RootLayout() {
   }
 
   return (
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{ persister: asyncStoragePersister }}
+    <ClerkProvider
+      publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+      tokenCache={tokenCache}
     >
-      <ClerkProvider
-        publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
-        tokenCache={tokenCache}
-      >
-        <LocaleProvider>
-          <ThemeProvider
-            value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-          >
-            <SafeAreaProvider>
-              <GestureHandlerRootView>
-                <BottomSheetModalProvider>
-                  <Stack screenOptions={{ headerShown: false }}>
-                    <Stack.Screen
-                      name="(aux)"
-                      options={{
-                        presentation: 'modal',
-                      }}
-                    />
-                  </Stack>
-                  <ToastRoot />
-                </BottomSheetModalProvider>
-              </GestureHandlerRootView>
-            </SafeAreaProvider>
-          </ThemeProvider>
-        </LocaleProvider>
-      </ClerkProvider>
-    </PersistQueryClientProvider>
+      <ClerkLoaded>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{ persister: asyncStoragePersister }}
+        >
+          <LocaleProvider>
+            <ThemeProvider
+              value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+            >
+              <SafeAreaProvider>
+                <GestureHandlerRootView>
+                  <BottomSheetModalProvider>
+                    <Stack screenOptions={{ headerShown: false }}>
+                      <Stack.Screen
+                        name="(aux)"
+                        options={{
+                          presentation: 'modal',
+                        }}
+                      />
+                    </Stack>
+                    <ToastRoot />
+                  </BottomSheetModalProvider>
+                </GestureHandlerRootView>
+              </SafeAreaProvider>
+            </ThemeProvider>
+          </LocaleProvider>
+        </PersistQueryClientProvider>
+      </ClerkLoaded>
+    </ClerkProvider>
   )
 }

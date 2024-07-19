@@ -13,7 +13,6 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import * as Haptics from 'expo-haptics'
 import { Calendar } from 'lucide-react-native'
 import { useRef, useState } from 'react'
-import { useController } from 'react-hook-form'
 import { Keyboard, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { FullWindowOverlay } from 'react-native-screens'
@@ -23,9 +22,13 @@ import { Text } from '../ui/text'
 function SpinnerDatePicker({
   value,
   onChange,
+  maximumDate,
+  minimumDate,
 }: {
   value: Date
   onChange: (date: Date | undefined) => void
+  maximumDate?: Date
+  minimumDate?: Date
 }) {
   const { i18n } = useLingui()
   const [date, setDate] = useState<Date | undefined>(value)
@@ -39,6 +42,8 @@ function SpinnerDatePicker({
         onChange={(_, selectedDate) => {
           setDate(selectedDate)
         }}
+        maximumDate={maximumDate}
+        minimumDate={minimumDate}
       />
       <Button
         className="mx-6"
@@ -53,17 +58,20 @@ function SpinnerDatePicker({
   )
 }
 
-export function SelectDateField({
-  onSelect,
+export function DatePicker({
+  value = new Date(),
+  onChange,
+  maximumDate,
+  minimumDate,
 }: {
-  onSelect?: (date?: Date) => void
+  value?: Date
+  onChange?: (date?: Date) => void
+  maximumDate?: Date
+  minimumDate?: Date
 }) {
   const { bottom } = useSafeAreaInsets()
   const { colorScheme } = useColorScheme()
   const sheetRef = useRef<BottomSheetModal>(null)
-  const {
-    field: { onChange, onBlur, value },
-  } = useController({ name: 'date' })
 
   return (
     <>
@@ -108,10 +116,10 @@ export function SelectDateField({
             onChange={async (date) => {
               sheetRef.current?.close()
               await sleep(500)
-              onChange(date)
-              onBlur()
-              onSelect?.(date)
+              onChange?.(date)
             }}
+            maximumDate={maximumDate}
+            minimumDate={minimumDate}
           />
         </BottomSheetView>
       </BottomSheetModal>

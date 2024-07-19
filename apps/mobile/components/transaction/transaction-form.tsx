@@ -14,6 +14,7 @@ import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
 } from 'react-native-reanimated'
+import { DatePicker } from '../common/date-picker'
 import { InputField } from '../form-fields/input-field'
 import { SubmitButton } from '../form-fields/submit-button'
 import { NumericPad } from '../numeric-pad'
@@ -22,7 +23,6 @@ import { Button } from '../ui/button'
 import { Text } from '../ui/text'
 import { SelectAccountField } from './select-account-field'
 import { SelectCategoryField } from './select-category-field'
-import { SelectDateField } from './select-date-field'
 
 type TransactionFormProps = {
   onSubmit: (data: TransactionFormValues) => void
@@ -93,7 +93,18 @@ export const TransactionForm = ({
           <Button size="icon" variant="secondary" onPress={onCancel}>
             <XIcon className="size-6 text-primary" />
           </Button>
-          <SelectDateField />
+          <Controller
+            name="date"
+            control={form.control}
+            render={({ field: { onChange, value } }) => (
+              <DatePicker
+                value={value}
+                onChange={onChange}
+                minimumDate={new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)}
+                maximumDate={new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)}
+              />
+            )}
+          />
           <View className="flex-row items-center gap-4">
             {onDelete ? (
               <Button size="icon" variant="secondary" onPress={onDelete}>

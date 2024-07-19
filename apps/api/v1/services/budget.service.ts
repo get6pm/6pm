@@ -1,11 +1,6 @@
+import { calculateBudgetPeriodStartEndDates } from '@6pm/utilities'
 import type { CreateBudget, UpdateBudget } from '@6pm/validation'
-import {
-  type Budget,
-  BudgetPeriodType,
-  BudgetUserPermission,
-  type User,
-} from '@prisma/client'
-import { dayjsExtended } from '../../lib/dayjs'
+import { type Budget, BudgetUserPermission, type User } from '@prisma/client'
 import prisma from '../../lib/prisma'
 import { inviteUserToBudget } from './budget-invitation.service'
 
@@ -92,47 +87,10 @@ export async function isUserBudgetOwner({
 export async function findBudget({ budgetId }: { budgetId: string }) {
   return prisma.budget.findUnique({
     where: { id: budgetId },
+    include: {
+      periodConfig: true,
+    },
   })
-}
-
-/**
- * Given an anchor date and period type,
- * calculate the start and end dates of the budget period.
- * Example:
- * - anchorDate: 2022-01-15
- * - periodType: MONTHLY
- * - startDate: 2022-01-01
- * - endDate: 2022-01-31
- */
-function calculateBudgetPeriodStartEndDates({
-  anchorDate,
-  type,
-}: {
-  anchorDate: Date
-  type: BudgetPeriodType
-}) {
-  switch (type) {
-    case BudgetPeriodType.MONTHLY:
-      return {
-        startDate: dayjsExtended(anchorDate).startOf('month').toDate(),
-        endDate: dayjsExtended(anchorDate).endOf('month').toDate(),
-      }
-    case BudgetPeriodType.QUARTERLY:
-      return {
-        startDate: dayjsExtended(anchorDate).startOf('quarter').toDate(),
-        endDate: dayjsExtended(anchorDate).endOf('quarter').toDate(),
-      }
-    case BudgetPeriodType.YEARLY:
-      return {
-        startDate: dayjsExtended(anchorDate).startOf('year').toDate(),
-        endDate: dayjsExtended(anchorDate).endOf('year').toDate(),
-      }
-    default:
-      return {
-        startDate: null,
-        endDate: null,
-      }
-  }
 }
 
 export async function createBudget({

@@ -1,0 +1,17 @@
+{
+  "name": "@6pm/utilities",
+  "version": "1.0.0",
+  "description": "Shared utilities between apps",
+  "main": "src/index.ts",
+  "scripts": {
+    "check": "biome check"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@6pm/validation": "workspace:^",
+    "@prisma/client": "^5.16.0",
+    "dayjs": "^1.11.11"
+  }
+}

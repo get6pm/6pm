@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { BudgetPeriodTypeSchema, BudgetTypeSchema } from './prisma'
 
 export const zCreateBudget = z.object({
+  id: z.string().cuid2().optional(),
   name: z.string(),
   description: z.string().optional(),
   preferredCurrency: z.string(),

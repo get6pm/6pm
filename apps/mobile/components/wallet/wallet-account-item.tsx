@@ -3,9 +3,9 @@ import { Link } from 'expo-router'
 import { ChevronRightIcon } from 'lucide-react-native'
 import type { FC } from 'react'
 import { View } from 'react-native'
+import { AmountFormat } from '../common/amount-format'
 import GenericIcon from '../common/generic-icon'
 import { MenuItem } from '../common/menu-item'
-import { Text } from '../ui/text'
 
 type WalletAccountItemProps = {
   data: WalletAccountWithBalance
@@ -32,10 +32,7 @@ export const WalletAccountItem: FC<WalletAccountItemProps> = ({ data }) => {
         )}
         rightSection={
           <View className="flex-row items-center gap-4">
-            <Text className="text-muted-foreground">
-              {Number(data.balance ?? '0')?.toLocaleString?.()}{' '}
-              {data.preferredCurrency}
-            </Text>
+            <AmountFormat amount={data.balance} displayNegativeSign size="sm" />
             <ChevronRightIcon className="w-5 h-5 text-primary" />
           </View>
         }

@@ -27,6 +27,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native'
+import { PortalHost } from '@rn-primitives/portal'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import { focusManager, onlineManager } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
@@ -126,6 +127,7 @@ export default function RootLayout() {
                       />
                     </Stack>
                     <ToastRoot />
+                    <PortalHost />
                   </BottomSheetModalProvider>
                 </GestureHandlerRootView>
               </SafeAreaProvider>

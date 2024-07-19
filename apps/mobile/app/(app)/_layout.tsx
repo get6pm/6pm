@@ -127,6 +127,13 @@ export default function AuthenticatedLayout() {
           headerTitle: t(i18n)`Edit category`,
         }}
       />
+      <Stack.Screen
+        name="budget/new-budget"
+        options={{
+          presentation: 'modal',
+          headerTitle: t(i18n)`New budget`,
+        }}
+      />
     </Stack>
   )
 }

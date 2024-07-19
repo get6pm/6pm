@@ -11,7 +11,7 @@ export function HomeHeader() {
   const { i18n } = useLingui()
 
   return (
-    <View className="flex bg-card px-6 py-3 flex-row items-center justify-between">
+    <View className="flex bg-card px-6 pb-3 flex-row items-center justify-between">
       <View className="flex flex-row items-center gap-3">
         <Avatar alt="avatar">
           <AvatarImage

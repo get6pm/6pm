@@ -1,5 +1,4 @@
 import { sleep } from '@/lib/utils'
-import { useCategories } from '@/queries/category'
 import type { Category } from '@6pm/validation'
 import {
   BottomSheetBackdrop,
@@ -15,6 +14,7 @@ import { FlatList, Keyboard, View } from 'react-native'
 
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
+import { useCategoryList } from '@/stores/category/hooks'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { FullWindowOverlay } from 'react-native-screens'
 import GenericIcon from '../common/generic-icon'
@@ -27,7 +27,7 @@ export function SelectCategoryField({
   onSelect?: (category: Category) => void
 }) {
   const { bottom } = useSafeAreaInsets()
-  const { data: categories = [], isLoading } = useCategories()
+  const { categories = [], isLoading } = useCategoryList()
   const { colorScheme } = useColorScheme()
 
   const sheetRef = useRef<BottomSheetModal>(null)
@@ -109,6 +109,7 @@ export function SelectCategoryField({
               <FlatList
                 data={section.data}
                 numColumns={4}
+                columnWrapperClassName="flex-wrap"
                 keyExtractor={(i) => i.id}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}

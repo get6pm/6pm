@@ -58,10 +58,10 @@ model Budget {
   preferredCurrency String
   type              BudgetType @default(SPENDING)
 
-  periodConfig BudgetPeriodConfig?
-  budgetUsers  BudgetUser[]
-  transactions Transaction[]
-  invitations  BudgetUserInvitation[]
+  periodConfigs BudgetPeriodConfig[]
+  budgetUsers   BudgetUser[]
+  transactions  Transaction[]
+  invitations   BudgetUserInvitation[]
 }
 
 enum BudgetType {

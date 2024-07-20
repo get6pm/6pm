@@ -4,6 +4,7 @@ import { TransactionForm } from '@/components/transaction/transaction-form'
 import { createTransaction } from '@/mutations/transaction'
 import { transactionQueries } from '@/queries/transaction'
 import { useWallets, walletQueries } from '@/queries/wallet'
+import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import {
   type TransactionFormValues,
   zTransactionFormValues,
@@ -27,6 +28,7 @@ export default function NewRecordScreen() {
   const queryClient = useQueryClient()
   const router = useRouter()
   const { data: walletAccounts } = useWallets()
+  const defaultCurrency = useDefaultCurrency()
   const defaultWallet = walletAccounts?.[0]
 
   const params = useLocalSearchParams()
@@ -34,7 +36,7 @@ export default function NewRecordScreen() {
   const defaultValues = {
     date: new Date(),
     amount: 0,
-    currency: 'USD',
+    currency: defaultCurrency,
     note: '',
     walletAccountId: defaultWallet?.id,
     ...parsedParams,

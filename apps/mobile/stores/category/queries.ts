@@ -1,6 +1,7 @@
 import { getHonoClient } from '@/lib/client'
 import { type Category, CategorySchema } from '@6pm/validation'
 import { createQueryKeys } from '@lukemorales/query-key-factory'
+import { z } from 'zod'
 
 export const categoryQueries = createQueryKeys('categories', {
   all: ({
@@ -15,7 +16,11 @@ export const categoryQueries = createQueryKeys('categories', {
       }
 
       const items = await res.json()
-      const categories = items.map((item) => CategorySchema.parse(item))
+      const categories = items.map((item) =>
+        CategorySchema.extend({
+          id: z.string().cuid2(),
+        }).parse(item),
+      )
 
       setCategoriesState(categories)
 

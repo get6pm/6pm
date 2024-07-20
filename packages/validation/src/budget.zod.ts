@@ -10,6 +10,7 @@ export const zCreateBudget = z.object({
   inviteeEmails: z.array(z.string().email()).optional(),
   period: z
     .object({
+      id: z.string().optional(),
       type: BudgetPeriodTypeSchema,
       amount: z.number({ coerce: true }).min(0),
       startDate: z.date({ coerce: true }).optional(),

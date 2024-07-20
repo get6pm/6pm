@@ -12,7 +12,16 @@ export default function CreateBudgetScreen() {
   const { sideOffset, ...rootProps } = useModalPortalRoot()
 
   const handleCreate = async (data: BudgetFormValues) => {
-    mutateAsync({ data, id: createId() }).catch(() => {
+    mutateAsync({
+      data: {
+        ...data,
+        period: {
+          ...data.period,
+          id: createId(),
+        },
+      },
+      id: createId(),
+    }).catch(() => {
       // ignore
     })
     router.back()

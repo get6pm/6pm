@@ -140,6 +140,7 @@ export async function createBudget({
       preferredCurrency,
       periodConfigs: {
         create: {
+          id: period.id,
           type: period.type,
           amount: period.amount,
           startDate: period.startDate ?? periodConfig.startDate,

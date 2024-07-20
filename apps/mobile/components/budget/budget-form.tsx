@@ -24,7 +24,6 @@ import { SubmitButton } from '../form-fields/submit-button'
 import { Label } from '../ui/label'
 import { Text } from '../ui/text'
 import { PeriodRangeField } from './period-range-field'
-import { SelectBudgetTypeField } from './select-budget-type-field'
 import { SelectPeriodTypeField } from './select-period-type-field'
 
 type BudgetFormProps = {
@@ -86,10 +85,11 @@ export const BudgetForm = ({
         keyboardShouldPersistTaps="handled"
         automaticallyAdjustKeyboardInsets
       >
-        <Controller
+        {/* <Controller
           name="type"
           control={budgetForm.control}
-          render={({ field: { onChange, value } }) => (
+          disabled
+          render={({ field: { onChange, value, disabled } }) => (
             <View className="gap-1">
               <Label nativeID={`label-type`}>{t(i18n)`Type`}</Label>
               <SelectBudgetTypeField
@@ -99,10 +99,11 @@ export const BudgetForm = ({
                   onChange(type)
                   nameInputRef.current?.focus()
                 }}
+                disabled={disabled}
               />
             </View>
           )}
-        />
+        /> */}
         <InputField
           ref={nameInputRef}
           name="name"
@@ -110,6 +111,7 @@ export const BudgetForm = ({
           placeholder={t(i18n)`Family budget`}
           disabled={budgetForm.formState.isLoading}
           onSubmitEditing={() => amountInputRef.current?.focus()}
+          autoFocus
         />
         <InputField
           ref={amountInputRef}
@@ -137,7 +139,8 @@ export const BudgetForm = ({
         <Controller
           name="period.type"
           control={budgetForm.control}
-          render={({ field: { onChange, value } }) => (
+          disabled
+          render={({ field: { onChange, value, disabled } }) => (
             <View className="gap-1">
               <Label nativeID={`label-period-type`}>{t(i18n)`Period`}</Label>
               <SelectPeriodTypeField
@@ -146,6 +149,7 @@ export const BudgetForm = ({
                 onSelect={(type) => {
                   onChange(type)
                 }}
+                disabled={disabled}
               />
             </View>
           )}

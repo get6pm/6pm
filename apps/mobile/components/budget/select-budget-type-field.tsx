@@ -17,12 +17,14 @@ type SelectBudgetTypeFieldProps = {
   value: string
   onSelect: (type?: string) => void
   sideOffset?: number
+  disabled?: boolean
 }
 
 export function SelectBudgetTypeField({
   value,
   onSelect,
   sideOffset,
+  disabled,
 }: SelectBudgetTypeFieldProps) {
   const { i18n } = useLingui()
   const insets = useSafeAreaInsets()
@@ -65,7 +67,7 @@ export function SelectBudgetTypeField({
       value={options.find((option) => option.value === value)}
       onValueChange={(selected) => onSelect(selected?.value)}
     >
-      <SelectTrigger>
+      <SelectTrigger disabled={disabled}>
         <GenericIcon
           // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           name={options.find((option) => option.value === value)?.icon as any}

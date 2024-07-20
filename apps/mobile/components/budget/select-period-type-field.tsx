@@ -16,12 +16,14 @@ type SelectPeriodTypeFieldProps = {
   value: string
   onSelect: (type?: string) => void
   sideOffset?: number
+  disabled?: boolean
 }
 
 export function SelectPeriodTypeField({
   value,
   onSelect,
   sideOffset,
+  disabled,
 }: SelectPeriodTypeFieldProps) {
   const { i18n } = useLingui()
   const insets = useSafeAreaInsets()
@@ -64,7 +66,7 @@ export function SelectPeriodTypeField({
       value={options.find((option) => option.value === value)}
       onValueChange={(selected) => onSelect(selected?.value)}
     >
-      <SelectTrigger>
+      <SelectTrigger disabled={disabled}>
         <SelectValue
           className="font-sans text-foreground"
           placeholder={t(i18n)`Select period type`}

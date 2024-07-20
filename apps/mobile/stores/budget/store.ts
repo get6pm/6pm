@@ -1,20 +1,24 @@
-import type { BudgetWithRelations } from '@6pm/validation'
+import type { Budget, BudgetPeriodConfig } from '@6pm/validation'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
+export type BudgetItem = Budget & {
+  periodConfigs: BudgetPeriodConfig[]
+}
+
 interface BudgetStore {
-  budgets: BudgetWithRelations[]
-  setBudgets: (budgets: BudgetWithRelations[]) => void
-  updateBudget: (budget: BudgetWithRelations) => void
+  budgets: BudgetItem[]
+  setBudgets: (budgets: BudgetItem[]) => void
+  updateBudget: (budget: BudgetItem) => void
 }
 
 export const useBudgetStore = create<BudgetStore>()(
   persist(
     (set) => ({
       budgets: [],
-      setBudgets: (budgets: BudgetWithRelations[]) => set({ budgets }),
-      updateBudget: (budget: BudgetWithRelations) =>
+      setBudgets: (budgets: BudgetItem[]) => set({ budgets }),
+      updateBudget: (budget: BudgetItem) =>
         set((state) => {
           const index = state.budgets.findIndex((c) => c.id === budget.id)
           if (index === -1) {

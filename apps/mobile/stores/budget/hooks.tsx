@@ -1,16 +1,13 @@
 import { getHonoClient } from '@/lib/client'
-import {
-  type BudgetFormValues,
-  BudgetSchema,
-  type BudgetWithRelations,
-} from '@6pm/validation'
+import { type BudgetFormValues, BudgetSchema } from '@6pm/validation'
 import { createId } from '@paralleldrive/cuid2'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { keyBy } from 'lodash-es'
+import Decimal from 'decimal.js'
+import { first, keyBy, orderBy } from 'lodash-es'
 import { useMemo } from 'react'
 import { z } from 'zod'
 import { budgetQueries } from './queries'
-import { useBudgetStore } from './store'
+import { type BudgetItem, useBudgetStore } from './store'
 
 export const useBudgetList = () => {
   const budgets = useBudgetStore().budgets
@@ -60,7 +57,7 @@ export const useBudgetList = () => {
 
 export const useBudget = (budgetId: string) => {
   const budgets = useBudgetStore().budgets
-  const budget: BudgetWithRelations | null = useMemo(
+  const budget: BudgetItem | null = useMemo(
     () => budgets.find((budget) => budget.id === budgetId) || null,
     [budgets, budgetId],
   )
@@ -98,7 +95,26 @@ export const useUpdateBudget = () => {
           return
         }
 
-        budget = { ...budget, ...data, updatedAt: new Date() }
+        const latestPeriodConfig = first(
+          orderBy(budget.periodConfigs, 'startDate', 'desc'),
+        )
+
+        budget = {
+          ...budget,
+          ...data,
+          updatedAt: new Date(),
+          periodConfigs: budget.periodConfigs.map((pc) =>
+            pc.id === latestPeriodConfig?.id
+              ? {
+                  ...latestPeriodConfig,
+                  ...data.period,
+                  amount:
+                    new Decimal(data.period.amount) ??
+                    latestPeriodConfig.amount,
+                }
+              : pc,
+          ),
+        }
 
         updateBudgetInStore(budget)
 
@@ -135,14 +151,25 @@ export const useCreateBudget = () => {
       throw result
     },
     onMutate({ id, data }) {
-      const budget: BudgetWithRelations = {
+      const period: BudgetItem['periodConfigs'][number] = {
+        ...data.period,
+        id: data.period.id ?? createId(),
+        budgetId: id!,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        amount: new Decimal(data.period.amount),
+        startDate: data.period.startDate
+          ? new Date(data.period.startDate)
+          : null,
+        endDate: data.period.endDate ? new Date(data.period.endDate) : null,
+      }
+
+      const budget: BudgetItem = {
         id: id!,
         createdAt: new Date(),
         updatedAt: new Date(),
         description: '',
-        budgetUsers: [],
-        invitations: [],
-        transactions: [],
+        periodConfigs: [period],
         ...data,
       }
 

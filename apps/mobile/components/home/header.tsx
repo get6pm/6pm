@@ -3,7 +3,7 @@ import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { ArrowDownUp, Bell } from 'lucide-react-native'
 import { Text, TouchableOpacity, View } from 'react-native'
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import { UserAvatar } from '../common/user-avatar'
 import { Button } from '../ui/button'
 
 export function HomeHeader() {
@@ -13,14 +13,7 @@ export function HomeHeader() {
   return (
     <View className="flex bg-card px-6 pb-3 flex-row items-center justify-between">
       <View className="flex flex-row items-center gap-3">
-        <Avatar alt="avatar">
-          <AvatarImage
-            source={{
-              uri: user?.imageUrl,
-            }}
-          />
-          <AvatarFallback>QK</AvatarFallback>
-        </Avatar>
+        <UserAvatar user={user!} />
         <View>
           <Text className="font-medium text-muted-foreground text-sm font-sans">
             {user?.fullName ?? user?.primaryEmailAddress?.emailAddress}

@@ -1,8 +1,20 @@
-import { calculateBudgetPeriodStartEndDates } from '@6pm/utilities'
+import {
+  calculateBudgetPeriodStartEndDates,
+  dayjsExtended,
+} from '@6pm/utilities'
 import type { CreateBudget, UpdateBudget } from '@6pm/validation'
-import { type Budget, BudgetUserPermission, type User } from '@prisma/client'
+import {
+  type Budget,
+  BudgetUserPermission,
+  type Prisma,
+  type User,
+} from '@prisma/client'
 import prisma from '../../lib/prisma'
 import { inviteUserToBudget } from './budget-invitation.service'
+
+const BUDGET_INCLUDE: Prisma.BudgetInclude = {
+  periodConfigs: true,
+}
 
 export async function canUserCreateBudget({
   // biome-ignore lint/correctness/noUnusedVariables: <explanation>
@@ -85,12 +97,16 @@ export async function isUserBudgetOwner({
 }
 
 export async function findBudget({ budgetId }: { budgetId: string }) {
-  return prisma.budget.findUnique({
+  const budget = await prisma.budget.findUnique({
     where: { id: budgetId },
-    include: {
-      periodConfig: true,
-    },
+    include: BUDGET_INCLUDE,
   })
+
+  if (!budget) {
+    return null
+  }
+
+  return verifyBudgetPeriods({ budget })
 }
 
 export async function createBudget({
@@ -122,7 +138,7 @@ export async function createBudget({
       type,
       description,
       preferredCurrency,
-      periodConfig: {
+      periodConfigs: {
         create: {
           type: period.type,
           amount: period.amount,
@@ -137,6 +153,7 @@ export async function createBudget({
         },
       },
     },
+    include: BUDGET_INCLUDE,
   })
 
   // Invite users as members
@@ -156,7 +173,7 @@ export async function createBudget({
     throw error
   }
 
-  return budget
+  return verifyBudgetPeriods({ budget })
 }
 
 export async function updateBudget({
@@ -168,6 +185,8 @@ export async function updateBudget({
 }) {
   const { name, description, type, preferredCurrency, period } = data
 
+  const latestPeriodConfig = await findBudgetLatestPeriodConfig({ budgetId })
+
   const budget = await prisma.budget.update({
     where: { id: budgetId },
     data: {
@@ -175,18 +194,28 @@ export async function updateBudget({
       description,
       type,
       preferredCurrency,
-      periodConfig: {
+      periodConfigs: {
         update: {
-          type: period?.type,
-          amount: period?.amount,
-          startDate: period?.startDate,
-          endDate: period?.endDate,
+          where: {
+            id: latestPeriodConfig?.id,
+          },
+          data: {
+            type: period?.type,
+            amount: period?.amount,
+            startDate: period?.startDate,
+            endDate: period?.endDate,
+          },
         },
       },
     },
+    include: BUDGET_INCLUDE,
   })
 
-  return budget
+  if (!budget) {
+    return null
+  }
+
+  return verifyBudgetPeriods({ budget })
 }
 
 export async function deleteBudget({ budgetId }: { budgetId: string }) {
@@ -199,7 +228,7 @@ export async function findBudgetsOfUser({
   user,
   permission,
 }: { user: User; permission?: BudgetUserPermission }) {
-  return prisma.budget.findMany({
+  const budgets = await prisma.budget.findMany({
     where: {
       budgetUsers: {
         some: {
@@ -208,10 +237,10 @@ export async function findBudgetsOfUser({
         },
       },
     },
-    include: {
-      periodConfig: true,
-    },
+    include: BUDGET_INCLUDE,
   })
+
+  return Promise.all(budgets.map((budget) => verifyBudgetPeriods({ budget })))
 }
 
 export async function createBudgetUser({
@@ -229,5 +258,51 @@ export async function createBudgetUser({
       budgetId,
       permission,
     },
+  })
+}
+
+async function findBudgetLatestPeriodConfig({
+  budgetId,
+}: {
+  budgetId: string
+}) {
+  return prisma.budgetPeriodConfig.findFirst({
+    where: {
+      budgetId,
+    },
+    orderBy: {
+      startDate: 'desc',
+    },
+  })
+}
+
+async function verifyBudgetPeriods({ budget }: { budget: Budget }) {
+  const latestPeriodConfig = await findBudgetLatestPeriodConfig({
+    budgetId: budget.id,
+  })
+
+  if (!latestPeriodConfig) {
+    return budget
+  }
+
+  if (
+    latestPeriodConfig.type === 'MONTHLY' &&
+    latestPeriodConfig.endDate &&
+    latestPeriodConfig.endDate < new Date()
+  ) {
+    await prisma.budgetPeriodConfig.create({
+      data: {
+        type: 'MONTHLY',
+        amount: 1,
+        startDate: latestPeriodConfig.endDate,
+        endDate: dayjsExtended().endOf('month').toDate(),
+        budgetId: budget.id,
+      },
+    })
+  }
+
+  return prisma.budget.findUnique({
+    where: { id: budget.id },
+    include: BUDGET_INCLUDE,
   })
 }

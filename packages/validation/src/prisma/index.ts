@@ -174,7 +174,7 @@ export type Budget = z.infer<typeof BudgetSchema>
 //------------------------------------------------------
 
 export type BudgetRelations = {
-  periodConfig?: BudgetPeriodConfigWithRelations | null;
+  periodConfigs: BudgetPeriodConfigWithRelations[];
   budgetUsers: BudgetUserWithRelations[];
   transactions: TransactionWithRelations[];
   invitations: BudgetUserInvitationWithRelations[];
@@ -183,7 +183,7 @@ export type BudgetRelations = {
 export type BudgetWithRelations = z.infer<typeof BudgetSchema> & BudgetRelations
 
 export const BudgetWithRelationsSchema: z.ZodType<BudgetWithRelations> = BudgetSchema.merge(z.object({
-  periodConfig: z.lazy(() => BudgetPeriodConfigWithRelationsSchema).nullable(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigWithRelationsSchema).array(),
   budgetUsers: z.lazy(() => BudgetUserWithRelationsSchema).array(),
   transactions: z.lazy(() => TransactionWithRelationsSchema).array(),
   invitations: z.lazy(() => BudgetUserInvitationWithRelationsSchema).array(),
@@ -513,7 +513,7 @@ export const UserWalletAccountSelectSchema: z.ZodType<Prisma.UserWalletAccountSe
 //------------------------------------------------------
 
 export const BudgetIncludeSchema: z.ZodType<Prisma.BudgetInclude> = z.object({
-  periodConfig: z.union([z.boolean(),z.lazy(() => BudgetPeriodConfigArgsSchema)]).optional(),
+  periodConfigs: z.union([z.boolean(),z.lazy(() => BudgetPeriodConfigFindManyArgsSchema)]).optional(),
   budgetUsers: z.union([z.boolean(),z.lazy(() => BudgetUserFindManyArgsSchema)]).optional(),
   transactions: z.union([z.boolean(),z.lazy(() => TransactionFindManyArgsSchema)]).optional(),
   invitations: z.union([z.boolean(),z.lazy(() => BudgetUserInvitationFindManyArgsSchema)]).optional(),
@@ -530,6 +530,7 @@ export const BudgetCountOutputTypeArgsSchema: z.ZodType<Prisma.BudgetCountOutput
 }).strict();
 
 export const BudgetCountOutputTypeSelectSchema: z.ZodType<Prisma.BudgetCountOutputTypeSelect> = z.object({
+  periodConfigs: z.boolean().optional(),
   budgetUsers: z.boolean().optional(),
   transactions: z.boolean().optional(),
   invitations: z.boolean().optional(),
@@ -543,7 +544,7 @@ export const BudgetSelectSchema: z.ZodType<Prisma.BudgetSelect> = z.object({
   description: z.boolean().optional(),
   preferredCurrency: z.boolean().optional(),
   type: z.boolean().optional(),
-  periodConfig: z.union([z.boolean(),z.lazy(() => BudgetPeriodConfigArgsSchema)]).optional(),
+  periodConfigs: z.union([z.boolean(),z.lazy(() => BudgetPeriodConfigFindManyArgsSchema)]).optional(),
   budgetUsers: z.union([z.boolean(),z.lazy(() => BudgetUserFindManyArgsSchema)]).optional(),
   transactions: z.union([z.boolean(),z.lazy(() => TransactionFindManyArgsSchema)]).optional(),
   invitations: z.union([z.boolean(),z.lazy(() => BudgetUserInvitationFindManyArgsSchema)]).optional(),
@@ -942,7 +943,7 @@ export const BudgetWhereInputSchema: z.ZodType<Prisma.BudgetWhereInput> = z.obje
   description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   preferredCurrency: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   type: z.union([ z.lazy(() => EnumBudgetTypeFilterSchema),z.lazy(() => BudgetTypeSchema) ]).optional(),
-  periodConfig: z.union([ z.lazy(() => BudgetPeriodConfigNullableRelationFilterSchema),z.lazy(() => BudgetPeriodConfigWhereInputSchema) ]).optional().nullable(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigListRelationFilterSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserListRelationFilterSchema).optional(),
   transactions: z.lazy(() => TransactionListRelationFilterSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationListRelationFilterSchema).optional()
@@ -956,7 +957,7 @@ export const BudgetOrderByWithRelationInputSchema: z.ZodType<Prisma.BudgetOrderB
   description: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   preferredCurrency: z.lazy(() => SortOrderSchema).optional(),
   type: z.lazy(() => SortOrderSchema).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigOrderByWithRelationInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigOrderByRelationAggregateInputSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserOrderByRelationAggregateInputSchema).optional(),
   transactions: z.lazy(() => TransactionOrderByRelationAggregateInputSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationOrderByRelationAggregateInputSchema).optional()
@@ -976,7 +977,7 @@ export const BudgetWhereUniqueInputSchema: z.ZodType<Prisma.BudgetWhereUniqueInp
   description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   preferredCurrency: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   type: z.union([ z.lazy(() => EnumBudgetTypeFilterSchema),z.lazy(() => BudgetTypeSchema) ]).optional(),
-  periodConfig: z.union([ z.lazy(() => BudgetPeriodConfigNullableRelationFilterSchema),z.lazy(() => BudgetPeriodConfigWhereInputSchema) ]).optional().nullable(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigListRelationFilterSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserListRelationFilterSchema).optional(),
   transactions: z.lazy(() => TransactionListRelationFilterSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationListRelationFilterSchema).optional()
@@ -1862,7 +1863,7 @@ export const BudgetCreateInputSchema: z.ZodType<Prisma.BudgetCreateInput> = z.ob
   description: z.string().optional().nullable(),
   preferredCurrency: z.string(),
   type: z.lazy(() => BudgetTypeSchema).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigCreateNestedOneWithoutBudgetInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigCreateNestedManyWithoutBudgetInputSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserCreateNestedManyWithoutBudgetInputSchema).optional(),
   transactions: z.lazy(() => TransactionCreateNestedManyWithoutBudgetInputSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationCreateNestedManyWithoutBudgetInputSchema).optional()
@@ -1876,7 +1877,7 @@ export const BudgetUncheckedCreateInputSchema: z.ZodType<Prisma.BudgetUncheckedC
   description: z.string().optional().nullable(),
   preferredCurrency: z.string(),
   type: z.lazy(() => BudgetTypeSchema).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigUncheckedCreateNestedOneWithoutBudgetInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigUncheckedCreateNestedManyWithoutBudgetInputSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserUncheckedCreateNestedManyWithoutBudgetInputSchema).optional(),
   transactions: z.lazy(() => TransactionUncheckedCreateNestedManyWithoutBudgetInputSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationUncheckedCreateNestedManyWithoutBudgetInputSchema).optional()
@@ -1890,7 +1891,7 @@ export const BudgetUpdateInputSchema: z.ZodType<Prisma.BudgetUpdateInput> = z.ob
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetTypeSchema),z.lazy(() => EnumBudgetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigUpdateOneWithoutBudgetNestedInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigUpdateManyWithoutBudgetNestedInputSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserUpdateManyWithoutBudgetNestedInputSchema).optional(),
   transactions: z.lazy(() => TransactionUpdateManyWithoutBudgetNestedInputSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationUpdateManyWithoutBudgetNestedInputSchema).optional()
@@ -1904,7 +1905,7 @@ export const BudgetUncheckedUpdateInputSchema: z.ZodType<Prisma.BudgetUncheckedU
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetTypeSchema),z.lazy(() => EnumBudgetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigUncheckedUpdateOneWithoutBudgetNestedInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigUncheckedUpdateManyWithoutBudgetNestedInputSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserUncheckedUpdateManyWithoutBudgetNestedInputSchema).optional(),
   transactions: z.lazy(() => TransactionUncheckedUpdateManyWithoutBudgetNestedInputSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationUncheckedUpdateManyWithoutBudgetNestedInputSchema).optional()
@@ -1948,7 +1949,7 @@ export const BudgetPeriodConfigCreateInputSchema: z.ZodType<Prisma.BudgetPeriodC
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
   startDate: z.coerce.date().optional().nullable(),
   endDate: z.coerce.date().optional().nullable(),
-  budget: z.lazy(() => BudgetCreateNestedOneWithoutPeriodConfigInputSchema)
+  budget: z.lazy(() => BudgetCreateNestedOneWithoutPeriodConfigsInputSchema)
 }).strict();
 
 export const BudgetPeriodConfigUncheckedCreateInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedCreateInput> = z.object({
@@ -1970,7 +1971,7 @@ export const BudgetPeriodConfigUpdateInputSchema: z.ZodType<Prisma.BudgetPeriodC
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   startDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   endDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  budget: z.lazy(() => BudgetUpdateOneRequiredWithoutPeriodConfigNestedInputSchema).optional()
+  budget: z.lazy(() => BudgetUpdateOneRequiredWithoutPeriodConfigsNestedInputSchema).optional()
 }).strict();
 
 export const BudgetPeriodConfigUncheckedUpdateInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedUpdateInput> = z.object({
@@ -2778,9 +2779,14 @@ export const EnumBudgetTypeFilterSchema: z.ZodType<Prisma.EnumBudgetTypeFilter> 
   not: z.union([ z.lazy(() => BudgetTypeSchema),z.lazy(() => NestedEnumBudgetTypeFilterSchema) ]).optional(),
 }).strict();
 
-export const BudgetPeriodConfigNullableRelationFilterSchema: z.ZodType<Prisma.BudgetPeriodConfigNullableRelationFilter> = z.object({
-  is: z.lazy(() => BudgetPeriodConfigWhereInputSchema).optional().nullable(),
-  isNot: z.lazy(() => BudgetPeriodConfigWhereInputSchema).optional().nullable()
+export const BudgetPeriodConfigListRelationFilterSchema: z.ZodType<Prisma.BudgetPeriodConfigListRelationFilter> = z.object({
+  every: z.lazy(() => BudgetPeriodConfigWhereInputSchema).optional(),
+  some: z.lazy(() => BudgetPeriodConfigWhereInputSchema).optional(),
+  none: z.lazy(() => BudgetPeriodConfigWhereInputSchema).optional()
+}).strict();
+
+export const BudgetPeriodConfigOrderByRelationAggregateInputSchema: z.ZodType<Prisma.BudgetPeriodConfigOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const BudgetCountOrderByAggregateInputSchema: z.ZodType<Prisma.BudgetCountOrderByAggregateInput> = z.object({
@@ -3604,10 +3610,11 @@ export const TransactionUncheckedUpdateManyWithoutWalletAccountNestedInputSchema
   deleteMany: z.union([ z.lazy(() => TransactionScalarWhereInputSchema),z.lazy(() => TransactionScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const BudgetPeriodConfigCreateNestedOneWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigCreateNestedOneWithoutBudgetInput> = z.object({
-  create: z.union([ z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => BudgetPeriodConfigCreateOrConnectWithoutBudgetInputSchema).optional(),
-  connect: z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).optional()
+export const BudgetPeriodConfigCreateNestedManyWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigCreateNestedManyWithoutBudgetInput> = z.object({
+  create: z.union([ z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema).array(),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => BudgetPeriodConfigCreateOrConnectWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigCreateOrConnectWithoutBudgetInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => BudgetPeriodConfigCreateManyBudgetInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema),z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const BudgetUserCreateNestedManyWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserCreateNestedManyWithoutBudgetInput> = z.object({
@@ -3631,10 +3638,11 @@ export const BudgetUserInvitationCreateNestedManyWithoutBudgetInputSchema: z.Zod
   connect: z.union([ z.lazy(() => BudgetUserInvitationWhereUniqueInputSchema),z.lazy(() => BudgetUserInvitationWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const BudgetPeriodConfigUncheckedCreateNestedOneWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedCreateNestedOneWithoutBudgetInput> = z.object({
-  create: z.union([ z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => BudgetPeriodConfigCreateOrConnectWithoutBudgetInputSchema).optional(),
-  connect: z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).optional()
+export const BudgetPeriodConfigUncheckedCreateNestedManyWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedCreateNestedManyWithoutBudgetInput> = z.object({
+  create: z.union([ z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema).array(),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => BudgetPeriodConfigCreateOrConnectWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigCreateOrConnectWithoutBudgetInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => BudgetPeriodConfigCreateManyBudgetInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema),z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const BudgetUserUncheckedCreateNestedManyWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserUncheckedCreateNestedManyWithoutBudgetInput> = z.object({
@@ -3662,14 +3670,18 @@ export const EnumBudgetTypeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.En
   set: z.lazy(() => BudgetTypeSchema).optional()
 }).strict();
 
-export const BudgetPeriodConfigUpdateOneWithoutBudgetNestedInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUpdateOneWithoutBudgetNestedInput> = z.object({
-  create: z.union([ z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => BudgetPeriodConfigCreateOrConnectWithoutBudgetInputSchema).optional(),
-  upsert: z.lazy(() => BudgetPeriodConfigUpsertWithoutBudgetInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => BudgetPeriodConfigWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => BudgetPeriodConfigWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => BudgetPeriodConfigUpdateToOneWithWhereWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUpdateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedUpdateWithoutBudgetInputSchema) ]).optional(),
+export const BudgetPeriodConfigUpdateManyWithoutBudgetNestedInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUpdateManyWithoutBudgetNestedInput> = z.object({
+  create: z.union([ z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema).array(),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => BudgetPeriodConfigCreateOrConnectWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigCreateOrConnectWithoutBudgetInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => BudgetPeriodConfigUpsertWithWhereUniqueWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUpsertWithWhereUniqueWithoutBudgetInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => BudgetPeriodConfigCreateManyBudgetInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema),z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema),z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema),z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema),z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => BudgetPeriodConfigUpdateWithWhereUniqueWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUpdateWithWhereUniqueWithoutBudgetInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => BudgetPeriodConfigUpdateManyWithWhereWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUpdateManyWithWhereWithoutBudgetInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => BudgetPeriodConfigScalarWhereInputSchema),z.lazy(() => BudgetPeriodConfigScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const BudgetUserUpdateManyWithoutBudgetNestedInputSchema: z.ZodType<Prisma.BudgetUserUpdateManyWithoutBudgetNestedInput> = z.object({
@@ -3714,14 +3726,18 @@ export const BudgetUserInvitationUpdateManyWithoutBudgetNestedInputSchema: z.Zod
   deleteMany: z.union([ z.lazy(() => BudgetUserInvitationScalarWhereInputSchema),z.lazy(() => BudgetUserInvitationScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const BudgetPeriodConfigUncheckedUpdateOneWithoutBudgetNestedInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedUpdateOneWithoutBudgetNestedInput> = z.object({
-  create: z.union([ z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => BudgetPeriodConfigCreateOrConnectWithoutBudgetInputSchema).optional(),
-  upsert: z.lazy(() => BudgetPeriodConfigUpsertWithoutBudgetInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => BudgetPeriodConfigWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => BudgetPeriodConfigWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => BudgetPeriodConfigUpdateToOneWithWhereWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUpdateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedUpdateWithoutBudgetInputSchema) ]).optional(),
+export const BudgetPeriodConfigUncheckedUpdateManyWithoutBudgetNestedInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedUpdateManyWithoutBudgetNestedInput> = z.object({
+  create: z.union([ z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema).array(),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => BudgetPeriodConfigCreateOrConnectWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigCreateOrConnectWithoutBudgetInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => BudgetPeriodConfigUpsertWithWhereUniqueWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUpsertWithWhereUniqueWithoutBudgetInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => BudgetPeriodConfigCreateManyBudgetInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema),z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema),z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema),z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema),z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => BudgetPeriodConfigUpdateWithWhereUniqueWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUpdateWithWhereUniqueWithoutBudgetInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => BudgetPeriodConfigUpdateManyWithWhereWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUpdateManyWithWhereWithoutBudgetInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => BudgetPeriodConfigScalarWhereInputSchema),z.lazy(() => BudgetPeriodConfigScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const BudgetUserUncheckedUpdateManyWithoutBudgetNestedInputSchema: z.ZodType<Prisma.BudgetUserUncheckedUpdateManyWithoutBudgetNestedInput> = z.object({
@@ -3766,9 +3782,9 @@ export const BudgetUserInvitationUncheckedUpdateManyWithoutBudgetNestedInputSche
   deleteMany: z.union([ z.lazy(() => BudgetUserInvitationScalarWhereInputSchema),z.lazy(() => BudgetUserInvitationScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const BudgetCreateNestedOneWithoutPeriodConfigInputSchema: z.ZodType<Prisma.BudgetCreateNestedOneWithoutPeriodConfigInput> = z.object({
-  create: z.union([ z.lazy(() => BudgetCreateWithoutPeriodConfigInputSchema),z.lazy(() => BudgetUncheckedCreateWithoutPeriodConfigInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => BudgetCreateOrConnectWithoutPeriodConfigInputSchema).optional(),
+export const BudgetCreateNestedOneWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.BudgetCreateNestedOneWithoutPeriodConfigsInput> = z.object({
+  create: z.union([ z.lazy(() => BudgetCreateWithoutPeriodConfigsInputSchema),z.lazy(() => BudgetUncheckedCreateWithoutPeriodConfigsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => BudgetCreateOrConnectWithoutPeriodConfigsInputSchema).optional(),
   connect: z.lazy(() => BudgetWhereUniqueInputSchema).optional()
 }).strict();
 
@@ -3788,12 +3804,12 @@ export const NullableDateTimeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.
   set: z.coerce.date().optional().nullable()
 }).strict();
 
-export const BudgetUpdateOneRequiredWithoutPeriodConfigNestedInputSchema: z.ZodType<Prisma.BudgetUpdateOneRequiredWithoutPeriodConfigNestedInput> = z.object({
-  create: z.union([ z.lazy(() => BudgetCreateWithoutPeriodConfigInputSchema),z.lazy(() => BudgetUncheckedCreateWithoutPeriodConfigInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => BudgetCreateOrConnectWithoutPeriodConfigInputSchema).optional(),
-  upsert: z.lazy(() => BudgetUpsertWithoutPeriodConfigInputSchema).optional(),
+export const BudgetUpdateOneRequiredWithoutPeriodConfigsNestedInputSchema: z.ZodType<Prisma.BudgetUpdateOneRequiredWithoutPeriodConfigsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => BudgetCreateWithoutPeriodConfigsInputSchema),z.lazy(() => BudgetUncheckedCreateWithoutPeriodConfigsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => BudgetCreateOrConnectWithoutPeriodConfigsInputSchema).optional(),
+  upsert: z.lazy(() => BudgetUpsertWithoutPeriodConfigsInputSchema).optional(),
   connect: z.lazy(() => BudgetWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => BudgetUpdateToOneWithWhereWithoutPeriodConfigInputSchema),z.lazy(() => BudgetUpdateWithoutPeriodConfigInputSchema),z.lazy(() => BudgetUncheckedUpdateWithoutPeriodConfigInputSchema) ]).optional(),
+  update: z.union([ z.lazy(() => BudgetUpdateToOneWithWhereWithoutPeriodConfigsInputSchema),z.lazy(() => BudgetUpdateWithoutPeriodConfigsInputSchema),z.lazy(() => BudgetUncheckedUpdateWithoutPeriodConfigsInputSchema) ]).optional(),
 }).strict();
 
 export const UserCreateNestedOneWithoutBudgetUsersInputSchema: z.ZodType<Prisma.UserCreateNestedOneWithoutBudgetUsersInput> = z.object({
@@ -4881,6 +4897,11 @@ export const BudgetPeriodConfigCreateOrConnectWithoutBudgetInputSchema: z.ZodTyp
   create: z.union([ z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema) ]),
 }).strict();
 
+export const BudgetPeriodConfigCreateManyBudgetInputEnvelopeSchema: z.ZodType<Prisma.BudgetPeriodConfigCreateManyBudgetInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => BudgetPeriodConfigCreateManyBudgetInputSchema),z.lazy(() => BudgetPeriodConfigCreateManyBudgetInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+
 export const BudgetUserCreateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserCreateWithoutBudgetInput> = z.object({
   id: z.string().cuid().optional(),
   createdAt: z.coerce.date().optional(),
@@ -4979,35 +5000,34 @@ export const BudgetUserInvitationCreateManyBudgetInputEnvelopeSchema: z.ZodType<
   skipDuplicates: z.boolean().optional()
 }).strict();
 
-export const BudgetPeriodConfigUpsertWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUpsertWithoutBudgetInput> = z.object({
+export const BudgetPeriodConfigUpsertWithWhereUniqueWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUpsertWithWhereUniqueWithoutBudgetInput> = z.object({
+  where: z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema),
   update: z.union([ z.lazy(() => BudgetPeriodConfigUpdateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedUpdateWithoutBudgetInputSchema) ]),
   create: z.union([ z.lazy(() => BudgetPeriodConfigCreateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema) ]),
-  where: z.lazy(() => BudgetPeriodConfigWhereInputSchema).optional()
 }).strict();
 
-export const BudgetPeriodConfigUpdateToOneWithWhereWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUpdateToOneWithWhereWithoutBudgetInput> = z.object({
-  where: z.lazy(() => BudgetPeriodConfigWhereInputSchema).optional(),
+export const BudgetPeriodConfigUpdateWithWhereUniqueWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUpdateWithWhereUniqueWithoutBudgetInput> = z.object({
+  where: z.lazy(() => BudgetPeriodConfigWhereUniqueInputSchema),
   data: z.union([ z.lazy(() => BudgetPeriodConfigUpdateWithoutBudgetInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedUpdateWithoutBudgetInputSchema) ]),
 }).strict();
 
-export const BudgetPeriodConfigUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUpdateWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  startDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  endDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+export const BudgetPeriodConfigUpdateManyWithWhereWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUpdateManyWithWhereWithoutBudgetInput> = z.object({
+  where: z.lazy(() => BudgetPeriodConfigScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => BudgetPeriodConfigUpdateManyMutationInputSchema),z.lazy(() => BudgetPeriodConfigUncheckedUpdateManyWithoutBudgetInputSchema) ]),
 }).strict();
 
-export const BudgetPeriodConfigUncheckedUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedUpdateWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  startDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  endDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+export const BudgetPeriodConfigScalarWhereInputSchema: z.ZodType<Prisma.BudgetPeriodConfigScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => BudgetPeriodConfigScalarWhereInputSchema),z.lazy(() => BudgetPeriodConfigScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => BudgetPeriodConfigScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => BudgetPeriodConfigScalarWhereInputSchema),z.lazy(() => BudgetPeriodConfigScalarWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  type: z.union([ z.lazy(() => EnumBudgetPeriodTypeFilterSchema),z.lazy(() => BudgetPeriodTypeSchema) ]).optional(),
+  amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  startDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  endDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  budgetId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict();
 
 export const BudgetUserUpsertWithWhereUniqueWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserUpsertWithWhereUniqueWithoutBudgetInput> = z.object({
@@ -5058,7 +5078,7 @@ export const BudgetUserInvitationUpdateManyWithWhereWithoutBudgetInputSchema: z.
   data: z.union([ z.lazy(() => BudgetUserInvitationUpdateManyMutationInputSchema),z.lazy(() => BudgetUserInvitationUncheckedUpdateManyWithoutBudgetInputSchema) ]),
 }).strict();
 
-export const BudgetCreateWithoutPeriodConfigInputSchema: z.ZodType<Prisma.BudgetCreateWithoutPeriodConfigInput> = z.object({
+export const BudgetCreateWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.BudgetCreateWithoutPeriodConfigsInput> = z.object({
   id: z.string().cuid().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -5071,7 +5091,7 @@ export const BudgetCreateWithoutPeriodConfigInputSchema: z.ZodType<Prisma.Budget
   invitations: z.lazy(() => BudgetUserInvitationCreateNestedManyWithoutBudgetInputSchema).optional()
 }).strict();
 
-export const BudgetUncheckedCreateWithoutPeriodConfigInputSchema: z.ZodType<Prisma.BudgetUncheckedCreateWithoutPeriodConfigInput> = z.object({
+export const BudgetUncheckedCreateWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.BudgetUncheckedCreateWithoutPeriodConfigsInput> = z.object({
   id: z.string().cuid().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -5084,23 +5104,23 @@ export const BudgetUncheckedCreateWithoutPeriodConfigInputSchema: z.ZodType<Pris
   invitations: z.lazy(() => BudgetUserInvitationUncheckedCreateNestedManyWithoutBudgetInputSchema).optional()
 }).strict();
 
-export const BudgetCreateOrConnectWithoutPeriodConfigInputSchema: z.ZodType<Prisma.BudgetCreateOrConnectWithoutPeriodConfigInput> = z.object({
+export const BudgetCreateOrConnectWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.BudgetCreateOrConnectWithoutPeriodConfigsInput> = z.object({
   where: z.lazy(() => BudgetWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => BudgetCreateWithoutPeriodConfigInputSchema),z.lazy(() => BudgetUncheckedCreateWithoutPeriodConfigInputSchema) ]),
+  create: z.union([ z.lazy(() => BudgetCreateWithoutPeriodConfigsInputSchema),z.lazy(() => BudgetUncheckedCreateWithoutPeriodConfigsInputSchema) ]),
 }).strict();
 
-export const BudgetUpsertWithoutPeriodConfigInputSchema: z.ZodType<Prisma.BudgetUpsertWithoutPeriodConfigInput> = z.object({
-  update: z.union([ z.lazy(() => BudgetUpdateWithoutPeriodConfigInputSchema),z.lazy(() => BudgetUncheckedUpdateWithoutPeriodConfigInputSchema) ]),
-  create: z.union([ z.lazy(() => BudgetCreateWithoutPeriodConfigInputSchema),z.lazy(() => BudgetUncheckedCreateWithoutPeriodConfigInputSchema) ]),
+export const BudgetUpsertWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.BudgetUpsertWithoutPeriodConfigsInput> = z.object({
+  update: z.union([ z.lazy(() => BudgetUpdateWithoutPeriodConfigsInputSchema),z.lazy(() => BudgetUncheckedUpdateWithoutPeriodConfigsInputSchema) ]),
+  create: z.union([ z.lazy(() => BudgetCreateWithoutPeriodConfigsInputSchema),z.lazy(() => BudgetUncheckedCreateWithoutPeriodConfigsInputSchema) ]),
   where: z.lazy(() => BudgetWhereInputSchema).optional()
 }).strict();
 
-export const BudgetUpdateToOneWithWhereWithoutPeriodConfigInputSchema: z.ZodType<Prisma.BudgetUpdateToOneWithWhereWithoutPeriodConfigInput> = z.object({
+export const BudgetUpdateToOneWithWhereWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.BudgetUpdateToOneWithWhereWithoutPeriodConfigsInput> = z.object({
   where: z.lazy(() => BudgetWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => BudgetUpdateWithoutPeriodConfigInputSchema),z.lazy(() => BudgetUncheckedUpdateWithoutPeriodConfigInputSchema) ]),
+  data: z.union([ z.lazy(() => BudgetUpdateWithoutPeriodConfigsInputSchema),z.lazy(() => BudgetUncheckedUpdateWithoutPeriodConfigsInputSchema) ]),
 }).strict();
 
-export const BudgetUpdateWithoutPeriodConfigInputSchema: z.ZodType<Prisma.BudgetUpdateWithoutPeriodConfigInput> = z.object({
+export const BudgetUpdateWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.BudgetUpdateWithoutPeriodConfigsInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5113,7 +5133,7 @@ export const BudgetUpdateWithoutPeriodConfigInputSchema: z.ZodType<Prisma.Budget
   invitations: z.lazy(() => BudgetUserInvitationUpdateManyWithoutBudgetNestedInputSchema).optional()
 }).strict();
 
-export const BudgetUncheckedUpdateWithoutPeriodConfigInputSchema: z.ZodType<Prisma.BudgetUncheckedUpdateWithoutPeriodConfigInput> = z.object({
+export const BudgetUncheckedUpdateWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.BudgetUncheckedUpdateWithoutPeriodConfigsInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5165,7 +5185,7 @@ export const BudgetCreateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.BudgetC
   description: z.string().optional().nullable(),
   preferredCurrency: z.string(),
   type: z.lazy(() => BudgetTypeSchema).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigCreateNestedOneWithoutBudgetInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigCreateNestedManyWithoutBudgetInputSchema).optional(),
   transactions: z.lazy(() => TransactionCreateNestedManyWithoutBudgetInputSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationCreateNestedManyWithoutBudgetInputSchema).optional()
 }).strict();
@@ -5178,7 +5198,7 @@ export const BudgetUncheckedCreateWithoutBudgetUsersInputSchema: z.ZodType<Prism
   description: z.string().optional().nullable(),
   preferredCurrency: z.string(),
   type: z.lazy(() => BudgetTypeSchema).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigUncheckedCreateNestedOneWithoutBudgetInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigUncheckedCreateNestedManyWithoutBudgetInputSchema).optional(),
   transactions: z.lazy(() => TransactionUncheckedCreateNestedManyWithoutBudgetInputSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationUncheckedCreateNestedManyWithoutBudgetInputSchema).optional()
 }).strict();
@@ -5244,7 +5264,7 @@ export const BudgetUpdateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.BudgetU
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetTypeSchema),z.lazy(() => EnumBudgetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigUpdateOneWithoutBudgetNestedInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigUpdateManyWithoutBudgetNestedInputSchema).optional(),
   transactions: z.lazy(() => TransactionUpdateManyWithoutBudgetNestedInputSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationUpdateManyWithoutBudgetNestedInputSchema).optional()
 }).strict();
@@ -5257,7 +5277,7 @@ export const BudgetUncheckedUpdateWithoutBudgetUsersInputSchema: z.ZodType<Prism
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetTypeSchema),z.lazy(() => EnumBudgetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigUncheckedUpdateOneWithoutBudgetNestedInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigUncheckedUpdateManyWithoutBudgetNestedInputSchema).optional(),
   transactions: z.lazy(() => TransactionUncheckedUpdateManyWithoutBudgetNestedInputSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationUncheckedUpdateManyWithoutBudgetNestedInputSchema).optional()
 }).strict();
@@ -5301,7 +5321,7 @@ export const BudgetCreateWithoutInvitationsInputSchema: z.ZodType<Prisma.BudgetC
   description: z.string().optional().nullable(),
   preferredCurrency: z.string(),
   type: z.lazy(() => BudgetTypeSchema).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigCreateNestedOneWithoutBudgetInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigCreateNestedManyWithoutBudgetInputSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserCreateNestedManyWithoutBudgetInputSchema).optional(),
   transactions: z.lazy(() => TransactionCreateNestedManyWithoutBudgetInputSchema).optional()
 }).strict();
@@ -5314,7 +5334,7 @@ export const BudgetUncheckedCreateWithoutInvitationsInputSchema: z.ZodType<Prism
   description: z.string().optional().nullable(),
   preferredCurrency: z.string(),
   type: z.lazy(() => BudgetTypeSchema).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigUncheckedCreateNestedOneWithoutBudgetInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigUncheckedCreateNestedManyWithoutBudgetInputSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserUncheckedCreateNestedManyWithoutBudgetInputSchema).optional(),
   transactions: z.lazy(() => TransactionUncheckedCreateNestedManyWithoutBudgetInputSchema).optional()
 }).strict();
@@ -5408,7 +5428,7 @@ export const BudgetUpdateWithoutInvitationsInputSchema: z.ZodType<Prisma.BudgetU
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetTypeSchema),z.lazy(() => EnumBudgetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigUpdateOneWithoutBudgetNestedInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigUpdateManyWithoutBudgetNestedInputSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserUpdateManyWithoutBudgetNestedInputSchema).optional(),
   transactions: z.lazy(() => TransactionUpdateManyWithoutBudgetNestedInputSchema).optional()
 }).strict();
@@ -5421,7 +5441,7 @@ export const BudgetUncheckedUpdateWithoutInvitationsInputSchema: z.ZodType<Prism
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetTypeSchema),z.lazy(() => EnumBudgetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigUncheckedUpdateOneWithoutBudgetNestedInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigUncheckedUpdateManyWithoutBudgetNestedInputSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserUncheckedUpdateManyWithoutBudgetNestedInputSchema).optional(),
   transactions: z.lazy(() => TransactionUncheckedUpdateManyWithoutBudgetNestedInputSchema).optional()
 }).strict();
@@ -5628,7 +5648,7 @@ export const BudgetCreateWithoutTransactionsInputSchema: z.ZodType<Prisma.Budget
   description: z.string().optional().nullable(),
   preferredCurrency: z.string(),
   type: z.lazy(() => BudgetTypeSchema).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigCreateNestedOneWithoutBudgetInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigCreateNestedManyWithoutBudgetInputSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserCreateNestedManyWithoutBudgetInputSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationCreateNestedManyWithoutBudgetInputSchema).optional()
 }).strict();
@@ -5641,7 +5661,7 @@ export const BudgetUncheckedCreateWithoutTransactionsInputSchema: z.ZodType<Pris
   description: z.string().optional().nullable(),
   preferredCurrency: z.string(),
   type: z.lazy(() => BudgetTypeSchema).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigUncheckedCreateNestedOneWithoutBudgetInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigUncheckedCreateNestedManyWithoutBudgetInputSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserUncheckedCreateNestedManyWithoutBudgetInputSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationUncheckedCreateNestedManyWithoutBudgetInputSchema).optional()
 }).strict();
@@ -5769,7 +5789,7 @@ export const BudgetUpdateWithoutTransactionsInputSchema: z.ZodType<Prisma.Budget
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetTypeSchema),z.lazy(() => EnumBudgetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigUpdateOneWithoutBudgetNestedInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigUpdateManyWithoutBudgetNestedInputSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserUpdateManyWithoutBudgetNestedInputSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationUpdateManyWithoutBudgetNestedInputSchema).optional()
 }).strict();
@@ -5782,7 +5802,7 @@ export const BudgetUncheckedUpdateWithoutTransactionsInputSchema: z.ZodType<Pris
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   preferredCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetTypeSchema),z.lazy(() => EnumBudgetTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  periodConfig: z.lazy(() => BudgetPeriodConfigUncheckedUpdateOneWithoutBudgetNestedInputSchema).optional(),
+  periodConfigs: z.lazy(() => BudgetPeriodConfigUncheckedUpdateManyWithoutBudgetNestedInputSchema).optional(),
   budgetUsers: z.lazy(() => BudgetUserUncheckedUpdateManyWithoutBudgetNestedInputSchema).optional(),
   invitations: z.lazy(() => BudgetUserInvitationUncheckedUpdateManyWithoutBudgetNestedInputSchema).optional()
 }).strict();
@@ -6395,6 +6415,16 @@ export const TransactionUncheckedUpdateManyWithoutWalletAccountInputSchema: z.Zo
   createdByUserId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
+export const BudgetPeriodConfigCreateManyBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigCreateManyBudgetInput> = z.object({
+  id: z.string().cuid().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  type: z.lazy(() => BudgetPeriodTypeSchema),
+  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  startDate: z.coerce.date().optional().nullable(),
+  endDate: z.coerce.date().optional().nullable()
+}).strict();
+
 export const BudgetUserCreateManyBudgetInputSchema: z.ZodType<Prisma.BudgetUserCreateManyBudgetInput> = z.object({
   id: z.string().cuid().optional(),
   createdAt: z.coerce.date().optional(),
@@ -6426,6 +6456,36 @@ export const BudgetUserInvitationCreateManyBudgetInputSchema: z.ZodType<Prisma.B
   expiresAt: z.coerce.date(),
   permission: z.lazy(() => BudgetUserPermissionSchema).optional().nullable(),
   createdByUserId: z.string()
+}).strict();
+
+export const BudgetPeriodConfigUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUpdateWithoutBudgetInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  startDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  endDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const BudgetPeriodConfigUncheckedUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedUpdateWithoutBudgetInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  startDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  endDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const BudgetPeriodConfigUncheckedUpdateManyWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedUpdateManyWithoutBudgetInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  startDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  endDate: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const BudgetUserUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserUpdateWithoutBudgetInput> = z.object({

@@ -1,14 +1,20 @@
 import { useUser } from '@clerk/clerk-expo'
-import { t } from '@lingui/macro'
-import { useLingui } from '@lingui/react'
-import { ArrowDownUp, Bell } from 'lucide-react-native'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Bell } from 'lucide-react-native'
+import { Text, View } from 'react-native'
 import { UserAvatar } from '../common/user-avatar'
 import { Button } from '../ui/button'
+import { SelectWalletAccount } from './select-wallet-account'
 
-export function HomeHeader() {
+type HomeHeaderProps = {
+  walletAccountId?: string
+  onWalletAccountChange?: (walletAccountId?: string) => void
+}
+
+export function HomeHeader({
+  walletAccountId,
+  onWalletAccountChange,
+}: HomeHeaderProps) {
   const { user } = useUser()
-  const { i18n } = useLingui()
 
   return (
     <View className="flex bg-card px-6 pb-3 flex-row items-center justify-between">
@@ -18,15 +24,10 @@ export function HomeHeader() {
           <Text className="font-medium text-muted-foreground text-sm font-sans">
             {user?.fullName ?? user?.primaryEmailAddress?.emailAddress}
           </Text>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            className="gap-2 items-center flex-row"
-          >
-            <Text className="text-primary font-sans font-medium">
-              {t(i18n)`All Accounts`}
-            </Text>
-            <ArrowDownUp className="w-4 h-4 text-muted-foreground" />
-          </TouchableOpacity>
+          <SelectWalletAccount
+            value={walletAccountId}
+            onSelect={onWalletAccountChange}
+          />
         </View>
       </View>
       <Button variant="secondary" size="icon">

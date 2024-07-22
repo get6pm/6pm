@@ -87,7 +87,7 @@ export function SelectBudgetTypeField({
         portalHost="budget-form"
         className="w-full"
       >
-        <SelectGroup>
+        <SelectGroup className="px-1">
           {options.map((option) => (
             <SelectItem
               key={option.value}

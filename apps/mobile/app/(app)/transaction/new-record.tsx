@@ -13,6 +13,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
+import { PortalHost, useModalPortalRoot } from '@rn-primitives/portal'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 import { useLocalSearchParams, useRouter } from 'expo-router'
@@ -30,6 +31,7 @@ export default function NewRecordScreen() {
   const { data: walletAccounts } = useWallets()
   const defaultCurrency = useDefaultCurrency()
   const defaultWallet = walletAccounts?.[0]
+  const { sideOffset, ...rootProps } = useModalPortalRoot()
 
   const params = useLocalSearchParams()
   const parsedParams = zUpdateTransaction.parse(params)
@@ -79,7 +81,7 @@ export default function NewRecordScreen() {
   }
 
   return (
-    <View className="flex-1 bg-card">
+    <View className="flex-1 bg-card" {...rootProps}>
       <PagerView
         ref={ref}
         overdrag={false}
@@ -88,6 +90,7 @@ export default function NewRecordScreen() {
         style={{ flex: 1 }}
       >
         <TransactionForm
+          sideOffset={sideOffset}
           form={transactionForm}
           onSubmit={mutateAsync}
           onCancel={router.back}
@@ -112,6 +115,7 @@ export default function NewRecordScreen() {
           }}
         />
       </PagerView>
+      <PortalHost name="transaction-form" />
     </View>
   )
 }

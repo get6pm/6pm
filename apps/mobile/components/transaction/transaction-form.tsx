@@ -2,7 +2,7 @@ import type { TransactionFormValues } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import * as Haptics from 'expo-haptics'
-import { LandPlot, ScanTextIcon, Trash2Icon, XIcon } from 'lucide-react-native'
+import { ScanTextIcon, Trash2Icon, XIcon } from 'lucide-react-native'
 import {
   Controller,
   FormProvider,
@@ -22,6 +22,7 @@ import { TextTicker } from '../text-ticker'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
 import { SelectAccountField } from './select-account-field'
+import { SelectBudgetField } from './select-budget-field'
 import { SelectCategoryField } from './select-category-field'
 
 type TransactionFormProps = {
@@ -30,6 +31,7 @@ type TransactionFormProps = {
   onDelete?: () => void
   onOpenScanner?: () => void
   form: UseFormReturn<TransactionFormValues>
+  sideOffset?: number
 }
 
 function TransactionAmount() {
@@ -71,6 +73,7 @@ export const TransactionForm = ({
   onCancel,
   onDelete,
   onOpenScanner,
+  sideOffset,
 }: TransactionFormProps) => {
   const { i18n } = useLingui()
 
@@ -118,15 +121,22 @@ export const TransactionForm = ({
           </View>
         </View>
         <View className="flex-1 items-center justify-center pb-12">
-          <View className="w-full h-24 justify-end mb-4">
+          <View className="w-full h-24 justify-end mb-2">
             <TransactionAmount />
           </View>
-          <Button variant="outline" size="sm" className="rounded-full">
-            <LandPlot className="w-5 h-5 text-primary" />
-            <Text className="text-muted-foreground">
-              {t(i18n)`No budget selected`}
-            </Text>
-          </Button>
+          <Controller
+            name="budgetId"
+            control={form.control}
+            render={({ field: { onChange, value } }) => (
+              <SelectBudgetField
+                sideOffset={sideOffset}
+                value={value}
+                onSelect={(type) => {
+                  onChange(type)
+                }}
+              />
+            )}
+          />
           <InputField
             name="note"
             placeholder={t(i18n)`transaction note`}

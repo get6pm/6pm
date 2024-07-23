@@ -24,6 +24,7 @@ export const useBudgetList = () => {
     savingBudgets,
     investingBudgets,
     debtBudgets,
+    totalBudget,
   } = useMemo(() => {
     const budgetsDict = keyBy(budgets, 'id')
     const spendingBudgets = budgets.filter(
@@ -35,12 +36,18 @@ export const useBudgetList = () => {
     )
     const debtBudgets = budgets.filter((budget) => budget.type === 'DEBT')
 
+    const totalBudget = budgets.reduce(
+      (acc, budget) => acc.add(new Decimal(budget.periodConfigs[0].amount)),
+      new Decimal(0),
+    )
+
     return {
       budgetsDict,
       spendingBudgets,
       savingBudgets,
       investingBudgets,
       debtBudgets,
+      totalBudget,
     }
   }, [budgets])
 
@@ -52,6 +59,7 @@ export const useBudgetList = () => {
     savingBudgets,
     investingBudgets,
     debtBudgets,
+    totalBudget,
   }
 }
 

@@ -5,6 +5,7 @@ import {
 import type { CreateBudget, UpdateBudget } from '@6pm/validation'
 import {
   type Budget,
+  type BudgetPeriodConfig,
   BudgetUserPermission,
   type Prisma,
   type User,
@@ -14,6 +15,10 @@ import { inviteUserToBudget } from './budget-invitation.service'
 
 const BUDGET_INCLUDE: Prisma.BudgetInclude = {
   periodConfigs: true,
+}
+
+type BudgetPopulated = Budget & {
+  periodConfigs: BudgetPeriodConfig[]
 }
 
 export async function canUserCreateBudget({
@@ -277,7 +282,7 @@ async function findBudgetLatestPeriodConfig({
   })
 }
 
-async function verifyBudgetPeriods({ budget }: { budget: Budget }) {
+async function verifyBudgetPeriods({ budget }: { budget: BudgetPopulated }) {
   const latestPeriodConfig = await findBudgetLatestPeriodConfig({
     budgetId: budget.id,
   })

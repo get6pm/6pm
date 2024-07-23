@@ -14,7 +14,7 @@ import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { format } from 'date-fns/format'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { SectionList, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -23,6 +23,7 @@ const TRANSACTIONS_PER_PAGE = 15
 export default function HomeScreen() {
   const { i18n } = useLingui()
   const { top, bottom } = useSafeAreaInsets()
+  const [walletAccountId, setWalletAccountId] = useState<string | undefined>()
   const {
     data,
     isLoading,
@@ -33,6 +34,7 @@ export default function HomeScreen() {
     isFetchingNextPage,
   } = useTransactions({
     last: TRANSACTIONS_PER_PAGE,
+    walletAccountId,
   })
   const { colorScheme } = useColorScheme()
 
@@ -64,7 +66,10 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 bg-card" style={{ paddingTop: top }}>
-      <HomeHeader />
+      <HomeHeader
+        walletAccountId={walletAccountId}
+        onWalletAccountChange={setWalletAccountId}
+      />
       <SectionList
         ListHeaderComponent={
           <View className="p-6">

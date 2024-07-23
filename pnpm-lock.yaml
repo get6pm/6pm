@@ -213,6 +213,9 @@ importers:
       expo-auth-session:
         specifier: ~5.5.2
         version: 5.5.2(expo@51.0.14(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7)))
+      expo-blur:
+        specifier: ~13.0.2
+        version: 13.0.2(expo@51.0.14(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7)))
       expo-camera:
         specifier: ~15.0.13
         version: 15.0.13(expo@51.0.14(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7)))
@@ -3930,6 +3933,11 @@ packages:
 
   expo-auth-session@5.5.2:
     resolution: {integrity: sha512-fgqrNz9FhCl/kNyU2Vy2AmLWk+X7vmgiGN2KVUgB8yLHl/tPogYLpNOiqFl/pMLMveoKjPpVOVfbz3RTJHJoTg==}
+
+  expo-blur@13.0.2:
+    resolution: {integrity: sha512-t2p7BChO3Reykued++QJRMZ/og6J3aXtSQ+bU31YcBeXhZLkHwjWEhiPKPnJka7J2/yTs4+jOCNDY0kCZmcE3w==}
+    peerDependencies:
+      expo: '*'
 
   expo-camera@15.0.13:
     resolution: {integrity: sha512-EhGk1hkc0dgKqtQIw9SX31cl9t+ffDBfMCma+0qvSBnEkcfDQImrDDHSODknQrq6yNQDT9w3LqH5ZouG0m9pJQ==}
@@ -11669,6 +11677,10 @@ snapshots:
     transitivePeerDependencies:
       - expo
       - supports-color
+
+  expo-blur@13.0.2(expo@51.0.14(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))):
+    dependencies:
+      expo: 51.0.14(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))
 
   expo-camera@15.0.13(expo@51.0.14(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))):
     dependencies:

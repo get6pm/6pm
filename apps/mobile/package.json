@@ -54,6 +54,7 @@
     "decimal.js": "^10.4.3",
     "expo": "~51.0.11",
     "expo-auth-session": "~5.5.2",
+    "expo-blur": "~13.0.2",
     "expo-camera": "~15.0.13",
     "expo-constants": "~16.0.2",
     "expo-crypto": "~13.0.2",

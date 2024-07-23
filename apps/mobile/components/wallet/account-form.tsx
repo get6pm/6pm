@@ -1,3 +1,4 @@
+import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import { type AccountFormValues, zAccountFormValues } from '@6pm/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
@@ -21,12 +22,13 @@ export const AccountForm = ({ onSubmit, defaultValues }: AccountFormProps) => {
   const { i18n } = useLingui()
   const nameInputRef = useRef<TextInput>(null)
   const balanceInputRef = useRef<TextInput>(null)
+  const defaultCurrency = useDefaultCurrency()
 
   const accountForm = useForm<AccountFormValues>({
     resolver: zodResolver(zAccountFormValues),
     defaultValues: {
       name: '',
-      preferredCurrency: 'USD', // TODO: get from user settings
+      preferredCurrency: defaultCurrency,
       icon: 'CreditCard',
       ...defaultValues,
     },

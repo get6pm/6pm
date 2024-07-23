@@ -17,11 +17,11 @@ msgstr ""
 msgid "{0}"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-item.tsx:50
+#: apps/mobile/components/budget/budget-item.tsx:60
 msgid "{0} left"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:135
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:130
 msgid "{language}"
 msgstr ""
 
@@ -33,7 +33,7 @@ msgstr ""
 msgid "<0>By continuing, you acknowledge that you understand and agree to the <1><2>Terms & Conditions</2></1> and <3><4>Privacy Policy</4></3></0>"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:118
+#: apps/mobile/components/budget/budget-form.tsx:120
 #: apps/mobile/components/wallet/account-form.tsx:58
 msgid "0.00"
 msgstr ""
@@ -42,7 +42,7 @@ msgstr ""
 msgid "Add your first transaction here"
 msgstr ""
 
-#: apps/mobile/components/home/header.tsx:33
+#: apps/mobile/components/home/header.tsx:26
 msgid "All Accounts"
 msgstr ""
 
@@ -50,7 +50,7 @@ msgstr ""
 msgid "An error occurred"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:116
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:111
 msgid "App settings"
 msgstr ""
 
@@ -59,11 +59,11 @@ msgid "App theme"
 msgstr ""
 
 #: apps/mobile/app/(app)/_layout.tsx:74
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:121
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:116
 msgid "Appearance"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:207
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:202
 msgid "Are you sure you want to sign out?"
 msgstr ""
 
@@ -83,7 +83,7 @@ msgstr ""
 msgid "Camera permissions are not granted"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:209
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:204
 #: apps/mobile/app/(app)/transaction/[transactionId].tsx:90
 #: apps/mobile/app/(app)/wallet/[walletId].tsx:74
 msgid "Cancel"
@@ -94,7 +94,7 @@ msgid "Cannot extract transaction data"
 msgstr ""
 
 #: apps/mobile/app/(app)/_layout.tsx:106
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:96
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:91
 msgid "Categories"
 msgstr ""
 
@@ -114,7 +114,7 @@ msgstr ""
 msgid "Continue with Email"
 msgstr ""
 
-#: apps/mobile/components/home/wallet-statistics.tsx:25
+#: apps/mobile/components/home/wallet-statistics.tsx:26
 msgid "Current balance"
 msgstr ""
 
@@ -122,12 +122,12 @@ msgstr ""
 msgid "Dark"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:31
-#: apps/mobile/components/budget/select-budget-type-field.tsx:55
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:136
+#: apps/mobile/components/budget/select-budget-type-field.tsx:57
 msgid "Debt"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:144
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:139
 msgid "Default currency"
 msgstr ""
 
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Expenses"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:110
+#: apps/mobile/components/budget/budget-form.tsx:111
 msgid "Family budget"
 msgstr ""
 
@@ -185,11 +185,11 @@ msgstr ""
 msgid "From date"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:82
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:77
 msgid "General"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:72
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:67
 msgid "Get 6pm Pro"
 msgstr ""
 
@@ -205,13 +205,13 @@ msgstr ""
 msgid "Incomes"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:30
-#: apps/mobile/components/budget/select-budget-type-field.tsx:50
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:135
+#: apps/mobile/components/budget/select-budget-type-field.tsx:52
 msgid "Investing"
 msgstr ""
 
 #: apps/mobile/app/(app)/_layout.tsx:69
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:130
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:125
 msgid "Language"
 msgstr ""
 
@@ -227,19 +227,19 @@ msgstr ""
 msgid "Light"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:157
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:152
 msgid "Login using FaceID"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:105
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:100
 msgid "Magic inbox"
 msgstr ""
 
-#: apps/mobile/components/budget/select-period-type-field.tsx:43
+#: apps/mobile/components/budget/select-period-type-field.tsx:45
 msgid "Monthly"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:109
+#: apps/mobile/components/budget/budget-form.tsx:110
 #: apps/mobile/components/category/category-form.tsx:66
 #: apps/mobile/components/wallet/account-form.tsx:41
 msgid "Name"
@@ -267,11 +267,15 @@ msgstr ""
 msgid "No budget selected"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:174
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:169
 msgid "Others"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:142
+#: apps/mobile/components/budget/budget-item.tsx:124
+msgid "per day"
+msgstr ""
+
+#: apps/mobile/components/budget/budget-form.tsx:145
 msgid "Period"
 msgstr ""
 
@@ -283,7 +287,7 @@ msgstr ""
 msgid "Period start date"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:242
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:237
 msgid "Privacy policy"
 msgstr ""
 
@@ -295,23 +299,23 @@ msgstr ""
 msgid "Processing transaction..."
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:199
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:194
 msgid "Proudly open source"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:164
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:159
 msgid "Push notifications"
 msgstr ""
 
-#: apps/mobile/components/budget/select-period-type-field.tsx:47
+#: apps/mobile/components/budget/select-period-type-field.tsx:49
 msgid "Quarterly"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:187
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:182
 msgid "Rate 6pm on App Store"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:52
+#: apps/mobile/components/budget/budget-form.tsx:51
 #: apps/mobile/components/category/category-form.tsx:118
 #: apps/mobile/components/common/date-picker.tsx:55
 #: apps/mobile/components/common/date-range-picker.tsx:62
@@ -320,8 +324,8 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:29
-#: apps/mobile/components/budget/select-budget-type-field.tsx:45
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:134
+#: apps/mobile/components/budget/select-budget-type-field.tsx:47
 msgid "Saving"
 msgstr ""
 
@@ -337,15 +341,15 @@ msgstr ""
 msgid "Select account"
 msgstr ""
 
-#: apps/mobile/components/budget/select-budget-type-field.tsx:76
+#: apps/mobile/components/budget/select-budget-type-field.tsx:78
 msgid "Select budget type"
 msgstr ""
 
-#: apps/mobile/components/budget/select-period-type-field.tsx:70
+#: apps/mobile/components/budget/select-period-type-field.tsx:72
 msgid "Select period type"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:179
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:174
 msgid "Send feedback"
 msgstr ""
 
@@ -353,7 +357,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:193
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:188
 msgid "Share with friends"
 msgstr ""
 
@@ -369,8 +373,8 @@ msgstr ""
 msgid "Sign in with Google"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:213
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:223
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:208
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:218
 msgid "Sign out"
 msgstr ""
 
@@ -378,12 +382,12 @@ msgstr ""
 msgid "Sign up"
 msgstr ""
 
-#: apps/mobile/components/budget/select-period-type-field.tsx:55
+#: apps/mobile/components/budget/select-period-type-field.tsx:57
 msgid "Specific dates"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:28
-#: apps/mobile/components/budget/select-budget-type-field.tsx:40
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:133
+#: apps/mobile/components/budget/select-budget-type-field.tsx:42
 msgid "Spending"
 msgstr ""
 
@@ -395,7 +399,7 @@ msgstr ""
 msgid "Take a picture of your transaction"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:117
+#: apps/mobile/components/budget/budget-form.tsx:119
 msgid "Target"
 msgstr ""
 
@@ -403,7 +407,7 @@ msgstr ""
 msgid "Terms & Conditions"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:237
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:232
 msgid "Terms of use"
 msgstr ""
 
@@ -431,7 +435,6 @@ msgstr ""
 msgid "transaction note"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:94
 #: apps/mobile/components/category/category-form.tsx:83
 msgid "Type"
 msgstr ""
@@ -441,15 +444,15 @@ msgstr ""
 msgid "Uncategorized"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-item.tsx:36
+#: apps/mobile/components/budget/budget-item.tsx:46
 msgid "Unknown"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:75
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:70
 msgid "Unlocks full AI power and more!"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:231
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:226
 msgid "ver."
 msgstr ""
 
@@ -466,7 +469,7 @@ msgid "Wallet account name"
 msgstr ""
 
 #: apps/mobile/app/(app)/_layout.tsx:79
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:87
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:82
 msgid "Wallet accounts"
 msgstr ""
 
@@ -474,11 +477,11 @@ msgstr ""
 msgid "Wallet Accounts"
 msgstr ""
 
-#: apps/mobile/components/budget/select-period-type-field.tsx:39
+#: apps/mobile/components/budget/select-period-type-field.tsx:41
 msgid "Weekly"
 msgstr ""
 
-#: apps/mobile/components/budget/select-period-type-field.tsx:51
+#: apps/mobile/components/budget/select-period-type-field.tsx:53
 msgid "Yearly"
 msgstr ""
 

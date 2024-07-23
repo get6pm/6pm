@@ -1,3 +1,4 @@
+import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import {
   type BudgetFormValues,
   BudgetPeriodTypeSchema,
@@ -61,13 +62,14 @@ export const BudgetForm = ({
   const { i18n } = useLingui()
   const nameInputRef = useRef<TextInput>(null)
   const amountInputRef = useRef<TextInput>(null)
+  const defaultCurrency = useDefaultCurrency()
 
   const budgetForm = useForm<BudgetFormValues>({
     resolver: zodResolver(zBudgetFormValues),
     defaultValues: {
       name: '',
       description: '',
-      preferredCurrency: 'USD',
+      preferredCurrency: defaultCurrency,
       type: BudgetTypeSchema.Enum.SPENDING,
       ...defaultValues,
       period: {

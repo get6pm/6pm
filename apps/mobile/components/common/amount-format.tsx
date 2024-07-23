@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import { type VariantProps, cva } from 'class-variance-authority'
 import { Text } from '../ui/text'
 
@@ -40,12 +41,13 @@ type AmountFormatProps = {
 
 export function AmountFormat({
   amount = 0,
-  currency = 'VND',
+  currency,
   className,
   size,
   displayNegativeSign,
   displayPositiveColor,
 }: AmountFormatProps) {
+  const defaultCurrency = useDefaultCurrency()
   return (
     <Text
       className={cn(
@@ -60,7 +62,9 @@ export function AmountFormat({
     >
       {(displayNegativeSign ? amount : Math.abs(amount)).toLocaleString() ||
         '0.00'}{' '}
-      <Text className={cn(currencyVariants({ size }))}>{currency}</Text>
+      <Text className={cn(currencyVariants({ size }))}>
+        {currency || defaultCurrency}
+      </Text>
     </Text>
   )
 }

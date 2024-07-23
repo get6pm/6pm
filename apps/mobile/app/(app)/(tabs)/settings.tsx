@@ -3,6 +3,7 @@ import * as Application from 'expo-application'
 import { Logo } from '@/components/common/logo'
 import { MenuItem } from '@/components/common/menu-item'
 import { UserAvatar } from '@/components/common/user-avatar'
+import { SelectDefaultCurrency } from '@/components/setting/select-default-currency'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
@@ -15,7 +16,6 @@ import { Link } from 'expo-router'
 import {
   BellIcon,
   ChevronRightIcon,
-  CurrencyIcon,
   EarthIcon,
   GithubIcon,
   InboxIcon,
@@ -124,7 +124,7 @@ export default function SettingsScreen() {
               icon={EarthIcon}
               rightSection={
                 <View className="flex flex-row items-center gap-2">
-                  <Text className="text-muted-foreground font-sans">
+                  <Text className="text-muted-foreground font-sans uppercase">
                     {t(i18n)`${language}`}
                   </Text>
                   <ChevronRightIcon className="w-5 h-5 text-primary" />
@@ -132,20 +132,7 @@ export default function SettingsScreen() {
               }
             />
           </Link>
-          <Link href="/currency" asChild disabled>
-            <MenuItem
-              label={t(i18n)`Default currency`}
-              icon={CurrencyIcon}
-              rightSection={
-                <View className="flex flex-row items-center gap-2">
-                  <Text className="text-muted-foreground font-sans">
-                    {/*  */}
-                  </Text>
-                  <ChevronRightIcon className="w-5 h-5 text-primary" />
-                </View>
-              }
-            />
-          </Link>
+          <SelectDefaultCurrency />
           <MenuItem
             label={t(i18n)`Login using FaceID`}
             icon={ScanFaceIcon}

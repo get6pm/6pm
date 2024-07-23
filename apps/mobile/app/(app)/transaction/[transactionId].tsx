@@ -9,6 +9,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
+import { PortalHost, useModalPortalRoot } from '@rn-primitives/portal'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 import { useLocalSearchParams, useRouter } from 'expo-router'
@@ -22,6 +23,7 @@ export default function EditRecordScreen() {
   const { data: transaction } = useTransactionDetail(transactionId!)
   const router = useRouter()
   const queryClient = useQueryClient()
+  const { sideOffset, ...rootProps } = useModalPortalRoot()
 
   const transactionForm = useForm<TransactionFormValues>({
     resolver: zodResolver(zTransactionFormValues),
@@ -31,7 +33,7 @@ export default function EditRecordScreen() {
       amount: Math.abs(transaction?.amount ?? 0),
       date: transaction?.date,
       note: transaction?.note ?? '',
-      budgetId: transaction?.budgetId ?? undefined,
+      budgetId: transaction?.budgetId,
       categoryId: transaction?.categoryId ?? undefined,
     },
   })
@@ -108,11 +110,15 @@ export default function EditRecordScreen() {
   }
 
   return (
-    <TransactionForm
-      form={transactionForm}
-      onSubmit={(values) => mutateAsync({ id: transaction.id, data: values })}
-      onCancel={router.back}
-      onDelete={handleDelete}
-    />
+    <View className="flex-1 bg-card" {...rootProps}>
+      <TransactionForm
+        sideOffset={sideOffset}
+        form={transactionForm}
+        onSubmit={(values) => mutateAsync({ id: transaction.id, data: values })}
+        onCancel={router.back}
+        onDelete={handleDelete}
+      />
+      <PortalHost name="transaction-form" />
+    </View>
   )
 }

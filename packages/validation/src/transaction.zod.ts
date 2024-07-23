@@ -6,7 +6,7 @@ export const zCreateTransaction = z.object({
   amount: z.number(),
   currency: z.string(),
   note: z.string().optional(),
-  budgetId: z.string().optional(),
+  budgetId: z.string().nullable().optional(),
   walletAccountId: z.string(),
   categoryId: z.string().optional(),
 })
@@ -17,7 +17,7 @@ export const zUpdateTransaction = z.object({
   amount: z.number({ coerce: true }).optional(),
   currency: z.string().optional(),
   note: z.string().optional(),
-  budgetId: z.string().optional(),
+  budgetId: z.string().nullable().optional(),
   walletAccountId: z.string().optional(),
   categoryId: z.string().optional(),
 })

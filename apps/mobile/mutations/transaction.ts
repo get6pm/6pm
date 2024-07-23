@@ -22,6 +22,7 @@ export async function createTransaction(data: TransactionFormValues) {
       z.object({
         // override Decimal type with number
         amount: z.number({ coerce: true }),
+        amountInVnd: z.number({ coerce: true }),
       }),
     ).parse(transaction)
   }
@@ -51,6 +52,7 @@ export async function updateTransaction({
       z.object({
         // override Decimal type with number
         amount: z.number({ coerce: true }),
+        amountInVnd: z.number({ coerce: true }),
       }),
     ).parse(transaction)
   }

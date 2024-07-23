@@ -28,7 +28,7 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
 
   const amountPerDay = 312500
 
-  const usagePercentage = 80
+  const usagePercentage = Math.random() * 100
 
   const remainingDays = useMemo(() => {
     let periodEndDate: Date | null
@@ -69,7 +69,7 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
         params: { budgetId: budget.id },
       }}
     >
-      <Pressable className="gap-4 mb-3 mt-1 justify-between p-4 border border-border rounded-lg">
+      <Pressable className="gap-4 mx-6 mb-3 mt-1 justify-between p-4 border border-border rounded-lg">
         <View className="flex-row items-center gap-6 justify-between">
           <View className="gap-2">
             <Text

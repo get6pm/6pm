@@ -21,7 +21,7 @@ export function BudgetStatistic({
           {totalRemaining?.toLocaleString() || '0.00'}{' '}
           <Text className="text-muted-foreground font-normal text-sm">VND</Text>
         </Text>
-        <Text className="text-muted-foreground text-sm">
+        <Text className="text-muted-foreground">
           {t(i18n)`Left this month`}
         </Text>
       </View>
@@ -30,7 +30,7 @@ export function BudgetStatistic({
           {remainingPerDay?.toLocaleString() || '0.00'}{' '}
           <Text className="text-muted-foreground font-normal text-sm">VND</Text>
         </Text>
-        <Text className="text-muted-foreground text-sm text-right">
+        <Text className="text-muted-foreground text-right">
           {t(i18n)`Left per day`}
         </Text>
       </View>

@@ -127,7 +127,7 @@ export function CircularProgress({
           },
         ]}
       >
-        <Text className="text-sm font-semibold">{progress}%</Text>
+        <Text className="text-sm font-semibold">{Math.round(progress)}%</Text>
       </View>
     </View>
   )

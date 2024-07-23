@@ -8,7 +8,7 @@ export const zCreateTransaction = z.object({
   note: z.string().optional(),
   budgetId: z.string().nullable().optional(),
   walletAccountId: z.string(),
-  categoryId: z.string().optional(),
+  categoryId: z.string().nullable().optional(),
 })
 export type CreateTransaction = z.infer<typeof zCreateTransaction>
 
@@ -19,7 +19,7 @@ export const zUpdateTransaction = z.object({
   note: z.string().optional(),
   budgetId: z.string().nullable().optional(),
   walletAccountId: z.string().optional(),
-  categoryId: z.string().optional(),
+  categoryId: z.string().nullable().optional(),
 })
 export type UpdateTransaction = z.infer<typeof zUpdateTransaction>
 

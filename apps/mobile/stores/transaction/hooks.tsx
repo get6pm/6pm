@@ -131,6 +131,7 @@ export function useCreateTransaction() {
       const response = await result.json()
       const transaction = TransactionSchema.merge(
         z.object({
+          id: z.string(),
           amount: z.number({ coerce: true }),
           amountInVnd: z.number({ coerce: true }),
         }),

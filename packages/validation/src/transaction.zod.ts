@@ -28,7 +28,11 @@ export const zTransactionFormValues = zCreateTransaction
 export type TransactionFormValues = z.infer<typeof zTransactionFormValues>
 
 export const TransactionPopulatedSchema = TransactionSchema.extend({
-  category: CategorySchema.nullable().optional(),
+  category: CategorySchema.extend({
+    id: z.string(),
+  })
+    .nullable()
+    .optional(),
   amount: z.number({ coerce: true }),
   amountInVnd: z.number({ coerce: true }),
 })

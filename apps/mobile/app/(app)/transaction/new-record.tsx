@@ -1,9 +1,8 @@
 import { toast } from '@/components/common/toast'
 import { Scanner } from '@/components/transaction/scanner'
 import { TransactionForm } from '@/components/transaction/transaction-form'
-import { createTransaction } from '@/mutations/transaction'
-import { transactionQueries } from '@/queries/transaction'
 import { useWallets, walletQueries } from '@/queries/wallet'
+import { useCreateTransaction } from '@/stores/transaction/hooks'
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import {
   type TransactionFormValues,
@@ -13,8 +12,9 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
+import { createId } from '@paralleldrive/cuid2'
 import { PortalHost, useModalPortalRoot } from '@rn-primitives/portal'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { LoaderIcon } from 'lucide-react-native'
@@ -49,28 +49,27 @@ export default function NewRecordScreen() {
     defaultValues,
   })
 
-  const { mutateAsync } = useMutation({
-    mutationFn: createTransaction,
-    onError(error) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-      Alert.alert(error.message)
-    },
-    onSuccess() {
+  const { mutateAsync } = useCreateTransaction()
+
+  const handleCreateTransaction = async (values: TransactionFormValues) => {
+    try {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
       router.back()
       toast.success(t(i18n)`Transaction created`)
-    },
-    async onSettled() {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: transactionQueries.all,
-        }),
-        queryClient.invalidateQueries({
-          queryKey: walletQueries.list._def,
-        }),
-      ])
-    },
-  })
+
+      await mutateAsync({ id: createId(), data: values })
+
+      // TODO: remove this after the wallet store is implemented
+      queryClient.invalidateQueries({
+        queryKey: walletQueries.list._def,
+      })
+    } catch (error) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+      if (error instanceof Error) {
+        Alert.alert(error.message)
+      }
+    }
+  }
 
   if (!defaultWallet) {
     return (
@@ -92,7 +91,7 @@ export default function NewRecordScreen() {
         <TransactionForm
           sideOffset={sideOffset}
           form={transactionForm}
-          onSubmit={mutateAsync}
+          onSubmit={handleCreateTransaction}
           onCancel={router.back}
           onOpenScanner={() => {
             ref.current?.setPage(1)

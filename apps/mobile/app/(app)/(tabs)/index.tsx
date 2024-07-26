@@ -8,7 +8,8 @@ import { Text } from '@/components/ui/text'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { formatDateShort } from '@/lib/date'
 import { theme } from '@/lib/theme'
-import { useTransactions } from '@/queries/transaction'
+import { useTransactionList } from '@/stores/transaction/hooks'
+import { dayjsExtended } from '@6pm/utilities'
 import type { TransactionPopulated } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -18,30 +19,20 @@ import { useMemo, useState } from 'react'
 import { SectionList, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const TRANSACTIONS_PER_PAGE = 15
-
 export default function HomeScreen() {
   const { i18n } = useLingui()
   const { top, bottom } = useSafeAreaInsets()
-  const [walletAccountId, setWalletAccountId] = useState<string | undefined>()
-  const {
-    data,
-    isLoading,
-    isRefetching,
-    refetch,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useTransactions({
-    last: TRANSACTIONS_PER_PAGE,
-    walletAccountId,
-  })
   const { colorScheme } = useColorScheme()
+  const [walletAccountId, setWalletAccountId] = useState<string | undefined>()
 
-  const transactions =
-    data?.pages?.reduce((acc, page) => {
-      return acc.concat(page.transactions)
-    }, [] as TransactionPopulated[]) ?? []
+  const { transactions, isLoading, isRefetching, refetch } = useTransactionList(
+    {
+      walletAccountId,
+      // FIXME: This should be dynamic @bkdev98
+      from: dayjsExtended().subtract(1, 'month').startOf('month').toDate(),
+      to: dayjsExtended().endOf('day').toDate(),
+    },
+  )
 
   const transactionsGroupByDate = useMemo(() => {
     const groupedTransactions = transactions.reduce(
@@ -90,15 +81,13 @@ export default function HomeScreen() {
             {title}
           </Text>
         )}
-        onEndReached={() => {
-          if (hasNextPage) {
-            fetchNextPage()
-          }
-        }}
+        // onEndReached={() => {
+        //   if (hasNextPage) {
+        //     fetchNextPage()
+        //   }
+        // }}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          isLoading || isFetchingNextPage ? <ListSkeleton /> : null
-        }
+        ListFooterComponent={isLoading ? <ListSkeleton /> : null}
       />
       {!transactions.length && !isLoading && (
         <View className="absolute bottom-20 flex-row right-6 z-50 gap-3">

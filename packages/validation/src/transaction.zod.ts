@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { CategorySchema, TransactionSchema } from './prisma'
 
 export const zCreateTransaction = z.object({
+  id: z.string().optional(),
   date: z.date({ coerce: true }),
   amount: z.number(),
   currency: z.string(),

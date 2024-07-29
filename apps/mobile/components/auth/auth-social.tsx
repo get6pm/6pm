@@ -3,6 +3,7 @@ import { useOAuth } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import type { SvgProps } from 'react-native-svg'
+import { toast } from '../common/toast'
 import { AppleLogo } from '../svg-assets/apple-logo'
 import { GoogleLogo } from '../svg-assets/google-logo'
 import { Button } from '../ui/button'
@@ -36,8 +37,11 @@ export function AuthSocial({ label, icon: Icon, strategy }: AuthSocialProps) {
       } else {
         // Use signIn or signUp for next steps such as MFA
       }
-    } catch (err) {
-      console.error('OAuth error', err)
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    } catch (err: any) {
+      toast.error(
+        err?.errors?.[0]?.longMessage ?? err.message ?? 'Unknown error',
+      )
     }
   }
 

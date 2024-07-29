@@ -8,6 +8,7 @@ import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
 
+import { Link } from 'expo-router'
 import Animated, {
   type SharedValue,
   useAnimatedStyle,
@@ -159,9 +160,11 @@ export function ProfileCard() {
             </Text>
           </View>
         </View>
-        <Button size="icon" variant="ghost">
-          <PencilIcon className="w-5 h-5 text-primary" />
-        </Button>
+        <Link href="/profile" asChild>
+          <Button size="icon" variant="ghost">
+            <PencilIcon className="w-5 h-5 text-primary" />
+          </Button>
+        </Link>
       </BlurView>
     </View>
   )

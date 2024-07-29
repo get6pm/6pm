@@ -3,11 +3,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Text } from '../ui/text'
 
 type UserAvatarProps = {
-  user: {
+  user?: {
     id: string
     fullName?: string | null
     imageUrl?: string
-  }
+  } | null
   className?: string
   fallbackClassName?: string
   fallbackLabelClassName?: string
@@ -27,7 +27,7 @@ export function UserAvatar({
     >
       <AvatarImage
         source={{
-          uri: user.imageUrl,
+          uri: user?.imageUrl,
         }}
       />
       <AvatarFallback className={fallbackClassName}>

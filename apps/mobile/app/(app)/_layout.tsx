@@ -70,6 +70,13 @@ export default function AuthenticatedLayout() {
         }}
       />
       <Stack.Screen
+        name="profile"
+        options={{
+          presentation: 'modal',
+          headerTitle: t(i18n)`Profile`,
+        }}
+      />
+      <Stack.Screen
         name="appearance"
         options={{ headerTitle: t(i18n)`Appearance` }}
       />

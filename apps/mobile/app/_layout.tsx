@@ -40,6 +40,7 @@ import { focusManager, onlineManager } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { LinearGradient } from 'expo-linear-gradient'
 import { cssInterop } from 'nativewind'
+import { PostHogProvider } from 'posthog-react-native'
 import { useEffect } from 'react'
 import { AppState, type AppStateStatus, Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -130,40 +131,48 @@ function RootLayout() {
   }
 
   return (
-    <ClerkProvider
-      publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
-      tokenCache={tokenCache}
+    <PostHogProvider
+      apiKey={process.env.EXPO_PUBLIC_POSTHOG_API_KEY!}
+      options={{
+        host: process.env.EXPO_PUBLIC_POSTHOG_HOST!,
+      }}
+      autocapture
     >
-      <ClerkLoaded>
-        <PersistQueryClientProvider
-          client={queryClient}
-          persistOptions={{ persister: asyncStoragePersister }}
-        >
-          <LocaleProvider>
-            <ThemeProvider
-              value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-            >
-              <SafeAreaProvider>
-                <GestureHandlerRootView>
-                  <BottomSheetModalProvider>
-                    <Stack screenOptions={{ headerShown: false }}>
-                      <Stack.Screen
-                        name="(aux)"
-                        options={{
-                          presentation: 'modal',
-                        }}
-                      />
-                    </Stack>
-                    <ToastRoot />
-                    <PortalHost />
-                  </BottomSheetModalProvider>
-                </GestureHandlerRootView>
-              </SafeAreaProvider>
-            </ThemeProvider>
-          </LocaleProvider>
-        </PersistQueryClientProvider>
-      </ClerkLoaded>
-    </ClerkProvider>
+      <ClerkProvider
+        publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+        tokenCache={tokenCache}
+      >
+        <ClerkLoaded>
+          <PersistQueryClientProvider
+            client={queryClient}
+            persistOptions={{ persister: asyncStoragePersister }}
+          >
+            <LocaleProvider>
+              <ThemeProvider
+                value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+              >
+                <SafeAreaProvider>
+                  <GestureHandlerRootView>
+                    <BottomSheetModalProvider>
+                      <Stack screenOptions={{ headerShown: false }}>
+                        <Stack.Screen
+                          name="(aux)"
+                          options={{
+                            presentation: 'modal',
+                          }}
+                        />
+                      </Stack>
+                      <ToastRoot />
+                      <PortalHost />
+                    </BottomSheetModalProvider>
+                  </GestureHandlerRootView>
+                </SafeAreaProvider>
+              </ThemeProvider>
+            </LocaleProvider>
+          </PersistQueryClientProvider>
+        </ClerkLoaded>
+      </ClerkProvider>
+    </PostHogProvider>
   )
 }
 

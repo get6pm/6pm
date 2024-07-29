@@ -43,7 +43,8 @@
         {
           "photosPermission": "Allow $(PRODUCT_NAME) accesses your photos for scanning invoices and transactions"
         }
-      ]
+      ],
+      ["@sentry/react-native/expo"]
     ],
     "experiments": {
       "typedRoutes": true

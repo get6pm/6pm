@@ -21,7 +21,7 @@ msgstr ""
 msgid "{0} left"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:130
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:115
 msgid "{language}"
 msgstr ""
 
@@ -33,24 +33,37 @@ msgstr "<0><1>Quản lý chi tiêu trong lòng bàn tay</1><2>Không lo cháy t�
 msgid "<0>By continuing, you acknowledge that you understand and agree to the <1><2>Terms & Conditions</2></1> and <3><4>Privacy Policy</4></3></0>"
 msgstr "<0>Bằng cách tiếp tục, bạn đã hiểu và đồng ý với <1><2>Điều khoản sử dụng</2></1> và <3><4>Chính sách bảo mật</4></3> của 6pm.</0>"
 
-#: apps/mobile/components/budget/budget-form.tsx:120
-#: apps/mobile/components/wallet/account-form.tsx:58
+#: apps/mobile/components/budget/budget-form.tsx:122
+#: apps/mobile/components/wallet/account-form.tsx:60
 msgid "0.00"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:100
+#: apps/mobile/app/(app)/profile.tsx:58
+msgid "Account deleted successfully"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/index.tsx:94
 msgid "Add your first transaction here"
 msgstr ""
 
-#: apps/mobile/components/home/header.tsx:26
+#: apps/mobile/components/home/select-wallet-account.tsx:30
+msgid "All accounts"
+msgstr ""
+
+#: apps/mobile/components/home/select-wallet-account.tsx:66
+#: apps/mobile/components/transaction/select-budget-field.tsx:76
 msgid "All Accounts"
 msgstr "Tất cả tài khoản"
+
+#: apps/mobile/app/(app)/profile.tsx:206
+msgid "All your data will be deleted"
+msgstr ""
 
 #: apps/mobile/components/auth/auth-email.tsx:86
 msgid "An error occurred"
 msgstr "Có lỗi xảy ra"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:111
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:96
 msgid "App settings"
 msgstr "Cài đặt ứng dụng"
 
@@ -58,12 +71,16 @@ msgstr "Cài đặt ứng dụng"
 msgid "App theme"
 msgstr "Chủ đề ứng dụng"
 
-#: apps/mobile/app/(app)/_layout.tsx:74
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:116
+#: apps/mobile/app/(app)/_layout.tsx:81
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:101
 msgid "Appearance"
 msgstr "Giao diện"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:202
+#: apps/mobile/app/(app)/profile.tsx:115
+msgid "Are you sure you want to delete your account? This action cannot be undone."
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:180
 msgid "Are you sure you want to sign out?"
 msgstr "Bạn có chắc chắn muốn đăng xuất?"
 
@@ -71,7 +88,11 @@ msgstr "Bạn có chắc chắn muốn đăng xuất?"
 msgid "Ask AI anything..."
 msgstr "Hỏi AI bất kỳ gì..."
 
-#: apps/mobile/components/wallet/account-form.tsx:57
+#: apps/mobile/app/(app)/profile.tsx:155
+msgid "Avatar"
+msgstr ""
+
+#: apps/mobile/components/wallet/account-form.tsx:59
 msgid "Balance"
 msgstr ""
 
@@ -83,8 +104,9 @@ msgstr "Ngân sách"
 msgid "Camera permissions are not granted"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:204
-#: apps/mobile/app/(app)/transaction/[transactionId].tsx:90
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:182
+#: apps/mobile/app/(app)/profile.tsx:120
+#: apps/mobile/app/(app)/transaction/[transactionId].tsx:92
 #: apps/mobile/app/(app)/wallet/[walletId].tsx:74
 msgid "Cancel"
 msgstr "Huỷ"
@@ -93,8 +115,8 @@ msgstr "Huỷ"
 msgid "Cannot extract transaction data"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:106
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:91
+#: apps/mobile/app/(app)/_layout.tsx:113
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:76
 msgid "Categories"
 msgstr ""
 
@@ -118,6 +140,10 @@ msgstr "Tiếp tục với Email"
 msgid "Current balance"
 msgstr ""
 
+#: apps/mobile/app/(app)/profile.tsx:194
+msgid "Danger zone"
+msgstr ""
+
 #: apps/mobile/app/(app)/appearance.tsx:33
 msgid "Dark"
 msgstr "Tối"
@@ -127,24 +153,33 @@ msgstr "Tối"
 msgid "Debt"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:139
+#: apps/mobile/components/setting/select-default-currency.tsx:27
 msgid "Default currency"
 msgstr ""
 
-#: apps/mobile/app/(app)/transaction/[transactionId].tsx:94
+#: apps/mobile/app/(app)/profile.tsx:124
+#: apps/mobile/app/(app)/transaction/[transactionId].tsx:96
 #: apps/mobile/app/(app)/wallet/[walletId].tsx:78
 msgid "Delete"
+msgstr ""
+
+#: apps/mobile/app/(app)/profile.tsx:203
+msgid "Delete 6pm account"
 msgstr ""
 
 #: apps/mobile/app/(app)/wallet/[walletId].tsx:68
 msgid "Delete wallet account will also delete all related transactions!"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:100
+#: apps/mobile/app/(app)/profile.tsx:175
+msgid "Display name"
+msgstr ""
+
+#: apps/mobile/app/(app)/_layout.tsx:107
 msgid "Edit account"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:127
+#: apps/mobile/app/(app)/_layout.tsx:134
 msgid "Edit category"
 msgstr ""
 
@@ -177,7 +212,7 @@ msgstr ""
 msgid "Expenses"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:111
+#: apps/mobile/components/budget/budget-form.tsx:113
 msgid "Family budget"
 msgstr ""
 
@@ -185,11 +220,11 @@ msgstr ""
 msgid "From date"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:77
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:62
 msgid "General"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:67
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:52
 msgid "Get 6pm Pro"
 msgstr ""
 
@@ -211,15 +246,15 @@ msgid "Investing"
 msgstr ""
 
 #: apps/mobile/app/(app)/_layout.tsx:69
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:125
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:110
 msgid "Language"
 msgstr "Ngôn ngữ"
 
-#: apps/mobile/components/budget/budget-statistic.tsx:34
+#: apps/mobile/components/budget/budget-statistic.tsx:40
 msgid "Left per day"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-statistic.tsx:25
+#: apps/mobile/components/budget/budget-statistic.tsx:29
 msgid "Left this month"
 msgstr ""
 
@@ -227,11 +262,11 @@ msgstr ""
 msgid "Light"
 msgstr "Sáng"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:152
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:124
 msgid "Login using FaceID"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:100
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:85
 msgid "Magic inbox"
 msgstr ""
 
@@ -239,9 +274,9 @@ msgstr ""
 msgid "Monthly"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:110
+#: apps/mobile/components/budget/budget-form.tsx:112
 #: apps/mobile/components/category/category-form.tsx:66
-#: apps/mobile/components/wallet/account-form.tsx:41
+#: apps/mobile/components/wallet/account-form.tsx:43
 msgid "Name"
 msgstr ""
 
@@ -249,25 +284,25 @@ msgstr ""
 msgid "New {0}"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:93
+#: apps/mobile/app/(app)/_layout.tsx:100
 #: apps/mobile/app/(app)/wallet/accounts.tsx:26
 msgid "New account"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:134
+#: apps/mobile/app/(app)/_layout.tsx:141
 #: apps/mobile/app/(app)/(tabs)/_layout.tsx:63
 msgid "New budget"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:120
+#: apps/mobile/app/(app)/_layout.tsx:127
 msgid "New category"
 msgstr ""
 
-#: apps/mobile/components/transaction/transaction-form.tsx:127
+#: apps/mobile/components/transaction/select-budget-field.tsx:34
 msgid "No budget selected"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:169
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:141
 msgid "Others"
 msgstr "Khác"
 
@@ -275,7 +310,7 @@ msgstr "Khác"
 msgid "per day"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:145
+#: apps/mobile/components/budget/budget-form.tsx:147
 msgid "Period"
 msgstr ""
 
@@ -287,7 +322,7 @@ msgstr ""
 msgid "Period start date"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:237
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:215
 msgid "Privacy policy"
 msgstr ""
 
@@ -299,11 +334,19 @@ msgstr ""
 msgid "Processing transaction..."
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:194
+#: apps/mobile/app/(app)/_layout.tsx:76
+msgid "Profile"
+msgstr ""
+
+#: apps/mobile/app/(app)/profile.tsx:46
+msgid "Profile updated successfully"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:170
 msgid "Proudly open source"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:159
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:131
 msgid "Push notifications"
 msgstr ""
 
@@ -311,17 +354,21 @@ msgstr ""
 msgid "Quarterly"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:182
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:154
 msgid "Rate 6pm on App Store"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:51
+#: apps/mobile/components/budget/budget-form.tsx:52
 #: apps/mobile/components/category/category-form.tsx:118
 #: apps/mobile/components/common/date-picker.tsx:55
 #: apps/mobile/components/common/date-range-picker.tsx:62
-#: apps/mobile/components/transaction/transaction-form.tsx:63
-#: apps/mobile/components/wallet/account-form.tsx:82
+#: apps/mobile/components/transaction/transaction-form.tsx:65
+#: apps/mobile/components/wallet/account-form.tsx:84
 msgid "Save"
+msgstr ""
+
+#: apps/mobile/app/(app)/profile.tsx:187
+msgid "Save changes"
 msgstr ""
 
 #: apps/mobile/app/(app)/(tabs)/budgets.tsx:134
@@ -349,7 +396,7 @@ msgstr ""
 msgid "Select period type"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:174
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:146
 msgid "Send feedback"
 msgstr ""
 
@@ -357,7 +404,7 @@ msgstr ""
 msgid "Settings"
 msgstr "Cài đặt"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:188
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:162
 msgid "Share with friends"
 msgstr ""
 
@@ -365,16 +412,16 @@ msgstr ""
 msgid "Sign in"
 msgstr "Đăng nhập"
 
-#: apps/mobile/components/auth/auth-social.tsx:67
+#: apps/mobile/components/auth/auth-social.tsx:71
 msgid "Sign in with Apple"
 msgstr "Tiếp tục với Apple"
 
-#: apps/mobile/components/auth/auth-social.tsx:56
+#: apps/mobile/components/auth/auth-social.tsx:60
 msgid "Sign in with Google"
 msgstr "Tiếp tục với Google"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:208
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:218
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:186
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:196
 msgid "Sign out"
 msgstr "Đăng xuất"
 
@@ -399,7 +446,7 @@ msgstr ""
 msgid "Take a picture of your transaction"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:119
+#: apps/mobile/components/budget/budget-form.tsx:121
 msgid "Target"
 msgstr ""
 
@@ -407,11 +454,11 @@ msgstr ""
 msgid "Terms & Conditions"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:232
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:210
 msgid "Terms of use"
 msgstr ""
 
-#: apps/mobile/app/(app)/transaction/[transactionId].tsx:84
+#: apps/mobile/app/(app)/transaction/[transactionId].tsx:86
 msgid "This will delete the transaction. Are you sure you want to continue?"
 msgstr ""
 
@@ -427,11 +474,11 @@ msgstr ""
 msgid "Tomorrow"
 msgstr ""
 
-#: apps/mobile/app/(app)/transaction/new-record.tsx:57
+#: apps/mobile/app/(app)/transaction/new-record.tsx:58
 msgid "Transaction created"
 msgstr ""
 
-#: apps/mobile/components/transaction/transaction-form.tsx:132
+#: apps/mobile/components/transaction/transaction-form.tsx:142
 msgid "transaction note"
 msgstr ""
 
@@ -448,11 +495,20 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:70
+#: apps/mobile/app/(app)/profile.tsx:50
+#: apps/mobile/app/(app)/profile.tsx:61
+msgid "Unknown error"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:55
 msgid "Unlocks full AI power and more!"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:226
+#: apps/mobile/app/(app)/profile.tsx:159
+msgid "Upload new photo"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:204
 msgid "ver."
 msgstr ""
 
@@ -464,12 +520,12 @@ msgstr "Mã xác nhận"
 msgid "Vietnamese"
 msgstr "Tiếng Việt"
 
-#: apps/mobile/components/wallet/account-form.tsx:42
+#: apps/mobile/components/wallet/account-form.tsx:44
 msgid "Wallet account name"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:79
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:82
+#: apps/mobile/app/(app)/_layout.tsx:86
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:67
 msgid "Wallet accounts"
 msgstr ""
 
@@ -487,4 +543,8 @@ msgstr ""
 
 #: apps/mobile/lib/date.tsx:14
 msgid "Yesterday"
+msgstr ""
+
+#: apps/mobile/app/(app)/profile.tsx:176
+msgid "Your display name"
 msgstr ""

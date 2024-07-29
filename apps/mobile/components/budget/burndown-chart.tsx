@@ -12,6 +12,7 @@ import {
   Text as SkiaText,
   useFont,
 } from '@shopify/react-native-skia'
+import { useMemo } from 'react'
 import { View } from 'react-native'
 import {
   CartesianChart,
@@ -55,6 +56,42 @@ function UsageLine({
       ? `${nFormatter(Math.abs(diffAmount), 0)} less`
       : `${nFormatter(Math.abs(diffAmount), 0)} over`
 
+  const badgeWidth = diffText.length * LETTER_WIDTH + 12
+
+  const lastPointBadgeX = useMemo(() => {
+    if (!lastPoint) {
+      return 0
+    }
+    const xValue = Number(lastPoint.xValue) // current day
+    let offset = 0
+    if (xValue > 28) {
+      offset = badgeWidth
+    } else if (xValue > 24) {
+      offset = badgeWidth / 2
+    } else if (xValue > 20) {
+      offset = 16
+    } else {
+      offset = 6
+    }
+
+    return lastPoint.x - offset
+  }, [badgeWidth, lastPoint])
+
+  const lastPointBadgeY = useMemo(() => {
+    if (!lastPoint) {
+      return 0
+    }
+    const xValue = Number(lastPoint.xValue) // current day
+    let offset = 0
+    if (xValue > 15) {
+      offset = 16
+    } else {
+      offset = -52
+    }
+
+    return lastPoint.y! + offset
+  }, [lastPoint])
+
   return (
     <>
       <Path
@@ -75,16 +112,17 @@ function UsageLine({
             radius={6}
           />
           <RoundedRect
-            x={lastPoint.x - (Number(lastPoint.xValue) > 20 ? 16 : 6)}
-            y={lastPoint.y! + (Number(lastPoint.xValue) > 15 ? 16 : -52)}
+            x={lastPointBadgeX}
+            y={lastPointBadgeY}
             width={diffText.length * LETTER_WIDTH + 12}
             height={34}
             r={8}
             color={diffAmount > 0 ? '#16a34a' : '#ef4444'}
+            opacity={0.8}
           />
           <SkiaText
-            x={lastPoint.x - (Number(lastPoint.xValue) > 20 ? 10 : 0)}
-            y={lastPoint.y! + (Number(lastPoint.xValue) > 15 ? 38 : -30)}
+            x={lastPointBadgeX + 6}
+            y={lastPointBadgeY + 22}
             font={font}
             text={diffText}
             color="white"
@@ -144,7 +182,7 @@ export function BurndownChart() {
           left: 14,
           right: 14,
           bottom: 8,
-          top: 0,
+          top: 8,
         }}
       >
         {({ points }) => (

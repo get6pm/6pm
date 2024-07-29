@@ -10,6 +10,10 @@ import {
   BeVietnamPro_700Bold,
   useFonts,
 } from '@expo-google-fonts/be-vietnam-pro'
+import {
+  SpaceMono_400Regular,
+  SpaceMono_700Bold,
+} from '@expo-google-fonts/space-mono'
 import { SplashScreen, Stack } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
 
@@ -87,8 +91,8 @@ export default function RootLayout() {
     BeVietnamPro_500Medium,
     BeVietnamPro_600SemiBold,
     BeVietnamPro_700Bold,
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono_400Regular,
+    SpaceMono_700Bold,
   })
 
   useEffect(() => {

@@ -7,7 +7,7 @@ import { Text } from '@/components/ui/text'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
 import { useBudgetList } from '@/stores/budget/hooks'
-import type { BudgetPopulated } from '@6pm/validation'
+import type { Budget, BudgetPeriodConfig } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -26,6 +26,10 @@ const { height } = Dimensions.get('screen')
 
 const chartHeight = 187
 const spacing = 16
+
+type BudgetPopulated = Budget & {
+  periodConfigs: BudgetPeriodConfig[]
+}
 
 const AnimatedSectionList = Animated.createAnimatedComponent(
   SectionList<BudgetPopulated>,
@@ -176,7 +180,7 @@ export default function BudgetsScreen() {
         )}
         ListFooterComponent={
           (isLoading || isRefetching) && !sections.length ? (
-            <View className="gap-4">
+            <View className="gap-4 px-6">
               <Skeleton className="h-20 w-full" />
               <Skeleton className="h-20 w-full" />
               <Skeleton className="h-20 w-full" />

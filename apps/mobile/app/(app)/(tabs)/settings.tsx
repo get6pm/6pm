@@ -192,7 +192,7 @@ export default function SettingsScreen() {
               className="justify-start gap-6 !px-6"
             >
               <LogOutIcon className="w-5 h-5 text-red-500" />
-              <Text className="text-red-500 font-regular group-active:text-red-500">
+              <Text className="text-red-500 font-normal group-active:text-red-500">
                 {t(i18n)`Sign out`}
               </Text>
             </Button>
@@ -200,7 +200,7 @@ export default function SettingsScreen() {
         </View>
         <View className="items-center gap-3">
           <Logo className="w-16 h-16 mx-auto" />
-          <Text className="font-medium text-muted-foreground text-sm">
+          <Text className="font-mono text-muted-foreground text-sm">
             {t(i18n)`ver.`}
             {Application.nativeApplicationVersion}
           </Text>

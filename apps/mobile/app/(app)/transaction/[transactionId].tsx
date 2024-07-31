@@ -1,7 +1,12 @@
 import { TransactionForm } from '@/components/transaction/transaction-form'
-import { deleteTransaction, updateTransaction } from '@/mutations/transaction'
-import { transactionQueries, useTransactionDetail } from '@/queries/transaction'
+import { sleep } from '@/lib/utils'
+import { deleteTransaction } from '@/mutations/transaction'
+import { transactionQueries } from '@/queries/transaction'
 import { walletQueries } from '@/queries/wallet'
+import {
+  useTransaction,
+  useUpdateTransaction,
+} from '@/stores/transaction/hooks'
 import {
   type TransactionFormValues,
   zTransactionFormValues,
@@ -20,9 +25,10 @@ import { Alert, View } from 'react-native'
 export default function EditRecordScreen() {
   const { i18n } = useLingui()
   const { transactionId } = useLocalSearchParams<{ transactionId: string }>()
-  const { data: transaction } = useTransactionDetail(transactionId!)
+  const { transaction } = useTransaction(transactionId!)
   const router = useRouter()
   const queryClient = useQueryClient()
+  const { mutateAsync: mutateUpdate } = useUpdateTransaction()
   const { sideOffset, ...rootProps } = useModalPortalRoot()
 
   const transactionForm = useForm<TransactionFormValues>({
@@ -38,25 +44,21 @@ export default function EditRecordScreen() {
     },
   })
 
-  const { mutateAsync } = useMutation({
-    mutationFn: updateTransaction,
-    onError(error) {
+  const handleUpdate = async (values: TransactionFormValues) => {
+    mutateUpdate({ id: transactionId!, data: values }).catch((error) => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-      Alert.alert(error.message)
-    },
-    onSuccess() {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
-      router.back()
-    },
-    async onSettled() {
-      await queryClient.invalidateQueries({
-        queryKey: transactionQueries.all,
-      })
-      await queryClient.invalidateQueries({
-        queryKey: walletQueries.list._def,
-      })
-    },
-  })
+      Alert.alert(
+        (error instanceof Error && error.message) ||
+          t(i18n)`An error occurred while updating the transaction`,
+      )
+    })
+
+    await sleep(200)
+
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+    router.back()
+  }
+
   const { mutateAsync: mutateDelete } = useMutation({
     mutationFn: deleteTransaction,
     onMutate() {
@@ -114,7 +116,7 @@ export default function EditRecordScreen() {
       <TransactionForm
         sideOffset={sideOffset}
         form={transactionForm}
-        onSubmit={(values) => mutateAsync({ id: transaction.id, data: values })}
+        onSubmit={handleUpdate}
         onCancel={router.back}
         onDelete={handleDelete}
       />

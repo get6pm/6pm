@@ -243,7 +243,7 @@ const router = new Hono()
           ? category?.type === 'INCOME'
             ? Math.abs(data.amount)
             : -Math.abs(data.amount)
-          : transaction.amount
+          : data.amount || transaction.amount
 
       const updatedTransaction = await updateTransaction({
         transactionId,

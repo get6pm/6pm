@@ -8,6 +8,7 @@ generator zod {
   createRelationValuesTypes = true
   output                    = "../../../packages/validation/src/prisma"
   useMultipleFiles          = false
+  useDefaultValidators      = false
 }
 
 datasource db {

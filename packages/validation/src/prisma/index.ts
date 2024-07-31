@@ -89,7 +89,7 @@ export type CategoryTypeType = `${z.infer<typeof CategoryTypeSchema>}`
 /////////////////////////////////////////
 
 export const UserSchema = z.object({
-  id: z.string().cuid(),
+  id: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   email: z.string(),
@@ -126,7 +126,7 @@ export const UserWithRelationsSchema: z.ZodType<UserWithRelations> = UserSchema.
 /////////////////////////////////////////
 
 export const UserWalletAccountSchema = z.object({
-  id: z.string().cuid(),
+  id: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   name: z.string(),
@@ -160,7 +160,7 @@ export const UserWalletAccountWithRelationsSchema: z.ZodType<UserWalletAccountWi
 
 export const BudgetSchema = z.object({
   type: BudgetTypeSchema,
-  id: z.string().cuid(),
+  id: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   name: z.string(),
@@ -195,7 +195,7 @@ export const BudgetWithRelationsSchema: z.ZodType<BudgetWithRelations> = BudgetS
 
 export const BudgetPeriodConfigSchema = z.object({
   type: BudgetPeriodTypeSchema,
-  id: z.string().cuid(),
+  id: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   amount: z.instanceof(Prisma.Decimal, { message: "Field 'amount' must be a Decimal. Location: ['Models', 'BudgetPeriodConfig']"}),
@@ -225,7 +225,7 @@ export const BudgetPeriodConfigWithRelationsSchema: z.ZodType<BudgetPeriodConfig
 
 export const BudgetUserSchema = z.object({
   permission: BudgetUserPermissionSchema,
-  id: z.string().cuid(),
+  id: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   userId: z.string(),
@@ -255,11 +255,11 @@ export const BudgetUserWithRelationsSchema: z.ZodType<BudgetUserWithRelations> =
 
 export const BudgetUserInvitationSchema = z.object({
   permission: BudgetUserPermissionSchema.nullable(),
-  id: z.string().cuid(),
+  id: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   email: z.string().nullable(),
-  token: z.string().uuid(),
+  token: z.string(),
   expiresAt: z.coerce.date(),
   createdByUserId: z.string(),
   budgetId: z.string(),
@@ -289,7 +289,7 @@ export const BudgetUserInvitationWithRelationsSchema: z.ZodType<BudgetUserInvita
 /////////////////////////////////////////
 
 export const BudgetUserInvitationResponseSchema = z.object({
-  id: z.string().cuid(),
+  id: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   acceptedAt: z.coerce.date().nullable(),
@@ -320,7 +320,7 @@ export const BudgetUserInvitationResponseWithRelationsSchema: z.ZodType<BudgetUs
 /////////////////////////////////////////
 
 export const TransactionSchema = z.object({
-  id: z.string().cuid(),
+  id: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   amount: z.instanceof(Prisma.Decimal, { message: "Field 'amount' must be a Decimal. Location: ['Models', 'Transaction']"}),
@@ -361,7 +361,7 @@ export const TransactionWithRelationsSchema: z.ZodType<TransactionWithRelations>
 
 export const CategorySchema = z.object({
   type: CategoryTypeSchema,
-  id: z.string().cuid(),
+  id: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   name: z.string(),
@@ -398,7 +398,7 @@ export const CategoryWithRelationsSchema: z.ZodType<CategoryWithRelations> = Cat
 /////////////////////////////////////////
 
 export const CachedGptResponseSchema = z.object({
-  id: z.string().cuid(),
+  id: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   query: z.string(),
@@ -412,7 +412,7 @@ export type CachedGptResponse = z.infer<typeof CachedGptResponseSchema>
 /////////////////////////////////////////
 
 export const CurrencyExchangeRateSchema = z.object({
-  id: z.string().cuid(),
+  id: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   fromCurrency: z.string(),
@@ -802,18 +802,18 @@ export const UserOrderByWithRelationInputSchema: z.ZodType<Prisma.UserOrderByWit
 
 export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> = z.union([
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
     email: z.string()
   }),
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
   }),
   z.object({
     email: z.string(),
   }),
 ])
 .and(z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   email: z.string().optional(),
   AND: z.union([ z.lazy(() => UserWhereInputSchema),z.lazy(() => UserWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => UserWhereInputSchema).array().optional(),
@@ -883,10 +883,10 @@ export const UserWalletAccountOrderByWithRelationInputSchema: z.ZodType<Prisma.U
 }).strict();
 
 export const UserWalletAccountWhereUniqueInputSchema: z.ZodType<Prisma.UserWalletAccountWhereUniqueInput> = z.object({
-  id: z.string().cuid()
+  id: z.string()
 })
 .and(z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   AND: z.union([ z.lazy(() => UserWalletAccountWhereInputSchema),z.lazy(() => UserWalletAccountWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => UserWalletAccountWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => UserWalletAccountWhereInputSchema),z.lazy(() => UserWalletAccountWhereInputSchema).array() ]).optional(),
@@ -964,10 +964,10 @@ export const BudgetOrderByWithRelationInputSchema: z.ZodType<Prisma.BudgetOrderB
 }).strict();
 
 export const BudgetWhereUniqueInputSchema: z.ZodType<Prisma.BudgetWhereUniqueInput> = z.object({
-  id: z.string().cuid()
+  id: z.string()
 })
 .and(z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   AND: z.union([ z.lazy(() => BudgetWhereInputSchema),z.lazy(() => BudgetWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => BudgetWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => BudgetWhereInputSchema),z.lazy(() => BudgetWhereInputSchema).array() ]).optional(),
@@ -1038,18 +1038,18 @@ export const BudgetPeriodConfigOrderByWithRelationInputSchema: z.ZodType<Prisma.
 
 export const BudgetPeriodConfigWhereUniqueInputSchema: z.ZodType<Prisma.BudgetPeriodConfigWhereUniqueInput> = z.union([
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
     budgetId: z.string()
   }),
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
   }),
   z.object({
     budgetId: z.string(),
   }),
 ])
 .and(z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   budgetId: z.string().optional(),
   AND: z.union([ z.lazy(() => BudgetPeriodConfigWhereInputSchema),z.lazy(() => BudgetPeriodConfigWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => BudgetPeriodConfigWhereInputSchema).array().optional(),
@@ -1120,18 +1120,18 @@ export const BudgetUserOrderByWithRelationInputSchema: z.ZodType<Prisma.BudgetUs
 
 export const BudgetUserWhereUniqueInputSchema: z.ZodType<Prisma.BudgetUserWhereUniqueInput> = z.union([
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
     userId_budgetId: z.lazy(() => BudgetUserUserIdBudgetIdCompoundUniqueInputSchema)
   }),
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
   }),
   z.object({
     userId_budgetId: z.lazy(() => BudgetUserUserIdBudgetIdCompoundUniqueInputSchema),
   }),
 ])
 .and(z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   userId_budgetId: z.lazy(() => BudgetUserUserIdBudgetIdCompoundUniqueInputSchema).optional(),
   AND: z.union([ z.lazy(() => BudgetUserWhereInputSchema),z.lazy(() => BudgetUserWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => BudgetUserWhereInputSchema).array().optional(),
@@ -1204,20 +1204,20 @@ export const BudgetUserInvitationOrderByWithRelationInputSchema: z.ZodType<Prism
 
 export const BudgetUserInvitationWhereUniqueInputSchema: z.ZodType<Prisma.BudgetUserInvitationWhereUniqueInput> = z.union([
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
     token_budgetId: z.lazy(() => BudgetUserInvitationTokenBudgetIdCompoundUniqueInputSchema),
     email_budgetId: z.lazy(() => BudgetUserInvitationEmailBudgetIdCompoundUniqueInputSchema)
   }),
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
     token_budgetId: z.lazy(() => BudgetUserInvitationTokenBudgetIdCompoundUniqueInputSchema),
   }),
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
     email_budgetId: z.lazy(() => BudgetUserInvitationEmailBudgetIdCompoundUniqueInputSchema),
   }),
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
   }),
   z.object({
     token_budgetId: z.lazy(() => BudgetUserInvitationTokenBudgetIdCompoundUniqueInputSchema),
@@ -1231,7 +1231,7 @@ export const BudgetUserInvitationWhereUniqueInputSchema: z.ZodType<Prisma.Budget
   }),
 ])
 .and(z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   token_budgetId: z.lazy(() => BudgetUserInvitationTokenBudgetIdCompoundUniqueInputSchema).optional(),
   email_budgetId: z.lazy(() => BudgetUserInvitationEmailBudgetIdCompoundUniqueInputSchema).optional(),
   AND: z.union([ z.lazy(() => BudgetUserInvitationWhereInputSchema),z.lazy(() => BudgetUserInvitationWhereInputSchema).array() ]).optional(),
@@ -1240,7 +1240,7 @@ export const BudgetUserInvitationWhereUniqueInputSchema: z.ZodType<Prisma.Budget
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   email: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  token: z.union([ z.lazy(() => StringFilterSchema),z.string().uuid() ]).optional(),
+  token: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   expiresAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   permission: z.union([ z.lazy(() => EnumBudgetUserPermissionNullableFilterSchema),z.lazy(() => BudgetUserPermissionSchema) ]).optional().nullable(),
   createdByUserId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
@@ -1309,18 +1309,18 @@ export const BudgetUserInvitationResponseOrderByWithRelationInputSchema: z.ZodTy
 
 export const BudgetUserInvitationResponseWhereUniqueInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseWhereUniqueInput> = z.union([
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
     createdUserId: z.string()
   }),
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
   }),
   z.object({
     createdUserId: z.string(),
   }),
 ])
 .and(z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdUserId: z.string().optional(),
   AND: z.union([ z.lazy(() => BudgetUserInvitationResponseWhereInputSchema),z.lazy(() => BudgetUserInvitationResponseWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => BudgetUserInvitationResponseWhereInputSchema).array().optional(),
@@ -1402,10 +1402,10 @@ export const TransactionOrderByWithRelationInputSchema: z.ZodType<Prisma.Transac
 }).strict();
 
 export const TransactionWhereUniqueInputSchema: z.ZodType<Prisma.TransactionWhereUniqueInput> = z.object({
-  id: z.string().cuid()
+  id: z.string()
 })
 .and(z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   AND: z.union([ z.lazy(() => TransactionWhereInputSchema),z.lazy(() => TransactionWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => TransactionWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => TransactionWhereInputSchema),z.lazy(() => TransactionWhereInputSchema).array() ]).optional(),
@@ -1502,10 +1502,10 @@ export const CategoryOrderByWithRelationInputSchema: z.ZodType<Prisma.CategoryOr
 }).strict();
 
 export const CategoryWhereUniqueInputSchema: z.ZodType<Prisma.CategoryWhereUniqueInput> = z.object({
-  id: z.string().cuid()
+  id: z.string()
 })
 .and(z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   AND: z.union([ z.lazy(() => CategoryWhereInputSchema),z.lazy(() => CategoryWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => CategoryWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => CategoryWhereInputSchema),z.lazy(() => CategoryWhereInputSchema).array() ]).optional(),
@@ -1576,10 +1576,10 @@ export const CachedGptResponseOrderByWithRelationInputSchema: z.ZodType<Prisma.C
 }).strict();
 
 export const CachedGptResponseWhereUniqueInputSchema: z.ZodType<Prisma.CachedGptResponseWhereUniqueInput> = z.object({
-  id: z.string().cuid()
+  id: z.string()
 })
 .and(z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   AND: z.union([ z.lazy(() => CachedGptResponseWhereInputSchema),z.lazy(() => CachedGptResponseWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => CachedGptResponseWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => CachedGptResponseWhereInputSchema),z.lazy(() => CachedGptResponseWhereInputSchema).array() ]).optional(),
@@ -1636,18 +1636,18 @@ export const CurrencyExchangeRateOrderByWithRelationInputSchema: z.ZodType<Prism
 
 export const CurrencyExchangeRateWhereUniqueInputSchema: z.ZodType<Prisma.CurrencyExchangeRateWhereUniqueInput> = z.union([
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
     fromCurrency_toCurrency_date: z.lazy(() => CurrencyExchangeRateFromCurrencyToCurrencyDateCompoundUniqueInputSchema)
   }),
   z.object({
-    id: z.string().cuid(),
+    id: z.string(),
   }),
   z.object({
     fromCurrency_toCurrency_date: z.lazy(() => CurrencyExchangeRateFromCurrencyToCurrencyDateCompoundUniqueInputSchema),
   }),
 ])
 .and(z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   fromCurrency_toCurrency_date: z.lazy(() => CurrencyExchangeRateFromCurrencyToCurrencyDateCompoundUniqueInputSchema).optional(),
   AND: z.union([ z.lazy(() => CurrencyExchangeRateWhereInputSchema),z.lazy(() => CurrencyExchangeRateWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => CurrencyExchangeRateWhereInputSchema).array().optional(),
@@ -1689,7 +1689,7 @@ export const CurrencyExchangeRateScalarWhereWithAggregatesInputSchema: z.ZodType
 }).strict();
 
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -1703,7 +1703,7 @@ export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object
 }).strict();
 
 export const UserUncheckedCreateInputSchema: z.ZodType<Prisma.UserUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -1717,7 +1717,7 @@ export const UserUncheckedCreateInputSchema: z.ZodType<Prisma.UserUncheckedCreat
 }).strict();
 
 export const UserUpdateInputSchema: z.ZodType<Prisma.UserUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1731,7 +1731,7 @@ export const UserUpdateInputSchema: z.ZodType<Prisma.UserUpdateInput> = z.object
 }).strict();
 
 export const UserUncheckedUpdateInputSchema: z.ZodType<Prisma.UserUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1745,7 +1745,7 @@ export const UserUncheckedUpdateInputSchema: z.ZodType<Prisma.UserUncheckedUpdat
 }).strict();
 
 export const UserCreateManyInputSchema: z.ZodType<Prisma.UserCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -1753,7 +1753,7 @@ export const UserCreateManyInputSchema: z.ZodType<Prisma.UserCreateManyInput> = 
 }).strict();
 
 export const UserUpdateManyMutationInputSchema: z.ZodType<Prisma.UserUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1761,7 +1761,7 @@ export const UserUpdateManyMutationInputSchema: z.ZodType<Prisma.UserUpdateManyM
 }).strict();
 
 export const UserUncheckedUpdateManyInputSchema: z.ZodType<Prisma.UserUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1769,7 +1769,7 @@ export const UserUncheckedUpdateManyInputSchema: z.ZodType<Prisma.UserUncheckedU
 }).strict();
 
 export const UserWalletAccountCreateInputSchema: z.ZodType<Prisma.UserWalletAccountCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -1782,7 +1782,7 @@ export const UserWalletAccountCreateInputSchema: z.ZodType<Prisma.UserWalletAcco
 }).strict();
 
 export const UserWalletAccountUncheckedCreateInputSchema: z.ZodType<Prisma.UserWalletAccountUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -1795,7 +1795,7 @@ export const UserWalletAccountUncheckedCreateInputSchema: z.ZodType<Prisma.UserW
 }).strict();
 
 export const UserWalletAccountUpdateInputSchema: z.ZodType<Prisma.UserWalletAccountUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1808,7 +1808,7 @@ export const UserWalletAccountUpdateInputSchema: z.ZodType<Prisma.UserWalletAcco
 }).strict();
 
 export const UserWalletAccountUncheckedUpdateInputSchema: z.ZodType<Prisma.UserWalletAccountUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1821,7 +1821,7 @@ export const UserWalletAccountUncheckedUpdateInputSchema: z.ZodType<Prisma.UserW
 }).strict();
 
 export const UserWalletAccountCreateManyInputSchema: z.ZodType<Prisma.UserWalletAccountCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -1833,7 +1833,7 @@ export const UserWalletAccountCreateManyInputSchema: z.ZodType<Prisma.UserWallet
 }).strict();
 
 export const UserWalletAccountUpdateManyMutationInputSchema: z.ZodType<Prisma.UserWalletAccountUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1844,7 +1844,7 @@ export const UserWalletAccountUpdateManyMutationInputSchema: z.ZodType<Prisma.Us
 }).strict();
 
 export const UserWalletAccountUncheckedUpdateManyInputSchema: z.ZodType<Prisma.UserWalletAccountUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1856,7 +1856,7 @@ export const UserWalletAccountUncheckedUpdateManyInputSchema: z.ZodType<Prisma.U
 }).strict();
 
 export const BudgetCreateInputSchema: z.ZodType<Prisma.BudgetCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -1870,7 +1870,7 @@ export const BudgetCreateInputSchema: z.ZodType<Prisma.BudgetCreateInput> = z.ob
 }).strict();
 
 export const BudgetUncheckedCreateInputSchema: z.ZodType<Prisma.BudgetUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -1884,7 +1884,7 @@ export const BudgetUncheckedCreateInputSchema: z.ZodType<Prisma.BudgetUncheckedC
 }).strict();
 
 export const BudgetUpdateInputSchema: z.ZodType<Prisma.BudgetUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1898,7 +1898,7 @@ export const BudgetUpdateInputSchema: z.ZodType<Prisma.BudgetUpdateInput> = z.ob
 }).strict();
 
 export const BudgetUncheckedUpdateInputSchema: z.ZodType<Prisma.BudgetUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1912,7 +1912,7 @@ export const BudgetUncheckedUpdateInputSchema: z.ZodType<Prisma.BudgetUncheckedU
 }).strict();
 
 export const BudgetCreateManyInputSchema: z.ZodType<Prisma.BudgetCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -1922,7 +1922,7 @@ export const BudgetCreateManyInputSchema: z.ZodType<Prisma.BudgetCreateManyInput
 }).strict();
 
 export const BudgetUpdateManyMutationInputSchema: z.ZodType<Prisma.BudgetUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1932,7 +1932,7 @@ export const BudgetUpdateManyMutationInputSchema: z.ZodType<Prisma.BudgetUpdateM
 }).strict();
 
 export const BudgetUncheckedUpdateManyInputSchema: z.ZodType<Prisma.BudgetUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1942,7 +1942,7 @@ export const BudgetUncheckedUpdateManyInputSchema: z.ZodType<Prisma.BudgetUnchec
 }).strict();
 
 export const BudgetPeriodConfigCreateInputSchema: z.ZodType<Prisma.BudgetPeriodConfigCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => BudgetPeriodTypeSchema),
@@ -1953,7 +1953,7 @@ export const BudgetPeriodConfigCreateInputSchema: z.ZodType<Prisma.BudgetPeriodC
 }).strict();
 
 export const BudgetPeriodConfigUncheckedCreateInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => BudgetPeriodTypeSchema),
@@ -1964,7 +1964,7 @@ export const BudgetPeriodConfigUncheckedCreateInputSchema: z.ZodType<Prisma.Budg
 }).strict();
 
 export const BudgetPeriodConfigUpdateInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1975,7 +1975,7 @@ export const BudgetPeriodConfigUpdateInputSchema: z.ZodType<Prisma.BudgetPeriodC
 }).strict();
 
 export const BudgetPeriodConfigUncheckedUpdateInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1986,7 +1986,7 @@ export const BudgetPeriodConfigUncheckedUpdateInputSchema: z.ZodType<Prisma.Budg
 }).strict();
 
 export const BudgetPeriodConfigCreateManyInputSchema: z.ZodType<Prisma.BudgetPeriodConfigCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => BudgetPeriodTypeSchema),
@@ -1997,7 +1997,7 @@ export const BudgetPeriodConfigCreateManyInputSchema: z.ZodType<Prisma.BudgetPer
 }).strict();
 
 export const BudgetPeriodConfigUpdateManyMutationInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2007,7 +2007,7 @@ export const BudgetPeriodConfigUpdateManyMutationInputSchema: z.ZodType<Prisma.B
 }).strict();
 
 export const BudgetPeriodConfigUncheckedUpdateManyInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2018,7 +2018,7 @@ export const BudgetPeriodConfigUncheckedUpdateManyInputSchema: z.ZodType<Prisma.
 }).strict();
 
 export const BudgetUserCreateInputSchema: z.ZodType<Prisma.BudgetUserCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   permission: z.lazy(() => BudgetUserPermissionSchema),
@@ -2027,7 +2027,7 @@ export const BudgetUserCreateInputSchema: z.ZodType<Prisma.BudgetUserCreateInput
 }).strict();
 
 export const BudgetUserUncheckedCreateInputSchema: z.ZodType<Prisma.BudgetUserUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   permission: z.lazy(() => BudgetUserPermissionSchema),
@@ -2036,7 +2036,7 @@ export const BudgetUserUncheckedCreateInputSchema: z.ZodType<Prisma.BudgetUserUn
 }).strict();
 
 export const BudgetUserUpdateInputSchema: z.ZodType<Prisma.BudgetUserUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => EnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2045,7 +2045,7 @@ export const BudgetUserUpdateInputSchema: z.ZodType<Prisma.BudgetUserUpdateInput
 }).strict();
 
 export const BudgetUserUncheckedUpdateInputSchema: z.ZodType<Prisma.BudgetUserUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => EnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2054,7 +2054,7 @@ export const BudgetUserUncheckedUpdateInputSchema: z.ZodType<Prisma.BudgetUserUn
 }).strict();
 
 export const BudgetUserCreateManyInputSchema: z.ZodType<Prisma.BudgetUserCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   permission: z.lazy(() => BudgetUserPermissionSchema),
@@ -2063,14 +2063,14 @@ export const BudgetUserCreateManyInputSchema: z.ZodType<Prisma.BudgetUserCreateM
 }).strict();
 
 export const BudgetUserUpdateManyMutationInputSchema: z.ZodType<Prisma.BudgetUserUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => EnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const BudgetUserUncheckedUpdateManyInputSchema: z.ZodType<Prisma.BudgetUserUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => EnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2079,11 +2079,11 @@ export const BudgetUserUncheckedUpdateManyInputSchema: z.ZodType<Prisma.BudgetUs
 }).strict();
 
 export const BudgetUserInvitationCreateInputSchema: z.ZodType<Prisma.BudgetUserInvitationCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string().optional().nullable(),
-  token: z.string().uuid().optional(),
+  token: z.string().optional(),
   expiresAt: z.coerce.date(),
   permission: z.lazy(() => BudgetUserPermissionSchema).optional().nullable(),
   createdByUser: z.lazy(() => UserCreateNestedOneWithoutCreatedBudgetUserInvitationsInputSchema),
@@ -2092,11 +2092,11 @@ export const BudgetUserInvitationCreateInputSchema: z.ZodType<Prisma.BudgetUserI
 }).strict();
 
 export const BudgetUserInvitationUncheckedCreateInputSchema: z.ZodType<Prisma.BudgetUserInvitationUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string().optional().nullable(),
-  token: z.string().uuid().optional(),
+  token: z.string().optional(),
   expiresAt: z.coerce.date(),
   permission: z.lazy(() => BudgetUserPermissionSchema).optional().nullable(),
   createdByUserId: z.string(),
@@ -2105,11 +2105,11 @@ export const BudgetUserInvitationUncheckedCreateInputSchema: z.ZodType<Prisma.Bu
 }).strict();
 
 export const BudgetUserInvitationUpdateInputSchema: z.ZodType<Prisma.BudgetUserInvitationUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  token: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  token: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   expiresAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => NullableEnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdByUser: z.lazy(() => UserUpdateOneRequiredWithoutCreatedBudgetUserInvitationsNestedInputSchema).optional(),
@@ -2118,11 +2118,11 @@ export const BudgetUserInvitationUpdateInputSchema: z.ZodType<Prisma.BudgetUserI
 }).strict();
 
 export const BudgetUserInvitationUncheckedUpdateInputSchema: z.ZodType<Prisma.BudgetUserInvitationUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  token: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  token: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   expiresAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => NullableEnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdByUserId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2131,11 +2131,11 @@ export const BudgetUserInvitationUncheckedUpdateInputSchema: z.ZodType<Prisma.Bu
 }).strict();
 
 export const BudgetUserInvitationCreateManyInputSchema: z.ZodType<Prisma.BudgetUserInvitationCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string().optional().nullable(),
-  token: z.string().uuid().optional(),
+  token: z.string().optional(),
   expiresAt: z.coerce.date(),
   permission: z.lazy(() => BudgetUserPermissionSchema).optional().nullable(),
   createdByUserId: z.string(),
@@ -2143,21 +2143,21 @@ export const BudgetUserInvitationCreateManyInputSchema: z.ZodType<Prisma.BudgetU
 }).strict();
 
 export const BudgetUserInvitationUpdateManyMutationInputSchema: z.ZodType<Prisma.BudgetUserInvitationUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  token: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  token: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   expiresAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => NullableEnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const BudgetUserInvitationUncheckedUpdateManyInputSchema: z.ZodType<Prisma.BudgetUserInvitationUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  token: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  token: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   expiresAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => NullableEnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdByUserId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2165,7 +2165,7 @@ export const BudgetUserInvitationUncheckedUpdateManyInputSchema: z.ZodType<Prism
 }).strict();
 
 export const BudgetUserInvitationResponseCreateInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   acceptedAt: z.coerce.date().optional().nullable(),
@@ -2175,7 +2175,7 @@ export const BudgetUserInvitationResponseCreateInputSchema: z.ZodType<Prisma.Bud
 }).strict();
 
 export const BudgetUserInvitationResponseUncheckedCreateInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   acceptedAt: z.coerce.date().optional().nullable(),
@@ -2185,7 +2185,7 @@ export const BudgetUserInvitationResponseUncheckedCreateInputSchema: z.ZodType<P
 }).strict();
 
 export const BudgetUserInvitationResponseUpdateInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   acceptedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2195,7 +2195,7 @@ export const BudgetUserInvitationResponseUpdateInputSchema: z.ZodType<Prisma.Bud
 }).strict();
 
 export const BudgetUserInvitationResponseUncheckedUpdateInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   acceptedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2205,7 +2205,7 @@ export const BudgetUserInvitationResponseUncheckedUpdateInputSchema: z.ZodType<P
 }).strict();
 
 export const BudgetUserInvitationResponseCreateManyInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   acceptedAt: z.coerce.date().optional().nullable(),
@@ -2215,7 +2215,7 @@ export const BudgetUserInvitationResponseCreateManyInputSchema: z.ZodType<Prisma
 }).strict();
 
 export const BudgetUserInvitationResponseUpdateManyMutationInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   acceptedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2223,7 +2223,7 @@ export const BudgetUserInvitationResponseUpdateManyMutationInputSchema: z.ZodTyp
 }).strict();
 
 export const BudgetUserInvitationResponseUncheckedUpdateManyInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   acceptedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -2233,7 +2233,7 @@ export const BudgetUserInvitationResponseUncheckedUpdateManyInputSchema: z.ZodTy
 }).strict();
 
 export const TransactionCreateInputSchema: z.ZodType<Prisma.TransactionCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -2248,7 +2248,7 @@ export const TransactionCreateInputSchema: z.ZodType<Prisma.TransactionCreateInp
 }).strict();
 
 export const TransactionUncheckedCreateInputSchema: z.ZodType<Prisma.TransactionUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -2263,7 +2263,7 @@ export const TransactionUncheckedCreateInputSchema: z.ZodType<Prisma.Transaction
 }).strict();
 
 export const TransactionUpdateInputSchema: z.ZodType<Prisma.TransactionUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2278,7 +2278,7 @@ export const TransactionUpdateInputSchema: z.ZodType<Prisma.TransactionUpdateInp
 }).strict();
 
 export const TransactionUncheckedUpdateInputSchema: z.ZodType<Prisma.TransactionUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2293,7 +2293,7 @@ export const TransactionUncheckedUpdateInputSchema: z.ZodType<Prisma.Transaction
 }).strict();
 
 export const TransactionCreateManyInputSchema: z.ZodType<Prisma.TransactionCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -2308,7 +2308,7 @@ export const TransactionCreateManyInputSchema: z.ZodType<Prisma.TransactionCreat
 }).strict();
 
 export const TransactionUpdateManyMutationInputSchema: z.ZodType<Prisma.TransactionUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2319,7 +2319,7 @@ export const TransactionUpdateManyMutationInputSchema: z.ZodType<Prisma.Transact
 }).strict();
 
 export const TransactionUncheckedUpdateManyInputSchema: z.ZodType<Prisma.TransactionUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2334,7 +2334,7 @@ export const TransactionUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Transac
 }).strict();
 
 export const CategoryCreateInputSchema: z.ZodType<Prisma.CategoryCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => CategoryTypeSchema),
@@ -2349,7 +2349,7 @@ export const CategoryCreateInputSchema: z.ZodType<Prisma.CategoryCreateInput> = 
 }).strict();
 
 export const CategoryUncheckedCreateInputSchema: z.ZodType<Prisma.CategoryUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => CategoryTypeSchema),
@@ -2364,7 +2364,7 @@ export const CategoryUncheckedCreateInputSchema: z.ZodType<Prisma.CategoryUnchec
 }).strict();
 
 export const CategoryUpdateInputSchema: z.ZodType<Prisma.CategoryUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2379,7 +2379,7 @@ export const CategoryUpdateInputSchema: z.ZodType<Prisma.CategoryUpdateInput> = 
 }).strict();
 
 export const CategoryUncheckedUpdateInputSchema: z.ZodType<Prisma.CategoryUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2394,7 +2394,7 @@ export const CategoryUncheckedUpdateInputSchema: z.ZodType<Prisma.CategoryUnchec
 }).strict();
 
 export const CategoryCreateManyInputSchema: z.ZodType<Prisma.CategoryCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => CategoryTypeSchema),
@@ -2407,7 +2407,7 @@ export const CategoryCreateManyInputSchema: z.ZodType<Prisma.CategoryCreateManyI
 }).strict();
 
 export const CategoryUpdateManyMutationInputSchema: z.ZodType<Prisma.CategoryUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2418,7 +2418,7 @@ export const CategoryUpdateManyMutationInputSchema: z.ZodType<Prisma.CategoryUpd
 }).strict();
 
 export const CategoryUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CategoryUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2431,7 +2431,7 @@ export const CategoryUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CategoryUn
 }).strict();
 
 export const CachedGptResponseCreateInputSchema: z.ZodType<Prisma.CachedGptResponseCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   query: z.string(),
@@ -2439,7 +2439,7 @@ export const CachedGptResponseCreateInputSchema: z.ZodType<Prisma.CachedGptRespo
 }).strict();
 
 export const CachedGptResponseUncheckedCreateInputSchema: z.ZodType<Prisma.CachedGptResponseUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   query: z.string(),
@@ -2447,7 +2447,7 @@ export const CachedGptResponseUncheckedCreateInputSchema: z.ZodType<Prisma.Cache
 }).strict();
 
 export const CachedGptResponseUpdateInputSchema: z.ZodType<Prisma.CachedGptResponseUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   query: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2455,7 +2455,7 @@ export const CachedGptResponseUpdateInputSchema: z.ZodType<Prisma.CachedGptRespo
 }).strict();
 
 export const CachedGptResponseUncheckedUpdateInputSchema: z.ZodType<Prisma.CachedGptResponseUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   query: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2463,7 +2463,7 @@ export const CachedGptResponseUncheckedUpdateInputSchema: z.ZodType<Prisma.Cache
 }).strict();
 
 export const CachedGptResponseCreateManyInputSchema: z.ZodType<Prisma.CachedGptResponseCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   query: z.string(),
@@ -2471,7 +2471,7 @@ export const CachedGptResponseCreateManyInputSchema: z.ZodType<Prisma.CachedGptR
 }).strict();
 
 export const CachedGptResponseUpdateManyMutationInputSchema: z.ZodType<Prisma.CachedGptResponseUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   query: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2479,7 +2479,7 @@ export const CachedGptResponseUpdateManyMutationInputSchema: z.ZodType<Prisma.Ca
 }).strict();
 
 export const CachedGptResponseUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CachedGptResponseUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   query: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2487,7 +2487,7 @@ export const CachedGptResponseUncheckedUpdateManyInputSchema: z.ZodType<Prisma.C
 }).strict();
 
 export const CurrencyExchangeRateCreateInputSchema: z.ZodType<Prisma.CurrencyExchangeRateCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   fromCurrency: z.string(),
@@ -2497,7 +2497,7 @@ export const CurrencyExchangeRateCreateInputSchema: z.ZodType<Prisma.CurrencyExc
 }).strict();
 
 export const CurrencyExchangeRateUncheckedCreateInputSchema: z.ZodType<Prisma.CurrencyExchangeRateUncheckedCreateInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   fromCurrency: z.string(),
@@ -2507,7 +2507,7 @@ export const CurrencyExchangeRateUncheckedCreateInputSchema: z.ZodType<Prisma.Cu
 }).strict();
 
 export const CurrencyExchangeRateUpdateInputSchema: z.ZodType<Prisma.CurrencyExchangeRateUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   fromCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2517,7 +2517,7 @@ export const CurrencyExchangeRateUpdateInputSchema: z.ZodType<Prisma.CurrencyExc
 }).strict();
 
 export const CurrencyExchangeRateUncheckedUpdateInputSchema: z.ZodType<Prisma.CurrencyExchangeRateUncheckedUpdateInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   fromCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2527,7 +2527,7 @@ export const CurrencyExchangeRateUncheckedUpdateInputSchema: z.ZodType<Prisma.Cu
 }).strict();
 
 export const CurrencyExchangeRateCreateManyInputSchema: z.ZodType<Prisma.CurrencyExchangeRateCreateManyInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   fromCurrency: z.string(),
@@ -2537,7 +2537,7 @@ export const CurrencyExchangeRateCreateManyInputSchema: z.ZodType<Prisma.Currenc
 }).strict();
 
 export const CurrencyExchangeRateUpdateManyMutationInputSchema: z.ZodType<Prisma.CurrencyExchangeRateUpdateManyMutationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   fromCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2547,7 +2547,7 @@ export const CurrencyExchangeRateUpdateManyMutationInputSchema: z.ZodType<Prisma
 }).strict();
 
 export const CurrencyExchangeRateUncheckedUpdateManyInputSchema: z.ZodType<Prisma.CurrencyExchangeRateUncheckedUpdateManyInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   fromCurrency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4373,7 +4373,7 @@ export const NestedEnumCategoryTypeWithAggregatesFilterSchema: z.ZodType<Prisma.
 }).strict();
 
 export const UserWalletAccountCreateWithoutUserInputSchema: z.ZodType<Prisma.UserWalletAccountCreateWithoutUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -4385,7 +4385,7 @@ export const UserWalletAccountCreateWithoutUserInputSchema: z.ZodType<Prisma.Use
 }).strict();
 
 export const UserWalletAccountUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.UserWalletAccountUncheckedCreateWithoutUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -4407,7 +4407,7 @@ export const UserWalletAccountCreateManyUserInputEnvelopeSchema: z.ZodType<Prism
 }).strict();
 
 export const BudgetUserCreateWithoutUserInputSchema: z.ZodType<Prisma.BudgetUserCreateWithoutUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   permission: z.lazy(() => BudgetUserPermissionSchema),
@@ -4415,7 +4415,7 @@ export const BudgetUserCreateWithoutUserInputSchema: z.ZodType<Prisma.BudgetUser
 }).strict();
 
 export const BudgetUserUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.BudgetUserUncheckedCreateWithoutUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   permission: z.lazy(() => BudgetUserPermissionSchema),
@@ -4433,7 +4433,7 @@ export const BudgetUserCreateManyUserInputEnvelopeSchema: z.ZodType<Prisma.Budge
 }).strict();
 
 export const TransactionCreateWithoutCreatedByUserInputSchema: z.ZodType<Prisma.TransactionCreateWithoutCreatedByUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -4447,7 +4447,7 @@ export const TransactionCreateWithoutCreatedByUserInputSchema: z.ZodType<Prisma.
 }).strict();
 
 export const TransactionUncheckedCreateWithoutCreatedByUserInputSchema: z.ZodType<Prisma.TransactionUncheckedCreateWithoutCreatedByUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -4471,11 +4471,11 @@ export const TransactionCreateManyCreatedByUserInputEnvelopeSchema: z.ZodType<Pr
 }).strict();
 
 export const BudgetUserInvitationCreateWithoutCreatedByUserInputSchema: z.ZodType<Prisma.BudgetUserInvitationCreateWithoutCreatedByUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string().optional().nullable(),
-  token: z.string().uuid().optional(),
+  token: z.string().optional(),
   expiresAt: z.coerce.date(),
   permission: z.lazy(() => BudgetUserPermissionSchema).optional().nullable(),
   budget: z.lazy(() => BudgetCreateNestedOneWithoutInvitationsInputSchema),
@@ -4483,11 +4483,11 @@ export const BudgetUserInvitationCreateWithoutCreatedByUserInputSchema: z.ZodTyp
 }).strict();
 
 export const BudgetUserInvitationUncheckedCreateWithoutCreatedByUserInputSchema: z.ZodType<Prisma.BudgetUserInvitationUncheckedCreateWithoutCreatedByUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string().optional().nullable(),
-  token: z.string().uuid().optional(),
+  token: z.string().optional(),
   expiresAt: z.coerce.date(),
   permission: z.lazy(() => BudgetUserPermissionSchema).optional().nullable(),
   budgetId: z.string(),
@@ -4505,7 +4505,7 @@ export const BudgetUserInvitationCreateManyCreatedByUserInputEnvelopeSchema: z.Z
 }).strict();
 
 export const BudgetUserInvitationResponseCreateWithoutCreatedUserInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseCreateWithoutCreatedUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   acceptedAt: z.coerce.date().optional().nullable(),
@@ -4514,7 +4514,7 @@ export const BudgetUserInvitationResponseCreateWithoutCreatedUserInputSchema: z.
 }).strict();
 
 export const BudgetUserInvitationResponseUncheckedCreateWithoutCreatedUserInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseUncheckedCreateWithoutCreatedUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   acceptedAt: z.coerce.date().optional().nullable(),
@@ -4528,7 +4528,7 @@ export const BudgetUserInvitationResponseCreateOrConnectWithoutCreatedUserInputS
 }).strict();
 
 export const CategoryCreateWithoutUserInputSchema: z.ZodType<Prisma.CategoryCreateWithoutUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => CategoryTypeSchema),
@@ -4542,7 +4542,7 @@ export const CategoryCreateWithoutUserInputSchema: z.ZodType<Prisma.CategoryCrea
 }).strict();
 
 export const CategoryUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.CategoryUncheckedCreateWithoutUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => CategoryTypeSchema),
@@ -4701,7 +4701,7 @@ export const BudgetUserInvitationResponseUpdateToOneWithWhereWithoutCreatedUserI
 }).strict();
 
 export const BudgetUserInvitationResponseUpdateWithoutCreatedUserInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseUpdateWithoutCreatedUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   acceptedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4710,7 +4710,7 @@ export const BudgetUserInvitationResponseUpdateWithoutCreatedUserInputSchema: z.
 }).strict();
 
 export const BudgetUserInvitationResponseUncheckedUpdateWithoutCreatedUserInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseUncheckedUpdateWithoutCreatedUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   acceptedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -4751,7 +4751,7 @@ export const CategoryScalarWhereInputSchema: z.ZodType<Prisma.CategoryScalarWher
 }).strict();
 
 export const UserCreateWithoutWalletAccountsInputSchema: z.ZodType<Prisma.UserCreateWithoutWalletAccountsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -4764,7 +4764,7 @@ export const UserCreateWithoutWalletAccountsInputSchema: z.ZodType<Prisma.UserCr
 }).strict();
 
 export const UserUncheckedCreateWithoutWalletAccountsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutWalletAccountsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -4782,7 +4782,7 @@ export const UserCreateOrConnectWithoutWalletAccountsInputSchema: z.ZodType<Pris
 }).strict();
 
 export const TransactionCreateWithoutWalletAccountInputSchema: z.ZodType<Prisma.TransactionCreateWithoutWalletAccountInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -4796,7 +4796,7 @@ export const TransactionCreateWithoutWalletAccountInputSchema: z.ZodType<Prisma.
 }).strict();
 
 export const TransactionUncheckedCreateWithoutWalletAccountInputSchema: z.ZodType<Prisma.TransactionUncheckedCreateWithoutWalletAccountInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -4831,7 +4831,7 @@ export const UserUpdateToOneWithWhereWithoutWalletAccountsInputSchema: z.ZodType
 }).strict();
 
 export const UserUpdateWithoutWalletAccountsInputSchema: z.ZodType<Prisma.UserUpdateWithoutWalletAccountsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4844,7 +4844,7 @@ export const UserUpdateWithoutWalletAccountsInputSchema: z.ZodType<Prisma.UserUp
 }).strict();
 
 export const UserUncheckedUpdateWithoutWalletAccountsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutWalletAccountsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4873,7 +4873,7 @@ export const TransactionUpdateManyWithWhereWithoutWalletAccountInputSchema: z.Zo
 }).strict();
 
 export const BudgetPeriodConfigCreateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigCreateWithoutBudgetInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => BudgetPeriodTypeSchema),
@@ -4883,7 +4883,7 @@ export const BudgetPeriodConfigCreateWithoutBudgetInputSchema: z.ZodType<Prisma.
 }).strict();
 
 export const BudgetPeriodConfigUncheckedCreateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedCreateWithoutBudgetInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => BudgetPeriodTypeSchema),
@@ -4903,7 +4903,7 @@ export const BudgetPeriodConfigCreateManyBudgetInputEnvelopeSchema: z.ZodType<Pr
 }).strict();
 
 export const BudgetUserCreateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserCreateWithoutBudgetInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   permission: z.lazy(() => BudgetUserPermissionSchema),
@@ -4911,7 +4911,7 @@ export const BudgetUserCreateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUs
 }).strict();
 
 export const BudgetUserUncheckedCreateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserUncheckedCreateWithoutBudgetInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   permission: z.lazy(() => BudgetUserPermissionSchema),
@@ -4929,7 +4929,7 @@ export const BudgetUserCreateManyBudgetInputEnvelopeSchema: z.ZodType<Prisma.Bud
 }).strict();
 
 export const TransactionCreateWithoutBudgetInputSchema: z.ZodType<Prisma.TransactionCreateWithoutBudgetInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -4943,7 +4943,7 @@ export const TransactionCreateWithoutBudgetInputSchema: z.ZodType<Prisma.Transac
 }).strict();
 
 export const TransactionUncheckedCreateWithoutBudgetInputSchema: z.ZodType<Prisma.TransactionUncheckedCreateWithoutBudgetInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -4967,11 +4967,11 @@ export const TransactionCreateManyBudgetInputEnvelopeSchema: z.ZodType<Prisma.Tr
 }).strict();
 
 export const BudgetUserInvitationCreateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserInvitationCreateWithoutBudgetInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string().optional().nullable(),
-  token: z.string().uuid().optional(),
+  token: z.string().optional(),
   expiresAt: z.coerce.date(),
   permission: z.lazy(() => BudgetUserPermissionSchema).optional().nullable(),
   createdByUser: z.lazy(() => UserCreateNestedOneWithoutCreatedBudgetUserInvitationsInputSchema),
@@ -4979,11 +4979,11 @@ export const BudgetUserInvitationCreateWithoutBudgetInputSchema: z.ZodType<Prism
 }).strict();
 
 export const BudgetUserInvitationUncheckedCreateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserInvitationUncheckedCreateWithoutBudgetInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string().optional().nullable(),
-  token: z.string().uuid().optional(),
+  token: z.string().optional(),
   expiresAt: z.coerce.date(),
   permission: z.lazy(() => BudgetUserPermissionSchema).optional().nullable(),
   createdByUserId: z.string(),
@@ -5079,7 +5079,7 @@ export const BudgetUserInvitationUpdateManyWithWhereWithoutBudgetInputSchema: z.
 }).strict();
 
 export const BudgetCreateWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.BudgetCreateWithoutPeriodConfigsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -5092,7 +5092,7 @@ export const BudgetCreateWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.Budge
 }).strict();
 
 export const BudgetUncheckedCreateWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.BudgetUncheckedCreateWithoutPeriodConfigsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -5121,7 +5121,7 @@ export const BudgetUpdateToOneWithWhereWithoutPeriodConfigsInputSchema: z.ZodTyp
 }).strict();
 
 export const BudgetUpdateWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.BudgetUpdateWithoutPeriodConfigsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5134,7 +5134,7 @@ export const BudgetUpdateWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.Budge
 }).strict();
 
 export const BudgetUncheckedUpdateWithoutPeriodConfigsInputSchema: z.ZodType<Prisma.BudgetUncheckedUpdateWithoutPeriodConfigsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5147,7 +5147,7 @@ export const BudgetUncheckedUpdateWithoutPeriodConfigsInputSchema: z.ZodType<Pri
 }).strict();
 
 export const UserCreateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.UserCreateWithoutBudgetUsersInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -5160,7 +5160,7 @@ export const UserCreateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.UserCreat
 }).strict();
 
 export const UserUncheckedCreateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutBudgetUsersInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -5178,7 +5178,7 @@ export const UserCreateOrConnectWithoutBudgetUsersInputSchema: z.ZodType<Prisma.
 }).strict();
 
 export const BudgetCreateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.BudgetCreateWithoutBudgetUsersInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -5191,7 +5191,7 @@ export const BudgetCreateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.BudgetC
 }).strict();
 
 export const BudgetUncheckedCreateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.BudgetUncheckedCreateWithoutBudgetUsersInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -5220,7 +5220,7 @@ export const UserUpdateToOneWithWhereWithoutBudgetUsersInputSchema: z.ZodType<Pr
 }).strict();
 
 export const UserUpdateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.UserUpdateWithoutBudgetUsersInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5233,7 +5233,7 @@ export const UserUpdateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.UserUpdat
 }).strict();
 
 export const UserUncheckedUpdateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutBudgetUsersInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5257,7 +5257,7 @@ export const BudgetUpdateToOneWithWhereWithoutBudgetUsersInputSchema: z.ZodType<
 }).strict();
 
 export const BudgetUpdateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.BudgetUpdateWithoutBudgetUsersInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5270,7 +5270,7 @@ export const BudgetUpdateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.BudgetU
 }).strict();
 
 export const BudgetUncheckedUpdateWithoutBudgetUsersInputSchema: z.ZodType<Prisma.BudgetUncheckedUpdateWithoutBudgetUsersInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5283,7 +5283,7 @@ export const BudgetUncheckedUpdateWithoutBudgetUsersInputSchema: z.ZodType<Prism
 }).strict();
 
 export const UserCreateWithoutCreatedBudgetUserInvitationsInputSchema: z.ZodType<Prisma.UserCreateWithoutCreatedBudgetUserInvitationsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -5296,7 +5296,7 @@ export const UserCreateWithoutCreatedBudgetUserInvitationsInputSchema: z.ZodType
 }).strict();
 
 export const UserUncheckedCreateWithoutCreatedBudgetUserInvitationsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutCreatedBudgetUserInvitationsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -5314,7 +5314,7 @@ export const UserCreateOrConnectWithoutCreatedBudgetUserInvitationsInputSchema: 
 }).strict();
 
 export const BudgetCreateWithoutInvitationsInputSchema: z.ZodType<Prisma.BudgetCreateWithoutInvitationsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -5327,7 +5327,7 @@ export const BudgetCreateWithoutInvitationsInputSchema: z.ZodType<Prisma.BudgetC
 }).strict();
 
 export const BudgetUncheckedCreateWithoutInvitationsInputSchema: z.ZodType<Prisma.BudgetUncheckedCreateWithoutInvitationsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -5345,7 +5345,7 @@ export const BudgetCreateOrConnectWithoutInvitationsInputSchema: z.ZodType<Prism
 }).strict();
 
 export const BudgetUserInvitationResponseCreateWithoutInvitationInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseCreateWithoutInvitationInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   acceptedAt: z.coerce.date().optional().nullable(),
@@ -5354,7 +5354,7 @@ export const BudgetUserInvitationResponseCreateWithoutInvitationInputSchema: z.Z
 }).strict();
 
 export const BudgetUserInvitationResponseUncheckedCreateWithoutInvitationInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseUncheckedCreateWithoutInvitationInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   acceptedAt: z.coerce.date().optional().nullable(),
@@ -5384,7 +5384,7 @@ export const UserUpdateToOneWithWhereWithoutCreatedBudgetUserInvitationsInputSch
 }).strict();
 
 export const UserUpdateWithoutCreatedBudgetUserInvitationsInputSchema: z.ZodType<Prisma.UserUpdateWithoutCreatedBudgetUserInvitationsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5397,7 +5397,7 @@ export const UserUpdateWithoutCreatedBudgetUserInvitationsInputSchema: z.ZodType
 }).strict();
 
 export const UserUncheckedUpdateWithoutCreatedBudgetUserInvitationsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutCreatedBudgetUserInvitationsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5421,7 +5421,7 @@ export const BudgetUpdateToOneWithWhereWithoutInvitationsInputSchema: z.ZodType<
 }).strict();
 
 export const BudgetUpdateWithoutInvitationsInputSchema: z.ZodType<Prisma.BudgetUpdateWithoutInvitationsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5434,7 +5434,7 @@ export const BudgetUpdateWithoutInvitationsInputSchema: z.ZodType<Prisma.BudgetU
 }).strict();
 
 export const BudgetUncheckedUpdateWithoutInvitationsInputSchema: z.ZodType<Prisma.BudgetUncheckedUpdateWithoutInvitationsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5476,11 +5476,11 @@ export const BudgetUserInvitationResponseScalarWhereInputSchema: z.ZodType<Prism
 }).strict();
 
 export const BudgetUserInvitationCreateWithoutResponsesInputSchema: z.ZodType<Prisma.BudgetUserInvitationCreateWithoutResponsesInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string().optional().nullable(),
-  token: z.string().uuid().optional(),
+  token: z.string().optional(),
   expiresAt: z.coerce.date(),
   permission: z.lazy(() => BudgetUserPermissionSchema).optional().nullable(),
   createdByUser: z.lazy(() => UserCreateNestedOneWithoutCreatedBudgetUserInvitationsInputSchema),
@@ -5488,11 +5488,11 @@ export const BudgetUserInvitationCreateWithoutResponsesInputSchema: z.ZodType<Pr
 }).strict();
 
 export const BudgetUserInvitationUncheckedCreateWithoutResponsesInputSchema: z.ZodType<Prisma.BudgetUserInvitationUncheckedCreateWithoutResponsesInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string().optional().nullable(),
-  token: z.string().uuid().optional(),
+  token: z.string().optional(),
   expiresAt: z.coerce.date(),
   permission: z.lazy(() => BudgetUserPermissionSchema).optional().nullable(),
   createdByUserId: z.string(),
@@ -5505,7 +5505,7 @@ export const BudgetUserInvitationCreateOrConnectWithoutResponsesInputSchema: z.Z
 }).strict();
 
 export const UserCreateWithoutCreatedFromInvitationInputSchema: z.ZodType<Prisma.UserCreateWithoutCreatedFromInvitationInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -5518,7 +5518,7 @@ export const UserCreateWithoutCreatedFromInvitationInputSchema: z.ZodType<Prisma
 }).strict();
 
 export const UserUncheckedCreateWithoutCreatedFromInvitationInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutCreatedFromInvitationInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -5547,11 +5547,11 @@ export const BudgetUserInvitationUpdateToOneWithWhereWithoutResponsesInputSchema
 }).strict();
 
 export const BudgetUserInvitationUpdateWithoutResponsesInputSchema: z.ZodType<Prisma.BudgetUserInvitationUpdateWithoutResponsesInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  token: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  token: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   expiresAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => NullableEnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdByUser: z.lazy(() => UserUpdateOneRequiredWithoutCreatedBudgetUserInvitationsNestedInputSchema).optional(),
@@ -5559,11 +5559,11 @@ export const BudgetUserInvitationUpdateWithoutResponsesInputSchema: z.ZodType<Pr
 }).strict();
 
 export const BudgetUserInvitationUncheckedUpdateWithoutResponsesInputSchema: z.ZodType<Prisma.BudgetUserInvitationUncheckedUpdateWithoutResponsesInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  token: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  token: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   expiresAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => NullableEnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdByUserId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5582,7 +5582,7 @@ export const UserUpdateToOneWithWhereWithoutCreatedFromInvitationInputSchema: z.
 }).strict();
 
 export const UserUpdateWithoutCreatedFromInvitationInputSchema: z.ZodType<Prisma.UserUpdateWithoutCreatedFromInvitationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5595,7 +5595,7 @@ export const UserUpdateWithoutCreatedFromInvitationInputSchema: z.ZodType<Prisma
 }).strict();
 
 export const UserUncheckedUpdateWithoutCreatedFromInvitationInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutCreatedFromInvitationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5608,7 +5608,7 @@ export const UserUncheckedUpdateWithoutCreatedFromInvitationInputSchema: z.ZodTy
 }).strict();
 
 export const CategoryCreateWithoutTransactionsInputSchema: z.ZodType<Prisma.CategoryCreateWithoutTransactionsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => CategoryTypeSchema),
@@ -5622,7 +5622,7 @@ export const CategoryCreateWithoutTransactionsInputSchema: z.ZodType<Prisma.Cate
 }).strict();
 
 export const CategoryUncheckedCreateWithoutTransactionsInputSchema: z.ZodType<Prisma.CategoryUncheckedCreateWithoutTransactionsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => CategoryTypeSchema),
@@ -5641,7 +5641,7 @@ export const CategoryCreateOrConnectWithoutTransactionsInputSchema: z.ZodType<Pr
 }).strict();
 
 export const BudgetCreateWithoutTransactionsInputSchema: z.ZodType<Prisma.BudgetCreateWithoutTransactionsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -5654,7 +5654,7 @@ export const BudgetCreateWithoutTransactionsInputSchema: z.ZodType<Prisma.Budget
 }).strict();
 
 export const BudgetUncheckedCreateWithoutTransactionsInputSchema: z.ZodType<Prisma.BudgetUncheckedCreateWithoutTransactionsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -5672,7 +5672,7 @@ export const BudgetCreateOrConnectWithoutTransactionsInputSchema: z.ZodType<Pris
 }).strict();
 
 export const UserWalletAccountCreateWithoutTransactionsInputSchema: z.ZodType<Prisma.UserWalletAccountCreateWithoutTransactionsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -5684,7 +5684,7 @@ export const UserWalletAccountCreateWithoutTransactionsInputSchema: z.ZodType<Pr
 }).strict();
 
 export const UserWalletAccountUncheckedCreateWithoutTransactionsInputSchema: z.ZodType<Prisma.UserWalletAccountUncheckedCreateWithoutTransactionsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -5701,7 +5701,7 @@ export const UserWalletAccountCreateOrConnectWithoutTransactionsInputSchema: z.Z
 }).strict();
 
 export const UserCreateWithoutTransactionsInputSchema: z.ZodType<Prisma.UserCreateWithoutTransactionsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -5714,7 +5714,7 @@ export const UserCreateWithoutTransactionsInputSchema: z.ZodType<Prisma.UserCrea
 }).strict();
 
 export const UserUncheckedCreateWithoutTransactionsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutTransactionsInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -5743,7 +5743,7 @@ export const CategoryUpdateToOneWithWhereWithoutTransactionsInputSchema: z.ZodTy
 }).strict();
 
 export const CategoryUpdateWithoutTransactionsInputSchema: z.ZodType<Prisma.CategoryUpdateWithoutTransactionsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5757,7 +5757,7 @@ export const CategoryUpdateWithoutTransactionsInputSchema: z.ZodType<Prisma.Cate
 }).strict();
 
 export const CategoryUncheckedUpdateWithoutTransactionsInputSchema: z.ZodType<Prisma.CategoryUncheckedUpdateWithoutTransactionsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5782,7 +5782,7 @@ export const BudgetUpdateToOneWithWhereWithoutTransactionsInputSchema: z.ZodType
 }).strict();
 
 export const BudgetUpdateWithoutTransactionsInputSchema: z.ZodType<Prisma.BudgetUpdateWithoutTransactionsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5795,7 +5795,7 @@ export const BudgetUpdateWithoutTransactionsInputSchema: z.ZodType<Prisma.Budget
 }).strict();
 
 export const BudgetUncheckedUpdateWithoutTransactionsInputSchema: z.ZodType<Prisma.BudgetUncheckedUpdateWithoutTransactionsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5819,7 +5819,7 @@ export const UserWalletAccountUpdateToOneWithWhereWithoutTransactionsInputSchema
 }).strict();
 
 export const UserWalletAccountUpdateWithoutTransactionsInputSchema: z.ZodType<Prisma.UserWalletAccountUpdateWithoutTransactionsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5831,7 +5831,7 @@ export const UserWalletAccountUpdateWithoutTransactionsInputSchema: z.ZodType<Pr
 }).strict();
 
 export const UserWalletAccountUncheckedUpdateWithoutTransactionsInputSchema: z.ZodType<Prisma.UserWalletAccountUncheckedUpdateWithoutTransactionsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5854,7 +5854,7 @@ export const UserUpdateToOneWithWhereWithoutTransactionsInputSchema: z.ZodType<P
 }).strict();
 
 export const UserUpdateWithoutTransactionsInputSchema: z.ZodType<Prisma.UserUpdateWithoutTransactionsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5867,7 +5867,7 @@ export const UserUpdateWithoutTransactionsInputSchema: z.ZodType<Prisma.UserUpda
 }).strict();
 
 export const UserUncheckedUpdateWithoutTransactionsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutTransactionsInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5880,7 +5880,7 @@ export const UserUncheckedUpdateWithoutTransactionsInputSchema: z.ZodType<Prisma
 }).strict();
 
 export const UserCreateWithoutCategoriesInputSchema: z.ZodType<Prisma.UserCreateWithoutCategoriesInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -5893,7 +5893,7 @@ export const UserCreateWithoutCategoriesInputSchema: z.ZodType<Prisma.UserCreate
 }).strict();
 
 export const UserUncheckedCreateWithoutCategoriesInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutCategoriesInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string(),
@@ -5911,7 +5911,7 @@ export const UserCreateOrConnectWithoutCategoriesInputSchema: z.ZodType<Prisma.U
 }).strict();
 
 export const CategoryCreateWithoutChildrenInputSchema: z.ZodType<Prisma.CategoryCreateWithoutChildrenInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => CategoryTypeSchema),
@@ -5925,7 +5925,7 @@ export const CategoryCreateWithoutChildrenInputSchema: z.ZodType<Prisma.Category
 }).strict();
 
 export const CategoryUncheckedCreateWithoutChildrenInputSchema: z.ZodType<Prisma.CategoryUncheckedCreateWithoutChildrenInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => CategoryTypeSchema),
@@ -5944,7 +5944,7 @@ export const CategoryCreateOrConnectWithoutChildrenInputSchema: z.ZodType<Prisma
 }).strict();
 
 export const CategoryCreateWithoutParentInputSchema: z.ZodType<Prisma.CategoryCreateWithoutParentInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => CategoryTypeSchema),
@@ -5958,7 +5958,7 @@ export const CategoryCreateWithoutParentInputSchema: z.ZodType<Prisma.CategoryCr
 }).strict();
 
 export const CategoryUncheckedCreateWithoutParentInputSchema: z.ZodType<Prisma.CategoryUncheckedCreateWithoutParentInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => CategoryTypeSchema),
@@ -5982,7 +5982,7 @@ export const CategoryCreateManyParentInputEnvelopeSchema: z.ZodType<Prisma.Categ
 }).strict();
 
 export const TransactionCreateWithoutCategoryInputSchema: z.ZodType<Prisma.TransactionCreateWithoutCategoryInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -5996,7 +5996,7 @@ export const TransactionCreateWithoutCategoryInputSchema: z.ZodType<Prisma.Trans
 }).strict();
 
 export const TransactionUncheckedCreateWithoutCategoryInputSchema: z.ZodType<Prisma.TransactionUncheckedCreateWithoutCategoryInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -6031,7 +6031,7 @@ export const UserUpdateToOneWithWhereWithoutCategoriesInputSchema: z.ZodType<Pri
 }).strict();
 
 export const UserUpdateWithoutCategoriesInputSchema: z.ZodType<Prisma.UserUpdateWithoutCategoriesInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6044,7 +6044,7 @@ export const UserUpdateWithoutCategoriesInputSchema: z.ZodType<Prisma.UserUpdate
 }).strict();
 
 export const UserUncheckedUpdateWithoutCategoriesInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutCategoriesInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6068,7 +6068,7 @@ export const CategoryUpdateToOneWithWhereWithoutChildrenInputSchema: z.ZodType<P
 }).strict();
 
 export const CategoryUpdateWithoutChildrenInputSchema: z.ZodType<Prisma.CategoryUpdateWithoutChildrenInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6082,7 +6082,7 @@ export const CategoryUpdateWithoutChildrenInputSchema: z.ZodType<Prisma.Category
 }).strict();
 
 export const CategoryUncheckedUpdateWithoutChildrenInputSchema: z.ZodType<Prisma.CategoryUncheckedUpdateWithoutChildrenInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6128,7 +6128,7 @@ export const TransactionUpdateManyWithWhereWithoutCategoryInputSchema: z.ZodType
 }).strict();
 
 export const UserWalletAccountCreateManyUserInputSchema: z.ZodType<Prisma.UserWalletAccountCreateManyUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   name: z.string(),
@@ -6139,7 +6139,7 @@ export const UserWalletAccountCreateManyUserInputSchema: z.ZodType<Prisma.UserWa
 }).strict();
 
 export const BudgetUserCreateManyUserInputSchema: z.ZodType<Prisma.BudgetUserCreateManyUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   permission: z.lazy(() => BudgetUserPermissionSchema),
@@ -6147,7 +6147,7 @@ export const BudgetUserCreateManyUserInputSchema: z.ZodType<Prisma.BudgetUserCre
 }).strict();
 
 export const TransactionCreateManyCreatedByUserInputSchema: z.ZodType<Prisma.TransactionCreateManyCreatedByUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -6161,18 +6161,18 @@ export const TransactionCreateManyCreatedByUserInputSchema: z.ZodType<Prisma.Tra
 }).strict();
 
 export const BudgetUserInvitationCreateManyCreatedByUserInputSchema: z.ZodType<Prisma.BudgetUserInvitationCreateManyCreatedByUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string().optional().nullable(),
-  token: z.string().uuid().optional(),
+  token: z.string().optional(),
   expiresAt: z.coerce.date(),
   permission: z.lazy(() => BudgetUserPermissionSchema).optional().nullable(),
   budgetId: z.string()
 }).strict();
 
 export const CategoryCreateManyUserInputSchema: z.ZodType<Prisma.CategoryCreateManyUserInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => CategoryTypeSchema),
@@ -6184,7 +6184,7 @@ export const CategoryCreateManyUserInputSchema: z.ZodType<Prisma.CategoryCreateM
 }).strict();
 
 export const UserWalletAccountUpdateWithoutUserInputSchema: z.ZodType<Prisma.UserWalletAccountUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6196,7 +6196,7 @@ export const UserWalletAccountUpdateWithoutUserInputSchema: z.ZodType<Prisma.Use
 }).strict();
 
 export const UserWalletAccountUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.UserWalletAccountUncheckedUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6208,7 +6208,7 @@ export const UserWalletAccountUncheckedUpdateWithoutUserInputSchema: z.ZodType<P
 }).strict();
 
 export const UserWalletAccountUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.UserWalletAccountUncheckedUpdateManyWithoutUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6219,7 +6219,7 @@ export const UserWalletAccountUncheckedUpdateManyWithoutUserInputSchema: z.ZodTy
 }).strict();
 
 export const BudgetUserUpdateWithoutUserInputSchema: z.ZodType<Prisma.BudgetUserUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => EnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6227,7 +6227,7 @@ export const BudgetUserUpdateWithoutUserInputSchema: z.ZodType<Prisma.BudgetUser
 }).strict();
 
 export const BudgetUserUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.BudgetUserUncheckedUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => EnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6235,7 +6235,7 @@ export const BudgetUserUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.B
 }).strict();
 
 export const BudgetUserUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.BudgetUserUncheckedUpdateManyWithoutUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => EnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6243,7 +6243,7 @@ export const BudgetUserUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Pris
 }).strict();
 
 export const TransactionUpdateWithoutCreatedByUserInputSchema: z.ZodType<Prisma.TransactionUpdateWithoutCreatedByUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6257,7 +6257,7 @@ export const TransactionUpdateWithoutCreatedByUserInputSchema: z.ZodType<Prisma.
 }).strict();
 
 export const TransactionUncheckedUpdateWithoutCreatedByUserInputSchema: z.ZodType<Prisma.TransactionUncheckedUpdateWithoutCreatedByUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6271,7 +6271,7 @@ export const TransactionUncheckedUpdateWithoutCreatedByUserInputSchema: z.ZodTyp
 }).strict();
 
 export const TransactionUncheckedUpdateManyWithoutCreatedByUserInputSchema: z.ZodType<Prisma.TransactionUncheckedUpdateManyWithoutCreatedByUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6285,11 +6285,11 @@ export const TransactionUncheckedUpdateManyWithoutCreatedByUserInputSchema: z.Zo
 }).strict();
 
 export const BudgetUserInvitationUpdateWithoutCreatedByUserInputSchema: z.ZodType<Prisma.BudgetUserInvitationUpdateWithoutCreatedByUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  token: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  token: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   expiresAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => NullableEnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   budget: z.lazy(() => BudgetUpdateOneRequiredWithoutInvitationsNestedInputSchema).optional(),
@@ -6297,11 +6297,11 @@ export const BudgetUserInvitationUpdateWithoutCreatedByUserInputSchema: z.ZodTyp
 }).strict();
 
 export const BudgetUserInvitationUncheckedUpdateWithoutCreatedByUserInputSchema: z.ZodType<Prisma.BudgetUserInvitationUncheckedUpdateWithoutCreatedByUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  token: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  token: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   expiresAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => NullableEnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   budgetId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6309,18 +6309,18 @@ export const BudgetUserInvitationUncheckedUpdateWithoutCreatedByUserInputSchema:
 }).strict();
 
 export const BudgetUserInvitationUncheckedUpdateManyWithoutCreatedByUserInputSchema: z.ZodType<Prisma.BudgetUserInvitationUncheckedUpdateManyWithoutCreatedByUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  token: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  token: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   expiresAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => NullableEnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   budgetId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const CategoryUpdateWithoutUserInputSchema: z.ZodType<Prisma.CategoryUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6334,7 +6334,7 @@ export const CategoryUpdateWithoutUserInputSchema: z.ZodType<Prisma.CategoryUpda
 }).strict();
 
 export const CategoryUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.CategoryUncheckedUpdateWithoutUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6348,7 +6348,7 @@ export const CategoryUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.Cat
 }).strict();
 
 export const CategoryUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.CategoryUncheckedUpdateManyWithoutUserInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6360,7 +6360,7 @@ export const CategoryUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma
 }).strict();
 
 export const TransactionCreateManyWalletAccountInputSchema: z.ZodType<Prisma.TransactionCreateManyWalletAccountInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -6374,7 +6374,7 @@ export const TransactionCreateManyWalletAccountInputSchema: z.ZodType<Prisma.Tra
 }).strict();
 
 export const TransactionUpdateWithoutWalletAccountInputSchema: z.ZodType<Prisma.TransactionUpdateWithoutWalletAccountInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6388,7 +6388,7 @@ export const TransactionUpdateWithoutWalletAccountInputSchema: z.ZodType<Prisma.
 }).strict();
 
 export const TransactionUncheckedUpdateWithoutWalletAccountInputSchema: z.ZodType<Prisma.TransactionUncheckedUpdateWithoutWalletAccountInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6402,7 +6402,7 @@ export const TransactionUncheckedUpdateWithoutWalletAccountInputSchema: z.ZodTyp
 }).strict();
 
 export const TransactionUncheckedUpdateManyWithoutWalletAccountInputSchema: z.ZodType<Prisma.TransactionUncheckedUpdateManyWithoutWalletAccountInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6416,7 +6416,7 @@ export const TransactionUncheckedUpdateManyWithoutWalletAccountInputSchema: z.Zo
 }).strict();
 
 export const BudgetPeriodConfigCreateManyBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigCreateManyBudgetInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => BudgetPeriodTypeSchema),
@@ -6426,7 +6426,7 @@ export const BudgetPeriodConfigCreateManyBudgetInputSchema: z.ZodType<Prisma.Bud
 }).strict();
 
 export const BudgetUserCreateManyBudgetInputSchema: z.ZodType<Prisma.BudgetUserCreateManyBudgetInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   permission: z.lazy(() => BudgetUserPermissionSchema),
@@ -6434,7 +6434,7 @@ export const BudgetUserCreateManyBudgetInputSchema: z.ZodType<Prisma.BudgetUserC
 }).strict();
 
 export const TransactionCreateManyBudgetInputSchema: z.ZodType<Prisma.TransactionCreateManyBudgetInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -6448,18 +6448,18 @@ export const TransactionCreateManyBudgetInputSchema: z.ZodType<Prisma.Transactio
 }).strict();
 
 export const BudgetUserInvitationCreateManyBudgetInputSchema: z.ZodType<Prisma.BudgetUserInvitationCreateManyBudgetInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   email: z.string().optional().nullable(),
-  token: z.string().uuid().optional(),
+  token: z.string().optional(),
   expiresAt: z.coerce.date(),
   permission: z.lazy(() => BudgetUserPermissionSchema).optional().nullable(),
   createdByUserId: z.string()
 }).strict();
 
 export const BudgetPeriodConfigUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUpdateWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6469,7 +6469,7 @@ export const BudgetPeriodConfigUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.
 }).strict();
 
 export const BudgetPeriodConfigUncheckedUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedUpdateWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6479,7 +6479,7 @@ export const BudgetPeriodConfigUncheckedUpdateWithoutBudgetInputSchema: z.ZodTyp
 }).strict();
 
 export const BudgetPeriodConfigUncheckedUpdateManyWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetPeriodConfigUncheckedUpdateManyWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => BudgetPeriodTypeSchema),z.lazy(() => EnumBudgetPeriodTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6489,7 +6489,7 @@ export const BudgetPeriodConfigUncheckedUpdateManyWithoutBudgetInputSchema: z.Zo
 }).strict();
 
 export const BudgetUserUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserUpdateWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => EnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6497,7 +6497,7 @@ export const BudgetUserUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUs
 }).strict();
 
 export const BudgetUserUncheckedUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserUncheckedUpdateWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => EnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6505,7 +6505,7 @@ export const BudgetUserUncheckedUpdateWithoutBudgetInputSchema: z.ZodType<Prisma
 }).strict();
 
 export const BudgetUserUncheckedUpdateManyWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserUncheckedUpdateManyWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => EnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6513,7 +6513,7 @@ export const BudgetUserUncheckedUpdateManyWithoutBudgetInputSchema: z.ZodType<Pr
 }).strict();
 
 export const TransactionUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.TransactionUpdateWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6527,7 +6527,7 @@ export const TransactionUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.Transac
 }).strict();
 
 export const TransactionUncheckedUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.TransactionUncheckedUpdateWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6541,7 +6541,7 @@ export const TransactionUncheckedUpdateWithoutBudgetInputSchema: z.ZodType<Prism
 }).strict();
 
 export const TransactionUncheckedUpdateManyWithoutBudgetInputSchema: z.ZodType<Prisma.TransactionUncheckedUpdateManyWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6555,11 +6555,11 @@ export const TransactionUncheckedUpdateManyWithoutBudgetInputSchema: z.ZodType<P
 }).strict();
 
 export const BudgetUserInvitationUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserInvitationUpdateWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  token: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  token: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   expiresAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => NullableEnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdByUser: z.lazy(() => UserUpdateOneRequiredWithoutCreatedBudgetUserInvitationsNestedInputSchema).optional(),
@@ -6567,11 +6567,11 @@ export const BudgetUserInvitationUpdateWithoutBudgetInputSchema: z.ZodType<Prism
 }).strict();
 
 export const BudgetUserInvitationUncheckedUpdateWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserInvitationUncheckedUpdateWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  token: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  token: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   expiresAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => NullableEnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdByUserId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6579,18 +6579,18 @@ export const BudgetUserInvitationUncheckedUpdateWithoutBudgetInputSchema: z.ZodT
 }).strict();
 
 export const BudgetUserInvitationUncheckedUpdateManyWithoutBudgetInputSchema: z.ZodType<Prisma.BudgetUserInvitationUncheckedUpdateManyWithoutBudgetInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  token: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  token: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   expiresAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   permission: z.union([ z.lazy(() => BudgetUserPermissionSchema),z.lazy(() => NullableEnumBudgetUserPermissionFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdByUserId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const BudgetUserInvitationResponseCreateManyInvitationInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseCreateManyInvitationInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   acceptedAt: z.coerce.date().optional().nullable(),
@@ -6599,7 +6599,7 @@ export const BudgetUserInvitationResponseCreateManyInvitationInputSchema: z.ZodT
 }).strict();
 
 export const BudgetUserInvitationResponseUpdateWithoutInvitationInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseUpdateWithoutInvitationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   acceptedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6608,7 +6608,7 @@ export const BudgetUserInvitationResponseUpdateWithoutInvitationInputSchema: z.Z
 }).strict();
 
 export const BudgetUserInvitationResponseUncheckedUpdateWithoutInvitationInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseUncheckedUpdateWithoutInvitationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   acceptedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6617,7 +6617,7 @@ export const BudgetUserInvitationResponseUncheckedUpdateWithoutInvitationInputSc
 }).strict();
 
 export const BudgetUserInvitationResponseUncheckedUpdateManyWithoutInvitationInputSchema: z.ZodType<Prisma.BudgetUserInvitationResponseUncheckedUpdateManyWithoutInvitationInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   acceptedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
@@ -6626,7 +6626,7 @@ export const BudgetUserInvitationResponseUncheckedUpdateManyWithoutInvitationInp
 }).strict();
 
 export const CategoryCreateManyParentInputSchema: z.ZodType<Prisma.CategoryCreateManyParentInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   type: z.lazy(() => CategoryTypeSchema),
@@ -6638,7 +6638,7 @@ export const CategoryCreateManyParentInputSchema: z.ZodType<Prisma.CategoryCreat
 }).strict();
 
 export const TransactionCreateManyCategoryInputSchema: z.ZodType<Prisma.TransactionCreateManyCategoryInput> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
@@ -6652,7 +6652,7 @@ export const TransactionCreateManyCategoryInputSchema: z.ZodType<Prisma.Transact
 }).strict();
 
 export const CategoryUpdateWithoutParentInputSchema: z.ZodType<Prisma.CategoryUpdateWithoutParentInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6666,7 +6666,7 @@ export const CategoryUpdateWithoutParentInputSchema: z.ZodType<Prisma.CategoryUp
 }).strict();
 
 export const CategoryUncheckedUpdateWithoutParentInputSchema: z.ZodType<Prisma.CategoryUncheckedUpdateWithoutParentInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6680,7 +6680,7 @@ export const CategoryUncheckedUpdateWithoutParentInputSchema: z.ZodType<Prisma.C
 }).strict();
 
 export const CategoryUncheckedUpdateManyWithoutParentInputSchema: z.ZodType<Prisma.CategoryUncheckedUpdateManyWithoutParentInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => CategoryTypeSchema),z.lazy(() => EnumCategoryTypeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6692,7 +6692,7 @@ export const CategoryUncheckedUpdateManyWithoutParentInputSchema: z.ZodType<Pris
 }).strict();
 
 export const TransactionUpdateWithoutCategoryInputSchema: z.ZodType<Prisma.TransactionUpdateWithoutCategoryInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6706,7 +6706,7 @@ export const TransactionUpdateWithoutCategoryInputSchema: z.ZodType<Prisma.Trans
 }).strict();
 
 export const TransactionUncheckedUpdateWithoutCategoryInputSchema: z.ZodType<Prisma.TransactionUncheckedUpdateWithoutCategoryInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6720,7 +6720,7 @@ export const TransactionUncheckedUpdateWithoutCategoryInputSchema: z.ZodType<Pri
 }).strict();
 
 export const TransactionUncheckedUpdateManyWithoutCategoryInputSchema: z.ZodType<Prisma.TransactionUncheckedUpdateManyWithoutCategoryInput> = z.object({
-  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),

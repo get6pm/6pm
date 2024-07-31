@@ -1,5 +1,8 @@
 import '../global.css'
 
+import * as Sentry from '@sentry/react-native'
+import { isRunningInExpoGo } from 'expo'
+
 import { tokenCache } from '@/lib/cache'
 import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
 import {
@@ -14,7 +17,7 @@ import {
   SpaceMono_400Regular,
   SpaceMono_700Bold,
 } from '@expo-google-fonts/space-mono'
-import { SplashScreen, Stack } from 'expo-router'
+import { SplashScreen, Stack, useNavigationContainerRef } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
 
 import 'react-native-reanimated'
@@ -42,6 +45,20 @@ import { AppState, type AppStateStatus, Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Svg } from 'react-native-svg'
+
+// Construct a new instrumentation instance. This is needed to communicate between the integration and React
+const routingInstrumentation = new Sentry.ReactNavigationInstrumentation()
+
+Sentry.init({
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  // debug: true,
+  integrations: [
+    new Sentry.ReactNativeTracing({
+      routingInstrumentation,
+      enableNativeFramesTracking: !isRunningInExpoGo(),
+    }),
+  ],
+})
 
 // Online status management
 onlineManager.setEventListener((setOnline) => {
@@ -82,7 +99,7 @@ export const unstable_settings = {
   initialRouteName: '(app)',
 }
 
-export default function RootLayout() {
+function RootLayout() {
   useWarmUpBrowser()
   const { colorScheme } = useColorScheme()
   const [fontsLoaded] = useFonts({
@@ -94,12 +111,19 @@ export default function RootLayout() {
     SpaceMono_400Regular,
     SpaceMono_700Bold,
   })
+  const ref = useNavigationContainerRef()
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', onAppStateChange)
 
     return () => subscription.remove()
   }, [])
+
+  useEffect(() => {
+    if (ref) {
+      routingInstrumentation.registerNavigationContainer(ref)
+    }
+  }, [ref])
 
   if (!fontsLoaded) {
     return null
@@ -142,3 +166,5 @@ export default function RootLayout() {
     </ClerkProvider>
   )
 }
+
+export default Sentry.wrap(RootLayout)

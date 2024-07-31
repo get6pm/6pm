@@ -1,9 +1,7 @@
 import { TransactionForm } from '@/components/transaction/transaction-form'
 import { sleep } from '@/lib/utils'
-import { deleteTransaction } from '@/mutations/transaction'
-import { transactionQueries } from '@/queries/transaction'
-import { walletQueries } from '@/queries/wallet'
 import {
+  useDeleteTransaction,
   useTransaction,
   useUpdateTransaction,
 } from '@/stores/transaction/hooks'
@@ -15,7 +13,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { PortalHost, useModalPortalRoot } from '@rn-primitives/portal'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { LoaderIcon } from 'lucide-react-native'
@@ -27,8 +24,8 @@ export default function EditRecordScreen() {
   const { transactionId } = useLocalSearchParams<{ transactionId: string }>()
   const { transaction } = useTransaction(transactionId!)
   const router = useRouter()
-  const queryClient = useQueryClient()
   const { mutateAsync: mutateUpdate } = useUpdateTransaction()
+  const { mutateAsync: mutateDelete } = useDeleteTransaction()
   const { sideOffset, ...rootProps } = useModalPortalRoot()
 
   const transactionForm = useForm<TransactionFormValues>({
@@ -59,36 +56,13 @@ export default function EditRecordScreen() {
     router.back()
   }
 
-  const { mutateAsync: mutateDelete } = useMutation({
-    mutationFn: deleteTransaction,
-    onMutate() {
-      router.back()
-    },
-    onError(error) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-      Alert.alert(error.message)
-    },
-    onSuccess() {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
-    },
-    async onSettled() {
-      await queryClient.invalidateQueries({
-        queryKey: transactionQueries.all,
-      })
-      await queryClient.invalidateQueries({
-        queryKey: walletQueries.list._def,
-      })
-    },
-    throwOnError: true,
-  })
-
   function handleDelete() {
     Haptics.selectionAsync()
     Alert.alert(
+      t(i18n)`Are you sure?`,
       t(
         i18n,
       )`This will delete the transaction. Are you sure you want to continue?`,
-      '',
       [
         {
           text: t(i18n)`Cancel`,
@@ -97,7 +71,18 @@ export default function EditRecordScreen() {
         {
           text: t(i18n)`Delete`,
           style: 'destructive',
-          onPress: () => mutateDelete(transactionId!),
+          onPress: async () => {
+            mutateDelete(transactionId!).catch((error) => {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+              Alert.alert(
+                error.message ||
+                  t(i18n)`An error occurred while deleting the transaction`,
+              )
+            })
+
+            router.back()
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+          },
         },
       ],
     )

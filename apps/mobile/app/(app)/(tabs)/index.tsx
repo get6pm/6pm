@@ -29,8 +29,8 @@ export default function HomeScreen() {
     {
       walletAccountId,
       // FIXME: This should be dynamic @bkdev98
-      from: dayjsExtended().subtract(1, 'month').startOf('month').toDate(),
-      to: dayjsExtended().endOf('day').toDate(),
+      from: dayjsExtended().subtract(10, 'year').startOf('year').toDate(),
+      to: dayjsExtended().add(10, 'year').endOf('year').toDate(),
     },
   )
 

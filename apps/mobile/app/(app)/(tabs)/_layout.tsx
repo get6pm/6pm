@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
+import { useUser } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { Link, Tabs } from 'expo-router'
@@ -12,10 +13,26 @@ import {
   PlusIcon,
   WalletIcon,
 } from 'lucide-react-native'
+import { usePostHog } from 'posthog-react-native'
+import { useEffect } from 'react'
 
 export default function TabLayout() {
   const { colorScheme } = useColorScheme()
   const { i18n } = useLingui()
+  const { user } = useUser()
+
+  const posthog = usePostHog()
+
+  useEffect(() => {
+    if (!user) {
+      return
+    }
+    posthog.identify(user?.id, {
+      email: user?.emailAddresses?.[0]?.emailAddress,
+      name: user?.fullName,
+    })
+  }, [user, posthog])
+
   return (
     <Tabs
       screenOptions={{

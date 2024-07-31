@@ -1,4 +1,5 @@
 import { TRANSACTION_ICONS } from '@/lib/icons/category-icons'
+import { useCategoryList } from '@/stores/category/hooks'
 import type { TransactionPopulated } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -15,22 +16,19 @@ type TransactionItemProps = {
 
 export const TransactionItem: FC<TransactionItemProps> = ({ transaction }) => {
   const { i18n } = useLingui()
+  const { categoryId } = transaction
+  const { categoriesDict } = useCategoryList()
+  const category = (categoryId && categoriesDict[categoryId]) || null
 
   const iconName = useMemo(() => {
-    return (
-      TRANSACTION_ICONS[transaction.note!] ||
-      transaction?.category?.icon ||
-      'Shapes'
-    )
-  }, [transaction])
+    return TRANSACTION_ICONS[transaction.note!] || category?.icon || 'Shapes'
+  }, [category?.icon, transaction.note])
 
   const transactionName = useMemo(() => {
     return (
-      t(i18n)`${transaction.note}` ||
-      transaction?.category?.name ||
-      t(i18n)`Uncategorized`
+      t(i18n)`${transaction.note}` || category?.name || t(i18n)`Uncategorized`
     )
-  }, [transaction, i18n])
+  }, [transaction.note, category?.name, i18n])
 
   return (
     <Link

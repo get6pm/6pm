@@ -39,9 +39,9 @@ function TransactionAmount() {
   return (
     <TextTicker
       value={amount}
-      className="font-semibold text-6xl text-foreground leading-tight text-center"
+      className="font-bold font-mono text-6xl text-foreground leading-tight text-center"
       suffix={currency}
-      suffixClassName="font-semibold ml-2 text-muted-foreground overflow-visible"
+      suffixClassName="font-bold font-mono ml-2 text-muted-foreground overflow-visible"
     />
   )
 }

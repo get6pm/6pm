@@ -3,13 +3,13 @@ import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import { type VariantProps, cva } from 'class-variance-authority'
 import { Text } from '../ui/text'
 
-const amountVariants = cva('font-semibold shrink-0', {
+const amountVariants = cva('font-bold font-mono shrink-0', {
   variants: {
     size: {
       xl: 'text-4xl',
       lg: 'text-3xl',
       md: 'text-2xl',
-      sm: 'text-base',
+      sm: 'text-lg',
     },
   },
   defaultVariants: {
@@ -17,7 +17,7 @@ const amountVariants = cva('font-semibold shrink-0', {
   },
 })
 
-const currencyVariants = cva('text-muted-foreground font-normal', {
+const currencyVariants = cva('text-muted-foreground font-mono', {
   variants: {
     size: {
       xl: 'text-base',

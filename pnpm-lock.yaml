@@ -120,6 +120,9 @@ importers:
       '@expo-google-fonts/be-vietnam-pro':
         specifier: ^0.2.3
         version: 0.2.3
+      '@expo-google-fonts/space-mono':
+        specifier: ^0.2.3
+        version: 0.2.3
       '@expo/vector-icons':
         specifier: ^14.0.0
         version: 14.0.2
@@ -1466,6 +1469,9 @@ packages:
 
   '@expo-google-fonts/be-vietnam-pro@0.2.3':
     resolution: {integrity: sha512-Iz2nrIX+Zp6efrs1TyLyarugVDEnYYmcjepD2VDclELLmU2AyQWndyutae7pcjlECJKBlGcgNJnsXuIsU+bT2Q==}
+
+  '@expo-google-fonts/space-mono@0.2.3':
+    resolution: {integrity: sha512-OpypFAHHAfIPipJXUIE1g0AF9juPciPPsUheCLyqgNNbxfVTiQjFFiTQI5up4Q2Xj9waNwoeFMBj0e6dvWi/mw==}
 
   '@expo/bunyan@4.0.0':
     resolution: {integrity: sha512-Ydf4LidRB/EBI+YrB+cVLqIseiRfjUI/AeHBgjGMtq3GroraDu81OV7zqophRgupngoL3iS3JUMDMnxO7g39qA==}
@@ -8609,6 +8615,8 @@ snapshots:
     optional: true
 
   '@expo-google-fonts/be-vietnam-pro@0.2.3': {}
+
+  '@expo-google-fonts/space-mono@0.2.3': {}
 
   '@expo/bunyan@4.0.0':
     dependencies:

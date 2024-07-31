@@ -17,15 +17,13 @@ import {
   useForm,
   useWatch,
 } from 'react-hook-form'
-import { ScrollView, View } from 'react-native'
+import { ScrollView } from 'react-native'
 import type { TextInput } from 'react-native'
 import { CurrencyField } from '../form-fields/currency-field'
 import { InputField } from '../form-fields/input-field'
 import { SubmitButton } from '../form-fields/submit-button'
-import { Label } from '../ui/label'
 import { Text } from '../ui/text'
 import { PeriodRangeField } from './period-range-field'
-import { SelectPeriodTypeField } from './select-period-type-field'
 
 type BudgetFormProps = {
   onSubmit: (data: BudgetFormValues) => void
@@ -57,7 +55,7 @@ function BudgetSubmitButton({
 export const BudgetForm = ({
   onSubmit,
   defaultValues,
-  sideOffset,
+  // sideOffset,
 }: BudgetFormProps) => {
   const { i18n } = useLingui()
   const nameInputRef = useRef<TextInput>(null)
@@ -138,7 +136,7 @@ export const BudgetForm = ({
             />
           }
         />
-        <Controller
+        {/* <Controller
           name="period.type"
           control={budgetForm.control}
           disabled
@@ -155,7 +153,7 @@ export const BudgetForm = ({
               />
             </View>
           )}
-        />
+        /> */}
 
         <PeriodRangeField />
 

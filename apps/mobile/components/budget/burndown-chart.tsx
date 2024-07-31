@@ -4,6 +4,7 @@ import { useBudgetList } from '@/stores/budget/hooks'
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import { nFormatter } from '@6pm/currency'
 import { dayjsExtended } from '@6pm/utilities'
+import { SpaceMono_700Bold } from '@expo-google-fonts/space-mono'
 import {
   DashPathEffect,
   Group,
@@ -47,7 +48,7 @@ function UsageLine({
 }: { points: PointsArray; diffAmount: number }) {
   const { colorScheme } = useColorScheme()
   const { path } = useLinePath(points, { curveType: 'cardinal' })
-  const font = useFont(require('../../assets/fonts/SpaceMono-Regular.ttf'), 16)
+  const font = useFont(SpaceMono_700Bold, 16)
 
   const lastPoint = points.filter((i) => !!i.y).pop()
 
@@ -171,7 +172,7 @@ export function BurndownChart() {
 
   return (
     <View className="bg-muted rounded-lg h-[187px] w-full">
-      <Text className="text-sm font-medium text-end self-end m-3 mb-0 text-muted-foreground">
+      <Text className="text-sm font-medium font-mono text-end self-end m-3 mb-0 text-muted-foreground">
         {totalBudget.toNumber().toLocaleString()} {defaultCurrency}
       </Text>
       <CartesianChart
@@ -192,7 +193,7 @@ export function BurndownChart() {
           </>
         )}
       </CartesianChart>
-      <Text className="text-sm font-medium m-3 mt-0 text-muted-foreground">
+      <Text className="text-sm font-medium font-mono m-3 mt-0 text-muted-foreground">
         {'0.00'} {defaultCurrency}
       </Text>
     </View>

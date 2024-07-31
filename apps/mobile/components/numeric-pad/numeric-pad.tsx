@@ -70,7 +70,7 @@ export function NumericPad({
             size="lg"
             onPressIn={Haptics.selectionAsync}
           >
-            <Text className="!text-2xl">{buttonKey}</Text>
+            <Text className="!text-2xl font-mono font-bold">{buttonKey}</Text>
           </Button>
         </View>
       ))}

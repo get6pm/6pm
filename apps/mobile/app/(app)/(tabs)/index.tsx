@@ -8,11 +8,13 @@ import { Text } from '@/components/ui/text'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { formatDateShort } from '@/lib/date'
 import { theme } from '@/lib/theme'
+import { walletQueries } from '@/queries/wallet'
 import { useTransactionList } from '@/stores/transaction/hooks'
 import { dayjsExtended } from '@6pm/utilities'
 import type { TransactionPopulated } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
+import { useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns/format'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useMemo, useState } from 'react'
@@ -24,6 +26,7 @@ export default function HomeScreen() {
   const { top, bottom } = useSafeAreaInsets()
   const { colorScheme } = useColorScheme()
   const [walletAccountId, setWalletAccountId] = useState<string | undefined>()
+  const queryClient = useQueryClient()
 
   const { transactions, isLoading, isRefetching, refetch } = useTransactionList(
     {
@@ -33,6 +36,11 @@ export default function HomeScreen() {
       to: dayjsExtended().add(10, 'year').endOf('year').toDate(),
     },
   )
+
+  const handleRefresh = () => {
+    refetch()
+    queryClient.invalidateQueries({ queryKey: walletQueries.list._def })
+  }
 
   const transactionsGroupByDate = useMemo(() => {
     const groupedTransactions = transactions.reduce(
@@ -70,7 +78,7 @@ export default function HomeScreen() {
         className="flex-1 bg-card"
         contentContainerStyle={{ paddingBottom: bottom + 32 }}
         refreshing={isRefetching}
-        onRefresh={refetch}
+        onRefresh={handleRefresh}
         sections={transactionsGroupByDate}
         keyExtractor={(item) => item.id}
         renderItem={({ item: transaction }) => (

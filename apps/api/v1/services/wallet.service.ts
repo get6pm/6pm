@@ -1,6 +1,7 @@
 import type { CreateWallet, UpdateWallet } from '@6pm/validation'
 import type { User, UserWalletAccount } from '@prisma/client'
 import prisma from '../../lib/prisma'
+import { DEFAULT_WALLETS } from '../constants/wallet.const'
 
 export async function findUserWallet({
   user,
@@ -113,4 +114,23 @@ export async function canUserReadWallet({
 export async function walletWithBalance(wallet: UserWalletAccount) {
   const balance = await getWalletBalance({ wallet })
   return { ...wallet, balance }
+}
+
+export async function bootstrapUserDefaultWalletAccounts({
+  user,
+  language,
+  preferredCurrency = 'USD',
+}: { user: User; language?: string; preferredCurrency?: string }) {
+  const defaultWallets = DEFAULT_WALLETS.map(({ vi, en, ...wallet }) => ({
+    ...wallet,
+    name: language === 'vi' ? vi : en,
+  }))
+
+  return await prisma.userWalletAccount.createMany({
+    data: defaultWallets.map((wallet) => ({
+      ...wallet,
+      preferredCurrency,
+      userId: user.id,
+    })),
+  })
 }

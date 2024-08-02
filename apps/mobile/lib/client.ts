@@ -13,6 +13,7 @@ export const clerk = getClerkInstance({
 export const getHonoClient = async () => {
   const token = await clerk.session?.getToken()
   const deviceLanguage = getLocales()[0].languageCode
+  const deviceCurrency = getLocales()[0]?.currencyCode
 
   const headers: Record<string, string> = {}
 
@@ -22,6 +23,10 @@ export const getHonoClient = async () => {
 
   if (deviceLanguage) {
     headers['x-device-language'] = deviceLanguage
+  }
+
+  if (deviceCurrency) {
+    headers['x-device-currency'] = deviceCurrency
   }
 
   return hc<AppType>(process.env.EXPO_PUBLIC_API_URL!, {

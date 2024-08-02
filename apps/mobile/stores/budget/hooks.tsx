@@ -15,7 +15,7 @@ export const useBudgetList = () => {
 
   const query = useQuery({
     ...budgetQueries.all({ setBudgetsState }),
-    initialData: budgets,
+    initialData: budgets.length > 0 ? budgets : undefined,
   })
 
   const {

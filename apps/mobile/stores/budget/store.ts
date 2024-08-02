@@ -9,6 +9,7 @@ export type BudgetItem = Budget & {
 
 interface BudgetStore {
   budgets: BudgetItem[]
+  _reset: () => void
   setBudgets: (budgets: BudgetItem[]) => void
   updateBudget: (budget: BudgetItem) => void
 }
@@ -17,6 +18,8 @@ export const useBudgetStore = create<BudgetStore>()(
   persist(
     (set) => ({
       budgets: [],
+      // biome-ignore lint/style/useNamingConvention: <explanation>
+      _reset: () => set({ budgets: [] }),
       setBudgets: (budgets: BudgetItem[]) => set({ budgets }),
       updateBudget: (budget: BudgetItem) =>
         set((state) => {

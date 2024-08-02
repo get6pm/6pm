@@ -35,7 +35,10 @@ export function useTransactionList({
       filters: { from, to },
       updateTransactionsByRangeInStore: updateTransactionsByRange,
     }),
-    initialData: transactionsInRangeFromStore,
+    initialData:
+      transactionsInRangeFromStore.length > 0
+        ? transactionsInRangeFromStore
+        : undefined,
   })
 
   const { transactions, transactionDict, totalExpense, totalIncome } =
@@ -98,7 +101,7 @@ export function useTransaction(transactionId: string) {
       updateTransactionInStore: updateTransaction,
       removeTransactionInStore: removeTransaction,
     }),
-    initialData: transaction,
+    initialData: transaction || undefined,
   })
 
   return { ...query, transaction }

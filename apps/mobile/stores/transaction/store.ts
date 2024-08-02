@@ -8,6 +8,7 @@ type Transaction = TransactionPopulated
 
 export interface TransactionStore {
   transactions: Transaction[]
+  _reset: () => void
   setTransactions: (transactions: Transaction[]) => void
   addTransactions: (transactions: Transaction[]) => void
   updateTransactionsByRange: (args: {
@@ -31,6 +32,8 @@ export const useTransactionStore = create<TransactionStore>()(
   persist(
     (set) => ({
       transactions: [],
+      // biome-ignore lint/style/useNamingConvention: <explanation>
+      _reset: () => set({ transactions: [] }),
       setTransactions: (transactions) => {
         set({ transactions: normalizeTransactions(transactions) })
       },

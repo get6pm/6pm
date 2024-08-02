@@ -217,7 +217,8 @@ export async function respondToBudgetInvitation({
 
   // Create find or new user
   const user =
-    (await findUserByEmail(userData.email)) || (await createUser(userData))
+    (await findUserByEmail(userData.email)) ||
+    (await createUser({ data: userData }))
 
   // Create invitation response
   const acceptedAt = new Date()

@@ -79,7 +79,7 @@
     "expo-web-browser": "~13.0.3",
     "hono": "^4.4.8",
     "lodash-es": "^4.17.21",
-    "lucide-react-native": "^0.390.0",
+    "lucide-react-native": "^0.417.0",
     "nativewind": "^4.0.36",
     "posthog-react-native": "^3.1.1",
     "react": "18.3.1",

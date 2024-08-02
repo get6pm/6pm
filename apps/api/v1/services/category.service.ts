@@ -1,6 +1,10 @@
 import type { CreateCategory, UpdateCategory } from '@6pm/validation'
-import type { Category, User } from '@prisma/client'
+import { type Category, CategoryType, type User } from '@prisma/client'
 import prisma from '../../lib/prisma'
+import {
+  DEFAULT_EXPENSE_CATEGORIES,
+  DEFAULT_INCOME_CATEGORIES,
+} from '../constants/category.const'
 
 export async function canUserCreateCategory({
   // biome-ignore lint/correctness/noUnusedVariables: <explanation>
@@ -115,5 +119,31 @@ export async function findCategoriesOfUser({
 }): Promise<Category[]> {
   return prisma.category.findMany({
     where: { userId: user.id },
+  })
+}
+
+export async function bootstrapUserDefaultCategories({
+  user,
+  language = 'en',
+}: { user: User; language?: string }) {
+  const defaultCategories = [
+    ...DEFAULT_INCOME_CATEGORIES.map((c) => ({
+      ...c,
+      type: CategoryType.INCOME,
+    })),
+    ...DEFAULT_EXPENSE_CATEGORIES.map((c) => ({
+      ...c,
+      type: CategoryType.EXPENSE,
+    })),
+  ].map(({ en, vi, ...category }) => ({
+    ...category,
+    name: language === 'vi' ? vi : en,
+  }))
+
+  return prisma.category.createMany({
+    data: defaultCategories.map((category) => ({
+      ...category,
+      userId: user.id,
+    })),
   })
 }

@@ -12,6 +12,11 @@ const GenericIcon: FC<
 > = ({ name, ...props }) => {
   const LucideIcon = icons[name]
 
+  if (!LucideIcon) {
+    console.error(`Icon "${name}" not found`)
+    return null
+  }
+
   return <LucideIcon {...props} />
 }
 

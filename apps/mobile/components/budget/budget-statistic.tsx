@@ -19,9 +19,9 @@ export function BudgetStatistic({
   return (
     <View className="flex-row items-center gap-6 justify-between">
       <View className="gap-1">
-        <Text className="font-bold font-mono text-2xl">
+        <Text className="font-bold text-2xl">
           {totalRemaining?.toLocaleString() || '0.00'}{' '}
-          <Text className="text-muted-foreground font-normal font-mono text-sm">
+          <Text className="text-muted-foreground font-normal text-sm">
             {defaultCurrency}
           </Text>
         </Text>
@@ -30,9 +30,9 @@ export function BudgetStatistic({
         </Text>
       </View>
       <View className="gap-1">
-        <Text className="font-bold font-mono text-2xl text-right">
+        <Text className="font-bold text-2xl text-right">
           {remainingPerDay?.toLocaleString() || '0.00'}{' '}
-          <Text className="text-muted-foreground font-normal font-mono text-sm">
+          <Text className="text-muted-foreground font-normal text-sm">
             {defaultCurrency}
           </Text>
         </Text>

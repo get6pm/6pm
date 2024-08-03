@@ -6,13 +6,12 @@ import { isRunningInExpoGo } from 'expo'
 import { tokenCache } from '@/lib/cache'
 import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
 import {
-  BeVietnamPro_300Light,
-  BeVietnamPro_400Regular,
-  BeVietnamPro_500Medium,
-  BeVietnamPro_600SemiBold,
-  BeVietnamPro_700Bold,
+  Inter_200ExtraLight,
+  Inter_300Light,
+  Inter_400Regular,
+  Inter_500Medium,
   useFonts,
-} from '@expo-google-fonts/be-vietnam-pro'
+} from '@expo-google-fonts/inter'
 import {
   SpaceMono_400Regular,
   SpaceMono_700Bold,
@@ -105,13 +104,12 @@ function RootLayout() {
   useWarmUpBrowser()
   const { colorScheme } = useColorScheme()
   const [fontsLoaded] = useFonts({
-    BeVietnamPro_300Light,
-    BeVietnamPro_400Regular,
-    BeVietnamPro_500Medium,
-    BeVietnamPro_600SemiBold,
-    BeVietnamPro_700Bold,
     SpaceMono_400Regular,
     SpaceMono_700Bold,
+    Inter_200ExtraLight,
+    Inter_300Light,
+    Inter_400Regular,
+    Inter_500Medium,
   })
   const ref = useNavigationContainerRef()
 

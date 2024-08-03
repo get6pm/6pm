@@ -22,7 +22,7 @@
     "@6pm/validation": "workspace:^",
     "@backpackapp-io/react-native-toast": "^0.11.0",
     "@clerk/clerk-expo": "^2.0.0",
-    "@expo-google-fonts/be-vietnam-pro": "^0.2.3",
+    "@expo-google-fonts/inter": "^0.2.3",
     "@expo-google-fonts/space-mono": "^0.2.3",
     "@expo/vector-icons": "^14.0.0",
     "@formatjs/intl-locale": "^4.0.0",

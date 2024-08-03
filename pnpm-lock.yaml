@@ -117,7 +117,7 @@ importers:
       '@clerk/clerk-expo':
         specifier: ^2.0.0
         version: 2.0.0(@types/react@18.2.79)(expo-auth-session@5.5.2(expo@51.0.14(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))))(expo-web-browser@13.0.3(expo@51.0.14(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))))(react-dom@18.3.1(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1)
-      '@expo-google-fonts/be-vietnam-pro':
+      '@expo-google-fonts/inter':
         specifier: ^0.2.3
         version: 0.2.3
       '@expo-google-fonts/space-mono':
@@ -1479,8 +1479,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@expo-google-fonts/be-vietnam-pro@0.2.3':
-    resolution: {integrity: sha512-Iz2nrIX+Zp6efrs1TyLyarugVDEnYYmcjepD2VDclELLmU2AyQWndyutae7pcjlECJKBlGcgNJnsXuIsU+bT2Q==}
+  '@expo-google-fonts/inter@0.2.3':
+    resolution: {integrity: sha512-iHK9FI+dnE45X5c2Z5hSFwNH4zUWethizpbv3XUn0FIGw5jwvzriENz0a6wCdkI4/d+1QkurnHo5XHti7TbNJA==}
 
   '@expo-google-fonts/space-mono@0.2.3':
     resolution: {integrity: sha512-OpypFAHHAfIPipJXUIE1g0AF9juPciPPsUheCLyqgNNbxfVTiQjFFiTQI5up4Q2Xj9waNwoeFMBj0e6dvWi/mw==}
@@ -8782,7 +8782,7 @@ snapshots:
   '@esbuild/win32-x64@0.17.19':
     optional: true
 
-  '@expo-google-fonts/be-vietnam-pro@0.2.3': {}
+  '@expo-google-fonts/inter@0.2.3': {}
 
   '@expo-google-fonts/space-mono@0.2.3': {}
 

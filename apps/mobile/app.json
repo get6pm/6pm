@@ -23,7 +23,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -57,6 +61,12 @@
         "projectId": "5853e031-3bfb-41fe-bfb6-c49f746c4adc"
       }
     },
-    "owner": "sixpm"
+    "owner": "sixpm",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/5853e031-3bfb-41fe-bfb6-c49f746c4adc"
+    }
   }
 }

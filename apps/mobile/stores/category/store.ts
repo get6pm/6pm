@@ -6,6 +6,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 interface CategoryStore {
   categories: Category[]
+  _reset: () => void
   setCategories: (categories: Category[]) => void
   updateCategory: (category: Category) => void
 }
@@ -18,6 +19,8 @@ export const useCategoryStore = create<CategoryStore>()(
   persist(
     (set) => ({
       categories: [],
+      // biome-ignore lint/style/useNamingConvention: <explanation>
+      _reset: () => set({ categories: [] }),
       setCategories: (categories: Category[]) =>
         set({ categories: normalizeCategories(categories) }),
       updateCategory: (category: Category) =>

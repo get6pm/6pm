@@ -26,6 +26,7 @@ import { useWarmUpBrowser } from '@/hooks/use-warm-up-browser'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { queryClient } from '@/lib/client'
 import { LocaleProvider } from '@/locales/provider'
+import { StoreProvider } from '@/stores/store-provider'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import NetInfo from '@react-native-community/netinfo'
@@ -147,28 +148,30 @@ function RootLayout() {
             client={queryClient}
             persistOptions={{ persister: asyncStoragePersister }}
           >
-            <LocaleProvider>
-              <ThemeProvider
-                value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-              >
-                <SafeAreaProvider>
-                  <GestureHandlerRootView>
-                    <BottomSheetModalProvider>
-                      <Stack screenOptions={{ headerShown: false }}>
-                        <Stack.Screen
-                          name="(aux)"
-                          options={{
-                            presentation: 'modal',
-                          }}
-                        />
-                      </Stack>
-                      <ToastRoot />
-                      <PortalHost />
-                    </BottomSheetModalProvider>
-                  </GestureHandlerRootView>
-                </SafeAreaProvider>
-              </ThemeProvider>
-            </LocaleProvider>
+            <StoreProvider>
+              <LocaleProvider>
+                <ThemeProvider
+                  value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+                >
+                  <SafeAreaProvider>
+                    <GestureHandlerRootView>
+                      <BottomSheetModalProvider>
+                        <Stack screenOptions={{ headerShown: false }}>
+                          <Stack.Screen
+                            name="(aux)"
+                            options={{
+                              presentation: 'modal',
+                            }}
+                          />
+                        </Stack>
+                        <ToastRoot />
+                        <PortalHost />
+                      </BottomSheetModalProvider>
+                    </GestureHandlerRootView>
+                  </SafeAreaProvider>
+                </ThemeProvider>
+              </LocaleProvider>
+            </StoreProvider>
           </PersistQueryClientProvider>
         </ClerkLoaded>
       </ClerkProvider>

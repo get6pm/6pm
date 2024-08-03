@@ -19,7 +19,7 @@ export const useCategoryList = () => {
 
   const query = useQuery({
     ...categoryQueries.all({ setCategoriesState }),
-    initialData: categories,
+    initialData: categories?.length > 0 ? categories : undefined,
   })
 
   const { categoriesDict, incomeCategories, expenseCategories } =

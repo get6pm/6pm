@@ -13,8 +13,6 @@ import { useLocale } from '@/locales/provider'
 import { useAuth } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { useQueryClient } from '@tanstack/react-query'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Link } from 'expo-router'
 import {
@@ -40,7 +38,6 @@ export default function SettingsScreen() {
   const { i18n } = useLingui()
   const { language } = useLocale()
   const { colorScheme } = useColorScheme()
-  const queryClient = useQueryClient()
 
   return (
     <View className="bg-card">
@@ -189,8 +186,6 @@ export default function SettingsScreen() {
                     text: t(i18n)`Sign out`,
                     style: 'destructive',
                     onPress: async () => {
-                      await AsyncStorage.clear()
-                      queryClient.clear()
                       await signOut()
                     },
                   },

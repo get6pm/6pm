@@ -3,6 +3,7 @@ import { useMeQuery } from '@/queries/auth'
 import {
   type TransactionFormValues,
   type TransactionPopulated,
+  TransactionPopulatedSchema,
   TransactionSchema,
 } from '@6pm/validation'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -91,10 +92,11 @@ export function useTransaction(transactionId: string) {
     (state) => state.removeTransaction,
   )
 
-  const transaction = useMemo(
-    () => transactions.find((t) => t.id === transactionId) || null,
-    [transactions, transactionId],
-  )
+  const transaction = useMemo(() => {
+    const t = transactions.find((t) => t.id === transactionId) || null
+
+    return t ? TransactionPopulatedSchema.parse(t) : null
+  }, [transactions, transactionId])
   const query = useQuery({
     ...transactionQueries.detail({
       transactionId,

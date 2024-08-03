@@ -1,4 +1,7 @@
-import type { TransactionPopulated } from '@6pm/validation'
+import {
+  type TransactionPopulated,
+  TransactionPopulatedSchema,
+} from '@6pm/validation'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { orderBy, uniqBy } from 'lodash-es'
 import { create } from 'zustand'
@@ -25,7 +28,7 @@ function normalizeTransactions(transactions: Transaction[]) {
     uniqBy(transactions, 'id'),
     ['date', 'createdAt'],
     ['desc', 'desc'],
-  )
+  ).map((t) => TransactionPopulatedSchema.parse(t))
 }
 
 export const useTransactionStore = create<TransactionStore>()(

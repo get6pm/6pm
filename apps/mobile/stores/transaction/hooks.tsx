@@ -10,6 +10,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { keyBy } from 'lodash-es'
 import { useMemo } from 'react'
 import { z } from 'zod'
+import { useCategoryList } from '../category/hooks'
 import { transactionQueries } from './queries'
 import { useTransactionStore } from './store'
 
@@ -114,6 +115,7 @@ export function useCreateTransaction() {
   const updateTransactionInStore = useTransactionStore(
     (state) => state.updateTransaction,
   )
+  const { categoriesDict } = useCategoryList()
 
   const mutation = useMutation({
     mutationFn: async ({
@@ -147,10 +149,18 @@ export function useCreateTransaction() {
       return transaction
     },
     onMutate({ id, data }) {
+      const category = data.categoryId ? categoriesDict[data.categoryId] : null
+      const categoryType = category?.type
+
+      const amount =
+        categoryType === 'INCOME'
+          ? Math.abs(data.amount)
+          : -Math.abs(data.amount)
+
       const transaction: TransactionPopulated = {
         id,
         ...data,
-        amount: -data.amount,
+        amount,
         createdAt: new Date(),
         updatedAt: new Date(),
         createdByUserId: userData?.id!,
@@ -175,6 +185,7 @@ export function useUpdateTransaction() {
     (state) => state.updateTransaction,
   )
   const transactions = useTransactionStore().transactions
+  const { categoriesDict } = useCategoryList()
 
   const mutation = useMutation({
     mutationFn: async ({
@@ -211,11 +222,19 @@ export function useUpdateTransaction() {
     },
     onMutate({ id, data }) {
       const transactionInStore = transactions.find((t) => t.id === id)
+      const category = data.categoryId ? categoriesDict[data.categoryId] : null
+      const categoryType = category?.type
+
+      const amount =
+        categoryType === 'INCOME'
+          ? Math.abs(data.amount)
+          : -Math.abs(data.amount)
+
       const transaction: TransactionPopulated = {
         id,
         ...transactionInStore,
         ...data,
-        amount: -data.amount,
+        amount,
         createdAt: transactionInStore?.createdAt ?? new Date(),
         updatedAt: new Date(),
         createdByUserId: transactionInStore?.createdByUserId ?? userData?.id!,

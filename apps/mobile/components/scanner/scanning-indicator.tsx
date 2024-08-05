@@ -31,7 +31,7 @@ export function ScanningIndicator({
   return (
     <Animated.View
       style={[style]}
-      className={cn('w-[80%] h-0.5 bg-background absolute', className)}
+      className={cn('absolute h-0.5 w-[80%] bg-background', className)}
       {...props}
     />
   )

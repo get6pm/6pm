@@ -14,6 +14,15 @@
     "enabled": true,
     "rules": {
       "recommended": false,
+      "nursery": {
+        "useSortedClasses": {
+          "level": "warn",
+          "options": {
+            "attributes": ["className"],
+            "functions": ["clsx", "cva", "tw"]
+          }
+        }
+      },
       "a11y": {
         "noAccessKey": "error",
         "noAriaUnsupportedElements": "error",

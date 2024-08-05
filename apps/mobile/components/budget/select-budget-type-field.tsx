@@ -71,10 +71,10 @@ export function SelectBudgetTypeField({
         <GenericIcon
           // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           name={options.find((option) => option.value === value)?.icon as any}
-          className="w-5 h-5 text-foreground absolute left-3"
+          className="absolute left-3 h-5 w-5 text-foreground"
         />
         <SelectValue
-          className="font-sans text-foreground left-8"
+          className="left-8 font-sans text-foreground"
           placeholder={t(i18n)`Select budget type`}
         >
           {value}

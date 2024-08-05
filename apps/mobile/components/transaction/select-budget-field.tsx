@@ -65,12 +65,12 @@ export function SelectBudgetField({
         disabled={disabled}
         hideArrow
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        className="gap-2 items-center flex-row rounded-full"
+        className="flex-row items-center gap-2 rounded-full"
       >
-        <LandPlotIcon className="w-5 h-5 text-primary" />
+        <LandPlotIcon className="h-5 w-5 text-primary" />
         <SelectValue
           className={cn(
-            'text-primary font-sans font-medium',
+            'font-medium font-sans text-primary',
             (!value || value === 'NO_SELECT') && '!text-muted-foreground',
           )}
           placeholder={t(i18n)`All Accounts`}
@@ -83,13 +83,13 @@ export function SelectBudgetField({
         align="center"
         portalHost="transaction-form"
       >
-        <SelectGroup className="px-1 max-w-[260px]">
+        <SelectGroup className="max-w-[260px] px-1">
           {options.map((option) => (
             <SelectItem
               key={option.value}
               value={option.value}
               label={option.label}
-              className="flex-row justify-between items-center"
+              className="flex-row items-center justify-between"
               extra={
                 option.value !== 'NO_SELECT' && (
                   <Text className="text-muted-foreground">

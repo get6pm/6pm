@@ -23,7 +23,7 @@ export function UserAvatar({
   return (
     <Avatar
       alt={`${user?.fullName}'s avatar`}
-      className={cn('bg-muted border-2 border-card h-12 w-12', className)}
+      className={cn('h-12 w-12 border-2 border-card bg-muted', className)}
     >
       <AvatarImage
         source={{

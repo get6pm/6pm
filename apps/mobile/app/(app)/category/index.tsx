@@ -23,7 +23,7 @@ export default function CategoriesScreen() {
 
   return (
     <SectionList
-      className="bg-card flex-1"
+      className="flex-1 bg-card"
       contentContainerStyle={{ paddingBottom: bottom }}
       refreshing={isRefetching}
       onRefresh={refetch}
@@ -31,19 +31,19 @@ export default function CategoriesScreen() {
       keyExtractor={(item) => item.id}
       renderItem={({ item: category }) => <CategoryItem category={category} />}
       renderSectionHeader={({ section: { title } }) => (
-        <Text className="text-muted-foreground mx-6 bg-card py-2">{title}</Text>
+        <Text className="mx-6 bg-card py-2 text-muted-foreground">{title}</Text>
       )}
       renderSectionFooter={({ section }) => (
         <>
           {!section.data.length &&
             (isRefetching ? (
               <>
-                <Skeleton className="mx-6 mb-5 mt-3 h-4 rounded-full" />
-                <Skeleton className="mx-6 mb-5 mt-3 h-4 rounded-full" />
-                <Skeleton className="mx-6 mb-5 mt-3 h-4 rounded-full" />
+                <Skeleton className="mx-6 mt-3 mb-5 h-4 rounded-full" />
+                <Skeleton className="mx-6 mt-3 mb-5 h-4 rounded-full" />
+                <Skeleton className="mx-6 mt-3 mb-5 h-4 rounded-full" />
               </>
             ) : (
-              <Text className="font-sans text-muted-foreground text-center mt-6 mb-9">
+              <Text className="mt-6 mb-9 text-center font-sans text-muted-foreground">
                 {t(i18n)`empty`}
               </Text>
             ))}

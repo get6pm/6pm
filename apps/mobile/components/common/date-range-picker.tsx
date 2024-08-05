@@ -39,7 +39,7 @@ function SpinnerDatePicker({
 
   return (
     <View className="gap-4">
-      <Text className="font-medium text-foreground mt-2 mx-6 text-center">
+      <Text className="mx-6 mt-2 text-center font-medium text-foreground">
         {title}
       </Text>
       <DateTimePicker
@@ -101,7 +101,7 @@ export function DateRangePicker({
             {fromDate ? formatDateShort(fromDate) : t(i18n)`From date`}
           </Text>
         </Button>
-        <ArrowRightIcon className="w-5 h-5 text-muted-foreground" />
+        <ArrowRightIcon className="h-5 w-5 text-muted-foreground" />
         <Button
           variant="outline"
           className="h-11 flex-1"

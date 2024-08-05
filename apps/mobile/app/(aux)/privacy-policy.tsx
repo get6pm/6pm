@@ -2,7 +2,7 @@ import { Text } from 'react-native'
 
 export default function PrivacyScreen() {
   return (
-    <Text className="font-sans m-4">
+    <Text className="m-4 font-sans">
       lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
       veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea

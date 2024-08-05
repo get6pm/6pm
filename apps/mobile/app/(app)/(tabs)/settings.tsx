@@ -46,19 +46,19 @@ export default function SettingsScreen() {
         className="bg-card"
       >
         <ProfileCard />
-        <Button className="mx-6 !px-4 !h-14 justify-between">
+        <Button className="!px-4 !h-14 mx-6 justify-between">
           <View>
-            <Text className="font-semibold !text-base">
+            <Text className="!text-base font-semibold">
               {t(i18n)`Get 6pm Pro`}
             </Text>
-            <Text className="font-medium opacity-65 !text-xs">
+            <Text className="!text-xs font-medium opacity-65">
               {t(i18n)`Unlocks full AI power and more!`}
             </Text>
           </View>
-          <LockKeyholeIcon className="w-6 h-6 text-muted-foreground" />
+          <LockKeyholeIcon className="h-6 w-6 text-muted-foreground" />
         </Button>
-        <View className="gap-2 mt-4">
-          <Text className="font-sans mx-6 text-muted-foreground">
+        <View className="mt-4 gap-2">
+          <Text className="mx-6 font-sans text-muted-foreground">
             {t(i18n)`General`}
           </Text>
           <View>
@@ -67,7 +67,7 @@ export default function SettingsScreen() {
                 label={t(i18n)`Wallet accounts`}
                 icon={WalletCardsIcon}
                 rightSection={
-                  <ChevronRightIcon className="w-5 h-5 text-primary" />
+                  <ChevronRightIcon className="h-5 w-5 text-primary" />
                 }
               />
             </Link>
@@ -76,7 +76,7 @@ export default function SettingsScreen() {
                 label={t(i18n)`Categories`}
                 icon={ShapesIcon}
                 rightSection={
-                  <ChevronRightIcon className="w-5 h-5 text-primary" />
+                  <ChevronRightIcon className="h-5 w-5 text-primary" />
                 }
               />
             </Link>
@@ -85,14 +85,14 @@ export default function SettingsScreen() {
                 label={t(i18n)`Magic inbox`}
                 icon={InboxIcon}
                 rightSection={
-                  <ChevronRightIcon className="w-5 h-5 text-primary" />
+                  <ChevronRightIcon className="h-5 w-5 text-primary" />
                 }
               />
             </Link>
           </View>
         </View>
         <View className="gap-2">
-          <Text className="font-sans mx-6 text-muted-foreground">
+          <Text className="mx-6 font-sans text-muted-foreground">
             {t(i18n)`App settings`}
           </Text>
           <View>
@@ -101,7 +101,7 @@ export default function SettingsScreen() {
                 label={t(i18n)`Appearance`}
                 icon={SwatchBookIcon}
                 rightSection={
-                  <ChevronRightIcon className="w-5 h-5 text-primary" />
+                  <ChevronRightIcon className="h-5 w-5 text-primary" />
                 }
               />
             </Link>
@@ -111,10 +111,10 @@ export default function SettingsScreen() {
                 icon={EarthIcon}
                 rightSection={
                   <View className="flex flex-row items-center gap-2">
-                    <Text className="text-muted-foreground font-sans uppercase">
+                    <Text className="font-sans text-muted-foreground uppercase">
                       {t(i18n)`${language}`}
                     </Text>
-                    <ChevronRightIcon className="w-5 h-5 text-primary" />
+                    <ChevronRightIcon className="h-5 w-5 text-primary" />
                   </View>
                 }
               />
@@ -137,7 +137,7 @@ export default function SettingsScreen() {
           </View>
         </View>
         <View className="gap-2">
-          <Text className="font-sans mx-6 text-muted-foreground">
+          <Text className="mx-6 font-sans text-muted-foreground">
             {t(i18n)`Others`}
           </Text>
           <View>
@@ -146,7 +146,7 @@ export default function SettingsScreen() {
                 label={t(i18n)`Send feedback`}
                 icon={MessageSquareQuoteIcon}
                 rightSection={
-                  <ChevronRightIcon className="w-5 h-5 text-primary" />
+                  <ChevronRightIcon className="h-5 w-5 text-primary" />
                 }
               />
             </Link>
@@ -154,7 +154,7 @@ export default function SettingsScreen() {
               label={t(i18n)`Rate 6pm on App Store`}
               icon={StarIcon}
               rightSection={
-                <ChevronRightIcon className="w-5 h-5 text-primary" />
+                <ChevronRightIcon className="h-5 w-5 text-primary" />
               }
               disabled
             />
@@ -162,7 +162,7 @@ export default function SettingsScreen() {
               label={t(i18n)`Share with friends`}
               icon={Share2Icon}
               rightSection={
-                <ChevronRightIcon className="w-5 h-5 text-primary" />
+                <ChevronRightIcon className="h-5 w-5 text-primary" />
               }
               disabled
             />
@@ -170,7 +170,7 @@ export default function SettingsScreen() {
               label={t(i18n)`Proudly open source`}
               icon={GithubIcon}
               rightSection={
-                <ChevronRightIcon className="w-5 h-5 text-primary" />
+                <ChevronRightIcon className="h-5 w-5 text-primary" />
               }
               onPress={() => Linking.openURL('https://github.com/sixpm-ai/6pm')}
             />
@@ -191,17 +191,17 @@ export default function SettingsScreen() {
                   },
                 ])
               }
-              className="justify-start gap-6 !px-6"
+              className="!px-6 justify-start gap-6"
             >
-              <LogOutIcon className="w-5 h-5 text-red-500" />
-              <Text className="text-red-500 font-normal group-active:text-red-500">
+              <LogOutIcon className="h-5 w-5 text-red-500" />
+              <Text className="font-normal text-red-500 group-active:text-red-500">
                 {t(i18n)`Sign out`}
               </Text>
             </Button>
           </View>
         </View>
         <View className="items-center gap-3">
-          <Logo className="w-16 h-16 mx-auto" />
+          <Logo className="mx-auto h-16 w-16" />
           <Text className="font-mono text-muted-foreground text-sm">
             {t(i18n)`ver.`}
             {Application.nativeApplicationVersion}
@@ -225,7 +225,7 @@ export default function SettingsScreen() {
           colorScheme === 'dark' ? 'transparent' : '#ffffff00',
           theme[colorScheme ?? 'light'].background,
         ]}
-        className="absolute bottom-0 left-0 right-0 h-20"
+        className="absolute right-0 bottom-0 left-0 h-20"
         pointerEvents="none"
       />
     </View>

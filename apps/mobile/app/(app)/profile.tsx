@@ -145,13 +145,13 @@ export default function ProfileScreen() {
                     ...user!,
                     imageUrl: value!,
                   }}
-                  className="w-20 h-20"
+                  className="h-20 w-20"
                 />
               )}
             />
           </Pressable>
           <View>
-            <Text className="font-sans text-primary font-medium text-base">
+            <Text className="font-medium font-sans text-base text-primary">
               {t(i18n)`Avatar`}
             </Text>
             <View className="flex-row items-center gap-2">
@@ -166,7 +166,7 @@ export default function ProfileScreen() {
                   profileForm.setValue('imageUrl', null, { shouldDirty: true })
                 }
               >
-                <Trash2Icon className="w-5 h-5 text-primary" />
+                <Trash2Icon className="h-5 w-5 text-primary" />
               </Button>
             </View>
           </View>
@@ -190,7 +190,7 @@ export default function ProfileScreen() {
       </FormProvider>
       <Separator className="mt-20 mb-4" />
       <View className="gap-3">
-        <Text className="font-sans text-primary font-medium text-base">
+        <Text className="font-medium font-sans text-base text-primary">
           {t(i18n)`Danger zone`}
         </Text>
         <Button
@@ -202,7 +202,7 @@ export default function ProfileScreen() {
         >
           <Text>{t(i18n)`Delete 6pm account`}</Text>
         </Button>
-        <Text className="font-sans text-muted-foreground text-sm mb-4">
+        <Text className="mb-4 font-sans text-muted-foreground text-sm">
           {t(i18n)`All your data will be deleted`}
         </Text>
       </View>

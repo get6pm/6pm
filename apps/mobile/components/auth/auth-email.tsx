@@ -147,7 +147,7 @@ export function AuthEmail() {
                     authEmailForm.reset()
                   }}
                 >
-                  <XCircleIcon className="w-5 h-5 text-muted-foreground" />
+                  <XCircleIcon className="h-5 w-5 text-muted-foreground" />
                 </Button>
               )
             }
@@ -164,7 +164,7 @@ export function AuthEmail() {
       </FormProvider>
       {verifying && (
         <FormProvider {...verifyEmailForm}>
-          <View className="gap-4 mt-3">
+          <View className="mt-3 gap-4">
             <InputField
               name="code"
               label={t(i18n)`Verification code`}

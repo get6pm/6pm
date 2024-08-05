@@ -32,7 +32,7 @@ export function ScanningOverlay({
     <Animated.View
       style={[style]}
       className={cn(
-        'flex-1 bg-background/50 absolute top-0 left-0 bottom-0 right-0 pointer-events-none',
+        'pointer-events-none absolute top-0 right-0 bottom-0 left-0 flex-1 bg-background/50',
         className,
       )}
       {...props}

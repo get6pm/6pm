@@ -17,11 +17,11 @@ export function BudgetStatistic({
   const defaultCurrency = useDefaultCurrency()
 
   return (
-    <View className="flex-row items-center gap-6 justify-between">
+    <View className="flex-row items-center justify-between gap-6">
       <View className="gap-1">
         <Text className="font-bold text-2xl">
           {totalRemaining?.toLocaleString() || '0.00'}{' '}
-          <Text className="text-muted-foreground font-normal text-sm">
+          <Text className="font-normal text-muted-foreground text-sm">
             {defaultCurrency}
           </Text>
         </Text>
@@ -30,13 +30,13 @@ export function BudgetStatistic({
         </Text>
       </View>
       <View className="gap-1">
-        <Text className="font-bold text-2xl text-right">
+        <Text className="text-right font-bold text-2xl">
           {remainingPerDay?.toLocaleString() || '0.00'}{' '}
-          <Text className="text-muted-foreground font-normal text-sm">
+          <Text className="font-normal text-muted-foreground text-sm">
             {defaultCurrency}
           </Text>
         </Text>
-        <Text className="text-muted-foreground text-right">
+        <Text className="text-right text-muted-foreground">
           {t(i18n)`Left per day`}
         </Text>
       </View>

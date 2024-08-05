@@ -69,19 +69,19 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
         params: { budgetId: budget.id },
       }}
     >
-      <Pressable className="gap-4 mx-6 mb-3 mt-1 justify-between p-4 border border-border rounded-lg">
-        <View className="flex-row items-center gap-6 justify-between">
+      <Pressable className="mx-6 mt-1 mb-3 justify-between gap-4 rounded-lg border border-border p-4">
+        <View className="flex-row items-center justify-between gap-6">
           <View className="gap-2">
             <Text
               numberOfLines={1}
-              className="flex-1 line-clamp-1 font-semibold text-lg"
+              className="line-clamp-1 flex-1 font-semibold text-lg"
             >
               {budget.name}
             </Text>
             <View className="flex-row items-center gap-2">
               <UserAvatar
                 user={user!}
-                className="w-7 h-7"
+                className="h-7 w-7"
                 fallbackLabelClassName="text-[10px]"
               />
               <Badge variant="outline" className="rounded-full">
@@ -91,13 +91,13 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
               </Badge>
             </View>
           </View>
-          <View className="gap-2 items-center flex-row">
+          <View className="flex-row items-center gap-2">
             <CircularProgress progress={usagePercentage} />
             <ChevronRightIcon className="size-6 text-foreground" />
           </View>
         </View>
         <Separator />
-        <View className="flex-row items-center gap-6 justify-between">
+        <View className="flex-row items-center justify-between gap-6">
           <View className="gap-1">
             <AmountFormat
               amount={remainingBalance}
@@ -106,12 +106,12 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
             />
             <Text
               numberOfLines={1}
-              className="flex-1 line-clamp-1 text-muted-foreground text-sm"
+              className="line-clamp-1 flex-1 text-muted-foreground text-sm"
             >
               {remainingDays}
             </Text>
           </View>
-          <View className="gap-1 justify-end">
+          <View className="justify-end gap-1">
             <AmountFormat
               amount={amountPerDay}
               displayNegativeSign
@@ -119,7 +119,7 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
             />
             <Text
               numberOfLines={1}
-              className="flex-1 line-clamp-1 text-right text-muted-foreground text-sm"
+              className="line-clamp-1 flex-1 text-right text-muted-foreground text-sm"
             >
               {t(i18n)`per day`}
             </Text>

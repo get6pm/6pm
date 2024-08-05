@@ -17,11 +17,11 @@ export function HomeHeader({
   const { user } = useUser()
 
   return (
-    <View className="flex bg-card px-6 pb-3 flex-row items-center justify-between">
+    <View className="flex flex-row items-center justify-between bg-card px-6 pb-3">
       <View className="flex flex-row items-center gap-3">
         <UserAvatar user={user!} />
         <View>
-          <Text className="font-medium text-muted-foreground text-sm font-sans">
+          <Text className="font-medium font-sans text-muted-foreground text-sm">
             {user?.fullName ?? user?.primaryEmailAddress?.emailAddress}
           </Text>
           <SelectWalletAccount
@@ -31,7 +31,7 @@ export function HomeHeader({
         </View>
       </View>
       <Button variant="secondary" size="icon">
-        <Bell className="w-5 h-5 text-primary" />
+        <Bell className="h-5 w-5 text-primary" />
       </Button>
     </View>
   )

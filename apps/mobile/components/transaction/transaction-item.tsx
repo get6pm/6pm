@@ -39,8 +39,8 @@ export const TransactionItem: FC<TransactionItemProps> = ({ transaction }) => {
         params: { transactionId: transaction.id },
       }}
     >
-      <Pressable className="flex flex-row items-center gap-4 px-6 justify-between h-14 active:bg-muted">
-        <View className="flex flex-row items-center gap-6 flex-1 line-clamp-1">
+      <Pressable className="flex h-14 flex-row items-center justify-between gap-4 px-6 active:bg-muted">
+        <View className="line-clamp-1 flex flex-1 flex-row items-center gap-6">
           <GenericIcon
             // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             name={iconName as any}
@@ -53,7 +53,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({ transaction }) => {
         <AmountFormat
           amount={transaction.amount}
           currency={transaction.currency}
-          size="sm"
+          className="font-semibold text-md"
           displayPositiveColor
         />
       </Pressable>

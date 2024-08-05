@@ -9,7 +9,7 @@ export function BackButton() {
   }
   return (
     <Button size="icon" variant="ghost" onPress={router.back}>
-      <ArrowLeftIcon className="w-6 h-6 text-primary" />
+      <ArrowLeftIcon className="h-6 w-6 text-primary" />
     </Button>
   )
 }

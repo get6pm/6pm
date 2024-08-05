@@ -30,11 +30,11 @@ export function CurrencyField({
           sheetRef.current?.present()
         }}
         className={cn(
-          '!border-r !h-11 !py-0 !px-0 !w-16 border-input rounded-r-none',
+          '!border-r !h-11 !py-0 !px-0 !w-16 rounded-r-none border-input',
           className,
         )}
       >
-        <Text className="text-primary font-normal text-sm">{value}</Text>
+        <Text className="font-normal text-primary text-sm">{value}</Text>
       </Button>
       <BottomSheetModal
         ref={sheetRef}

@@ -23,7 +23,7 @@ export function IconGridSheet({ icons, onSelect, value }: IconGridSheetProps) {
       renderItem={({ item }) => (
         <Button
           size="icon"
-          className="h-16 flex-1 flex flex-grow"
+          className="flex h-16 flex-1 flex-grow"
           variant={value === item ? 'secondary' : 'ghost'}
           onPress={() => onSelect(item)}
         >

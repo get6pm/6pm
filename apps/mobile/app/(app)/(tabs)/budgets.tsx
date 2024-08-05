@@ -153,7 +153,7 @@ export default function BudgetsScreen() {
           })
         }}
       >
-        <Animated.View className="gap-6 py-6 px-6" style={summaryStyle}>
+        <Animated.View className="gap-6 px-6 py-6" style={summaryStyle}>
           <BudgetStatistic totalRemaining={1000} remainingPerDay={100} />
         </Animated.View>
         <Animated.View
@@ -174,7 +174,7 @@ export default function BudgetsScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item: budget }) => <BudgetItem budget={budget} />}
         renderSectionHeader={({ section: { title } }) => (
-          <Text className="text-muted-foreground bg-card py-2 px-6">
+          <Text className="bg-card px-6 py-2 text-muted-foreground">
             {title}
           </Text>
         )}
@@ -193,7 +193,7 @@ export default function BudgetsScreen() {
           colorScheme === 'dark' ? 'transparent' : '#ffffff00',
           theme[colorScheme ?? 'light'].background,
         ]}
-        className="absolute bottom-0 left-0 right-0 h-36"
+        className="absolute right-0 bottom-0 left-0 h-36"
         pointerEvents="none"
       />
       <Toolbar />

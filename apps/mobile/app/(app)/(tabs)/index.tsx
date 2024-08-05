@@ -1,3 +1,4 @@
+import { AmountFormat } from '@/components/common/amount-format'
 import { ListSkeleton } from '@/components/common/list-skeleton'
 import { Toolbar } from '@/components/common/toolbar'
 import { HomeHeader } from '@/components/home/header'
@@ -11,12 +12,12 @@ import { theme } from '@/lib/theme'
 import { walletQueries } from '@/queries/wallet'
 import { useTransactionList } from '@/stores/transaction/hooks'
 import { dayjsExtended } from '@6pm/utilities'
-import type { TransactionPopulated } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns/format'
 import { LinearGradient } from 'expo-linear-gradient'
+import { groupBy, mapValues, orderBy, sumBy } from 'lodash-es'
 import { useMemo, useState } from 'react'
 import { SectionList, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -43,24 +44,18 @@ export default function HomeScreen() {
   }
 
   const transactionsGroupByDate = useMemo(() => {
-    const groupedTransactions = transactions.reduce(
-      (acc, transaction) => {
-        const key = format(transaction.date, 'yyyy-MM-dd')
-        if (!acc[key]) {
-          acc[key] = []
-        }
-        acc[key].push(transaction)
-        return acc
-      },
-      {} as Record<string, TransactionPopulated[]>,
+    const groupedByDay = groupBy(transactions, (transaction) =>
+      format(new Date(transaction.date), 'yyyy-MM-dd'),
     )
-    return Object.entries(groupedTransactions)
-      .map(([key, data]) => ({
-        key,
-        title: formatDateShort(new Date(key)),
-        data,
-      }))
-      .sort((a, b) => b.key.localeCompare(a.key))
+
+    const sectionDict = mapValues(groupedByDay, (transactions, key) => ({
+      key,
+      title: formatDateShort(new Date(key)),
+      data: orderBy(transactions, 'date', 'desc'),
+      sum: sumBy(transactions, 'amount'),
+    }))
+
+    return Object.values(sectionDict)
   }, [transactions])
 
   return (
@@ -84,10 +79,16 @@ export default function HomeScreen() {
         renderItem={({ item: transaction }) => (
           <TransactionItem transaction={transaction} />
         )}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text className="text-muted-foreground mx-6 bg-card py-2">
-            {title}
-          </Text>
+        renderSectionHeader={({ section: { title, sum } }) => (
+          <View className="mx-6 pt-4 flex-row justify-between border-muted-foreground/20 border-b bg-card py-2 align-center">
+            <Text className="text-muted-foreground">{title}</Text>
+            <AmountFormat
+              amount={sum}
+              className="font-semibold text-md text-muted-foreground"
+              displayNegativeSign
+              displayPositiveSign
+            />
+          </View>
         )}
         // onEndReached={() => {
         //   if (hasNextPage) {
@@ -98,7 +99,7 @@ export default function HomeScreen() {
         ListFooterComponent={isLoading ? <ListSkeleton /> : null}
       />
       {!transactions.length && !isLoading && (
-        <View className="absolute bottom-20 flex-row right-6 z-50 gap-3">
+        <View className="absolute right-6 bottom-20 z-50 flex-row gap-3">
           <Text>{t(i18n)`Add your first transaction here`}</Text>
           <HandyArrow className="mt-4 text-muted-foreground" />
         </View>
@@ -108,7 +109,7 @@ export default function HomeScreen() {
           colorScheme === 'dark' ? 'transparent' : '#ffffff00',
           theme[colorScheme ?? 'light'].background,
         ]}
-        className="absolute bottom-0 left-0 right-0 h-36"
+        className="absolute right-0 bottom-0 left-0 h-36"
         pointerEvents="none"
       />
       <Toolbar />

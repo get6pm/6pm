@@ -44,7 +44,7 @@ export function SelectAccountField({
     <>
       <Button
         variant="secondary"
-        className="border border-border !px-3 max-w-[160px]"
+        className="!px-3 max-w-[160px] border border-border"
         disabled={isLoading}
         onPress={() => {
           Haptics.selectionAsync()
@@ -56,10 +56,10 @@ export function SelectAccountField({
           <GenericIcon
             // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             name={selectedWalletAccount.icon as any}
-            className="w-5 h-5 text-primary"
+            className="h-5 w-5 text-primary"
           />
         )}
-        <Text className="shrink line-clamp-1">
+        <Text className="line-clamp-1 shrink">
           {selectedWalletAccount?.name || t(i18n)`Select account`}
         </Text>
       </Button>
@@ -93,7 +93,7 @@ export function SelectAccountField({
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           ListHeaderComponent={
-            <Text className="text-base font-medium text-center pt-2">
+            <Text className="pt-2 text-center font-medium text-base">
               {t(i18n)`Wallet Accounts`}
             </Text>
           }
@@ -101,7 +101,7 @@ export function SelectAccountField({
           renderItem={({ item }) => (
             <Button
               size="icon"
-              className="h-20 flex-1 flex gap-2 px-2 flex-col flex-grow"
+              className="flex h-20 flex-1 flex-grow flex-col gap-2 px-2"
               variant={value === item ? 'secondary' : 'ghost'}
               onPress={async () => {
                 Haptics.selectionAsync()
@@ -117,7 +117,7 @@ export function SelectAccountField({
                 name={item.icon as any}
                 className="size-8 text-foreground"
               />
-              <Text className="text-muted-foreground line-clamp-1 text-center !text-sm">
+              <Text className="!text-sm line-clamp-1 text-center text-muted-foreground">
                 {item.name}
               </Text>
             </Button>

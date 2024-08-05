@@ -15,11 +15,11 @@ export function AddNewButton({ label, className, onPress }: AddNewButtonProps) {
       variant="outline"
       onPress={onPress}
       className={cn(
-        'border-dashed items-center gap-4 mx-6 my-1.5 !h-11 !py-2',
+        '!h-11 !py-2 mx-6 my-1.5 items-center gap-4 border-dashed',
         className,
       )}
     >
-      <PlusCircleIcon className="w-5 h-5 text-muted-foreground" />
+      <PlusCircleIcon className="h-5 w-5 text-muted-foreground" />
       <Text className="font-normal font-sans">{label}</Text>
     </Button>
   )

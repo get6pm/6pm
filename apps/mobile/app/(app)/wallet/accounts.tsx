@@ -30,12 +30,12 @@ export default function WalletAccountsScreen() {
       ListEmptyComponent={
         isLoading ? (
           <>
-            <Skeleton className="mx-6 mb-5 mt-3 h-4 rounded-full" />
-            <Skeleton className="mx-6 mb-5 mt-3 h-4 rounded-full" />
-            <Skeleton className="mx-6 mb-5 mt-3 h-4 rounded-full" />
+            <Skeleton className="mx-6 mt-3 mb-5 h-4 rounded-full" />
+            <Skeleton className="mx-6 mt-3 mb-5 h-4 rounded-full" />
+            <Skeleton className="mx-6 mt-3 mb-5 h-4 rounded-full" />
           </>
         ) : (
-          <Text className="font-sans text-muted-foreground text-center mt-6 mb-9">
+          <Text className="mt-6 mb-9 text-center font-sans text-muted-foreground">
             {t(i18n)`empty`}
           </Text>
         )

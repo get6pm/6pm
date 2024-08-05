@@ -56,7 +56,7 @@ export function NumericPad({
   return (
     <Animated.View
       className={cn(
-        'flex-wrap bg-card flex-row border-t border-border items-center content-center py-1.5 px-2',
+        'flex-row flex-wrap content-center items-center border-border border-t bg-card px-2 py-1.5',
         className,
       )}
       style={{ paddingBottom: bottom }}

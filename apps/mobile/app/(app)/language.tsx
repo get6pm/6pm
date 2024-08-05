@@ -17,7 +17,7 @@ export default function LanguageScreen() {
         label={t(i18n)`English`}
         rightSection={
           language === 'en' && (
-            <CheckCircleIcon className="w-5 h-5 text-primary" />
+            <CheckCircleIcon className="h-5 w-5 text-primary" />
           )
         }
         onPress={() => {
@@ -29,7 +29,7 @@ export default function LanguageScreen() {
         label={t(i18n)`Vietnamese`}
         rightSection={
           language === 'vi' && (
-            <CheckCircleIcon className="w-5 h-5 text-primary" />
+            <CheckCircleIcon className="h-5 w-5 text-primary" />
           )
         }
         onPress={() => {

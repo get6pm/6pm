@@ -59,15 +59,15 @@ export function SelectWalletAccount({
         disabled={disabled}
         hideArrow
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        className="gap-2 items-center flex-row !border-none !border-transparent px-0 !py-0 !h-6"
+        className="!border-none !border-transparent !py-0 !h-6 flex-row items-center gap-2 px-0"
       >
         <SelectValue
-          className="text-primary font-sans font-medium"
+          className="font-medium font-sans text-primary"
           placeholder={t(i18n)`All Accounts`}
         >
           {value}
         </SelectValue>
-        <ArrowDownUp className="w-4 h-4 text-muted-foreground" />
+        <ArrowDownUp className="h-4 w-4 text-muted-foreground" />
       </SelectTrigger>
       <SelectContent sideOffset={6}>
         <SelectGroup className="px-1">

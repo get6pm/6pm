@@ -171,8 +171,8 @@ export function BurndownChart() {
   )
 
   return (
-    <View className="bg-muted rounded-lg h-[187px] w-full">
-      <Text className="text-sm font-medium text-end self-end m-3 mb-0 text-muted-foreground">
+    <View className="h-[187px] w-full rounded-lg bg-muted">
+      <Text className="m-3 mb-0 self-end text-end font-medium text-muted-foreground text-sm">
         {totalBudget.toNumber().toLocaleString()} {defaultCurrency}
       </Text>
       <CartesianChart
@@ -193,7 +193,7 @@ export function BurndownChart() {
           </>
         )}
       </CartesianChart>
-      <Text className="text-sm font-medium m-3 mt-0 text-muted-foreground">
+      <Text className="m-3 mt-0 font-medium text-muted-foreground text-sm">
         {'0.00'} {defaultCurrency}
       </Text>
     </View>

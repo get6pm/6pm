@@ -31,7 +31,7 @@ export function SelectAccountIconField({
           Keyboard.dismiss()
           sheetRef.current?.present()
         }}
-        className="!border-r !h-11 !py-0 !px-0 !w-16 border-input rounded-r-none"
+        className="!border-r !h-11 !py-0 !px-0 !w-16 rounded-r-none border-input"
       >
         <GenericIcon name={value} className="size-6 text-primary" />
       </Button>

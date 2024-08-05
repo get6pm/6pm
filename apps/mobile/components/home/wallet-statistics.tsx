@@ -21,13 +21,13 @@ export function WalletStatistics() {
 
   return (
     <View className="gap-3">
-      <Pressable className="border-b border-primary self-start">
+      <Pressable className="self-start border-primary border-b">
         <Text className="w-fit self-start leading-tight">
           {t(i18n)`Current balance`}
         </Text>
       </Pressable>
       {isLoading ? (
-        <Skeleton className="w-44 h-10" />
+        <Skeleton className="h-10 w-44" />
       ) : (
         <AmountFormat amount={currentBalance} size="xl" displayNegativeSign />
       )}

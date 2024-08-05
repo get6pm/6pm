@@ -13,7 +13,7 @@ export default function EditCategoryScreen() {
 
   if (!category) {
     return (
-      <View className="flex-1 bg-card items-center justify-center">
+      <View className="flex-1 items-center justify-center bg-card">
         <Text className="text-muted-foreground">Category not found</Text>
       </View>
     )

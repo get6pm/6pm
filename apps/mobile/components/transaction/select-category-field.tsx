@@ -54,7 +54,7 @@ export function SelectCategoryField({
     <>
       <Button
         variant="secondary"
-        className="border border-border !px-3 max-w-[160px]"
+        className="!px-3 max-w-[160px] border border-border"
         disabled={isLoading}
         onPress={() => {
           Haptics.selectionAsync()
@@ -65,9 +65,9 @@ export function SelectCategoryField({
         <GenericIcon
           // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           name={(selectedCategory?.icon as any) || 'Shapes'}
-          className="w-5 h-5 text-primary"
+          className="h-5 w-5 text-primary"
         />
-        <Text className="shrink line-clamp-1">
+        <Text className="line-clamp-1 shrink">
           {selectedCategory?.name || t(i18n)`Uncategorized`}
         </Text>
       </Button>
@@ -99,7 +99,7 @@ export function SelectCategoryField({
           contentContainerClassName="px-2"
           keyboardDismissMode="on-drag"
           renderSectionHeader={({ section: { title } }) => (
-            <Text className="text-base bg-card font-medium text-center py-2">
+            <Text className="bg-card py-2 text-center font-medium text-base">
               {title}
             </Text>
           )}
@@ -114,10 +114,10 @@ export function SelectCategoryField({
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => (
-                  <View className="p-1.5 w-[25%]">
+                  <View className="w-[25%] p-1.5">
                     <Button
                       size="icon"
-                      className="h-20 flex flex-1 w-full gap-2 px-2 flex-col flex-grow"
+                      className="flex h-20 w-full flex-1 flex-grow flex-col gap-2 px-2"
                       variant={value === item ? 'secondary' : 'ghost'}
                       onPress={async () => {
                         Haptics.selectionAsync()
@@ -133,7 +133,7 @@ export function SelectCategoryField({
                         name={item.icon as any}
                         className="size-8 text-foreground"
                       />
-                      <Text className="text-muted-foreground line-clamp-1 text-center !text-sm">
+                      <Text className="!text-sm line-clamp-1 text-center text-muted-foreground">
                         {item.name}
                       </Text>
                     </Button>

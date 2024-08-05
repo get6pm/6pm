@@ -73,7 +73,7 @@ export default function NewRecordScreen() {
 
   if (!defaultWallet) {
     return (
-      <View className="flex-1 items-center bg-muted justify-center">
+      <View className="flex-1 items-center justify-center bg-muted">
         <LoaderIcon className="size-7 animate-spin text-primary" />
       </View>
     )

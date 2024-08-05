@@ -111,7 +111,7 @@ export function Scanner({ onScanStart, onScanResult }: ScannerProps) {
   if (!permission) {
     // Camera permissions are still loading.
     return (
-      <View className="flex-1 items-center bg-muted justify-center">
+      <View className="flex-1 items-center justify-center bg-muted">
         <LoaderIcon className="size-7 animate-spin text-primary" />
       </View>
     )
@@ -120,7 +120,7 @@ export function Scanner({ onScanStart, onScanResult }: ScannerProps) {
   if (!permission.granted) {
     // Camera permissions are not granted.
     return (
-      <View className="flex-1 items-center bg-muted gap-4 justify-center">
+      <View className="flex-1 items-center justify-center gap-4 bg-muted">
         <CameraIcon className="size-16 text-muted-foreground" />
         <Text>{t(i18n)`Camera permissions are not granted`}</Text>
         <Button variant="outline" onPress={requestPermission}>
@@ -132,7 +132,7 @@ export function Scanner({ onScanStart, onScanResult }: ScannerProps) {
 
   if (imageUri) {
     return (
-      <View className="flex-1 bg-primary relative">
+      <View className="relative flex-1 bg-primary">
         <ImageBackground
           source={{ uri: imageUri }}
           className="flex-1 items-center"
@@ -140,13 +140,13 @@ export function Scanner({ onScanStart, onScanResult }: ScannerProps) {
         >
           <ScanningOverlay />
           {/* <ScanningIndicator /> */}
-          <View className="top-6 bg-background p-2 px-4 rounded-md">
+          <View className="top-6 rounded-md bg-background p-2 px-4">
             <Text>{t(i18n)`Processing transaction...`}</Text>
           </View>
           <Button
             variant="secondary"
             size="icon"
-            className="w-auto !opacity-100 h-auto p-1 absolute bottom-8 rounded-full bg-primary-foreground"
+            className="!opacity-100 absolute bottom-8 h-auto w-auto rounded-full bg-primary-foreground p-1"
             disabled
           >
             <AnimatedRing />
@@ -164,14 +164,14 @@ export function Scanner({ onScanStart, onScanResult }: ScannerProps) {
         facing={facing}
         style={{ paddingBottom: bottom }}
       >
-        <View className="top-6 bg-background/50 p-2 px-4 rounded-md">
+        <View className="top-6 rounded-md bg-background/50 p-2 px-4">
           <Text>{t(i18n)`Take a picture of your transaction`}</Text>
         </View>
-        <View className="absolute bottom-8 left-6 right-6 flex-row items-center justify-between gap-4">
+        <View className="absolute right-6 bottom-8 left-6 flex-row items-center justify-between gap-4">
           <Button
             variant="secondary"
             size="icon"
-            className="rounded-full w-12 h-12"
+            className="h-12 w-12 rounded-full"
             onPress={pickImage}
           >
             <ImagesIcon className="size-6 text-primary" />
@@ -179,15 +179,15 @@ export function Scanner({ onScanStart, onScanResult }: ScannerProps) {
           <Button
             variant="secondary"
             size="icon"
-            className="w-auto h-auto p-1 rounded-full bg-primary-foreground"
+            className="h-auto w-auto rounded-full bg-primary-foreground p-1"
             onPress={takePicture}
           >
-            <View className="w-16 h-16 bg-primary-foreground border-2 border-primary rounded-full" />
+            <View className="h-16 w-16 rounded-full border-2 border-primary bg-primary-foreground" />
           </Button>
           <Button
             variant="secondary"
             size="icon"
-            className="rounded-full w-12 h-12"
+            className="h-12 w-12 rounded-full"
             onPress={toggleFacing}
           >
             <SwitchCameraIcon className="size-6 text-primary" />

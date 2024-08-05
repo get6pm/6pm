@@ -33,7 +33,7 @@ export function PeriodRangeField() {
         }}
       />
       {!!errors.period?.root?.message && (
-        <Text className="text-destructive text-center">
+        <Text className="text-center text-destructive">
           {errors.period.root.message.toString()}
         </Text>
       )}

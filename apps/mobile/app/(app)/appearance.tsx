@@ -12,10 +12,10 @@ export default function AppearanceScreen() {
 
   return (
     <ScrollView className="bg-card" contentContainerClassName="px-6 py-3">
-      <Text className="font-sans text-primary font-medium text-base">
+      <Text className="font-medium font-sans text-base text-primary">
         {t(i18n)`App theme`}
       </Text>
-      <Text className="font-sans text-muted-foreground text-sm mb-4">
+      <Text className="mb-4 font-sans text-muted-foreground text-sm">
         {t(i18n)`Choose a preferred theme for the 6pm`}
       </Text>
       <Tabs
@@ -25,11 +25,11 @@ export default function AppearanceScreen() {
       >
         <TabsList>
           <TabsTrigger value="light">
-            <SunIcon className="w-5 h-5 text-muted-foreground" />
+            <SunIcon className="h-5 w-5 text-muted-foreground" />
             <Text>{t(i18n)`Light`}</Text>
           </TabsTrigger>
           <TabsTrigger value="dark">
-            <MoonStarIcon className="w-5 h-5 text-muted-foreground" />
+            <MoonStarIcon className="h-5 w-5 text-muted-foreground" />
             <Text>{t(i18n)`Dark`}</Text>
           </TabsTrigger>
         </TabsList>

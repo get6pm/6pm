@@ -84,7 +84,7 @@ export function DatePicker({
           sheetRef.current?.present()
         }}
       >
-        <Calendar className="w-5 h-5 text-primary" />
+        <Calendar className="h-5 w-5 text-primary" />
         <Text>{formatDateShort(value)}</Text>
       </Button>
       <BottomSheetModal

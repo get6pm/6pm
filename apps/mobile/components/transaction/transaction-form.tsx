@@ -39,7 +39,7 @@ function TransactionAmount() {
   return (
     <TextTicker
       value={amount}
-      className="font-bold text-6xl text-foreground leading-tight text-center"
+      className="text-center font-bold text-6xl text-foreground leading-tight"
       suffix={currency}
       suffixClassName="font-bold ml-2 text-muted-foreground overflow-visible"
     />
@@ -92,7 +92,7 @@ export const TransactionForm = ({
         automaticallyAdjustKeyboardInsets
         contentContainerClassName="flex-1 justify-between bg-muted"
       >
-        <View className="flex-row justify-between items-center p-4 pb-0">
+        <View className="flex-row items-center justify-between p-4 pb-0">
           <Button size="icon" variant="secondary" onPress={onCancel}>
             <XIcon className="size-6 text-primary" />
           </Button>
@@ -121,7 +121,7 @@ export const TransactionForm = ({
           </View>
         </View>
         <View className="flex-1 items-center justify-center pb-12">
-          <View className="w-full h-24 justify-end mb-2">
+          <View className="mb-2 h-24 w-full justify-end">
             <TransactionAmount />
           </View>
           <Controller
@@ -141,7 +141,7 @@ export const TransactionForm = ({
             name="note"
             placeholder={t(i18n)`transaction note`}
             autoCapitalize="none"
-            className="truncate line-clamp-1 bg-transparent h-8 border-0"
+            className="line-clamp-1 h-8 truncate border-0 bg-transparent"
             placeholderClassName="!text-muted"
             wrapperClassName="absolute left-4 right-4 bottom-4"
             numberOfLines={1}
@@ -149,7 +149,7 @@ export const TransactionForm = ({
           />
         </View>
         <Animated.View style={translateStyle}>
-          <View className="flex-row items-center justify-between bg-card border-t border-border p-2">
+          <View className="flex-row items-center justify-between border-border border-t bg-card p-2">
             <View className="flex-row items-center gap-2">
               <SelectAccountField
                 onSelect={(walletAccount) => {

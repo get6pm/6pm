@@ -32,10 +32,10 @@ export function SelectDefaultCurrency() {
         }}
         rightSection={
           <View className="flex flex-row items-center gap-2">
-            <Text className="text-muted-foreground font-sans">
+            <Text className="font-sans text-muted-foreground">
               {defaultCurrency}
             </Text>
-            <ChevronRightIcon className="w-5 h-5 text-primary" />
+            <ChevronRightIcon className="h-5 w-5 text-primary" />
           </View>
         }
       />

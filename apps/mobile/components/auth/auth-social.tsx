@@ -47,7 +47,7 @@ export function AuthSocial({ label, icon: Icon, strategy }: AuthSocialProps) {
 
   return (
     <Button variant="outline" onPress={onPress}>
-      <Icon className="w-5 h-5 text-primary" />
+      <Icon className="h-5 w-5 text-primary" />
       <Text>{label}</Text>
     </Button>
   )

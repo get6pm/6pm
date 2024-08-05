@@ -110,7 +110,7 @@ const Dot = ({ dot, fromIndex }: DotProps) => {
         },
         dotStyle,
       ]}
-      className="w-1.5 h-1.5 rounded-full bg-muted-foreground"
+      className="h-1.5 w-1.5 rounded-full bg-muted-foreground"
       removeClippedSubviews
       renderToHardwareTextureAndroid
     />
@@ -124,7 +124,7 @@ export function ProfileCard() {
   )
 
   return (
-    <View className="bg-muted rounded-lg overflow-hidden mx-6 justify-end h-52">
+    <View className="mx-6 h-52 justify-end overflow-hidden rounded-lg bg-muted">
       <View className="flex flex-1">
         {dots.map((row, rowIndex) => {
           return (
@@ -147,13 +147,13 @@ export function ProfileCard() {
       </View>
       <BlurView
         intensity={15}
-        className="flex flex-row px-4 py-3 items-center gap-2 justify-between"
+        className="flex flex-row items-center justify-between gap-2 px-4 py-3"
       >
         <View className="flex flex-row items-center gap-3">
           <UserAvatar user={user!} fallbackClassName="bg-card" />
           <View>
-            <Badge variant="default" className="self-start rounded-md mb-1">
-              <Text className="text-xs font-medium">Saver</Text>
+            <Badge variant="default" className="mb-1 self-start rounded-md">
+              <Text className="font-medium text-xs">Saver</Text>
             </Badge>
             <Text className="font-medium text-primary">
               {user?.fullName ?? user?.primaryEmailAddress?.emailAddress}
@@ -162,7 +162,7 @@ export function ProfileCard() {
         </View>
         <Link href="/profile" asChild>
           <Button size="icon" variant="ghost">
-            <PencilIcon className="w-5 h-5 text-primary" />
+            <PencilIcon className="h-5 w-5 text-primary" />
           </Button>
         </Link>
       </BlurView>

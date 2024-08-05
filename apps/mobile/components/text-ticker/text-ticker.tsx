@@ -70,7 +70,7 @@ export function TextTicker({
         adjustsFontSizeToFit
         className={cn(
           className,
-          'absolute text-center left-0 right-0 opacity-0',
+          'absolute right-0 left-0 text-center opacity-0',
         )}
         style={{
           fontSize: initialFontSize,
@@ -84,7 +84,7 @@ export function TextTicker({
         {formattedNumbers.map((x) => x.value).join('')}
         {suffix}
       </Text>
-      <Animated.View className="flex-row items-end justify-center w-full flex-1 overflow-hidden">
+      <Animated.View className="w-full flex-1 flex-row items-end justify-center overflow-hidden">
         {formattedNumbers.map((formattedNumber) => {
           return (
             <Animated.View

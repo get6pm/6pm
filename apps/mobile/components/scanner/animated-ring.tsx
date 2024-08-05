@@ -32,7 +32,7 @@ export function AnimatedRing({
     <Animated.View
       style={[style]}
       className={cn(
-        'w-16 h-16 bg-primary-foreground border-2 border-primary rounded-full',
+        'h-16 w-16 rounded-full border-2 border-primary bg-primary-foreground',
         className,
       )}
       {...props}

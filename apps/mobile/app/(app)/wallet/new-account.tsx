@@ -51,7 +51,7 @@ export default function NewAccountScreen() {
 
   return (
     <ScrollView
-      className="bg-card flex-1"
+      className="flex-1 bg-card"
       contentContainerClassName="gap-4 p-6"
       automaticallyAdjustKeyboardInsets
       keyboardShouldPersistTaps="handled"

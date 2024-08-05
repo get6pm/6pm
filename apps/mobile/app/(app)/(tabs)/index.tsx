@@ -80,7 +80,7 @@ export default function HomeScreen() {
           <TransactionItem transaction={transaction} />
         )}
         renderSectionHeader={({ section: { title, sum } }) => (
-          <View className="mx-6 pt-4 flex-row justify-between border-muted-foreground/20 border-b bg-card py-2 align-center">
+          <View className="mx-6 flex-row justify-between border-muted-foreground/20 border-b bg-card py-2 pt-4 align-center">
             <Text className="text-muted-foreground">{title}</Text>
             <AmountFormat
               amount={sum}

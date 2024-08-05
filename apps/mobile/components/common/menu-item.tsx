@@ -30,13 +30,13 @@ export const MenuItem = forwardRef(function (
       ref={ref}
       disabled={disabled}
       className={cn(
-        'flex flex-row items-center gap-4 px-6 justify-between h-14 active:bg-muted',
+        'flex h-14 flex-row items-center justify-between gap-4 px-6 active:bg-muted',
         disabled && 'opacity-50',
         className,
       )}
     >
       <View className="flex flex-row items-center gap-6">
-        {Icon && <Icon className="w-5 h-5 text-foreground" />}
+        {Icon && <Icon className="h-5 w-5 text-foreground" />}
         <Text>{label}</Text>
       </View>
       {rightSection}

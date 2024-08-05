@@ -115,7 +115,7 @@ export function CircularProgress({
         />
       </Svg>
       <View
-        className="justify-center items-center"
+        className="items-center justify-center"
         style={[
           {
             top: strokeWidth,
@@ -127,7 +127,7 @@ export function CircularProgress({
           },
         ]}
       >
-        <Text className="text-sm font-bold font-mono">
+        <Text className="font-bold font-mono text-sm">
           {Math.round(progress)}%
         </Text>
       </View>

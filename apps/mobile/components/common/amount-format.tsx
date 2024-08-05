@@ -1,9 +1,10 @@
 import { cn } from '@/lib/utils'
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import { type VariantProps, cva } from 'class-variance-authority'
+import { useMemo } from 'react'
 import { Text } from '../ui/text'
 
-const amountVariants = cva('font-bold shrink-0', {
+const amountVariants = cva('shrink-0 font-bold', {
   variants: {
     size: {
       xl: 'text-4xl',
@@ -36,6 +37,7 @@ type AmountFormatProps = {
   currency?: string
   className?: string
   displayNegativeSign?: boolean
+  displayPositiveSign?: boolean
   displayPositiveColor?: boolean
 } & VariantProps<typeof amountVariants>
 
@@ -45,9 +47,21 @@ export function AmountFormat({
   className,
   size,
   displayNegativeSign,
+  displayPositiveSign,
   displayPositiveColor,
 }: AmountFormatProps) {
   const defaultCurrency = useDefaultCurrency()
+
+  const sign = useMemo(() => {
+    if (amount < 0) {
+      return displayNegativeSign ? '-' : ''
+    }
+    if (amount > 0) {
+      return displayPositiveSign ? '+' : ''
+    }
+    return ''
+  }, [amount, displayNegativeSign, displayPositiveSign])
+
   return (
     <Text
       className={cn(
@@ -60,8 +74,8 @@ export function AmountFormat({
         className,
       )}
     >
-      {(displayNegativeSign ? amount : Math.abs(amount)).toLocaleString() ||
-        '0.00'}{' '}
+      {sign}
+      {Math.abs(amount).toLocaleString()}{' '}
       <Text className={cn(currencyVariants({ size }))}>
         {currency || defaultCurrency}
       </Text>

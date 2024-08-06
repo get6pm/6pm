@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
-import { useBudgetStore } from './budget/store'
-import { useCategoryStore } from './category/store'
-import { useTransactionStore } from './transaction/store'
+import { useBudgetStore } from '../budget/store'
+import { useCategoryStore } from '../category/store'
+import { useTransactionStore } from '../transaction/store'
 
 export const useResetAllStores = () => {
   const resetBudgetStore = useBudgetStore((state) => state._reset)

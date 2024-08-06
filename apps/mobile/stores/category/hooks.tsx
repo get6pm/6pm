@@ -10,17 +10,27 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { keyBy, omit } from 'lodash-es'
 import { useMemo } from 'react'
 import { z } from 'zod'
+import type { StoreHookQueryOptions } from '../core/stores'
 import { categoryQueries } from './queries'
 import { useCategoryStore } from './store'
 
-export const useCategoryList = () => {
+export const useCategoryListQueryOptions = (
+  queryOptions?: StoreHookQueryOptions,
+) => {
   const categories = useCategoryStore().categories
   const setCategoriesState = useCategoryStore((state) => state.setCategories)
-
-  const query = useQuery({
+  return {
     ...categoryQueries.all({ setCategoriesState }),
     initialData: categories?.length > 0 ? categories : undefined,
-  })
+    ...queryOptions,
+  }
+}
+
+export const useCategoryList = (queryOptions?: StoreHookQueryOptions) => {
+  const categories = useCategoryStore().categories
+  const queryOpts = useCategoryListQueryOptions(queryOptions)
+
+  const query = useQuery(queryOpts)
 
   const { categoriesDict, incomeCategories, expenseCategories } =
     useMemo(() => {

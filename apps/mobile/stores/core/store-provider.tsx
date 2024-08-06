@@ -9,6 +9,7 @@ import {
   useEffect,
   useState,
 } from 'react'
+import { StoreIntervalUpdate } from './store-interval-update'
 import { useResetAllStores } from './use-reset-all-stores'
 
 export type StoreProviderProps = {
@@ -60,5 +61,10 @@ export const StoreProvider: FC<StoreProviderProps> = ({ children }) => {
     return null
   }
 
-  return children
+  return (
+    <>
+      <StoreIntervalUpdate />
+      {children}
+    </>
+  )
 }

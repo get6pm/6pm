@@ -17,6 +17,9 @@
       "bundleIdentifier": "ai.sixpm.app",
       "config": {
         "usesNonExemptEncryption": false
+      },
+      "entitlements": {
+        "com.apple.developer.applesignin": ["Default"]
       }
     },
     "android": {

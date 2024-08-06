@@ -1,6 +1,6 @@
 {
   "name": "@6pm/mobile",
-  "main": "index.js",
+  "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start -c",

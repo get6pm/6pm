@@ -1,0 +1,123 @@
+name: EAS Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      auto_submit:
+        description: "Auto submit the build"
+        required: false
+        default: true
+        type: boolean
+      platform:
+        type: choice
+        description: Platform to build for
+        options:
+          - android
+          - ios
+      profile:
+        type: choice
+        description: Build profile to use
+        options:
+          - development
+          - preview
+          - production
+
+jobs:
+  eas-build:
+    name: EAS build
+    runs-on: ${{ github.event.inputs.platform == 'ios' && 'macos-latest' || 'ubuntu-latest' }}
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v3
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - uses: pnpm/action-setup@v4
+        name: 🏗 Install pnpm
+        with:
+          run_install: false
+
+      - name: 🏗 Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: 🏗 Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: 🏗 Install homebrew
+        run: |
+          if ! command -v brew &> /dev/null; then
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          else
+            echo "🤩 Homebrew already installed"
+          fi
+
+      - name: 🏗 Setup fastlane & cocoapods
+        run: |
+          brew install fastlane
+          brew install cocoapods
+
+      - name: 🏗 For act to work (local testing)
+        if: ${{ env.ACT == 'true' }}
+        run: pnpm install -g yarn
+
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 🏗 Setup EAS local builds
+        run: |
+          pnpm install -g eas-cli-local-build-plugin
+
+      - name: 📦 Install dependencies
+        run: pnpm install
+
+      - name: 🔐 Setup Apple certificate
+        if: ${{ env.ACT != 'true' }}
+        run: |
+          sudo security authorizationdb write com.apple.trust-settings.admin allow
+          security add-trusted-cert -d -r unspecified -k ~/Library/Keychains/login.keychain-db ./AppleWWDRCAG3.cer
+
+      - name: 👷 Build app
+        working-directory: apps/mobile
+        env:
+          NODE_ENV: production
+          EXPO_USE_METRO_WORKSPACE_ROOT: 0
+          EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ALLOW_FAILURE: true
+          EXPO_PUBLIC_SENTRY_DSN: ${{ secrets.EXPO_PUBLIC_SENTRY_DSN }}
+          EXPO_PUBLIC_POSTHOG_API_KEY: ${{ secrets.EXPO_PUBLIC_POSTHOG_API_KEY }}
+          EXPO_PUBLIC_POSTHOG_HOST: ${{ secrets.EXPO_PUBLIC_POSTHOG_HOST }}
+        run: |
+          eas build \
+            --local \
+            --non-interactive \
+            --output=./app-build \
+            --platform=${{ github.event.inputs.platform }} \
+            --profile=${{ github.event.inputs.profile }}
+
+      - name: 🚀 Submit app
+        if: ${{ github.event.inputs.auto_submit }}
+        working-directory: apps/mobile
+        run: |
+          eas submit \
+            --non-interactive \
+            --platform=${{ github.event.inputs.platform }}  \
+            --profile=${{ github.event.inputs.profile }} \
+            --path app-build

@@ -51,7 +51,15 @@
           "photosPermission": "Allow $(PRODUCT_NAME) accesses your photos for scanning invoices and transactions"
         }
       ],
-      ["@sentry/react-native/expo"]
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "note": "Use SENTRY_AUTH_TOKEN env to authenticate with Sentry.",
+          "project": "6pm-mobile",
+          "organization": "get6pm"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

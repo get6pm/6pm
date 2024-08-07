@@ -59,7 +59,7 @@ export function SelectWalletAccount({
         disabled={disabled}
         hideArrow
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        className="!border-none !border-transparent !py-0 !h-6 flex-row items-center gap-2 px-0"
+        className="!border-none !border-transparent !py-0 !h-6 flex-row items-center gap-2 self-start px-0"
       >
         <SelectValue
           className="font-medium font-sans text-primary"

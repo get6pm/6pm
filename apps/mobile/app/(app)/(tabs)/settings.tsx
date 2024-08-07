@@ -1,4 +1,5 @@
 import * as Application from 'expo-application'
+import Constants from 'expo-constants'
 
 import { Logo } from '@/components/common/logo'
 import { MenuItem } from '@/components/common/menu-item'
@@ -204,7 +205,10 @@ export default function SettingsScreen() {
           <Logo className="mx-auto h-16 w-16" />
           <Text className="font-mono text-muted-foreground text-sm">
             {t(i18n)`ver.`}
-            {Application.nativeApplicationVersion}
+            {Application.nativeApplicationVersion}{' '}
+            {Constants.expoConfig?.ios?.buildNumber
+              ? `(${Constants.expoConfig.ios.buildNumber})`
+              : ''}
           </Text>
           <View className="flex-row gap-6">
             <Link href="/terms-of-service">

@@ -1,5 +1,5 @@
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
-import { type AccountFormValues, zAccountFormValues } from '@6pm/validation'
+import { type WalletFormValues, zWalletFormValues } from '@6pm/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -14,8 +14,8 @@ import { Text } from '../ui/text'
 import { SelectAccountIconField } from './select-account-icon-field'
 
 type AccountFormProps = {
-  onSubmit: (data: AccountFormValues) => void
-  defaultValues?: AccountFormValues
+  onSubmit: (data: WalletFormValues) => void
+  defaultValues?: WalletFormValues
 }
 
 export const AccountForm = ({ onSubmit, defaultValues }: AccountFormProps) => {
@@ -24,8 +24,8 @@ export const AccountForm = ({ onSubmit, defaultValues }: AccountFormProps) => {
   const balanceInputRef = useRef<TextInput>(null)
   const defaultCurrency = useDefaultCurrency()
 
-  const accountForm = useForm<AccountFormValues>({
-    resolver: zodResolver(zAccountFormValues),
+  const accountForm = useForm<WalletFormValues>({
+    resolver: zodResolver(zWalletFormValues),
     defaultValues: {
       name: '',
       preferredCurrency: defaultCurrency,

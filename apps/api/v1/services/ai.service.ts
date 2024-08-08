@@ -41,10 +41,43 @@ export async function deleteFile({ fileId }: { fileId: string }) {
   return deletedFile
 }
 
+function generateAdditionalInstruction({
+  noteLanguage,
+  categories,
+}: {
+  noteLanguage: string
+  categories: {
+    id: string
+    name: string
+    icon?: string | null
+    type?: CategoryType
+  }[]
+}) {
+  const template = `<categories>
+{{user_categories}}
+</categories>
+
+<additional_info>
+- Current datetime: {{current_datetime}}
+- User's prefer language: {{user_prefer_lang}}
+- User's prefer currency: {{user_prefer_currency}}
+</additional_info>`
+
+  const userCategories = JSON.stringify(categories)
+
+  const instruction = template
+    .replace('{{user_categories}}', userCategories)
+    .replace('{{current_datetime}}', new Date().toISOString())
+    .replace('{{user_prefer_lang}}', noteLanguage)
+    .replace('{{user_prefer_currency}}', '<unknown>')
+
+  return instruction
+}
+
 export async function generateTransactionDataFromFile({
   file: inputFile,
   noteLanguage = 'English',
-  categories,
+  categories = [],
 }: {
   file: File
   noteLanguage?: string
@@ -56,7 +89,10 @@ export async function generateTransactionDataFromFile({
   }[]
 }) {
   const log = getLogger(`ai.service:${generateTransactionDataFromFile.name}`)
-  const additionalInstructions = `note must be in ${noteLanguage} language but do not translate names. Categories: ${JSON.stringify(categories?.map((cat) => ({ id: cat.id, name: cat.name, icon: cat.icon, type: cat.type })) || [])}`
+  const additionalInstructions = generateAdditionalInstruction({
+    noteLanguage,
+    categories,
+  })
 
   // If cached, return cached response
   const fileHash = await hashFile(inputFile)

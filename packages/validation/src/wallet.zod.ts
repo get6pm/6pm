@@ -19,10 +19,10 @@ export const zUpdateWallet = z.object({
 })
 export type UpdateWallet = z.infer<typeof zUpdateWallet>
 
-export const zAccountFormValues = zCreateWallet.extend({
-  balance: z.number({ coerce: true }).positive().optional(),
+export const zWalletFormValues = zCreateWallet.extend({
+  balance: z.number({ coerce: true }).optional(),
 })
-export type AccountFormValues = z.infer<typeof zAccountFormValues>
+export type WalletFormValues = z.infer<typeof zWalletFormValues>
 
 export const WalletAccountWithBalanceSchema = UserWalletAccountSchema.extend({
   balance: z.number({ coerce: true }).optional(),

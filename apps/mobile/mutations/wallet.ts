@@ -1,7 +1,7 @@
 import { getHonoClient } from '@/lib/client'
-import type { AccountFormValues } from '@6pm/validation'
+import type { WalletFormValues } from '@6pm/validation'
 
-export async function createWallet(data: AccountFormValues) {
+export async function createWallet(data: WalletFormValues) {
   const { balance, ...walletData } = data
   const hc = await getHonoClient()
   const result = await hc.v1.wallets.wallets.$post({
@@ -27,7 +27,7 @@ export async function updateWallet({
   data,
 }: {
   id: string
-  data: AccountFormValues
+  data: WalletFormValues
 }) {
   const { balance, ...walletData } = data
   const hc = await getHonoClient()

@@ -1,0 +1,272 @@
+Extract the transaction details from an image. You must always follow the JSON with structure of <output>.
+
+<input>
+An camera captured photo could be:
+- a receipt
+- a can of coke
+- a petrol station
+</input>
+
+<output>
+amount: {number | amount of the transaction}
+currency: {string | 3-character currency such as "VND", "USD", "EUR", ...}
+type: {string | "EXPENSE" or "INCOME"}
+categoryId: {string or null | pick one id field from the <categories> list below, null if there's no relevant categories found},
+note: {string | some brief note about 20 characters to remind about the transaction}
+date: {string - ISO datetime | When did the transaction is created, null if no date found in the image}
+</output>
+
+<instructions>
+- If you're not sure the image contains any transaction info, return {"error": "Unable to process transaction"}
+- If there's no category relevant to the transaction. Set categoryId: null
+- If the image contains some products but you're sure about the costs, left "A: 0"
+- The date in the image could be in different formats (Eg: dd/MM/yyyy or MM/dd/yyyy or dd.MM.yyyy or MM.dd.yyyy or dd-MM-yyyy or yyyy-MM-dd or others). You should consider parsing it into most accurate format as possible, using the language of the image or <additional_info>. If you are not able to determine the date, response "F: N/A"
+</instructions>
+
+<example1>
+<example1_input>
+An image containing text:
+
+"""
+THE COFFEE HOUSE
+63 Rạch Bùng Binh, Quận 3
+Số 04
+
+Thời gian: 08.08.2024 19.45
+Thu ngân: CASH2          Số bill: 0123456789
+Khách hàng:
+
+TT  Tên món          SL    Giá       T.Tiền
+1   Cà phê sữa đá    1     29 000    29 000
+    (Nhỏ)
+2   Trà sữa Oolong   1     39 000    39 000
+    BLao (Vừa)
+
+Tổng số lượng   2
+Thành tiền:           68 000
+Thanh toán:           68 000
+Tiền khách đưa:       68 000
+Tiền thừa:            0
+
++ Tiền mặt VND        68 000
+
+Sản phẩm đã bao gồm VAT 8%. Hoá
+đơn GTGT chỉ xuất tại thời điểm thanh
+toán...
+"""
+</example1_input>
+
+<example1_categories>
+[
+  {
+    "id": "cat1",
+    "name": "Cafe",
+    "type": "EXPENSE"
+  },
+  {
+    "id": "cat2",
+    "name": "Food & Beverage",
+    "type": "EXPENSE"
+  },
+  {
+    "id": "cat3",
+    "name": "Groceries",
+    "type": "EXPENSE"
+  },
+  {
+    "id": "cat4",
+    "name": "Salary",
+    "type": "INCOME"
+  },
+  {
+    "id": "cat4",
+    "name": "Interest",
+    "type": "INCOME"
+  }
+]
+</example1_categories>
+
+<example1_additional_info>
+- Current datetime: 2024-08-08T14:18:29.207Z
+- User's prefer language: en
+- User's prefer currency: VND
+</example1_additional_info>
+
+<example1_output>
+{
+  "amount": 68000,
+  "currency": "VND",
+  "type": "EXPENSE",
+  "categoryId": "cat1",
+  "note": "Cafe at The Coffee House 63 Rạch Bùng Binh, Quận 3",
+  "date": "2024-08-08T19:45:00"
+}
+</example1_output>
+</example1>
+
+<example2>
+<example2_input>
+An image containing text:
+
+"""
+THE COFFEE HOUSE
+63 Rạch Bùng Binh, Quận 3
+Số 04
+
+Thời gian: 08.08.2024 19.45
+Thu ngân: CASH2          Số bill: 0123456789
+Khách hàng:
+
+TT  Tên món          SL    Giá       T.Tiền
+1   Cà phê sữa đá    1     29 000    29 000
+    (Nhỏ)
+2   Trà sữa Oolong   1     39 000    39 000
+    BLao (Vừa)
+
+Tổng số lượng   2
+Thành tiền:           68 000
+Thanh toán:           68 000
+Tiền khách đưa:       68 000
+Tiền thừa:            0
+
++ Tiền mặt VND        68 000
+
+Sản phẩm đã bao gồm VAT 8%. Hoá
+đơn GTGT chỉ xuất tại thời điểm thanh
+toán...
+"""
+</example2_input>
+
+<example2_categories>
+[
+  {
+    "id": "cat1",
+    "name": "Transportation",
+    "type": "EXPENSE"
+  },
+  {
+    "id": "cat2",
+    "name": "Food & Beverage",
+    "type": "EXPENSE"
+  },
+  {
+    "id": "cat3",
+    "name": "Groceries",
+    "type": "EXPENSE"
+  },
+  {
+    "id": "cat4",
+    "name": "Salary",
+    "type": "INCOME"
+  },
+  {
+    "id": "cat4",
+    "name": "Interest",
+    "type": "INCOME"
+  }
+]
+</example2_categories>
+
+<example2_additional_info>
+- Current datetime: 2024-08-08T14:18:29.207Z
+- User's prefer language: vi
+- User's prefer currency: VND
+</example2_additional_info>
+
+<example2_output>
+A: 68000
+B: VND
+C: EXPENSE
+D: cat2,
+E: Cafe ở The Coffee House 63 Rạch Bùng Binh, Quận 3
+F: 2024-08-08T19:45:00
+{
+  "amount": 68000,
+  "currency": "VND",
+  "type": "EXPENSE",
+  "categoryId": "cat2",
+  "note": "Cafe ở The Coffee House 63 Rạch Bùng Binh, Quận 3",
+  "date": "2024-08-08T19:45:00"
+}
+</example2_output>
+</example2>
+
+<example3>
+<example3_input>
+An image containing text:
+
+"""
+THE COFFEE HOUSE
+63 Rạch Bùng Binh, Quận 3
+Số 04
+
+Thu ngân: CASH2          Số bill: 0123456789
+Khách hàng:
+
+TT  Tên món          SL    Giá       T.Tiền
+1   Cà phê sữa đá    1     29 000    29 000
+    (Nhỏ)
+2   Trà sữa Oolong   1     39 000    39 000
+    BLao (Vừa)
+
+Tổng số lượng   2
+Thành tiền:           68 000
+Thanh toán:           68 000
+Tiền khách đưa:       68 000
+Tiền thừa:            0
+
++ Tiền mặt VND        68 000
+
+Sản phẩm đã bao gồm VAT 8%. Hoá
+đơn GTGT chỉ xuất tại thời điểm thanh
+toán...
+"""
+</example3_input>
+
+<example3_categories>
+[
+  {
+    "id": "cat1",
+    "name": "Personal Care",
+    "type": "EXPENSE"
+  },
+  {
+    "id": "cat2",
+    "name": "Petrol",
+    "type": "EXPENSE"
+  },
+  {
+    "id": "cat3",
+    "name": "Groceries",
+    "type": "EXPENSE"
+  },
+  {
+    "id": "cat4",
+    "name": "Salary",
+    "type": "INCOME"
+  },
+  {
+    "id": "cat4",
+    "name": "Interest",
+    "type": "INCOME"
+  }
+]
+</example3_categories>
+
+<example3_additional_info>
+- Current datetime: 2024-08-08T14:18:29.207Z
+- User's prefer language: en
+- User's prefer currency: VND
+</example3_additional_info>
+
+<example3_output>
+{
+  "amount": 68000,
+  "currency": "VND",
+  "type": "EXPENSE",
+  "categoryId": null,
+  "note": "Cafe at The Coffee House 63 Rạch Bùng Binh, Quận 3",
+  "date": null
+}
+</example3_output>
+</example3>

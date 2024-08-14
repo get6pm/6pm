@@ -8,13 +8,15 @@ import {
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import * as Haptics from 'expo-haptics'
-import { useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useController } from 'react-hook-form'
 import { FlatList, Keyboard, View } from 'react-native'
 
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
 import { useCategoryList } from '@/stores/category/hooks'
+import { Link, useFocusEffect } from 'expo-router'
+import { PlusIcon } from 'lucide-react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { FullWindowOverlay } from 'react-native-screens'
 import GenericIcon from '../common/generic-icon'
@@ -29,12 +31,22 @@ export function SelectCategoryField({
   const { bottom } = useSafeAreaInsets()
   const { categories = [], isLoading } = useCategoryList()
   const { colorScheme } = useColorScheme()
+  const [shouldReOpen, setShouldReOpen] = useState(false)
 
   const sheetRef = useRef<BottomSheetModal>(null)
   const { i18n } = useLingui()
   const {
     field: { onChange, onBlur, value },
   } = useController({ name: 'categoryId' })
+
+  useFocusEffect(
+    useCallback(() => {
+      if (shouldReOpen) {
+        sheetRef.current?.present()
+        setShouldReOpen(false)
+      }
+    }, [shouldReOpen]),
+  )
 
   const selectedCategory = categories?.find((category) => category.id === value)
 
@@ -113,31 +125,53 @@ export function SelectCategoryField({
                 keyExtractor={(i) => i.id}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => (
-                  <View className="w-[25%] p-1.5">
-                    <Button
-                      size="icon"
-                      className="flex h-20 w-full flex-1 flex-grow flex-col gap-2 px-2"
-                      variant={value === item ? 'secondary' : 'ghost'}
-                      onPress={async () => {
-                        Haptics.selectionAsync()
-                        sheetRef.current?.close()
-                        await sleep(500)
-                        onChange(item.id)
-                        onBlur()
-                        onSelect?.(item)
-                      }}
-                    >
-                      <GenericIcon
-                        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-                        name={item.icon as any}
-                        className="size-8 text-foreground"
-                      />
-                      <Text className="!text-sm line-clamp-1 text-center text-muted-foreground">
-                        {item.name}
-                      </Text>
-                    </Button>
-                  </View>
+                renderItem={({ item, index: idx }) => (
+                  <>
+                    <View className="w-[25%] items-center justify-center p-1.5">
+                      <Button
+                        size="icon"
+                        className="flex h-20 w-full flex-1 flex-grow flex-col gap-2 px-2"
+                        variant={value === item ? 'secondary' : 'ghost'}
+                        onPress={async () => {
+                          Haptics.selectionAsync()
+                          sheetRef.current?.close()
+                          await sleep(500)
+                          onChange(item.id)
+                          onBlur()
+                          onSelect?.(item)
+                        }}
+                      >
+                        <GenericIcon
+                          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+                          name={item.icon as any}
+                          className="size-8 text-foreground"
+                        />
+                        <Text className="!text-sm line-clamp-1 text-center text-muted-foreground">
+                          {item.name}
+                        </Text>
+                      </Button>
+                    </View>
+
+                    {idx === section.data.length - 1 && (
+                      <View className="w-[25%] items-center justify-center p-1.5">
+                        <Link href="/category/new-category" asChild>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="h-16 w-16 items-center justify-center border-dashed"
+                            onPress={async () => {
+                              Haptics.selectionAsync()
+                              sheetRef.current?.close()
+                              await sleep(500)
+                              setShouldReOpen(true)
+                            }}
+                          >
+                            <PlusIcon className="size-6 text-muted-foreground" />
+                          </Button>
+                        </Link>
+                      </View>
+                    )}
+                  </>
                 )}
               />
             ) : null

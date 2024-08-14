@@ -41,6 +41,7 @@ type AmountFormatProps = {
   displayNegativeSign?: boolean
   displayPositiveSign?: boolean
   displayPositiveColor?: boolean
+  convertToDefaultCurrency?: boolean
 } & VariantProps<typeof amountVariants>
 
 export function AmountFormat({
@@ -51,6 +52,7 @@ export function AmountFormat({
   displayNegativeSign,
   displayPositiveSign,
   displayPositiveColor,
+  convertToDefaultCurrency,
 }: AmountFormatProps) {
   const defaultCurrency = useDefaultCurrency()
 
@@ -64,12 +66,20 @@ export function AmountFormat({
     return ''
   }, [amount, displayNegativeSign, displayPositiveSign])
 
-  const roundedAmount = useMemo(() => {
-    if (SHOULD_ROUND_VALUE_CURRENCIES.includes(currency || defaultCurrency)) {
-      return Math.round(amount)
+  const displayAmount = useMemo(() => {
+    const roundedAmount = SHOULD_ROUND_VALUE_CURRENCIES.includes(
+      currency || defaultCurrency,
+    )
+      ? Math.round(amount)
+      : amount
+
+    if (!convertToDefaultCurrency) {
+      return Math.abs(roundedAmount).toLocaleString()
     }
-    return amount
-  }, [amount, currency, defaultCurrency])
+
+    // TODO: correct amount with currency exchange rate
+    return Math.abs(roundedAmount).toLocaleString()
+  }, [amount, convertToDefaultCurrency, currency, defaultCurrency])
 
   return (
     <Text
@@ -84,9 +94,11 @@ export function AmountFormat({
       )}
     >
       {sign}
-      {Math.abs(roundedAmount).toLocaleString()}{' '}
+      {displayAmount}{' '}
       <Text className={cn(currencyVariants({ size }))}>
-        {currency || defaultCurrency}
+        {convertToDefaultCurrency
+          ? defaultCurrency
+          : currency || defaultCurrency}
       </Text>
     </Text>
   )

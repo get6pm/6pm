@@ -9,11 +9,7 @@ export function WalletStatistics() {
   const { i18n } = useLingui()
   const { transactions } = useTransactionStore()
 
-  /**
-   * TODO: Calculate correct amount with currency exchange rate
-   * base on the user's preferred currency
-   */
-  const currentBalance = transactions.reduce((acc, t) => acc + t.amount, 0)
+  const currentBalance = transactions.reduce((acc, t) => acc + t.amountInVnd, 0)
 
   return (
     <View className="gap-3">

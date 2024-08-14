@@ -1,12 +1,18 @@
+import { useColorScheme } from '@/hooks/useColorScheme'
+import { theme } from '@/lib/theme'
+import { sleep } from '@/lib/utils'
 import type { TransactionFormValues } from '@6pm/validation'
+import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import * as Haptics from 'expo-haptics'
 import { ScanTextIcon, Trash2Icon, XIcon } from 'lucide-react-native'
+import { useRef } from 'react'
 import {
   Controller,
   FormProvider,
   type UseFormReturn,
+  useController,
   useWatch,
 } from 'react-hook-form'
 import { ScrollView, View } from 'react-native'
@@ -14,6 +20,8 @@ import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
 } from 'react-native-reanimated'
+import { FullWindowOverlay } from 'react-native-screens'
+import { CurrencySheetList } from '../common/currency-sheet'
 import { DatePicker } from '../common/date-picker'
 import { InputField } from '../form-fields/input-field'
 import { SubmitButton } from '../form-fields/submit-button'
@@ -35,14 +43,54 @@ type TransactionFormProps = {
 }
 
 function TransactionAmount() {
-  const [amount, currency] = useWatch({ name: ['amount', 'currency'] })
+  const { colorScheme } = useColorScheme()
+  const sheetRef = useRef<BottomSheetModal>(null)
+  const [amount] = useWatch({ name: ['amount'] })
+  const {
+    field: { onChange, value: currency },
+  } = useController({ name: 'currency' })
+
   return (
-    <TextTicker
-      value={amount}
-      className="text-center font-bold text-6xl text-foreground leading-tight"
-      suffix={currency}
-      suffixClassName="font-bold ml-2 text-muted-foreground overflow-visible"
-    />
+    <>
+      <TextTicker
+        value={amount}
+        className="text-center font-bold text-6xl text-foreground leading-tight"
+        suffix={currency}
+        suffixClassName="font-bold ml-2 text-muted-foreground overflow-visible"
+        onPressSuffix={() => {
+          Haptics.selectionAsync()
+          sheetRef.current?.present()
+        }}
+      />
+      <BottomSheetModal
+        ref={sheetRef}
+        index={0}
+        snapPoints={['50%', '87%']}
+        enablePanDownToClose
+        backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
+        keyboardBehavior="extend"
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            enableTouchThrough
+          />
+        )}
+        containerComponent={(props) => (
+          <FullWindowOverlay>{props.children}</FullWindowOverlay>
+        )}
+      >
+        <CurrencySheetList
+          value={currency}
+          onSelect={async (selected) => {
+            sheetRef.current?.close()
+            await sleep(500)
+            onChange?.(selected.code)
+          }}
+        />
+      </BottomSheetModal>
+    </>
   )
 }
 

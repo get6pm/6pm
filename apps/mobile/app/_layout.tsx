@@ -15,6 +15,7 @@ import {
   Inter_300Light,
   Inter_400Regular,
   Inter_500Medium,
+  Inter_600SemiBold,
   useFonts,
 } from '@expo-google-fonts/inter'
 import {
@@ -115,6 +116,7 @@ function RootLayout() {
     Inter_300Light,
     Inter_400Regular,
     Inter_500Medium,
+    Inter_600SemiBold,
   })
   const ref = useNavigationContainerRef()
 

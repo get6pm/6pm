@@ -105,7 +105,7 @@ export function TextTicker({
             >
               <Animated.Text
                 style={[style, { fontSize }]}
-                className={className}
+                className={cn(className, 'font-semibold')}
               >
                 {formattedNumber.value}
               </Animated.Text>
@@ -120,7 +120,10 @@ export function TextTicker({
             <TouchableOpacity activeOpacity={0.8} onPress={onPressSuffix}>
               <Animated.Text
                 style={{ fontSize: fontSize / 3 }}
-                className={suffixClassName}
+                className={cn(
+                  suffixClassName,
+                  'font-medium text-muted-foreground',
+                )}
               >
                 {suffix}
               </Animated.Text>

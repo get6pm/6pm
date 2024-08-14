@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 import React, { useState } from 'react'
-import type { TextStyle } from 'react-native'
+import { type TextStyle, TouchableOpacity } from 'react-native'
 import Animated, {
   LinearTransition,
   SlideInDown,
@@ -38,6 +38,7 @@ type TextTickerProps = {
   autoFocus?: boolean
   suffix?: string
   suffixClassName?: string
+  onPressSuffix?: () => void
 }
 
 export function TextTicker({
@@ -47,6 +48,7 @@ export function TextTicker({
   formatter = new Intl.NumberFormat('en-US'),
   suffix,
   suffixClassName,
+  onPressSuffix,
 }: TextTickerProps) {
   const initialFontSize = style?.fontSize ?? 68
   const animationDuration = 300
@@ -115,12 +117,14 @@ export function TextTicker({
             layout={LinearTransition.duration(animationDuration)}
             style={{ marginBottom: fontSize / 6 }}
           >
-            <Animated.Text
-              style={{ fontSize: fontSize / 3 }}
-              className={suffixClassName}
-            >
-              {suffix}
-            </Animated.Text>
+            <TouchableOpacity activeOpacity={0.8} onPress={onPressSuffix}>
+              <Animated.Text
+                style={{ fontSize: fontSize / 3 }}
+                className={suffixClassName}
+              >
+                {suffix}
+              </Animated.Text>
+            </TouchableOpacity>
           </Animated.View>
         )}
       </Animated.View>

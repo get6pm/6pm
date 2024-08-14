@@ -1,11 +1,8 @@
-import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
-import { useRef } from 'react'
-
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { theme } from '@/lib/theme'
 import { cn } from '@/lib/utils'
+import type { BottomSheetModal } from '@gorhom/bottom-sheet'
+import { useRef } from 'react'
 import { Keyboard } from 'react-native'
-import { FullWindowOverlay } from 'react-native-screens'
+import { BottomSheet } from '../common/bottom-sheet'
 import { CurrencySheetList } from '../common/currency-sheet'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
@@ -20,7 +17,6 @@ export function CurrencyField({
   className?: string
 }) {
   const sheetRef = useRef<BottomSheetModal>(null)
-  const { colorScheme } = useColorScheme()
   return (
     <>
       <Button
@@ -36,25 +32,7 @@ export function CurrencyField({
       >
         <Text className="font-normal text-primary text-sm">{value}</Text>
       </Button>
-      <BottomSheetModal
-        ref={sheetRef}
-        index={0}
-        snapPoints={['50%', '87%']}
-        enablePanDownToClose
-        backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
-        keyboardBehavior="extend"
-        backdropComponent={(props) => (
-          <BottomSheetBackdrop
-            {...props}
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            enableTouchThrough
-          />
-        )}
-        containerComponent={(props) => (
-          <FullWindowOverlay>{props.children}</FullWindowOverlay>
-        )}
-      >
+      <BottomSheet ref={sheetRef} index={0} snapPoints={['50%', '87%']}>
         <CurrencySheetList
           value={value}
           onSelect={(currency) => {
@@ -62,7 +40,7 @@ export function CurrencyField({
             setTimeout(() => sheetRef.current?.close(), 200)
           }}
         />
-      </BottomSheetModal>
+      </BottomSheet>
     </>
   )
 }

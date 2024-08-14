@@ -11,7 +11,7 @@ import { useLingui } from '@lingui/react'
 import * as Haptics from 'expo-haptics'
 import { useRef } from 'react'
 import { useController } from 'react-hook-form'
-import { Keyboard } from 'react-native'
+import { Keyboard, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { FullWindowOverlay } from 'react-native-screens'
 
@@ -86,41 +86,43 @@ export function SelectAccountField({
           data={walletAccounts}
           numColumns={4}
           keyExtractor={(i) => i.id}
-          contentContainerClassName="px-4 gap-4"
-          columnWrapperClassName="gap-2"
+          columnWrapperClassName="flex-wrap"
+          contentContainerClassName="px-2"
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           ListHeaderComponent={
-            <Text className="pt-2 text-center font-medium text-base">
+            <Text className="py-2 text-center font-medium text-base">
               {t(i18n)`Wallet Accounts`}
             </Text>
           }
           contentContainerStyle={{ paddingBottom: bottom + 16 }}
           renderItem={({ item }) => (
-            <Button
-              size="icon"
-              className="flex h-20 flex-1 flex-grow flex-col gap-2 px-2"
-              variant={value === item ? 'secondary' : 'ghost'}
-              onPress={async () => {
-                Haptics.selectionAsync()
-                sheetRef.current?.close()
-                await sleep(500)
-                onChange(item.id)
-                onBlur()
-                onSelect?.(item)
-              }}
-            >
-              <GenericIcon
-                // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-                name={item.icon as any}
-                className="size-8 text-foreground"
-              />
-              <Text className="!text-sm line-clamp-1 text-center text-muted-foreground">
-                {item.name}
-              </Text>
-            </Button>
+            <View className="w-[25%] p-1.5">
+              <Button
+                size="icon"
+                className="flex h-20 w-full flex-1 flex-grow flex-col gap-2 px-2"
+                variant={value === item ? 'secondary' : 'ghost'}
+                onPress={async () => {
+                  Haptics.selectionAsync()
+                  sheetRef.current?.close()
+                  await sleep(500)
+                  onChange(item.id)
+                  onBlur()
+                  onSelect?.(item)
+                }}
+              >
+                <GenericIcon
+                  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+                  name={item.icon as any}
+                  className="size-8 text-foreground"
+                />
+                <Text className="!text-sm line-clamp-1 text-center text-muted-foreground">
+                  {item.name}
+                </Text>
+              </Button>
+            </View>
           )}
         />
       </BottomSheetModal>

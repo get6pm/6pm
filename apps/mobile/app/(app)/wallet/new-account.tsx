@@ -1,12 +1,15 @@
 import { AccountForm } from '@/components/wallet/account-form'
 import { createWallet } from '@/mutations/wallet'
 import { walletQueries } from '@/queries/wallet'
+import { WalletBalanceState } from '@6pm/validation'
+import { PortalHost, useModalPortalRoot } from '@rn-primitives/portal'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
-import { Alert, ScrollView } from 'react-native'
+import { Alert, ScrollView, View } from 'react-native'
 
 export default function NewAccountScreen() {
   const queryClient = useQueryClient()
+  const { sideOffset, ...rootProps } = useModalPortalRoot()
   const router = useRouter()
   const { mutateAsync } = useMutation({
     mutationFn: createWallet,
@@ -50,13 +53,28 @@ export default function NewAccountScreen() {
   })
 
   return (
-    <ScrollView
-      className="flex-1 bg-card"
-      contentContainerClassName="gap-4 p-6"
-      automaticallyAdjustKeyboardInsets
-      keyboardShouldPersistTaps="handled"
-    >
-      <AccountForm onSubmit={mutateAsync} />
-    </ScrollView>
+    <View className="flex-1 bg-card" {...rootProps}>
+      <ScrollView
+        className="flex-1 bg-card"
+        contentContainerClassName="gap-4 p-6"
+        automaticallyAdjustKeyboardInsets
+        keyboardShouldPersistTaps="handled"
+      >
+        <AccountForm
+          onSubmit={({ balance, ...data }) => {
+            const statedBalance =
+              data.balanceState === WalletBalanceState.Positive
+                ? balance
+                : (balance ?? 0) * -1
+            mutateAsync({
+              ...data,
+              balance: statedBalance,
+            })
+          }}
+          sideOffset={sideOffset}
+        />
+      </ScrollView>
+      <PortalHost name="account-form" />
+    </View>
   )
 }

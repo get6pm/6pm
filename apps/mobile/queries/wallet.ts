@@ -2,6 +2,7 @@ import { getHonoClient } from '@/lib/client'
 import { WalletAccountWithBalanceSchema } from '@6pm/validation'
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import { useQuery } from '@tanstack/react-query'
+import { orderBy } from 'lodash-es'
 
 export const walletQueries = createQueryKeys('wallet', {
   list: () => ({
@@ -16,7 +17,7 @@ export const walletQueries = createQueryKeys('wallet', {
       const result = rawResult.map((item) =>
         WalletAccountWithBalanceSchema.parse(item),
       )
-      return result
+      return orderBy(result, 'name')
     },
   }),
 })

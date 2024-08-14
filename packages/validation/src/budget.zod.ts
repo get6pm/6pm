@@ -12,7 +12,11 @@ export const zCreateBudget = z.object({
     .object({
       id: z.string().optional(),
       type: BudgetPeriodTypeSchema,
-      amount: z.number({ coerce: true }).min(0),
+      amount: z
+        .string({ coerce: true })
+        .transform((val) => Number(`${val}`.replace(',', '.')))
+        .pipe(z.number({ coerce: true }).min(0))
+        .optional(),
       startDate: z.date({ coerce: true }).optional(),
       endDate: z.date({ coerce: true }).optional(),
     })
@@ -33,7 +37,11 @@ export const zUpdateBudget = z.object({
   period: z
     .object({
       type: BudgetPeriodTypeSchema.optional(),
-      amount: z.number({ coerce: true }).min(0).optional(),
+      amount: z
+        .string({ coerce: true })
+        .transform((val) => Number(`${val}`.replace(',', '.')))
+        .pipe(z.number({ coerce: true }).min(0))
+        .optional(),
       startDate: z.date({ coerce: true }).optional(),
       endDate: z.date({ coerce: true }).optional(),
     })

@@ -12,15 +12,10 @@ import { type CameraType, CameraView, useCameraPermissions } from 'expo-camera'
 import * as Haptics from 'expo-haptics'
 import { SaveFormat, manipulateAsync } from 'expo-image-manipulator'
 import * as ImagePicker from 'expo-image-picker'
-import {
-  CameraIcon,
-  ImagesIcon,
-  LoaderIcon,
-  SwitchCameraIcon,
-} from 'lucide-react-native'
+import { CameraIcon, ImagesIcon, SwitchCameraIcon } from 'lucide-react-native'
 import { cssInterop } from 'nativewind'
 import { useRef, useState } from 'react'
-import { Alert } from 'react-native'
+import { ActivityIndicator, Alert } from 'react-native'
 import { ImageBackground, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -112,7 +107,7 @@ export function Scanner({ onScanStart, onScanResult }: ScannerProps) {
     // Camera permissions are still loading.
     return (
       <View className="flex-1 items-center justify-center bg-muted">
-        <LoaderIcon className="size-7 animate-spin text-primary" />
+        <ActivityIndicator size="large" />
       </View>
     )
   }

@@ -37,9 +37,7 @@ export const InputField = forwardRef(
         {!!label && <Label nativeID={`label-${name}`}>{label}</Label>}
         <View>
           {leftSection && (
-            <View className="-translate-y-1/2 absolute top-1/2 z-10 transform">
-              {leftSection}
-            </View>
+            <View className="absolute top-0 z-10">{leftSection}</View>
           )}
           <Input
             ref={ref}
@@ -55,9 +53,7 @@ export const InputField = forwardRef(
             {...props}
           />
           {rightSection && (
-            <View className="-translate-y-1/2 absolute top-1/2 right-2 transform">
-              {rightSection}
-            </View>
+            <View className="absolute top-0 right-2">{rightSection}</View>
           )}
         </View>
         {!!fieldState.error && (

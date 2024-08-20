@@ -18,7 +18,7 @@ export function Toolbar() {
           // editable={false}
           pointerEvents="none"
         />
-        <View className="-translate-y-1/2 absolute top-1/2 left-3 transform">
+        <View className="absolute top-3 left-3">
           <Sparkles className="h-5 w-5 text-muted-foreground" />
         </View>
       </TouchableOpacity>

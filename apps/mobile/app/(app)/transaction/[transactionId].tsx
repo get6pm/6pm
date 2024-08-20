@@ -17,9 +17,8 @@ import { PortalHost, useModalPortalRoot } from '@rn-primitives/portal'
 import { useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { LoaderIcon } from 'lucide-react-native'
 import { useForm } from 'react-hook-form'
-import { Alert, View } from 'react-native'
+import { ActivityIndicator, Alert, View } from 'react-native'
 
 export default function EditRecordScreen() {
   const { i18n } = useLingui()
@@ -110,7 +109,7 @@ export default function EditRecordScreen() {
   if (!transaction) {
     return (
       <View className="flex-1 items-center justify-center bg-muted">
-        <LoaderIcon className="size-7 animate-spin text-primary" />
+        <ActivityIndicator size="large" />
       </View>
     )
   }

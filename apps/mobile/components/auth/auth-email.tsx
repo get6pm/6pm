@@ -146,6 +146,7 @@ export function AuthEmail() {
                     setVerifying(false)
                     authEmailForm.reset()
                   }}
+                  className="!-right-1.5 top-0.5"
                 >
                   <XCircleIcon className="h-5 w-5 text-muted-foreground" />
                 </Button>

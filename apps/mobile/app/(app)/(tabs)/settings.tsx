@@ -3,18 +3,22 @@ import Constants from 'expo-constants'
 
 import { Logo } from '@/components/common/logo'
 import { MenuItem } from '@/components/common/menu-item'
+import { toast } from '@/components/common/toast'
 import { ProfileCard } from '@/components/setting/profile-card'
 import { SelectDefaultCurrency } from '@/components/setting/select-default-currency'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'
+import { useScheduleNotification } from '@/hooks/use-schedule-notification'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
 import { useLocale } from '@/locales/provider'
+import { useUserSettingsStore } from '@/stores/user-settings/store'
 import { useAuth } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { LinearGradient } from 'expo-linear-gradient'
+import * as Notifications from 'expo-notifications'
 import { Link } from 'expo-router'
 import {
   BellIcon,
@@ -39,6 +43,9 @@ export default function SettingsScreen() {
   const { i18n } = useLingui()
   const { language } = useLocale()
   const { colorScheme } = useColorScheme()
+  const { cancelAllScheduledNotifications } = useScheduleNotification()
+  const { setEnabledPushNotifications, enabledPushNotifications } =
+    useUserSettingsStore()
 
   return (
     <View className="bg-card">
@@ -132,7 +139,30 @@ export default function SettingsScreen() {
               label={t(i18n)`Push notifications`}
               icon={BellIcon}
               rightSection={
-                <Switch checked={false} onCheckedChange={console.log} />
+                <Switch
+                  checked={enabledPushNotifications}
+                  onCheckedChange={async (checked) => {
+                    if (checked) {
+                      const { status: existingStatus } =
+                        await Notifications.getPermissionsAsync()
+                      let finalStatus = existingStatus
+                      if (existingStatus !== 'granted') {
+                        const { status } =
+                          await Notifications.requestPermissionsAsync()
+                        finalStatus = status
+                      }
+                      if (finalStatus !== 'granted') {
+                        toast.error(t(i18n)`Push notifications are not enabled`)
+                        setEnabledPushNotifications(false)
+                        return
+                      }
+                      toast.success(t(i18n)`Push notifications are enabled`)
+                    } else {
+                      toast.success(t(i18n)`Push notifications are disabled`)
+                    }
+                    setEnabledPushNotifications(checked)
+                  }}
+                />
               }
             />
           </View>
@@ -188,6 +218,7 @@ export default function SettingsScreen() {
                     style: 'destructive',
                     onPress: async () => {
                       await signOut()
+                      await cancelAllScheduledNotifications()
                     },
                   },
                 ])

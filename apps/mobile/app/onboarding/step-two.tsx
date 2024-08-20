@@ -11,6 +11,7 @@ import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { createId } from '@paralleldrive/cuid2'
 import * as Haptics from 'expo-haptics'
+import * as Notifications from 'expo-notifications'
 import { useRouter } from 'expo-router'
 import {
   Controller,
@@ -51,6 +52,9 @@ export function FormSubmitButton({
   )
 }
 
+const budgetId = createId()
+const periodId = createId()
+
 export default function StepTwoScreen() {
   const { i18n } = useLingui()
   const defaultCurrency = useDefaultCurrency()
@@ -74,12 +78,12 @@ export default function StepTwoScreen() {
         preferredCurrency: data.currency,
         type: BudgetTypeSchema.Enum.SPENDING,
         period: {
-          id: createId(),
+          id: periodId,
           amount: data.amount,
           type: BudgetPeriodTypeSchema.Enum.MONTHLY,
         },
       },
-      id: createId(),
+      id: budgetId,
     }).catch(() => {
       // ignore
     })
@@ -90,7 +94,13 @@ export default function StepTwoScreen() {
       },
     })
 
-    router.replace('/')
+    const { status: existingStatus } = await Notifications.getPermissionsAsync()
+
+    if (existingStatus === 'granted') {
+      router.replace('/')
+    } else {
+      router.push('/onboarding/step-three')
+    }
   }
 
   return (

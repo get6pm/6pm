@@ -1,5 +1,6 @@
 import { BackButton } from '@/components/common/back-button'
 import { Button } from '@/components/ui/button'
+import { useScheduleNotificationTrigger } from '@/hooks/use-schedule-notification'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
 import { useUser } from '@clerk/clerk-expo'
@@ -13,6 +14,7 @@ export default function AuthenticatedLayout() {
   const { user, isLoaded, isSignedIn } = useUser()
   const { colorScheme } = useColorScheme()
   const { i18n } = useLingui()
+  useScheduleNotificationTrigger()
 
   useEffect(() => {
     if (isLoaded) {

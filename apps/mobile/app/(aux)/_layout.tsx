@@ -16,7 +16,7 @@ export default function AuxiliaryLayout() {
         headerTintColor: theme[colorScheme ?? 'light'].primary,
         headerShadowVisible: false,
         headerTitleStyle: {
-          fontFamily: 'Be Vietnam Pro Medium',
+          fontFamily: 'Inter Medium',
           fontSize: 16,
           color: theme[colorScheme ?? 'light'].primary,
         },

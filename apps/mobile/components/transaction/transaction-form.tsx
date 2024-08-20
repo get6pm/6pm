@@ -54,9 +54,9 @@ function TransactionAmount() {
     <>
       <TextTicker
         value={amount}
-        className="text-center font-bold text-6xl text-foreground leading-tight"
+        className="text-center text-6xl text-foreground leading-tight"
         suffix={currency}
-        suffixClassName="font-bold ml-2 text-muted-foreground overflow-visible"
+        suffixClassName="ml-2 text-muted-foreground overflow-visible"
         onPressSuffix={() => {
           Haptics.selectionAsync()
           sheetRef.current?.present()

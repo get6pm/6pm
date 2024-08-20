@@ -4,13 +4,13 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { useMemo } from 'react'
 import { Text } from '../ui/text'
 
-const amountVariants = cva('shrink-0 font-bold', {
+const amountVariants = cva('shrink-0 font-semibold', {
   variants: {
     size: {
       xl: 'text-4xl',
       lg: 'text-3xl',
       md: 'text-2xl',
-      sm: 'text-lg',
+      sm: 'text-base',
     },
   },
   defaultVariants: {
@@ -18,7 +18,7 @@ const amountVariants = cva('shrink-0 font-bold', {
   },
 })
 
-const currencyVariants = cva('text-muted-foreground', {
+const currencyVariants = cva('font-medium text-muted-foreground', {
   variants: {
     size: {
       xl: 'text-base',

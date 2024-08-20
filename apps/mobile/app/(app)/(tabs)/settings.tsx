@@ -6,6 +6,8 @@ import { MenuItem } from '@/components/common/menu-item'
 import { toast } from '@/components/common/toast'
 import { ProfileCard } from '@/components/setting/profile-card'
 import { SelectDefaultCurrency } from '@/components/setting/select-default-currency'
+import { SetLocalAuth } from '@/components/setting/set-local-auth'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'
@@ -29,7 +31,6 @@ import {
   LockKeyholeIcon,
   LogOutIcon,
   MessageSquareQuoteIcon,
-  ScanFaceIcon,
   ScrollTextIcon,
   ShapesIcon,
   Share2Icon,
@@ -94,7 +95,9 @@ export default function SettingsScreen() {
                 label={t(i18n)`Magic inbox`}
                 icon={InboxIcon}
                 rightSection={
-                  <ChevronRightIcon className="h-5 w-5 text-primary" />
+                  <Badge variant="outline">
+                    <Text className="text-xs">{t(i18n)`Coming soon`}</Text>
+                  </Badge>
                 }
               />
             </Link>
@@ -129,13 +132,7 @@ export default function SettingsScreen() {
               />
             </Link>
             <SelectDefaultCurrency />
-            <MenuItem
-              label={t(i18n)`Login using FaceID`}
-              icon={ScanFaceIcon}
-              rightSection={
-                <Switch checked={false} onCheckedChange={console.log} />
-              }
-            />
+            <SetLocalAuth />
             <MenuItem
               label={t(i18n)`Push notifications`}
               icon={BellIcon}

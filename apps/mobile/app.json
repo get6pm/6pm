@@ -59,6 +59,12 @@
           "project": "6pm-mobile",
           "organization": "get6pm"
         }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID to secure your account"
+        }
       ]
     ],
     "experiments": {

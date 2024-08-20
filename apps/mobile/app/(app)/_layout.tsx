@@ -1,5 +1,7 @@
+import { AuthLocal } from '@/components/auth/auth-local'
 import { BackButton } from '@/components/common/back-button'
 import { Button } from '@/components/ui/button'
+import { useLocalAuth } from '@/hooks/use-local-auth'
 import { useScheduleNotificationTrigger } from '@/hooks/use-schedule-notification'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
@@ -14,6 +16,7 @@ export default function AuthenticatedLayout() {
   const { user, isLoaded, isSignedIn } = useUser()
   const { colorScheme } = useColorScheme()
   const { i18n } = useLingui()
+  const { shouldAuthLocal, setShouldAuthLocal } = useLocalAuth()
   useScheduleNotificationTrigger()
 
   useEffect(() => {
@@ -28,6 +31,10 @@ export default function AuthenticatedLayout() {
 
   if (!user?.unsafeMetadata?.onboardedAt && isLoaded) {
     return <Redirect href={'/onboarding/step-one'} />
+  }
+
+  if (shouldAuthLocal) {
+    return <AuthLocal onAuthenticated={() => setShouldAuthLocal(false)} />
   }
 
   return (

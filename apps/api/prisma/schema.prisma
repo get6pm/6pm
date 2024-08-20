@@ -102,9 +102,9 @@ model BudgetUser {
   permission BudgetUserPermission
 
   userId   String
-  user     User   @relation(fields: [userId], references: [id])
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   budgetId String
-  budget   Budget @relation(fields: [budgetId], references: [id])
+  budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
 
   @@unique([userId, budgetId])
 }

@@ -124,7 +124,7 @@ msgstr ""
 msgid "Budgets"
 msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:120
+#: apps/mobile/components/transaction/scanner.tsx:139
 msgid "Camera permissions are not granted"
 msgstr ""
 
@@ -136,7 +136,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:48
+#: apps/mobile/components/transaction/scanner.tsx:58
 msgid "Cannot extract transaction data"
 msgstr ""
 
@@ -274,7 +274,7 @@ msgstr ""
 msgid "Get started by setting your monthly budget."
 msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:122
+#: apps/mobile/components/transaction/scanner.tsx:141
 msgid "Grant camera permissions"
 msgstr ""
 
@@ -404,7 +404,7 @@ msgstr ""
 msgid "Privacy Policy"
 msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:139
+#: apps/mobile/components/transaction/scanner.tsx:158
 msgid "Processing transaction..."
 msgstr ""
 
@@ -540,11 +540,15 @@ msgstr ""
 msgid "Spending"
 msgstr ""
 
+#: apps/mobile/components/transaction/scanner.tsx:129
+msgid "Swift up to scan transaction"
+msgstr ""
+
 #: apps/mobile/app/(app)/appearance.tsx:38
 #~ msgid "System"
 #~ msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:163
+#: apps/mobile/components/transaction/scanner.tsx:182
 msgid "Take a picture of your transaction"
 msgstr ""
 
@@ -580,7 +584,7 @@ msgstr ""
 msgid "Tomorrow"
 msgstr ""
 
-#: apps/mobile/app/(app)/transaction/new-record.tsx:57
+#: apps/mobile/app/(app)/transaction/new-record.tsx:58
 msgid "Transaction created"
 msgstr ""
 

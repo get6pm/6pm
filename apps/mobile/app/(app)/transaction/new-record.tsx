@@ -17,7 +17,7 @@ import { PortalHost, useModalPortalRoot } from '@rn-primitives/portal'
 import { useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ActivityIndicator, Alert, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
@@ -31,6 +31,7 @@ export default function NewRecordScreen() {
   const defaultCurrency = useDefaultCurrency()
   const defaultWallet = walletAccounts?.[0]
   const { sideOffset, ...rootProps } = useModalPortalRoot()
+  const [page, setPage] = useState<number>(0)
 
   const params = useLocalSearchParams()
   const parsedParams = zUpdateTransaction.parse(params)
@@ -86,6 +87,8 @@ export default function NewRecordScreen() {
         orientation="vertical"
         initialPage={0}
         style={{ flex: 1 }}
+        onPageSelected={({ nativeEvent }) => setPage(nativeEvent.position)}
+        offscreenPageLimit={2}
       >
         <TransactionForm
           sideOffset={sideOffset}
@@ -111,6 +114,7 @@ export default function NewRecordScreen() {
             ref.current?.setScrollEnabled(true)
             ref.current?.setPage(0)
           }}
+          shouldRender={page === 1}
         />
       </PagerView>
       <PortalHost name="transaction-form" />

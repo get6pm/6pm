@@ -42,7 +42,7 @@ type TransactionFormProps = {
   sideOffset?: number
 }
 
-function TransactionAmount() {
+export function TransactionAmount() {
   const { colorScheme } = useColorScheme()
   const sheetRef = useRef<BottomSheetModal>(null)
   const [amount] = useWatch({ name: ['amount'] })

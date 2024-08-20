@@ -4,7 +4,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { useMemo } from 'react'
 import { Text } from '../ui/text'
 
-const amountVariants = cva('shrink-0 font-semibold', {
+const amountVariants = cva('line-clamp-1 shrink-0 font-semibold', {
   variants: {
     size: {
       xl: 'text-4xl',

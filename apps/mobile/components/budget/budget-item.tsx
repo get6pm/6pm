@@ -105,7 +105,7 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
         </View>
         <Separator />
         <View className="flex-row items-center justify-between gap-6">
-          <View className="gap-1">
+          <View className="flex-1 gap-1">
             <AmountFormat
               amount={remainingBalance}
               displayNegativeSign

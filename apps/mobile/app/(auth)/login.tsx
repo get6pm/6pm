@@ -45,18 +45,16 @@ export default function LoginScreen() {
         <Separator className="mx-auto my-3 w-[70%]" />
         {withEmail && <AuthEmail />}
       </View>
-      <Trans>
-        <Text className="mx-auto mt-4 px-4 text-center font-sans text-muted-foreground text-xs">
-          By continuing, you acknowledge that you understand and agree to the{' '}
-          <Link href="/terms-of-service">
-            <Text className="text-primary text-xs">Terms & Conditions</Text>
-          </Link>{' '}
-          and{' '}
-          <Link href="/privacy-policy">
-            <Text className="text-primary text-xs">Privacy Policy</Text>
-          </Link>
-        </Text>
-      </Trans>
+      <View className="px-4">
+        <Trans>
+          <Text className="mx-auto text-center font-sans text-muted-foreground text-xs">
+            By continuing, you acknowledge that you understand and agree to our{' '}
+            <Link href="/privacy-policy">
+              <Text className="text-primary text-xs">Privacy Policy</Text>
+            </Link>
+          </Text>
+        </Trans>
+      </View>
     </ScrollView>
   )
 }

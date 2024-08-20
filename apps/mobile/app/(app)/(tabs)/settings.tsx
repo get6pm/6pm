@@ -30,6 +30,7 @@ import {
   LogOutIcon,
   MessageSquareQuoteIcon,
   ScanFaceIcon,
+  ScrollTextIcon,
   ShapesIcon,
   Share2Icon,
   StarIcon,
@@ -172,6 +173,15 @@ export default function SettingsScreen() {
             {t(i18n)`Others`}
           </Text>
           <View>
+            <Link href="/privacy-policy" asChild>
+              <MenuItem
+                label={t(i18n)`Privacy policy`}
+                icon={ScrollTextIcon}
+                rightSection={
+                  <ChevronRightIcon className="h-5 w-5 text-primary" />
+                }
+              />
+            </Link>
             <Link href="/feedback" asChild disabled>
               <MenuItem
                 label={t(i18n)`Send feedback`}
@@ -241,18 +251,6 @@ export default function SettingsScreen() {
               ? `(${Constants.expoConfig.ios.buildNumber})`
               : ''}
           </Text>
-          <View className="flex-row gap-6">
-            <Link href="/terms-of-service">
-              <Text className="text-muted-foreground text-sm">
-                {t(i18n)`Terms of use`}
-              </Text>
-            </Link>
-            <Link href="/privacy-policy">
-              <Text className="text-muted-foreground text-sm">
-                {t(i18n)`Privacy policy`}
-              </Text>
-            </Link>
-          </View>
         </View>
       </ScrollView>
       <LinearGradient

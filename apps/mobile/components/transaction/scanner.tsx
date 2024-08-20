@@ -126,7 +126,7 @@ export function Scanner({
     return (
       <View className="flex-1 items-center gap-4 bg-muted p-4">
         <ChevronsUpIcon className="size-10 text-muted-foreground" />
-        <Text>{t(i18n)`Swift up to scan transaction`}</Text>
+        <Text>{t(i18n)`Swipe up to scan transaction`}</Text>
       </View>
     )
   }

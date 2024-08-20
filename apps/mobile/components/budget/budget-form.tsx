@@ -119,7 +119,7 @@ export const BudgetForm = ({
           label={t(i18n)`Target`}
           placeholder={t(i18n)`0.00`}
           className="!pl-[62px]"
-          keyboardType="number-pad"
+          keyboardType="numeric"
           leftSection={
             <Controller
               name="preferredCurrency"

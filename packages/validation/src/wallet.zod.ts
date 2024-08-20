@@ -19,8 +19,18 @@ export const zUpdateWallet = z.object({
 })
 export type UpdateWallet = z.infer<typeof zUpdateWallet>
 
+export enum WalletBalanceState {
+  Positive = 'POSITIVE',
+  Negative = 'NEGATIVE',
+}
+
 export const zWalletFormValues = zCreateWallet.extend({
-  balance: z.number({ coerce: true }).optional(),
+  balance: z
+    .string({ coerce: true })
+    .transform((val) => Number(`${val}`.replace(',', '.')))
+    .pipe(z.number({ coerce: true }))
+    .optional(),
+  balanceState: z.nativeEnum(WalletBalanceState).optional(),
 })
 export type WalletFormValues = z.infer<typeof zWalletFormValues>
 

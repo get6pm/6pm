@@ -40,6 +40,7 @@
     "@react-native-community/datetimepicker": "8.0.1",
     "@react-native-community/netinfo": "11.3.1",
     "@react-navigation/native": "^6.0.2",
+    "@rn-primitives/collapsible": "^1.0.3",
     "@rn-primitives/dropdown-menu": "^1.0.3",
     "@rn-primitives/portal": "^1.0.3",
     "@rn-primitives/progress": "^1.0.3",

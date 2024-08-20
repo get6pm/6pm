@@ -1,10 +1,12 @@
 import { getHonoClient } from '@/lib/client'
+import { calculateBudgetPeriodStartEndDates } from '@6pm/utilities'
 import { type BudgetFormValues, BudgetSchema } from '@6pm/validation'
 import { createId } from '@paralleldrive/cuid2'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import Decimal from 'decimal.js'
 import { first, keyBy, orderBy } from 'lodash-es'
 import { useMemo } from 'react'
+import { Alert } from 'react-native'
 import { z } from 'zod'
 import { budgetQueries } from './queries'
 import { type BudgetItem, useBudgetStore } from './store'
@@ -87,7 +89,8 @@ export const useUpdateBudget = () => {
         const hc = await getHonoClient()
         const result = await hc.v1.budgets[':budgetId'].$put({
           param: { budgetId: id },
-          json: data,
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          json: data as any,
         })
 
         if (result.ok) {
@@ -117,8 +120,8 @@ export const useUpdateBudget = () => {
                   ...latestPeriodConfig,
                   ...data.period,
                   amount:
-                    new Decimal(data.period.amount) ??
-                    latestPeriodConfig.amount,
+                    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+                    data.period.amount ?? (latestPeriodConfig.amount as any),
                 }
               : pc,
           ),
@@ -145,7 +148,8 @@ export const useCreateBudget = () => {
     }: { id?: string; data: BudgetFormValues }) => {
       const hc = await getHonoClient()
       const result = await hc.v1.budgets.$post({
-        json: { id, ...data },
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        json: { id, ...data } as any,
       })
 
       if (result.ok) {
@@ -159,17 +163,20 @@ export const useCreateBudget = () => {
       throw result
     },
     onMutate({ id, data }) {
+      const periodConfig = calculateBudgetPeriodStartEndDates({
+        anchorDate: new Date(),
+        type: data.period.type,
+      })
+
       const period: BudgetItem['periodConfigs'][number] = {
         ...data.period,
         id: data.period.id ?? createId(),
         budgetId: id!,
         createdAt: new Date(),
         updatedAt: new Date(),
-        amount: new Decimal(data.period.amount),
-        startDate: data.period.startDate
-          ? new Date(data.period.startDate)
-          : null,
-        endDate: data.period.endDate ? new Date(data.period.endDate) : null,
+        amount: new Decimal(data.period.amount!),
+        startDate: data.period.startDate ?? periodConfig.startDate,
+        endDate: data.period.endDate ?? periodConfig.endDate,
       }
 
       const budget: BudgetItem = {
@@ -185,6 +192,28 @@ export const useCreateBudget = () => {
 
       return budget
     },
+  })
+
+  return mutation
+}
+
+export function useDeleteBudget() {
+  const removeBudgetInStore = useBudgetStore((state) => state.removeBudget)
+
+  const mutation = useMutation({
+    mutationFn: async (budgetId: string) => {
+      const hc = await getHonoClient()
+      await hc.v1.budgets[':budgetId'].$delete({
+        param: { budgetId },
+      })
+    },
+    onMutate(budgetId) {
+      removeBudgetInStore(budgetId)
+    },
+    onError(error) {
+      Alert.alert(error.message)
+    },
+    throwOnError: true,
   })
 
   return mutation

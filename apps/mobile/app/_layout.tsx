@@ -22,11 +22,13 @@ import {
   SpaceMono_400Regular,
   SpaceMono_700Bold,
 } from '@expo-google-fonts/space-mono'
+import * as Notifications from 'expo-notifications'
 import { SplashScreen, Stack, useNavigationContainerRef } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
 
 import 'react-native-reanimated'
 import { ToastRoot } from '@/components/common/toast'
+import { useNotificationObserver } from '@/hooks/use-schedule-notification'
 import { useWarmUpBrowser } from '@/hooks/use-warm-up-browser'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { queryClient } from '@/lib/client'
@@ -101,6 +103,14 @@ SplashScreen.preventAutoHideAsync()
 
 WebBrowser.maybeCompleteAuthSession()
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+})
+
 // biome-ignore lint/style/useNamingConvention: <explanation>
 export const unstable_settings = {
   initialRouteName: '(app)',
@@ -119,6 +129,7 @@ function RootLayout() {
     Inter_600SemiBold,
   })
   const ref = useNavigationContainerRef()
+  useNotificationObserver()
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', onAppStateChange)

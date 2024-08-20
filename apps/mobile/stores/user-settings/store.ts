@@ -5,6 +5,8 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 interface UserSettingsStore {
   preferredCurrency?: string
   setPreferredCurrency: (preferredCurrency: string) => void
+  enabledPushNotifications: boolean
+  setEnabledPushNotifications: (enabledPushNotifications: boolean) => void
 }
 
 export const useUserSettingsStore = create<UserSettingsStore>()(
@@ -12,6 +14,9 @@ export const useUserSettingsStore = create<UserSettingsStore>()(
     (set) => ({
       preferredCurrency: undefined,
       setPreferredCurrency: (preferredCurrency) => set({ preferredCurrency }),
+      enabledPushNotifications: false,
+      setEnabledPushNotifications: (enabledPushNotifications) =>
+        set({ enabledPushNotifications }),
     }),
     {
       name: 'user-settings-storage',

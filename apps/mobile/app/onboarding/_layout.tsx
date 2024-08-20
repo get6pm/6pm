@@ -30,6 +30,7 @@ export default function OnboardingLayout() {
           },
         }}
       />
+      <Stack.Screen name="step-three" />
     </Stack>
   )
 }

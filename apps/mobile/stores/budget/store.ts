@@ -12,6 +12,7 @@ interface BudgetStore {
   _reset: () => void
   setBudgets: (budgets: BudgetItem[]) => void
   updateBudget: (budget: BudgetItem) => void
+  removeBudget: (budgetId: string) => void
 }
 
 export const useBudgetStore = create<BudgetStore>()(
@@ -30,8 +31,15 @@ export const useBudgetStore = create<BudgetStore>()(
             }
           }
 
-          state.budgets[index] = budget
-          return { budgets: state.budgets }
+          return {
+            budgets: state.budgets.map((c) =>
+              c.id === budget.id ? budget : c,
+            ),
+          }
+        }),
+      removeBudget: (budgetId) =>
+        set((state) => {
+          return { budgets: state.budgets.filter((c) => c.id !== budgetId) }
         }),
     }),
     {

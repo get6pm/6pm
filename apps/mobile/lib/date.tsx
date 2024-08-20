@@ -5,7 +5,11 @@ import { isToday } from 'date-fns/isToday'
 import { isTomorrow } from 'date-fns/isTomorrow'
 import { isYesterday } from 'date-fns/isYesterday'
 
-export function formatDateShort(date: Date) {
+export function formatDateShort(date?: Date) {
+  if (!date) {
+    return ''
+  }
+
   if (isToday(date)) {
     return t`Today`
   }

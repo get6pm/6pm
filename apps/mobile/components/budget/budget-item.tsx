@@ -8,6 +8,7 @@ import { Pressable, View } from 'react-native'
 import type { BudgetItem as BudgetItemData } from '@/stores/budget/store'
 import { calculateBudgetPeriodStartEndDates } from '@6pm/utilities'
 import { useUser } from '@clerk/clerk-expo'
+import { first, orderBy } from 'lodash-es'
 import { ChevronRightIcon } from 'lucide-react-native'
 import { AmountFormat } from '../common/amount-format'
 import { CircularProgress } from '../common/circular-progress'
@@ -24,20 +25,26 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
   const { i18n } = useLingui()
   const { user } = useUser()
 
-  const remainingBalance = 2500000
+  const latestPeriodConfig = first(
+    orderBy(budget.periodConfigs, 'startDate', 'desc'),
+  )
 
-  const amountPerDay = 312500
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  const remainingBalance = (latestPeriodConfig?.amount ?? 0) as any
+
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  const amountPerDay = latestPeriodConfig?.amount ?? (0 as any)
 
   const usagePercentage = Math.random() * 100
 
   const remainingDays = useMemo(() => {
     let periodEndDate: Date | null
-    if (budget.periodConfigs?.[0]?.type === 'CUSTOM') {
-      periodEndDate = budget.periodConfigs?.[0]?.endDate
+    if (latestPeriodConfig?.type === 'CUSTOM') {
+      periodEndDate = latestPeriodConfig?.endDate
     } else {
       const { endDate } = calculateBudgetPeriodStartEndDates({
         anchorDate: new Date(),
-        type: budget.periodConfigs?.[0]?.type,
+        type: latestPeriodConfig?.type ?? 'MONTHLY',
       })
       periodEndDate = endDate
     }
@@ -58,7 +65,7 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
     )
 
     return t(i18n)`${duration?.split(',')[0]} left`
-  }, [budget.periodConfigs, i18n])
+  }, [latestPeriodConfig, i18n])
 
   return (
     <Link

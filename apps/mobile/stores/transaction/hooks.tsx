@@ -27,7 +27,8 @@ export function useTransactionList({
 }) {
   const transactionsInRangeFromStore =
     useTransactionStore().transactions.filter(
-      (t) => new Date(t.date) >= from && new Date(t.date) <= to,
+      (t) =>
+        new Date(t.date) >= new Date(from) && new Date(t.date) <= new Date(to),
     )
   const updateTransactionsByRange = useTransactionStore(
     (state) => state.updateTransactionsByRange,

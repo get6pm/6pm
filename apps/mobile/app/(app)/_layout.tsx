@@ -2,7 +2,7 @@ import { BackButton } from '@/components/common/back-button'
 import { Button } from '@/components/ui/button'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
-import { useAuth } from '@clerk/clerk-expo'
+import { useUser } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { Link, Redirect, SplashScreen, Stack } from 'expo-router'
@@ -10,7 +10,7 @@ import { PlusIcon } from 'lucide-react-native'
 import { useEffect } from 'react'
 
 export default function AuthenticatedLayout() {
-  const { isLoaded, isSignedIn } = useAuth()
+  const { user, isLoaded, isSignedIn } = useUser()
   const { colorScheme } = useColorScheme()
   const { i18n } = useLingui()
 
@@ -22,6 +22,10 @@ export default function AuthenticatedLayout() {
 
   if (!isSignedIn && isLoaded) {
     return <Redirect href={'/login'} />
+  }
+
+  if (!user?.unsafeMetadata?.onboardedAt && isLoaded) {
+    return <Redirect href={'/onboarding/step-one'} />
   }
 
   return (

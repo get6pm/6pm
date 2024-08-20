@@ -11,17 +11,25 @@ import * as Haptics from 'expo-haptics'
 import { useCallback, useRef, useState } from 'react'
 import { useController } from 'react-hook-form'
 import { FlatList, Keyboard, View } from 'react-native'
+import TextTicker from 'react-native-text-ticker'
 
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
 import { useCategoryList } from '@/stores/category/hooks'
 import { Link, useFocusEffect } from 'expo-router'
 import { PlusIcon } from 'lucide-react-native'
+import { cssInterop } from 'nativewind'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { FullWindowOverlay } from 'react-native-screens'
 import GenericIcon from '../common/generic-icon'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
+
+cssInterop(TextTicker, {
+  className: {
+    target: 'style',
+  },
+})
 
 export function SelectCategoryField({
   onSelect,
@@ -146,9 +154,17 @@ export function SelectCategoryField({
                           name={item.icon as any}
                           className="size-8 text-foreground"
                         />
-                        <Text className="!text-sm line-clamp-1 text-center text-muted-foreground">
+                        <TextTicker
+                          marqueeDelay={500}
+                          duration={180 * item.name.length}
+                          bouncePadding={{ left: 5, right: 5 }}
+                          bounce
+                          loop
+                          animationType="bounce"
+                          className="!text-sm line-clamp-1 text-center text-muted-foreground"
+                        >
                           {item.name}
-                        </Text>
+                        </TextTicker>
                       </Button>
                     </View>
 

@@ -21,7 +21,7 @@ msgstr ""
 msgid "{0} left"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:124
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:127
 msgid "{language}"
 msgstr ""
 
@@ -83,7 +83,11 @@ msgstr ""
 msgid "An error occurred while updating the transaction"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:105
+#: apps/mobile/components/auth/auth-local.tsx:34
+msgid "App is locked. Please authenticate to continue."
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:108
 msgid "App settings"
 msgstr ""
 
@@ -91,8 +95,8 @@ msgstr ""
 msgid "App theme"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:87
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:110
+#: apps/mobile/app/(app)/_layout.tsx:94
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:113
 msgid "Appearance"
 msgstr ""
 
@@ -104,7 +108,7 @@ msgstr ""
 msgid "Are you sure you want to delete your account? This action cannot be undone."
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:221
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:218
 msgid "Are you sure you want to sign out?"
 msgstr ""
 
@@ -132,7 +136,7 @@ msgstr ""
 msgid "Camera permissions are not granted"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:223
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:220
 #: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:43
 #: apps/mobile/app/(app)/profile.tsx:120
 #: apps/mobile/app/(app)/transaction/[transactionId].tsx:77
@@ -144,8 +148,8 @@ msgstr ""
 msgid "Cannot extract transaction data"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:119
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:85
+#: apps/mobile/app/(app)/_layout.tsx:126
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:86
 msgid "Categories"
 msgstr ""
 
@@ -155,6 +159,10 @@ msgstr ""
 
 #: apps/mobile/app/(app)/appearance.tsx:19
 msgid "Choose a preferred theme for the 6pm"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:99
+msgid "Coming soon"
 msgstr ""
 
 #: apps/mobile/components/auth/auth-email.tsx:161
@@ -213,11 +221,11 @@ msgstr ""
 msgid "Display name"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:113
+#: apps/mobile/app/(app)/_layout.tsx:120
 msgid "Edit account"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:140
+#: apps/mobile/app/(app)/_layout.tsx:147
 msgid "Edit category"
 msgstr ""
 
@@ -266,11 +274,11 @@ msgstr ""
 msgid "From date"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:71
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:72
 msgid "General"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:61
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:62
 msgid "Get 6pm Pro"
 msgstr ""
 
@@ -303,8 +311,8 @@ msgstr ""
 msgid "Keeping up with your spending and budgets."
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:75
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:119
+#: apps/mobile/app/(app)/_layout.tsx:82
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:122
 msgid "Language"
 msgstr ""
 
@@ -320,11 +328,11 @@ msgstr ""
 msgid "Light"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:133
+#: apps/mobile/components/setting/set-local-auth.tsx:41
 msgid "Login using FaceID"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:94
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:95
 msgid "Magic inbox"
 msgstr ""
 
@@ -354,17 +362,17 @@ msgstr ""
 msgid "New {0}"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:106
+#: apps/mobile/app/(app)/_layout.tsx:113
 #: apps/mobile/app/(app)/wallet/accounts.tsx:26
 msgid "New account"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:147
+#: apps/mobile/app/(app)/_layout.tsx:154
 #: apps/mobile/app/(app)/(tabs)/_layout.tsx:80
 msgid "New budget"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:133
+#: apps/mobile/app/(app)/_layout.tsx:140
 msgid "New category"
 msgstr ""
 
@@ -376,7 +384,7 @@ msgstr ""
 msgid "No transactions found"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:173
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:170
 msgid "Others"
 msgstr ""
 
@@ -400,7 +408,7 @@ msgstr ""
 msgid "Positive"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:178
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:175
 msgid "Privacy policy"
 msgstr ""
 
@@ -412,7 +420,7 @@ msgstr ""
 msgid "Processing transaction..."
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:82
+#: apps/mobile/app/(app)/_layout.tsx:89
 msgid "Profile"
 msgstr ""
 
@@ -420,23 +428,23 @@ msgstr ""
 msgid "Profile updated successfully"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:211
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:208
 msgid "Proudly open source"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:140
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:137
 msgid "Push notifications"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:162
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:159
 msgid "Push notifications are disabled"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:160
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:157
 msgid "Push notifications are enabled"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:156
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:153
 msgid "Push notifications are not enabled"
 msgstr ""
 
@@ -444,7 +452,7 @@ msgstr ""
 msgid "Quarterly"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:195
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:192
 msgid "Rate 6pm on App Store"
 msgstr ""
 
@@ -490,7 +498,7 @@ msgstr ""
 msgid "Select period type"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:187
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:184
 msgid "Send feedback"
 msgstr ""
 
@@ -510,7 +518,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:203
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:200
 msgid "Share with friends"
 msgstr ""
 
@@ -526,8 +534,8 @@ msgstr ""
 msgid "Sign in with Google"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:227
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:240
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:224
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:237
 msgid "Sign out"
 msgstr ""
 
@@ -615,10 +623,15 @@ msgstr ""
 
 #: apps/mobile/app/(app)/profile.tsx:50
 #: apps/mobile/app/(app)/profile.tsx:61
+#: apps/mobile/components/setting/set-local-auth.tsx:31
 msgid "Unknown error"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:64
+#: apps/mobile/components/auth/auth-local.tsx:39
+msgid "Unlock"
+msgstr ""
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:65
 msgid "Unlocks full AI power and more!"
 msgstr ""
 
@@ -626,7 +639,7 @@ msgstr ""
 msgid "Upload new photo"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:248
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:245
 msgid "ver."
 msgstr ""
 
@@ -642,8 +655,8 @@ msgstr ""
 msgid "Wallet account name"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:92
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:76
+#: apps/mobile/app/(app)/_layout.tsx:99
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:77
 msgid "Wallet accounts"
 msgstr ""
 

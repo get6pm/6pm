@@ -149,13 +149,13 @@ export function ProfileCard() {
         intensity={15}
         className="flex flex-row items-center justify-between gap-2 px-4 py-3"
       >
-        <View className="flex flex-row items-center gap-3">
+        <View className="flex flex-1 flex-row items-center gap-3">
           <UserAvatar user={user!} fallbackClassName="bg-card" />
-          <View>
+          <View className="flex-1 flex-grow">
             <Badge variant="default" className="mb-1 self-start rounded-md">
               <Text className="font-medium text-xs">Saver</Text>
             </Badge>
-            <Text className="font-medium text-primary">
+            <Text className="line-clamp-1 flex-grow font-medium text-primary">
               {user?.fullName ?? user?.primaryEmailAddress?.emailAddress}
             </Text>
           </View>

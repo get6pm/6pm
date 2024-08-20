@@ -124,7 +124,7 @@ msgstr "Số dư"
 msgid "Budgets"
 msgstr "Ngân sách"
 
-#: apps/mobile/components/transaction/scanner.tsx:120
+#: apps/mobile/components/transaction/scanner.tsx:139
 msgid "Camera permissions are not granted"
 msgstr "Quyền truy cập camera không được cấp"
 
@@ -136,7 +136,7 @@ msgstr "Quyền truy cập camera không được cấp"
 msgid "Cancel"
 msgstr "Huỷ"
 
-#: apps/mobile/components/transaction/scanner.tsx:48
+#: apps/mobile/components/transaction/scanner.tsx:58
 msgid "Cannot extract transaction data"
 msgstr "Không thể xử lý dữ liệu giao dịch"
 
@@ -274,7 +274,7 @@ msgstr "Nâng Cấp 6pm Pro"
 msgid "Get started by setting your monthly budget."
 msgstr "Bắt đầu bằng cách đặt ngân sách hàng tháng của bạn."
 
-#: apps/mobile/components/transaction/scanner.tsx:122
+#: apps/mobile/components/transaction/scanner.tsx:141
 msgid "Grant camera permissions"
 msgstr "Cấp quyền truy cập camera"
 
@@ -404,7 +404,7 @@ msgstr "Chính sách bảo mật"
 msgid "Privacy Policy"
 msgstr "Chính sách bảo mật"
 
-#: apps/mobile/components/transaction/scanner.tsx:139
+#: apps/mobile/components/transaction/scanner.tsx:158
 msgid "Processing transaction..."
 msgstr "Đang xử lý giao dịch..."
 
@@ -540,11 +540,15 @@ msgstr "Ngày cụ thể"
 msgid "Spending"
 msgstr "Chi tiêu"
 
+#: apps/mobile/components/transaction/scanner.tsx:129
+msgid "Swift up to scan transaction"
+msgstr "Vuốt lên để quét giao dịch"
+
 #: apps/mobile/app/(app)/appearance.tsx:38
 #~ msgid "System"
 #~ msgstr "Hệ thống"
 
-#: apps/mobile/components/transaction/scanner.tsx:163
+#: apps/mobile/components/transaction/scanner.tsx:182
 msgid "Take a picture of your transaction"
 msgstr "Chụp ảnh giao dịch của bạn"
 
@@ -580,7 +584,7 @@ msgstr "Hôm nay"
 msgid "Tomorrow"
 msgstr "Ngày mai"
 
-#: apps/mobile/app/(app)/transaction/new-record.tsx:57
+#: apps/mobile/app/(app)/transaction/new-record.tsx:58
 msgid "Transaction created"
 msgstr "Giao dịch đã được tạo"
 

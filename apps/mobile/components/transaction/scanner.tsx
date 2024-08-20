@@ -12,7 +12,12 @@ import { type CameraType, CameraView, useCameraPermissions } from 'expo-camera'
 import * as Haptics from 'expo-haptics'
 import { SaveFormat, manipulateAsync } from 'expo-image-manipulator'
 import * as ImagePicker from 'expo-image-picker'
-import { CameraIcon, ImagesIcon, SwitchCameraIcon } from 'lucide-react-native'
+import {
+  CameraIcon,
+  ChevronsUpIcon,
+  ImagesIcon,
+  SwitchCameraIcon,
+} from 'lucide-react-native'
 import { cssInterop } from 'nativewind'
 import { useRef, useState } from 'react'
 import { ActivityIndicator, Alert } from 'react-native'
@@ -28,9 +33,14 @@ cssInterop(CameraView, {
 type ScannerProps = {
   onScanStart?: () => void
   onScanResult: (result: UpdateTransaction) => void
+  shouldRender?: boolean
 }
 
-export function Scanner({ onScanStart, onScanResult }: ScannerProps) {
+export function Scanner({
+  onScanStart,
+  onScanResult,
+  shouldRender,
+}: ScannerProps) {
   const camera = useRef<CameraView>(null)
   const [facing, setFacing] = useState<CameraType>('back')
   const [permission, requestPermission] = useCameraPermissions()
@@ -108,6 +118,15 @@ export function Scanner({ onScanStart, onScanResult }: ScannerProps) {
     return (
       <View className="flex-1 items-center justify-center bg-muted">
         <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+
+  if (!shouldRender) {
+    return (
+      <View className="flex-1 items-center gap-4 bg-muted p-4">
+        <ChevronsUpIcon className="size-10 text-muted-foreground" />
+        <Text>{t(i18n)`Swift up to scan transaction`}</Text>
       </View>
     )
   }

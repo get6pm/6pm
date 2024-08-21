@@ -39,6 +39,7 @@ export default function HomeScreen() {
     from: dayjsExtended().subtract(10, 'year').startOf('year').toDate(),
     to: dayjsExtended().add(10, 'year').endOf('year').toDate(),
   })
+  const [categoryId, setCategoryId] = useState<string | undefined>(undefined)
 
   const timeRange = useMemo(() => {
     if (filter !== HomeFilter.All) {
@@ -53,6 +54,7 @@ export default function HomeScreen() {
   const { transactions, isLoading, isRefetching, refetch } = useTransactionList(
     {
       walletAccountId,
+      categoryId,
       ...timeRange,
     },
   )
@@ -80,6 +82,7 @@ export default function HomeScreen() {
       })
     }
     setFilter(filter)
+    setCategoryId(undefined)
   }
 
   const transactionsGroupByDate = useMemo(() => {
@@ -115,11 +118,16 @@ export default function HomeScreen() {
       <SectionList
         ListHeaderComponent={
           filter === HomeFilter.All ? (
-            <View className="p-6">
+            <View className="p-6 pb-4">
               <WalletStatistics
                 view={view}
-                onViewChange={setView}
+                onViewChange={(selected) => {
+                  setView(selected)
+                  setCategoryId(undefined)
+                }}
                 walletAccountId={walletAccountId}
+                categoryId={categoryId}
+                onCategoryChange={setCategoryId}
               />
             </View>
           ) : null

@@ -1,3 +1,4 @@
+import { UNCATEGORIZED_ID } from '@/components/home/category-chart'
 import { getHonoClient } from '@/lib/client'
 import { useMeQuery } from '@/queries/auth'
 import {
@@ -19,11 +20,13 @@ export function useTransactionList({
   to,
   walletAccountId,
   budgetId,
+  categoryId,
 }: {
   from: Date
   to: Date
   walletAccountId?: string
   budgetId?: string
+  categoryId?: string
 }) {
   const transactionsInRangeFromStore =
     useTransactionStore().transactions.filter(
@@ -55,6 +58,14 @@ export function useTransactionList({
           return false
         }
 
+        if (categoryId && categoryId === UNCATEGORIZED_ID && !t.categoryId) {
+          return true
+        }
+
+        if (categoryId && t.categoryId !== categoryId) {
+          return false
+        }
+
         return true
       })
 
@@ -74,7 +85,7 @@ export function useTransactionList({
       }, 0)
 
       return { transactions, transactionDict, totalIncome, totalExpense }
-    }, [transactionsInRangeFromStore, walletAccountId, budgetId])
+    }, [transactionsInRangeFromStore, walletAccountId, budgetId, categoryId])
 
   return {
     ...query,

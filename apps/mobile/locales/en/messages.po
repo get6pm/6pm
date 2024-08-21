@@ -50,7 +50,7 @@ msgstr ""
 msgid "Account deleted successfully"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:169
+#: apps/mobile/app/(app)/(tabs)/index.tsx:177
 msgid "Add your first transaction here"
 msgstr ""
 
@@ -194,7 +194,7 @@ msgstr ""
 msgid "Copied version to clipboard"
 msgstr ""
 
-#: apps/mobile/components/home/wallet-statistics.tsx:102
+#: apps/mobile/components/home/wallet-statistics.tsx:107
 msgid "Current balance"
 msgstr ""
 
@@ -401,7 +401,7 @@ msgstr ""
 msgid "No budget selected"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:157
+#: apps/mobile/app/(app)/(tabs)/index.tsx:165
 msgid "No transactions"
 msgstr ""
 
@@ -481,11 +481,11 @@ msgstr ""
 msgid "Rate 6pm on App Store"
 msgstr ""
 
-#: apps/mobile/components/home/wallet-statistics.tsx:98
+#: apps/mobile/components/home/wallet-statistics.tsx:103
 msgid "Revenue this month"
 msgstr ""
 
-#: apps/mobile/components/home/wallet-statistics.tsx:94
+#: apps/mobile/components/home/wallet-statistics.tsx:99
 msgid "Revenue this week"
 msgstr ""
 
@@ -589,11 +589,11 @@ msgstr ""
 msgid "Spending"
 msgstr ""
 
-#: apps/mobile/components/home/wallet-statistics.tsx:90
+#: apps/mobile/components/home/wallet-statistics.tsx:95
 msgid "Spent this month"
 msgstr ""
 
-#: apps/mobile/components/home/wallet-statistics.tsx:86
+#: apps/mobile/components/home/wallet-statistics.tsx:91
 msgid "Spent this week"
 msgstr ""
 
@@ -657,6 +657,7 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
+#: apps/mobile/components/home/category-chart.tsx:61
 #: apps/mobile/components/transaction/select-category-field.tsx:91
 #: apps/mobile/components/transaction/transaction-item.tsx:29
 msgid "Uncategorized"

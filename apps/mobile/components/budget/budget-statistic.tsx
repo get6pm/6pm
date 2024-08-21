@@ -23,7 +23,7 @@ export function BudgetStatistic({
           {t(i18n)`Left this month`}
         </Text>
       </View>
-      <View className="gap-1">
+      <View className="items-end gap-1">
         <AmountFormat amount={remainingPerDay} />
         <Text className="text-right text-muted-foreground">
           {t(i18n)`Left per day`}

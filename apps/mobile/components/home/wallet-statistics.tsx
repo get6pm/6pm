@@ -14,6 +14,7 @@ import {
   SelectTrigger,
 } from '../ui/select'
 import { Text } from '../ui/text'
+import { CategoryChart } from './category-chart'
 
 export enum HomeView {
   SpentThisWeek = 'SPENT_THIS_WEEK',
@@ -27,12 +28,16 @@ type WalletStatisticsProps = {
   view?: HomeView
   onViewChange?: (view: HomeView) => void
   walletAccountId?: string
+  categoryId?: string
+  onCategoryChange?: (categoryId?: string) => void
 }
 
 export function WalletStatistics({
   view = HomeView.SpentThisWeek,
   onViewChange,
   walletAccountId,
+  categoryId,
+  onCategoryChange,
 }: WalletStatisticsProps) {
   const { i18n } = useLingui()
 
@@ -60,7 +65,7 @@ export function WalletStatistics({
     }
   }, [view])
 
-  const { totalExpense, totalIncome } = useTransactionList({
+  const { totalExpense, totalIncome, transactions } = useTransactionList({
     walletAccountId,
     ...timeRange,
   })
@@ -104,69 +109,91 @@ export function WalletStatistics({
   ]
 
   return (
-    <Select
-      value={options.find((option) => option.value === view) ?? options[0]}
-      onValueChange={(selected) => {
-        onViewChange?.(selected?.value as HomeView)
-      }}
-    >
-      <SelectTrigger
-        hideArrow
-        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        // className={cn(
-        //   '!h-10 !px-2.5 flex-row items-center gap-2',
-        //   value !== HomeFilter.All && 'border-primary bg-primary',
-        // )}
-        className="!border-0 h-auto flex-col items-center gap-3 native:h-auto"
+    <View className="items-center gap-6">
+      <Select
+        value={options.find((option) => option.value === view) ?? options[0]}
+        onValueChange={(selected) => {
+          onViewChange?.(selected?.value as HomeView)
+        }}
       >
-        <View className="self-center border-primary border-b">
-          <Text className="w-fit self-center text-center leading-tight">
-            {options.find((option) => option.value === view)?.label}
-          </Text>
-        </View>
-        <AmountFormat
-          amount={totalValue}
-          size="xl"
-          displayNegativeSign
-          displayPositiveColor
+        <SelectTrigger
+          hideArrow
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          // className={cn(
+          //   '!h-10 !px-2.5 flex-row items-center gap-2',
+          //   value !== HomeFilter.All && 'border-primary bg-primary',
+          // )}
+          className="!border-0 h-auto flex-col items-center gap-3 native:h-auto"
+        >
+          <View className="self-center border-primary border-b">
+            <Text className="w-fit self-center text-center leading-tight">
+              {options.find((option) => option.value === view)?.label}
+            </Text>
+          </View>
+          <AmountFormat
+            amount={totalValue}
+            size="xl"
+            displayNegativeSign
+            displayPositiveColor
+          />
+        </SelectTrigger>
+        <SelectContent sideOffset={6} align="center">
+          <SelectGroup className="px-1">
+            {options.slice(0, 2).map((option) => (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                label={option.label}
+                className="flex-row items-center justify-between"
+              >
+                {option.label}
+              </SelectItem>
+            ))}
+            <SelectSeparator />
+            {options.slice(2, 4).map((option) => (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                label={option.label}
+                className="flex-row items-center justify-between"
+              >
+                {option.label}
+              </SelectItem>
+            ))}
+            <SelectSeparator />
+            {options.slice(4).map((option) => (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                label={option.label}
+                className="flex-row items-center justify-between"
+              >
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      {view !== HomeView.CurrentBalance ? (
+        <CategoryChart
+          selected={categoryId}
+          onSelect={onCategoryChange}
+          transactions={transactions.filter((t) => {
+            if (
+              view === HomeView.SpentThisWeek ||
+              view === HomeView.SpentThisMonth
+            ) {
+              return t.amountInVnd < 0
+            }
+            if (
+              view === HomeView.RevenueThisWeek ||
+              view === HomeView.RevenueThisMonth
+            ) {
+              return t.amountInVnd > 0
+            }
+          })}
         />
-      </SelectTrigger>
-      <SelectContent sideOffset={6} align="center">
-        <SelectGroup className="px-1">
-          {options.slice(0, 2).map((option) => (
-            <SelectItem
-              key={option.value}
-              value={option.value}
-              label={option.label}
-              className="flex-row items-center justify-between"
-            >
-              {option.label}
-            </SelectItem>
-          ))}
-          <SelectSeparator />
-          {options.slice(2, 4).map((option) => (
-            <SelectItem
-              key={option.value}
-              value={option.value}
-              label={option.label}
-              className="flex-row items-center justify-between"
-            >
-              {option.label}
-            </SelectItem>
-          ))}
-          <SelectSeparator />
-          {options.slice(4).map((option) => (
-            <SelectItem
-              key={option.value}
-              value={option.value}
-              label={option.label}
-              className="flex-row items-center justify-between"
-            >
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+      ) : null}
+    </View>
   )
 }

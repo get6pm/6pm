@@ -1,5 +1,6 @@
 import * as Application from 'expo-application'
-import Constants from 'expo-constants'
+import * as Haptics from 'expo-haptics'
+import * as Updates from 'expo-updates'
 
 import { Logo } from '@/components/common/logo'
 import { MenuItem } from '@/components/common/menu-item'
@@ -19,6 +20,7 @@ import { useUserSettingsStore } from '@/stores/user-settings/store'
 import { useAuth } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
+import * as Clipboard from 'expo-clipboard'
 import { LinearGradient } from 'expo-linear-gradient'
 import * as Notifications from 'expo-notifications'
 import { Link } from 'expo-router'
@@ -38,7 +40,13 @@ import {
   SwatchBookIcon,
   WalletCardsIcon,
 } from 'lucide-react-native'
-import { Alert, Linking, ScrollView, View } from 'react-native'
+import {
+  Alert,
+  Linking,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
 export default function SettingsScreen() {
   const { signOut } = useAuth()
@@ -48,6 +56,13 @@ export default function SettingsScreen() {
   const { cancelAllScheduledNotifications } = useScheduleNotification()
   const { setEnabledPushNotifications, enabledPushNotifications } =
     useUserSettingsStore()
+
+  async function handleCopyVersion() {
+    const fullVersion = `${Application.nativeApplicationVersion} - ${Updates.updateId ?? 'Embedded'}`
+    await Clipboard.setStringAsync(fullVersion)
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+    toast.success(t(i18n)`Copied version to clipboard`)
+  }
 
   return (
     <View className="bg-card">
@@ -239,16 +254,18 @@ export default function SettingsScreen() {
             </Button>
           </View>
         </View>
-        <View className="items-center gap-3">
+        <TouchableOpacity
+          activeOpacity={0.8}
+          className="items-center gap-3"
+          onPressIn={Haptics.selectionAsync}
+          onLongPress={handleCopyVersion}
+        >
           <Logo className="mx-auto h-16 w-16" />
           <Text className="font-mono text-muted-foreground text-sm">
             {t(i18n)`ver.`}
-            {Application.nativeApplicationVersion}{' '}
-            {Constants.expoConfig?.ios?.buildNumber
-              ? `(${Constants.expoConfig.ios.buildNumber})`
-              : ''}
+            {Application.nativeApplicationVersion}
           </Text>
-        </View>
+        </TouchableOpacity>
       </ScrollView>
       <LinearGradient
         colors={[

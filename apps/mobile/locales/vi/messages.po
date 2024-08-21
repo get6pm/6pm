@@ -50,7 +50,7 @@ msgstr ""
 msgid "Account deleted successfully"
 msgstr "Xóa tài khoản thành công"
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:169
+#: apps/mobile/app/(app)/(tabs)/index.tsx:177
 msgid "Add your first transaction here"
 msgstr "Thêm giao dịch đầu tiên ở đây"
 
@@ -194,7 +194,7 @@ msgstr "Tiếp tục với Email"
 msgid "Copied version to clipboard"
 msgstr "Đã sao chép số phiên bản"
 
-#: apps/mobile/components/home/wallet-statistics.tsx:102
+#: apps/mobile/components/home/wallet-statistics.tsx:107
 msgid "Current balance"
 msgstr "Số dư hiện tại"
 
@@ -401,7 +401,7 @@ msgstr "Tạo danh mục mới"
 msgid "No budget selected"
 msgstr "Chọn ngân sách"
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:157
+#: apps/mobile/app/(app)/(tabs)/index.tsx:165
 msgid "No transactions"
 msgstr "Không có giao dịch"
 
@@ -481,11 +481,11 @@ msgstr "Hàng quý"
 msgid "Rate 6pm on App Store"
 msgstr "Đánh giá 6pm trên App Store"
 
-#: apps/mobile/components/home/wallet-statistics.tsx:98
+#: apps/mobile/components/home/wallet-statistics.tsx:103
 msgid "Revenue this month"
 msgstr "Doanh thu tháng này"
 
-#: apps/mobile/components/home/wallet-statistics.tsx:94
+#: apps/mobile/components/home/wallet-statistics.tsx:99
 msgid "Revenue this week"
 msgstr "Doanh thu tuần này"
 
@@ -589,11 +589,11 @@ msgstr "Ngày cụ thể"
 msgid "Spending"
 msgstr "Chi tiêu"
 
-#: apps/mobile/components/home/wallet-statistics.tsx:90
+#: apps/mobile/components/home/wallet-statistics.tsx:95
 msgid "Spent this month"
 msgstr "Chi tiêu tháng này"
 
-#: apps/mobile/components/home/wallet-statistics.tsx:86
+#: apps/mobile/components/home/wallet-statistics.tsx:91
 msgid "Spent this week"
 msgstr "Chi tiêu tuần này"
 
@@ -657,6 +657,7 @@ msgstr "ghi chú giao dịch"
 msgid "Type"
 msgstr "Loại"
 
+#: apps/mobile/components/home/category-chart.tsx:61
 #: apps/mobile/components/transaction/select-category-field.tsx:91
 #: apps/mobile/components/transaction/transaction-item.tsx:29
 msgid "Uncategorized"

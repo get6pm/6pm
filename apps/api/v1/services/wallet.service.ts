@@ -69,10 +69,10 @@ export async function getWalletBalance({
   const balance = await prisma.transaction.aggregate({
     where: { walletAccountId: wallet.id },
     // biome-ignore lint/style/useNamingConvention: <explanation>
-    _sum: { amount: true },
+    _sum: { amountInVnd: true },
   })
 
-  return balance._sum.amount || 0
+  return balance._sum.amountInVnd || 0
 }
 
 // biome-ignore lint/correctness/noUnusedVariables: <explanation>

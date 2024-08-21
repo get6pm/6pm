@@ -61,14 +61,14 @@ export function useTransactionList({
       const transactionDict = keyBy(transactions, 'id')
 
       const totalIncome = transactions.reduce((acc, t) => {
-        if (t.amount > 0) {
-          return acc + t.amount
+        if (t.amountInVnd > 0) {
+          return acc + t.amountInVnd
         }
         return acc
       }, 0)
       const totalExpense = transactions.reduce((acc, t) => {
-        if (t.amount < 0) {
-          return acc + t.amount
+        if (t.amountInVnd < 0) {
+          return acc + t.amountInVnd
         }
         return acc
       }, 0)

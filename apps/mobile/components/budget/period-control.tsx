@@ -1,4 +1,4 @@
-import { formatDateShort } from '@/lib/date'
+import { formatDateRange } from '@/lib/date'
 import type { BudgetPeriodConfig } from '@6pm/validation'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native'
 import { View } from 'react-native'
@@ -20,7 +20,7 @@ export function PeriodControl({
   const couldGoForward = index < periodConfigs.length - 1
 
   return (
-    <View className="h-12 w-full flex-row items-center justify-between gap-2 bg-muted px-4">
+    <View className="z-50 h-12 w-full flex-row items-center justify-between gap-2 bg-muted px-4">
       <Button
         size="icon"
         variant="ghost"
@@ -30,9 +30,10 @@ export function PeriodControl({
         <ChevronLeftIcon className="size-6 text-muted-foreground" />
       </Button>
       <Text className="font-medium">
-        {formatDateShort(periodConfigs[index].startDate!)}
-        {' - '}
-        {formatDateShort(periodConfigs[index].endDate!)}
+        {formatDateRange(
+          periodConfigs[index].startDate!,
+          periodConfigs[index].endDate!,
+        )}
       </Text>
       <Button
         size="icon"

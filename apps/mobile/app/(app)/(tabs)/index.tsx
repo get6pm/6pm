@@ -2,7 +2,9 @@ import { AmountFormat } from '@/components/common/amount-format'
 import { ListSkeleton } from '@/components/common/list-skeleton'
 import { Toolbar } from '@/components/common/toolbar'
 import { HomeHeader } from '@/components/home/header'
-import { WalletStatistics } from '@/components/home/wallet-statistics'
+import { HomeFilter } from '@/components/home/select-filter'
+import { TimeRangeControl } from '@/components/home/time-range-control'
+import { HomeView, WalletStatistics } from '@/components/home/wallet-statistics'
 import { HandyArrow } from '@/components/transaction/handy-arrow'
 import { TransactionItem } from '@/components/transaction/transaction-item'
 import { Text } from '@/components/ui/text'
@@ -28,19 +30,56 @@ export default function HomeScreen() {
   const { colorScheme } = useColorScheme()
   const [walletAccountId, setWalletAccountId] = useState<string | undefined>()
   const queryClient = useQueryClient()
+  const [filter, setFilter] = useState<HomeFilter>(HomeFilter.All)
+  const [view, setView] = useState<HomeView>(HomeView.SpentThisWeek)
+  const [customTimeRange, setCustomTimeRange] = useState<{
+    from: Date
+    to: Date
+  }>({
+    from: dayjsExtended().subtract(10, 'year').startOf('year').toDate(),
+    to: dayjsExtended().add(10, 'year').endOf('year').toDate(),
+  })
+
+  const timeRange = useMemo(() => {
+    if (filter !== HomeFilter.All) {
+      return customTimeRange
+    }
+    return {
+      from: dayjsExtended().subtract(10, 'year').startOf('year').toDate(),
+      to: dayjsExtended().add(10, 'year').endOf('year').toDate(),
+    }
+  }, [customTimeRange, filter])
 
   const { transactions, isLoading, isRefetching, refetch } = useTransactionList(
     {
       walletAccountId,
-      // FIXME: This should be dynamic @bkdev98
-      from: dayjsExtended().subtract(10, 'year').startOf('year').toDate(),
-      to: dayjsExtended().add(10, 'year').endOf('year').toDate(),
+      ...timeRange,
     },
   )
 
   const handleRefresh = () => {
     refetch()
     queryClient.invalidateQueries({ queryKey: walletQueries.list._def })
+  }
+
+  const handleSetFilter = (filter: HomeFilter) => {
+    if (filter === HomeFilter.ByDay) {
+      setCustomTimeRange({
+        from: dayjsExtended().startOf('day').toDate(),
+        to: dayjsExtended().endOf('day').toDate(),
+      })
+    } else if (filter === HomeFilter.ByWeek) {
+      setCustomTimeRange({
+        from: dayjsExtended().startOf('week').toDate(),
+        to: dayjsExtended().endOf('week').toDate(),
+      })
+    } else if (filter === HomeFilter.ByMonth) {
+      setCustomTimeRange({
+        from: dayjsExtended().startOf('month').toDate(),
+        to: dayjsExtended().endOf('month').toDate(),
+      })
+    }
+    setFilter(filter)
   }
 
   const transactionsGroupByDate = useMemo(() => {
@@ -52,7 +91,7 @@ export default function HomeScreen() {
       key,
       title: formatDateShort(new Date(key)),
       data: orderBy(transactions, 'date', 'desc'),
-      sum: sumBy(transactions, 'amount'),
+      sum: sumBy(transactions, 'amountInVnd'),
     }))
 
     return Object.values(sectionDict)
@@ -63,12 +102,27 @@ export default function HomeScreen() {
       <HomeHeader
         walletAccountId={walletAccountId}
         onWalletAccountChange={setWalletAccountId}
+        filter={filter}
+        onFilterChange={handleSetFilter}
       />
+      {filter !== HomeFilter.All && (
+        <TimeRangeControl
+          filter={filter}
+          timeRange={timeRange}
+          onTimeRangeChange={setCustomTimeRange}
+        />
+      )}
       <SectionList
         ListHeaderComponent={
-          <View className="p-6">
-            <WalletStatistics />
-          </View>
+          filter === HomeFilter.All ? (
+            <View className="p-6">
+              <WalletStatistics
+                view={view}
+                onViewChange={setView}
+                walletAccountId={walletAccountId}
+              />
+            </View>
+          ) : null
         }
         className="flex-1 bg-card"
         contentContainerStyle={{ paddingBottom: bottom + 32 }}
@@ -97,12 +151,26 @@ export default function HomeScreen() {
         // }}
         onEndReachedThreshold={0.5}
         ListFooterComponent={isLoading ? <ListSkeleton /> : null}
+        ListEmptyComponent={
+          filter !== HomeFilter.All && !isLoading ? (
+            <View className="mx-auto my-4">
+              <Text className="text-muted-foreground">{t(
+                i18n,
+              )`No transactions`}</Text>
+            </View>
+          ) : null
+        }
+        extraData={filter}
       />
       {!transactions.length && !isLoading && (
-        <View className="absolute right-6 bottom-20 z-50 flex-row gap-3">
-          <Text>{t(i18n)`Add your first transaction here`}</Text>
-          <HandyArrow className="mt-4 text-muted-foreground" />
-        </View>
+        <>
+          {filter === HomeFilter.All ? (
+            <View className="absolute right-6 bottom-20 z-50 flex-row gap-3">
+              <Text>{t(i18n)`Add your first transaction here`}</Text>
+              <HandyArrow className="mt-4 text-muted-foreground" />
+            </View>
+          ) : null}
+        </>
       )}
       <LinearGradient
         colors={[

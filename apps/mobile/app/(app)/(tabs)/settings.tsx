@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'
 import { useScheduleNotification } from '@/hooks/use-schedule-notification'
+import { useSeed } from '@/hooks/use-seed'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
 import { useLocale } from '@/locales/provider'
@@ -25,6 +26,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import * as Notifications from 'expo-notifications'
 import { Link } from 'expo-router'
 import {
+  BeanIcon,
   BellIcon,
   ChevronRightIcon,
   EarthIcon,
@@ -56,6 +58,7 @@ export default function SettingsScreen() {
   const { cancelAllScheduledNotifications } = useScheduleNotification()
   const { setEnabledPushNotifications, enabledPushNotifications } =
     useUserSettingsStore()
+  const { startSeed } = useSeed()
 
   async function handleCopyVersion() {
     const fullVersion = `${Application.nativeApplicationVersion} - ${Updates.updateId ?? 'Embedded'}`
@@ -185,6 +188,16 @@ export default function SettingsScreen() {
             {t(i18n)`Others`}
           </Text>
           <View>
+            {__DEV__ && (
+              <MenuItem
+                label={t(i18n)`Seed transactions`}
+                icon={BeanIcon}
+                rightSection={
+                  <ChevronRightIcon className="h-5 w-5 text-primary" />
+                }
+                onPress={startSeed}
+              />
+            )}
             <Link href="/privacy-policy" asChild>
               <MenuItem
                 label={t(i18n)`Privacy policy`}

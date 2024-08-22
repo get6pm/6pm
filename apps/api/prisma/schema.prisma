@@ -45,7 +45,7 @@ model UserWalletAccount {
   preferredCurrency String
 
   userId       String
-  user         User          @relation(fields: [userId], references: [id])
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   transactions Transaction[]
 }
 
@@ -125,7 +125,7 @@ model BudgetUserInvitation {
   permission BudgetUserPermission?
 
   createdByUserId String
-  createdByUser   User                           @relation(fields: [createdByUserId], references: [id])
+  createdByUser   User                           @relation(fields: [createdByUserId], references: [id], onDelete: Cascade)
   budgetId        String
   budget          Budget                         @relation(fields: [budgetId], references: [id], onDelete: Cascade)
   responses       BudgetUserInvitationResponse[]
@@ -145,7 +145,7 @@ model BudgetUserInvitationResponse {
   invitationId  String
   invitation    BudgetUserInvitation @relation(fields: [invitationId], references: [id])
   createdUserId String?              @unique
-  createdUser   User?                @relation(fields: [createdUserId], references: [id])
+  createdUser   User?                @relation(fields: [createdUserId], references: [id], onDelete: SetNull)
 }
 
 model Transaction {

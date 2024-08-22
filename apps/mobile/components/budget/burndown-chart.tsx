@@ -1,10 +1,12 @@
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
-import { useBudgetList } from '@/stores/budget/hooks'
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import { nFormatter } from '@6pm/currency'
 import { dayjsExtended } from '@6pm/utilities'
-import { SpaceMono_700Bold } from '@expo-google-fonts/space-mono'
+import {
+  SpaceMono_400Regular,
+  SpaceMono_700Bold,
+} from '@expo-google-fonts/space-mono'
 import {
   DashPathEffect,
   Group,
@@ -21,7 +23,6 @@ import {
   Scatter,
   useLinePath,
 } from 'victory-native'
-import { Text } from '../ui/text'
 
 function AverageLine({ points }: { points: PointsArray }) {
   const { colorScheme } = useColorScheme()
@@ -90,6 +91,10 @@ function UsageLine({
       offset = -52
     }
 
+    if (lastPoint.y! > 120) {
+      offset = -52
+    }
+
     return lastPoint.y! + offset
   }, [lastPoint])
 
@@ -134,22 +139,29 @@ function UsageLine({
   )
 }
 
-export function BurndownChart() {
-  const { totalBudget } = useBudgetList()
+type BurndownChartProps = {
+  totalBudget: number
+  averagePerDay: number
+  data?: { day: number; amount?: number }[]
+}
+
+export function BurndownChart({
+  totalBudget,
+  averagePerDay,
+  data = [],
+}: BurndownChartProps) {
+  const font = useFont(SpaceMono_400Regular, 12)
+  const { colorScheme } = useColorScheme()
   const defaultCurrency = useDefaultCurrency()
 
   const today = dayjsExtended(new Date()).get('date') + 1
 
-  const daysInMonth = dayjsExtended(new Date()).daysInMonth()
+  const daysInMonth = dayjsExtended().daysInMonth()
 
-  const averagePerDay = totalBudget.div(daysInMonth).toNumber()
-
-  const mockUsageData = Array.from({ length: daysInMonth + 1 }, (_, i) => ({
+  const chartData = Array.from({ length: daysInMonth + 1 }, (_, i) => ({
     day: i,
-    amount: i === 0 ? 0 : Math.random() * averagePerDay * 2,
-  }))
-
-  const chartData = mockUsageData.reduce(
+    amount: i === 0 ? 0 : data.find((d) => d.day === i)?.amount ?? 0,
+  })).reduce(
     (acc, usage, index) => {
       const lastDay = acc[acc.length - 1]
       return [
@@ -157,7 +169,9 @@ export function BurndownChart() {
         {
           ...usage,
           amount:
-            index > today ? undefined : (lastDay?.amount || 0) + usage.amount,
+            index > today
+              ? undefined
+              : (lastDay?.amount || 0) + (usage.amount ?? 0),
           average: averagePerDay * index,
         },
       ]
@@ -170,11 +184,10 @@ export function BurndownChart() {
     (todayRecord?.average || 0) - (todayRecord?.amount || 0),
   )
 
+  const totalText = `${nFormatter(totalBudget, 0)} ${defaultCurrency}`
+
   return (
-    <View className="h-[187px] w-full rounded-lg bg-muted">
-      <Text className="m-3 mb-0 self-end text-end font-medium text-muted-foreground text-sm">
-        {totalBudget.toNumber().toLocaleString()} {defaultCurrency}
-      </Text>
+    <View className="min-h-[187px] w-full rounded-lg bg-muted">
       <CartesianChart
         data={chartData}
         xKey="day"
@@ -182,20 +195,34 @@ export function BurndownChart() {
         domainPadding={{
           left: 14,
           right: 14,
-          bottom: 8,
-          top: 8,
+          bottom: 24,
+          top: 24,
         }}
       >
         {({ points }) => (
           <>
             <AverageLine points={points.average} />
             <UsageLine points={points.amount} diffAmount={diffAmount} />
+            <SkiaText
+              x={points.average[0].x}
+              y={(points.average[0].y ?? 0) + 16}
+              font={font}
+              text={`0.00`}
+              color={theme[colorScheme ?? 'light'].mutedForeground}
+            />
+            <SkiaText
+              x={
+                points.average[points.average.length - 1].x -
+                totalText.length * 7
+              }
+              y={(points.average[points.average.length - 1].y ?? 0) - 10}
+              font={font}
+              text={totalText}
+              color={theme[colorScheme ?? 'light'].mutedForeground}
+            />
           </>
         )}
       </CartesianChart>
-      <Text className="m-3 mt-0 font-medium text-muted-foreground text-sm">
-        {'0.00'} {defaultCurrency}
-      </Text>
     </View>
   )
 }

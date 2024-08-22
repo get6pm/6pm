@@ -18,7 +18,7 @@ import { useLingui } from '@lingui/react'
 import { format } from 'date-fns'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Link, useLocalSearchParams, useNavigation } from 'expo-router'
-import { groupBy, mapValues, orderBy, sortBy, sumBy } from 'lodash-es'
+import { groupBy, map, mapValues, orderBy, sortBy, sumBy } from 'lodash-es'
 import { SettingsIcon } from 'lucide-react-native'
 import { useEffect, useMemo, useState } from 'react'
 import { ActivityIndicator, Dimensions, SectionList, View } from 'react-native'
@@ -64,6 +64,8 @@ export default function BudgetDetailScreen() {
       to: currentPeriod?.endDate || dayjsExtended().endOf('month').toDate(),
     },
   )
+
+  const totalUsage = transactions.reduce((acc, t) => acc + t.amountInVnd, 0)
 
   const transactionsGroupByDate = useMemo(() => {
     const groupedByDay = groupBy(transactions, (transaction) =>
@@ -193,6 +195,25 @@ export default function BudgetDetailScreen() {
     )
   }
 
+  const totalRemaining = Math.round(
+    Number(currentPeriod.amount ?? 0) + totalUsage,
+  )
+  const remainingDays =
+    dayjsExtended().daysInMonth() - dayjsExtended().get('date')
+  const remainingPerDay = Math.round(totalRemaining / remainingDays)
+
+  const averagePerDay = Math.round(
+    Number(currentPeriod.amount) / dayjsExtended().daysInMonth(),
+  )
+
+  const chartData = map(
+    groupBy(transactions, (t) => t.date),
+    (transactions, key) => ({
+      day: new Date(key).getDate(),
+      amount: transactions.reduce((acc, t) => acc + t.amountInVnd, 0),
+    }),
+  )
+
   return (
     <View className="flex-1 bg-card">
       <PeriodControl
@@ -213,17 +234,19 @@ export default function BudgetDetailScreen() {
       >
         <Animated.View className="gap-6 px-6 py-6" style={summaryStyle}>
           <BudgetStatistic
-            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-            totalRemaining={currentPeriod.amount as any}
-            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-            remainingPerDay={currentPeriod.amount as any}
+            totalRemaining={totalRemaining}
+            remainingPerDay={remainingPerDay}
           />
         </Animated.View>
         <Animated.View
           className="px-6 pb-5"
           style={[{ flexGrow: 0 }, chartStyle]}
         >
-          <BurndownChart />
+          <BurndownChart
+            totalBudget={Number(currentPeriod?.amount)}
+            averagePerDay={Math.abs(averagePerDay)}
+            data={chartData}
+          />
         </Animated.View>
       </View>
       <AnimatedSectionList

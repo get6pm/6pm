@@ -38,10 +38,15 @@ export const useBudgetList = () => {
     )
     const debtBudgets = budgets.filter((budget) => budget.type === 'DEBT')
 
-    const totalBudget = budgets.reduce(
-      (acc, budget) => acc.add(new Decimal(budget.periodConfigs[0].amount)),
-      new Decimal(0),
-    )
+    const totalBudget = budgets.reduce((acc, budget) => {
+      const latestPeriodConfig = first(
+        orderBy(budget.periodConfigs, 'startDate', 'desc'),
+      )
+      if (!latestPeriodConfig) {
+        return acc
+      }
+      return acc.add(new Decimal(latestPeriodConfig.amount))
+    }, new Decimal(0))
 
     return {
       budgetsDict,

@@ -6,7 +6,11 @@ import { type FC, useMemo } from 'react'
 import { Pressable, View } from 'react-native'
 
 import type { BudgetItem as BudgetItemData } from '@/stores/budget/store'
-import { calculateBudgetPeriodStartEndDates } from '@6pm/utilities'
+import { useTransactionList } from '@/stores/transaction/hooks'
+import {
+  calculateBudgetPeriodStartEndDates,
+  dayjsExtended,
+} from '@6pm/utilities'
 import { useUser } from '@clerk/clerk-expo'
 import { first, orderBy } from 'lodash-es'
 import { ChevronRightIcon } from 'lucide-react-native'
@@ -29,15 +33,23 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
     orderBy(budget.periodConfigs, 'startDate', 'desc'),
   )
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const remainingBalance = (latestPeriodConfig?.amount ?? 0) as any
+  const { totalExpense, totalIncome } = useTransactionList({
+    from: latestPeriodConfig?.startDate!,
+    to: latestPeriodConfig?.endDate!,
+    budgetId: budget.id,
+  })
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const amountPerDay = latestPeriodConfig?.amount ?? (0 as any)
+  const totalBudgetUsage = totalExpense + totalIncome
 
-  const usagePercentage = Math.random() * 100
+  const remainingBalance = Math.round(
+    Number(latestPeriodConfig?.amount!) + totalBudgetUsage,
+  )
 
-  const remainingDays = useMemo(() => {
+  const usagePercentage = Math.round(
+    (Math.abs(totalBudgetUsage) / Number(latestPeriodConfig?.amount)) * 100,
+  )
+
+  const remainingDuration = useMemo(() => {
     let periodEndDate: Date | null
     if (latestPeriodConfig?.type === 'CUSTOM') {
       periodEndDate = latestPeriodConfig?.endDate
@@ -50,22 +62,35 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
     }
 
     if (!periodEndDate) {
+      return null
+    }
+
+    return intervalToDuration({
+      start: new Date(),
+      end: periodEndDate,
+    })
+  }, [latestPeriodConfig])
+
+  const remainingDaysText = useMemo(() => {
+    if (!remainingDuration) {
       return t(i18n)`Unknown`
     }
 
-    const duration = formatDuration(
-      intervalToDuration({
-        start: new Date(),
-        end: periodEndDate,
-      }),
-      {
-        format: ['days', 'hours'],
-        delimiter: ',',
-      },
-    )
+    const duration = formatDuration(remainingDuration, {
+      format: ['days', 'hours'],
+      delimiter: ',',
+    })
 
-    return t(i18n)`${duration?.split(',')[0]} left`
-  }, [latestPeriodConfig, i18n])
+    return t(i18n)`${duration.split(',')[0]} left`
+  }, [remainingDuration, i18n])
+
+  const remainingDays =
+    dayjsExtended().daysInMonth() - dayjsExtended().get('date')
+
+  const amountPerDay = remainingBalance / remainingDays
+
+  const isOver =
+    remainingBalance < 0 || remainingBalance < amountPerDay * remainingDays
 
   return (
     <Link
@@ -99,7 +124,10 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
             </View>
           </View>
           <View className="flex-row items-center gap-2">
-            <CircularProgress progress={usagePercentage} />
+            <CircularProgress
+              progress={usagePercentage}
+              strokeColor={isOver ? '#ef4444' : undefined}
+            />
             <ChevronRightIcon className="size-6 text-foreground" />
           </View>
         </View>
@@ -115,12 +143,12 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
               numberOfLines={1}
               className="line-clamp-1 flex-1 text-muted-foreground text-sm"
             >
-              {remainingDays}
+              {remainingDaysText}
             </Text>
           </View>
           <View className="justify-end gap-1">
             <AmountFormat
-              amount={amountPerDay}
+              amount={Math.round(amountPerDay)}
               displayNegativeSign
               className="text-xl"
             />

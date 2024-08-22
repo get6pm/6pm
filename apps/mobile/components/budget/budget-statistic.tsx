@@ -18,13 +18,13 @@ export function BudgetStatistic({
   return (
     <View className="flex-row items-center justify-between gap-6">
       <View className="gap-1">
-        <AmountFormat amount={totalRemaining} />
+        <AmountFormat amount={totalRemaining} displayNegativeSign />
         <Text className="text-muted-foreground">
           {t(i18n)`Left this month`}
         </Text>
       </View>
       <View className="items-end gap-1">
-        <AmountFormat amount={remainingPerDay} />
+        <AmountFormat amount={remainingPerDay} displayNegativeSign />
         <Text className="text-right text-muted-foreground">
           {t(i18n)`Left per day`}
         </Text>

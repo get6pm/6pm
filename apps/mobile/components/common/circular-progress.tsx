@@ -66,13 +66,15 @@ export function CircularProgress({
   const length = properties.getTotalLength()
   const animatedValue = useSharedValue(length)
 
+  const chartPercentage = progress > 100 ? 100 : progress
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     animatedValue.value = withDelay(
       delay,
-      withTiming(length - (progress * length) / 100, { duration }),
+      withTiming(length - (chartPercentage * length) / 100, { duration }),
     )
-  }, [duration, progress])
+  }, [duration, chartPercentage])
 
   const animatedProps = useAnimatedProps(() => {
     return {
@@ -127,7 +129,10 @@ export function CircularProgress({
           },
         ]}
       >
-        <Text className="font-bold font-mono text-sm">
+        <Text
+          className="font-bold font-mono text-sm"
+          style={{ color: strokeColor }}
+        >
           {Math.round(progress)}%
         </Text>
       </View>

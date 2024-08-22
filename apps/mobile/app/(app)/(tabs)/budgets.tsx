@@ -7,10 +7,13 @@ import { Text } from '@/components/ui/text'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
 import { useBudgetList } from '@/stores/budget/hooks'
+import { useTransactionList } from '@/stores/transaction/hooks'
+import { dayjsExtended } from '@6pm/utilities'
 import type { Budget, BudgetPeriodConfig } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { LinearGradient } from 'expo-linear-gradient'
+import { groupBy, map } from 'lodash-es'
 import { Dimensions, SectionList, View } from 'react-native'
 import Animated, {
   Extrapolation,
@@ -128,10 +131,38 @@ export default function BudgetsScreen() {
     savingBudgets,
     investingBudgets,
     debtBudgets,
+    totalBudget,
     isRefetching,
     isLoading,
     refetch,
   } = useBudgetList()
+
+  const { transactions } = useTransactionList({
+    from: dayjsExtended().startOf('month').toDate(),
+    to: dayjsExtended().endOf('month').toDate(),
+  })
+
+  const totalBudgetUsage = transactions.reduce((acc, t) => {
+    if (!t.budgetId) {
+      return acc
+    }
+    return acc + t.amountInVnd
+  }, 0)
+
+  const chartData = map(
+    groupBy(transactions, (t) => t.date),
+    (transactions, key) => ({
+      day: new Date(key).getDate(),
+      amount: transactions.reduce((acc, t) => acc + t.amountInVnd, 0),
+    }),
+  )
+
+  const totalRemaining = totalBudget.add(totalBudgetUsage).round()
+
+  const daysInMonth = dayjsExtended().daysInMonth()
+  const remainingDays = daysInMonth - dayjsExtended().get('date')
+  const remainingPerDay = totalRemaining.div(remainingDays).round()
+  const averagePerDay = totalBudget.div(daysInMonth).round()
 
   const sections = [
     { key: 'SPENDING', title: t(i18n)`Spending`, data: spendingBudgets },
@@ -154,13 +185,20 @@ export default function BudgetsScreen() {
         }}
       >
         <Animated.View className="gap-6 px-6 py-6" style={summaryStyle}>
-          <BudgetStatistic totalRemaining={1000} remainingPerDay={100} />
+          <BudgetStatistic
+            totalRemaining={totalRemaining.toNumber()}
+            remainingPerDay={remainingPerDay.toNumber()}
+          />
         </Animated.View>
         <Animated.View
           className="px-6 pb-5"
           style={[{ flexGrow: 0 }, chartStyle]}
         >
-          <BurndownChart />
+          <BurndownChart
+            totalBudget={totalBudget.toNumber()}
+            averagePerDay={averagePerDay.toNumber()}
+            data={chartData}
+          />
         </Animated.View>
       </View>
       <AnimatedSectionList

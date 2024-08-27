@@ -1,8 +1,7 @@
 import { sleep } from '@/lib/utils'
 import type { Category } from '@6pm/validation'
 import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
+  type BottomSheetModal,
   BottomSheetSectionList,
 } from '@gorhom/bottom-sheet'
 import { t } from '@lingui/macro'
@@ -13,14 +12,12 @@ import { useController } from 'react-hook-form'
 import { FlatList, Keyboard, View } from 'react-native'
 import TextTicker from 'react-native-text-ticker'
 
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { theme } from '@/lib/theme'
 import { useCategoryList } from '@/stores/category/hooks'
 import { Link, useFocusEffect } from 'expo-router'
 import { PlusIcon } from 'lucide-react-native'
 import { cssInterop } from 'nativewind'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { FullWindowOverlay } from 'react-native-screens'
+import { BottomSheet } from '../common/bottom-sheet'
 import GenericIcon from '../common/generic-icon'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
@@ -38,7 +35,6 @@ export function SelectCategoryField({
 }) {
   const { bottom } = useSafeAreaInsets()
   const { categories = [], isLoading } = useCategoryList()
-  const { colorScheme } = useColorScheme()
   const [shouldReOpen, setShouldReOpen] = useState(false)
 
   const sheetRef = useRef<BottomSheetModal>(null)
@@ -91,25 +87,7 @@ export function SelectCategoryField({
           {selectedCategory?.name || t(i18n)`Uncategorized`}
         </Text>
       </Button>
-      <BottomSheetModal
-        ref={sheetRef}
-        index={0}
-        enableDynamicSizing
-        enablePanDownToClose
-        keyboardBehavior="extend"
-        backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
-        backdropComponent={(props) => (
-          <BottomSheetBackdrop
-            {...props}
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            enableTouchThrough
-          />
-        )}
-        containerComponent={(props) => (
-          <FullWindowOverlay>{props.children}</FullWindowOverlay>
-        )}
-      >
+      <BottomSheet ref={sheetRef} index={0} enableDynamicSizing>
         <BottomSheetSectionList
           sections={sections}
           keyExtractor={(i) => i.id}
@@ -193,7 +171,7 @@ export function SelectCategoryField({
             ) : null
           }
         />
-      </BottomSheetModal>
+      </BottomSheet>
     </>
   )
 }

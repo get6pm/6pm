@@ -2,9 +2,8 @@ import { sleep } from '@/lib/utils'
 import { useWallets } from '@/queries/wallet'
 import type { WalletAccountWithBalance } from '@6pm/validation'
 import {
-  BottomSheetBackdrop,
   BottomSheetFlatList,
-  BottomSheetModal,
+  type BottomSheetModal,
 } from '@gorhom/bottom-sheet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -13,10 +12,7 @@ import { useRef } from 'react'
 import { useController } from 'react-hook-form'
 import { Keyboard, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { FullWindowOverlay } from 'react-native-screens'
-
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { theme } from '@/lib/theme'
+import { BottomSheet } from '../common/bottom-sheet'
 import GenericIcon from '../common/generic-icon'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
@@ -28,7 +24,6 @@ export function SelectAccountField({
 }) {
   const { bottom } = useSafeAreaInsets()
   const { data: walletAccounts, isLoading } = useWallets()
-  const { colorScheme } = useColorScheme()
 
   const sheetRef = useRef<BottomSheetModal>(null)
   const { i18n } = useLingui()
@@ -63,25 +58,7 @@ export function SelectAccountField({
           {selectedWalletAccount?.name || t(i18n)`Select account`}
         </Text>
       </Button>
-      <BottomSheetModal
-        ref={sheetRef}
-        index={0}
-        enableDynamicSizing
-        enablePanDownToClose
-        keyboardBehavior="extend"
-        backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
-        backdropComponent={(props) => (
-          <BottomSheetBackdrop
-            {...props}
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            enableTouchThrough
-          />
-        )}
-        containerComponent={(props) => (
-          <FullWindowOverlay>{props.children}</FullWindowOverlay>
-        )}
-      >
+      <BottomSheet ref={sheetRef} index={0} enableDynamicSizing>
         <BottomSheetFlatList
           data={walletAccounts}
           numColumns={4}
@@ -125,7 +102,7 @@ export function SelectAccountField({
             </View>
           )}
         />
-      </BottomSheetModal>
+      </BottomSheet>
     </>
   )
 }

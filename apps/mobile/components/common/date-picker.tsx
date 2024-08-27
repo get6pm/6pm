@@ -1,12 +1,6 @@
-import { useColorScheme } from '@/hooks/useColorScheme'
 import { formatDateShort } from '@/lib/date'
-import { theme } from '@/lib/theme'
 import { sleep } from '@/lib/utils'
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetView,
-} from '@gorhom/bottom-sheet'
+import { type BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import DateTimePicker from '@react-native-community/datetimepicker'
@@ -15,9 +9,9 @@ import { Calendar } from 'lucide-react-native'
 import { useRef, useState } from 'react'
 import { Keyboard, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { FullWindowOverlay } from 'react-native-screens'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
+import { BottomSheet } from './bottom-sheet'
 
 function SpinnerDatePicker({
   value,
@@ -70,7 +64,6 @@ export function DatePicker({
   minimumDate?: Date
 }) {
   const { bottom } = useSafeAreaInsets()
-  const { colorScheme } = useColorScheme()
   const sheetRef = useRef<BottomSheetModal>(null)
 
   return (
@@ -87,25 +80,7 @@ export function DatePicker({
         <Calendar className="h-5 w-5 text-primary" />
         <Text>{formatDateShort(value)}</Text>
       </Button>
-      <BottomSheetModal
-        ref={sheetRef}
-        index={0}
-        enableDynamicSizing
-        enablePanDownToClose
-        keyboardBehavior="extend"
-        backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
-        backdropComponent={(props) => (
-          <BottomSheetBackdrop
-            {...props}
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            enableTouchThrough
-          />
-        )}
-        containerComponent={(props) => (
-          <FullWindowOverlay>{props.children}</FullWindowOverlay>
-        )}
-      >
+      <BottomSheet ref={sheetRef} index={0} enableDynamicSizing>
         <BottomSheetView
           style={{
             paddingBottom: bottom,
@@ -122,7 +97,7 @@ export function DatePicker({
             minimumDate={minimumDate}
           />
         </BottomSheetView>
-      </BottomSheetModal>
+      </BottomSheet>
     </>
   )
 }

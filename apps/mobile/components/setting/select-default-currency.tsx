@@ -1,16 +1,13 @@
-import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
-import { useRef } from 'react'
-
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { theme } from '@/lib/theme'
 import { sleep } from '@/lib/utils'
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import { useUserSettingsStore } from '@/stores/user-settings/store'
+import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { ChevronRightIcon, CurrencyIcon } from 'lucide-react-native'
+import { useRef } from 'react'
 import { Keyboard, View } from 'react-native'
-import { FullWindowOverlay } from 'react-native-screens'
+import { BottomSheet } from '../common/bottom-sheet'
 import { CurrencySheetList } from '../common/currency-sheet'
 import { MenuItem } from '../common/menu-item'
 import { Text } from '../ui/text'
@@ -20,7 +17,6 @@ export function SelectDefaultCurrency() {
   const sheetRef = useRef<BottomSheetModal>(null)
   const defaultCurrency = useDefaultCurrency()
   const setPreferredCurrency = useUserSettingsStore().setPreferredCurrency
-  const { colorScheme } = useColorScheme()
   return (
     <>
       <MenuItem
@@ -39,25 +35,7 @@ export function SelectDefaultCurrency() {
           </View>
         }
       />
-      <BottomSheetModal
-        ref={sheetRef}
-        index={0}
-        snapPoints={['50%', '87%']}
-        enablePanDownToClose
-        backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
-        keyboardBehavior="extend"
-        backdropComponent={(props) => (
-          <BottomSheetBackdrop
-            {...props}
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            enableTouchThrough
-          />
-        )}
-        containerComponent={(props) => (
-          <FullWindowOverlay>{props.children}</FullWindowOverlay>
-        )}
-      >
+      <BottomSheet ref={sheetRef} index={0} snapPoints={['50%', '87%']}>
         <CurrencySheetList
           value={defaultCurrency}
           onSelect={async (currency) => {
@@ -66,7 +44,7 @@ export function SelectDefaultCurrency() {
             setPreferredCurrency?.(currency.code)
           }}
         />
-      </BottomSheetModal>
+      </BottomSheet>
     </>
   )
 }

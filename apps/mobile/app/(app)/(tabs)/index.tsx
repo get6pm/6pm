@@ -11,12 +11,10 @@ import { Text } from '@/components/ui/text'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { formatDateShort } from '@/lib/date'
 import { theme } from '@/lib/theme'
-import { walletQueries } from '@/queries/wallet'
 import { useTransactionList } from '@/stores/transaction/hooks'
 import { dayjsExtended } from '@6pm/utilities'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns/format'
 import { LinearGradient } from 'expo-linear-gradient'
 import { groupBy, mapValues, orderBy, sumBy } from 'lodash-es'
@@ -29,7 +27,6 @@ export default function HomeScreen() {
   const { top, bottom } = useSafeAreaInsets()
   const { colorScheme } = useColorScheme()
   const [walletAccountId, setWalletAccountId] = useState<string | undefined>()
-  const queryClient = useQueryClient()
   const [filter, setFilter] = useState<HomeFilter>(HomeFilter.All)
   const [view, setView] = useState<HomeView>(HomeView.SpentThisWeek)
   const [customTimeRange, setCustomTimeRange] = useState<{
@@ -51,18 +48,11 @@ export default function HomeScreen() {
     }
   }, [customTimeRange, filter])
 
-  const { transactions, isLoading, isRefetching, refetch } = useTransactionList(
-    {
-      walletAccountId,
-      categoryId,
-      ...timeRange,
-    },
-  )
-
-  const handleRefresh = () => {
-    refetch()
-    queryClient.invalidateQueries({ queryKey: walletQueries.list._def })
-  }
+  const { transactions, isLoading } = useTransactionList({
+    walletAccountId,
+    categoryId,
+    ...timeRange,
+  })
 
   const handleSetFilter = (filter: HomeFilter) => {
     if (filter === HomeFilter.ByDay) {
@@ -134,8 +124,8 @@ export default function HomeScreen() {
         }
         className="flex-1 bg-card"
         contentContainerStyle={{ paddingBottom: bottom + 32 }}
-        refreshing={isRefetching}
-        onRefresh={handleRefresh}
+        // refreshing={isRefetching}
+        // onRefresh={handleRefresh}
         sections={transactionsGroupByDate}
         keyExtractor={(item) => item.id}
         renderItem={({ item: transaction }) => (

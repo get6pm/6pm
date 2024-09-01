@@ -104,7 +104,9 @@ const router = new Hono()
 
     logger.debug('Creating transaction %o', data)
 
-    const budget = budgetId ? await findBudget({ budgetId }) : null
+    const budget = budgetId
+      ? await findBudget({ budgetId, anchorDate: data.date })
+      : null
     if (budgetId && (!budget || !(await canUserReadBudget({ user, budget })))) {
       logger.error(`Budget not found or user doesn't have read access %o`, {
         budgetId,

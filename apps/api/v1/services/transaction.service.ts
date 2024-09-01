@@ -52,7 +52,10 @@ export async function canUserReadTransaction({
 
   // If user is the member of the budget of the transaction, they can read it
   if (transaction.budgetId) {
-    const budget = await findBudget({ budgetId: transaction.budgetId })
+    const budget = await findBudget({
+      budgetId: transaction.budgetId,
+      anchorDate: transaction.date,
+    })
     return budget && (await isUserBudgetMember({ user, budget }))
   }
 
@@ -80,7 +83,10 @@ export async function canUserUpdateTransaction({
 
   // If user owns the budget of the transaction, they can update it
   if (transaction.budgetId) {
-    const budget = await findBudget({ budgetId: transaction.budgetId })
+    const budget = await findBudget({
+      budgetId: transaction.budgetId,
+      anchorDate: transaction.date,
+    })
     return budget && (await isUserBudgetOwner({ user, budget }))
   }
 

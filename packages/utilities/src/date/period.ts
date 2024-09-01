@@ -20,23 +20,38 @@ export function calculateBudgetPeriodStartEndDates({
   switch (type) {
     case BudgetPeriodType.WEEKLY:
       return {
-        startDate: dayjsExtended(anchorDate).startOf('week').toDate(),
-        endDate: dayjsExtended(anchorDate).endOf('week').toDate(),
+        startDate: dayjsExtended(anchorDate)
+          .startOf('day')
+          .startOf('week')
+          .toDate(),
+        endDate: dayjsExtended(anchorDate).endOf('day').endOf('week').toDate(),
       }
     case BudgetPeriodType.MONTHLY:
       return {
-        startDate: dayjsExtended(anchorDate).startOf('month').toDate(),
-        endDate: dayjsExtended(anchorDate).endOf('month').toDate(),
+        startDate: dayjsExtended(anchorDate)
+          .startOf('day')
+          .startOf('month')
+          .toDate(),
+        endDate: dayjsExtended(anchorDate).endOf('day').endOf('month').toDate(),
       }
     case BudgetPeriodType.QUARTERLY:
       return {
-        startDate: dayjsExtended(anchorDate).startOf('quarter').toDate(),
-        endDate: dayjsExtended(anchorDate).endOf('quarter').toDate(),
+        startDate: dayjsExtended(anchorDate)
+          .startOf('day')
+          .startOf('quarter')
+          .toDate(),
+        endDate: dayjsExtended(anchorDate)
+          .endOf('day')
+          .endOf('quarter')
+          .toDate(),
       }
     case BudgetPeriodType.YEARLY:
       return {
-        startDate: dayjsExtended(anchorDate).startOf('year').toDate(),
-        endDate: dayjsExtended(anchorDate).endOf('year').toDate(),
+        startDate: dayjsExtended(anchorDate)
+          .startOf('day')
+          .startOf('year')
+          .toDate(),
+        endDate: dayjsExtended(anchorDate).endOf('day').endOf('year').toDate(),
       }
     default:
       return {

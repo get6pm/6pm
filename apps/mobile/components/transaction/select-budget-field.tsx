@@ -1,5 +1,10 @@
 import { cn } from '@/lib/utils'
-import { useBudgetList } from '@/stores/budget/hooks'
+import {
+  getLatestPeriodConfig,
+  useBudget,
+  useBudgetList,
+  useBudgetPeriodStats,
+} from '@/stores/budget/hooks'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { LandPlotIcon } from 'lucide-react-native'
@@ -13,6 +18,36 @@ import {
   SelectValue,
 } from '../ui/select'
 import { Text } from '../ui/text'
+
+function BudgetItem({ budgetId }: { budgetId: string }) {
+  const { budget } = useBudget(budgetId)
+  const latestPeriodConfig = getLatestPeriodConfig(budget?.periodConfigs ?? [])
+  const { usagePercentage, isExceeded } = useBudgetPeriodStats(
+    latestPeriodConfig!,
+  )
+
+  return (
+    <SelectItem
+      value={budgetId}
+      label={budget?.name ?? ''}
+      className="flex-row items-center justify-between"
+      extra={
+        budgetId !== 'NO_SELECT' && (
+          <Text
+            className={cn(
+              'text-muted-foreground',
+              isExceeded && 'text-amount-negative',
+            )}
+          >
+            {usagePercentage}%
+          </Text>
+        )
+      }
+    >
+      {budget?.name}
+    </SelectItem>
+  )
+}
 
 export function SelectBudgetField({
   value,
@@ -40,9 +75,9 @@ export function SelectBudgetField({
   const options = useMemo(
     () => [
       defaultValue,
-      ...(budgets?.map((walletAccount) => ({
-        value: walletAccount.id,
-        label: walletAccount.name,
+      ...(budgets?.map((budget) => ({
+        value: budget.id,
+        label: budget.name,
         usagePercentage: 50,
       })) || []),
     ],
@@ -84,23 +119,20 @@ export function SelectBudgetField({
         portalHost="transaction-form"
       >
         <SelectGroup className="max-w-[260px] px-1">
-          {options.map((option) => (
-            <SelectItem
-              key={option.value}
-              value={option.value}
-              label={option.label}
-              className="flex-row items-center justify-between"
-              extra={
-                option.value !== 'NO_SELECT' && (
-                  <Text className="text-muted-foreground">
-                    {option.usagePercentage}%
-                  </Text>
-                )
-              }
-            >
-              {option.label}
-            </SelectItem>
-          ))}
+          {options.map((option) =>
+            option.value !== 'NO_SELECT' ? (
+              <BudgetItem key={option.value} budgetId={option.value} />
+            ) : (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                label={option.label}
+                className="flex-row items-center justify-between"
+              >
+                {option.label}
+              </SelectItem>
+            ),
+          )}
         </SelectGroup>
       </SelectContent>
     </Select>

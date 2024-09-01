@@ -18,11 +18,15 @@ msgid "{0}"
 msgstr ""
 
 #: apps/mobile/components/budget/budget-item.tsx:67
-msgid "{0} left"
-msgstr ""
+#~ msgid "{0} left"
+#~ msgstr ""
 
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:145
 msgid "{language}"
+msgstr ""
+
+#: apps/mobile/components/budget/budget-item.tsx:90
+msgid "{remainingDays} days left"
 msgstr ""
 
 #: apps/mobile/app/onboarding/step-two.tsx:127
@@ -50,7 +54,7 @@ msgstr ""
 msgid "Account deleted successfully"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:177
+#: apps/mobile/app/(app)/(tabs)/index.tsx:167
 msgid "Add your first transaction here"
 msgstr ""
 
@@ -64,7 +68,7 @@ msgstr ""
 
 #: apps/mobile/components/home/select-filter.tsx:75
 #: apps/mobile/components/home/select-wallet-account.tsx:66
-#: apps/mobile/components/transaction/select-budget-field.tsx:76
+#: apps/mobile/components/transaction/select-budget-field.tsx:111
 msgid "All Accounts"
 msgstr ""
 
@@ -214,12 +218,12 @@ msgstr ""
 msgid "Dark"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:140
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:171
 #: apps/mobile/components/budget/select-budget-type-field.tsx:57
 msgid "Debt"
 msgstr ""
 
-#: apps/mobile/components/setting/select-default-currency.tsx:27
+#: apps/mobile/components/setting/select-default-currency.tsx:23
 msgid "Default currency"
 msgstr ""
 
@@ -291,7 +295,7 @@ msgstr ""
 msgid "Family budget"
 msgstr ""
 
-#: apps/mobile/components/common/date-range-picker.tsx:101
+#: apps/mobile/components/common/date-range-picker.tsx:94
 msgid "From date"
 msgstr ""
 
@@ -323,7 +327,7 @@ msgstr ""
 msgid "Incomes"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:139
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:170
 #: apps/mobile/components/budget/select-budget-type-field.tsx:52
 msgid "Investing"
 msgstr ""
@@ -397,23 +401,23 @@ msgstr ""
 msgid "New category"
 msgstr ""
 
-#: apps/mobile/components/transaction/select-budget-field.tsx:34
+#: apps/mobile/components/transaction/select-budget-field.tsx:69
 msgid "No budget selected"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:165
+#: apps/mobile/app/(app)/(tabs)/index.tsx:155
 msgid "No transactions"
 msgstr ""
 
 #: apps/mobile/app/(app)/budget/[budgetId]/index.tsx:257
-msgid "No transactions found"
-msgstr ""
+#~ msgid "No transactions found"
+#~ msgstr ""
 
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:188
 msgid "Others"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-item.tsx:131
+#: apps/mobile/components/budget/budget-item.tsx:103
 msgid "per day"
 msgstr ""
 
@@ -421,11 +425,11 @@ msgstr ""
 #~ msgid "Period"
 #~ msgstr ""
 
-#: apps/mobile/components/common/date-range-picker.tsx:189
+#: apps/mobile/components/common/date-range-picker.tsx:146
 msgid "Period end date"
 msgstr ""
 
-#: apps/mobile/components/common/date-range-picker.tsx:146
+#: apps/mobile/components/common/date-range-picker.tsx:121
 msgid "Period start date"
 msgstr ""
 
@@ -491,8 +495,8 @@ msgstr ""
 
 #: apps/mobile/components/budget/budget-form.tsx:50
 #: apps/mobile/components/category/category-form.tsx:118
-#: apps/mobile/components/common/date-picker.tsx:55
-#: apps/mobile/components/common/date-range-picker.tsx:62
+#: apps/mobile/components/common/date-picker.tsx:49
+#: apps/mobile/components/common/date-range-picker.tsx:56
 #: apps/mobile/components/transaction/transaction-form.tsx:113
 #: apps/mobile/components/wallet/account-form.tsx:149
 msgid "Save"
@@ -502,7 +506,7 @@ msgstr ""
 msgid "Save changes"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:138
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:169
 #: apps/mobile/components/budget/select-budget-type-field.tsx:47
 msgid "Saving"
 msgstr ""
@@ -519,7 +523,7 @@ msgstr ""
 msgid "Seed transactions"
 msgstr ""
 
-#: apps/mobile/components/transaction/select-account-field.tsx:63
+#: apps/mobile/components/transaction/select-account-field.tsx:58
 msgid "Select account"
 msgstr ""
 
@@ -584,7 +588,7 @@ msgstr ""
 msgid "Specific dates"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:137
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:168
 #: apps/mobile/components/budget/select-budget-type-field.tsx:42
 msgid "Spending"
 msgstr ""
@@ -633,7 +637,7 @@ msgstr ""
 msgid "Time to enter your expenses!"
 msgstr ""
 
-#: apps/mobile/components/common/date-range-picker.tsx:117
+#: apps/mobile/components/common/date-range-picker.tsx:110
 msgid "To date"
 msgstr ""
 
@@ -658,14 +662,14 @@ msgid "Type"
 msgstr ""
 
 #: apps/mobile/components/home/category-chart.tsx:61
-#: apps/mobile/components/transaction/select-category-field.tsx:91
+#: apps/mobile/components/transaction/select-category-field.tsx:87
 #: apps/mobile/components/transaction/transaction-item.tsx:29
 msgid "Uncategorized"
 msgstr ""
 
 #: apps/mobile/components/budget/budget-item.tsx:53
-msgid "Unknown"
-msgstr ""
+#~ msgid "Unknown"
+#~ msgstr ""
 
 #: apps/mobile/app/(app)/profile.tsx:50
 #: apps/mobile/app/(app)/profile.tsx:61
@@ -706,7 +710,7 @@ msgstr ""
 msgid "Wallet accounts"
 msgstr ""
 
-#: apps/mobile/components/transaction/select-account-field.tsx:97
+#: apps/mobile/components/transaction/select-account-field.tsx:74
 msgid "Wallet Accounts"
 msgstr ""
 

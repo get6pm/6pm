@@ -65,7 +65,7 @@ export function AuthEmail() {
             identifier: emailAddress,
           })
 
-          const emailCodeFactor = supportedFirstFactors.find(
+          const emailCodeFactor = supportedFirstFactors?.find(
             (i) => i.strategy === 'email_code',
           )
           if (emailCodeFactor) {

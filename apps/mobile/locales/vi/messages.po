@@ -18,12 +18,16 @@ msgid "{0}"
 msgstr ""
 
 #: apps/mobile/components/budget/budget-item.tsx:67
-msgid "{0} left"
-msgstr "{0} còn lại"
+#~ msgid "{0} left"
+#~ msgstr "{0} còn lại"
 
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:145
 msgid "{language}"
 msgstr ""
+
+#: apps/mobile/components/budget/budget-item.tsx:90
+msgid "{remainingDays} days left"
+msgstr "còn {remainingDays} ngày"
 
 #: apps/mobile/app/onboarding/step-two.tsx:127
 msgid "* you can always change this later."
@@ -50,7 +54,7 @@ msgstr ""
 msgid "Account deleted successfully"
 msgstr "Xóa tài khoản thành công"
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:177
+#: apps/mobile/app/(app)/(tabs)/index.tsx:167
 msgid "Add your first transaction here"
 msgstr "Thêm giao dịch đầu tiên ở đây"
 
@@ -64,7 +68,7 @@ msgstr "Tất cả tài khoản"
 
 #: apps/mobile/components/home/select-filter.tsx:75
 #: apps/mobile/components/home/select-wallet-account.tsx:66
-#: apps/mobile/components/transaction/select-budget-field.tsx:76
+#: apps/mobile/components/transaction/select-budget-field.tsx:111
 msgid "All Accounts"
 msgstr "Tất cả tài khoản"
 
@@ -214,12 +218,12 @@ msgstr "Vùng nguy hiểm"
 msgid "Dark"
 msgstr "Tối"
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:140
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:171
 #: apps/mobile/components/budget/select-budget-type-field.tsx:57
 msgid "Debt"
 msgstr "Nợ"
 
-#: apps/mobile/components/setting/select-default-currency.tsx:27
+#: apps/mobile/components/setting/select-default-currency.tsx:23
 msgid "Default currency"
 msgstr "Đơn vị mặc định"
 
@@ -291,7 +295,7 @@ msgstr "Chi tiêu"
 msgid "Family budget"
 msgstr "Ngân sách gia đình"
 
-#: apps/mobile/components/common/date-range-picker.tsx:101
+#: apps/mobile/components/common/date-range-picker.tsx:94
 msgid "From date"
 msgstr "Từ ngày"
 
@@ -323,7 +327,7 @@ msgstr "Thu nhập"
 msgid "Incomes"
 msgstr "Thu nhập"
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:139
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:170
 #: apps/mobile/components/budget/select-budget-type-field.tsx:52
 msgid "Investing"
 msgstr "Đầu tư"
@@ -397,23 +401,23 @@ msgstr "Tạo ngân sách"
 msgid "New category"
 msgstr "Tạo danh mục mới"
 
-#: apps/mobile/components/transaction/select-budget-field.tsx:34
+#: apps/mobile/components/transaction/select-budget-field.tsx:69
 msgid "No budget selected"
 msgstr "Chọn ngân sách"
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:165
+#: apps/mobile/app/(app)/(tabs)/index.tsx:155
 msgid "No transactions"
 msgstr "Không có giao dịch"
 
 #: apps/mobile/app/(app)/budget/[budgetId]/index.tsx:257
-msgid "No transactions found"
-msgstr "Không tìm thấy giao dịch"
+#~ msgid "No transactions found"
+#~ msgstr "Không tìm thấy giao dịch"
 
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:188
 msgid "Others"
 msgstr "Khác"
 
-#: apps/mobile/components/budget/budget-item.tsx:131
+#: apps/mobile/components/budget/budget-item.tsx:103
 msgid "per day"
 msgstr "mỗi ngày"
 
@@ -421,11 +425,11 @@ msgstr "mỗi ngày"
 #~ msgid "Period"
 #~ msgstr ""
 
-#: apps/mobile/components/common/date-range-picker.tsx:189
+#: apps/mobile/components/common/date-range-picker.tsx:146
 msgid "Period end date"
 msgstr "Ngày kết thúc"
 
-#: apps/mobile/components/common/date-range-picker.tsx:146
+#: apps/mobile/components/common/date-range-picker.tsx:121
 msgid "Period start date"
 msgstr "Ngày bắt đầu"
 
@@ -491,8 +495,8 @@ msgstr "Doanh thu tuần này"
 
 #: apps/mobile/components/budget/budget-form.tsx:50
 #: apps/mobile/components/category/category-form.tsx:118
-#: apps/mobile/components/common/date-picker.tsx:55
-#: apps/mobile/components/common/date-range-picker.tsx:62
+#: apps/mobile/components/common/date-picker.tsx:49
+#: apps/mobile/components/common/date-range-picker.tsx:56
 #: apps/mobile/components/transaction/transaction-form.tsx:113
 #: apps/mobile/components/wallet/account-form.tsx:149
 msgid "Save"
@@ -502,7 +506,7 @@ msgstr "Lưu"
 msgid "Save changes"
 msgstr "Lưu thay đổi"
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:138
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:169
 #: apps/mobile/components/budget/select-budget-type-field.tsx:47
 msgid "Saving"
 msgstr "Đang lưu"
@@ -519,7 +523,7 @@ msgstr "Tìm kiếm đơn vị..."
 msgid "Seed transactions"
 msgstr "Tạo giao dịch mẫu"
 
-#: apps/mobile/components/transaction/select-account-field.tsx:63
+#: apps/mobile/components/transaction/select-account-field.tsx:58
 msgid "Select account"
 msgstr "Chọn tài khoản"
 
@@ -584,7 +588,7 @@ msgstr "Đăng ký"
 msgid "Specific dates"
 msgstr "Ngày cụ thể"
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:137
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:168
 #: apps/mobile/components/budget/select-budget-type-field.tsx:42
 msgid "Spending"
 msgstr "Chi tiêu"
@@ -633,7 +637,7 @@ msgstr "Hành động này sẽ xóa giao dịch. Bạn có chắc chắn muốn
 msgid "Time to enter your expenses!"
 msgstr "Đến giờ nhập chi tiêu hôm nay!"
 
-#: apps/mobile/components/common/date-range-picker.tsx:117
+#: apps/mobile/components/common/date-range-picker.tsx:110
 msgid "To date"
 msgstr "Đến ngày"
 
@@ -658,14 +662,14 @@ msgid "Type"
 msgstr "Loại"
 
 #: apps/mobile/components/home/category-chart.tsx:61
-#: apps/mobile/components/transaction/select-category-field.tsx:91
+#: apps/mobile/components/transaction/select-category-field.tsx:87
 #: apps/mobile/components/transaction/transaction-item.tsx:29
 msgid "Uncategorized"
 msgstr "Chưa phân loại"
 
 #: apps/mobile/components/budget/budget-item.tsx:53
-msgid "Unknown"
-msgstr "Không xác định"
+#~ msgid "Unknown"
+#~ msgstr "Không xác định"
 
 #: apps/mobile/app/(app)/profile.tsx:50
 #: apps/mobile/app/(app)/profile.tsx:61
@@ -706,7 +710,7 @@ msgstr "Tên tài khoản ví"
 msgid "Wallet accounts"
 msgstr "Quản lý tài khoản ví"
 
-#: apps/mobile/components/transaction/select-account-field.tsx:97
+#: apps/mobile/components/transaction/select-account-field.tsx:74
 msgid "Wallet Accounts"
 msgstr "Các tài khoản"
 

@@ -4,6 +4,8 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { useMemo } from 'react'
 import { Text } from '../ui/text'
 
+const SHOULD_ROUND_VALUE_CURRENCIES = ['VND']
+
 const amountVariants = cva('line-clamp-1 shrink-0 font-semibold', {
   variants: {
     size: {
@@ -62,6 +64,13 @@ export function AmountFormat({
     return ''
   }, [amount, displayNegativeSign, displayPositiveSign])
 
+  const roundedAmount = useMemo(() => {
+    if (SHOULD_ROUND_VALUE_CURRENCIES.includes(currency || defaultCurrency)) {
+      return Math.round(amount)
+    }
+    return amount
+  }, [amount, currency, defaultCurrency])
+
   return (
     <Text
       className={cn(
@@ -75,7 +84,7 @@ export function AmountFormat({
       )}
     >
       {sign}
-      {Math.abs(amount).toLocaleString()}{' '}
+      {Math.abs(roundedAmount).toLocaleString()}{' '}
       <Text className={cn(currencyVariants({ size }))}>
         {currency || defaultCurrency}
       </Text>

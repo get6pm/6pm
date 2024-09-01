@@ -9,6 +9,7 @@ interface CategoryStore {
   _reset: () => void
   setCategories: (categories: Category[]) => void
   updateCategory: (category: Category) => void
+  deleteCategory: (categoryId: string) => void
 }
 
 function normalizeCategories(categories: Category[]) {
@@ -34,6 +35,12 @@ export const useCategoryStore = create<CategoryStore>()(
 
           state.categories[index] = category
           return { categories: normalizeCategories(state.categories) }
+        }),
+      deleteCategory: (categoryId) =>
+        set((state) => {
+          return {
+            categories: state.categories.filter((c) => c.id !== categoryId),
+          }
         }),
     }),
     {

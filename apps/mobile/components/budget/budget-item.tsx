@@ -4,6 +4,7 @@ import { Link } from 'expo-router'
 import type { FC } from 'react'
 import { Pressable, View } from 'react-native'
 
+import { useUserMetadata } from '@/hooks/use-user-metadata'
 import {
   getLatestPeriodConfig,
   useBudgetPeriodStats,
@@ -25,6 +26,7 @@ type BudgetItemProps = {
 export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
   const { i18n } = useLingui()
   const { user } = useUser()
+  const { defaultBudgetId } = useUserMetadata()
 
   const latestPeriodConfig = getLatestPeriodConfig(budget.periodConfigs)
 
@@ -35,6 +37,8 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
     remainingDays,
     isExceeded,
   } = useBudgetPeriodStats(latestPeriodConfig!)
+
+  const isDefault = defaultBudgetId === budget.id
 
   return (
     <Link
@@ -47,7 +51,7 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
     >
       <Pressable className="mx-6 mt-1 mb-3 justify-between gap-4 rounded-lg border border-border p-4">
         <View className="flex-row items-center justify-between gap-6">
-          <View className="gap-2">
+          <View className="flex-1 gap-2">
             <Text
               numberOfLines={1}
               className="line-clamp-1 flex-1 font-semibold text-lg"
@@ -60,7 +64,12 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
                 className="h-7 w-7"
                 fallbackLabelClassName="text-[10px]"
               />
-              <Badge variant="outline" className="rounded-full">
+              {isDefault && (
+                <Badge variant="secondary">
+                  <Text className="text-sm capitalize">{t(i18n)`Default`}</Text>
+                </Badge>
+              )}
+              <Badge variant="outline">
                 <Text className="text-sm capitalize">
                   {latestPeriodConfig?.type}
                 </Text>

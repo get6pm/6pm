@@ -1,5 +1,6 @@
 import { BudgetForm } from '@/components/budget/budget-form'
 import { Button } from '@/components/ui/button'
+import { useUserMetadata } from '@/hooks/use-user-metadata'
 import {
   useBudget,
   useDeleteBudget,
@@ -23,6 +24,7 @@ export default function EditBudgetScreen() {
   const { budget } = useBudget(budgetId!)
   const { mutateAsync } = useUpdateBudget()
   const { mutateAsync: mutateDelete } = useDeleteBudget()
+  const { setDefaultBudgetId, defaultBudgetId } = useUserMetadata()
   const { sideOffset, ...rootProps } = useModalPortalRoot()
 
   useEffect(() => {
@@ -65,7 +67,10 @@ export default function EditBudgetScreen() {
     orderBy(budget?.periodConfigs, 'startDate', 'desc'),
   )
 
-  const handleUpdate = async (data: BudgetFormValues) => {
+  const handleUpdate = async ({ isDefault, ...data }: BudgetFormValues) => {
+    if (isDefault) {
+      await setDefaultBudgetId(budget?.id)
+    }
     mutateAsync({
       data: data,
       id: budget?.id!,
@@ -95,6 +100,7 @@ export default function EditBudgetScreen() {
             startDate: latestPeriodConfig?.startDate ?? undefined,
             endDate: latestPeriodConfig?.endDate ?? undefined,
           },
+          isDefault: defaultBudgetId === budget?.id,
         }}
       />
       <PortalHost name="budget-form" />

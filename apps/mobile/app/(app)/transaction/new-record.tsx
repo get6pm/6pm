@@ -1,6 +1,7 @@
 import { toast } from '@/components/common/toast'
 import { Scanner } from '@/components/transaction/scanner'
 import { TransactionForm } from '@/components/transaction/transaction-form'
+import { useUserMetadata } from '@/hooks/use-user-metadata'
 import { useWallets, walletQueries } from '@/queries/wallet'
 import { useCreateTransaction } from '@/stores/transaction/hooks'
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
@@ -32,6 +33,7 @@ export default function NewRecordScreen() {
   const defaultWallet = walletAccounts?.[0]
   const { sideOffset, ...rootProps } = useModalPortalRoot()
   const [page, setPage] = useState<number>(0)
+  const { defaultBudgetId } = useUserMetadata()
 
   const params = useLocalSearchParams()
   const parsedParams = zUpdateTransaction.parse(params)
@@ -41,6 +43,7 @@ export default function NewRecordScreen() {
     currency: defaultCurrency,
     note: '',
     walletAccountId: defaultWallet?.id,
+    budgetId: defaultBudgetId as string,
     ...parsedParams,
   }
 

@@ -26,6 +26,7 @@ export const zCreateBudget = z.object({
       }
       return true
     }, 'Select period range'),
+  isDefault: z.boolean().optional(),
 })
 export type CreateBudget = z.infer<typeof zCreateBudget>
 
@@ -51,6 +52,7 @@ export const zUpdateBudget = z.object({
       }
       return true
     }, 'Select period range'),
+  isDefault: z.boolean().optional(),
 })
 export type UpdateBudget = z.infer<typeof zUpdateBudget>
 

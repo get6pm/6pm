@@ -25,11 +25,11 @@ msgstr ""
 msgid "{language}"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-item.tsx:90
+#: apps/mobile/components/budget/budget-item.tsx:99
 msgid "{remainingDays} days left"
 msgstr "còn {remainingDays} ngày"
 
-#: apps/mobile/app/onboarding/step-two.tsx:127
+#: apps/mobile/app/onboarding/step-two.tsx:124
 msgid "* you can always change this later."
 msgstr "* bạn có thể cập nhật lại sau."
 
@@ -45,7 +45,7 @@ msgstr "<0>Bằng cách tiếp tục, bạn đã hiểu và đồng ý với <1>
 #~ msgid "<0>By continuing, you acknowledge that you understand and agree to the <1><2>Terms & Conditions</2></1> and <3><4>Privacy Policy</4></3></0>"
 #~ msgstr "<0>Bằng cách tiếp tục, bạn đã hiểu và đồng ý với <1><2>Điều khoản sử dụng</2></1> và <3><4>Chính sách bảo mật</4></3> của 6pm.</0>"
 
-#: apps/mobile/components/budget/budget-form.tsx:120
+#: apps/mobile/components/budget/budget-form.tsx:121
 #: apps/mobile/components/wallet/account-form.tsx:86
 msgid "0.00"
 msgstr ""
@@ -104,12 +104,12 @@ msgstr "Cài đặt ứng dụng"
 msgid "App theme"
 msgstr "Chủ đề ứng dụng"
 
-#: apps/mobile/app/(app)/_layout.tsx:94
+#: apps/mobile/app/(app)/_layout.tsx:96
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:131
 msgid "Appearance"
 msgstr "Giao diện"
 
-#: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:37
+#: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:39
 msgid "Are you sure you want to delete this budget? This action cannot be undone."
 msgstr "Bạn có chắc chắn muốn xóa ngân sách này? Hành động này không thể hoàn tác."
 
@@ -158,7 +158,7 @@ msgid "Camera permissions are not granted"
 msgstr "Quyền truy cập camera không được cấp"
 
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:248
-#: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:43
+#: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:45
 #: apps/mobile/app/(app)/profile.tsx:120
 #: apps/mobile/app/(app)/transaction/[transactionId].tsx:77
 #: apps/mobile/app/(app)/wallet/[walletId].tsx:77
@@ -169,7 +169,7 @@ msgstr "Huỷ"
 msgid "Cannot extract transaction data"
 msgstr "Không thể xử lý dữ liệu giao dịch"
 
-#: apps/mobile/app/(app)/_layout.tsx:126
+#: apps/mobile/app/(app)/_layout.tsx:128
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:104
 msgid "Categories"
 msgstr "Danh mục"
@@ -223,11 +223,15 @@ msgstr "Tối"
 msgid "Debt"
 msgstr "Nợ"
 
+#: apps/mobile/components/budget/budget-item.tsx:69
+msgid "Default"
+msgstr "Mặc định"
+
 #: apps/mobile/components/setting/select-default-currency.tsx:23
 msgid "Default currency"
 msgstr "Đơn vị mặc định"
 
-#: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:47
+#: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:49
 #: apps/mobile/app/(app)/profile.tsx:124
 #: apps/mobile/app/(app)/transaction/[transactionId].tsx:81
 #: apps/mobile/app/(app)/wallet/[walletId].tsx:81
@@ -246,11 +250,11 @@ msgstr "Xóa tài khoản ví sẽ cũng xóa tất cả các giao dịch liên 
 msgid "Display name"
 msgstr "Tên hiển thị"
 
-#: apps/mobile/app/(app)/_layout.tsx:120
+#: apps/mobile/app/(app)/_layout.tsx:122
 msgid "Edit account"
 msgstr "Chỉnh sửa tài khoản"
 
-#: apps/mobile/app/(app)/_layout.tsx:147
+#: apps/mobile/app/(app)/_layout.tsx:149
 msgid "Edit category"
 msgstr "Chỉnh sửa danh mục"
 
@@ -291,7 +295,7 @@ msgstr "Chi tiêu"
 msgid "Expenses"
 msgstr "Chi tiêu"
 
-#: apps/mobile/components/budget/budget-form.tsx:111
+#: apps/mobile/components/budget/budget-form.tsx:112
 msgid "Family budget"
 msgstr "Ngân sách gia đình"
 
@@ -315,7 +319,7 @@ msgstr "Bắt đầu bằng cách đặt ngân sách hàng tháng của bạn."
 msgid "Grant camera permissions"
 msgstr "Cấp quyền truy cập camera"
 
-#: apps/mobile/app/onboarding/step-two.tsx:119
+#: apps/mobile/app/onboarding/step-two.tsx:116
 msgid "If you're not sure, start with how much you usually spend per month."
 msgstr "Nếu không chắc chắn, hãy nhập số tiền bạn thường chi tiêu hàng tháng."
 
@@ -336,7 +340,7 @@ msgstr "Đầu tư"
 msgid "Keeping up with your spending and budgets."
 msgstr "Theo dõi kịp tình hình chi tiêu và ngân sách."
 
-#: apps/mobile/app/(app)/_layout.tsx:82
+#: apps/mobile/app/(app)/_layout.tsx:84
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:140
 msgid "Language"
 msgstr "Ngôn ngữ"
@@ -369,7 +373,7 @@ msgstr "Hàng tháng"
 msgid "Monthly budget"
 msgstr "Ngân sách tháng"
 
-#: apps/mobile/components/budget/budget-form.tsx:110
+#: apps/mobile/components/budget/budget-form.tsx:111
 #: apps/mobile/components/category/category-form.tsx:66
 #: apps/mobile/components/wallet/account-form.tsx:69
 msgid "Name"
@@ -387,17 +391,17 @@ msgstr "Âm nếu số dư tài khoản dưới 0"
 msgid "New {0}"
 msgstr "Tạo mới {0}"
 
-#: apps/mobile/app/(app)/_layout.tsx:113
+#: apps/mobile/app/(app)/_layout.tsx:115
 #: apps/mobile/app/(app)/wallet/accounts.tsx:26
 msgid "New account"
 msgstr "Tạo tài khoản mới"
 
-#: apps/mobile/app/(app)/_layout.tsx:154
+#: apps/mobile/app/(app)/_layout.tsx:156
 #: apps/mobile/app/(app)/(tabs)/_layout.tsx:80
 msgid "New budget"
 msgstr "Tạo ngân sách"
 
-#: apps/mobile/app/(app)/_layout.tsx:140
+#: apps/mobile/app/(app)/_layout.tsx:142
 msgid "New category"
 msgstr "Tạo danh mục mới"
 
@@ -417,7 +421,7 @@ msgstr "Không có giao dịch"
 msgid "Others"
 msgstr "Khác"
 
-#: apps/mobile/components/budget/budget-item.tsx:103
+#: apps/mobile/components/budget/budget-item.tsx:112
 msgid "per day"
 msgstr "mỗi ngày"
 
@@ -449,7 +453,7 @@ msgstr "Chính sách bảo mật"
 msgid "Processing transaction..."
 msgstr "Đang xử lý giao dịch..."
 
-#: apps/mobile/app/(app)/_layout.tsx:89
+#: apps/mobile/app/(app)/_layout.tsx:91
 msgid "Profile"
 msgstr "Hồ sơ"
 
@@ -493,7 +497,7 @@ msgstr "Doanh thu tháng này"
 msgid "Revenue this week"
 msgstr "Doanh thu tuần này"
 
-#: apps/mobile/components/budget/budget-form.tsx:50
+#: apps/mobile/components/budget/budget-form.tsx:51
 #: apps/mobile/components/category/category-form.tsx:118
 #: apps/mobile/components/common/date-picker.tsx:49
 #: apps/mobile/components/common/date-range-picker.tsx:56
@@ -543,6 +547,10 @@ msgstr "Chọn loại chu kỳ"
 msgid "Send feedback"
 msgstr "Gửi phản hồi"
 
+#: apps/mobile/components/budget/budget-form.tsx:161
+msgid "Set as default"
+msgstr "Đặt làm mặc định"
+
 #: apps/mobile/app/onboarding/step-two.tsx:50
 msgid "Set Budget"
 msgstr "Lưu Ngân Sách"
@@ -551,7 +559,7 @@ msgstr "Lưu Ngân Sách"
 msgid "Set Monthly Budget"
 msgstr "Đặt Ngân Sách Tháng"
 
-#: apps/mobile/app/onboarding/step-two.tsx:116
+#: apps/mobile/app/onboarding/step-two.tsx:113
 msgid "Set your monthly spending goal"
 msgstr "Đặt mục tiêu chi tiêu hàng tháng"
 
@@ -617,7 +625,7 @@ msgstr "Vuốt lên để quét giao dịch"
 msgid "Take a picture of your transaction"
 msgstr "Chụp ảnh giao dịch của bạn"
 
-#: apps/mobile/components/budget/budget-form.tsx:119
+#: apps/mobile/components/budget/budget-form.tsx:120
 msgid "Target"
 msgstr "Mục tiêu"
 
@@ -649,7 +657,7 @@ msgstr "Hôm nay"
 msgid "Tomorrow"
 msgstr "Ngày mai"
 
-#: apps/mobile/app/(app)/transaction/new-record.tsx:58
+#: apps/mobile/app/(app)/transaction/new-record.tsx:61
 msgid "Transaction created"
 msgstr "Giao dịch đã được tạo"
 
@@ -705,7 +713,7 @@ msgstr "Tiếng Việt"
 msgid "Wallet account name"
 msgstr "Tên tài khoản ví"
 
-#: apps/mobile/app/(app)/_layout.tsx:99
+#: apps/mobile/app/(app)/_layout.tsx:101
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:95
 msgid "Wallet accounts"
 msgstr "Quản lý tài khoản ví"

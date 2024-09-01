@@ -25,11 +25,11 @@ msgstr ""
 msgid "{language}"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-item.tsx:90
+#: apps/mobile/components/budget/budget-item.tsx:99
 msgid "{remainingDays} days left"
 msgstr ""
 
-#: apps/mobile/app/onboarding/step-two.tsx:127
+#: apps/mobile/app/onboarding/step-two.tsx:124
 msgid "* you can always change this later."
 msgstr ""
 
@@ -45,7 +45,7 @@ msgstr ""
 #~ msgid "<0>By continuing, you acknowledge that you understand and agree to the <1><2>Terms & Conditions</2></1> and <3><4>Privacy Policy</4></3></0>"
 #~ msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:120
+#: apps/mobile/components/budget/budget-form.tsx:121
 #: apps/mobile/components/wallet/account-form.tsx:86
 msgid "0.00"
 msgstr ""
@@ -104,12 +104,12 @@ msgstr ""
 msgid "App theme"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:94
+#: apps/mobile/app/(app)/_layout.tsx:96
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:131
 msgid "Appearance"
 msgstr ""
 
-#: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:37
+#: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:39
 msgid "Are you sure you want to delete this budget? This action cannot be undone."
 msgstr ""
 
@@ -158,7 +158,7 @@ msgid "Camera permissions are not granted"
 msgstr ""
 
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:248
-#: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:43
+#: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:45
 #: apps/mobile/app/(app)/profile.tsx:120
 #: apps/mobile/app/(app)/transaction/[transactionId].tsx:77
 #: apps/mobile/app/(app)/wallet/[walletId].tsx:77
@@ -169,7 +169,7 @@ msgstr ""
 msgid "Cannot extract transaction data"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:126
+#: apps/mobile/app/(app)/_layout.tsx:128
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:104
 msgid "Categories"
 msgstr ""
@@ -223,11 +223,15 @@ msgstr ""
 msgid "Debt"
 msgstr ""
 
+#: apps/mobile/components/budget/budget-item.tsx:69
+msgid "Default"
+msgstr ""
+
 #: apps/mobile/components/setting/select-default-currency.tsx:23
 msgid "Default currency"
 msgstr ""
 
-#: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:47
+#: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:49
 #: apps/mobile/app/(app)/profile.tsx:124
 #: apps/mobile/app/(app)/transaction/[transactionId].tsx:81
 #: apps/mobile/app/(app)/wallet/[walletId].tsx:81
@@ -246,11 +250,11 @@ msgstr ""
 msgid "Display name"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:120
+#: apps/mobile/app/(app)/_layout.tsx:122
 msgid "Edit account"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:147
+#: apps/mobile/app/(app)/_layout.tsx:149
 msgid "Edit category"
 msgstr ""
 
@@ -291,7 +295,7 @@ msgstr ""
 msgid "Expenses"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:111
+#: apps/mobile/components/budget/budget-form.tsx:112
 msgid "Family budget"
 msgstr ""
 
@@ -315,7 +319,7 @@ msgstr ""
 msgid "Grant camera permissions"
 msgstr ""
 
-#: apps/mobile/app/onboarding/step-two.tsx:119
+#: apps/mobile/app/onboarding/step-two.tsx:116
 msgid "If you're not sure, start with how much you usually spend per month."
 msgstr ""
 
@@ -336,7 +340,7 @@ msgstr ""
 msgid "Keeping up with your spending and budgets."
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:82
+#: apps/mobile/app/(app)/_layout.tsx:84
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:140
 msgid "Language"
 msgstr ""
@@ -369,7 +373,7 @@ msgstr ""
 msgid "Monthly budget"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:110
+#: apps/mobile/components/budget/budget-form.tsx:111
 #: apps/mobile/components/category/category-form.tsx:66
 #: apps/mobile/components/wallet/account-form.tsx:69
 msgid "Name"
@@ -387,17 +391,17 @@ msgstr ""
 msgid "New {0}"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:113
+#: apps/mobile/app/(app)/_layout.tsx:115
 #: apps/mobile/app/(app)/wallet/accounts.tsx:26
 msgid "New account"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:154
+#: apps/mobile/app/(app)/_layout.tsx:156
 #: apps/mobile/app/(app)/(tabs)/_layout.tsx:80
 msgid "New budget"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:140
+#: apps/mobile/app/(app)/_layout.tsx:142
 msgid "New category"
 msgstr ""
 
@@ -417,7 +421,7 @@ msgstr ""
 msgid "Others"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-item.tsx:103
+#: apps/mobile/components/budget/budget-item.tsx:112
 msgid "per day"
 msgstr ""
 
@@ -449,7 +453,7 @@ msgstr ""
 msgid "Processing transaction..."
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:89
+#: apps/mobile/app/(app)/_layout.tsx:91
 msgid "Profile"
 msgstr ""
 
@@ -493,7 +497,7 @@ msgstr ""
 msgid "Revenue this week"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:50
+#: apps/mobile/components/budget/budget-form.tsx:51
 #: apps/mobile/components/category/category-form.tsx:118
 #: apps/mobile/components/common/date-picker.tsx:49
 #: apps/mobile/components/common/date-range-picker.tsx:56
@@ -543,6 +547,10 @@ msgstr ""
 msgid "Send feedback"
 msgstr ""
 
+#: apps/mobile/components/budget/budget-form.tsx:161
+msgid "Set as default"
+msgstr ""
+
 #: apps/mobile/app/onboarding/step-two.tsx:50
 msgid "Set Budget"
 msgstr ""
@@ -551,7 +559,7 @@ msgstr ""
 msgid "Set Monthly Budget"
 msgstr ""
 
-#: apps/mobile/app/onboarding/step-two.tsx:116
+#: apps/mobile/app/onboarding/step-two.tsx:113
 msgid "Set your monthly spending goal"
 msgstr ""
 
@@ -617,7 +625,7 @@ msgstr ""
 msgid "Take a picture of your transaction"
 msgstr ""
 
-#: apps/mobile/components/budget/budget-form.tsx:119
+#: apps/mobile/components/budget/budget-form.tsx:120
 msgid "Target"
 msgstr ""
 
@@ -649,7 +657,7 @@ msgstr ""
 msgid "Tomorrow"
 msgstr ""
 
-#: apps/mobile/app/(app)/transaction/new-record.tsx:58
+#: apps/mobile/app/(app)/transaction/new-record.tsx:61
 msgid "Transaction created"
 msgstr ""
 
@@ -705,7 +713,7 @@ msgstr ""
 msgid "Wallet account name"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:99
+#: apps/mobile/app/(app)/_layout.tsx:101
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:95
 msgid "Wallet accounts"
 msgstr ""

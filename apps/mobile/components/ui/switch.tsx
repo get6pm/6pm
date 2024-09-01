@@ -1,4 +1,6 @@
-import * as SwitchPrimitives from '@/components/primitives/switch'
+import { useColorScheme } from '@/hooks/useColorScheme'
+import { cn } from '@/lib/utils'
+import * as SwitchPrimitives from '@rn-primitives/switch'
 import * as React from 'react'
 import { Platform } from 'react-native'
 import Animated, {
@@ -8,16 +10,13 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated'
 
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { cn } from '@/lib/utils'
-
 const SwitchWeb = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
 >(({ className, ...props }, ref) => (
   <SwitchPrimitives.Root
     className={cn(
-      'peer h-6 w-11 shrink-0 cursor-pointer flex-row items-center rounded-full border-2 border-transparent transition-colors disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+      'peer h-6 w-11 shrink-0 cursor-pointer flex-row items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed',
       props.checked ? 'bg-primary' : 'bg-input',
       props.disabled && 'opacity-50',
       className,
@@ -71,13 +70,14 @@ const SwitchNative = React.forwardRef<
     <Animated.View
       style={animatedRootStyle}
       className={cn(
-        'h-7 w-[42px] rounded-full',
+        'h-8 w-[46px] rounded-full',
         props.disabled && 'opacity-50',
       )}
     >
       <SwitchPrimitives.Root
         className={cn(
-          'h-7 w-[42px] shrink-0 flex-row items-center rounded-full border-2 border-transparent',
+          'h-8 w-[46px] shrink-0 flex-row items-center rounded-full border-2 border-transparent',
+          props.checked ? 'bg-primary' : 'bg-input',
           className,
         )}
         {...props}
@@ -86,7 +86,7 @@ const SwitchNative = React.forwardRef<
         <Animated.View style={animatedThumbStyle}>
           <SwitchPrimitives.Thumb
             className={
-              'h-6 w-6 rounded-full bg-background shadow-foreground/25 shadow-md ring-0'
+              'h-7 w-7 rounded-full bg-background shadow-foreground/25 shadow-md ring-0'
             }
           />
         </Animated.View>

@@ -1,3 +1,4 @@
+import { toast } from '@/components/common/toast'
 import { getHonoClient } from '@/lib/client'
 import { useMeQuery } from '@/queries/auth'
 import {
@@ -158,5 +159,28 @@ export const useCreateCategory = () => {
     },
   })
 
+  return mutation
+}
+
+export function useDeleteCategory() {
+  const deleteCategoryInStore = useCategoryStore(
+    (state) => state.deleteCategory,
+  )
+
+  const mutation = useMutation({
+    mutationFn: async (categoryId: string) => {
+      const hc = await getHonoClient()
+      await hc.v1.categories[':categoryId'].$delete({
+        param: { categoryId },
+      })
+    },
+    onMutate(categoryId) {
+      deleteCategoryInStore(categoryId)
+    },
+    onError(error) {
+      toast.error(error.message)
+    },
+    throwOnError: true,
+  })
   return mutation
 }

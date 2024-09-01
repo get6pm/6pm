@@ -113,6 +113,10 @@ msgstr ""
 msgid "Are you sure you want to delete this budget? This action cannot be undone."
 msgstr ""
 
+#: apps/mobile/app/(app)/category/[categoryId].tsx:36
+msgid "Are you sure you want to delete this category? This action cannot be undone."
+msgstr ""
+
 #: apps/mobile/app/(app)/profile.tsx:115
 msgid "Are you sure you want to delete your account? This action cannot be undone."
 msgstr ""
@@ -159,6 +163,7 @@ msgstr ""
 
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:248
 #: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:45
+#: apps/mobile/app/(app)/category/[categoryId].tsx:42
 #: apps/mobile/app/(app)/profile.tsx:120
 #: apps/mobile/app/(app)/transaction/[transactionId].tsx:77
 #: apps/mobile/app/(app)/wallet/[walletId].tsx:77
@@ -172,6 +177,10 @@ msgstr ""
 #: apps/mobile/app/(app)/_layout.tsx:128
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:104
 msgid "Categories"
+msgstr ""
+
+#: apps/mobile/app/(app)/category/[categoryId].tsx:51
+msgid "Category deleted"
 msgstr ""
 
 #: apps/mobile/components/category/category-form.tsx:67
@@ -232,6 +241,7 @@ msgid "Default currency"
 msgstr ""
 
 #: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:49
+#: apps/mobile/app/(app)/category/[categoryId].tsx:46
 #: apps/mobile/app/(app)/profile.tsx:124
 #: apps/mobile/app/(app)/transaction/[transactionId].tsx:81
 #: apps/mobile/app/(app)/wallet/[walletId].tsx:81

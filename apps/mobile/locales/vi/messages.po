@@ -113,6 +113,10 @@ msgstr "Giao diện"
 msgid "Are you sure you want to delete this budget? This action cannot be undone."
 msgstr "Bạn có chắc chắn muốn xóa ngân sách này? Hành động này không thể hoàn tác."
 
+#: apps/mobile/app/(app)/category/[categoryId].tsx:36
+msgid "Are you sure you want to delete this category? This action cannot be undone."
+msgstr "Bạn có chắc chắn muốn xóa danh mục này? Hành động này không thể hoàn tác."
+
 #: apps/mobile/app/(app)/profile.tsx:115
 msgid "Are you sure you want to delete your account? This action cannot be undone."
 msgstr "Bạn có chắc chắn muốn xóa tài khoản của bạn? Hành động này không thể hoàn tác."
@@ -159,6 +163,7 @@ msgstr "Quyền truy cập camera không được cấp"
 
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:248
 #: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:45
+#: apps/mobile/app/(app)/category/[categoryId].tsx:42
 #: apps/mobile/app/(app)/profile.tsx:120
 #: apps/mobile/app/(app)/transaction/[transactionId].tsx:77
 #: apps/mobile/app/(app)/wallet/[walletId].tsx:77
@@ -173,6 +178,10 @@ msgstr "Không thể xử lý dữ liệu giao dịch"
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:104
 msgid "Categories"
 msgstr "Danh mục"
+
+#: apps/mobile/app/(app)/category/[categoryId].tsx:51
+msgid "Category deleted"
+msgstr "Đã xóa danh mục"
 
 #: apps/mobile/components/category/category-form.tsx:67
 msgid "Category name"
@@ -232,6 +241,7 @@ msgid "Default currency"
 msgstr "Đơn vị mặc định"
 
 #: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:49
+#: apps/mobile/app/(app)/category/[categoryId].tsx:46
 #: apps/mobile/app/(app)/profile.tsx:124
 #: apps/mobile/app/(app)/transaction/[transactionId].tsx:81
 #: apps/mobile/app/(app)/wallet/[walletId].tsx:81

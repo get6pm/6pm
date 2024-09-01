@@ -1,7 +1,4 @@
-import {
-  calculateBudgetPeriodStartEndDates,
-  dayjsExtended,
-} from '@6pm/utilities'
+import { calculateBudgetPeriodStartEndDates } from '@6pm/utilities'
 import type { CreateBudget, UpdateBudget } from '@6pm/validation'
 import {
   type Budget,
@@ -101,7 +98,10 @@ export async function isUserBudgetOwner({
   return !!budgetUser
 }
 
-export async function findBudget({ budgetId }: { budgetId: string }) {
+export async function findBudget({
+  budgetId,
+  anchorDate,
+}: { budgetId: string; anchorDate?: Date }) {
   const budget = await prisma.budget.findUnique({
     where: { id: budgetId },
     include: BUDGET_INCLUDE,
@@ -111,7 +111,7 @@ export async function findBudget({ budgetId }: { budgetId: string }) {
     return null
   }
 
-  return verifyBudgetPeriods({ budget })
+  return verifyBudgetPeriods({ budget, anchorDate })
 }
 
 export async function createBudget({
@@ -282,7 +282,27 @@ async function findBudgetLatestPeriodConfig({
   })
 }
 
-async function verifyBudgetPeriods({ budget }: { budget: BudgetPopulated }) {
+async function findPeriodConfigByDate({
+  budgetId,
+  date,
+}: { budgetId: string; date: Date }) {
+  return prisma.budgetPeriodConfig.findFirst({
+    where: {
+      budgetId,
+      startDate: {
+        lte: date,
+      },
+      endDate: {
+        gte: date,
+      },
+    },
+  })
+}
+
+async function verifyBudgetPeriods({
+  budget,
+  anchorDate = new Date(),
+}: { budget: BudgetPopulated; anchorDate?: Date }) {
   const latestPeriodConfig = await findBudgetLatestPeriodConfig({
     budgetId: budget.id,
   })
@@ -291,18 +311,21 @@ async function verifyBudgetPeriods({ budget }: { budget: BudgetPopulated }) {
     return budget
   }
 
-  if (
-    latestPeriodConfig.type === 'MONTHLY' &&
-    latestPeriodConfig.endDate &&
-    latestPeriodConfig.endDate < new Date()
-  ) {
+  const periodConfig = await findPeriodConfigByDate({
+    budgetId: budget.id,
+    date: anchorDate,
+  })
+
+  if (!periodConfig) {
     await prisma.budgetPeriodConfig.create({
       data: {
-        type: 'MONTHLY',
-        amount: 1,
-        startDate: latestPeriodConfig.endDate,
-        endDate: dayjsExtended().endOf('month').toDate(),
+        type: latestPeriodConfig.type,
+        amount: latestPeriodConfig.amount,
         budgetId: budget.id,
+        ...calculateBudgetPeriodStartEndDates({
+          anchorDate,
+          type: latestPeriodConfig.type,
+        }),
       },
     })
   }

@@ -1,6 +1,13 @@
 import { getHonoClient } from '@/lib/client'
-import { calculateBudgetPeriodStartEndDates } from '@6pm/utilities'
-import { type BudgetFormValues, BudgetSchema } from '@6pm/validation'
+import {
+  calculateBudgetPeriodStartEndDates,
+  dayjsExtended,
+} from '@6pm/utilities'
+import {
+  type BudgetFormValues,
+  type BudgetPeriodConfig,
+  BudgetSchema,
+} from '@6pm/validation'
 import { createId } from '@paralleldrive/cuid2'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import Decimal from 'decimal.js'
@@ -8,6 +15,7 @@ import { first, keyBy, orderBy } from 'lodash-es'
 import { useMemo } from 'react'
 import { Alert } from 'react-native'
 import { z } from 'zod'
+import { useTransactionList } from '../transaction/hooks'
 import { budgetQueries } from './queries'
 import { type BudgetItem, useBudgetStore } from './store'
 
@@ -222,4 +230,63 @@ export function useDeleteBudget() {
   })
 
   return mutation
+}
+
+export function getLatestPeriodConfig(periodConfigs: BudgetPeriodConfig[]) {
+  return first(orderBy(periodConfigs, 'startDate', 'desc'))
+}
+
+export function useBudgetPeriodStats(periodConfig: BudgetPeriodConfig) {
+  const budgetAmount = useMemo(() => {
+    if (periodConfig?.amount instanceof Decimal) {
+      return periodConfig?.amount
+    }
+
+    return new Decimal(periodConfig?.amount || 0)
+  }, [periodConfig])
+
+  const { transactions, totalExpense, totalIncome } = useTransactionList({
+    from: new Date(periodConfig?.startDate!),
+    to: new Date(periodConfig?.endDate!),
+    budgetId: periodConfig.budgetId,
+  })
+
+  const totalBudgetUsage = new Decimal(totalExpense).plus(totalIncome).abs()
+
+  const remainingAmount = budgetAmount.sub(totalBudgetUsage)
+
+  const usagePercentage = totalBudgetUsage
+    .div(budgetAmount!)
+    .mul(100)
+    .toNumber()
+
+  const averageAmountPerDay = budgetAmount.div(
+    dayjsExtended(periodConfig?.endDate!).diff(
+      dayjsExtended(periodConfig?.startDate!),
+      'day',
+    ),
+  )
+
+  const remainingDays = dayjsExtended(periodConfig?.endDate!).diff(
+    dayjsExtended(),
+    'day',
+  )
+
+  const remainingAmountPerDays = remainingAmount?.div(
+    remainingDays > 0 ? remainingDays : 1,
+  )
+
+  const isExceeded = remainingAmountPerDays?.lt(averageAmountPerDay!)
+
+  return {
+    budgetAmount,
+    transactions,
+    totalBudgetUsage,
+    usagePercentage,
+    remainingAmount,
+    remainingDays: remainingDays > 0 ? remainingDays : 1,
+    remainingAmountPerDays,
+    averageAmountPerDay,
+    isExceeded,
+  }
 }

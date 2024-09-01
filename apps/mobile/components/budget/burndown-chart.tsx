@@ -143,24 +143,23 @@ type BurndownChartProps = {
   totalBudget: number
   averagePerDay: number
   data?: { day: number; amount?: number }[]
+  anchorDay?: number
 }
 
 export function BurndownChart({
   totalBudget,
   averagePerDay,
   data = [],
+  anchorDay = new Date().getDate(),
 }: BurndownChartProps) {
   const font = useFont(SpaceMono_400Regular, 12)
   const { colorScheme } = useColorScheme()
   const defaultCurrency = useDefaultCurrency()
-
-  const today = dayjsExtended(new Date()).get('date') + 1
-
-  const daysInMonth = dayjsExtended().daysInMonth()
+  const daysInMonth = dayjsExtended(anchorDay).daysInMonth()
 
   const chartData = Array.from({ length: daysInMonth + 1 }, (_, i) => ({
     day: i,
-    amount: i === 0 ? 0 : data.find((d) => d.day === i)?.amount ?? 0,
+    amount: data.find((d) => d.day === i)?.amount ?? 0,
   })).reduce(
     (acc, usage, index) => {
       const lastDay = acc[acc.length - 1]
@@ -169,7 +168,7 @@ export function BurndownChart({
         {
           ...usage,
           amount:
-            index > today
+            index > anchorDay
               ? undefined
               : (lastDay?.amount || 0) + (usage.amount ?? 0),
           average: averagePerDay * index,
@@ -179,7 +178,7 @@ export function BurndownChart({
     [] as { day: number; amount?: number; average: number }[],
   )
 
-  const todayRecord = chartData.find((i) => i.day === today)
+  const todayRecord = chartData.find((i) => i.day === anchorDay)
   const diffAmount = Math.round(
     (todayRecord?.average || 0) - (todayRecord?.amount || 0),
   )

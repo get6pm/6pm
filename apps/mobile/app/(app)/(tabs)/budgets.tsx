@@ -153,16 +153,16 @@ export default function BudgetsScreen() {
     groupBy(transactions, (t) => t.date),
     (transactions, key) => ({
       day: new Date(key).getDate(),
-      amount: transactions.reduce((acc, t) => acc + t.amountInVnd, 0),
+      amount: transactions.reduce((acc, t) => acc - t.amountInVnd, 0),
     }),
   )
 
-  const totalRemaining = totalBudget.add(totalBudgetUsage).round()
+  const totalRemaining = totalBudget.add(totalBudgetUsage)
 
   const daysInMonth = dayjsExtended().daysInMonth()
   const remainingDays = daysInMonth - dayjsExtended().get('date')
-  const remainingPerDay = totalRemaining.div(remainingDays).round()
-  const averagePerDay = totalBudget.div(daysInMonth).round()
+  const remainingPerDay = totalRemaining.div(remainingDays)
+  const averagePerDay = totalBudget.div(daysInMonth)
 
   const sections = [
     { key: 'SPENDING', title: t(i18n)`Spending`, data: spendingBudgets },

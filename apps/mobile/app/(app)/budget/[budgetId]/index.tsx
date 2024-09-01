@@ -2,19 +2,14 @@ import { BudgetStatistic } from '@/components/budget/budget-statistic'
 import { BurndownChart } from '@/components/budget/burndown-chart'
 import { PeriodControl } from '@/components/budget/period-control'
 import { AmountFormat } from '@/components/common/amount-format'
-import { ListSkeleton } from '@/components/common/list-skeleton'
 import { TransactionItem } from '@/components/transaction/transaction-item'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { formatDateShort } from '@/lib/date'
 import { theme } from '@/lib/theme'
-import { useBudget } from '@/stores/budget/hooks'
-import { useTransactionList } from '@/stores/transaction/hooks'
-import { dayjsExtended } from '@6pm/utilities'
+import { useBudget, useBudgetPeriodStats } from '@/stores/budget/hooks'
 import type { TransactionPopulated } from '@6pm/validation'
-import { t } from '@lingui/macro'
-import { useLingui } from '@lingui/react'
 import { format } from 'date-fns'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Link, useLocalSearchParams, useNavigation } from 'expo-router'
@@ -44,7 +39,6 @@ const AnimatedSectionList = Animated.createAnimatedComponent(
 export default function BudgetDetailScreen() {
   const navigation = useNavigation()
   const { colorScheme } = useColorScheme()
-  const { i18n } = useLingui()
   const { bottom } = useSafeAreaInsets()
   const headerAnimation = useSharedValue(0)
   const scrollY = useSharedValue(0)
@@ -53,19 +47,18 @@ export default function BudgetDetailScreen() {
   const { budgetId } = useLocalSearchParams<{ budgetId: string }>()
   const { budget } = useBudget(budgetId!)
   const periodConfigs = sortBy(budget?.periodConfigs, (pc) => pc.startDate)
-  const [currentPeriodIndex, setCurrentPeriodIndex] = useState<number>(0)
+  const [currentPeriodIndex, setCurrentPeriodIndex] = useState<number>(
+    periodConfigs.length - 1,
+  )
   const currentPeriod = periodConfigs[currentPeriodIndex]
 
-  const { transactions, isLoading, isRefetching, refetch } = useTransactionList(
-    {
-      budgetId,
-      from:
-        currentPeriod?.startDate || dayjsExtended().startOf('month').toDate(),
-      to: currentPeriod?.endDate || dayjsExtended().endOf('month').toDate(),
-    },
-  )
-
-  const totalUsage = transactions.reduce((acc, t) => acc + t.amountInVnd, 0)
+  const {
+    budgetAmount,
+    transactions,
+    remainingAmount,
+    remainingAmountPerDays,
+    averageAmountPerDay,
+  } = useBudgetPeriodStats(currentPeriod!)
 
   const transactionsGroupByDate = useMemo(() => {
     const groupedByDay = groupBy(transactions, (transaction) =>
@@ -93,7 +86,7 @@ export default function BudgetDetailScreen() {
           <Link
             href={{
               pathname: '/budget/[budgetId]/edit',
-              params: { budgetId: budget?.id },
+              params: { budgetId: budget?.id! },
             }}
             asChild
             push
@@ -195,22 +188,11 @@ export default function BudgetDetailScreen() {
     )
   }
 
-  const totalRemaining = Math.round(
-    Number(currentPeriod.amount ?? 0) + totalUsage,
-  )
-  const remainingDays =
-    dayjsExtended().daysInMonth() - dayjsExtended().get('date')
-  const remainingPerDay = Math.round(totalRemaining / remainingDays)
-
-  const averagePerDay = Math.round(
-    Number(currentPeriod.amount) / dayjsExtended().daysInMonth(),
-  )
-
   const chartData = map(
     groupBy(transactions, (t) => t.date),
     (transactions, key) => ({
       day: new Date(key).getDate(),
-      amount: transactions.reduce((acc, t) => acc + t.amountInVnd, 0),
+      amount: transactions.reduce((acc, t) => acc - t.amountInVnd, 0),
     }),
   )
 
@@ -234,8 +216,8 @@ export default function BudgetDetailScreen() {
       >
         <Animated.View className="gap-6 px-6 py-6" style={summaryStyle}>
           <BudgetStatistic
-            totalRemaining={totalRemaining}
-            remainingPerDay={remainingPerDay}
+            totalRemaining={remainingAmount.toNumber()}
+            remainingPerDay={remainingAmountPerDays.toNumber()}
           />
         </Animated.View>
         <Animated.View
@@ -243,9 +225,15 @@ export default function BudgetDetailScreen() {
           style={[{ flexGrow: 0 }, chartStyle]}
         >
           <BurndownChart
-            totalBudget={Number(currentPeriod?.amount)}
-            averagePerDay={Math.abs(averagePerDay)}
+            totalBudget={budgetAmount.toNumber()}
+            averagePerDay={averageAmountPerDay.toNumber()}
             data={chartData}
+            anchorDay={
+              new Date() > new Date(currentPeriod?.startDate!) &&
+              new Date() < new Date(currentPeriod?.endDate!)
+                ? new Date().getDate()
+                : new Date(currentPeriod?.endDate!).getDate()
+            }
           />
         </Animated.View>
       </View>
@@ -254,8 +242,8 @@ export default function BudgetDetailScreen() {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={<Animated.View style={dummyHeaderStyle} />}
         contentContainerStyle={{ paddingBottom: bottom + 32 }}
-        refreshing={isRefetching}
-        onRefresh={refetch}
+        // refreshing={isRefetching}
+        // onRefresh={refetch}
         sections={transactionsGroupByDate}
         keyExtractor={(item) => item.id}
         renderItem={({ item: transaction }) => (
@@ -272,16 +260,6 @@ export default function BudgetDetailScreen() {
             />
           </View>
         )}
-        ListFooterComponent={
-          isLoading || isRefetching ? <ListSkeleton /> : null
-        }
-        ListEmptyComponent={
-          !isLoading && !isRefetching ? (
-            <Text className="mx-auto my-2 text-center text-muted-foreground">{t(
-              i18n,
-            )`No transactions found`}</Text>
-          ) : null
-        }
       />
       <LinearGradient
         colors={[

@@ -46,7 +46,11 @@ export default function BudgetDetailScreen() {
 
   const { budgetId } = useLocalSearchParams<{ budgetId: string }>()
   const { budget } = useBudget(budgetId!)
-  const periodConfigs = sortBy(budget?.periodConfigs, (pc) => pc.startDate)
+  const periodConfigs = sortBy(
+    budget?.periodConfigs,
+    (pc) => pc.startDate,
+    'desc',
+  )
   const [currentPeriodIndex, setCurrentPeriodIndex] = useState<number>(
     periodConfigs.length - 1,
   )

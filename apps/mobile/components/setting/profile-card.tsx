@@ -117,34 +117,41 @@ const Dot = ({ dot, fromIndex }: DotProps) => {
   )
 }
 
-export function ProfileCard() {
-  const { user } = useUser()
+export const DotsGrid = () => {
   const fromIndex = useSharedValue(
     dots[Math.round(ROWS / 2)][Math.round(COLS / 2)],
   )
 
   return (
+    <View className="flex flex-1">
+      {dots.map((row, rowIndex) => {
+        return (
+          <View className="flex-row" key={rowIndex.toString()}>
+            {row.map((dot) => {
+              return (
+                <Pressable
+                  key={dot.key.toString()}
+                  onPress={() => {
+                    fromIndex.value = dot
+                  }}
+                >
+                  <Dot dot={dot} fromIndex={fromIndex} />
+                </Pressable>
+              )
+            })}
+          </View>
+        )
+      })}
+    </View>
+  )
+}
+
+export function ProfileCard() {
+  const { user } = useUser()
+
+  return (
     <View className="mx-6 h-52 justify-end overflow-hidden rounded-lg bg-muted">
-      <View className="flex flex-1">
-        {dots.map((row, rowIndex) => {
-          return (
-            <View className="flex-row" key={rowIndex.toString()}>
-              {row.map((dot) => {
-                return (
-                  <Pressable
-                    key={dot.key.toString()}
-                    onPress={() => {
-                      fromIndex.value = dot
-                    }}
-                  >
-                    <Dot dot={dot} fromIndex={fromIndex} />
-                  </Pressable>
-                )
-              })}
-            </View>
-          )
-        })}
-      </View>
+      <View className="flex flex-1"></View>
       <BlurView
         intensity={15}
         className="flex flex-row items-center justify-between gap-2 px-4 py-3"

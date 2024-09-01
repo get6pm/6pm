@@ -1036,21 +1036,11 @@ export const BudgetPeriodConfigOrderByWithRelationInputSchema: z.ZodType<Prisma.
   budget: z.lazy(() => BudgetOrderByWithRelationInputSchema).optional()
 }).strict();
 
-export const BudgetPeriodConfigWhereUniqueInputSchema: z.ZodType<Prisma.BudgetPeriodConfigWhereUniqueInput> = z.union([
-  z.object({
-    id: z.string(),
-    budgetId: z.string()
-  }),
-  z.object({
-    id: z.string(),
-  }),
-  z.object({
-    budgetId: z.string(),
-  }),
-])
+export const BudgetPeriodConfigWhereUniqueInputSchema: z.ZodType<Prisma.BudgetPeriodConfigWhereUniqueInput> = z.object({
+  id: z.string()
+})
 .and(z.object({
   id: z.string().optional(),
-  budgetId: z.string().optional(),
   AND: z.union([ z.lazy(() => BudgetPeriodConfigWhereInputSchema),z.lazy(() => BudgetPeriodConfigWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => BudgetPeriodConfigWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => BudgetPeriodConfigWhereInputSchema),z.lazy(() => BudgetPeriodConfigWhereInputSchema).array() ]).optional(),
@@ -1060,6 +1050,7 @@ export const BudgetPeriodConfigWhereUniqueInputSchema: z.ZodType<Prisma.BudgetPe
   amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   startDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   endDate: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  budgetId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   budget: z.union([ z.lazy(() => BudgetRelationFilterSchema),z.lazy(() => BudgetWhereInputSchema) ]).optional(),
 }).strict());
 

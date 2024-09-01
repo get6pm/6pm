@@ -83,7 +83,7 @@ model BudgetPeriodConfig {
   endDate   DateTime?
 
   budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
-  budgetId String @unique
+  budgetId String
 }
 
 enum BudgetPeriodType {

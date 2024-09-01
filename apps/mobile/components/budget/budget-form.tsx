@@ -19,6 +19,7 @@ import {
 } from 'react-hook-form'
 import { ScrollView } from 'react-native'
 import type { TextInput } from 'react-native'
+import { BooleanField } from '../form-fields/boolean-field'
 import { CurrencyField } from '../form-fields/currency-field'
 import { InputField } from '../form-fields/input-field'
 import { SubmitButton } from '../form-fields/submit-button'
@@ -156,6 +157,8 @@ export const BudgetForm = ({
         /> */}
 
         <PeriodRangeField />
+
+        <BooleanField name="isDefault" label={t(i18n)`Set as default`} />
 
         <BudgetSubmitButton form={budgetForm} onSubmit={onSubmit} />
       </ScrollView>

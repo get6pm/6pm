@@ -46,6 +46,7 @@
     "@rn-primitives/progress": "^1.0.3",
     "@rn-primitives/select": "^1.0.3",
     "@rn-primitives/slot": "^1.0.3",
+    "@rn-primitives/switch": "^1.0.3",
     "@rn-primitives/types": "^1.0.3",
     "@sentry/react-native": "~5.26.0",
     "@shopify/react-native-skia": "1.2.3",

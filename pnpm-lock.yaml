@@ -189,6 +189,9 @@ importers:
       '@rn-primitives/slot':
         specifier: ^1.0.3
         version: 1.0.3(react-native-web@0.19.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-native@0.74.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1)
+      '@rn-primitives/switch':
+        specifier: ^1.0.3
+        version: 1.0.3(@types/react-dom@18.3.0)(@types/react@18.2.79)(react-dom@18.3.1(react@18.3.1))(react-native-web@0.19.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-native@0.74.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1)
       '@rn-primitives/types':
         specifier: ^1.0.3
         version: 1.0.3(react-native-web@0.19.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-native@0.74.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1)
@@ -2632,6 +2635,18 @@ packages:
 
   '@rn-primitives/slot@1.0.3':
     resolution: {integrity: sha512-sSDYwD2upLQUOva2cmNfaJqZlN+o0E/wa8uXEDEIYj6MJsG/O0k1t0jGXMqLP8BsQ3ZaTtUbqnG9eW/VQFOmdQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+      react-native-web: '*'
+    peerDependenciesMeta:
+      react-native:
+        optional: true
+      react-native-web:
+        optional: true
+
+  '@rn-primitives/switch@1.0.3':
+    resolution: {integrity: sha512-bzgRcdBw8myXeHerGxZw1bhhP7afqkj0N0nzcWmK0o9Epr70b++X1LkIFe0//BGsTkrulb02aJEkVg6UOgez3g==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -10538,6 +10553,20 @@ snapshots:
     optionalDependencies:
       react-native: 0.74.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.3.1)
       react-native-web: 0.19.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+
+  '@rn-primitives/switch@1.0.3(@types/react-dom@18.3.0)(@types/react@18.2.79)(react-dom@18.3.1(react@18.3.1))(react-native-web@0.19.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-native@0.74.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@radix-ui/react-switch': 1.1.0(@types/react-dom@18.3.0)(@types/react@18.2.79)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@rn-primitives/slot': 1.0.3(react-native-web@0.19.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-native@0.74.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1)
+      '@rn-primitives/types': 1.0.3(react-native-web@0.19.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-native@0.74.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+    optionalDependencies:
+      react-native: 0.74.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.3.1)
+      react-native-web: 0.19.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
+      - react-dom
 
   '@rn-primitives/types@1.0.3(react-native-web@0.19.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-native@0.74.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1)':
     dependencies:

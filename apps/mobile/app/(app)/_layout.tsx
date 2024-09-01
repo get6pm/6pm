@@ -3,6 +3,7 @@ import { BackButton } from '@/components/common/back-button'
 import { Button } from '@/components/ui/button'
 import { useLocalAuth } from '@/hooks/use-local-auth'
 import { useScheduleNotificationTrigger } from '@/hooks/use-schedule-notification'
+import { useUserMetadata } from '@/hooks/use-user-metadata'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
 import { useUser } from '@clerk/clerk-expo'
@@ -13,7 +14,8 @@ import { PlusIcon } from 'lucide-react-native'
 import { useEffect } from 'react'
 
 export default function AuthenticatedLayout() {
-  const { user, isLoaded, isSignedIn } = useUser()
+  const { isLoaded, isSignedIn } = useUser()
+  const { onboardedAt } = useUserMetadata()
   const { colorScheme } = useColorScheme()
   const { i18n } = useLingui()
   const { shouldAuthLocal, setShouldAuthLocal } = useLocalAuth()
@@ -29,7 +31,7 @@ export default function AuthenticatedLayout() {
     return <Redirect href={'/login'} />
   }
 
-  if (!user?.unsafeMetadata?.onboardedAt && isLoaded) {
+  if (!onboardedAt && isLoaded) {
     return <Redirect href={'/onboarding/step-one'} />
   }
 

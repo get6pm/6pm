@@ -2,10 +2,10 @@ import { SubmitButton } from '@/components/form-fields/submit-button'
 import { NumericPad } from '@/components/numeric-pad'
 import { TransactionAmount } from '@/components/transaction/transaction-form'
 import { Text } from '@/components/ui/text'
+import { useUserMetadata } from '@/hooks/use-user-metadata'
 import { useCreateBudget } from '@/stores/budget/hooks'
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import { BudgetPeriodTypeSchema, BudgetTypeSchema } from '@6pm/validation'
-import { useUser } from '@clerk/clerk-expo'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -59,7 +59,7 @@ export default function StepTwoScreen() {
   const { i18n } = useLingui()
   const defaultCurrency = useDefaultCurrency()
   const { mutateAsync } = useCreateBudget()
-  const { user } = useUser()
+  const { setOnboardedAt, setDefaultBudgetId } = useUserMetadata()
   const router = useRouter()
 
   const form = useForm<OnboardBudgetFormValues>({
@@ -88,11 +88,8 @@ export default function StepTwoScreen() {
       // ignore
     })
 
-    await user?.update({
-      unsafeMetadata: {
-        onboardedAt: new Date().toISOString(),
-      },
-    })
+    await setDefaultBudgetId(budgetId)
+    await setOnboardedAt(new Date().toISOString())
 
     const { status: existingStatus } = await Notifications.getPermissionsAsync()
 

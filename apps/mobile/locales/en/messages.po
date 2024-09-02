@@ -13,6 +13,7 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:87
 #: apps/mobile/components/transaction/transaction-item.tsx:29
 msgid "{0}"
 msgstr ""
@@ -21,7 +22,7 @@ msgstr ""
 #~ msgid "{0} left"
 #~ msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:145
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:160
 msgid "{language}"
 msgstr ""
 
@@ -54,7 +55,7 @@ msgstr ""
 msgid "Account deleted successfully"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:167
+#: apps/mobile/app/(app)/(tabs)/index.tsx:171
 msgid "Add your first transaction here"
 msgstr ""
 
@@ -96,7 +97,7 @@ msgstr ""
 msgid "App is locked. Please authenticate to continue."
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:126
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:141
 msgid "App settings"
 msgstr ""
 
@@ -104,8 +105,8 @@ msgstr ""
 msgid "App theme"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:96
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:131
+#: apps/mobile/app/(app)/_layout.tsx:104
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:146
 msgid "Appearance"
 msgstr ""
 
@@ -121,7 +122,7 @@ msgstr ""
 msgid "Are you sure you want to delete your account? This action cannot be undone."
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:246
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:260
 msgid "Are you sure you want to sign out?"
 msgstr ""
 
@@ -157,11 +158,11 @@ msgstr ""
 msgid "By week"
 msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:139
+#: apps/mobile/components/transaction/scanner.tsx:163
 msgid "Camera permissions are not granted"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:248
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:262
 #: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:45
 #: apps/mobile/app/(app)/category/[categoryId].tsx:42
 #: apps/mobile/app/(app)/profile.tsx:120
@@ -170,12 +171,23 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:58
-msgid "Cannot extract transaction data"
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:41
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:45
+#: apps/mobile/components/transaction/scanner.tsx:65
+#: apps/mobile/components/transaction/scanner.tsx:70
+msgid "Cannot extract transaction"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:128
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:104
+#: apps/mobile/components/transaction/scanner.tsx:58
+#~ msgid "Cannot extract transaction data"
+#~ msgstr ""
+
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:133
+msgid "Cannot process image"
+msgstr ""
+
+#: apps/mobile/app/(app)/_layout.tsx:136
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:107
 msgid "Categories"
 msgstr ""
 
@@ -191,7 +203,7 @@ msgstr ""
 msgid "Choose a preferred theme for the 6pm"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:117
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:132
 msgid "Coming soon"
 msgstr ""
 
@@ -203,7 +215,7 @@ msgstr ""
 msgid "Continue with Email"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:67
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:70
 msgid "Copied version to clipboard"
 msgstr ""
 
@@ -245,6 +257,7 @@ msgstr ""
 #: apps/mobile/app/(app)/profile.tsx:124
 #: apps/mobile/app/(app)/transaction/[transactionId].tsx:81
 #: apps/mobile/app/(app)/wallet/[walletId].tsx:81
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:66
 msgid "Delete"
 msgstr ""
 
@@ -260,11 +273,11 @@ msgstr ""
 msgid "Display name"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:122
+#: apps/mobile/app/(app)/_layout.tsx:130
 msgid "Edit account"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:149
+#: apps/mobile/app/(app)/_layout.tsx:157
 msgid "Edit category"
 msgstr ""
 
@@ -313,11 +326,11 @@ msgstr ""
 msgid "From date"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:90
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:93
 msgid "General"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:80
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:83
 msgid "Get 6pm Pro"
 msgstr ""
 
@@ -325,7 +338,7 @@ msgstr ""
 msgid "Get started by setting your monthly budget."
 msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:141
+#: apps/mobile/components/transaction/scanner.tsx:165
 msgid "Grant camera permissions"
 msgstr ""
 
@@ -350,8 +363,8 @@ msgstr ""
 msgid "Keeping up with your spending and budgets."
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:84
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:140
+#: apps/mobile/app/(app)/_layout.tsx:92
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:155
 msgid "Language"
 msgstr ""
 
@@ -371,7 +384,7 @@ msgstr ""
 msgid "Login using FaceID"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:113
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:128
 msgid "Magic inbox"
 msgstr ""
 
@@ -401,17 +414,17 @@ msgstr ""
 msgid "New {0}"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:115
+#: apps/mobile/app/(app)/_layout.tsx:123
 #: apps/mobile/app/(app)/wallet/accounts.tsx:26
 msgid "New account"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:156
+#: apps/mobile/app/(app)/_layout.tsx:164
 #: apps/mobile/app/(app)/(tabs)/_layout.tsx:80
 msgid "New budget"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:142
+#: apps/mobile/app/(app)/_layout.tsx:150
 msgid "New category"
 msgstr ""
 
@@ -419,7 +432,7 @@ msgstr ""
 msgid "No budget selected"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:155
+#: apps/mobile/app/(app)/(tabs)/index.tsx:159
 msgid "No transactions"
 msgstr ""
 
@@ -427,7 +440,7 @@ msgstr ""
 #~ msgid "No transactions found"
 #~ msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:188
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:203
 msgid "Others"
 msgstr ""
 
@@ -451,7 +464,7 @@ msgstr ""
 msgid "Positive"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:203
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:218
 msgid "Privacy policy"
 msgstr ""
 
@@ -459,11 +472,15 @@ msgstr ""
 msgid "Privacy Policy"
 msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:158
+#: apps/mobile/components/transaction/scanner.tsx:182
 msgid "Processing transaction..."
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:91
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:112
+msgid "Processing..."
+msgstr ""
+
+#: apps/mobile/app/(app)/_layout.tsx:99
 msgid "Profile"
 msgstr ""
 
@@ -471,23 +488,23 @@ msgstr ""
 msgid "Profile updated successfully"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:236
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:250
 msgid "Proudly open source"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:155
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:170
 msgid "Push notifications"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:177
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:192
 msgid "Push notifications are disabled"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:175
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:190
 msgid "Push notifications are enabled"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:171
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:186
 msgid "Push notifications are not enabled"
 msgstr ""
 
@@ -495,8 +512,12 @@ msgstr ""
 msgid "Quarterly"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:220
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:234
 msgid "Rate 6pm on App Store"
+msgstr ""
+
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:57
+msgid "Retry"
 msgstr ""
 
 #: apps/mobile/components/home/wallet-statistics.tsx:103
@@ -505,6 +526,11 @@ msgstr ""
 
 #: apps/mobile/components/home/wallet-statistics.tsx:99
 msgid "Revenue this week"
+msgstr ""
+
+#: apps/mobile/app/(app)/_layout.tsx:78
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:116
+msgid "Review transactions"
 msgstr ""
 
 #: apps/mobile/components/budget/budget-form.tsx:51
@@ -533,7 +559,7 @@ msgstr ""
 msgid "Search currency..."
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:193
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:208
 msgid "Seed transactions"
 msgstr ""
 
@@ -553,7 +579,7 @@ msgstr ""
 msgid "Select period type"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:212
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:226
 msgid "Send feedback"
 msgstr ""
 
@@ -577,7 +603,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:228
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:242
 msgid "Share with friends"
 msgstr ""
 
@@ -593,13 +619,17 @@ msgstr ""
 msgid "Sign in with Google"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:252
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:265
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:266
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:279
 msgid "Sign out"
 msgstr ""
 
 #: apps/mobile/components/auth/auth-email.tsx:180
 msgid "Sign up"
+msgstr ""
+
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:55
+msgid "Something went wrong. Please try again."
 msgstr ""
 
 #: apps/mobile/components/budget/select-period-type-field.tsx:57
@@ -619,19 +649,23 @@ msgstr ""
 msgid "Spent this week"
 msgstr ""
 
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:96
+msgid "Stop"
+msgstr ""
+
 #: apps/mobile/components/transaction/scanner.tsx:129
 #~ msgid "Swift up to scan transaction"
 #~ msgstr ""
 
 #: apps/mobile/components/transaction/scanner.tsx:129
-msgid "Swipe up to scan transaction"
-msgstr ""
+#~ msgid "Swipe up to scan transaction"
+#~ msgstr ""
 
 #: apps/mobile/app/(app)/appearance.tsx:38
 #~ msgid "System"
 #~ msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:182
+#: apps/mobile/components/transaction/scanner.tsx:206
 msgid "Take a picture of your transaction"
 msgstr ""
 
@@ -667,11 +701,19 @@ msgstr ""
 msgid "Tomorrow"
 msgstr ""
 
-#: apps/mobile/app/(app)/transaction/new-record.tsx:61
+#: apps/mobile/app/(app)/transaction/new-record.tsx:177
+msgid "Transaction added to processing queue"
+msgstr ""
+
+#: apps/mobile/app/(app)/transaction/new-record.tsx:120
 msgid "Transaction created"
 msgstr ""
 
-#: apps/mobile/components/transaction/transaction-form.tsx:190
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:94
+msgid "Transaction is processing..."
+msgstr ""
+
+#: apps/mobile/components/transaction/transaction-form.tsx:187
 msgid "transaction note"
 msgstr ""
 
@@ -680,9 +722,14 @@ msgid "Type"
 msgstr ""
 
 #: apps/mobile/components/home/category-chart.tsx:61
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:87
 #: apps/mobile/components/transaction/select-category-field.tsx:87
 #: apps/mobile/components/transaction/transaction-item.tsx:29
 msgid "Uncategorized"
+msgstr ""
+
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:104
+msgid "Understood"
 msgstr ""
 
 #: apps/mobile/components/budget/budget-item.tsx:53
@@ -699,7 +746,7 @@ msgstr ""
 msgid "Unlock"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:83
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:86
 msgid "Unlocks full AI power and more!"
 msgstr ""
 
@@ -707,7 +754,7 @@ msgstr ""
 msgid "Upload new photo"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:278
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:292
 msgid "ver."
 msgstr ""
 
@@ -719,12 +766,16 @@ msgstr ""
 msgid "Vietnamese"
 msgstr ""
 
+#: apps/mobile/components/transaction/draft-transaction-list.tsx:20
+msgid "Waiting for review"
+msgstr ""
+
 #: apps/mobile/components/wallet/account-form.tsx:70
 msgid "Wallet account name"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:101
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:95
+#: apps/mobile/app/(app)/_layout.tsx:109
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:98
 msgid "Wallet accounts"
 msgstr ""
 
@@ -750,4 +801,8 @@ msgstr ""
 
 #: apps/mobile/app/(app)/profile.tsx:176
 msgid "Your display name"
+msgstr ""
+
+#: apps/mobile/app/(app)/review-transactions.tsx:22
+msgid "Your pending AI transactions will show up here"
 msgstr ""

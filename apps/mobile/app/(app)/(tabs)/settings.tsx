@@ -40,7 +40,7 @@ import {
   ShapesIcon,
   Share2Icon,
   SparklesIcon,
-  StarIcon,
+  // StarIcon,
   SwatchBookIcon,
   WalletCardsIcon,
 } from 'lucide-react-native'
@@ -48,6 +48,7 @@ import {
   Alert,
   Linking,
   ScrollView,
+  Share,
   TouchableOpacity,
   View,
 } from 'react-native'
@@ -68,6 +69,19 @@ export default function SettingsScreen() {
     await Clipboard.setStringAsync(fullVersion)
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     toast.success(t(i18n)`Copied version to clipboard`)
+  }
+
+  async function handleShare() {
+    try {
+      await Share.share({
+        message: t(
+          i18n,
+        )`Hi there! I'm using 6pm to manage my expenses and budgets. Feel free to give it a try and let me know what you think. https://get6pm.com`,
+      })
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    } catch (error: any) {
+      toast.error(error.message)
+    }
   }
 
   return (
@@ -231,21 +245,21 @@ export default function SettingsScreen() {
                 }
               />
             </Link>
-            <MenuItem
+            {/* <MenuItem
               label={t(i18n)`Rate 6pm on App Store`}
               icon={StarIcon}
               rightSection={
                 <ChevronRightIcon className="h-5 w-5 text-primary" />
               }
               disabled
-            />
+            /> */}
             <MenuItem
               label={t(i18n)`Share with friends`}
               icon={Share2Icon}
               rightSection={
                 <ChevronRightIcon className="h-5 w-5 text-primary" />
               }
-              disabled
+              onPress={handleShare}
             />
             <MenuItem
               label={t(i18n)`Proudly open source`}

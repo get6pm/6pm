@@ -1,9 +1,12 @@
 import { toast } from '@/components/common/toast'
 import { Scanner } from '@/components/transaction/scanner'
 import { TransactionForm } from '@/components/transaction/transaction-form'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useUserMetadata } from '@/hooks/use-user-metadata'
 import { useWallets, walletQueries } from '@/queries/wallet'
 import { useCreateTransaction } from '@/stores/transaction/hooks'
+import { useTransactionStore } from '@/stores/transaction/store'
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import {
   type TransactionFormValues,
@@ -17,15 +20,22 @@ import { createId } from '@paralleldrive/cuid2'
 import { PortalHost, useModalPortalRoot } from '@rn-primitives/portal'
 import { useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
-import { useLocalSearchParams, useRouter } from 'expo-router'
-import { useRef, useState } from 'react'
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
+import { CameraIcon, KeyboardIcon, Trash2Icon } from 'lucide-react-native'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { ActivityIndicator, Alert, View } from 'react-native'
-import PagerView from 'react-native-pager-view'
+import {
+  ActivityIndicator,
+  Alert,
+  Keyboard,
+  ScrollView,
+  View,
+  useWindowDimensions,
+} from 'react-native'
 
 export default function NewRecordScreen() {
   const { i18n } = useLingui()
-  const ref = useRef<PagerView>(null)
+  const ref = useRef<ScrollView>(null)
   const queryClient = useQueryClient()
   const router = useRouter()
   const { data: walletAccounts } = useWallets()
@@ -34,6 +44,9 @@ export default function NewRecordScreen() {
   const { sideOffset, ...rootProps } = useModalPortalRoot()
   const [page, setPage] = useState<number>(0)
   const { defaultBudgetId } = useUserMetadata()
+  const navigation = useNavigation()
+  const { width } = useWindowDimensions()
+  const { removeDraftTransaction } = useTransactionStore()
 
   const params = useLocalSearchParams()
   const parsedParams = zUpdateTransaction.parse(params)
@@ -54,13 +67,59 @@ export default function NewRecordScreen() {
 
   const { mutateAsync } = useCreateTransaction()
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => (
+        <Tabs
+          value={page.toString()}
+          onValueChange={(value) => {
+            setPage(Number(value))
+            Keyboard.dismiss()
+            ref.current?.scrollTo({
+              y: 0,
+              x: value === '0' ? 0 : width,
+              animated: true,
+            })
+          }}
+          className="w-[150px]"
+        >
+          <TabsList>
+            <TabsTrigger value="0">
+              <KeyboardIcon className="!text-primary size-5" />
+            </TabsTrigger>
+            <TabsTrigger value="1">
+              <CameraIcon className="!text-primary size-5" />
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      ),
+      headerRight: () =>
+        parsedParams?.id ? (
+          <Button
+            size="icon"
+            variant="ghost"
+            onPress={() => {
+              removeDraftTransaction(parsedParams.id!)
+              router.back()
+            }}
+          >
+            <Trash2Icon className="size-6 text-destructive" />
+          </Button>
+        ) : null,
+    })
+  }, [page])
+
   const handleCreateTransaction = async (values: TransactionFormValues) => {
     try {
+      if (parsedParams?.id) {
+        removeDraftTransaction(parsedParams.id)
+      }
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
       router.back()
       toast.success(t(i18n)`Transaction created`)
 
-      await mutateAsync({ id: createId(), data: values })
+      await mutateAsync({ id: parsedParams.id || createId(), data: values })
 
       // TODO: remove this after the wallet store is implemented
       queryClient.invalidateQueries({
@@ -84,42 +143,43 @@ export default function NewRecordScreen() {
 
   return (
     <View className="flex-1 bg-card" {...rootProps}>
-      <PagerView
+      <ScrollView
         ref={ref}
-        overdrag={false}
-        orientation="vertical"
-        initialPage={0}
-        style={{ flex: 1 }}
-        onPageSelected={({ nativeEvent }) => setPage(nativeEvent.position)}
-        offscreenPageLimit={2}
+        horizontal
+        pagingEnabled
+        bounces={false}
+        scrollEventThrottle={16}
+        onMomentumScrollEnd={({ nativeEvent }) => {
+          const page = Math.round(nativeEvent.contentOffset.x / width)
+          setPage(page)
+          Keyboard.dismiss()
+        }}
+        showsHorizontalScrollIndicator={false}
       >
-        <TransactionForm
-          sideOffset={sideOffset}
-          form={transactionForm}
-          onSubmit={handleCreateTransaction}
-          onCancel={router.back}
-          onOpenScanner={() => {
-            ref.current?.setPage(1)
-          }}
-        />
-        <Scanner
-          onScanStart={() => ref.current?.setScrollEnabled(false)}
-          onScanResult={(result) => {
-            transactionForm.reset(
-              {
-                ...defaultValues,
-                ...result,
-              },
-              {
-                keepDefaultValues: false,
-              },
-            )
-            ref.current?.setScrollEnabled(true)
-            ref.current?.setPage(0)
-          }}
-          shouldRender={page === 1}
-        />
-      </PagerView>
+        <View style={{ width }}>
+          <TransactionForm
+            sideOffset={sideOffset}
+            form={transactionForm}
+            onSubmit={handleCreateTransaction}
+            onCancel={router.back}
+            onOpenScanner={() => {
+              ref.current?.scrollTo({
+                y: 0,
+                x: width,
+                animated: true,
+              })
+            }}
+          />
+        </View>
+        <View style={{ width }}>
+          <Scanner
+            onScanStart={() => {
+              toast.success(t(i18n)`Transaction added to processing queue`)
+            }}
+            shouldRender={page === 1}
+          />
+        </View>
+      </ScrollView>
       <PortalHost name="transaction-form" />
     </View>
   )

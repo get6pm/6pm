@@ -5,6 +5,7 @@ import { HomeHeader } from '@/components/home/header'
 import { HomeFilter } from '@/components/home/select-filter'
 import { TimeRangeControl } from '@/components/home/time-range-control'
 import { HomeView, WalletStatistics } from '@/components/home/wallet-statistics'
+import { DraftTransactionList } from '@/components/transaction/draft-transaction-list'
 import { HandyArrow } from '@/components/transaction/handy-arrow'
 import { TransactionItem } from '@/components/transaction/transaction-item'
 import { Text } from '@/components/ui/text'
@@ -108,17 +109,20 @@ export default function HomeScreen() {
       <SectionList
         ListHeaderComponent={
           filter === HomeFilter.All ? (
-            <View className="p-6 pb-4">
-              <WalletStatistics
-                view={view}
-                onViewChange={(selected) => {
-                  setView(selected)
-                  setCategoryId(undefined)
-                }}
-                walletAccountId={walletAccountId}
-                categoryId={categoryId}
-                onCategoryChange={setCategoryId}
-              />
+            <View>
+              <View className="p-6 pb-4">
+                <WalletStatistics
+                  view={view}
+                  onViewChange={(selected) => {
+                    setView(selected)
+                    setCategoryId(undefined)
+                  }}
+                  walletAccountId={walletAccountId}
+                  categoryId={categoryId}
+                  onCategoryChange={setCategoryId}
+                />
+              </View>
+              <DraftTransactionList />
             </View>
           ) : null
         }

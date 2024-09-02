@@ -17,6 +17,7 @@ import { useSeed } from '@/hooks/use-seed'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
 import { useLocale } from '@/locales/provider'
+import { useTransactionStore } from '@/stores/transaction/store'
 import { useUserSettingsStore } from '@/stores/user-settings/store'
 import { useAuth } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
@@ -38,6 +39,7 @@ import {
   ScrollTextIcon,
   ShapesIcon,
   Share2Icon,
+  SparklesIcon,
   StarIcon,
   SwatchBookIcon,
   WalletCardsIcon,
@@ -59,6 +61,7 @@ export default function SettingsScreen() {
   const { setEnabledPushNotifications, enabledPushNotifications } =
     useUserSettingsStore()
   const { startSeed } = useSeed()
+  const { draftTransactions } = useTransactionStore()
 
   async function handleCopyVersion() {
     const fullVersion = `${Application.nativeApplicationVersion} - ${Updates.updateId ?? 'Embedded'}`
@@ -108,17 +111,29 @@ export default function SettingsScreen() {
                 }
               />
             </Link>
-            <Link href="/magic-inbox" asChild disabled>
+            <Link href="/review-transactions" asChild>
               <MenuItem
-                label={t(i18n)`Magic inbox`}
-                icon={InboxIcon}
+                label={t(i18n)`Review transactions`}
+                icon={SparklesIcon}
                 rightSection={
-                  <Badge variant="outline">
-                    <Text className="text-xs">{t(i18n)`Coming soon`}</Text>
+                  <Badge
+                    variant={draftTransactions.length ? 'default' : 'outline'}
+                  >
+                    <Text className="text-xs">{draftTransactions.length}</Text>
                   </Badge>
                 }
               />
             </Link>
+            <MenuItem
+              label={t(i18n)`Magic inbox`}
+              icon={InboxIcon}
+              rightSection={
+                <Badge variant="outline">
+                  <Text className="text-xs">{t(i18n)`Coming soon`}</Text>
+                </Badge>
+              }
+              disabled
+            />
           </View>
         </View>
         <View className="gap-2">
@@ -207,15 +222,14 @@ export default function SettingsScreen() {
                 }
               />
             </Link>
-            <Link href="/feedback" asChild disabled>
-              <MenuItem
-                label={t(i18n)`Send feedback`}
-                icon={MessageSquareQuoteIcon}
-                rightSection={
-                  <ChevronRightIcon className="h-5 w-5 text-primary" />
-                }
-              />
-            </Link>
+            <MenuItem
+              label={t(i18n)`Send feedback`}
+              icon={MessageSquareQuoteIcon}
+              rightSection={
+                <ChevronRightIcon className="h-5 w-5 text-primary" />
+              }
+              disabled
+            />
             <MenuItem
               label={t(i18n)`Rate 6pm on App Store`}
               icon={StarIcon}

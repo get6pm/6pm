@@ -14,6 +14,7 @@ export const zCreateTransaction = z.object({
 export type CreateTransaction = z.infer<typeof zCreateTransaction>
 
 export const zUpdateTransaction = z.object({
+  id: z.string().optional(),
   date: z.date({ coerce: true }).optional(),
   amount: z.number({ coerce: true }).optional(),
   currency: z.string().optional(),

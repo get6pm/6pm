@@ -28,18 +28,40 @@ export function TimeRangeControl({
   function handlePrevious() {
     if (filter === HomeFilter.ByDay) {
       onTimeRangeChange({
-        from: dayjsExtended(timeRange.from).subtract(1, 'day').toDate(),
-        to: dayjsExtended(timeRange.to).subtract(1, 'day').toDate(),
+        from: dayjsExtended(timeRange.from)
+          .subtract(1, 'day')
+          .startOf('day')
+          .toDate(),
+        to: dayjsExtended(timeRange.to)
+          .subtract(1, 'day')
+          .endOf('day')
+          .toDate(),
       })
     } else if (filter === HomeFilter.ByWeek) {
       onTimeRangeChange({
-        from: dayjsExtended(timeRange.from).subtract(1, 'week').toDate(),
-        to: dayjsExtended(timeRange.to).subtract(1, 'week').toDate(),
+        from: dayjsExtended(timeRange.from)
+          .subtract(1, 'week')
+          .startOf('day')
+          .startOf('week')
+          .toDate(),
+        to: dayjsExtended(timeRange.to)
+          .subtract(1, 'week')
+          .endOf('day')
+          .endOf('week')
+          .toDate(),
       })
     } else if (filter === HomeFilter.ByMonth) {
       onTimeRangeChange({
-        from: dayjsExtended(timeRange.from).subtract(1, 'month').toDate(),
-        to: dayjsExtended(timeRange.to).subtract(1, 'month').toDate(),
+        from: dayjsExtended(timeRange.from)
+          .subtract(1, 'month')
+          .startOf('day')
+          .startOf('month')
+          .toDate(),
+        to: dayjsExtended(timeRange.to)
+          .subtract(1, 'month')
+          .endOf('day')
+          .endOf('month')
+          .toDate(),
       })
     }
   }
@@ -47,18 +69,37 @@ export function TimeRangeControl({
   function handleNext() {
     if (filter === HomeFilter.ByDay) {
       onTimeRangeChange({
-        from: dayjsExtended(timeRange.from).add(1, 'day').toDate(),
-        to: dayjsExtended(timeRange.to).add(1, 'day').toDate(),
+        from: dayjsExtended(timeRange.from)
+          .add(1, 'day')
+          .startOf('day')
+          .toDate(),
+        to: dayjsExtended(timeRange.to).add(1, 'day').endOf('day').toDate(),
       })
     } else if (filter === HomeFilter.ByWeek) {
       onTimeRangeChange({
-        from: dayjsExtended(timeRange.from).add(1, 'week').toDate(),
-        to: dayjsExtended(timeRange.to).add(1, 'week').toDate(),
+        from: dayjsExtended(timeRange.from)
+          .add(1, 'week')
+          .startOf('day')
+          .startOf('week')
+          .toDate(),
+        to: dayjsExtended(timeRange.to)
+          .add(1, 'week')
+          .endOf('day')
+          .endOf('week')
+          .toDate(),
       })
     } else if (filter === HomeFilter.ByMonth) {
       onTimeRangeChange({
-        from: dayjsExtended(timeRange.from).add(1, 'month').toDate(),
-        to: dayjsExtended(timeRange.to).add(1, 'month').toDate(),
+        from: dayjsExtended(timeRange.from)
+          .add(1, 'month')
+          .startOf('day')
+          .startOf('month')
+          .toDate(),
+        to: dayjsExtended(timeRange.to)
+          .add(1, 'month')
+          .endOf('day')
+          .endOf('month')
+          .toDate(),
       })
     }
   }

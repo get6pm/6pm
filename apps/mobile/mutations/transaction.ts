@@ -67,7 +67,13 @@ export async function deleteTransaction(id: string) {
   })
 }
 
-export async function getAITransactionData(fileUri: string) {
+export async function getAITransactionData({
+  fileUri,
+  id,
+}: {
+  fileUri: string
+  id?: string
+}) {
   const token = await clerk.session?.getToken()
 
   const result = await FileSystem.uploadAsync(
@@ -91,5 +97,5 @@ export async function getAITransactionData(fileUri: string) {
     date: body?.date ? new Date(body.date) : undefined,
   })
 
-  return transaction
+  return { id, ...transaction }
 }

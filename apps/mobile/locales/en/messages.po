@@ -105,7 +105,7 @@ msgstr ""
 msgid "App theme"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:104
+#: apps/mobile/app/(app)/_layout.tsx:111
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:146
 msgid "Appearance"
 msgstr ""
@@ -122,7 +122,7 @@ msgstr ""
 msgid "Are you sure you want to delete your account? This action cannot be undone."
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:260
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:261
 msgid "Are you sure you want to sign out?"
 msgstr ""
 
@@ -162,7 +162,7 @@ msgstr ""
 msgid "Camera permissions are not granted"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:262
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:263
 #: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:45
 #: apps/mobile/app/(app)/category/[categoryId].tsx:42
 #: apps/mobile/app/(app)/profile.tsx:120
@@ -186,7 +186,7 @@ msgstr ""
 msgid "Cannot process image"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:136
+#: apps/mobile/app/(app)/_layout.tsx:143
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:107
 msgid "Categories"
 msgstr ""
@@ -273,11 +273,11 @@ msgstr ""
 msgid "Display name"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:130
+#: apps/mobile/app/(app)/_layout.tsx:137
 msgid "Edit account"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:157
+#: apps/mobile/app/(app)/_layout.tsx:164
 msgid "Edit category"
 msgstr ""
 
@@ -320,6 +320,10 @@ msgstr ""
 
 #: apps/mobile/components/budget/budget-form.tsx:112
 msgid "Family budget"
+msgstr ""
+
+#: apps/mobile/app/(app)/_layout.tsx:106
+msgid "Feedback"
 msgstr ""
 
 #: apps/mobile/components/common/date-range-picker.tsx:94
@@ -414,17 +418,17 @@ msgstr ""
 msgid "New {0}"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:123
+#: apps/mobile/app/(app)/_layout.tsx:130
 #: apps/mobile/app/(app)/wallet/accounts.tsx:26
 msgid "New account"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:164
+#: apps/mobile/app/(app)/_layout.tsx:171
 #: apps/mobile/app/(app)/(tabs)/_layout.tsx:80
 msgid "New budget"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:150
+#: apps/mobile/app/(app)/_layout.tsx:157
 msgid "New category"
 msgstr ""
 
@@ -488,7 +492,7 @@ msgstr ""
 msgid "Profile updated successfully"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:250
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:251
 msgid "Proudly open source"
 msgstr ""
 
@@ -512,8 +516,12 @@ msgstr ""
 msgid "Quarterly"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:234
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:235
 msgid "Rate 6pm on App Store"
+msgstr ""
+
+#: apps/mobile/app/(app)/feedback.tsx:56
+msgid "Report a bug, request a feature, or just say hi!"
 msgstr ""
 
 #: apps/mobile/components/transaction/draft-transaction-item.tsx:57
@@ -579,7 +587,8 @@ msgstr ""
 msgid "Select period type"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:226
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:227
+#: apps/mobile/app/(app)/feedback.tsx:69
 msgid "Send feedback"
 msgstr ""
 
@@ -603,7 +612,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:242
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:243
 msgid "Share with friends"
 msgstr ""
 
@@ -619,8 +628,8 @@ msgstr ""
 msgid "Sign in with Google"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:266
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:279
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:267
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:280
 msgid "Sign out"
 msgstr ""
 
@@ -680,6 +689,10 @@ msgstr ""
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:247
 #~ msgid "Terms of use"
 #~ msgstr ""
+
+#: apps/mobile/app/(app)/feedback.tsx:40
+msgid "Thank you for your feedback!"
+msgstr ""
 
 #: apps/mobile/app/(app)/transaction/[transactionId].tsx:72
 msgid "This will delete the transaction. Are you sure you want to continue?"
@@ -754,7 +767,7 @@ msgstr ""
 msgid "Upload new photo"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:292
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:293
 msgid "ver."
 msgstr ""
 
@@ -774,7 +787,7 @@ msgstr ""
 msgid "Wallet account name"
 msgstr ""
 
-#: apps/mobile/app/(app)/_layout.tsx:109
+#: apps/mobile/app/(app)/_layout.tsx:116
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:98
 msgid "Wallet accounts"
 msgstr ""
@@ -801,6 +814,10 @@ msgstr ""
 
 #: apps/mobile/app/(app)/profile.tsx:176
 msgid "Your display name"
+msgstr ""
+
+#: apps/mobile/app/(app)/feedback.tsx:55
+msgid "Your message"
 msgstr ""
 
 #: apps/mobile/app/(app)/review-transactions.tsx:22

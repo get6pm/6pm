@@ -222,14 +222,15 @@ export default function SettingsScreen() {
                 }
               />
             </Link>
-            <MenuItem
-              label={t(i18n)`Send feedback`}
-              icon={MessageSquareQuoteIcon}
-              rightSection={
-                <ChevronRightIcon className="h-5 w-5 text-primary" />
-              }
-              disabled
-            />
+            <Link href="/feedback" asChild>
+              <MenuItem
+                label={t(i18n)`Send feedback`}
+                icon={MessageSquareQuoteIcon}
+                rightSection={
+                  <ChevronRightIcon className="h-5 w-5 text-primary" />
+                }
+              />
+            </Link>
             <MenuItem
               label={t(i18n)`Rate 6pm on App Store`}
               icon={StarIcon}

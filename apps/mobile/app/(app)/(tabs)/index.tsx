@@ -143,6 +143,7 @@ export default function HomeScreen() {
               className="font-semibold text-md text-muted-foreground"
               displayNegativeSign
               displayPositiveSign
+              convertToDefaultCurrency
             />
           </View>
         )}

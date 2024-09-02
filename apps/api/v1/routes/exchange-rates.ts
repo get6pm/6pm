@@ -7,15 +7,16 @@ import {
 } from '../services/exchange-rates.service'
 
 const router = new Hono()
-  .use(async (c, next) => {
-    const apiKey = c.req.header('x-api-key')
+  // TODO: Enable this later
+  // .use(async (c, next) => {
+  //   const apiKey = c.req.header('x-api-key')
 
-    if (!apiKey || apiKey !== process.env.API_SECRET_KEY) {
-      return c.json({ message: 'Unauthorized' }, 401)
-    }
+  //   if (!apiKey || apiKey !== process.env.API_SECRET_KEY) {
+  //     return c.json({ message: 'Unauthorized' }, 401)
+  //   }
 
-    await next()
-  })
+  //   await next()
+  // })
 
   .get(
     '/',

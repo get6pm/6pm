@@ -9,9 +9,9 @@ import usersApp from './routes/users'
 import walletsApp from './routes/wallets'
 
 export const hono = new Hono()
-  .route('/exchange-rates', exchangeRatesApp)
-
   .use('*', authMiddleware)
+
+  .route('/exchange-rates', exchangeRatesApp)
 
   .route('/auth', authApp)
   .route('/budgets', budgetsApp)

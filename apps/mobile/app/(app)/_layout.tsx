@@ -100,6 +100,13 @@ export default function AuthenticatedLayout() {
           }}
         />
         <Stack.Screen
+          name="feedback"
+          options={{
+            presentation: 'modal',
+            headerTitle: t(i18n)`Feedback`,
+          }}
+        />
+        <Stack.Screen
           name="appearance"
           options={{ headerTitle: t(i18n)`Appearance` }}
         />

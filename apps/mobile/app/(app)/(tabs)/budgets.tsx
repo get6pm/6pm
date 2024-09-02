@@ -1,7 +1,7 @@
 import { BudgetItem } from '@/components/budget/budget-item'
 import { BudgetStatistic } from '@/components/budget/budget-statistic'
 import { BurndownChart } from '@/components/budget/burndown-chart'
-import { Toolbar } from '@/components/common/toolbar'
+// import { Toolbar } from '@/components/common/toolbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Text } from '@/components/ui/text'
 import { useColorScheme } from '@/hooks/useColorScheme'
@@ -205,7 +205,7 @@ export default function BudgetsScreen() {
         onScroll={onScroll}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={<Animated.View style={dummyHeaderStyle} />}
-        contentContainerStyle={{ paddingBottom: bottom + 32 }}
+        contentContainerStyle={{ paddingBottom: bottom + 80 }}
         refreshing={isRefetching}
         onRefresh={refetch}
         sections={sections}
@@ -234,7 +234,7 @@ export default function BudgetsScreen() {
         className="absolute right-0 bottom-0 left-0 h-36"
         pointerEvents="none"
       />
-      <Toolbar />
+      {/* <Toolbar /> */}
     </View>
   )
 }

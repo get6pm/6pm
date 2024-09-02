@@ -29,7 +29,7 @@ export function AuthLocal({ onAuthenticated }: AuthLocalProps) {
   }, [])
 
   return (
-    <SafeAreaView className="flex-1 items-center justify-center gap-4 bg-muted">
+    <SafeAreaView className="absolute top-0 right-0 bottom-0 left-0 z-50 flex-1 items-center justify-center gap-4 bg-muted">
       <LockKeyholeIcon className="size-12 text-primary" />
       <Text className="mx-8">{t(
         i18n,

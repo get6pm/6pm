@@ -4,25 +4,29 @@ import { ScanningOverlay } from '@/components/scanner/scanning-overlay'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { getAITransactionData } from '@/mutations/transaction'
+import { useTransactionStore } from '@/stores/transaction/store'
 import type { UpdateTransaction } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
+import { createId } from '@paralleldrive/cuid2'
 import { useMutation } from '@tanstack/react-query'
 import { type CameraType, CameraView, useCameraPermissions } from 'expo-camera'
 import * as Haptics from 'expo-haptics'
 import { SaveFormat, manipulateAsync } from 'expo-image-manipulator'
 import * as ImagePicker from 'expo-image-picker'
+import { useRouter } from 'expo-router'
 import {
   CameraIcon,
-  ChevronsUpIcon,
+  ChevronsRightIcon,
   ImagesIcon,
   SwitchCameraIcon,
 } from 'lucide-react-native'
 import { cssInterop } from 'nativewind'
 import { useRef, useState } from 'react'
-import { ActivityIndicator, Alert } from 'react-native'
+import { ActivityIndicator } from 'react-native'
 import { ImageBackground, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { toast } from '../common/toast'
 
 cssInterop(CameraView, {
   className: {
@@ -32,7 +36,7 @@ cssInterop(CameraView, {
 
 type ScannerProps = {
   onScanStart?: () => void
-  onScanResult: (result: UpdateTransaction) => void
+  onScanResult?: (result: UpdateTransaction) => void
   shouldRender?: boolean
 }
 
@@ -47,21 +51,30 @@ export function Scanner({
   const [imageUri, setImageUri] = useState<string | null>(null)
   const { i18n } = useLingui()
   const { bottom } = useSafeAreaInsets()
+  const { addDraftTransaction, updateDraftTransaction } = useTransactionStore()
+  const router = useRouter()
 
   const { mutateAsync } = useMutation({
+    mutationKey: ['ai-transaction'],
     mutationFn: getAITransactionData,
     onMutate() {
       onScanStart?.()
     },
     onError(error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-      Alert.alert(error.message ?? t(i18n)`Cannot extract transaction data`)
+      toast.error(error.message ?? t(i18n)`Cannot extract transaction`)
       setImageUri(null)
     },
     onSuccess(result) {
+      if (!result.amount) {
+        throw new Error(t(i18n)`Cannot extract transaction`)
+      }
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
-      onScanResult(result)
-      setImageUri(null)
+      onScanResult?.(result)
+      updateDraftTransaction({
+        ...result,
+        id: result.id!,
+      })
     },
   })
 
@@ -70,21 +83,33 @@ export function Scanner({
     setFacing(facing === 'back' ? 'front' : 'back')
   }
 
-  async function processImage(uri: string) {
-    const manipResult = await manipulateAsync(
-      uri,
-      [
-        {
-          resize: { width: 1024 },
-        },
-      ],
-      {
-        compress: 0.5,
-        format: SaveFormat.WEBP,
-      },
+  async function processImages(uris: string[]) {
+    router.back()
+    await Promise.all(
+      uris.map(async (uri) => {
+        const id = createId()
+        const manipResult = await manipulateAsync(
+          uri,
+          [
+            {
+              resize: { width: 1024 },
+            },
+          ],
+          {
+            compress: 0.5,
+            format: SaveFormat.WEBP,
+          },
+        )
+        addDraftTransaction({
+          id,
+          imageUri: manipResult.uri,
+        })
+        return await mutateAsync({
+          id,
+          fileUri: manipResult.uri,
+        })
+      }),
     )
-    setImageUri(manipResult.uri)
-    await mutateAsync(manipResult.uri)
   }
 
   async function takePicture() {
@@ -94,14 +119,14 @@ export function Scanner({
       quality: 0.5,
     })
     if (result?.uri) {
-      return await processImage(result.uri)
+      return await processImages([result.uri])
     }
   }
 
   async function pickImage() {
     Haptics.selectionAsync()
     const result = await ImagePicker.launchImageLibraryAsync({
-      allowsMultipleSelection: false,
+      allowsMultipleSelection: true,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 0.5,
@@ -110,7 +135,7 @@ export function Scanner({
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
       return
     }
-    return await processImage(result.assets[0].uri)
+    return await processImages(result.assets.map((a) => a.uri))
   }
 
   if (!permission) {
@@ -124,9 +149,8 @@ export function Scanner({
 
   if (!shouldRender) {
     return (
-      <View className="flex-1 items-center gap-4 bg-muted p-4">
-        <ChevronsUpIcon className="size-10 text-muted-foreground" />
-        <Text>{t(i18n)`Swipe up to scan transaction`}</Text>
+      <View className="flex-1 justify-center gap-4 bg-muted p-4">
+        <ChevronsRightIcon className="size-10 text-muted-foreground" />
       </View>
     )
   }

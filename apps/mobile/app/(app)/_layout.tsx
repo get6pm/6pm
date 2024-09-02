@@ -67,7 +67,14 @@ export default function AuthenticatedLayout() {
         name="transaction/new-record"
         options={{
           presentation: 'modal',
-          headerShown: false,
+          headerTitle: '',
+          // headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="review-transactions"
+        options={{
+          headerTitle: t(i18n)`Review transactions`,
         }}
       />
       <Stack.Screen

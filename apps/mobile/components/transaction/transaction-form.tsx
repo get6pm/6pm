@@ -6,7 +6,7 @@ import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import * as Haptics from 'expo-haptics'
-import { ScanTextIcon, Trash2Icon, XIcon } from 'lucide-react-native'
+import { Trash2Icon } from 'lucide-react-native'
 import { useRef } from 'react'
 import {
   Controller,
@@ -139,11 +139,12 @@ export const TransactionForm = ({
         keyboardDismissMode="on-drag"
         automaticallyAdjustKeyboardInsets
         contentContainerClassName="flex-1 justify-between bg-muted"
+        bounces={false}
       >
         <View className="flex-row items-center justify-between p-4 pb-0">
-          <Button size="icon" variant="secondary" onPress={onCancel}>
+          {/* <Button size="icon" variant="secondary" onPress={onCancel}>
             <XIcon className="size-6 text-primary" />
-          </Button>
+          </Button> */}
           <Controller
             name="date"
             control={form.control}
@@ -161,11 +162,7 @@ export const TransactionForm = ({
               <Button size="icon" variant="secondary" onPress={onDelete}>
                 <Trash2Icon className="size-6 text-primary" />
               </Button>
-            ) : (
-              <Button size="icon" variant="ghost" onPress={onOpenScanner}>
-                <ScanTextIcon className="size-6 text-primary" />
-              </Button>
-            )}
+            ) : null}
           </View>
         </View>
         <View className="flex-1 items-center justify-center pb-12">
@@ -197,7 +194,7 @@ export const TransactionForm = ({
           />
         </View>
         <Animated.View style={translateStyle}>
-          <View className="flex-row items-center justify-between border-border border-t bg-card p-2">
+          <View className="flex-row items-center justify-between gap-3 border-border border-t bg-card p-2">
             <View className="flex-row items-center gap-2">
               <SelectAccountField
                 onSelect={(walletAccount) => {

@@ -1,6 +1,7 @@
 import {
   type TransactionPopulated,
   TransactionPopulatedSchema,
+  type UpdateTransaction,
 } from '@6pm/validation'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { orderBy, uniqBy } from 'lodash-es'
@@ -9,8 +10,11 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 type Transaction = TransactionPopulated
 
+type DraftTransaction = UpdateTransaction & { id: string; imageUri?: string }
+
 export interface TransactionStore {
   transactions: Transaction[]
+  draftTransactions: DraftTransaction[]
   _reset: () => void
   setTransactions: (transactions: Transaction[]) => void
   addTransactions: (transactions: Transaction[]) => void
@@ -21,6 +25,9 @@ export interface TransactionStore {
   }) => void
   updateTransaction: (transaction: Transaction) => void
   removeTransaction: (transactionId: string) => void
+  addDraftTransaction: (transaction: DraftTransaction) => void
+  updateDraftTransaction: (transaction: DraftTransaction) => void
+  removeDraftTransaction: (transactionId: string) => void
 }
 
 function normalizeTransactions(transactions: Transaction[]) {
@@ -35,8 +42,9 @@ export const useTransactionStore = create<TransactionStore>()(
   persist(
     (set) => ({
       transactions: [],
+      draftTransactions: [],
       // biome-ignore lint/style/useNamingConvention: <explanation>
-      _reset: () => set({ transactions: [] }),
+      _reset: () => set({ transactions: [], draftTransactions: [] }),
       setTransactions: (transactions) => {
         set({ transactions: normalizeTransactions(transactions) })
       },
@@ -95,6 +103,31 @@ export const useTransactionStore = create<TransactionStore>()(
           state.transactions.splice(index, 1)
           return { transactions: normalizeTransactions(state.transactions) }
         })
+      },
+      addDraftTransaction: (transaction) => {
+        set((state) => ({
+          draftTransactions: state.draftTransactions.find(
+            (i) => i.id === transaction.id,
+          )
+            ? state.draftTransactions.map((i) =>
+                i.id === transaction.id ? transaction : i,
+              )
+            : [transaction, ...state.draftTransactions],
+        }))
+      },
+      updateDraftTransaction: (transaction) => {
+        set((state) => ({
+          draftTransactions: state.draftTransactions.map((i) =>
+            i.id === transaction.id ? transaction : i,
+          ),
+        }))
+      },
+      removeDraftTransaction: (transactionId) => {
+        set((state) => ({
+          draftTransactions: state.draftTransactions.filter(
+            (t) => t.id !== transactionId,
+          ),
+        }))
       },
     }),
     {

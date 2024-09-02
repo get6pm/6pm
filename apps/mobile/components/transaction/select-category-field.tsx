@@ -70,7 +70,7 @@ export function SelectCategoryField({
     <>
       <Button
         variant="secondary"
-        className="!px-3 max-w-[160px] border border-border"
+        className="!px-3 max-w-[140px] border border-border"
         disabled={isLoading}
         onPress={() => {
           Haptics.selectionAsync()

@@ -1,5 +1,4 @@
 import { useUser } from '@clerk/clerk-expo'
-import { BlurView } from 'expo-blur'
 import { PencilIcon } from 'lucide-react-native'
 import { Dimensions, Pressable, View } from 'react-native'
 
@@ -150,29 +149,27 @@ export function ProfileCard() {
   const { user } = useUser()
 
   return (
-    <View className="mx-6 h-52 justify-end overflow-hidden rounded-lg bg-muted">
-      <View className="flex flex-1"></View>
-      <BlurView
-        intensity={15}
-        className="flex flex-row items-center justify-between gap-2 px-4 py-3"
-      >
-        <View className="flex flex-1 flex-row items-center gap-3">
-          <UserAvatar user={user!} fallbackClassName="bg-card" />
-          <View className="flex-1 flex-grow">
-            <Badge variant="default" className="mb-1 self-start rounded-md">
-              <Text className="font-medium text-xs">Saver</Text>
-            </Badge>
-            <Text className="line-clamp-1 flex-grow font-medium text-primary">
-              {user?.fullName ?? user?.primaryEmailAddress?.emailAddress}
-            </Text>
-          </View>
+    <View className="mx-6 flex-row items-center justify-center overflow-hidden rounded-lg">
+      <View className="flex flex-1 flex-row items-center justify-center gap-3">
+        <UserAvatar
+          user={user!}
+          fallbackClassName="bg-card"
+          className="h-16 w-16"
+        />
+        <View className="flex-1 justify-center gap-1">
+          <Text className="line-clamp-1 font-medium text-primary">
+            {user?.fullName ?? user?.primaryEmailAddress?.emailAddress}
+          </Text>
+          <Badge variant="default" className="self-start rounded-md">
+            <Text className="font-medium text-xs">Saver</Text>
+          </Badge>
         </View>
-        <Link href="/profile" asChild>
-          <Button size="icon" variant="ghost">
-            <PencilIcon className="h-5 w-5 text-primary" />
-          </Button>
-        </Link>
-      </BlurView>
+      </View>
+      <Link href="/profile" asChild>
+        <Button size="icon" variant="ghost">
+          <PencilIcon className="h-5 w-5 text-primary" />
+        </Button>
+      </Link>
     </View>
   )
 }

@@ -1,3 +1,4 @@
+import { useInitializePurchases } from '@/hooks/use-purchases'
 import { useTransactionList } from '@/stores/transaction/hooks'
 import { dayjsExtended } from '@6pm/utilities'
 import { t } from '@lingui/macro'
@@ -40,6 +41,7 @@ export function WalletStatistics({
   onCategoryChange,
 }: WalletStatisticsProps) {
   const { i18n } = useLingui()
+  useInitializePurchases()
 
   const timeRange = useMemo(() => {
     if (view === HomeView.SpentThisWeek || view === HomeView.RevenueThisWeek) {
@@ -125,7 +127,7 @@ export function WalletStatistics({
           // )}
           className="!border-0 h-auto native:h-auto flex-col items-center gap-3"
         >
-          <View className="self-center border-primary border-b">
+          <View className="self-center">
             <Text className="w-fit self-center text-center leading-tight">
               {options.find((option) => option.value === view)?.label}
             </Text>

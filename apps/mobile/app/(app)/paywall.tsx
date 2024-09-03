@@ -1,23 +1,32 @@
 import { AmountFormat } from '@/components/common/amount-format'
 import { Marquee } from '@/components/common/marquee'
+import { toast } from '@/components/common/toast'
 import { PaywallIllustration } from '@/components/svg-assets/paywall-illustration'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Text } from '@/components/ui/text'
+import { usePurchasesPackages } from '@/hooks/use-purchases'
+import { cn } from '@/lib/utils'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
+import { useMutation } from '@tanstack/react-query'
 import { BlurView } from 'expo-blur'
-import { Link } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import { CheckCircleIcon } from 'lucide-react-native'
 import { cssInterop } from 'nativewind'
 import { useState } from 'react'
 import {
+  ActivityIndicator,
+  Alert,
   Image,
   type ImageSourcePropType,
   Pressable,
   ScrollView,
+  TouchableOpacity,
   View,
 } from 'react-native'
+import type { PurchasesPackage } from 'react-native-purchases'
+import Purchases from 'react-native-purchases'
 
 cssInterop(BlurView, {
   className: {
@@ -50,9 +59,94 @@ function FeatureCard({ source, title, className }: FeatureCardProps) {
   )
 }
 
+function PackageCard({
+  data,
+  selected,
+  onSelect,
+}: { data: PurchasesPackage; selected: boolean; onSelect?: () => void }) {
+  const { i18n } = useLingui()
+
+  const isAnnual = data.identifier.includes('annually')
+
+  return (
+    <Pressable
+      className={cn(
+        'flex-1 overflow-hidden rounded-lg p-0.5',
+        isAnnual ? 'h-44' : 'h-36',
+        selected ? 'bg-primary' : 'bg-border',
+      )}
+      onPress={onSelect}
+    >
+      {isAnnual && (
+        <View
+          className={cn(
+            'h-8 items-center justify-center',
+            selected ? 'bg-primary' : 'bg-border',
+          )}
+        >
+          <Text
+            className={cn(
+              'text-center font-semibold text-sm uppercase',
+              selected ? 'text-primary-foreground' : 'text-muted-foreground',
+            )}
+          >
+            {t(i18n)`Best value`}
+          </Text>
+        </View>
+      )}
+      <View
+        className={cn(
+          'flex-1 items-center justify-center rounded-md p-4',
+          selected ? 'bg-background' : 'bg-background/75',
+        )}
+      >
+        <Text className="font-bold text-4xl">{isAnnual ? 12 : 1}</Text>
+        <Text className="mb-4 text-center text-muted-foreground text-sm uppercase">
+          {t(i18n)`months`}
+        </Text>
+        <AmountFormat
+          amount={
+            isAnnual ? data.product.pricePerYear : data.product.pricePerMonth
+          }
+          currency="VND"
+          convertToDefaultCurrency
+        />
+      </View>
+    </Pressable>
+  )
+}
+
 export default function PaywallScreen() {
   const { i18n } = useLingui()
   const [plan, setPlan] = useState<'growth' | 'wealth'>('growth')
+  const [duration, setDuration] = useState<'monthly' | 'annually'>('annually')
+  const { data } = usePurchasesPackages()
+  const router = useRouter()
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: Purchases.purchasePackage,
+    onSuccess() {
+      router.back()
+      toast.success(t(i18n)`Thank you! You have unlocked 6pm Pro!`)
+    },
+  })
+  const { mutateAsync: mutateRestore, isPending: isRestoring } = useMutation({
+    mutationFn: Purchases.restorePurchases,
+    onSuccess(result) {
+      if (Object.keys(result.entitlements.active).length) {
+        toast.success(t(i18n)`Purchases restored successfully!`)
+        router.back()
+        Purchases.syncPurchases()
+      } else {
+        Alert.alert(t(i18n)`No active subscriptions found`)
+      }
+    },
+    onError(error) {
+      toast.error(error.message)
+    },
+  })
+  const selectedPackage = data?.find(
+    (i) => i.identifier === `rc_${plan}_${duration}`,
+  )
 
   const proFeatures = [
     {
@@ -88,86 +182,105 @@ export default function PaywallScreen() {
     ],
   }
 
+  const handlePurchases = async () => {
+    if (!selectedPackage) {
+      return
+    }
+    await mutateAsync(selectedPackage)
+  }
+
   return (
-    <ScrollView
-      className="bg-card"
-      contentContainerClassName="gap-3"
-      automaticallyAdjustKeyboardInsets
-      keyboardShouldPersistTaps="handled"
-    >
-      <Text className="mx-8 my-2 font-sans font-semibold text-3xl text-primary">
-        {t(i18n)`Complete control over your finances`}
-      </Text>
-      <Marquee spacing={20} speed={0.5}>
-        <View className="flex-row gap-4 py-8">
-          {proFeatures.map((item, index) => (
-            <FeatureCard
-              key={item.title}
-              source={item.source}
-              title={item.title}
-              className={index % 2 === 0 ? '-translate-y-4' : 'translate-y-4'}
-            />
+    <View className="flex-1 bg-card">
+      <ScrollView
+        className="bg-card"
+        contentContainerClassName="gap-3"
+        automaticallyAdjustKeyboardInsets
+        keyboardShouldPersistTaps="handled"
+      >
+        <Text className="mx-8 my-2 font-sans font-semibold text-3xl text-primary">
+          {t(i18n)`Complete control over your finances`}
+        </Text>
+        <Marquee spacing={20} speed={0.5}>
+          <View className="flex-row gap-4 py-8">
+            {proFeatures.map((item, index) => (
+              <FeatureCard
+                key={item.title}
+                source={item.source}
+                title={item.title}
+                className={index % 2 === 0 ? '-translate-y-4' : 'translate-y-4'}
+              />
+            ))}
+          </View>
+        </Marquee>
+        <Tabs
+          value={plan}
+          className="mx-8"
+          onValueChange={(value) => {
+            setPlan(value as 'growth' | 'wealth')
+          }}
+        >
+          <TabsList>
+            <TabsTrigger value="growth">
+              <Text>{t(i18n)`Growth`}</Text>
+            </TabsTrigger>
+            <TabsTrigger value="wealth">
+              <Text>{t(i18n)`Wealth`}</Text>
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <View className="gap-3 py-2">
+          {plans[plan].map((item) => (
+            <View className="mx-8 flex-row gap-3" key={item}>
+              <CheckCircleIcon className="size-6 text-amount-positive" />
+              <Text className="text-primary">{item}</Text>
+            </View>
           ))}
         </View>
-      </Marquee>
-      <Tabs
-        value={plan}
-        className="mx-8"
-        onValueChange={(value) => {
-          setPlan(value as 'growth' | 'wealth')
-        }}
-      >
-        <TabsList>
-          <TabsTrigger value="growth">
-            <Text>{t(i18n)`Growth`}</Text>
-          </TabsTrigger>
-          <TabsTrigger value="wealth">
-            <Text>{t(i18n)`Wealth`}</Text>
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-      <View className="gap-3 py-2">
-        {plans[plan].map((item) => (
-          <View className="mx-8 flex-row gap-3" key={item}>
-            <CheckCircleIcon className="size-6 text-amount-positive" />
-            <Text className="text-primary">{item}</Text>
+        <View className="mx-8 flex-row items-end gap-6">
+          {data
+            ?.filter((i) => i.identifier?.includes(plan))
+            ?.map((pkg) => (
+              <PackageCard
+                key={pkg.identifier}
+                data={pkg}
+                selected={pkg.identifier === selectedPackage?.identifier}
+                onSelect={() => {
+                  setDuration(
+                    pkg.identifier.includes('annually')
+                      ? 'annually'
+                      : 'monthly',
+                  )
+                }}
+              />
+            ))}
+        </View>
+        <Button
+          className="mx-8 mt-2"
+          disabled={!selectedPackage}
+          onPress={handlePurchases}
+        >
+          <Text>{t(i18n)`Unlock 6pm Pro`}</Text>
+        </Button>
+        <View className="mx-auto mt-2 flex-row items-center gap-4">
+          <TouchableOpacity activeOpacity={0.8} onPress={() => mutateRestore()}>
+            <Text className="mx-auto text-center text-muted-foreground text-sm">
+              {t(i18n)`Restore purchases`}
+            </Text>
+          </TouchableOpacity>
+          <Link href="/privacy-policy">
+            <Text className="mx-auto text-center text-muted-foreground text-sm">
+              {t(i18n)`Privacy policy`}
+            </Text>
+          </Link>
+        </View>
+        <PaywallIllustration className="mx-auto h-[566px] w-[200px] text-primary" />
+      </ScrollView>
+      {isPending ||
+        (isRestoring && (
+          <View className="absolute top-0 right-0 bottom-0 left-0 z-50 items-center justify-center bg-background/50">
+            <ActivityIndicator size="large" />
           </View>
         ))}
-      </View>
-      <View className="mx-8 flex-row items-end gap-6">
-        <Pressable className="h-36 flex-1 rounded-lg border-2 border-border">
-          <View className="flex-1 items-center justify-center bg-muted/40 p-4">
-            <Text className="font-bold text-4xl">1</Text>
-            <Text className="mb-4 text-center text-muted-foreground text-sm uppercase">
-              month
-            </Text>
-            <AmountFormat amount={99000} currency="VND" />
-          </View>
-        </Pressable>
-        <Pressable className="h-44 flex-1 overflow-hidden rounded-lg bg-primary p-0.5">
-          <View className="h-8 items-center justify-center bg-primary">
-            <Text className="text-center font-semibold text-primary-foreground text-sm uppercase">
-              {t(i18n)`Best value`}
-            </Text>
-          </View>
-          <View className="flex-1 items-center justify-center rounded-md bg-background p-4">
-            <Text className="font-bold text-4xl">12</Text>
-            <Text className="mb-4 text-center text-muted-foreground text-sm uppercase">
-              months
-            </Text>
-            <AmountFormat amount={999000} currency="VND" />
-          </View>
-        </Pressable>
-      </View>
-      <Button className="mx-8 mt-2">
-        <Text>{t(i18n)`Unlock 6pm Pro`}</Text>
-      </Button>
-      <Link href="/privacy-policy">
-        <Text className="mx-auto text-center text-muted-foreground text-sm">
-          Privacy Policy
-        </Text>
-      </Link>
-      <PaywallIllustration className="mx-auto h-[566px] w-[200px] text-primary" />
-    </ScrollView>
+    </View>
   )
 }

@@ -1,9 +1,11 @@
+import { useUserEntitlements } from '@/hooks/use-purchases'
 import { sleep } from '@/lib/utils'
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import { useUserSettingsStore } from '@/stores/user-settings/store'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
+import { useRouter } from 'expo-router'
 import { ChevronRightIcon, CurrencyIcon } from 'lucide-react-native'
 import { useRef } from 'react'
 import { Keyboard, View } from 'react-native'
@@ -16,6 +18,8 @@ export function SelectDefaultCurrency() {
   const { i18n } = useLingui()
   const sheetRef = useRef<BottomSheetModal>(null)
   const defaultCurrency = useDefaultCurrency()
+  const { isPro } = useUserEntitlements()
+  const router = useRouter()
   const setPreferredCurrency = useUserSettingsStore().setPreferredCurrency
   return (
     <>
@@ -23,6 +27,10 @@ export function SelectDefaultCurrency() {
         label={t(i18n)`Default currency`}
         icon={CurrencyIcon}
         onPress={() => {
+          if (!isPro) {
+            router.push('/paywall')
+            return
+          }
           Keyboard.dismiss()
           sheetRef.current?.present()
         }}

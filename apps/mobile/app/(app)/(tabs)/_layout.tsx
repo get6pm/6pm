@@ -18,12 +18,15 @@ import {
 import { usePostHog } from 'posthog-react-native'
 import { useEffect } from 'react'
 import { View, useWindowDimensions } from 'react-native'
+import Purchases from 'react-native-purchases'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function TabLayout() {
   const { colorScheme } = useColorScheme()
   const { i18n } = useLingui()
   const { user } = useUser()
   const { width } = useWindowDimensions()
+  const { bottom } = useSafeAreaInsets()
 
   const posthog = usePostHog()
 
@@ -35,6 +38,7 @@ export default function TabLayout() {
       email: user?.emailAddresses?.[0]?.emailAddress,
       name: user?.fullName,
     })
+    Purchases.logIn(user.id)
   }, [user, posthog])
 
   return (
@@ -50,7 +54,7 @@ export default function TabLayout() {
           backgroundColor: theme[colorScheme ?? 'light'].background,
           borderColor: theme[colorScheme ?? 'light'].border,
           borderTopColor: theme[colorScheme ?? 'light'].border,
-          bottom: 36,
+          bottom: bottom ? 36 : 16,
           marginHorizontal: (width - (8 * 5 + 48 * 4 + 16)) / 2,
           paddingVertical: 0,
           paddingBottom: 0,

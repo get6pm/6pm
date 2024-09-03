@@ -29,8 +29,11 @@
       },
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
-      ]
+        "android.permission.RECORD_AUDIO",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ],
+      "package": "ai.sixpm.app"
     },
     "web": {
       "bundler": "metro",
@@ -79,9 +82,7 @@
       }
     },
     "owner": "sixpm",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "1.0.0",
     "updates": {
       "url": "https://u.expo.dev/5853e031-3bfb-41fe-bfb6-c49f746c4adc"
     }

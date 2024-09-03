@@ -1,5 +1,5 @@
 import { useUser } from '@clerk/clerk-expo'
-import { PencilIcon } from 'lucide-react-native'
+import { CrownIcon, PencilIcon } from 'lucide-react-native'
 import { Dimensions, Pressable, View } from 'react-native'
 
 import { UserAvatar } from '../common/user-avatar'
@@ -7,6 +7,9 @@ import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
 
+import { useUserEntitlements } from '@/hooks/use-purchases'
+import { t } from '@lingui/macro'
+import { useLingui } from '@lingui/react'
 import { Link } from 'expo-router'
 import Animated, {
   type SharedValue,
@@ -146,7 +149,9 @@ export const DotsGrid = () => {
 }
 
 export function ProfileCard() {
+  const { i18n } = useLingui()
   const { user } = useUser()
+  const { isWealth, isGrowth, isPro } = useUserEntitlements()
 
   return (
     <View className="mx-6 flex-row items-center justify-center overflow-hidden rounded-lg">
@@ -160,8 +165,18 @@ export function ProfileCard() {
           <Text className="line-clamp-1 font-medium text-primary">
             {user?.fullName ?? user?.primaryEmailAddress?.emailAddress}
           </Text>
-          <Badge variant="default" className="self-start rounded-md">
-            <Text className="font-medium text-xs">Saver</Text>
+          <Badge
+            variant="default"
+            className="flex-row gap-1 self-start rounded-md"
+          >
+            {isPro && <CrownIcon className="size-4 text-primary-foreground" />}
+            <Text className="font-medium text-xs">
+              {isWealth
+                ? t(i18n)`Wealth`
+                : isGrowth
+                  ? t(i18n)`Growth`
+                  : t(i18n)`Saver`}
+            </Text>
           </Badge>
         </View>
       </View>

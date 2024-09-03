@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'
+import { useUserEntitlements } from '@/hooks/use-purchases'
 import { useScheduleNotification } from '@/hooks/use-schedule-notification'
 import { useSeed } from '@/hooks/use-seed'
 import { useColorScheme } from '@/hooks/useColorScheme'
@@ -65,6 +66,7 @@ export default function SettingsScreen() {
     useUserSettingsStore()
   const { startSeed } = useSeed()
   const { draftTransactions } = useTransactionStore()
+  const { isPro } = useUserEntitlements()
 
   async function handleCopyVersion() {
     const fullVersion = `${Application.nativeApplicationVersion} - ${Updates.updateId ?? 'Embedded'}`
@@ -94,19 +96,21 @@ export default function SettingsScreen() {
         className="bg-card"
       >
         <ProfileCard />
-        <Link href="/paywall" asChild>
-          <Button className="!px-4 !h-14 mx-6 justify-between">
-            <View>
-              <Text className="!text-base font-semibold">
-                {t(i18n)`Get 6pm Pro`}
-              </Text>
-              <Text className="!text-xs font-medium opacity-65">
-                {t(i18n)`Unlocks full AI power and more!`}
-              </Text>
-            </View>
-            <LockKeyholeIcon className="h-6 w-6 text-muted-foreground" />
-          </Button>
-        </Link>
+        {!isPro && (
+          <Link href="/paywall" asChild>
+            <Button className="!px-4 !h-14 mx-6 justify-between">
+              <View>
+                <Text className="!text-base font-semibold">
+                  {t(i18n)`Get 6pm Pro`}
+                </Text>
+                <Text className="!text-xs font-medium opacity-65">
+                  {t(i18n)`Unlocks full AI power and more!`}
+                </Text>
+              </View>
+              <LockKeyholeIcon className="h-6 w-6 text-muted-foreground" />
+            </Button>
+          </Link>
+        )}
         <View className="mt-4 gap-2">
           <Text className="mx-6 font-sans text-muted-foreground">
             {t(i18n)`General`}

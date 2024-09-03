@@ -91,7 +91,7 @@ const router = new Hono()
 
       await deleteCategory({ categoryId })
 
-      return c.json(category, 204)
+      return c.json(category)
     },
   )
 

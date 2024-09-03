@@ -107,6 +107,13 @@ export default function AuthenticatedLayout() {
           }}
         />
         <Stack.Screen
+          name="paywall"
+          options={{
+            presentation: 'modal',
+            headerTitle: '',
+          }}
+        />
+        <Stack.Screen
           name="appearance"
           options={{ headerTitle: t(i18n)`Appearance` }}
         />

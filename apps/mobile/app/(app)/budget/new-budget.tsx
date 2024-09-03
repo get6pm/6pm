@@ -7,9 +7,8 @@ import { PortalHost, useModalPortalRoot } from '@rn-primitives/portal'
 import { useRouter } from 'expo-router'
 import { View } from 'react-native'
 
-const budgetId = createId()
-
 export default function CreateBudgetScreen() {
+  const budgetId = createId()
   const router = useRouter()
   const { mutateAsync } = useCreateBudget()
   const { sideOffset, ...rootProps } = useModalPortalRoot()

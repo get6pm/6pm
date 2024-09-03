@@ -259,17 +259,18 @@ export function useBudgetPeriodStats(
   const { transactions, totalExpense, totalIncome } = useTransactionList({
     from: new Date(periodConfig?.startDate!),
     to: new Date(periodConfig?.endDate!),
-    budgetId: periodConfig.budgetId,
+    budgetId: periodConfig?.budgetId,
   })
 
   const totalBudgetUsage = new Decimal(totalExpense)
     .plus(totalIncome)
-    .abs()
     .mul(exchangeToBudgetCurrency?.rate ?? 1)
 
-  const remainingAmount = budgetAmount.sub(totalBudgetUsage)
+  const remainingAmount = budgetAmount.add(totalBudgetUsage)
 
-  const usagePercentage = totalBudgetUsage
+  const usagePercentage = (
+    totalBudgetUsage.gt(0) ? new Decimal(0) : totalBudgetUsage.abs()
+  )
     .div(budgetAmount!)
     .mul(100)
     .toNumber()

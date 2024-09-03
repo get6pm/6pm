@@ -52,10 +52,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function SettingsScreen() {
   const { signOut } = useAuth()
   const { i18n } = useLingui()
+  const { bottom } = useSafeAreaInsets()
   const { language } = useLocale()
   const { colorScheme } = useColorScheme()
   const { cancelAllScheduledNotifications } = useScheduleNotification()
@@ -87,7 +89,8 @@ export default function SettingsScreen() {
   return (
     <View className="bg-card">
       <ScrollView
-        contentContainerClassName="py-4 pb-14 gap-4"
+        contentContainerClassName="py-4 gap-4"
+        contentContainerStyle={{ paddingBottom: bottom + 80 }}
         className="bg-card"
       >
         <ProfileCard />

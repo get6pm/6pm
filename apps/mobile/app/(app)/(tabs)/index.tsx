@@ -1,6 +1,6 @@
 import { AmountFormat } from '@/components/common/amount-format'
 import { ListSkeleton } from '@/components/common/list-skeleton'
-import { Toolbar } from '@/components/common/toolbar'
+// import { Toolbar } from '@/components/common/toolbar'
 import { HomeHeader } from '@/components/home/header'
 import { HomeFilter } from '@/components/home/select-filter'
 import { TimeRangeControl } from '@/components/home/time-range-control'
@@ -127,7 +127,7 @@ export default function HomeScreen() {
           ) : null
         }
         className="flex-1 bg-card"
-        contentContainerStyle={{ paddingBottom: bottom + 32 }}
+        contentContainerStyle={{ paddingBottom: bottom + 80 }}
         // refreshing={isRefetching}
         // onRefresh={handleRefresh}
         sections={transactionsGroupByDate}
@@ -168,9 +168,9 @@ export default function HomeScreen() {
       {!transactions.length && !isLoading && (
         <>
           {filter === HomeFilter.All ? (
-            <View className="absolute right-6 bottom-20 z-50 flex-row gap-3">
+            <View className="pointer-events-none absolute right-28 bottom-32 z-50 items-end gap-2">
               <Text>{t(i18n)`Add your first transaction here`}</Text>
-              <HandyArrow className="mt-4 text-muted-foreground" />
+              <HandyArrow className="-right-8 text-muted-foreground" />
             </View>
           ) : null}
         </>
@@ -183,7 +183,7 @@ export default function HomeScreen() {
         className="absolute right-0 bottom-0 left-0 h-36"
         pointerEvents="none"
       />
-      <Toolbar />
+      {/* <Toolbar /> */}
     </View>
   )
 }

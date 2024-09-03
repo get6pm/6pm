@@ -32,7 +32,12 @@ export const WalletAccountItem: FC<WalletAccountItemProps> = ({ data }) => {
         )}
         rightSection={
           <View className="flex-row items-center gap-4">
-            <AmountFormat amount={data.balance} displayNegativeSign size="sm" />
+            <AmountFormat
+              amount={data.balance}
+              displayNegativeSign
+              size="sm"
+              convertToDefaultCurrency
+            />
             <ChevronRightIcon className="h-5 w-5 text-primary" />
           </View>
         }

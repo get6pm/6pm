@@ -24,6 +24,7 @@ function BudgetItem({ budgetId }: { budgetId: string }) {
   const latestPeriodConfig = getLatestPeriodConfig(budget?.periodConfigs ?? [])
   const { usagePercentage, isExceeded } = useBudgetPeriodStats(
     latestPeriodConfig!,
+    budget?.preferredCurrency ?? 'VND',
   )
 
   return (

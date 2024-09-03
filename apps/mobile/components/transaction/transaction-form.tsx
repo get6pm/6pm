@@ -1,8 +1,6 @@
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { theme } from '@/lib/theme'
 import { sleep } from '@/lib/utils'
 import type { TransactionFormValues } from '@6pm/validation'
-import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
+import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import * as Haptics from 'expo-haptics'
@@ -20,7 +18,7 @@ import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
 } from 'react-native-reanimated'
-import { FullWindowOverlay } from 'react-native-screens'
+import { BottomSheet } from '../common/bottom-sheet'
 import { CurrencySheetList } from '../common/currency-sheet'
 import { DatePicker } from '../common/date-picker'
 import { InputField } from '../form-fields/input-field'
@@ -43,7 +41,6 @@ type TransactionFormProps = {
 }
 
 export function TransactionAmount() {
-  const { colorScheme } = useColorScheme()
   const sheetRef = useRef<BottomSheetModal>(null)
   const [amount] = useWatch({ name: ['amount'] })
   const {
@@ -62,25 +59,7 @@ export function TransactionAmount() {
           sheetRef.current?.present()
         }}
       />
-      <BottomSheetModal
-        ref={sheetRef}
-        index={0}
-        snapPoints={['50%', '87%']}
-        enablePanDownToClose
-        backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
-        keyboardBehavior="extend"
-        backdropComponent={(props) => (
-          <BottomSheetBackdrop
-            {...props}
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            enableTouchThrough
-          />
-        )}
-        containerComponent={(props) => (
-          <FullWindowOverlay>{props.children}</FullWindowOverlay>
-        )}
-      >
+      <BottomSheet ref={sheetRef} index={0} enableDynamicSizing>
         <CurrencySheetList
           value={currency}
           onSelect={async (selected) => {
@@ -89,7 +68,7 @@ export function TransactionAmount() {
             onChange?.(selected.code)
           }}
         />
-      </BottomSheetModal>
+      </BottomSheet>
     </>
   )
 }
@@ -118,9 +97,9 @@ function FormSubmitButton({
 export const TransactionForm = ({
   form,
   onSubmit,
-  onCancel,
+  // onCancel,
   onDelete,
-  onOpenScanner,
+  // onOpenScanner,
   sideOffset,
 }: TransactionFormProps) => {
   const { i18n } = useLingui()

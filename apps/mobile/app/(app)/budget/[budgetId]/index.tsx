@@ -62,7 +62,7 @@ export default function BudgetDetailScreen() {
     remainingAmount,
     remainingAmountPerDays,
     averageAmountPerDay,
-  } = useBudgetPeriodStats(currentPeriod!)
+  } = useBudgetPeriodStats(currentPeriod!, budget?.preferredCurrency ?? 'VND')
 
   const transactionsGroupByDate = useMemo(() => {
     const groupedByDay = groupBy(transactions, (transaction) =>
@@ -73,7 +73,7 @@ export default function BudgetDetailScreen() {
       key,
       title: formatDateShort(new Date(key)),
       data: orderBy(transactions, 'date', 'desc'),
-      sum: sumBy(transactions, 'amount'),
+      sum: sumBy(transactions, 'amountInVnd'),
     }))
 
     return Object.values(sectionDict)
@@ -261,6 +261,7 @@ export default function BudgetDetailScreen() {
               className="font-semibold text-md text-muted-foreground"
               displayNegativeSign
               displayPositiveSign
+              convertToDefaultCurrency
             />
           </View>
         )}

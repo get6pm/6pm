@@ -15,6 +15,7 @@ import { first, keyBy, orderBy } from 'lodash-es'
 import { useMemo } from 'react'
 import { Alert } from 'react-native'
 import { z } from 'zod'
+import { useExchangeRate } from '../exchange-rates/hooks'
 import { useTransactionList } from '../transaction/hooks'
 import { budgetQueries } from './queries'
 import { type BudgetItem, useBudgetStore } from './store'
@@ -46,6 +47,7 @@ export const useBudgetList = () => {
     )
     const debtBudgets = budgets.filter((budget) => budget.type === 'DEBT')
 
+    // TODO: Correct this with exchange rate
     const totalBudget = budgets.reduce((acc, budget) => {
       const latestPeriodConfig = first(
         orderBy(budget.periodConfigs, 'startDate', 'desc'),
@@ -236,13 +238,22 @@ export function getLatestPeriodConfig(periodConfigs: BudgetPeriodConfig[]) {
   return first(orderBy(periodConfigs, 'startDate', 'desc'))
 }
 
-export function useBudgetPeriodStats(periodConfig: BudgetPeriodConfig) {
+export function useBudgetPeriodStats(
+  periodConfig: BudgetPeriodConfig,
+  currency: string,
+) {
+  const { exchangeRate: exchangeToBudgetCurrency } = useExchangeRate({
+    fromCurrency: 'VND',
+    toCurrency: currency,
+  })
+
+  // in budget currency
   const budgetAmount = useMemo(() => {
     if (periodConfig?.amount instanceof Decimal) {
       return periodConfig?.amount
     }
 
-    return new Decimal(periodConfig?.amount || 0)
+    return new Decimal(periodConfig?.amount ?? 0)
   }, [periodConfig])
 
   const { transactions, totalExpense, totalIncome } = useTransactionList({
@@ -251,7 +262,10 @@ export function useBudgetPeriodStats(periodConfig: BudgetPeriodConfig) {
     budgetId: periodConfig.budgetId,
   })
 
-  const totalBudgetUsage = new Decimal(totalExpense).plus(totalIncome).abs()
+  const totalBudgetUsage = new Decimal(totalExpense)
+    .plus(totalIncome)
+    .abs()
+    .mul(exchangeToBudgetCurrency?.rate ?? 1)
 
   const remainingAmount = budgetAmount.sub(totalBudgetUsage)
 

@@ -36,7 +36,7 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
     remainingAmountPerDays,
     remainingDays,
     isExceeded,
-  } = useBudgetPeriodStats(latestPeriodConfig!)
+  } = useBudgetPeriodStats(latestPeriodConfig!, budget.preferredCurrency)
 
   const isDefault = defaultBudgetId === budget.id
 
@@ -91,6 +91,7 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
               amount={remainingAmount?.toNumber() ?? 0}
               displayNegativeSign
               className="text-xl"
+              currency={budget.preferredCurrency}
             />
             <Text
               numberOfLines={1}
@@ -104,6 +105,7 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
               amount={remainingAmountPerDays?.toNumber() ?? 0}
               displayNegativeSign
               className="text-xl"
+              currency={budget.preferredCurrency}
             />
             <Text
               numberOfLines={1}

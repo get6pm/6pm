@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { useExchangeRate } from '@/stores/exchange-rates/hooks'
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import { type VariantProps, cva } from 'class-variance-authority'
 import { useMemo } from 'react'
@@ -55,6 +56,19 @@ export function AmountFormat({
   convertToDefaultCurrency,
 }: AmountFormatProps) {
   const defaultCurrency = useDefaultCurrency()
+  const { exchangeRate, isLoading } = useExchangeRate({
+    fromCurrency: currency || 'VND',
+    toCurrency: defaultCurrency,
+  })
+
+  const formatter = new Intl.NumberFormat('en-US', {
+    currency: currency || defaultCurrency,
+    maximumFractionDigits: SHOULD_ROUND_VALUE_CURRENCIES.includes(
+      currency || defaultCurrency,
+    )
+      ? 0
+      : 2,
+  })
 
   const sign = useMemo(() => {
     if (amount < 0) {
@@ -67,26 +81,24 @@ export function AmountFormat({
   }, [amount, displayNegativeSign, displayPositiveSign])
 
   const displayAmount = useMemo(() => {
-    const roundedAmount = SHOULD_ROUND_VALUE_CURRENCIES.includes(
-      currency || defaultCurrency,
-    )
-      ? Math.round(amount)
-      : amount
-
     if (!convertToDefaultCurrency) {
-      return Math.abs(roundedAmount).toLocaleString()
+      return formatter.format(Math.abs(amount))
     }
 
-    // TODO: correct amount with currency exchange rate
-    return Math.abs(roundedAmount).toLocaleString()
-  }, [amount, convertToDefaultCurrency, currency, defaultCurrency])
+    const exchangedAmount = exchangeRate
+      ? Math.abs(amount) * (exchangeRate.rate || 1)
+      : Math.abs(amount)
+
+    return formatter.format(exchangedAmount)
+  }, [amount, convertToDefaultCurrency, exchangeRate, formatter])
 
   return (
     <Text
       className={cn(
         amountVariants({ size }),
+        isLoading && 'opacity-25',
         amount >= 0
-          ? displayPositiveColor
+          ? displayPositiveColor && amount > 0
             ? 'text-amount-positive'
             : 'text-foreground'
           : 'text-amount-negative',
@@ -94,7 +106,7 @@ export function AmountFormat({
       )}
     >
       {sign}
-      {displayAmount}{' '}
+      {displayAmount === '0' ? '0.00' : displayAmount}{' '}
       <Text className={cn(currencyVariants({ size }))}>
         {convertToDefaultCurrency
           ? defaultCurrency

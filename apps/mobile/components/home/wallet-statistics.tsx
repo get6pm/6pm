@@ -123,7 +123,7 @@ export function WalletStatistics({
           //   '!h-10 !px-2.5 flex-row items-center gap-2',
           //   value !== HomeFilter.All && 'border-primary bg-primary',
           // )}
-          className="!border-0 h-auto flex-col items-center gap-3 native:h-auto"
+          className="!border-0 h-auto native:h-auto flex-col items-center gap-3"
         >
           <View className="self-center border-primary border-b">
             <Text className="w-fit self-center text-center leading-tight">
@@ -135,6 +135,7 @@ export function WalletStatistics({
             size="xl"
             displayNegativeSign
             displayPositiveColor
+            convertToDefaultCurrency
           />
         </SelectTrigger>
         <SelectContent sideOffset={6} align="center">

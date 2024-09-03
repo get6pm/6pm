@@ -9,6 +9,7 @@
     "api:start": "pnpm --filter @6pm/api run start",
     "mobile": "pnpm --filter @6pm/mobile",
     "mobile:start": "pnpm --filter @6pm/mobile run start",
+    "mobile:ios": "pnpm --filter @6pm/mobile run ios",
     "li:extract": "lingui extract",
     "li:compile": "lingui compile --typescript",
     "li": "pnpm li:extract && pnpm li:compile"

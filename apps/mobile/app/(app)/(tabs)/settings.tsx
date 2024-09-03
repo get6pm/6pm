@@ -94,17 +94,19 @@ export default function SettingsScreen() {
         className="bg-card"
       >
         <ProfileCard />
-        <Button className="!px-4 !h-14 mx-6 justify-between">
-          <View>
-            <Text className="!text-base font-semibold">
-              {t(i18n)`Get 6pm Pro`}
-            </Text>
-            <Text className="!text-xs font-medium opacity-65">
-              {t(i18n)`Unlocks full AI power and more!`}
-            </Text>
-          </View>
-          <LockKeyholeIcon className="h-6 w-6 text-muted-foreground" />
-        </Button>
+        <Link href="/paywall" asChild>
+          <Button className="!px-4 !h-14 mx-6 justify-between">
+            <View>
+              <Text className="!text-base font-semibold">
+                {t(i18n)`Get 6pm Pro`}
+              </Text>
+              <Text className="!text-xs font-medium opacity-65">
+                {t(i18n)`Unlocks full AI power and more!`}
+              </Text>
+            </View>
+            <LockKeyholeIcon className="h-6 w-6 text-muted-foreground" />
+          </Button>
+        </Link>
         <View className="mt-4 gap-2">
           <Text className="mx-6 font-sans text-muted-foreground">
             {t(i18n)`General`}

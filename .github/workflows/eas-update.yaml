@@ -60,4 +60,5 @@ jobs:
           EXPO_PUBLIC_SENTRY_DSN: ${{ secrets.EXPO_PUBLIC_SENTRY_DSN }}
           EXPO_PUBLIC_POSTHOG_API_KEY: ${{ secrets.EXPO_PUBLIC_POSTHOG_API_KEY }}
           EXPO_PUBLIC_POSTHOG_HOST: ${{ secrets.EXPO_PUBLIC_POSTHOG_HOST }}
+          EXPO_PUBLIC_REVENUECAT_PROJECT_IOS_API_KEY: ${{ secrets.EXPO_PUBLIC_REVENUECAT_PROJECT_IOS_API_KEY }}
         run: eas update --auto --non-interactive

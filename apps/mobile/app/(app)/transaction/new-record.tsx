@@ -82,14 +82,14 @@ export default function NewRecordScreen() {
               animated: true,
             })
           }}
-          className="w-[150px]"
+          className="w-[160px]"
         >
-          <TabsList>
+          <TabsList className="border border-border">
             <TabsTrigger value="0">
-              <KeyboardIcon className="!text-primary size-5" />
+              <KeyboardIcon className="!text-primary size-6" />
             </TabsTrigger>
             <TabsTrigger value="1">
-              <CameraIcon className="!text-primary size-5" />
+              <CameraIcon className="!text-primary size-6" />
             </TabsTrigger>
           </TabsList>
         </Tabs>

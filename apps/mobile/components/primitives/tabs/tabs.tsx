@@ -15,18 +15,7 @@ interface RootContext extends TabsRootProps {
 const TabsContext = React.createContext<RootContext | null>(null)
 
 const Root = React.forwardRef<ViewRef, SlottableViewProps & TabsRootProps>(
-  (
-    {
-      asChild,
-      value,
-      onValueChange,
-      orientation: Orientation,
-      dir: Dir,
-      activationMode: ActivationMode,
-      ...viewProps
-    },
-    ref,
-  ) => {
+  ({ asChild, value, onValueChange, ...viewProps }, ref) => {
     const nativeID = React.useId()
     const Component = asChild ? Slot.View : View
     return (

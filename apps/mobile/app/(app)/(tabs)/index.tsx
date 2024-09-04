@@ -13,6 +13,7 @@ import { useColorScheme } from '@/hooks/useColorScheme'
 import { formatDateShort } from '@/lib/date'
 import { theme } from '@/lib/theme'
 import { useTransactionList } from '@/stores/transaction/hooks'
+import { useTransactionStore } from '@/stores/transaction/store'
 import { dayjsExtended } from '@6pm/utilities'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -54,6 +55,7 @@ export default function HomeScreen() {
     categoryId,
     ...timeRange,
   })
+  const { draftTransactions } = useTransactionStore()
 
   const handleSetFilter = (filter: HomeFilter) => {
     if (filter === HomeFilter.ByDay) {
@@ -165,7 +167,7 @@ export default function HomeScreen() {
         }
         extraData={filter}
       />
-      {!transactions.length && !isLoading && (
+      {!transactions.length && !draftTransactions.length && !isLoading && (
         <>
           {filter === HomeFilter.All ? (
             <View className="pointer-events-none absolute right-28 bottom-32 z-50 items-end gap-2">

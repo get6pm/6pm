@@ -12,7 +12,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      'web:inline-flex h-10 native:h-11 flex-row items-center justify-center rounded-md bg-muted p-1 native:px-1.5',
+      'web:inline-flex h-10 native:h-12 flex-row items-center justify-center rounded-xl bg-muted native:p-1.5 p-1',
       className,
     )}
     {...props}
@@ -29,16 +29,15 @@ const TabsTrigger = React.forwardRef<
     <TextClassContext.Provider
       value={cn(
         'text-sm native:text-base font-medium text-muted-foreground web:transition-all',
-        value === props.value && 'text-foreground dark:text-primary',
+        value === props.value && 'text-foreground',
       )}
     >
       <TabsPrimitive.Trigger
         ref={ref}
         className={cn(
-          'inline-flex flex-1 flex-row items-center justify-center gap-3 web:whitespace-nowrap rounded-sm px-3 py-1.5 font-medium text-sm shadow-none web:ring-offset-background web:transition-all web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
+          'inline-flex h-full flex-1 flex-row items-center justify-center gap-2 web:whitespace-nowrap rounded-md font-medium text-sm shadow-none web:ring-offset-background web:transition-all web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
           props.disabled && 'web:pointer-events-none opacity-50',
-          props.value === value &&
-            'bg-background shadow-border shadow-sm dark:shadow-foreground/15',
+          props.value === value && 'bg-background',
           className,
         )}
         {...props}

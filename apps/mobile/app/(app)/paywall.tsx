@@ -1,4 +1,3 @@
-import { AmountFormat } from '@/components/common/amount-format'
 import { Marquee } from '@/components/common/marquee'
 import { toast } from '@/components/common/toast'
 import { PaywallIllustration } from '@/components/svg-assets/paywall-illustration'
@@ -104,13 +103,11 @@ function PackageCard({
         <Text className="mb-4 text-center text-muted-foreground text-sm uppercase">
           {t(i18n)`months`}
         </Text>
-        <AmountFormat
-          amount={
-            isAnnual ? data.product.pricePerYear : data.product.pricePerMonth
-          }
-          currency="VND"
-          convertToDefaultCurrency
-        />
+        <Text className="line-clamp-1 shrink-0 font-semibold text-2xl">
+          {isAnnual
+            ? data.product.pricePerYearString
+            : data.product.pricePerMonthString}
+        </Text>
       </View>
     </Pressable>
   )

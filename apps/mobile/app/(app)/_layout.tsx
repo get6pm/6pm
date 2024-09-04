@@ -69,6 +69,9 @@ export default function AuthenticatedLayout() {
           options={{
             presentation: 'modal',
             headerTitle: '',
+            headerStyle: {
+              backgroundColor: theme[colorScheme ?? 'light'].muted,
+            },
             // headerShown: false,
           }}
         />

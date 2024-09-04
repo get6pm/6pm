@@ -10,7 +10,7 @@ const SHOULD_ROUND_VALUE_CURRENCIES = ['VND']
 const amountVariants = cva('line-clamp-1 shrink-0 font-semibold', {
   variants: {
     size: {
-      xl: 'text-4xl',
+      xl: 'text-5xl',
       lg: 'text-3xl',
       md: 'text-2xl',
       sm: 'text-base',

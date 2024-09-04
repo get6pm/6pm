@@ -150,7 +150,10 @@ export default function BudgetsScreen() {
   }, 0)
 
   const chartData = map(
-    groupBy(transactions, (t) => t.date),
+    groupBy(
+      transactions.filter((i) => !!i.budgetId),
+      (t) => t.date,
+    ),
     (transactions, key) => ({
       day: new Date(key).getDate(),
       amount: transactions.reduce((acc, t) => acc - t.amountInVnd, 0),

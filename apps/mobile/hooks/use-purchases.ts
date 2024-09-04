@@ -38,8 +38,6 @@ export function useUserEntitlements() {
 
   const isGrowth = !!customerInfo?.entitlements.active.growth?.isActive
 
-  console.log(customerInfo?.entitlements.active)
-
   const isPro = isWealth || isGrowth
 
   return {

@@ -1,23 +1,16 @@
+import { TabBar } from '@/components/common/tab-bar'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
-import { cn } from '@/lib/utils'
 import { useUser } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import * as Haptics from 'expo-haptics'
 import { Link, Tabs } from 'expo-router'
-import {
-  // BarChartBigIcon,
-  CogIcon,
-  LandPlotIcon,
-  PlusIcon,
-  WalletIcon,
-} from 'lucide-react-native'
+import { PlusIcon } from 'lucide-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect } from 'react'
-import { View, useWindowDimensions } from 'react-native'
+import { useWindowDimensions } from 'react-native'
 import Purchases from 'react-native-purchases'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -43,6 +36,7 @@ export default function TabLayout() {
 
   return (
     <Tabs
+      tabBar={(props) => <TabBar {...props} />}
       screenOptions={{
         headerShadowVisible: false,
         tabBarActiveTintColor: theme[colorScheme ?? 'light'].background,
@@ -75,17 +69,6 @@ export default function TabLayout() {
         name="index"
         options={{
           headerShown: false,
-          tabBarShowLabel: false,
-          tabBarIcon: ({ color, focused }) => (
-            <View
-              className={cn(
-                'h-[48px] w-[48px] items-center justify-center rounded-xl',
-                focused && 'bg-primary',
-              )}
-            >
-              <WalletIcon color={color} className="size-6" />
-            </View>
-          ),
         }}
       />
       <Tabs.Screen
@@ -98,17 +81,6 @@ export default function TabLayout() {
             color: theme[colorScheme ?? 'light'].primary,
             marginLeft: 5,
           },
-          tabBarShowLabel: false,
-          tabBarIcon: ({ color, focused }) => (
-            <View
-              className={cn(
-                'h-[48px] w-[48px] items-center justify-center rounded-xl',
-                focused && 'bg-primary',
-              )}
-            >
-              <LandPlotIcon color={color} className="size-6" />
-            </View>
-          ),
           headerRight: () => (
             <Link href="/budget/new-budget" asChild>
               <Button size="sm" variant="secondary" className="mr-6 h-10">
@@ -132,41 +104,6 @@ export default function TabLayout() {
         name="settings"
         options={{
           headerTitle: t(i18n)`Settings`,
-          tabBarShowLabel: false,
-          tabBarIcon: ({ color, focused }) => (
-            <View
-              className={cn(
-                'h-[48px] w-[48px] items-center justify-center rounded-xl',
-                focused && 'bg-primary',
-              )}
-            >
-              <CogIcon color={color} className="size-6" />
-            </View>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="dummy"
-        options={{
-          tabBarShowLabel: false,
-          tabBarButton: () => (
-            <View className="items-center justify-center px-2">
-              <Link
-                href="/transaction/new-record"
-                asChild
-                onPress={Haptics.selectionAsync}
-              >
-                <Button
-                  size="icon"
-                  className={cn(
-                    'h-[48px] w-[48px] items-center justify-center rounded-xl border border-border bg-muted active:bg-muted/75',
-                  )}
-                >
-                  <PlusIcon className="size-6 text-foreground" />
-                </Button>
-              </Link>
-            </View>
-          ),
         }}
       />
     </Tabs>

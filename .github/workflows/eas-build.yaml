@@ -90,6 +90,10 @@ jobs:
           sudo security authorizationdb write com.apple.trust-settings.admin allow
           security add-trusted-cert -d -r unspecified -k ~/Library/Keychains/login.keychain-db ./AppleWWDRCAG3.cer
 
+      - name: 📱 Prebuild native code
+        working-directory: apps/mobile
+        run: pnpm prebuild
+
       - name: 👷 Build app
         working-directory: apps/mobile
         env:

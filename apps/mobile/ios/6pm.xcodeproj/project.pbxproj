@@ -17,6 +17,22 @@
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		D7776E943EB34B66A98A6A2C /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5A0026D5DB42999CBC28FE /* noop-file.swift */; };
 		DEE1C0AF3858C12C88E3160B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 82965772011B75850F546AE9 /* PrivacyInfo.xcprivacy */; };
+		B913E4B9B07B463B8D74925E /* dark-Icon-$60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 202BD4B7E2554DAAA50DC6AB /* dark-Icon-$60x60@2x.png */; };
+		F079BC1C2E684D6F8A5086B8 /* dark-Icon-$60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 95BD5C94DBA14C63A4E45609 /* dark-Icon-$60x60@3x.png */; };
+		6AB8311E234D4369838B2082 /* dark-Icon-$60x60@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 53BF9606B84F4874B1F6DAAD /* dark-Icon-$60x60@2x~ipad.png */; };
+		530D496B809D4A0AB314138B /* dark-Icon-$60x60@3x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 6C71BD1F231C4FEBB5BFDA55 /* dark-Icon-$60x60@3x~ipad.png */; };
+		E7C273776E544BA2AED0DBF0 /* light-Icon-$60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB4412274E6C4A329E6248A9 /* light-Icon-$60x60@2x.png */; };
+		0003FDA534874407A3932074 /* light-Icon-$60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4625994F0C724BF5826845CB /* light-Icon-$60x60@3x.png */; };
+		88ED96783BB14D9D835BFC8B /* light-Icon-$60x60@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FE24D9D501E489BAB4EC695 /* light-Icon-$60x60@2x~ipad.png */; };
+		02F43DCD5F97485BB39E22E8 /* light-Icon-$60x60@3x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = A99583C5F58847C7B4C72027 /* light-Icon-$60x60@3x~ipad.png */; };
+		3EFDE87D524C41538127AF0D /* digital-Icon-$60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 96B18405541E43DBAFC2B684 /* digital-Icon-$60x60@2x.png */; };
+		D6AB09DF80344E8CAD81E60D /* digital-Icon-$60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 121869AE61C24A028A5A93E0 /* digital-Icon-$60x60@3x.png */; };
+		4CFF631DFD064CD392D8F08C /* digital-Icon-$60x60@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 584C5210CB334DF19D78CADB /* digital-Icon-$60x60@2x~ipad.png */; };
+		376932FD57EF46B59E8F39E7 /* digital-Icon-$60x60@3x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = DB3B923B9A324F3ABC00A717 /* digital-Icon-$60x60@3x~ipad.png */; };
+		90FB812A42914CDF987F2A79 /* original-Icon-$60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 149D1416EF164A998AD0AFF3 /* original-Icon-$60x60@2x.png */; };
+		E2245EA6B1B44B59BAB42936 /* original-Icon-$60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = B1D7F140492B440D892CD0BF /* original-Icon-$60x60@3x.png */; };
+		9AD1B7A3473E4DED9448E70E /* original-Icon-$60x60@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 91CE158559C841AFB4D749A9 /* original-Icon-$60x60@2x~ipad.png */; };
+		C263348587A541EFA32C81CB /* original-Icon-$60x60@3x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 0034ED89F95F4B0B993F62EC /* original-Icon-$60x60@3x~ipad.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +53,22 @@
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-6pm/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		202BD4B7E2554DAAA50DC6AB /* dark-Icon-$60x60@2x.png */ = {isa = PBXFileReference; name = "dark-Icon-$60x60@2x.png"; path = "6pm/DynamicAppIcons/dark-Icon-$60x60@2x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		95BD5C94DBA14C63A4E45609 /* dark-Icon-$60x60@3x.png */ = {isa = PBXFileReference; name = "dark-Icon-$60x60@3x.png"; path = "6pm/DynamicAppIcons/dark-Icon-$60x60@3x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		53BF9606B84F4874B1F6DAAD /* dark-Icon-$60x60@2x~ipad.png */ = {isa = PBXFileReference; name = "dark-Icon-$60x60@2x~ipad.png"; path = "6pm/DynamicAppIcons/dark-Icon-$60x60@2x~ipad.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		6C71BD1F231C4FEBB5BFDA55 /* dark-Icon-$60x60@3x~ipad.png */ = {isa = PBXFileReference; name = "dark-Icon-$60x60@3x~ipad.png"; path = "6pm/DynamicAppIcons/dark-Icon-$60x60@3x~ipad.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EB4412274E6C4A329E6248A9 /* light-Icon-$60x60@2x.png */ = {isa = PBXFileReference; name = "light-Icon-$60x60@2x.png"; path = "6pm/DynamicAppIcons/light-Icon-$60x60@2x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4625994F0C724BF5826845CB /* light-Icon-$60x60@3x.png */ = {isa = PBXFileReference; name = "light-Icon-$60x60@3x.png"; path = "6pm/DynamicAppIcons/light-Icon-$60x60@3x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		8FE24D9D501E489BAB4EC695 /* light-Icon-$60x60@2x~ipad.png */ = {isa = PBXFileReference; name = "light-Icon-$60x60@2x~ipad.png"; path = "6pm/DynamicAppIcons/light-Icon-$60x60@2x~ipad.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		A99583C5F58847C7B4C72027 /* light-Icon-$60x60@3x~ipad.png */ = {isa = PBXFileReference; name = "light-Icon-$60x60@3x~ipad.png"; path = "6pm/DynamicAppIcons/light-Icon-$60x60@3x~ipad.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		96B18405541E43DBAFC2B684 /* digital-Icon-$60x60@2x.png */ = {isa = PBXFileReference; name = "digital-Icon-$60x60@2x.png"; path = "6pm/DynamicAppIcons/digital-Icon-$60x60@2x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		121869AE61C24A028A5A93E0 /* digital-Icon-$60x60@3x.png */ = {isa = PBXFileReference; name = "digital-Icon-$60x60@3x.png"; path = "6pm/DynamicAppIcons/digital-Icon-$60x60@3x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		584C5210CB334DF19D78CADB /* digital-Icon-$60x60@2x~ipad.png */ = {isa = PBXFileReference; name = "digital-Icon-$60x60@2x~ipad.png"; path = "6pm/DynamicAppIcons/digital-Icon-$60x60@2x~ipad.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		DB3B923B9A324F3ABC00A717 /* digital-Icon-$60x60@3x~ipad.png */ = {isa = PBXFileReference; name = "digital-Icon-$60x60@3x~ipad.png"; path = "6pm/DynamicAppIcons/digital-Icon-$60x60@3x~ipad.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		149D1416EF164A998AD0AFF3 /* original-Icon-$60x60@2x.png */ = {isa = PBXFileReference; name = "original-Icon-$60x60@2x.png"; path = "6pm/DynamicAppIcons/original-Icon-$60x60@2x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B1D7F140492B440D892CD0BF /* original-Icon-$60x60@3x.png */ = {isa = PBXFileReference; name = "original-Icon-$60x60@3x.png"; path = "6pm/DynamicAppIcons/original-Icon-$60x60@3x.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		91CE158559C841AFB4D749A9 /* original-Icon-$60x60@2x~ipad.png */ = {isa = PBXFileReference; name = "original-Icon-$60x60@2x~ipad.png"; path = "6pm/DynamicAppIcons/original-Icon-$60x60@2x~ipad.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		0034ED89F95F4B0B993F62EC /* original-Icon-$60x60@3x~ipad.png */ = {isa = PBXFileReference; name = "original-Icon-$60x60@3x~ipad.png"; path = "6pm/DynamicAppIcons/original-Icon-$60x60@3x~ipad.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +97,7 @@
 				7B5A0026D5DB42999CBC28FE /* noop-file.swift */,
 				4540C642BA1A497BB5E0BF0B /* 6pm-Bridging-Header.h */,
 				82965772011B75850F546AE9 /* PrivacyInfo.xcprivacy */,
+				CB8E79DF79AB447E92B6ADBE /* DynamicAppIcons */,
 			);
 			name = 6pm;
 			sourceTree = "<group>";
@@ -143,6 +176,30 @@
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
+		CB8E79DF79AB447E92B6ADBE /* DynamicAppIcons */ = {
+			isa = "PBXGroup";
+			children = (
+				202BD4B7E2554DAAA50DC6AB /* dark-Icon-$60x60@2x.png */,
+				95BD5C94DBA14C63A4E45609 /* dark-Icon-$60x60@3x.png */,
+				53BF9606B84F4874B1F6DAAD /* dark-Icon-$60x60@2x~ipad.png */,
+				6C71BD1F231C4FEBB5BFDA55 /* dark-Icon-$60x60@3x~ipad.png */,
+				EB4412274E6C4A329E6248A9 /* light-Icon-$60x60@2x.png */,
+				4625994F0C724BF5826845CB /* light-Icon-$60x60@3x.png */,
+				8FE24D9D501E489BAB4EC695 /* light-Icon-$60x60@2x~ipad.png */,
+				A99583C5F58847C7B4C72027 /* light-Icon-$60x60@3x~ipad.png */,
+				96B18405541E43DBAFC2B684 /* digital-Icon-$60x60@2x.png */,
+				121869AE61C24A028A5A93E0 /* digital-Icon-$60x60@3x.png */,
+				584C5210CB334DF19D78CADB /* digital-Icon-$60x60@2x~ipad.png */,
+				DB3B923B9A324F3ABC00A717 /* digital-Icon-$60x60@3x~ipad.png */,
+				149D1416EF164A998AD0AFF3 /* original-Icon-$60x60@2x.png */,
+				B1D7F140492B440D892CD0BF /* original-Icon-$60x60@3x.png */,
+				91CE158559C841AFB4D749A9 /* original-Icon-$60x60@2x~ipad.png */,
+				0034ED89F95F4B0B993F62EC /* original-Icon-$60x60@3x~ipad.png */,
+			);
+			name = DynamicAppIcons;
+			sourceTree = "<group>";
+			path = "";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -211,6 +268,22 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				DEE1C0AF3858C12C88E3160B /* PrivacyInfo.xcprivacy in Resources */,
+				B913E4B9B07B463B8D74925E /* dark-Icon-$60x60@2x.png in Resources */,
+				F079BC1C2E684D6F8A5086B8 /* dark-Icon-$60x60@3x.png in Resources */,
+				6AB8311E234D4369838B2082 /* dark-Icon-$60x60@2x~ipad.png in Resources */,
+				530D496B809D4A0AB314138B /* dark-Icon-$60x60@3x~ipad.png in Resources */,
+				E7C273776E544BA2AED0DBF0 /* light-Icon-$60x60@2x.png in Resources */,
+				0003FDA534874407A3932074 /* light-Icon-$60x60@3x.png in Resources */,
+				88ED96783BB14D9D835BFC8B /* light-Icon-$60x60@2x~ipad.png in Resources */,
+				02F43DCD5F97485BB39E22E8 /* light-Icon-$60x60@3x~ipad.png in Resources */,
+				3EFDE87D524C41538127AF0D /* digital-Icon-$60x60@2x.png in Resources */,
+				D6AB09DF80344E8CAD81E60D /* digital-Icon-$60x60@3x.png in Resources */,
+				4CFF631DFD064CD392D8F08C /* digital-Icon-$60x60@2x~ipad.png in Resources */,
+				376932FD57EF46B59E8F39E7 /* digital-Icon-$60x60@3x~ipad.png in Resources */,
+				90FB812A42914CDF987F2A79 /* original-Icon-$60x60@2x.png in Resources */,
+				E2245EA6B1B44B59BAB42936 /* original-Icon-$60x60@3x.png in Resources */,
+				9AD1B7A3473E4DED9448E70E /* original-Icon-$60x60@2x~ipad.png in Resources */,
+				C263348587A541EFA32C81CB /* original-Icon-$60x60@3x~ipad.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -593,6 +666,9 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin PBXVariantGroup section */
+/* End PBXVariantGroup section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }

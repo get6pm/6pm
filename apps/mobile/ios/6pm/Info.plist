@@ -10,6 +10,104 @@
     <string>6pm</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundleIcons</key>
+    <dict>
+      <key>CFBundleAlternateIcons</key>
+      <dict>
+        <key>dark</key>
+        <dict>
+          <key>CFBundleIconFiles</key>
+          <array>
+            <string>dark-Icon-$60x60</string>
+          </array>
+          <key>UIPrerenderedIcon</key>
+          <true/>
+        </dict>
+        <key>light</key>
+        <dict>
+          <key>CFBundleIconFiles</key>
+          <array>
+            <string>light-Icon-$60x60</string>
+          </array>
+          <key>UIPrerenderedIcon</key>
+          <true/>
+        </dict>
+        <key>digital</key>
+        <dict>
+          <key>CFBundleIconFiles</key>
+          <array>
+            <string>digital-Icon-$60x60</string>
+          </array>
+          <key>UIPrerenderedIcon</key>
+          <true/>
+        </dict>
+        <key>original</key>
+        <dict>
+          <key>CFBundleIconFiles</key>
+          <array>
+            <string>original-Icon-$60x60</string>
+          </array>
+          <key>UIPrerenderedIcon</key>
+          <false/>
+        </dict>
+      </dict>
+      <key>CFBundlePrimaryIcon</key>
+      <dict>
+        <key>CFBundleIconFiles</key>
+        <array>
+          <string>AppIcon</string>
+        </array>
+      </dict>
+    </dict>
+    <key>CFBundleIcons~ipad</key>
+    <dict>
+      <key>CFBundleAlternateIcons</key>
+      <dict>
+        <key>dark</key>
+        <dict>
+          <key>CFBundleIconFiles</key>
+          <array>
+            <string>dark-Icon-$60x60</string>
+          </array>
+          <key>UIPrerenderedIcon</key>
+          <true/>
+        </dict>
+        <key>light</key>
+        <dict>
+          <key>CFBundleIconFiles</key>
+          <array>
+            <string>light-Icon-$60x60</string>
+          </array>
+          <key>UIPrerenderedIcon</key>
+          <true/>
+        </dict>
+        <key>digital</key>
+        <dict>
+          <key>CFBundleIconFiles</key>
+          <array>
+            <string>digital-Icon-$60x60</string>
+          </array>
+          <key>UIPrerenderedIcon</key>
+          <true/>
+        </dict>
+        <key>original</key>
+        <dict>
+          <key>CFBundleIconFiles</key>
+          <array>
+            <string>original-Icon-$60x60</string>
+          </array>
+          <key>UIPrerenderedIcon</key>
+          <false/>
+        </dict>
+      </dict>
+      <key>CFBundlePrimaryIcon</key>
+      <dict>
+        <key>CFBundleIconFiles</key>
+        <array>
+          <string>AppIcon</string>
+        </array>
+      </dict>
+    </dict>
     <key>CFBundleIdentifier</key>
     <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
     <key>CFBundleInfoDictionaryVersion</key>
@@ -61,6 +159,7 @@
     <string>Allow $(PRODUCT_NAME) accesses your photos for scanning invoices and transactions</string>
     <key>NSUserActivityTypes</key>
     <array>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>

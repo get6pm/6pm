@@ -121,6 +121,10 @@ export default function AuthenticatedLayout() {
           options={{ headerTitle: t(i18n)`Appearance` }}
         />
         <Stack.Screen
+          name="app-icon"
+          options={{ headerTitle: t(i18n)`App icon` }}
+        />
+        <Stack.Screen
           name="wallet/accounts"
           options={{
             headerTitle: t(i18n)`Wallet accounts`,

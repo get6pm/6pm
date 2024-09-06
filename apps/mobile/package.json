@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start -c",
+    "prebuild": "expo prebuild",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
@@ -67,6 +68,7 @@
     "expo-crypto": "~13.0.2",
     "expo-dev-client": "~4.0.25",
     "expo-device": "~6.0.2",
+    "expo-dynamic-app-icon": "github:simonsturge/expo-dynamic-app-icon",
     "expo-file-system": "~17.0.1",
     "expo-font": "~12.0.7",
     "expo-haptics": "~13.0.1",

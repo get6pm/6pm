@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
     },
     "ios": {
       "supportsTablet": true,
@@ -25,7 +25,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#000000"
       },
       "permissions": [
         "android.permission.CAMERA",
@@ -67,6 +67,31 @@
         "expo-local-authentication",
         {
           "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID to secure your account"
+        }
+      ],
+      [
+        "expo-dynamic-app-icon",
+        {
+          "dark": {
+            "image": "./assets/images/app-icons/dark.png",
+            "prerendered": true,
+            "platforms": ["ios", "android"]
+          },
+          "light": {
+            "image": "./assets/images/app-icons/light.png",
+            "prerendered": true,
+            "platforms": ["ios", "android"]
+          },
+          "digital": {
+            "image": "./assets/images/app-icons/digital.png",
+            "prerendered": true,
+            "platforms": ["ios", "android"]
+          },
+          "original": {
+            "image": "./assets/images/app-icons/original.png",
+            "prerendered": false,
+            "platforms": ["ios", "android"]
+          }
         }
       ]
     ],

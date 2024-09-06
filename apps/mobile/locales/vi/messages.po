@@ -22,7 +22,7 @@ msgstr ""
 #~ msgid "{0} left"
 #~ msgstr "{0} còn lại"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:183
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:193
 msgid "{language}"
 msgstr ""
 
@@ -51,7 +51,7 @@ msgstr "<0>Bằng cách tiếp tục, bạn đã hiểu và đồng ý với <1>
 msgid "0.00"
 msgstr ""
 
-#: apps/mobile/app/(app)/paywall.tsx:174
+#: apps/mobile/app/(app)/paywall.tsx:171
 msgid "6 budgets & 6 accounts"
 msgstr "6 ngân sách & 6 tài khoản"
 
@@ -59,7 +59,7 @@ msgstr "6 ngân sách & 6 tài khoản"
 msgid "Account deleted successfully"
 msgstr "Xóa tài khoản thành công"
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:172
+#: apps/mobile/app/(app)/(tabs)/index.tsx:174
 msgid "Add your first transaction here"
 msgstr "Thêm giao dịch đầu tiên ở đây"
 
@@ -67,7 +67,7 @@ msgstr "Thêm giao dịch đầu tiên ở đây"
 msgid "Advanced"
 msgstr "Nâng cao"
 
-#: apps/mobile/app/(app)/paywall.tsx:158
+#: apps/mobile/app/(app)/paywall.tsx:155
 msgid "AI Insights"
 msgstr "Trợ lý AI"
 
@@ -85,7 +85,7 @@ msgstr "Tất cả tài khoản"
 msgid "All entries"
 msgstr "Xem tất cả"
 
-#: apps/mobile/app/(app)/paywall.tsx:179
+#: apps/mobile/app/(app)/paywall.tsx:176
 msgid "All features of growth plan"
 msgstr "Tất cả các tính năng trong gói Phát triển"
 
@@ -105,11 +105,20 @@ msgstr "Có lỗi xảy ra khi xóa giao dịch"
 msgid "An error occurred while updating the transaction"
 msgstr "Có lỗi xảy ra khi cập nhật giao dịch"
 
+#: apps/mobile/app/(app)/_layout.tsx:125
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:179
+msgid "App icon"
+msgstr "Icon ứng dụng"
+
+#: apps/mobile/app/(app)/app-icon.tsx:57
+msgid "App icon updated!"
+msgstr "Đã cập nhật icon ứng dụng!"
+
 #: apps/mobile/components/auth/auth-local.tsx:34
 msgid "App is locked. Please authenticate to continue."
 msgstr "Ứng dụng đã khóa. Vui lòng xác thực để tiếp tục."
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:164
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:165
 msgid "App settings"
 msgstr "Cài đặt ứng dụng"
 
@@ -117,8 +126,8 @@ msgstr "Cài đặt ứng dụng"
 msgid "App theme"
 msgstr "Chủ đề ứng dụng"
 
-#: apps/mobile/app/(app)/_layout.tsx:118
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:169
+#: apps/mobile/app/(app)/_layout.tsx:121
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:170
 msgid "Appearance"
 msgstr "Giao diện"
 
@@ -134,7 +143,7 @@ msgstr "Bạn có chắc chắn muốn xóa danh mục này? Hành động này 
 msgid "Are you sure you want to delete your account? This action cannot be undone."
 msgstr "Bạn có chắc chắn muốn xóa tài khoản của bạn? Hành động này không thể hoàn tác."
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:284
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:294
 msgid "Are you sure you want to sign out?"
 msgstr "Bạn có chắc chắn muốn đăng xuất?"
 
@@ -154,11 +163,11 @@ msgstr "Ảnh đại diện"
 msgid "Balance"
 msgstr "Số dư"
 
-#: apps/mobile/app/(app)/paywall.tsx:93
+#: apps/mobile/app/(app)/paywall.tsx:92
 msgid "Best value"
 msgstr "Ưu đãi nhất"
 
-#: apps/mobile/app/(app)/(tabs)/_layout.tsx:94
+#: apps/mobile/app/(app)/(tabs)/_layout.tsx:77
 msgid "Budgets"
 msgstr "Ngân sách"
 
@@ -178,7 +187,7 @@ msgstr "Theo tuần"
 msgid "Camera permissions are not granted"
 msgstr "Quyền truy cập camera không được cấp"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:286
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:296
 #: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:45
 #: apps/mobile/app/(app)/category/[categoryId].tsx:42
 #: apps/mobile/app/(app)/profile.tsx:120
@@ -202,8 +211,8 @@ msgstr "Không thể xử lý giao dịch"
 msgid "Cannot process image"
 msgstr "Không thể xử lý hình ảnh"
 
-#: apps/mobile/app/(app)/_layout.tsx:150
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:130
+#: apps/mobile/app/(app)/_layout.tsx:157
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:131
 msgid "Categories"
 msgstr "Danh mục"
 
@@ -219,11 +228,15 @@ msgstr "Tên danh mục"
 msgid "Choose a preferred theme for the 6pm"
 msgstr "Chọn chủ đề giao diện cho 6pm"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:155
+#: apps/mobile/app/(app)/app-icon.tsx:88
+msgid "Choose your preferred app icon"
+msgstr "Chọn app icon cho 6pm"
+
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:156
 msgid "Coming soon"
 msgstr "Sắp xong"
 
-#: apps/mobile/app/(app)/paywall.tsx:201
+#: apps/mobile/app/(app)/paywall.tsx:198
 msgid "Complete control over your finances"
 msgstr "Toàn quyền quản lý tài chính với 6pm Pro"
 
@@ -235,7 +248,7 @@ msgstr "Tiếp tục"
 msgid "Continue with Email"
 msgstr "Tiếp tục với Email"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:75
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:76
 msgid "Copied version to clipboard"
 msgstr "Đã sao chép số phiên bản"
 
@@ -259,7 +272,7 @@ msgstr "Vùng nguy hiểm"
 msgid "Dark"
 msgstr "Tối"
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:171
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:174
 #: apps/mobile/components/budget/select-budget-type-field.tsx:57
 msgid "Debt"
 msgstr "Nợ"
@@ -293,11 +306,11 @@ msgstr "Xóa tài khoản ví sẽ cũng xóa tất cả các giao dịch liên 
 msgid "Display name"
 msgstr "Tên hiển thị"
 
-#: apps/mobile/app/(app)/_layout.tsx:144
+#: apps/mobile/app/(app)/_layout.tsx:151
 msgid "Edit account"
 msgstr "Chỉnh sửa tài khoản"
 
-#: apps/mobile/app/(app)/_layout.tsx:171
+#: apps/mobile/app/(app)/_layout.tsx:178
 msgid "Edit category"
 msgstr "Chỉnh sửa danh mục"
 
@@ -342,7 +355,7 @@ msgstr "Chi tiêu"
 msgid "Family budget"
 msgstr "Ngân sách gia đình"
 
-#: apps/mobile/app/(app)/_layout.tsx:106
+#: apps/mobile/app/(app)/_layout.tsx:109
 msgid "Feedback"
 msgstr "Phản hồi"
 
@@ -350,11 +363,11 @@ msgstr "Phản hồi"
 msgid "From date"
 msgstr "Từ ngày"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:116
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:117
 msgid "General"
 msgstr "Chung"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:104
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:105
 msgid "Get 6pm Pro"
 msgstr "Nâng Cấp 6pm Pro"
 
@@ -366,12 +379,12 @@ msgstr "Bắt đầu bằng cách đặt ngân sách hàng tháng của bạn."
 msgid "Grant camera permissions"
 msgstr "Cấp quyền truy cập camera"
 
-#: apps/mobile/app/(app)/paywall.tsx:224
+#: apps/mobile/app/(app)/paywall.tsx:221
 #: apps/mobile/components/setting/profile-card.tsx:177
 msgid "Growth"
 msgstr "Phát triển"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:81
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:82
 msgid "Hi there! I'm using 6pm to manage my expenses and budgets. Feel free to give it a try and let me know what you think. https://get6pm.com"
 msgstr "Tôi đang dùng 6pm để quản lý chi tiêu và ngân sách của mình. Hãy dùng thử và cho tôi biết bạn thấy thế nào nhé: https://get6pm.com"
 
@@ -387,7 +400,7 @@ msgstr "Thu nhập"
 msgid "Incomes"
 msgstr "Thu nhập"
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:170
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:173
 #: apps/mobile/components/budget/select-budget-type-field.tsx:52
 msgid "Investing"
 msgstr "Đầu tư"
@@ -396,8 +409,8 @@ msgstr "Đầu tư"
 msgid "Keeping up with your spending and budgets."
 msgstr "Theo dõi kịp tình hình chi tiêu và ngân sách."
 
-#: apps/mobile/app/(app)/_layout.tsx:92
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:178
+#: apps/mobile/app/(app)/_layout.tsx:95
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:188
 msgid "Language"
 msgstr "Ngôn ngữ"
 
@@ -417,7 +430,7 @@ msgstr "Sáng"
 msgid "Login using FaceID"
 msgstr "Đăng nhập bằng FaceID"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:151
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:152
 msgid "Magic inbox"
 msgstr "Hộp thư ma thuật"
 
@@ -429,19 +442,19 @@ msgstr "Hàng tháng"
 msgid "Monthly budget"
 msgstr "Ngân sách tháng"
 
-#: apps/mobile/app/(app)/paywall.tsx:105
+#: apps/mobile/app/(app)/paywall.tsx:104
 msgid "months"
 msgstr "tháng"
 
-#: apps/mobile/app/(app)/paywall.tsx:181
+#: apps/mobile/app/(app)/paywall.tsx:178
 msgid "Most advanced financial AI assistant"
 msgstr "Trợ lý AI mạnh mẽ nhất"
 
-#: apps/mobile/app/(app)/paywall.tsx:162
+#: apps/mobile/app/(app)/paywall.tsx:159
 msgid "Multi-currencies"
 msgstr "Quy đổi tiền tệ"
 
-#: apps/mobile/app/(app)/paywall.tsx:175
+#: apps/mobile/app/(app)/paywall.tsx:172
 msgid "Multi-currencies & customizations"
 msgstr "Quy đổi tiền tệ & tùy chỉnh tối đa"
 
@@ -463,21 +476,21 @@ msgstr "Âm nếu số dư tài khoản dưới 0"
 msgid "New {0}"
 msgstr "Tạo mới {0}"
 
-#: apps/mobile/app/(app)/_layout.tsx:137
+#: apps/mobile/app/(app)/_layout.tsx:144
 #: apps/mobile/app/(app)/wallet/accounts.tsx:26
 msgid "New account"
 msgstr "Tạo tài khoản mới"
 
-#: apps/mobile/app/(app)/_layout.tsx:178
-#: apps/mobile/app/(app)/(tabs)/_layout.tsx:116
+#: apps/mobile/app/(app)/_layout.tsx:185
+#: apps/mobile/app/(app)/(tabs)/_layout.tsx:88
 msgid "New budget"
 msgstr "Tạo ngân sách"
 
-#: apps/mobile/app/(app)/_layout.tsx:164
+#: apps/mobile/app/(app)/_layout.tsx:171
 msgid "New category"
 msgstr "Tạo danh mục mới"
 
-#: apps/mobile/app/(app)/paywall.tsx:140
+#: apps/mobile/app/(app)/paywall.tsx:137
 msgid "No active subscriptions found"
 msgstr "Không tìm thấy gói đăng ký nào!"
 
@@ -485,7 +498,7 @@ msgstr "Không tìm thấy gói đăng ký nào!"
 msgid "No budget selected"
 msgstr "Chọn ngân sách"
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:160
+#: apps/mobile/app/(app)/(tabs)/index.tsx:162
 msgid "No transactions"
 msgstr "Không có giao dịch"
 
@@ -493,7 +506,7 @@ msgstr "Không có giao dịch"
 #~ msgid "No transactions found"
 #~ msgstr "Không tìm thấy giao dịch"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:226
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:236
 msgid "Others"
 msgstr "Khác"
 
@@ -517,8 +530,8 @@ msgstr "Ngày bắt đầu"
 msgid "Positive"
 msgstr "Dương"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:241
-#: apps/mobile/app/(app)/paywall.tsx:272
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:251
+#: apps/mobile/app/(app)/paywall.tsx:269
 msgid "Privacy policy"
 msgstr "Chính sách bảo mật"
 
@@ -534,7 +547,7 @@ msgstr "Đang xử lý giao dịch..."
 msgid "Processing..."
 msgstr "Đang xử lý..."
 
-#: apps/mobile/app/(app)/_layout.tsx:99
+#: apps/mobile/app/(app)/_layout.tsx:102
 msgid "Profile"
 msgstr "Hồ sơ"
 
@@ -542,27 +555,27 @@ msgstr "Hồ sơ"
 msgid "Profile updated successfully"
 msgstr "Cập nhật hồ sơ thành công"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:274
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:284
 msgid "Proudly open source"
 msgstr "Mã nguồn mở"
 
-#: apps/mobile/app/(app)/paywall.tsx:136
+#: apps/mobile/app/(app)/paywall.tsx:133
 msgid "Purchases restored successfully!"
 msgstr "Khôi phục gói đăng ký thành công!"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:193
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:203
 msgid "Push notifications"
 msgstr "Thông báo đẩy"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:215
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:225
 msgid "Push notifications are disabled"
 msgstr "Thông báo đẩy bị vô hiệu hóa"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:213
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:223
 msgid "Push notifications are enabled"
 msgstr "Thông báo đẩy đã được bật"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:209
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:219
 msgid "Push notifications are not enabled"
 msgstr "Thông báo đẩy chưa được bật"
 
@@ -578,7 +591,7 @@ msgstr "Hàng quý"
 msgid "Report a bug, request a feature, or just say hi!"
 msgstr "Báo lỗi, yêu cầu tính năng mới, hoặc chỉ gửi một lời chào!"
 
-#: apps/mobile/app/(app)/paywall.tsx:267
+#: apps/mobile/app/(app)/paywall.tsx:264
 msgid "Restore purchases"
 msgstr "Khôi phục gói đăng ký"
 
@@ -594,8 +607,8 @@ msgstr "Doanh thu tháng này"
 msgid "Revenue this week"
 msgstr "Doanh thu tuần này"
 
-#: apps/mobile/app/(app)/_layout.tsx:78
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:139
+#: apps/mobile/app/(app)/_layout.tsx:81
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:140
 msgid "Review transactions"
 msgstr "Giao dịch chờ duyệt"
 
@@ -616,7 +629,7 @@ msgstr "Lưu thay đổi"
 msgid "Saver"
 msgstr "Cơ bản"
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:169
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:172
 #: apps/mobile/components/budget/select-budget-type-field.tsx:47
 msgid "Saving"
 msgstr "Đang lưu"
@@ -629,11 +642,11 @@ msgstr "Đang lưu"
 msgid "Search currency..."
 msgstr "Tìm kiếm đơn vị..."
 
-#: apps/mobile/app/(app)/paywall.tsx:166
+#: apps/mobile/app/(app)/paywall.tsx:163
 msgid "Security"
 msgstr "Bảo mật"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:231
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:241
 msgid "Seed transactions"
 msgstr "Tạo giao dịch mẫu"
 
@@ -653,7 +666,7 @@ msgstr "Chọn loại ngân sách"
 msgid "Select period type"
 msgstr "Chọn loại chu kỳ"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:250
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:260
 #: apps/mobile/app/(app)/feedback.tsx:69
 msgid "Send feedback"
 msgstr "Gửi phản hồi"
@@ -674,11 +687,11 @@ msgstr "Đặt Ngân Sách Tháng"
 msgid "Set your monthly spending goal"
 msgstr "Đặt mục tiêu chi tiêu hàng tháng"
 
-#: apps/mobile/app/(app)/(tabs)/_layout.tsx:134
+#: apps/mobile/app/(app)/(tabs)/_layout.tsx:106
 msgid "Settings"
 msgstr "Cài đặt"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:266
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:276
 msgid "Share with friends"
 msgstr "Chia sẻ với bạn bè"
 
@@ -694,8 +707,8 @@ msgstr "Tiếp tục với Apple"
 msgid "Sign in with Google"
 msgstr "Tiếp tục với Google"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:290
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:303
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:300
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:313
 msgid "Sign out"
 msgstr "Đăng xuất"
 
@@ -711,7 +724,7 @@ msgstr "Có lỗi xảy ra. Vui lòng thử lại."
 msgid "Specific dates"
 msgstr "Ngày cụ thể"
 
-#: apps/mobile/app/(app)/(tabs)/budgets.tsx:168
+#: apps/mobile/app/(app)/(tabs)/budgets.tsx:171
 #: apps/mobile/components/budget/select-budget-type-field.tsx:42
 msgid "Spending"
 msgstr "Chi tiêu"
@@ -760,7 +773,7 @@ msgstr "Điều khoản sử dụng"
 msgid "Thank you for your feedback!"
 msgstr "Cảm ơn phản hồi của bạn!"
 
-#: apps/mobile/app/(app)/paywall.tsx:129
+#: apps/mobile/app/(app)/paywall.tsx:126
 msgid "Thank you! You have unlocked 6pm Pro!"
 msgstr "Cảm ơn! Bạn đã mở khóa 6pm Pro!"
 
@@ -825,15 +838,15 @@ msgstr "Đã hiểu"
 msgid "Unknown error"
 msgstr "Lỗi không xác định"
 
-#: apps/mobile/app/(app)/paywall.tsx:154
+#: apps/mobile/app/(app)/paywall.tsx:151
 msgid "Unlimited"
 msgstr "Không giới hạn"
 
-#: apps/mobile/app/(app)/paywall.tsx:180
+#: apps/mobile/app/(app)/paywall.tsx:177
 msgid "Unlimited budgets & accounts"
 msgstr "Không giới hạn ngân sách & tài khoản"
 
-#: apps/mobile/app/(app)/paywall.tsx:173
+#: apps/mobile/app/(app)/paywall.tsx:170
 msgid "Unlimited transactions & categories"
 msgstr "Không giới hạn giao dịch & danh mục"
 
@@ -841,19 +854,19 @@ msgstr "Không giới hạn giao dịch & danh mục"
 msgid "Unlock"
 msgstr "Mở khóa"
 
-#: apps/mobile/app/(app)/paywall.tsx:262
+#: apps/mobile/app/(app)/paywall.tsx:259
 msgid "Unlock 6pm Pro"
 msgstr "Mở khóa 6pm Pro"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:107
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:108
 msgid "Unlocks full AI power and more!"
 msgstr "Mở khóa sức mạnh AI và các tính năng khác!"
 
-#: apps/mobile/app/(app)/paywall.tsx:172
+#: apps/mobile/app/(app)/paywall.tsx:169
 msgid "Up to 10 AI transactions per day"
 msgstr "Tối đa 10 giao dịch AI mỗi ngày"
 
-#: apps/mobile/app/(app)/paywall.tsx:178
+#: apps/mobile/app/(app)/paywall.tsx:175
 msgid "Up to 25 AI transactions per day"
 msgstr "Tối đa 25 giao dịch AI mỗi ngày"
 
@@ -861,7 +874,7 @@ msgstr "Tối đa 25 giao dịch AI mỗi ngày"
 msgid "Upload new photo"
 msgstr "Tải lên ảnh mới"
 
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:316
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:326
 msgid "ver."
 msgstr ""
 
@@ -881,8 +894,8 @@ msgstr "Đang chờ duyệt"
 msgid "Wallet account name"
 msgstr "Tên tài khoản ví"
 
-#: apps/mobile/app/(app)/_layout.tsx:123
-#: apps/mobile/app/(app)/(tabs)/settings.tsx:121
+#: apps/mobile/app/(app)/_layout.tsx:130
+#: apps/mobile/app/(app)/(tabs)/settings.tsx:122
 msgid "Wallet accounts"
 msgstr "Quản lý tài khoản ví"
 
@@ -890,7 +903,7 @@ msgstr "Quản lý tài khoản ví"
 msgid "Wallet Accounts"
 msgstr "Các tài khoản"
 
-#: apps/mobile/app/(app)/paywall.tsx:227
+#: apps/mobile/app/(app)/paywall.tsx:224
 #: apps/mobile/components/setting/profile-card.tsx:175
 msgid "Wealth"
 msgstr "Thịnh vượng"

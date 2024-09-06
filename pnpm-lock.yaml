@@ -252,6 +252,9 @@ importers:
       expo-device:
         specifier: ~6.0.2
         version: 6.0.2(expo@51.0.31(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2)))
+      expo-dynamic-app-icon:
+        specifier: github:simonsturge/expo-dynamic-app-icon
+        version: https://codeload.github.com/simonsturge/expo-dynamic-app-icon/tar.gz/0dab95d3cae0269c2e59e3f94d7b29d4bfd78a6e(expo@51.0.31(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2)))(react-native@0.74.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1)
       expo-file-system:
         specifier: ~17.0.1
         version: 17.0.1(expo@51.0.31(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2)))
@@ -4130,6 +4133,14 @@ packages:
     resolution: {integrity: sha512-sCt91CuTmAuMXX4SlFOn4lIos2UIr8vb0jDstDDZXys6kErcj0uynC7bQAMreU5uRUTKMAl4MAMpKt9ufCXPBw==}
     peerDependencies:
       expo: '*'
+
+  expo-dynamic-app-icon@https://codeload.github.com/simonsturge/expo-dynamic-app-icon/tar.gz/0dab95d3cae0269c2e59e3f94d7b29d4bfd78a6e:
+    resolution: {tarball: https://codeload.github.com/simonsturge/expo-dynamic-app-icon/tar.gz/0dab95d3cae0269c2e59e3f94d7b29d4bfd78a6e}
+    version: 1.2.0
+    peerDependencies:
+      expo: '>=49'
+      react: '*'
+      react-native: '*'
 
   expo-eas-client@0.12.0:
     resolution: {integrity: sha512-Jkww9Cwpv0z7DdLYiRX0r4fqBEcI9cKqTn7cHx63S09JaZ2rcwEE4zYHgrXwjahO+tU2VW8zqH+AJl6RhhW4zA==}
@@ -12203,6 +12214,12 @@ snapshots:
     dependencies:
       expo: 51.0.31(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))
       ua-parser-js: 0.7.38
+
+  expo-dynamic-app-icon@https://codeload.github.com/simonsturge/expo-dynamic-app-icon/tar.gz/0dab95d3cae0269c2e59e3f94d7b29d4bfd78a6e(expo@51.0.31(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2)))(react-native@0.74.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      expo: 51.0.31(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))
+      react: 18.3.1
+      react-native: 0.74.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.3.1)
 
   expo-eas-client@0.12.0: {}
 

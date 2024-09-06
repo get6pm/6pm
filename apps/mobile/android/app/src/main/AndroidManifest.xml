@@ -36,5 +36,61 @@
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>
+    <activity-alias android:name="ai.sixpm.app.MainActivitydark" android:enabled="false" android:exported="true" android:icon="@mipmap/dark" android:targetActivity=".MainActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="sixpm"/>
+        <data android:scheme="ai.sixpm.app"/>
+        <data android:scheme="exp+6pm"/>
+      </intent-filter>
+    </activity-alias>
+    <activity-alias android:name="ai.sixpm.app.MainActivitylight" android:enabled="false" android:exported="true" android:icon="@mipmap/light" android:targetActivity=".MainActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="sixpm"/>
+        <data android:scheme="ai.sixpm.app"/>
+        <data android:scheme="exp+6pm"/>
+      </intent-filter>
+    </activity-alias>
+    <activity-alias android:name="ai.sixpm.app.MainActivitydigital" android:enabled="false" android:exported="true" android:icon="@mipmap/digital" android:targetActivity=".MainActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="sixpm"/>
+        <data android:scheme="ai.sixpm.app"/>
+        <data android:scheme="exp+6pm"/>
+      </intent-filter>
+    </activity-alias>
+    <activity-alias android:name="ai.sixpm.app.MainActivityoriginal" android:enabled="false" android:exported="true" android:icon="@mipmap/original" android:targetActivity=".MainActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="sixpm"/>
+        <data android:scheme="ai.sixpm.app"/>
+        <data android:scheme="exp+6pm"/>
+      </intent-filter>
+    </activity-alias>
   </application>
 </manifest>

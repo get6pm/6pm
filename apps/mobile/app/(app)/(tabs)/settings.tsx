@@ -37,6 +37,7 @@ import {
   LockKeyholeIcon,
   LogOutIcon,
   MessageSquareQuoteIcon,
+  PencilRulerIcon,
   ScrollTextIcon,
   ShapesIcon,
   Share2Icon,
@@ -168,6 +169,15 @@ export default function SettingsScreen() {
               <MenuItem
                 label={t(i18n)`Appearance`}
                 icon={SwatchBookIcon}
+                rightSection={
+                  <ChevronRightIcon className="h-5 w-5 text-primary" />
+                }
+              />
+            </Link>
+            <Link href="/app-icon" asChild>
+              <MenuItem
+                label={t(i18n)`App icon`}
+                icon={PencilRulerIcon}
                 rightSection={
                   <ChevronRightIcon className="h-5 w-5 text-primary" />
                 }

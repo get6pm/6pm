@@ -37,6 +37,7 @@ function TabBarItem({
       accessibilityState={focused ? { selected: true } : {}}
       accessibilityLabel={options.tabBarAccessibilityLabel}
       className={'h-12 w-12 items-center justify-center'}
+      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
       {...props}
     >
       <Icon
@@ -61,6 +62,7 @@ function NewRecordButton() {
         className={cn(
           'h-12 w-12 items-center justify-center rounded-xl border border-border bg-muted active:bg-muted/75',
         )}
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
       >
         <PlusIcon className="size-6 text-foreground" />
       </Button>
@@ -74,7 +76,7 @@ const TAB_BAR_ICONS = {
   settings: CogIcon,
 }
 
-const TAB_BAR_ITEM_WIDTH = (3 + 0.75) * rem.get()
+const TAB_BAR_ITEM_WIDTH = (3 + 1) * rem.get()
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const tabIndicatorPosition = useSharedValue(0)
@@ -89,43 +91,48 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         style={[animatedStyle]}
         className="absolute left-2 h-12 w-12 rounded-xl bg-primary"
       />
-      {state.routes.map((route, index) => {
-        function onPress() {
-          Haptics.selectionAsync()
+      <View className="flex-row items-center gap-4">
+        {state.routes.map((route, index) => {
+          function onPress() {
+            Haptics.selectionAsync()
 
-          tabIndicatorPosition.value = withTiming(index * TAB_BAR_ITEM_WIDTH, {
-            duration: 300,
-          })
+            tabIndicatorPosition.value = withTiming(
+              index * TAB_BAR_ITEM_WIDTH,
+              {
+                duration: 300,
+              },
+            )
 
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          })
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true,
+            })
 
-          if (state.index !== index && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params)
+            if (state.index !== index && !event.defaultPrevented) {
+              navigation.navigate(route.name, route.params)
+            }
           }
-        }
 
-        function onLongPress() {
-          navigation.emit({
-            type: 'tabLongPress',
-            target: route.key,
-          })
-        }
+          function onLongPress() {
+            navigation.emit({
+              type: 'tabLongPress',
+              target: route.key,
+            })
+          }
 
-        return (
-          <TabBarItem
-            key={route.key}
-            icon={TAB_BAR_ICONS[route.name as keyof typeof TAB_BAR_ICONS]}
-            focused={state.index === index}
-            descriptor={descriptors[route.key]}
-            onPress={onPress}
-            onLongPress={onLongPress}
-          />
-        )
-      })}
+          return (
+            <TabBarItem
+              key={route.key}
+              icon={TAB_BAR_ICONS[route.name as keyof typeof TAB_BAR_ICONS]}
+              focused={state.index === index}
+              descriptor={descriptors[route.key]}
+              onPress={onPress}
+              onLongPress={onLongPress}
+            />
+          )
+        })}
+      </View>
       <Separator orientation="vertical" className="h-8" />
       <NewRecordButton />
     </View>

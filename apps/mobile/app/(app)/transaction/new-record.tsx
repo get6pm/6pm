@@ -84,7 +84,7 @@ export default function NewRecordScreen() {
           }}
           className="w-[160px]"
         >
-          <TabsList className="border border-border">
+          <TabsList className="border border-border dark:border-background/20">
             <TabsTrigger value="0">
               <KeyboardIcon className="!text-primary size-6" />
             </TabsTrigger>

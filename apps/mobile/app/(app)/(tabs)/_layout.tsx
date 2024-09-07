@@ -76,9 +76,6 @@ export default function TabLayout() {
         options={{
           headerTitle: t(i18n)`Budgets`,
           headerTitleStyle: {
-            fontFamily: 'Inter Medium',
-            fontSize: 16,
-            color: theme[colorScheme ?? 'light'].primary,
             marginLeft: 5,
           },
           headerRight: () => (

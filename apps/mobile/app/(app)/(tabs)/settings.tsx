@@ -99,12 +99,12 @@ export default function SettingsScreen() {
         <ProfileCard />
         {!isPro && (
           <Link href="/paywall" asChild>
-            <Button className="!px-4 !h-14 mx-6 justify-between">
+            <Button className="!px-4 !h-16 mx-6 justify-between border border-muted-foreground/20 bg-muted">
               <View>
-                <Text className="!text-base font-semibold">
+                <Text className="!text-lg font-semibold text-foreground">
                   {t(i18n)`Get 6pm Pro`}
                 </Text>
-                <Text className="!text-xs font-medium opacity-65">
+                <Text className="!text-sm text-muted-foreground">
                   {t(i18n)`Unlocks full AI power and more!`}
                 </Text>
               </View>

@@ -3,7 +3,7 @@ import { useLocale } from '@/locales/provider'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { useRouter } from 'expo-router'
-import { CheckCircleIcon } from 'lucide-react-native'
+import { CheckIcon } from 'lucide-react-native'
 import { ScrollView } from 'react-native'
 
 export default function LanguageScreen() {
@@ -17,7 +17,7 @@ export default function LanguageScreen() {
         label={t(i18n)`English`}
         rightSection={
           language === 'en' && (
-            <CheckCircleIcon className="h-5 w-5 text-primary" />
+            <CheckIcon className="size-6 text-amount-positive" />
           )
         }
         onPress={() => {
@@ -29,7 +29,7 @@ export default function LanguageScreen() {
         label={t(i18n)`Vietnamese`}
         rightSection={
           language === 'vi' && (
-            <CheckCircleIcon className="h-5 w-5 text-primary" />
+            <CheckIcon className="size-6 text-amount-positive" />
           )
         }
         onPress={() => {

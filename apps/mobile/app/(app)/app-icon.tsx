@@ -7,7 +7,7 @@ import { useLingui } from '@lingui/react'
 import { getAppIcon, setAppIcon } from 'expo-dynamic-app-icon'
 import * as Haptics from 'expo-haptics'
 import { useRouter } from 'expo-router'
-import { CheckIcon, LockIcon } from 'lucide-react-native'
+import { CheckIcon, LockKeyholeIcon } from 'lucide-react-native'
 import { useState } from 'react'
 import { FlatList, Image, Pressable, View } from 'react-native'
 
@@ -56,7 +56,7 @@ export default function AppearanceScreen() {
           setSelected(item.name)
           toast.success(t(i18n)`App icon updated!`)
         }}
-        className="flex-1 flex-row items-center justify-center gap-4 rounded-lg bg-card px-6 py-2 active:bg-muted/50"
+        className="flex-1 flex-row items-center justify-center gap-4 bg-card px-6 py-2 active:bg-muted/50"
       >
         <View className="flex-1 flex-row items-center gap-4">
           <Image
@@ -71,7 +71,7 @@ export default function AppearanceScreen() {
           <CheckIcon className="size-6 text-amount-positive" />
         ) : item.pro && !isPro ? (
           <Badge variant="secondary" className="py-1.5">
-            <LockIcon className="size-4 text-primary" />
+            <LockKeyholeIcon className="size-4 text-primary" />
           </Badge>
         ) : null}
       </Pressable>

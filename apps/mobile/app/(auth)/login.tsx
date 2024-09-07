@@ -23,6 +23,7 @@ export default function LoginScreen() {
       contentContainerClassName="gap-4 p-8"
       automaticallyAdjustKeyboardInsets
       keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
     >
       <Trans>
         <View className="gap-4">

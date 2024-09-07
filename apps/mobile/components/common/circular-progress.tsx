@@ -117,7 +117,7 @@ export function CircularProgress({
         />
       </Svg>
       <View
-        className="items-center justify-center"
+        className="z-10 items-center justify-center"
         style={[
           {
             top: strokeWidth,
@@ -130,8 +130,14 @@ export function CircularProgress({
         ]}
       >
         <Text
-          className="font-bold font-mono text-sm"
-          style={{ color: strokeColor }}
+          className={'font-bold font-mono text-primary text-sm'}
+          style={
+            strokeColor
+              ? {
+                  color: strokeColor,
+                }
+              : {}
+          }
         >
           {Math.round(progress)}%
         </Text>

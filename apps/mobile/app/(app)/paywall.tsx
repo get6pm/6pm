@@ -4,7 +4,10 @@ import { PaywallIllustration } from '@/components/svg-assets/paywall-illustratio
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Text } from '@/components/ui/text'
-import { usePurchasesPackages } from '@/hooks/use-purchases'
+import {
+  usePurchasesPackages,
+  useUserEntitlements,
+} from '@/hooks/use-purchases'
 import { cn } from '@/lib/utils'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -118,20 +121,24 @@ export default function PaywallScreen() {
   const [plan, setPlan] = useState<'growth' | 'wealth'>('growth')
   const [duration, setDuration] = useState<'monthly' | 'annually'>('annually')
   const { data } = usePurchasesPackages()
+  const { refetch } = useUserEntitlements()
   const router = useRouter()
   const { mutateAsync, isPending } = useMutation({
     mutationFn: Purchases.purchasePackage,
     onSuccess() {
+      refetch()
       router.back()
       toast.success(t(i18n)`Thank you! You have unlocked 6pm Pro!`)
     },
     onError() {
+      refetch()
       //
     },
   })
   const { mutateAsync: mutateRestore, isPending: isRestoring } = useMutation({
     mutationFn: Purchases.restorePurchases,
     onSuccess(result) {
+      refetch()
       if (Object.keys(result.entitlements.active).length) {
         toast.success(t(i18n)`Purchases restored successfully!`)
         router.back()
@@ -141,6 +148,7 @@ export default function PaywallScreen() {
       }
     },
     onError(error) {
+      refetch()
       toast.error(error.message)
     },
   })

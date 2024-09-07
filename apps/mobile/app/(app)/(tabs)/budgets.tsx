@@ -1,10 +1,13 @@
 import { BudgetItem } from '@/components/budget/budget-item'
 import { BudgetStatistic } from '@/components/budget/budget-statistic'
 import { BurndownChart } from '@/components/budget/burndown-chart'
+import { Button } from '@/components/ui/button'
 // import { Toolbar } from '@/components/common/toolbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Text } from '@/components/ui/text'
+import { useUserEntitlements } from '@/hooks/use-purchases'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import { ENTILEMENT_LIMIT } from '@/lib/constaints'
 import { theme } from '@/lib/theme'
 import { useBudgetList } from '@/stores/budget/hooks'
 import { useTransactionList } from '@/stores/transaction/hooks'
@@ -13,7 +16,10 @@ import type { Budget, BudgetPeriodConfig } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { LinearGradient } from 'expo-linear-gradient'
+import { Link, useNavigation } from 'expo-router'
 import { groupBy, map } from 'lodash-es'
+import { PlusIcon } from 'lucide-react-native'
+import { useEffect } from 'react'
 import { Dimensions, SectionList, View } from 'react-native'
 import Animated, {
   Extrapolation,
@@ -45,6 +51,7 @@ export default function BudgetsScreen() {
   const headerAnimation = useSharedValue(0)
   const scrollY = useSharedValue(0)
   const headerHeight = useSharedValue(height)
+  const navigation = useNavigation()
 
   const dummyHeaderStyle = useAnimatedStyle(() => {
     return {
@@ -136,6 +143,25 @@ export default function BudgetsScreen() {
     isLoading,
     refetch,
   } = useBudgetList()
+
+  const { entilement } = useUserEntitlements()
+
+  const isExceeded =
+    ENTILEMENT_LIMIT[entilement]?.wallets <= (spendingBudgets?.length ?? 0)
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Link href={isExceeded ? '/paywall' : '/budget/new-budget'} asChild>
+          <Button size="sm" variant="secondary" className="mr-6 h-10">
+            <PlusIcon className="size-6 text-primary" />
+            <Text>{t(i18n)`New budget`}</Text>
+          </Button>
+        </Link>
+      ),
+    })
+  }, [isExceeded])
 
   const { transactions } = useTransactionList({
     from: dayjsExtended().startOf('month').toDate(),

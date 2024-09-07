@@ -174,9 +174,13 @@ export default function NewRecordScreen() {
         <View style={{ width }}>
           <Scanner
             onScanStart={() => {
+              router.back()
               toast.success(t(i18n)`Transaction added to processing queue`)
             }}
             shouldRender={page === 1}
+            onLimitExceeded={() => {
+              router.push('/paywall')
+            }}
           />
         </View>
       </ScrollView>

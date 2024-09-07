@@ -1,13 +1,10 @@
 import { TabBar } from '@/components/common/tab-bar'
-import { Button } from '@/components/ui/button'
-import { Text } from '@/components/ui/text'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { theme } from '@/lib/theme'
 import { useUser } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { Link, Tabs } from 'expo-router'
-import { PlusIcon } from 'lucide-react-native'
+import { Tabs } from 'expo-router'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect } from 'react'
 import { useWindowDimensions } from 'react-native'
@@ -32,6 +29,10 @@ export default function TabLayout() {
       name: user?.fullName,
     })
     Purchases.logIn(user.id)
+    Purchases.setAttributes({
+      email: user?.emailAddresses?.[0]?.emailAddress,
+      displayName: user?.fullName,
+    })
   }, [user, posthog])
 
   return (
@@ -78,14 +79,6 @@ export default function TabLayout() {
           headerTitleStyle: {
             marginLeft: 5,
           },
-          headerRight: () => (
-            <Link href="/budget/new-budget" asChild>
-              <Button size="sm" variant="secondary" className="mr-6 h-10">
-                <PlusIcon className="size-6 text-primary" />
-                <Text>{t(i18n)`New budget`}</Text>
-              </Button>
-            </Link>
-          ),
           headerTitleAlign: 'left',
         }}
       />

@@ -1,6 +1,5 @@
 import { AuthLocal } from '@/components/auth/auth-local'
 import { BackButton } from '@/components/common/back-button'
-import { Button } from '@/components/ui/button'
 import { useLocalAuth } from '@/hooks/use-local-auth'
 import { useScheduleNotificationTrigger } from '@/hooks/use-schedule-notification'
 import { useUserMetadata } from '@/hooks/use-user-metadata'
@@ -9,8 +8,7 @@ import { theme } from '@/lib/theme'
 import { useUser } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { Link, Redirect, SplashScreen, Stack } from 'expo-router'
-import { PlusIcon } from 'lucide-react-native'
+import { Redirect, SplashScreen, Stack } from 'expo-router'
 import { useEffect } from 'react'
 import { View } from 'react-native'
 
@@ -128,13 +126,6 @@ export default function AuthenticatedLayout() {
           name="wallet/accounts"
           options={{
             headerTitle: t(i18n)`Wallet accounts`,
-            headerRight: () => (
-              <Link href="/wallet/new-account" asChild>
-                <Button size="icon" variant="ghost">
-                  <PlusIcon className="size-6 text-primary" />
-                </Button>
-              </Link>
-            ),
           }}
         />
         <Stack.Screen
@@ -155,13 +146,6 @@ export default function AuthenticatedLayout() {
           name="category/index"
           options={{
             headerTitle: t(i18n)`Categories`,
-            headerRight: () => (
-              <Link href="/category/new-category" asChild>
-                <Button size="icon" variant="ghost">
-                  <PlusIcon className="size-6 text-primary" />
-                </Button>
-              </Link>
-            ),
           }}
         />
         <Stack.Screen

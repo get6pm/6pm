@@ -1,9 +1,11 @@
+import { useUserEntitlements } from '@/hooks/use-purchases'
 import { sleep } from '@/lib/utils'
 import type { TransactionFormValues } from '@6pm/validation'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import * as Haptics from 'expo-haptics'
+import { useRouter } from 'expo-router'
 import { Trash2Icon } from 'lucide-react-native'
 import { useRef } from 'react'
 import {
@@ -46,6 +48,8 @@ export function TransactionAmount() {
   const {
     field: { onChange, value: currency },
   } = useController({ name: 'currency' })
+  const { isPro } = useUserEntitlements()
+  const router = useRouter()
 
   return (
     <>
@@ -56,7 +60,11 @@ export function TransactionAmount() {
         suffixClassName="ml-2 text-muted-foreground overflow-visible"
         onPressSuffix={() => {
           Haptics.selectionAsync()
-          sheetRef.current?.present()
+          if (isPro) {
+            sheetRef.current?.present()
+          } else {
+            router.push('/paywall')
+          }
         }}
       />
       <BottomSheet ref={sheetRef} index={0} enableDynamicSizing>

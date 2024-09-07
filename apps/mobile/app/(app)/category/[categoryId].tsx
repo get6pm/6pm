@@ -2,6 +2,7 @@ import { CategoryForm } from '@/components/category/category-form'
 import { toast } from '@/components/common/toast'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
+import { useUserEntitlements } from '@/hooks/use-purchases'
 import {
   useCategory,
   useDeleteCategory,
@@ -20,6 +21,7 @@ export default function EditCategoryScreen() {
   const { category } = useCategory(categoryId!)
   const navigation = useNavigation()
   const { i18n } = useLingui()
+  const { isPro } = useUserEntitlements()
 
   const { mutateAsync: mutateUpdate } = useUpdateCategory()
   const { mutateAsync: mutateDelete } = useDeleteCategory()
@@ -31,6 +33,7 @@ export default function EditCategoryScreen() {
         <Button
           size="icon"
           variant="ghost"
+          disabled={!isPro}
           onPress={() =>
             Alert.alert(
               t(
@@ -59,7 +62,7 @@ export default function EditCategoryScreen() {
         </Button>
       ),
     })
-  }, [])
+  }, [isPro])
 
   if (!category) {
     return (

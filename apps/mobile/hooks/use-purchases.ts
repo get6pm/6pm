@@ -29,9 +29,10 @@ export function usePurchasesPackages() {
 }
 
 export function useUserEntitlements() {
-  const { data: customerInfo } = useQuery({
+  const { data: customerInfo, refetch } = useQuery({
     queryKey: ['entitlements'],
     queryFn: Purchases.getCustomerInfo,
+    refetchInterval: 1000 * 60,
   })
 
   const isWealth = !!customerInfo?.entitlements.active.wealth?.isActive
@@ -45,5 +46,6 @@ export function useUserEntitlements() {
     isWealth,
     isGrowth,
     isPro,
+    refetch,
   }
 }

@@ -27,10 +27,10 @@ import { useForm } from 'react-hook-form'
 import {
   ActivityIndicator,
   Alert,
+  Dimensions,
   Keyboard,
   ScrollView,
   View,
-  useWindowDimensions,
 } from 'react-native'
 
 export default function NewRecordScreen() {
@@ -45,7 +45,7 @@ export default function NewRecordScreen() {
   const [page, setPage] = useState<number>(0)
   const { defaultBudgetId } = useUserMetadata()
   const navigation = useNavigation()
-  const { width } = useWindowDimensions()
+  const [width, setWidth] = useState(Dimensions.get('window').width)
   const { removeDraftTransaction } = useTransactionStore()
 
   const params = useLocalSearchParams()
@@ -155,6 +155,7 @@ export default function NewRecordScreen() {
           Keyboard.dismiss()
         }}
         showsHorizontalScrollIndicator={false}
+        onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
       >
         <View style={{ width }}>
           <TransactionForm

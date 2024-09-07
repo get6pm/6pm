@@ -90,7 +90,7 @@ export default function SettingsScreen() {
   }
 
   return (
-    <View className="bg-card">
+    <View className="flex-1 bg-card">
       <ScrollView
         contentContainerClassName="py-4 gap-4"
         contentContainerStyle={{ paddingBottom: bottom + 80 }}

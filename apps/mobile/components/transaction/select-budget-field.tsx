@@ -40,7 +40,7 @@ function BudgetItem({ budgetId }: { budgetId: string }) {
               isExceeded && 'text-amount-negative',
             )}
           >
-            {usagePercentage}%
+            {usagePercentage.toFixed(2)}%
           </Text>
         )
       }

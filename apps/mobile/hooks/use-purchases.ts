@@ -1,4 +1,5 @@
 import { toast } from '@/components/common/toast'
+import type { Entitlement } from '@/lib/constaints'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { Platform } from 'react-native'
@@ -41,8 +42,13 @@ export function useUserEntitlements() {
 
   const isPro = isWealth || isGrowth
 
+  const entilement = (
+    isWealth ? 'wealth' : isGrowth ? 'growth' : 'free'
+  ) as Entitlement
+
   return {
     customerInfo,
+    entilement,
     isWealth,
     isGrowth,
     isPro,

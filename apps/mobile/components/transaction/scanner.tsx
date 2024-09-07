@@ -3,8 +3,12 @@ import { AnimatedRing } from '@/components/scanner/animated-ring'
 import { ScanningOverlay } from '@/components/scanner/scanning-overlay'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
+import { useUserEntitlements } from '@/hooks/use-purchases'
+import { ENTILEMENT_LIMIT } from '@/lib/constaints'
+import { cn } from '@/lib/utils'
 import { getAITransactionData } from '@/mutations/transaction'
 import { useTransactionStore } from '@/stores/transaction/store'
+import { dayjsExtended } from '@6pm/utilities'
 import type { UpdateTransaction } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -14,7 +18,6 @@ import { type CameraType, CameraView, useCameraPermissions } from 'expo-camera'
 import * as Haptics from 'expo-haptics'
 import { SaveFormat, manipulateAsync } from 'expo-image-manipulator'
 import * as ImagePicker from 'expo-image-picker'
-import { useRouter } from 'expo-router'
 import {
   CameraIcon,
   ChevronsRightIcon,
@@ -38,12 +41,14 @@ type ScannerProps = {
   onScanStart?: () => void
   onScanResult?: (result: UpdateTransaction) => void
   shouldRender?: boolean
+  onLimitExceeded?: () => void
 }
 
 export function Scanner({
   onScanStart,
   onScanResult,
   shouldRender,
+  onLimitExceeded,
 }: ScannerProps) {
   const camera = useRef<CameraView>(null)
   const [facing, setFacing] = useState<CameraType>('back')
@@ -51,15 +56,17 @@ export function Scanner({
   const [imageUri, setImageUri] = useState<string | null>(null)
   const { i18n } = useLingui()
   const { bottom } = useSafeAreaInsets()
-  const { addDraftTransaction, updateDraftTransaction } = useTransactionStore()
-  const router = useRouter()
+  const { addDraftTransaction, updateDraftTransaction, transactions } =
+    useTransactionStore()
+  const { entilement } = useUserEntitlements()
+
+  const todayTransactions = transactions.filter((t) =>
+    dayjsExtended(t.createdAt).isSame(dayjsExtended(), 'day'),
+  )
 
   const { mutateAsync } = useMutation({
     mutationKey: ['ai-transaction'],
     mutationFn: getAITransactionData,
-    onMutate() {
-      onScanStart?.()
-    },
     onError(error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
       toast.error(error.message ?? t(i18n)`Cannot extract transaction`)
@@ -83,8 +90,17 @@ export function Scanner({
     setFacing(facing === 'back' ? 'front' : 'back')
   }
 
+  const transactionQuota =
+    ENTILEMENT_LIMIT[entilement]?.['ai-transactions'] - todayTransactions.length
+
   async function processImages(uris: string[]) {
-    router.back()
+    if (transactionQuota - uris.length <= 0) {
+      onLimitExceeded?.()
+      return
+    }
+
+    onScanStart?.()
+
     await Promise.all(
       uris.map(async (uri) => {
         const id = createId()
@@ -202,10 +218,23 @@ export function Scanner({
         facing={facing}
         style={{ paddingBottom: bottom }}
       >
-        <View className="top-6 rounded-md bg-background/50 p-2 px-4">
-          <Text>{t(i18n)`Take a picture of your transaction`}</Text>
+        <View
+          className={cn(
+            'top-6 rounded-md p-2 px-4',
+            transactionQuota <= 0
+              ? 'bg-amount-negative/20'
+              : 'bg-background/50',
+          )}
+        >
+          {transactionQuota <= 0 ? (
+            <Text className="text-amount-negative">{t(
+              i18n,
+            )`You have reached the daily AI transaction limit`}</Text>
+          ) : (
+            <Text>{t(i18n)`Take a picture of your transaction`}</Text>
+          )}
         </View>
-        <View className="absolute right-6 bottom-8 left-6 flex-row items-center justify-between gap-4">
+        <View className="absolute right-6 bottom-8 left-6 z-10 flex-row items-center justify-between gap-4">
           <Button
             variant="secondary"
             size="icon"

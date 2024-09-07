@@ -14,14 +14,15 @@ export const DEFAULT_WALLETS = [
     vi: 'Thẻ tín dụng',
     icon: 'CreditCard',
   },
-  {
-    en: 'Investment',
-    vi: 'Đầu tư',
-    icon: 'ChartLine',
-  },
-  {
-    en: 'Other Wallet',
-    vi: 'Ví khác',
-    icon: 'Banknote',
-  },
+  // Limit to 3 wallets for free users
+  // {
+  //   en: 'Investment',
+  //   vi: 'Đầu tư',
+  //   icon: 'ChartLine',
+  // },
+  // {
+  //   en: 'Other Wallet',
+  //   vi: 'Ví khác',
+  //   icon: 'Banknote',
+  // },
 ]

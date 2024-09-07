@@ -4,7 +4,7 @@ import { useColorScheme } from '@/hooks/useColorScheme'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { MoonStarIcon, SunIcon } from 'lucide-react-native'
-import { ScrollView } from 'react-native'
+import { ScrollView, StatusBar } from 'react-native'
 
 export default function AppearanceScreen() {
   const { colorScheme, setColorScheme } = useColorScheme()
@@ -21,7 +21,14 @@ export default function AppearanceScreen() {
       <Tabs
         value={colorScheme || 'light'}
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        onValueChange={(value: any) => setColorScheme(value)}
+        onValueChange={(value: any) => {
+          setColorScheme(value)
+          if (value === 'dark') {
+            StatusBar.setBarStyle('light-content')
+          } else {
+            StatusBar.setBarStyle('dark-content')
+          }
+        }}
       >
         <TabsList>
           <TabsTrigger value="light">

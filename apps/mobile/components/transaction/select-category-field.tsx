@@ -134,7 +134,7 @@ export function SelectCategoryField({
                         />
                         <TextTicker
                           marqueeDelay={500}
-                          duration={180 * item.name.length}
+                          duration={200 * item.name.length}
                           bouncePadding={{ left: 5, right: 5 }}
                           bounce
                           loop

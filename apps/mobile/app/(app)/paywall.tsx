@@ -125,6 +125,9 @@ export default function PaywallScreen() {
       router.back()
       toast.success(t(i18n)`Thank you! You have unlocked 6pm Pro!`)
     },
+    onError() {
+      //
+    },
   })
   const { mutateAsync: mutateRestore, isPending: isRestoring } = useMutation({
     mutationFn: Purchases.restorePurchases,
@@ -193,6 +196,7 @@ export default function PaywallScreen() {
         contentContainerClassName="gap-3"
         automaticallyAdjustKeyboardInsets
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
         <Text className="mx-8 my-2 font-sans font-semibold text-3xl text-primary">
           {t(i18n)`Complete control over your finances`}
@@ -272,12 +276,11 @@ export default function PaywallScreen() {
         </View>
         <PaywallIllustration className="mx-auto h-[566px] w-[200px] text-primary" />
       </ScrollView>
-      {isPending ||
-        (isRestoring && (
-          <View className="absolute top-0 right-0 bottom-0 left-0 z-50 items-center justify-center bg-background/50">
-            <ActivityIndicator size="large" />
-          </View>
-        ))}
+      {(isPending || isRestoring) && (
+        <View className="absolute top-0 right-0 bottom-0 left-0 z-50 items-center justify-center bg-background/50">
+          <ActivityIndicator size="large" />
+        </View>
+      )}
     </View>
   )
 }

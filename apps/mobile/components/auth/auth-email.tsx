@@ -7,8 +7,10 @@ import { View } from 'react-native'
 import { createUser } from '@/mutations/user'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
+import * as Haptics from 'expo-haptics'
 import { XCircleIcon } from 'lucide-react-native'
 import { FormProvider, useForm } from 'react-hook-form'
+import { toast } from '../common/toast'
 import { InputField } from '../form-fields/input-field'
 import { SubmitButton } from '../form-fields/submit-button'
 import { Button } from '../ui/button'
@@ -80,6 +82,10 @@ export function AuthEmail() {
         } catch (e: any) {
           // biome-ignore lint/suspicious/noConsoleLog: <explanation>
           console.log('error', JSON.stringify(e, null, 2))
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+          if (e.errors?.[0]?.longMessage) {
+            toast.error(e.errors?.[0]?.longMessage)
+          }
         }
       } else {
         authEmailForm.setError('emailAddress', {
@@ -121,6 +127,10 @@ export function AuthEmail() {
     } catch (err: any) {
       // biome-ignore lint/suspicious/noConsoleLog: <explanation>
       console.log('error', JSON.stringify(err, null, 2))
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+      if (err.errors?.[0]?.longMessage) {
+        toast.error(err.errors?.[0]?.longMessage)
+      }
     }
   }
 

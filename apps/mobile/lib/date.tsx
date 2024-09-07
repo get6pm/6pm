@@ -54,10 +54,13 @@ const shortenAmPm = (text: string): string => {
 
 const removeLeadingZero = (text: string): string => text.replace(/^0/, '')
 
-export const formatTime = (date: Date, locale?: string): string => {
+export const formatTime = (date?: Date, locale?: string): string => {
+  if (!date) {
+    return ''
+  }
   return removeLeadingZero(
     shortenAmPm(
-      date.toLocaleTimeString(locale, {
+      new Date(date)?.toLocaleTimeString?.(locale || 'en-US', {
         hour: '2-digit',
         minute: '2-digit',
       }) || '',

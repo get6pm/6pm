@@ -52,9 +52,6 @@ export function FormSubmitButton({
   )
 }
 
-const budgetId = createId()
-const periodId = createId()
-
 export default function StepTwoScreen() {
   const { i18n } = useLingui()
   const defaultCurrency = useDefaultCurrency()
@@ -71,6 +68,9 @@ export default function StepTwoScreen() {
   })
 
   async function handleSubmit(data: OnboardBudgetFormValues) {
+    const budgetId = createId()
+    const periodId = createId()
+
     await mutateAsync({
       data: {
         name: t(i18n)`Monthly budget`,

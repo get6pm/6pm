@@ -169,9 +169,9 @@ export const useCreateBudget = () => {
 
   const mutation = useMutation({
     mutationFn: async ({
-      id = createId(),
+      id,
       data,
-    }: { id?: string; data: BudgetFormValues }) => {
+    }: { id: string; data: BudgetFormValues }) => {
       const hc = await getHonoClient()
       const result = await hc.v1.budgets.$post({
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>

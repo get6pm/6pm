@@ -1,4 +1,4 @@
-import { useWallets } from '@/queries/wallet'
+import { useWalletList } from '@/stores/wallet/hooks'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { ArrowDownUp } from 'lucide-react-native'
@@ -22,7 +22,7 @@ export function SelectWalletAccount({
   disabled?: boolean
 }) {
   const { i18n } = useLingui()
-  const { data: walletAccounts } = useWallets()
+  const { wallets } = useWalletList()
 
   const defaultValue = useMemo(
     () => ({
@@ -35,12 +35,12 @@ export function SelectWalletAccount({
   const options = useMemo(
     () => [
       defaultValue,
-      ...(walletAccounts?.map((walletAccount) => ({
+      ...(wallets?.map((walletAccount) => ({
         value: walletAccount.id,
         label: walletAccount.name,
       })) || []),
     ],
-    [walletAccounts, defaultValue],
+    [wallets, defaultValue],
   )
 
   return (

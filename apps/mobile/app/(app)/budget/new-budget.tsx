@@ -8,13 +8,14 @@ import { useRouter } from 'expo-router'
 import { View } from 'react-native'
 
 export default function CreateBudgetScreen() {
-  const budgetId = createId()
   const router = useRouter()
   const { mutateAsync } = useCreateBudget()
   const { sideOffset, ...rootProps } = useModalPortalRoot()
   const { setDefaultBudgetId } = useUserMetadata()
 
   const handleCreate = async ({ isDefault, ...data }: BudgetFormValues) => {
+    const budgetId = createId()
+
     if (isDefault) {
       await setDefaultBudgetId(budgetId)
     }

@@ -4,10 +4,10 @@ import { TransactionForm } from '@/components/transaction/transaction-form'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useUserMetadata } from '@/hooks/use-user-metadata'
-import { useWallets, walletQueries } from '@/queries/wallet'
 import { useCreateTransaction } from '@/stores/transaction/hooks'
 import { useTransactionStore } from '@/stores/transaction/store'
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
+import { useWalletList } from '@/stores/wallet/hooks'
 import {
   type TransactionFormValues,
   zTransactionFormValues,
@@ -18,7 +18,6 @@ import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { createId } from '@paralleldrive/cuid2'
 import { PortalHost, useModalPortalRoot } from '@rn-primitives/portal'
-import { useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import { CameraIcon, KeyboardIcon, Trash2Icon } from 'lucide-react-native'
@@ -36,11 +35,10 @@ import {
 export default function NewRecordScreen() {
   const { i18n } = useLingui()
   const ref = useRef<ScrollView>(null)
-  const queryClient = useQueryClient()
   const router = useRouter()
-  const { data: walletAccounts } = useWallets()
+  const { wallets } = useWalletList()
   const defaultCurrency = useDefaultCurrency()
-  const defaultWallet = walletAccounts?.[0]
+  const defaultWallet = wallets?.[0]
   const { sideOffset, ...rootProps } = useModalPortalRoot()
   const [page, setPage] = useState<number>(0)
   const { defaultBudgetId } = useUserMetadata()
@@ -119,11 +117,12 @@ export default function NewRecordScreen() {
       router.back()
       toast.success(t(i18n)`Transaction created`)
 
-      await mutateAsync({ id: parsedParams.id || createId(), data: values })
-
-      // TODO: remove this after the wallet store is implemented
-      queryClient.invalidateQueries({
-        queryKey: walletQueries.list._def,
+      await mutateAsync({
+        id: parsedParams.id || createId(),
+        data: {
+          ...values,
+          amount: values.categoryId ? values.amount : -Math.abs(values.amount),
+        },
       })
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)

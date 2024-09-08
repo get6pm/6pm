@@ -6,7 +6,6 @@ import {
   type CategoryFormValues,
   CategorySchema,
 } from '@6pm/validation'
-import { createId } from '@paralleldrive/cuid2'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { keyBy, omit } from 'lodash-es'
 import { useMemo } from 'react'
@@ -122,9 +121,9 @@ export const useCreateCategory = () => {
 
   const mutation = useMutation({
     mutationFn: async ({
-      id = createId(),
+      id,
       data,
-    }: { id?: string; data: CategoryFormValues }) => {
+    }: { id: string; data: CategoryFormValues }) => {
       const hc = await getHonoClient()
       const result = await hc.v1.categories.$post({
         json: { id, ...data },
@@ -142,7 +141,7 @@ export const useCreateCategory = () => {
     },
     onMutate({ id, data }) {
       const category: Category = {
-        id: id!,
+        id,
         createdAt: new Date(),
         updatedAt: new Date(),
         parentId: null,

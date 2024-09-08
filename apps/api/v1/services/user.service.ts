@@ -22,3 +22,11 @@ export async function createUser({ data }: { data: CreateUser }) {
     data,
   })
 }
+
+export async function deleteUser(userId: string) {
+  prisma.user.delete({
+    where: {
+      id: userId,
+    },
+  })
+}

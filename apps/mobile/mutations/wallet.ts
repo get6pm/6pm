@@ -4,7 +4,7 @@ import type { WalletFormValues } from '@6pm/validation'
 export async function createWallet(data: WalletFormValues) {
   const { balance, ...walletData } = data
   const hc = await getHonoClient()
-  const result = await hc.v1.wallets.wallets.$post({
+  const result = await hc.v1.wallets.$post({
     json: walletData,
   })
   if (result.ok) {
@@ -31,7 +31,7 @@ export async function updateWallet({
 }) {
   const { balance, ...walletData } = data
   const hc = await getHonoClient()
-  const result = await hc.v1.wallets.wallets[':walletId'].$put({
+  const result = await hc.v1.wallets[':walletId'].$put({
     param: { walletId: id },
     json: walletData,
   })
@@ -52,7 +52,7 @@ export async function updateWallet({
 
 export async function deleteWallet(id: string) {
   const hc = await getHonoClient()
-  await hc.v1.wallets.wallets[':walletId'].$delete({
+  await hc.v1.wallets[':walletId'].$delete({
     param: { walletId: id },
   })
 }

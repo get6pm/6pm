@@ -18,7 +18,7 @@ import {
 
 const router = new Hono()
 
-  .get('/wallets', async (c) => {
+  .get('', async (c) => {
     const user = getAuthUserStrict(c)
 
     const wallets = await Promise.all(
@@ -28,7 +28,7 @@ const router = new Hono()
     return c.json(wallets, 200)
   })
 
-  .post('/wallets', zValidator('json', zCreateWallet), async (c) => {
+  .post('', zValidator('json', zCreateWallet), async (c) => {
     const user = getAuthUserStrict(c)
 
     if (!(await canUserCreateWallet({ user }))) {
@@ -43,7 +43,7 @@ const router = new Hono()
   })
 
   .put(
-    '/wallets/:walletId',
+    '/:walletId',
     zValidator('param', object({ walletId: string() })),
     zValidator('json', zUpdateWallet),
     async (c) => {
@@ -69,7 +69,7 @@ const router = new Hono()
   )
 
   .delete(
-    '/wallets/:walletId',
+    '/:walletId',
     zValidator('param', object({ walletId: string() })),
     async (c) => {
       const user = getAuthUserStrict(c)
@@ -92,7 +92,7 @@ const router = new Hono()
   )
 
   .get(
-    '/wallets/:walletId/balance',
+    '/:walletId/balance',
     zValidator('param', object({ walletId: string() })),
     async (c) => {
       const user = getAuthUserStrict(c)

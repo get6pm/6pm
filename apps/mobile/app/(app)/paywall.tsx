@@ -9,7 +9,7 @@ import {
   useUserEntitlements,
 } from '@/hooks/use-purchases'
 import { cn } from '@/lib/utils'
-import { t } from '@lingui/macro'
+import { Trans, t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { useMutation } from '@tanstack/react-query'
 import { BlurView } from 'expo-blur'
@@ -22,6 +22,7 @@ import {
   Alert,
   Image,
   type ImageSourcePropType,
+  Linking,
   Pressable,
   ScrollView,
   TouchableOpacity,
@@ -270,17 +271,34 @@ export default function PaywallScreen() {
         >
           <Text>{t(i18n)`Unlock 6pm Pro`}</Text>
         </Button>
-        <View className="mx-auto mt-2 flex-row items-center gap-4">
+        <View className="mx-auto flex-row items-center gap-4">
           <TouchableOpacity activeOpacity={0.8} onPress={() => mutateRestore()}>
-            <Text className="mx-auto text-center text-muted-foreground text-sm">
+            <Text className="mx-auto text-center text-sm">
               {t(i18n)`Restore purchases`}
             </Text>
           </TouchableOpacity>
-          <Link href="/privacy-policy">
-            <Text className="mx-auto text-center text-muted-foreground text-sm">
-              {t(i18n)`Privacy policy`}
+        </View>
+        <View className="mx-8">
+          <Trans>
+            <Text className="text-center font-sans text-muted-foreground text-xs">
+              By continuing, you acknowledge that you understand and agree to
+              our{' '}
+              <Link href="/privacy-policy">
+                <Text className="text-primary text-xs">Privacy Policy</Text>
+              </Link>{' '}
+              and{' '}
+              <Text
+                className="text-primary text-xs"
+                onPress={() =>
+                  Linking.openURL(
+                    'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/',
+                  )
+                }
+              >
+                Terms of Use
+              </Text>
             </Text>
-          </Link>
+          </Trans>
         </View>
         <PaywallIllustration className="mx-auto h-[566px] w-[200px] text-primary" />
       </ScrollView>

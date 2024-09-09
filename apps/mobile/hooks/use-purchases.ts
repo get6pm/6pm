@@ -31,7 +31,7 @@ export function usePurchasesPackages() {
 
 export function useUserEntitlements() {
   const { data: customerInfo, refetch } = useQuery({
-    queryKey: ['entitlements'],
+    queryKey: ['entitlementsx'],
     queryFn: Purchases.getCustomerInfo,
     refetchInterval: 1000 * 60,
   })

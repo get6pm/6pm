@@ -12,7 +12,7 @@ import { useLingui } from '@lingui/react'
 import { Link } from 'expo-router'
 import { MailIcon } from 'lucide-react-native'
 import { useState } from 'react'
-import { ScrollView, View } from 'react-native'
+import { Linking, ScrollView, View } from 'react-native'
 
 export default function LoginScreen() {
   const [withEmail, setWithEmail] = useState(false)
@@ -52,7 +52,18 @@ export default function LoginScreen() {
             By continuing, you acknowledge that you understand and agree to our{' '}
             <Link href="/privacy-policy">
               <Text className="text-primary text-xs">Privacy Policy</Text>
-            </Link>
+            </Link>{' '}
+            and{' '}
+            <Text
+              className="text-primary text-xs"
+              onPress={() =>
+                Linking.openURL(
+                  'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/',
+                )
+              }
+            >
+              Terms of Use
+            </Text>
           </Text>
         </Trans>
       </View>

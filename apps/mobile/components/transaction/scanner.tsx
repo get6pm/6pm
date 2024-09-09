@@ -19,14 +19,14 @@ import * as Haptics from 'expo-haptics'
 import { SaveFormat, manipulateAsync } from 'expo-image-manipulator'
 import * as ImagePicker from 'expo-image-picker'
 import {
-  CameraIcon,
   ChevronsRightIcon,
   ImagesIcon,
+  ScanTextIcon,
   SwitchCameraIcon,
 } from 'lucide-react-native'
 import { cssInterop } from 'nativewind'
 import { useRef, useState } from 'react'
-import { ActivityIndicator } from 'react-native'
+import { ActivityIndicator, Linking } from 'react-native'
 import { ImageBackground, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { toast } from '../common/toast'
@@ -174,12 +174,20 @@ export function Scanner({
   if (!permission.granted) {
     // Camera permissions are not granted.
     return (
-      <View className="flex-1 items-center justify-center gap-4 bg-muted">
-        <CameraIcon className="size-16 text-muted-foreground" />
-        <Text>{t(i18n)`Camera permissions are not granted`}</Text>
-        <Button variant="outline" onPress={requestPermission}>
-          <Text>{t(i18n)`Grant camera permissions`}</Text>
-        </Button>
+      <View className="flex-1 items-center justify-center gap-6 bg-muted">
+        <ScanTextIcon className="size-20 text-muted-foreground" />
+        <Text className="mx-6 text-center">{t(
+          i18n,
+        )`6pm needs camera permissions to scan your transactions`}</Text>
+        {permission.canAskAgain ? (
+          <Button onPress={requestPermission}>
+            <Text>{t(i18n)`Continue`}</Text>
+          </Button>
+        ) : (
+          <Button onPress={() => Linking.openSettings()}>
+            <Text>{t(i18n)`Open settings`}</Text>
+          </Button>
+        )}
       </View>
     )
   }

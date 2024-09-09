@@ -1,5 +1,5 @@
 import { sleep } from '@/lib/utils'
-import { useWallets } from '@/queries/wallet'
+import { useWalletList } from '@/stores/wallet/hooks'
 import type { WalletAccountWithBalance } from '@6pm/validation'
 import {
   BottomSheetFlatList,
@@ -23,7 +23,7 @@ export function SelectAccountField({
   onSelect?: (walletAccount: WalletAccountWithBalance) => void
 }) {
   const { bottom } = useSafeAreaInsets()
-  const { data: walletAccounts, isLoading } = useWallets()
+  const { wallets, walletsDict, isLoading } = useWalletList()
 
   const sheetRef = useRef<BottomSheetModal>(null)
   const { i18n } = useLingui()
@@ -31,9 +31,7 @@ export function SelectAccountField({
     field: { onChange, onBlur, value },
   } = useController({ name: 'walletAccountId' })
 
-  const selectedWalletAccount = walletAccounts?.find(
-    (walletAccount) => walletAccount.id === value,
-  )
+  const selectedWalletAccount = walletsDict[value]
 
   return (
     <>
@@ -60,7 +58,7 @@ export function SelectAccountField({
       </Button>
       <BottomSheet ref={sheetRef} index={0} enableDynamicSizing>
         <BottomSheetFlatList
-          data={walletAccounts}
+          data={wallets}
           numColumns={4}
           keyExtractor={(i) => i.id}
           columnWrapperClassName="flex-wrap"

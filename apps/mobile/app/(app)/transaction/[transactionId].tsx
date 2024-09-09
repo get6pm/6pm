@@ -1,6 +1,5 @@
 import { TransactionForm } from '@/components/transaction/transaction-form'
 import { sleep } from '@/lib/utils'
-import { walletQueries } from '@/queries/wallet'
 import {
   useDeleteTransaction,
   useTransaction,
@@ -14,7 +13,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { PortalHost, useModalPortalRoot } from '@rn-primitives/portal'
-import { useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useForm } from 'react-hook-form'
@@ -27,7 +25,6 @@ export default function EditRecordScreen() {
   const router = useRouter()
   const { mutateAsync: mutateUpdate } = useUpdateTransaction()
   const { mutateAsync: mutateDelete } = useDeleteTransaction()
-  const queryClient = useQueryClient()
   const { sideOffset, ...rootProps } = useModalPortalRoot()
 
   const transactionForm = useForm<TransactionFormValues>({
@@ -44,20 +41,19 @@ export default function EditRecordScreen() {
   })
 
   const handleUpdate = async (values: TransactionFormValues) => {
-    mutateUpdate({ id: transactionId!, data: values })
-      .then(() => {
-        // TODO: remove this after the wallet store is implemented
-        queryClient.invalidateQueries({
-          queryKey: walletQueries.list._def,
-        })
-      })
-      .catch((error) => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-        Alert.alert(
-          (error instanceof Error && error.message) ||
-            t(i18n)`An error occurred while updating the transaction`,
-        )
-      })
+    mutateUpdate({
+      id: transactionId!,
+      data: {
+        ...values,
+        amount: values.categoryId ? values.amount : -Math.abs(values.amount),
+      },
+    }).catch((error) => {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+      Alert.alert(
+        (error instanceof Error && error.message) ||
+          t(i18n)`An error occurred while updating the transaction`,
+      )
+    })
 
     await sleep(200)
 
@@ -81,22 +77,13 @@ export default function EditRecordScreen() {
           text: t(i18n)`Delete`,
           style: 'destructive',
           onPress: async () => {
-            mutateDelete(transactionId!)
-              .then(() => {
-                // TODO: remove this after the wallet store is implemented
-                queryClient.invalidateQueries({
-                  queryKey: walletQueries.list._def,
-                })
-              })
-              .catch((error) => {
-                Haptics.notificationAsync(
-                  Haptics.NotificationFeedbackType.Error,
-                )
-                Alert.alert(
-                  error.message ||
-                    t(i18n)`An error occurred while deleting the transaction`,
-                )
-              })
+            mutateDelete(transactionId!).catch((error) => {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+              Alert.alert(
+                error.message ||
+                  t(i18n)`An error occurred while deleting the transaction`,
+              )
+            })
 
             router.back()
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)

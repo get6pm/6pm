@@ -3,7 +3,6 @@ import { Hono } from 'hono'
 import { Webhook } from 'svix'
 import { z } from 'zod'
 import { deleteUser } from '../services/user.service'
-import { zDeleteUserHeader } from './utils'
 
 const webhookSecret: string = process.env.CLERK_SECRET_KEY ?? ''
 
@@ -17,6 +16,18 @@ const zDeletedUser = z.object({
   object: z.string(),
   type: z.string(),
 })
+
+export const zDeleteUserHeader = ({
+  required = false,
+}: { required?: boolean } = {}) =>
+  zValidator(
+    'header',
+    z.object({
+      'svix-id': required ? z.string() : z.string().optional(),
+      'svix-timestamp': required ? z.string() : z.string().optional(),
+      'svix-signature': required ? z.string() : z.string().optional(),
+    }),
+  )
 
 const router = new Hono().post(
   '/clerk',
@@ -39,7 +50,7 @@ const router = new Hono().post(
     }
 
     if (data.type !== 'user.deleted') {
-      return c.json({ message: 'Can not delete user' }, 400)
+      return c.json({ message: `${data.type} is not supported` }, 400)
     }
 
     console.log('Delete user:', data.data.id)

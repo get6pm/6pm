@@ -30,6 +30,7 @@ import { Link } from 'expo-router'
 import {
   BeanIcon,
   BellIcon,
+  BookTypeIcon,
   ChevronRightIcon,
   EarthIcon,
   GithubIcon,
@@ -255,6 +256,18 @@ export default function SettingsScreen() {
                 }
               />
             </Link>
+            <MenuItem
+              label={t(i18n)`Terms of use`}
+              icon={BookTypeIcon}
+              rightSection={
+                <ChevronRightIcon className="h-5 w-5 text-primary" />
+              }
+              onPress={() =>
+                Linking.openURL(
+                  'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/',
+                )
+              }
+            />
             <Link href="/feedback" asChild>
               <MenuItem
                 label={t(i18n)`Send feedback`}

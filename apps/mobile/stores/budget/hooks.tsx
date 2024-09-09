@@ -15,19 +15,30 @@ import { first, keyBy, orderBy } from 'lodash-es'
 import { useMemo } from 'react'
 import { Alert } from 'react-native'
 import { z } from 'zod'
+import type { StoreHookQueryOptions } from '../core/stores'
 import { useExchangeRate } from '../exchange-rates/hooks'
 import { useTransactionList } from '../transaction/hooks'
 import { budgetQueries } from './queries'
 import { type BudgetItem, useBudgetStore } from './store'
 
-export const useBudgetList = () => {
+export const useBudgetListQueryOptions = (
+  queryOptions?: StoreHookQueryOptions,
+) => {
   const budgets = useBudgetStore().budgets
   const setBudgetsState = useBudgetStore((state) => state.setBudgets)
 
-  const query = useQuery({
+  return {
     ...budgetQueries.all({ setBudgetsState }),
     initialData: budgets.length > 0 ? budgets : undefined,
-  })
+    ...queryOptions,
+  }
+}
+
+export const useBudgetList = (queryOptions?: StoreHookQueryOptions) => {
+  const budgets = useBudgetStore().budgets
+  const queryOpts = useBudgetListQueryOptions(queryOptions)
+
+  const query = useQuery(queryOpts)
 
   const {
     budgetsDict,
@@ -158,9 +169,9 @@ export const useCreateBudget = () => {
 
   const mutation = useMutation({
     mutationFn: async ({
-      id = createId(),
+      id,
       data,
-    }: { id?: string; data: BudgetFormValues }) => {
+    }: { id: string; data: BudgetFormValues }) => {
       const hc = await getHonoClient()
       const result = await hc.v1.budgets.$post({
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>

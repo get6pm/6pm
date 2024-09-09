@@ -5,7 +5,7 @@ import { Text } from '@/components/ui/text'
 import { WalletAccountItem } from '@/components/wallet/wallet-account-item'
 import { useUserEntitlements } from '@/hooks/use-purchases'
 import { ENTILEMENT_LIMIT } from '@/lib/constaints'
-import { useWallets } from '@/queries/wallet'
+import { useWalletList } from '@/stores/wallet/hooks'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { Link } from 'expo-router'
@@ -16,7 +16,7 @@ import { FlatList } from 'react-native'
 
 export default function WalletAccountsScreen() {
   const { i18n } = useLingui()
-  const { data: walletAccounts, isLoading, refetch } = useWallets()
+  const { wallets: walletAccounts, isLoading, refetch } = useWalletList()
   const router = useRouter()
   const navigation = useNavigation()
   const { entilement } = useUserEntitlements()

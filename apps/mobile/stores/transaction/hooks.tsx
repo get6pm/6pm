@@ -111,14 +111,14 @@ export function useTransactionList(
       const transactionDict = keyBy(transactions, 'id')
 
       const totalIncome = transactions.reduce((acc, t) => {
-        if (t.amountInVnd > 0) {
-          return acc + t.amountInVnd
+        if (t.amount > 0) {
+          return acc + t.amount
         }
         return acc
       }, 0)
       const totalExpense = transactions.reduce((acc, t) => {
-        if (t.amountInVnd < 0) {
-          return acc + t.amountInVnd
+        if (t.amount < 0) {
+          return acc + t.amount
         }
         return acc
       }, 0)
@@ -174,11 +174,20 @@ export function useCreateTransaction() {
       data,
     }: { id: string; data: TransactionFormValues }) => {
       const hc = await getHonoClient()
+      const category = data.categoryId ? categoriesDict[data.categoryId] : null
+      const categoryType = category?.type
+
+      const amount = category
+        ? categoryType === 'INCOME'
+          ? Math.abs(data.amount)
+          : -Math.abs(data.amount)
+        : data.amount
+
       const result = await hc.v1.transactions.$post({
         json: {
           ...data,
           id,
-          amount: -data.amount,
+          amount,
         },
       })
 
@@ -203,10 +212,11 @@ export function useCreateTransaction() {
       const category = data.categoryId ? categoriesDict[data.categoryId] : null
       const categoryType = category?.type
 
-      const amount =
-        categoryType === 'INCOME'
+      const amount = category
+        ? categoryType === 'INCOME'
           ? Math.abs(data.amount)
           : -Math.abs(data.amount)
+        : data.amount
 
       const transaction: TransactionPopulated = {
         id,
@@ -246,12 +256,21 @@ export function useUpdateTransaction() {
       id: string
       data: TransactionFormValues
     }) => {
+      const category = data.categoryId ? categoriesDict[data.categoryId] : null
+      const categoryType = category?.type
+
+      const amount = category
+        ? categoryType === 'INCOME'
+          ? Math.abs(data.amount)
+          : -Math.abs(data.amount)
+        : data.amount
+
       const hc = await getHonoClient()
       const result = await hc.v1.transactions[':transactionId'].$put({
         param: { transactionId: id },
         json: {
           ...data,
-          amount: -data.amount,
+          amount,
         },
       })
 

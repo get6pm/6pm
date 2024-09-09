@@ -1,9 +1,9 @@
 import { toast } from '@/components/common/toast'
 import { sleep } from '@/lib/utils'
-import { useWallets } from '@/queries/wallet'
 import { useBudgetList } from '@/stores/budget/hooks'
 import { useCategoryList } from '@/stores/category/hooks'
 import { useCreateTransaction } from '@/stores/transaction/hooks'
+import { useWalletList } from '@/stores/wallet/hooks'
 import { dayjsExtended } from '@6pm/utilities'
 import type { TransactionFormValues } from '@6pm/validation'
 import { createId } from '@paralleldrive/cuid2'
@@ -17,14 +17,14 @@ function getRandomInt(min: number, max: number) {
 }
 
 export function useSeed() {
-  const { data: walletAccounts } = useWallets()
-  const { data: budgets } = useBudgetList()
+  const { wallets } = useWalletList()
+  const { budgets } = useBudgetList()
   const { categories = [] } = useCategoryList()
   const { mutateAsync } = useCreateTransaction()
 
   function generateTransaction(): TransactionFormValues {
     const id = createId()
-    const walletAccountId = sample(walletAccounts)?.id!
+    const walletAccountId = sample(wallets)?.id!
     const budgetId = sample(budgets)?.id
     const categoryId = sample(categories)?.id
     const currency = sample(['VND', 'USD'])

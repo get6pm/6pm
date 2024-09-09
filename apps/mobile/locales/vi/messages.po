@@ -60,6 +60,10 @@ msgstr ""
 msgid "6 budgets & 6 accounts"
 msgstr "6 ngân sách & 6 tài khoản"
 
+#: apps/mobile/components/transaction/scanner.tsx:179
+msgid "6pm needs camera permissions to scan your transactions"
+msgstr "6pm cần quyền truy cập camera để quét giao dịch của bạn"
+
 #: apps/mobile/app/(app)/profile.tsx:58
 msgid "Account deleted successfully"
 msgstr "Xóa tài khoản thành công"
@@ -189,8 +193,8 @@ msgid "By week"
 msgstr "Theo tuần"
 
 #: apps/mobile/components/transaction/scanner.tsx:179
-msgid "Camera permissions are not granted"
-msgstr "Quyền truy cập camera không được cấp"
+#~ msgid "Camera permissions are not granted"
+#~ msgstr "Quyền truy cập camera không được cấp"
 
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:309
 #: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:45
@@ -246,6 +250,7 @@ msgid "Complete control over your finances"
 msgstr "Toàn quyền quản lý tài chính với 6pm Pro"
 
 #: apps/mobile/components/auth/auth-email.tsx:171
+#: apps/mobile/components/transaction/scanner.tsx:184
 msgid "Continue"
 msgstr "Tiếp tục"
 
@@ -381,8 +386,8 @@ msgid "Get started by setting your monthly budget."
 msgstr "Bắt đầu bằng cách đặt ngân sách hàng tháng của bạn."
 
 #: apps/mobile/components/transaction/scanner.tsx:181
-msgid "Grant camera permissions"
-msgstr "Cấp quyền truy cập camera"
+#~ msgid "Grant camera permissions"
+#~ msgstr "Cấp quyền truy cập camera"
 
 #: apps/mobile/app/(app)/paywall.tsx:234
 #: apps/mobile/components/setting/profile-card.tsx:177
@@ -511,6 +516,10 @@ msgstr "Không có giao dịch"
 #~ msgid "No transactions found"
 #~ msgstr "Không tìm thấy giao dịch"
 
+#: apps/mobile/components/transaction/scanner.tsx:188
+msgid "Open settings"
+msgstr "Mở cài đặt"
+
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:237
 msgid "Others"
 msgstr "Khác"
@@ -543,7 +552,7 @@ msgstr "Chính sách bảo mật"
 msgid "Privacy Policy"
 msgstr "Chính sách bảo mật"
 
-#: apps/mobile/components/transaction/scanner.tsx:198
+#: apps/mobile/components/transaction/scanner.tsx:206
 msgid "Processing transaction..."
 msgstr "Đang xử lý giao dịch..."
 
@@ -757,7 +766,7 @@ msgstr "Dừng"
 #~ msgid "System"
 #~ msgstr "Hệ thống"
 
-#: apps/mobile/components/transaction/scanner.tsx:234
+#: apps/mobile/components/transaction/scanner.tsx:242
 msgid "Take a picture of your transaction"
 msgstr "Chụp ảnh giao dịch của bạn"
 
@@ -928,7 +937,7 @@ msgstr "Hàng năm"
 msgid "Yesterday"
 msgstr "Hôm qua"
 
-#: apps/mobile/components/transaction/scanner.tsx:230
+#: apps/mobile/components/transaction/scanner.tsx:238
 msgid "You have reached the daily AI transaction limit"
 msgstr "Bạn đã đạt giới hạn giao dịch AI hàng ngày"
 

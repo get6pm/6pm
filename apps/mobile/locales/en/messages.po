@@ -60,6 +60,10 @@ msgstr ""
 msgid "6 budgets & 6 accounts"
 msgstr ""
 
+#: apps/mobile/components/transaction/scanner.tsx:179
+msgid "6pm needs camera permissions to scan your transactions"
+msgstr ""
+
 #: apps/mobile/app/(app)/profile.tsx:58
 msgid "Account deleted successfully"
 msgstr ""
@@ -189,8 +193,8 @@ msgid "By week"
 msgstr ""
 
 #: apps/mobile/components/transaction/scanner.tsx:179
-msgid "Camera permissions are not granted"
-msgstr ""
+#~ msgid "Camera permissions are not granted"
+#~ msgstr ""
 
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:309
 #: apps/mobile/app/(app)/budget/[budgetId]/edit.tsx:45
@@ -246,6 +250,7 @@ msgid "Complete control over your finances"
 msgstr ""
 
 #: apps/mobile/components/auth/auth-email.tsx:171
+#: apps/mobile/components/transaction/scanner.tsx:184
 msgid "Continue"
 msgstr ""
 
@@ -381,8 +386,8 @@ msgid "Get started by setting your monthly budget."
 msgstr ""
 
 #: apps/mobile/components/transaction/scanner.tsx:181
-msgid "Grant camera permissions"
-msgstr ""
+#~ msgid "Grant camera permissions"
+#~ msgstr ""
 
 #: apps/mobile/app/(app)/paywall.tsx:234
 #: apps/mobile/components/setting/profile-card.tsx:177
@@ -511,6 +516,10 @@ msgstr ""
 #~ msgid "No transactions found"
 #~ msgstr ""
 
+#: apps/mobile/components/transaction/scanner.tsx:188
+msgid "Open settings"
+msgstr ""
+
 #: apps/mobile/app/(app)/(tabs)/settings.tsx:237
 msgid "Others"
 msgstr ""
@@ -543,7 +552,7 @@ msgstr ""
 msgid "Privacy Policy"
 msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:198
+#: apps/mobile/components/transaction/scanner.tsx:206
 msgid "Processing transaction..."
 msgstr ""
 
@@ -757,7 +766,7 @@ msgstr ""
 #~ msgid "System"
 #~ msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:234
+#: apps/mobile/components/transaction/scanner.tsx:242
 msgid "Take a picture of your transaction"
 msgstr ""
 
@@ -928,7 +937,7 @@ msgstr ""
 msgid "Yesterday"
 msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:230
+#: apps/mobile/components/transaction/scanner.tsx:238
 msgid "You have reached the daily AI transaction limit"
 msgstr ""
 

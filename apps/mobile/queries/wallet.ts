@@ -9,7 +9,7 @@ export const walletQueries = createQueryKeys('wallet', {
     queryKey: [{}],
     queryFn: async () => {
       const hc = await getHonoClient()
-      const res = await hc.v1.wallets.wallets.$get()
+      const res = await hc.v1.wallets.$get()
       if (!res.ok) {
         throw new Error(await res.text())
       }

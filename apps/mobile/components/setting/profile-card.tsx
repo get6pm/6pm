@@ -1,6 +1,6 @@
 import { useUser } from '@clerk/clerk-expo'
 import { CrownIcon, PencilIcon } from 'lucide-react-native'
-import { Dimensions, Pressable, View } from 'react-native'
+import { Dimensions, Pressable, TouchableOpacity, View } from 'react-native'
 
 import { UserAvatar } from '../common/user-avatar'
 import { Badge } from '../ui/badge'
@@ -10,7 +10,7 @@ import { Text } from '../ui/text'
 import { useUserEntitlements } from '@/hooks/use-purchases'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { Link } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import Animated, {
   type SharedValue,
   useAnimatedStyle,
@@ -152,10 +152,15 @@ export function ProfileCard() {
   const { i18n } = useLingui()
   const { user } = useUser()
   const { isWealth, isGrowth, isPro } = useUserEntitlements()
+  const router = useRouter()
 
   return (
     <View className="mx-6 flex-row items-center justify-center overflow-hidden rounded-lg">
-      <View className="flex flex-1 flex-row items-center justify-center gap-3">
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() => router.push('/(app)/profile')}
+        className="flex flex-1 flex-row items-center justify-center gap-3"
+      >
         <UserAvatar
           user={user!}
           fallbackClassName="bg-card"
@@ -179,7 +184,7 @@ export function ProfileCard() {
             </Text>
           </Badge>
         </View>
-      </View>
+      </TouchableOpacity>
       <Link href="/profile" asChild>
         <Button size="icon" variant="ghost">
           <PencilIcon className="h-5 w-5 text-primary" />

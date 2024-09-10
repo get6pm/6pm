@@ -7,8 +7,10 @@ import exchangeRatesApp from './routes/exchange-rates'
 import transactionsApp from './routes/transactions'
 import usersApp from './routes/users'
 import walletsApp from './routes/wallets'
+import webhookApp from './routes/webhooks'
 
 export const hono = new Hono()
+  .route('/webhooks', webhookApp)
   .use('*', authMiddleware)
 
   .route('/auth', authApp)

@@ -12,6 +12,7 @@ import { createId } from '@paralleldrive/cuid2'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import Decimal from 'decimal.js'
 import { first, keyBy, orderBy } from 'lodash-es'
+import { usePostHog } from 'posthog-react-native'
 import { useMemo } from 'react'
 import { Alert } from 'react-native'
 import { z } from 'zod'
@@ -102,6 +103,7 @@ export const useBudget = (budgetId: string) => {
 }
 
 export const useUpdateBudget = () => {
+  const posthog = usePostHog()
   const updateBudgetInStore = useBudgetStore((state) => state.updateBudget)
   const { budgetsDict } = useBudgetList()
   const queryClient = useQueryClient()
@@ -155,6 +157,15 @@ export const useUpdateBudget = () => {
 
         updateBudgetInStore(budget)
 
+        posthog.capture('budget_updated', {
+          budget_id: budget.id,
+          budget_name: budget.name,
+          budget_type: budget.type,
+          budget_currency: budget.preferredCurrency,
+          budget_period_amount: data.period.amount,
+          budget_period_type: data.period.type,
+        })
+
         return budget
       },
     },
@@ -165,13 +176,14 @@ export const useUpdateBudget = () => {
 }
 
 export const useCreateBudget = () => {
+  const posthog = usePostHog()
   const updateBudgetInStore = useBudgetStore((state) => state.updateBudget)
 
   const mutation = useMutation({
     mutationFn: async ({
       id,
       data,
-    }: { id: string; data: BudgetFormValues }) => {
+    }: { id: string; data: BudgetFormValues; isOnboarding?: boolean }) => {
       const hc = await getHonoClient()
       const result = await hc.v1.budgets.$post({
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -183,12 +195,13 @@ export const useCreateBudget = () => {
         const budget = BudgetSchema.extend({
           id: z.string(),
         }).parse(json)
+
         return budget
       }
 
       throw result
     },
-    onMutate({ id, data }) {
+    onMutate({ id, data, isOnboarding }) {
       const periodConfig = calculateBudgetPeriodStartEndDates({
         anchorDate: new Date(),
         type: data.period.type,
@@ -216,6 +229,16 @@ export const useCreateBudget = () => {
 
       updateBudgetInStore(budget)
 
+      posthog.capture('budget_created', {
+        budget_id: budget.id,
+        budget_name: budget.name,
+        budget_type: budget.type,
+        budget_currency: budget.preferredCurrency,
+        budget_period_amount: data.period.amount,
+        budget_period_type: data.period.type,
+        is_onboarding: isOnboarding,
+      })
+
       return budget
     },
   })
@@ -224,6 +247,7 @@ export const useCreateBudget = () => {
 }
 
 export function useDeleteBudget() {
+  const posthog = usePostHog()
   const removeBudgetInStore = useBudgetStore((state) => state.removeBudget)
 
   const mutation = useMutation({
@@ -235,6 +259,10 @@ export function useDeleteBudget() {
     },
     onMutate(budgetId) {
       removeBudgetInStore(budgetId)
+
+      posthog.capture('budget_deleted', {
+        budget_id: budgetId,
+      })
     },
     onError(error) {
       Alert.alert(error.message)

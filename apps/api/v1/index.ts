@@ -11,11 +11,10 @@ import walletsApp from './routes/wallets'
 export const hono = new Hono()
   .use('*', authMiddleware)
 
-  .route('/exchange-rates', exchangeRatesApp)
-
   .route('/auth', authApp)
   .route('/budgets', budgetsApp)
   .route('/categories', categoriesApp)
   .route('/users', usersApp)
   .route('/transactions', transactionsApp)
   .route('/wallets', walletsApp)
+  .route('/exchange-rates', exchangeRatesApp)

@@ -235,7 +235,7 @@ export default function BudgetsScreen() {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={<Animated.View style={dummyHeaderStyle} />}
         contentContainerStyle={{ paddingBottom: bottom + 80 }}
-        refreshing={isRefetching}
+        refreshing={false}
         onRefresh={refetch}
         sections={sections}
         keyExtractor={(item) => item.id}

@@ -24,7 +24,7 @@ export async function createUser({ data }: { data: CreateUser }) {
 }
 
 export async function deleteUser(userId: string) {
-  return prisma.user.delete({
+  await prisma.user.delete({
     where: {
       id: userId,
     },

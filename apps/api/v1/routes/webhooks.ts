@@ -4,7 +4,7 @@ import { Webhook } from 'svix'
 import { z } from 'zod'
 import { deleteUser } from '../services/user.service'
 
-const webhookSecret: string = process.env.CLERK_SECRET_KEY ?? ''
+const webhookSecret: string = process.env.CLERK_WEBHOOK_SECRET_KEY ?? ''
 
 const zDeletedUser = z.object({
   data: z.object({
@@ -17,15 +17,13 @@ const zDeletedUser = z.object({
   type: z.string(),
 })
 
-export const zDeleteUserHeader = ({
-  required = false,
-}: { required?: boolean } = {}) =>
+const zDeleteUserHeader = () =>
   zValidator(
     'header',
     z.object({
-      'svix-id': required ? z.string() : z.string().optional(),
-      'svix-timestamp': required ? z.string() : z.string().optional(),
-      'svix-signature': required ? z.string() : z.string().optional(),
+      'svix-id': z.string(),
+      'svix-timestamp': z.string(),
+      'svix-signature': z.string(),
     }),
   )
 
@@ -37,13 +35,13 @@ const router = new Hono().post(
     const bodyText = await c.req.text()
     const data = c.req.valid('json')
 
-    const sivx = new Webhook(webhookSecret)
+    const svix = new Webhook(webhookSecret)
 
     try {
-      sivx.verify(bodyText, {
-        'svix-id': c.req.valid('header')['svix-id'] ?? '',
-        'svix-timestamp': c.req.valid('header')['svix-timestamp'] ?? '',
-        'svix-signature': c.req.valid('header')['svix-signature'] ?? '',
+      svix.verify(bodyText, {
+        'svix-id': c.req.valid('header')['svix-id'],
+        'svix-timestamp': c.req.valid('header')['svix-timestamp'],
+        'svix-signature': c.req.valid('header')['svix-signature'],
       })
     } catch (error) {
       c.json({ message: `Can not verify secret key: ${error}` }, 400)

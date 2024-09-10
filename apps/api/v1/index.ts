@@ -10,6 +10,7 @@ import walletsApp from './routes/wallets'
 import webhookApp from './routes/webhooks'
 
 export const hono = new Hono()
+  .route('/webhooks', webhookApp)
   .use('*', authMiddleware)
 
   .route('/exchange-rates', exchangeRatesApp)
@@ -20,4 +21,3 @@ export const hono = new Hono()
   .route('/users', usersApp)
   .route('/transactions', transactionsApp)
   .route('/wallets', walletsApp)
-  .route('/webhooks', webhookApp)

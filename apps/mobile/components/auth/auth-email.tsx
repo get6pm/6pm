@@ -22,7 +22,13 @@ import {
   verifyEmailFormSchema,
 } from './emailSchema'
 
-export function AuthEmail() {
+export function AuthEmail({
+  onSignedUp,
+  onSignedIn,
+}: {
+  onSignedUp: (strategy: 'email_code', userId?: string) => void
+  onSignedIn: (strategy: 'email_code', userId?: string) => void
+}) {
   const { i18n } = useLingui()
 
   const authEmailForm = useForm<EmailFormValues>({
@@ -108,6 +114,7 @@ export function AuthEmail() {
             email: signUpAttempt.emailAddress!,
             name: signUpAttempt.firstName ?? '',
           })
+          onSignedUp('email_code', signUpAttempt.id)
         } else {
           console.error(signUpAttempt)
         }
@@ -119,6 +126,7 @@ export function AuthEmail() {
         if (signInAttempt.status === 'complete') {
           await setActiveSignIn({ session: signInAttempt.createdSessionId })
           // signed in
+          onSignedIn('email_code', signInAttempt.id)
         } else {
           console.error(signInAttempt)
         }

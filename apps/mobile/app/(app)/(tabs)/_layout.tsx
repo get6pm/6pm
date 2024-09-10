@@ -17,11 +17,11 @@ export default function TabLayout() {
   const { user } = useUser()
   const { width } = useWindowDimensions()
   const { bottom } = useSafeAreaInsets()
-
   const posthog = usePostHog()
 
   useEffect(() => {
     if (!user) {
+      posthog.reset()
       return
     }
     posthog.identify(user?.id, {

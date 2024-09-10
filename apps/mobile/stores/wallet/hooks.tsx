@@ -4,6 +4,7 @@ import type { WalletFormValues } from '@6pm/validation'
 import { createId } from '@paralleldrive/cuid2'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { keyBy } from 'lodash-es'
+import { usePostHog } from 'posthog-react-native'
 import { useMemo } from 'react'
 import type { StoreHookQueryOptions } from '../core/stores'
 import { useCreateTransaction } from '../transaction/hooks'
@@ -48,6 +49,7 @@ export const useWallet = (walletId: string) => {
 }
 
 export const useUpdateWallet = () => {
+  const posthog = usePostHog()
   const updateWalletInStore = useWalletStore((state) => state.updateWallet)
   const { walletsDict } = useWalletList()
   const { mutateAsync: mutateCreateTransaction } = useCreateTransaction()
@@ -115,6 +117,14 @@ export const useUpdateWallet = () => {
 
         updateWalletInStore(wallet)
 
+        posthog.capture('wallet_updated', {
+          wallet_id: wallet.id,
+          wallet_name: wallet.name,
+          wallet_currency: wallet.preferredCurrency,
+          wallet_balance: wallet.balance,
+          wallet_icon: wallet.icon,
+        })
+
         return wallet
       },
     },
@@ -125,6 +135,7 @@ export const useUpdateWallet = () => {
 }
 
 export const useCreateWallet = () => {
+  const posthog = usePostHog()
   const { data: userData } = useMeQuery()
   const updateWalletInStore = useWalletStore((state) => state.updateWallet)
 
@@ -177,6 +188,14 @@ export const useCreateWallet = () => {
 
       updateWalletInStore(wallet)
 
+      posthog.capture('wallet_created', {
+        wallet_id: wallet.id,
+        wallet_name: wallet.name,
+        wallet_currency: wallet.preferredCurrency,
+        wallet_balance: wallet.balance,
+        wallet_icon: wallet.icon,
+      })
+
       return wallet
     },
   })
@@ -185,6 +204,7 @@ export const useCreateWallet = () => {
 }
 
 export const useDeleteWallet = () => {
+  const posthog = usePostHog()
   const removeWalletInStore = useWalletStore((state) => state.removeWallet)
 
   const mutation = useMutation({
@@ -196,6 +216,9 @@ export const useDeleteWallet = () => {
     },
     onMutate(walletId) {
       removeWalletInStore(walletId)
+      posthog.capture('wallet_deleted', {
+        wallet_id: walletId,
+      })
     },
   })
 

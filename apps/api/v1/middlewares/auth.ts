@@ -5,13 +5,6 @@ import { createMiddleware } from 'hono/factory'
 import { HTTPException } from 'hono/http-exception'
 import { findUserById } from '../services/user.service'
 
-declare module 'hono' {
-  interface ContextVariableMap {
-    user: User | null
-    userId: string | null
-  }
-}
-
 export const authMiddleware = createMiddleware(async (c, next) => {
   await clerkMiddleware()(c, () => Promise.resolve())
   const auth = getAuth(c)

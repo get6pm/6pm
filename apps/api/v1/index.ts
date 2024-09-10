@@ -3,16 +3,16 @@ import { authMiddleware } from './middlewares/auth'
 import authApp from './routes/auth'
 import budgetsApp from './routes/budgets'
 import categoriesApp from './routes/categories'
+import clerkWebhooksApp from './routes/clerk-webhooks'
 import exchangeRatesApp from './routes/exchange-rates'
 import transactionsApp from './routes/transactions'
 import usersApp from './routes/users'
 import walletsApp from './routes/wallets'
-import webhookApp from './routes/webhooks'
 
 export const hono = new Hono()
-  .route('/webhooks', webhookApp)
-  .use('*', authMiddleware)
+  .route('/webhooks/clerk', clerkWebhooksApp)
 
+  .use('*', authMiddleware)
   .route('/auth', authApp)
   .route('/budgets', budgetsApp)
   .route('/categories', categoriesApp)

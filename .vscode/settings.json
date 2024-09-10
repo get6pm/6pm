@@ -17,6 +17,7 @@
     "EXCHANGERATES",
     "hono",
     "openai",
+    "svix",
     "tanstack"
   ]
 }

@@ -16,6 +16,7 @@ import { BlurView } from 'expo-blur'
 import { Link, useRouter } from 'expo-router'
 import { CheckCircleIcon } from 'lucide-react-native'
 import { cssInterop } from 'nativewind'
+import { usePostHog } from 'posthog-react-native'
 import { useState } from 'react'
 import {
   ActivityIndicator,
@@ -124,9 +125,18 @@ export default function PaywallScreen() {
   const { data } = usePurchasesPackages()
   const { refetch } = useUserEntitlements()
   const router = useRouter()
+  const posthog = usePostHog()
   const { mutateAsync, isPending } = useMutation({
     mutationFn: Purchases.purchasePackage,
     onSuccess() {
+      posthog.capture('$set', {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
+        $set: {
+          subscription_plan: plan,
+          subscription_duration: duration,
+        },
+      })
+      posthog.capture('subscription_purchased', { plan, duration })
       refetch()
       router.back()
       toast.success(t(i18n)`Thank you! You have unlocked 6pm Pro!`)
@@ -139,6 +149,15 @@ export default function PaywallScreen() {
   const { mutateAsync: mutateRestore, isPending: isRestoring } = useMutation({
     mutationFn: Purchases.restorePurchases,
     onSuccess(result) {
+      posthog.capture('$set', {
+        // biome-ignore lint/style/useNamingConvention: <explanation>
+        $set: {
+          subscription_plan: plan,
+          subscription_duration: duration,
+        },
+      })
+      posthog.capture('subscription_restore', { plan, duration })
+
       refetch()
       if (Object.keys(result.entitlements.active).length) {
         toast.success(t(i18n)`Purchases restored successfully!`)

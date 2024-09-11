@@ -1,6 +1,7 @@
 import { toast } from '@/components/common/toast'
 import type { Entitlement } from '@/lib/constaints'
 import { useQuery } from '@tanstack/react-query'
+import { usePostHog } from 'posthog-react-native'
 import { useEffect } from 'react'
 import { Platform } from 'react-native'
 import Purchases, { LOG_LEVEL } from 'react-native-purchases'
@@ -30,6 +31,7 @@ export function usePurchasesPackages() {
 }
 
 export function useUserEntitlements() {
+  const posthog = usePostHog()
   const { data: customerInfo, refetch } = useQuery({
     queryKey: ['entitlementsx'],
     queryFn: Purchases.getCustomerInfo,
@@ -45,6 +47,15 @@ export function useUserEntitlements() {
   const entilement = (
     isWealth ? 'wealth' : isGrowth ? 'growth' : 'free'
   ) as Entitlement
+
+  useEffect(() => {
+    posthog.capture('$set', {
+      // biome-ignore lint/style/useNamingConvention: <explanation>
+      $set: {
+        subscription_plan: entilement,
+      },
+    })
+  }, [posthog, entilement])
 
   return {
     customerInfo,

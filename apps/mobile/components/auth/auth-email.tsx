@@ -26,8 +26,22 @@ export function AuthEmail({
   onSignedUp,
   onSignedIn,
 }: {
-  onSignedUp: (strategy: 'email_code', userId?: string) => void
-  onSignedIn: (strategy: 'email_code', userId?: string) => void
+  onSignedUp: (
+    strategy: 'email_code',
+    userData: {
+      id?: string
+      email?: string
+      name?: string
+    },
+  ) => void
+  onSignedIn: (
+    strategy: 'email_code',
+    userData: {
+      id?: string
+      email?: string
+      name?: string
+    },
+  ) => void
 }) {
   const { i18n } = useLingui()
 
@@ -114,7 +128,11 @@ export function AuthEmail({
             email: signUpAttempt.emailAddress!,
             name: signUpAttempt.firstName ?? '',
           })
-          onSignedUp('email_code', signUpAttempt.id)
+          onSignedUp('email_code', {
+            id: signUpAttempt.id,
+            email: signUpAttempt.emailAddress ?? undefined,
+            name: signUpAttempt.firstName ?? undefined,
+          })
         } else {
           console.error(signUpAttempt)
         }
@@ -126,7 +144,11 @@ export function AuthEmail({
         if (signInAttempt.status === 'complete') {
           await setActiveSignIn({ session: signInAttempt.createdSessionId })
           // signed in
-          onSignedIn('email_code', signInAttempt.id)
+          onSignedIn('email_code', {
+            id: signInAttempt.id,
+            email: authEmailForm.getValues().emailAddress,
+            name: signInAttempt.userData.firstName ?? undefined,
+          })
         } else {
           console.error(signInAttempt)
         }

@@ -1,5 +1,6 @@
 import { toast } from '@/components/common/toast'
 import type { Entitlement } from '@/lib/constaints'
+import { useUser } from '@clerk/clerk-expo'
 import { useQuery } from '@tanstack/react-query'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect } from 'react'
@@ -32,10 +33,16 @@ export function usePurchasesPackages() {
 
 export function useUserEntitlements() {
   const posthog = usePostHog()
+  const { user } = useUser()
+
   const { data: customerInfo, refetch } = useQuery({
-    queryKey: ['entitlementsx'],
+    queryKey: ['entitlements', user?.id],
     queryFn: Purchases.getCustomerInfo,
     refetchInterval: 1000 * 60,
+    enabled: !!user?.id,
+    networkMode: 'online',
+    gcTime: 0,
+    staleTime: 0,
   })
 
   const isWealth = !!customerInfo?.entitlements.active.wealth?.isActive

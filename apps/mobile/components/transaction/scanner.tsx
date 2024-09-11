@@ -4,7 +4,7 @@ import { ScanningOverlay } from '@/components/scanner/scanning-overlay'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { useUserEntitlements } from '@/hooks/use-purchases'
-import { ENTILEMENT_LIMIT } from '@/lib/constaints'
+import { ENTITLEMENT_LIMIT } from '@/lib/constaints'
 import { cn } from '@/lib/utils'
 import { getAITransactionData } from '@/mutations/transaction'
 import { useTransactionStore } from '@/stores/transaction/store'
@@ -58,7 +58,7 @@ export function Scanner({
   const { bottom } = useSafeAreaInsets()
   const { addDraftTransaction, updateDraftTransaction, transactions } =
     useTransactionStore()
-  const { entilement } = useUserEntitlements()
+  const { entitlement } = useUserEntitlements()
 
   const todayTransactions = transactions.filter((t) =>
     dayjsExtended(t.createdAt).isSame(dayjsExtended(), 'day'),
@@ -91,7 +91,8 @@ export function Scanner({
   }
 
   const transactionQuota =
-    ENTILEMENT_LIMIT[entilement]?.['ai-transactions'] - todayTransactions.length
+    ENTITLEMENT_LIMIT[entitlement]?.['ai-transactions'] -
+    todayTransactions.length
 
   async function processImages(uris: string[]) {
     if (transactionQuota - uris.length <= 0) {

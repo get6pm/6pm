@@ -4,7 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Text } from '@/components/ui/text'
 import { WalletAccountItem } from '@/components/wallet/wallet-account-item'
 import { useUserEntitlements } from '@/hooks/use-purchases'
-import { ENTILEMENT_LIMIT } from '@/lib/constaints'
+import { ENTITLEMENT_LIMIT } from '@/lib/constaints'
 import { useWalletList } from '@/stores/wallet/hooks'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -19,10 +19,10 @@ export default function WalletAccountsScreen() {
   const { wallets: walletAccounts, isLoading, refetch } = useWalletList()
   const router = useRouter()
   const navigation = useNavigation()
-  const { entilement } = useUserEntitlements()
+  const { entitlement } = useUserEntitlements()
 
   const isExceeded =
-    ENTILEMENT_LIMIT[entilement]?.wallets <= (walletAccounts?.length ?? 0)
+    ENTITLEMENT_LIMIT[entitlement]?.wallets <= (walletAccounts?.length ?? 0)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {

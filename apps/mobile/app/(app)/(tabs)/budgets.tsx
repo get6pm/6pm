@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Text } from '@/components/ui/text'
 import { useUserEntitlements } from '@/hooks/use-purchases'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import { ENTILEMENT_LIMIT } from '@/lib/constaints'
+import { ENTITLEMENT_LIMIT } from '@/lib/constaints'
 import { theme } from '@/lib/theme'
 import { useBudgetList } from '@/stores/budget/hooks'
 import { useTransactionList } from '@/stores/transaction/hooks'
@@ -144,10 +144,10 @@ export default function BudgetsScreen() {
     refetch,
   } = useBudgetList()
 
-  const { entilement } = useUserEntitlements()
+  const { entitlement } = useUserEntitlements()
 
   const isExceeded =
-    ENTILEMENT_LIMIT[entilement]?.wallets <= (spendingBudgets?.length ?? 0)
+    ENTITLEMENT_LIMIT[entitlement]?.wallets <= (spendingBudgets?.length ?? 0)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {

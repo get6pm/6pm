@@ -8,8 +8,7 @@ import { theme } from '@/lib/theme'
 import { useUser } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { Redirect, SplashScreen, Stack } from 'expo-router'
-import { useEffect } from 'react'
+import { Redirect, Stack } from 'expo-router'
 import { View } from 'react-native'
 
 export default function AuthenticatedLayout() {
@@ -19,12 +18,6 @@ export default function AuthenticatedLayout() {
   const { i18n } = useLingui()
   const { shouldAuthLocal, setShouldAuthLocal } = useLocalAuth()
   useScheduleNotificationTrigger()
-
-  useEffect(() => {
-    if (isLoaded) {
-      setTimeout(() => SplashScreen.hideAsync(), 1000)
-    }
-  }, [isLoaded])
 
   if (!isSignedIn && isLoaded) {
     return <Redirect href={'/login'} />

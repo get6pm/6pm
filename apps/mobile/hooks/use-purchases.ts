@@ -44,7 +44,7 @@ export function useUserEntitlements() {
 
   const isPro = isWealth || isGrowth
 
-  const entilement = (
+  const entitlement = (
     isWealth ? 'wealth' : isGrowth ? 'growth' : 'free'
   ) as Entitlement
 
@@ -52,14 +52,14 @@ export function useUserEntitlements() {
     posthog.capture('$set', {
       // biome-ignore lint/style/useNamingConvention: <explanation>
       $set: {
-        subscription_plan: entilement,
+        subscription_plan: entitlement,
       },
     })
-  }, [posthog, entilement])
+  }, [posthog, entitlement])
 
   return {
     customerInfo,
-    entilement,
+    entitlement,
     isWealth,
     isGrowth,
     isPro,

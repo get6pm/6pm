@@ -1,6 +1,6 @@
 export type Entitlement = 'wealth' | 'growth' | 'free'
 
-export const ENTILEMENT_LIMIT: Record<Entitlement, Record<string, number>> = {
+export const ENTITLEMENT_LIMIT: Record<Entitlement, Record<string, number>> = {
   free: {
     'ai-transactions': 2,
     budgets: 3,

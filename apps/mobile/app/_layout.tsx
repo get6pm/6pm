@@ -132,6 +132,8 @@ function RootLayout() {
   useNotificationObserver()
 
   useEffect(() => {
+    setTimeout(() => SplashScreen.hideAsync(), 2000)
+
     const subscription = AppState.addEventListener('change', onAppStateChange)
 
     return () => subscription.remove()

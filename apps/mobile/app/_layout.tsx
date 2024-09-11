@@ -149,11 +149,13 @@ function RootLayout() {
 
   return (
     <PostHogProvider
+      autocapture
       apiKey={process.env.EXPO_PUBLIC_POSTHOG_API_KEY!}
       options={{
         host: process.env.EXPO_PUBLIC_POSTHOG_HOST!,
+        disabled:
+          process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY?.includes('test'),
       }}
-      autocapture
     >
       <ClerkProvider
         publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}

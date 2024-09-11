@@ -11,12 +11,33 @@ import { Trans, t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { Link } from 'expo-router'
 import { MailIcon } from 'lucide-react-native'
-import { useState } from 'react'
+import { usePostHog } from 'posthog-react-native'
+import { useCallback, useState } from 'react'
 import { Linking, ScrollView, View } from 'react-native'
+
+type Strategy = 'email_code' | 'oauth_google' | 'oauth_apple'
 
 export default function LoginScreen() {
   const [withEmail, setWithEmail] = useState(false)
   const { i18n } = useLingui()
+  const posthog = usePostHog()
+
+  const handleSignedUp = useCallback(
+    (strategy: Strategy, userId?: string) => {
+      posthog.identify(userId)
+      posthog.capture('user_signed_up', { strategy })
+    },
+    [posthog],
+  )
+
+  const handleSignedIn = useCallback(
+    (strategy: Strategy, userId?: string) => {
+      posthog.identify(userId)
+      posthog.capture('user_signed_up', { strategy })
+    },
+    [posthog],
+  )
+
   return (
     <ScrollView
       className="bg-card"
@@ -37,14 +58,22 @@ export default function LoginScreen() {
       </Trans>
       <AuthIllustration className="my-16 h-[326px] text-primary" />
       <View className="flex flex-col gap-3">
-        <AppleAuthButton />
-        <GoogleAuthButton />
+        <AppleAuthButton
+          onSignedUp={handleSignedUp}
+          onSignedIn={handleSignedIn}
+        />
+        <GoogleAuthButton
+          onSignedUp={handleSignedUp}
+          onSignedIn={handleSignedIn}
+        />
         <Button variant="outline" onPress={() => setWithEmail(true)}>
           <MailIcon className="h-5 w-5 text-primary" />
           <Text>{t(i18n)`Continue with Email`}</Text>
         </Button>
         <Separator className="mx-auto my-3 w-[70%]" />
-        {withEmail && <AuthEmail />}
+        {withEmail && (
+          <AuthEmail onSignedUp={handleSignedUp} onSignedIn={handleSignedIn} />
+        )}
       </View>
       <View className="px-4">
         <Trans>

@@ -10,6 +10,7 @@ import {
 } from '@6pm/validation'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { keyBy } from 'lodash-es'
+import { usePostHog } from 'posthog-react-native'
 import { useMemo } from 'react'
 import { z } from 'zod'
 import { useCategoryList } from '../category/hooks'
@@ -162,6 +163,7 @@ export function useTransaction(transactionId: string) {
 }
 
 export function useCreateTransaction() {
+  const posthog = usePostHog()
   const { data: userData } = useMeQuery()
   const updateTransactionInStore = useTransactionStore(
     (state) => state.updateTransaction,
@@ -233,6 +235,17 @@ export function useCreateTransaction() {
 
       updateTransactionInStore(transaction)
 
+      posthog.capture('transaction_created', {
+        transaction_id: transaction.id,
+        transaction_amount: transaction.amount,
+        transaction_category_id: transaction.categoryId,
+        transaction_note: transaction.note,
+        transaction_wallet_account_id: transaction.walletAccountId,
+        transaction_budget_id: transaction.budgetId,
+        transaction_date: transaction.date,
+        transaction_category_type: categoryType,
+      })
+
       return transaction
     },
   })
@@ -241,6 +254,7 @@ export function useCreateTransaction() {
 }
 
 export function useUpdateTransaction() {
+  const posthog = usePostHog()
   const { data: userData } = useMeQuery()
   const updateTransactionInStore = useTransactionStore(
     (state) => state.updateTransaction,
@@ -316,6 +330,17 @@ export function useUpdateTransaction() {
 
       updateTransactionInStore(transaction)
 
+      posthog.capture('transaction_updated', {
+        transaction_id: transaction.id,
+        transaction_amount: transaction.amount,
+        transaction_category_id: transaction.categoryId,
+        transaction_note: transaction.note,
+        transaction_wallet_account_id: transaction.walletAccountId,
+        transaction_budget_id: transaction.budgetId,
+        transaction_date: transaction.date,
+        transaction_category_type: categoryType,
+      })
+
       return transaction
     },
   })
@@ -324,6 +349,7 @@ export function useUpdateTransaction() {
 }
 
 export function useDeleteTransaction() {
+  const posthog = usePostHog()
   const removeTransactionInStore = useTransactionStore(
     (state) => state.removeTransaction,
   )
@@ -337,6 +363,9 @@ export function useDeleteTransaction() {
     },
     onMutate(id) {
       removeTransactionInStore(id)
+      posthog.capture('transaction_deleted', {
+        transaction_id: id,
+      })
     },
   })
 

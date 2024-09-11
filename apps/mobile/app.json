@@ -2,7 +2,7 @@
   "expo": {
     "name": "6pm",
     "slug": "6pm",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "sixpm",
@@ -107,7 +107,7 @@
       }
     },
     "owner": "sixpm",
-    "runtimeVersion": "1.0.0",
+    "runtimeVersion": "1.0.1",
     "updates": {
       "url": "https://u.expo.dev/5853e031-3bfb-41fe-bfb6-c49f746c4adc",
       "checkAutomatically": "ON_ERROR_RECOVERY"

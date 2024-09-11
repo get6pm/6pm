@@ -28,6 +28,7 @@ import * as WebBrowser from 'expo-web-browser'
 
 import 'react-native-reanimated'
 import { ToastRoot } from '@/components/common/toast'
+import { UpdateLoader } from '@/components/common/update-loader'
 import { useNotificationObserver } from '@/hooks/use-schedule-notification'
 import { useWarmUpBrowser } from '@/hooks/use-warm-up-browser'
 import { useColorScheme } from '@/hooks/useColorScheme'
@@ -47,9 +48,10 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 import { focusManager, onlineManager } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { LinearGradient } from 'expo-linear-gradient'
+import * as Updates from 'expo-updates'
 import { cssInterop } from 'nativewind'
 import { PostHogProvider } from 'posthog-react-native'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { AppState, type AppStateStatus, Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -130,8 +132,29 @@ function RootLayout() {
   })
   const ref = useNavigationContainerRef()
   useNotificationObserver()
+  const [updating, setUpdating] = useState<boolean>(false)
 
+  const checkAndForceUpdates = useCallback(async () => {
+    if (__DEV__) {
+      return
+    }
+    setUpdating(true)
+    try {
+      const update = await Updates.checkForUpdateAsync()
+      if (update.isAvailable) {
+        await Updates.fetchUpdateAsync()
+        await Updates.reloadAsync()
+      }
+    } catch (error) {
+      Sentry.captureException(error)
+    }
+    setUpdating(false)
+  }, [])
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    checkAndForceUpdates()
+
     setTimeout(() => SplashScreen.hideAsync(), 2000)
 
     const subscription = AppState.addEventListener('change', onAppStateChange)
@@ -175,18 +198,22 @@ function RootLayout() {
                 >
                   <SafeAreaProvider>
                     <GestureHandlerRootView>
-                      <BottomSheetModalProvider>
-                        <Stack screenOptions={{ headerShown: false }}>
-                          <Stack.Screen
-                            name="(aux)"
-                            options={{
-                              presentation: 'modal',
-                            }}
-                          />
-                        </Stack>
-                        <ToastRoot />
-                        <PortalHost />
-                      </BottomSheetModalProvider>
+                      {updating ? (
+                        <UpdateLoader />
+                      ) : (
+                        <BottomSheetModalProvider>
+                          <Stack screenOptions={{ headerShown: false }}>
+                            <Stack.Screen
+                              name="(aux)"
+                              options={{
+                                presentation: 'modal',
+                              }}
+                            />
+                          </Stack>
+                          <ToastRoot />
+                          <PortalHost />
+                        </BottomSheetModalProvider>
+                      )}
                     </GestureHandlerRootView>
                   </SafeAreaProvider>
                 </ThemeProvider>

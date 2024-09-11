@@ -109,7 +109,8 @@
     "owner": "sixpm",
     "runtimeVersion": "1.0.0",
     "updates": {
-      "url": "https://u.expo.dev/5853e031-3bfb-41fe-bfb6-c49f746c4adc"
+      "url": "https://u.expo.dev/5853e031-3bfb-41fe-bfb6-c49f746c4adc",
+      "checkAutomatically": "ON_ERROR_RECOVERY"
     }
   }
 }

@@ -23,16 +23,30 @@ export default function LoginScreen() {
   const posthog = usePostHog()
 
   const handleSignedUp = useCallback(
-    (strategy: Strategy, userId?: string) => {
-      posthog.identify(userId)
+    (
+      strategy: Strategy,
+      userData: {
+        id?: string
+        email?: string
+        name?: string
+      },
+    ) => {
+      posthog.identify(userData.id)
       posthog.capture('user_signed_up', { strategy })
     },
     [posthog],
   )
 
   const handleSignedIn = useCallback(
-    (strategy: Strategy, userId?: string) => {
-      posthog.identify(userId)
+    (
+      strategy: Strategy,
+      userData: {
+        id?: string
+        email?: string
+        name?: string
+      },
+    ) => {
+      posthog.identify(userData.id)
       posthog.capture('user_signed_up', { strategy })
     },
     [posthog],

@@ -15,8 +15,22 @@ type AuthSocialProps = {
   label: string
   icon: React.ComponentType<SvgProps>
   strategy: Strategy
-  onSignedUp: (strategy: Strategy, userId?: string) => void
-  onSignedIn: (strategy: Strategy, userId?: string) => void
+  onSignedUp: (
+    strategy: Strategy,
+    userData: {
+      id?: string
+      email?: string
+      name?: string
+    },
+  ) => void
+  onSignedIn: (
+    strategy: Strategy,
+    userData: {
+      id?: string
+      email?: string
+      name?: string
+    },
+  ) => void
 }
 
 export function AuthSocial({
@@ -42,12 +56,19 @@ export function AuthSocial({
               name: signUp.firstName ?? '',
             })
 
-            onSignedUp(strategy, signUp.id)
+            onSignedUp(strategy, {
+              id: signUp.id,
+              email: signUp.emailAddress ?? undefined,
+              name: signUp.firstName ?? undefined,
+            })
           }, 1000)
         }
       } else {
         // Use signIn or signUp for next steps such as MFA
-        onSignedIn(strategy, signIn?.id)
+        onSignedIn(strategy, {
+          id: signIn?.id,
+          name: signIn?.userData.firstName,
+        })
       }
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (err: any) {
@@ -69,8 +90,22 @@ export function GoogleAuthButton({
   onSignedUp,
   onSignedIn,
 }: {
-  onSignedUp: (strategy: Strategy, userId?: string) => void
-  onSignedIn: (strategy: Strategy, userId?: string) => void
+  onSignedUp: (
+    strategy: Strategy,
+    userData: {
+      id?: string
+      email?: string
+      name?: string
+    },
+  ) => void
+  onSignedIn: (
+    strategy: Strategy,
+    userData: {
+      id?: string
+      email?: string
+      name?: string
+    },
+  ) => void
 }) {
   const { i18n } = useLingui()
   return (
@@ -88,8 +123,22 @@ export function AppleAuthButton({
   onSignedUp,
   onSignedIn,
 }: {
-  onSignedUp: (strategy: Strategy, userId?: string) => void
-  onSignedIn: (strategy: Strategy, userId?: string) => void
+  onSignedUp: (
+    strategy: Strategy,
+    userData: {
+      id?: string
+      email?: string
+      name?: string
+    },
+  ) => void
+  onSignedIn: (
+    strategy: Strategy,
+    userData: {
+      id?: string
+      email?: string
+      name?: string
+    },
+  ) => void
 }) {
   const { i18n } = useLingui()
   return (

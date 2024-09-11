@@ -63,7 +63,7 @@ export const StoreProvider: FC<StoreProviderProps> = ({ children }) => {
 
   return (
     <>
-      <StoreIntervalUpdate />
+      {userId && <StoreIntervalUpdate />}
       {children}
     </>
   )

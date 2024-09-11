@@ -8,6 +8,7 @@ import {
 } from '@6pm/validation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { keyBy, omit } from 'lodash-es'
+import { usePostHog } from 'posthog-react-native'
 import { useMemo } from 'react'
 import { z } from 'zod'
 import type { StoreHookQueryOptions } from '../core/stores'
@@ -69,6 +70,7 @@ export const useCategory = (categoryId: string) => {
 }
 
 export const useUpdateCategory = () => {
+  const posthog = usePostHog()
   const updateCategoryInStore = useCategoryStore(
     (state) => state.updateCategory,
   )
@@ -104,6 +106,14 @@ export const useUpdateCategory = () => {
 
         updateCategoryInStore(category)
 
+        posthog.capture('category_updated', {
+          category_id: category.id,
+          category_name: category.name,
+          category_type: category.type,
+          category_color: category.color,
+          category_icon: category.icon,
+        })
+
         return category
       },
     },
@@ -114,6 +124,7 @@ export const useUpdateCategory = () => {
 }
 
 export const useCreateCategory = () => {
+  const posthog = usePostHog()
   const { data: userData } = useMeQuery()
   const updateCategoryInStore = useCategoryStore(
     (state) => state.updateCategory,
@@ -154,6 +165,14 @@ export const useCreateCategory = () => {
 
       updateCategoryInStore(category)
 
+      posthog.capture('category_created', {
+        category_id: category.id,
+        category_name: category.name,
+        category_type: category.type,
+        category_color: category.color,
+        category_icon: category.icon,
+      })
+
       return category
     },
   })
@@ -162,6 +181,7 @@ export const useCreateCategory = () => {
 }
 
 export function useDeleteCategory() {
+  const posthog = usePostHog()
   const deleteCategoryInStore = useCategoryStore(
     (state) => state.deleteCategory,
   )
@@ -175,6 +195,9 @@ export function useDeleteCategory() {
     },
     onMutate(categoryId) {
       deleteCategoryInStore(categoryId)
+      posthog.capture('category_deleted', {
+        category_id: categoryId,
+      })
     },
     onError(error) {
       toast.error(error.message)

@@ -109,18 +109,14 @@ export async function findTransaction({
   transactionId: string
 }) {
   return prisma.transaction.findUnique({
-    where: {
-      id: transactionId,
-    },
-    include: {
-      category: true,
-    },
+    where: { id: transactionId },
+    include: { category: true, blobAttachments: true },
   })
 }
 
 export async function createTransaction({
   user,
-  data,
+  data: { blobAttachmentIds, ...data },
 }: {
   user: User
   data: CreateTransaction
@@ -149,10 +145,11 @@ export async function createTransaction({
       ...data,
       amountInVnd,
       createdByUserId: user.id,
+      blobAttachments: {
+        connect: blobAttachmentIds?.map((id) => ({ id })),
+      },
     },
-    include: {
-      category: true,
-    },
+    include: { category: true, blobAttachments: true },
   })
 
   return transaction
@@ -160,7 +157,7 @@ export async function createTransaction({
 
 export async function updateTransaction({
   transactionId,
-  data,
+  data: { blobAttachmentIds, ...data },
 }: {
   transactionId: string
   data: UpdateTransaction
@@ -203,16 +200,13 @@ export async function updateTransaction({
   }
 
   transaction = await prisma.transaction.update({
-    where: {
-      id: transactionId,
-    },
+    where: { id: transactionId },
     data: {
       ...data,
       amountInVnd,
+      blobAttachments: { set: blobAttachmentIds?.map((id) => ({ id })) },
     },
-    include: {
-      category: true,
-    },
+    include: { category: true, blobAttachments: true },
   })
 
   return transaction
@@ -224,9 +218,7 @@ export async function deleteTransaction({
   transactionId: string
 }) {
   await prisma.transaction.delete({
-    where: {
-      id: transactionId,
-    },
+    where: { id: transactionId },
   })
 }
 
@@ -258,13 +250,9 @@ export async function listTransactions({
         }),
       },
     },
-    orderBy: {
-      date: 'desc',
-    },
+    orderBy: { date: 'desc' },
     take: pagination.first || pagination.last,
-    include: {
-      category: true,
-    },
+    include: { category: true, blobAttachments: true },
   })
 
   const totalCount = await prisma.transaction.count({

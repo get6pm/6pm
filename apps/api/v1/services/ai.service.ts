@@ -1,4 +1,4 @@
-import type { CategoryType } from '@prisma/client'
+import type { CategoryType, User } from '@prisma/client'
 import { OpenAI } from 'openai'
 import { getLogger } from '../../lib/log'
 import { createAiCache, findAiCacheByQuery } from './ai-cache.service'
@@ -79,6 +79,7 @@ export async function generateTransactionDataFromFile({
   file: inputFile,
   noteLanguage = 'English',
   categories = [],
+  performUser,
 }: {
   file: File
   noteLanguage?: string
@@ -88,6 +89,7 @@ export async function generateTransactionDataFromFile({
     icon?: string | null
     type?: CategoryType
   }[]
+  performUser?: User
 }) {
   const log = getLogger(`ai.service:${generateTransactionDataFromFile.name}`)
   const additionalInstructions = generateAdditionalInstruction({
@@ -117,6 +119,7 @@ export async function generateTransactionDataFromFile({
     putBlobObject({
       file: inputFile,
       pathname: blobObjectPathname,
+      uploadedUser: performUser,
     }),
   ])
 

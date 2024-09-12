@@ -101,12 +101,12 @@ const router = new Hono()
     const logger = getLogger(`${c.req.method} ${c.req.path}`)
     const user = getAuthUserStrict(c)
     const data = c.req.valid('json')
-    const { budgetId, walletAccountId: walletId, categoryId } = data
+    const { budgetId, walletAccountId: walletId, categoryId, date } = data
 
     logger.debug('Creating transaction %o', data)
 
     const budget = budgetId
-      ? await findBudget({ budgetId, anchorDate: data.date })
+      ? await findBudget({ budgetId, anchorDate: date })
       : null
     if (budgetId && (!budget || !(await canUserReadBudget({ user, budget })))) {
       logger.error(`Budget not found or user doesn't have read access %o`, {
@@ -289,6 +289,7 @@ const router = new Hono()
       const transactionData = await generateTransactionDataFromFile({
         file,
         categories: userCategories,
+        performUser: user,
       })
       return c.json(transactionData)
     } catch {

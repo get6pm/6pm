@@ -47,7 +47,7 @@ export default function LoginScreen() {
       },
     ) => {
       posthog.identify(userData.id)
-      posthog.capture('user_signed_up', { strategy })
+      posthog.capture('user_signed_in', { strategy })
     },
     [posthog],
   )

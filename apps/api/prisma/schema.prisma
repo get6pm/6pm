@@ -31,6 +31,7 @@ model User {
   createdBudgetUserInvitations BudgetUserInvitation[]
   createdFromInvitation        BudgetUserInvitationResponse?
   categories                   Category[]
+  uploadedBlobObjects          BlobObject[]
 }
 
 model UserWalletAccount {
@@ -167,6 +168,7 @@ model Transaction {
   walletAccount   UserWalletAccount @relation(fields: [walletAccountId], references: [id], onDelete: Cascade)
   createdByUserId String
   createdByUser   User              @relation(fields: [createdByUserId], references: [id], onDelete: Cascade)
+  blobAttachments BlobObject[]
 }
 
 model Category {
@@ -214,4 +216,22 @@ model CurrencyExchangeRate {
   date         String // YYYY-MM-DD
 
   @@unique([fromCurrency, toCurrency, date])
+}
+
+model BlobObject {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  uploadedByUserId String?
+  uploadedByUser   User?   @relation(fields: [uploadedByUserId], references: [id], onDelete: Cascade)
+
+  pathname           String
+  contentType        String?
+  contentDisposition String
+  url                String
+  downloadUrl        String
+
+  transactionId String?
+  transaction   Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
 }

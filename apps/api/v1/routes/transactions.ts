@@ -1,3 +1,4 @@
+import { getTransactionAmountBasedOnCategory } from '@6pm/utilities'
 import { zCreateTransaction, zUpdateTransaction } from '@6pm/validation'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
@@ -153,12 +154,7 @@ const router = new Hono()
 
     const createTransactionData = {
       ...data,
-      amount:
-        (category &&
-          (category?.type === 'INCOME'
-            ? Math.abs(data.amount)
-            : -Math.abs(data.amount))) ||
-        data.amount,
+      amount: getTransactionAmountBasedOnCategory(data.amount, category?.type),
     }
     logger.debug('Creating transaction with data %o', createTransactionData)
 
@@ -241,11 +237,9 @@ const router = new Hono()
       }
 
       const transactionAmount =
-        data.amount && category
-          ? category?.type === 'INCOME'
-            ? Math.abs(data.amount)
-            : -Math.abs(data.amount)
-          : data.amount || transaction.amount
+        (data.amount &&
+          getTransactionAmountBasedOnCategory(data.amount, category?.type)) ||
+        transaction.amount
 
       const updatedTransaction = await updateTransaction({
         transactionId,

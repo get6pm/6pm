@@ -1,7 +1,10 @@
 import { UNCATEGORIZED_ID } from '@/components/home/category-chart'
 import { getHonoClient } from '@/lib/client'
 import { useMeQuery } from '@/queries/auth'
-import { dayjsExtended } from '@6pm/utilities'
+import {
+  dayjsExtended,
+  getTransactionAmountBasedOnCategory,
+} from '@6pm/utilities'
 import {
   type TransactionFormValues,
   type TransactionPopulated,
@@ -180,9 +183,7 @@ export function useCreateTransaction() {
       const categoryType = category?.type
 
       const amount = category
-        ? categoryType === 'INCOME'
-          ? Math.abs(data.amount)
-          : -Math.abs(data.amount)
+        ? getTransactionAmountBasedOnCategory(data.amount, categoryType)
         : data.amount
 
       const result = await hc.v1.transactions.$post({
@@ -309,10 +310,10 @@ export function useUpdateTransaction() {
       const category = data.categoryId ? categoriesDict[data.categoryId] : null
       const categoryType = category?.type
 
-      const amount =
-        categoryType === 'INCOME'
-          ? Math.abs(data.amount)
-          : -Math.abs(data.amount)
+      const amount = getTransactionAmountBasedOnCategory(
+        data.amount,
+        category?.type,
+      )
 
       const transaction: TransactionPopulated = {
         id,

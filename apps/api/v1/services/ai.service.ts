@@ -2,6 +2,7 @@ import type { CategoryType } from '@prisma/client'
 import { OpenAI } from 'openai'
 import { getLogger } from '../../lib/log'
 import { createAiCache, findAiCacheByQuery } from './ai-cache.service'
+import { putBlobObject } from './blob.service'
 import { hashFile } from './file.service'
 
 const ASSISTANT_ID = process.env.OPENAI_ASSISTANT_ID!
@@ -100,6 +101,7 @@ export async function generateTransactionDataFromFile({
     fileHash,
     additionalInstructions,
   })}`
+  const blobObjectPathname = `transaction_files/${fileHash}`
 
   log.debug('Checking cache for query: %s', cacheQuery)
 
@@ -110,15 +112,23 @@ export async function generateTransactionDataFromFile({
     return JSON.parse(cachedResponse.response)
   }
 
-  const file = await uploadVisionFile({ file: inputFile })
+  const [visionFile, blobObject] = await Promise.all([
+    uploadVisionFile({ file: inputFile }),
+    putBlobObject({
+      file: inputFile,
+      pathname: blobObjectPathname,
+    }),
+  ])
 
-  log.debug('Creating thread with uploaded file. File ID: %s', file.id)
+  log.debug('Creating thread with uploaded file. File ID: %s', visionFile.id)
 
   const thread = await openai.beta.threads.create({
     messages: [
       {
         role: 'user',
-        content: [{ type: 'image_file', image_file: { file_id: file.id } }],
+        content: [
+          { type: 'image_file', image_file: { file_id: visionFile.id } },
+        ],
       },
     ],
   })
@@ -141,7 +151,7 @@ export async function generateTransactionDataFromFile({
 
   async function cleanup() {
     // Delete the file after processing
-    await deleteFile({ fileId: file.id })
+    await deleteFile({ fileId: visionFile.id })
     // Delete the thread after processing
     log.debug('Deleting thread. Thread ID: %s', thread.id)
     await openai.beta.threads.del(thread.id)
@@ -165,7 +175,7 @@ export async function generateTransactionDataFromFile({
       response: JSON.stringify(aiTransactionData),
     })
 
-    return aiTransactionData
+    return { ...aiTransactionData, blobObject }
   }
 
   log.error('Assistant run failed. Run details: %o', run)

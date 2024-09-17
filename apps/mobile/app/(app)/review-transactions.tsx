@@ -11,7 +11,7 @@ export default function ReviewTransactionsScreen() {
 
   return (
     <FlatList
-      className="bg-card"
+      className="bg-background"
       data={draftTransactions}
       renderItem={({ item }) => (
         <DraftTransactionItem transactionId={item.id} />

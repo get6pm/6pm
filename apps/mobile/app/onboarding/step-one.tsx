@@ -14,21 +14,21 @@ export default function StepOneScreen() {
 
   return (
     <ScrollView
-      className="bg-card"
+      className="bg-background"
       contentContainerClassName="gap-4 p-8 pt-4 flex-1 justify-between"
       automaticallyAdjustKeyboardInsets
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{ paddingBottom: bottom + 32 }}
     >
       <View className="gap-4">
-        <Text className="font-semiBold text-3xl text-primary">
+        <Text className="font-semiBold text-3xl">
           {t(i18n)`Welcome to 6pm!`}
         </Text>
         <Text className="text-muted-foreground">
           {t(i18n)`Get started by setting your monthly budget.`}
         </Text>
       </View>
-      <OnboardIllustration className="my-16 h-[326px] text-primary" />
+      <OnboardIllustration className="my-16 h-[326px] text-foreground" />
       <Link href="/onboarding/step-two" asChild>
         <Button className="mx-auto">
           <Text>{t(i18n)`Set Monthly Budget`}</Text>

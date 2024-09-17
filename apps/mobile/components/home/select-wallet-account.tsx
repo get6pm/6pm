@@ -62,7 +62,7 @@ export function SelectWalletAccount({
         className="!border-none !border-transparent !py-0 !h-6 flex-row items-center gap-2 self-start px-0"
       >
         <SelectValue
-          className="font-medium text-primary"
+          className="font-medium text-foreground"
           placeholder={t(i18n)`All Accounts`}
         >
           {value}

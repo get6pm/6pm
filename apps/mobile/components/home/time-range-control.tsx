@@ -112,13 +112,13 @@ export function TimeRangeControl({
       )}
     >
       <Button size="icon" variant="secondary" onPress={handlePrevious}>
-        <ChevronLeftIcon className="size-6 text-muted-foreground" />
+        <ChevronLeftIcon className="size-6 text-secondary-foreground" />
       </Button>
       <Text className="font-medium">
         {formatDateRange(timeRange.from, timeRange.to)}
       </Text>
       <Button size="icon" variant="secondary" onPress={handleNext}>
-        <ChevronRightIcon className="size-6 text-muted-foreground" />
+        <ChevronRightIcon className="size-6 text-secondary-foreground" />
       </Button>
     </View>
   )

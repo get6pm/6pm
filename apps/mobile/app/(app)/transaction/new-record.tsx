@@ -82,7 +82,7 @@ export default function NewRecordScreen() {
           }}
           className="w-[160px]"
         >
-          <TabsList className="border border-border dark:border-primary/10">
+          <TabsList className="bg-secondary">
             <TabsTrigger value="0">
               <KeyboardIcon className="!text-primary size-6" />
             </TabsTrigger>
@@ -141,7 +141,7 @@ export default function NewRecordScreen() {
   }
 
   return (
-    <View className="flex-1 bg-card" {...rootProps}>
+    <View className="flex-1 bg-background" {...rootProps}>
       <ScrollView
         ref={ref}
         horizontal

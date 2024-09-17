@@ -218,9 +218,9 @@ export default function PaywallScreen() {
   }
 
   return (
-    <View className="flex-1 bg-card">
+    <View className="flex-1 bg-background">
       <ScrollView
-        className="bg-card"
+        className="bg-background"
         contentContainerClassName="gap-3"
         automaticallyAdjustKeyboardInsets
         keyboardShouldPersistTaps="handled"

@@ -154,8 +154,8 @@ export default function BudgetsScreen() {
     navigation.setOptions({
       headerRight: () => (
         <Link href={isExceeded ? '/paywall' : '/budget/new-budget'} asChild>
-          <Button size="sm" variant="secondary" className="mr-6 h-10">
-            <PlusIcon className="size-6 text-primary" />
+          <Button size="sm" variant="outline" className="mr-6 h-10">
+            <PlusIcon className="size-6 text-foreground" />
             <Text>{t(i18n)`New budget`}</Text>
           </Button>
         </Link>
@@ -201,7 +201,7 @@ export default function BudgetsScreen() {
   ].filter(({ data }) => data.length)
 
   return (
-    <View className="flex-1 bg-card">
+    <View className="flex-1 bg-background">
       <View
         className="absolute w-full"
         onLayout={(ev) => {
@@ -241,7 +241,7 @@ export default function BudgetsScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item: budget }) => <BudgetItem budget={budget} />}
         renderSectionHeader={({ section: { title } }) => (
-          <Text className="bg-card px-6 py-2 text-muted-foreground">
+          <Text className="bg-background px-6 py-2 text-muted-foreground">
             {title}
           </Text>
         )}

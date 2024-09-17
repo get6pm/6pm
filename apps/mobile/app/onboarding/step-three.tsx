@@ -25,21 +25,21 @@ export default function StepThreeScreen() {
 
   return (
     <ScrollView
-      className="bg-card"
+      className="bg-background"
       contentContainerClassName="gap-4 p-8 pt-4 flex-1 justify-between"
       automaticallyAdjustKeyboardInsets
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{ paddingBottom: bottom + 32 }}
     >
       <View className="gap-4">
-        <Text className="font-semiBold text-3xl text-primary">
+        <Text className="font-semiBold text-3xl">
           {t(i18n)`Enable spending alerts`}
         </Text>
         <Text className="text-muted-foreground">
           {t(i18n)`Keeping up with your spending and budgets.`}
         </Text>
       </View>
-      <NotificationIllustration className="my-16 h-[326px] text-primary" />
+      <NotificationIllustration className="my-16 h-[326px] text-foreground" />
       <Button className="mx-auto" onPress={handleEnableNotification}>
         <Text>{t(i18n)`Enable Push Notifications`}</Text>
       </Button>

@@ -1,6 +1,5 @@
 import { TabBar } from '@/components/common/tab-bar'
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { theme } from '@/lib/theme'
+import { useColorPalette } from '@/hooks/use-color-palette'
 import { useUser } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -12,7 +11,7 @@ import Purchases from 'react-native-purchases'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function TabLayout() {
-  const { colorScheme } = useColorScheme()
+  const { getColor } = useColorPalette()
   const { i18n } = useLingui()
   const { user } = useUser()
   const { width } = useWindowDimensions()
@@ -40,15 +39,15 @@ export default function TabLayout() {
       tabBar={(props) => <TabBar {...props} />}
       screenOptions={{
         headerShadowVisible: false,
-        tabBarActiveTintColor: theme[colorScheme ?? 'light'].background,
+        tabBarActiveTintColor: getColor('--background'),
         tabBarShowLabel: false,
         tabBarStyle: {
           position: 'absolute',
           borderWidth: 1,
           borderTopWidth: 1,
-          backgroundColor: theme[colorScheme ?? 'light'].background,
-          borderColor: theme[colorScheme ?? 'light'].border,
-          borderTopColor: theme[colorScheme ?? 'light'].border,
+          backgroundColor: getColor('--background'),
+          borderColor: getColor('--border'),
+          borderTopColor: getColor('--border'),
           bottom: bottom ? 36 : 16,
           marginHorizontal: (width - (8 * 5 + 48 * 4 + 16)) / 2,
           paddingVertical: 0,
@@ -59,10 +58,10 @@ export default function TabLayout() {
         headerTitleStyle: {
           fontFamily: 'Haskoy-Medium',
           fontSize: 16,
-          color: theme[colorScheme ?? 'light'].primary,
+          color: getColor('--foreground'),
         },
         headerStyle: {
-          backgroundColor: theme[colorScheme ?? 'light'].background,
+          backgroundColor: getColor('--background'),
         },
       }}
     >

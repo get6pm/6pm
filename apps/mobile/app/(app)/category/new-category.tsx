@@ -20,7 +20,7 @@ export default function CreateCategoryScreen() {
   }
 
   return (
-    <View className="h-screen bg-card px-6 py-3">
+    <View className="h-screen bg-background px-6 py-3">
       <CategoryForm onSubmit={handleCreate} defaultValues={{ type }} />
     </View>
   )

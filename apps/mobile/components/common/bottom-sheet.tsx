@@ -1,5 +1,4 @@
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { theme } from '@/lib/theme'
+import { useColorPalette } from '@/hooks/use-color-palette'
 import {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
@@ -14,7 +13,7 @@ export const BottomSheet = forwardRef<
   BottomSheetModalMethods,
   BottomSheetModalProps
 >((props, ref) => {
-  const { colorScheme } = useColorScheme()
+  const { getColor } = useColorPalette()
 
   const backdropComponent = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -38,7 +37,7 @@ export const BottomSheet = forwardRef<
   return (
     <BottomSheetModal
       ref={ref}
-      backgroundStyle={{ backgroundColor: theme[colorScheme].background }}
+      backgroundStyle={{ backgroundColor: getColor('--background') }}
       backdropComponent={backdropComponent}
       containerComponent={containerComponent}
       keyboardBehavior="extend"

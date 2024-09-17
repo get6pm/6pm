@@ -132,7 +132,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <ScrollView className="bg-card" contentContainerClassName="px-6 py-3">
+    <ScrollView className="bg-background" contentContainerClassName="px-6 py-3">
       <FormProvider {...profileForm}>
         <View className="gap-4">
           <Pressable onPress={handlePickImage}>
@@ -151,7 +151,7 @@ export default function ProfileScreen() {
             />
           </Pressable>
           <View>
-            <Text className="font-medium text-base text-primary">
+            <Text className="font-medium text-base text-foreground">
               {t(i18n)`Avatar`}
             </Text>
             <View className="flex-row items-center gap-2">
@@ -166,7 +166,7 @@ export default function ProfileScreen() {
                   profileForm.setValue('imageUrl', null, { shouldDirty: true })
                 }
               >
-                <Trash2Icon className="h-5 w-5 text-primary" />
+                <Trash2Icon className="h-5 w-5 text-foreground" />
               </Button>
             </View>
           </View>
@@ -190,7 +190,7 @@ export default function ProfileScreen() {
       </FormProvider>
       <Separator className="mt-20 mb-4" />
       <View className="gap-3">
-        <Text className="font-medium text-base text-primary">
+        <Text className="font-medium text-base text-foreground">
           {t(i18n)`Danger zone`}
         </Text>
         <Button

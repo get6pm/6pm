@@ -1,29 +1,29 @@
 import { BackButton } from '@/components/common/back-button'
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { theme } from '@/lib/theme'
+import { useColorPalette } from '@/hooks/use-color-palette'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native'
 
 export default function AuxiliaryLayout() {
-  const { colorScheme } = useColorScheme()
+  const { getColor } = useColorPalette()
+
   const { i18n } = useLingui()
   return (
-    <SafeAreaView className="flex-1 bg-card">
+    <SafeAreaView className="flex-1 bg-background">
       <Stack
         screenOptions={{
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTintColor: theme[colorScheme ?? 'light'].primary,
+          headerTintColor: getColor('--foreground'),
           headerShadowVisible: false,
           headerTitleStyle: {
             fontFamily: 'Haskoy-Medium',
             fontSize: 16,
-            color: theme[colorScheme ?? 'light'].primary,
+            color: getColor('--foreground'),
           },
           headerStyle: {
-            backgroundColor: theme[colorScheme ?? 'light'].background,
+            backgroundColor: getColor('--background'),
           },
           headerLeft: () => <BackButton />,
         }}

@@ -10,9 +10,7 @@ export default function NotFoundScreen() {
     <>
       <Stack.Screen options={{ title: 'Oops!' }} />
       <View className="flex-1 items-center justify-center gap-4 p-4">
-        <Text className="font-medium text-primary">
-          This screen doesn't exist.
-        </Text>
+        <Text className="font-medium">This screen doesn't exist.</Text>
         <View className="flex-row gap-4">
           <Button variant="outline" onPress={() => router.back()}>
             <Text>Go back</Text>

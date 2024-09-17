@@ -103,13 +103,13 @@ export default function StepTwoScreen() {
   return (
     <FormProvider {...form}>
       <ScrollView
-        className="bg-card"
+        className="bg-background"
         contentContainerClassName="gap-4 pt-4 flex-1 bg-muted justify-between"
         automaticallyAdjustKeyboardInsets
         keyboardShouldPersistTaps="handled"
       >
         <View className="gap-4 px-8">
-          <Text className="font-semiBold text-3xl text-primary">
+          <Text className="font-semiBold text-3xl">
             {t(i18n)`Set your monthly spending goal`}
           </Text>
           <Text className="text-muted-foreground">

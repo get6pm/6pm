@@ -57,7 +57,7 @@ export default function EditBudgetScreen() {
             )
           }
         >
-          <Trash2Icon className="size-6 text-primary" />
+          <Trash2Icon className="size-5 text-foreground" />
         </Button>
       ),
     })
@@ -81,7 +81,7 @@ export default function EditBudgetScreen() {
   }
 
   return (
-    <View className="bg-card" {...rootProps}>
+    <View className="bg-background" {...rootProps}>
       <BudgetForm
         onSubmit={handleUpdate}
         sideOffset={sideOffset}

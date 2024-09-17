@@ -91,11 +91,11 @@ export default function SettingsScreen() {
   }
 
   return (
-    <View className="flex-1 bg-card">
+    <View className="flex-1 bg-background">
       <ScrollView
         contentContainerClassName="py-4 gap-4"
         contentContainerStyle={{ paddingBottom: bottom + 80 }}
-        className="bg-card"
+        className="bg-background"
       >
         <ProfileCard />
         {!isPro && (
@@ -121,7 +121,7 @@ export default function SettingsScreen() {
                 label={t(i18n)`Wallet accounts`}
                 icon={WalletCardsIcon}
                 rightSection={
-                  <ChevronRightIcon className="h-5 w-5 text-primary" />
+                  <ChevronRightIcon className="h-5 w-5 text-foreground" />
                 }
               />
             </Link>
@@ -130,7 +130,7 @@ export default function SettingsScreen() {
                 label={t(i18n)`Categories`}
                 icon={ShapesIcon}
                 rightSection={
-                  <ChevronRightIcon className="h-5 w-5 text-primary" />
+                  <ChevronRightIcon className="h-5 w-5 text-foreground" />
                 }
               />
             </Link>
@@ -169,7 +169,7 @@ export default function SettingsScreen() {
                 label={t(i18n)`Appearance`}
                 icon={SwatchBookIcon}
                 rightSection={
-                  <ChevronRightIcon className="h-5 w-5 text-primary" />
+                  <ChevronRightIcon className="h-5 w-5 text-foreground" />
                 }
               />
             </Link>
@@ -178,7 +178,7 @@ export default function SettingsScreen() {
                 label={t(i18n)`App icon`}
                 icon={PencilRulerIcon}
                 rightSection={
-                  <ChevronRightIcon className="h-5 w-5 text-primary" />
+                  <ChevronRightIcon className="h-5 w-5 text-foreground" />
                 }
               />
             </Link>
@@ -191,7 +191,7 @@ export default function SettingsScreen() {
                     <Text className="text-muted-foreground uppercase">
                       {t(i18n)`${language}`}
                     </Text>
-                    <ChevronRightIcon className="h-5 w-5 text-primary" />
+                    <ChevronRightIcon className="h-5 w-5 text-foreground" />
                   </View>
                 }
               />
@@ -238,7 +238,7 @@ export default function SettingsScreen() {
                 label={t(i18n)`Seed transactions`}
                 icon={BeanIcon}
                 rightSection={
-                  <ChevronRightIcon className="h-5 w-5 text-primary" />
+                  <ChevronRightIcon className="h-5 w-5 text-foreground" />
                 }
                 onPress={startSeed}
               />
@@ -248,7 +248,7 @@ export default function SettingsScreen() {
                 label={t(i18n)`Privacy policy`}
                 icon={ScrollTextIcon}
                 rightSection={
-                  <ChevronRightIcon className="h-5 w-5 text-primary" />
+                  <ChevronRightIcon className="h-5 w-5 text-foreground" />
                 }
               />
             </Link>
@@ -256,7 +256,7 @@ export default function SettingsScreen() {
               label={t(i18n)`Terms of use`}
               icon={BookTypeIcon}
               rightSection={
-                <ChevronRightIcon className="h-5 w-5 text-primary" />
+                <ChevronRightIcon className="h-5 w-5 text-foreground" />
               }
               onPress={() =>
                 Linking.openURL(
@@ -269,7 +269,7 @@ export default function SettingsScreen() {
                 label={t(i18n)`Send feedback`}
                 icon={MessageSquareQuoteIcon}
                 rightSection={
-                  <ChevronRightIcon className="h-5 w-5 text-primary" />
+                  <ChevronRightIcon className="h-5 w-5 text-foreground" />
                 }
               />
             </Link>
@@ -277,7 +277,7 @@ export default function SettingsScreen() {
               label={t(i18n)`Rate 6pm on App Store`}
               icon={StarIcon}
               rightSection={
-                <ChevronRightIcon className="h-5 w-5 text-primary" />
+                <ChevronRightIcon className="h-5 w-5 text-foreground" />
               }
               disabled
             /> */}
@@ -285,7 +285,7 @@ export default function SettingsScreen() {
               label={t(i18n)`Share with friends`}
               icon={Share2Icon}
               rightSection={
-                <ChevronRightIcon className="h-5 w-5 text-primary" />
+                <ChevronRightIcon className="h-5 w-5 text-foreground" />
               }
               onPress={handleShare}
             />
@@ -293,7 +293,7 @@ export default function SettingsScreen() {
               label={t(i18n)`Proudly open source`}
               icon={GithubIcon}
               rightSection={
-                <ChevronRightIcon className="h-5 w-5 text-primary" />
+                <ChevronRightIcon className="h-5 w-5 text-foreground" />
               }
               onPress={() => Linking.openURL('https://github.com/sixpm-ai/6pm')}
             />

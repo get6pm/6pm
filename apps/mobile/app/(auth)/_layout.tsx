@@ -10,7 +10,7 @@ export default function UnAuthenticatedLayout() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-card">
+    <SafeAreaView className="flex-1 bg-background">
       <Stack screenOptions={{ headerShown: false }} />
     </SafeAreaView>
   )

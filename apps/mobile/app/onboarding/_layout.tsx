@@ -1,15 +1,15 @@
 import { BackButton } from '@/components/common/back-button'
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { theme } from '@/lib/theme'
+import { useColorPalette } from '@/hooks/use-color-palette'
 import { Stack } from 'expo-router'
 
 export default function OnboardingLayout() {
-  const { colorScheme } = useColorScheme()
+  const { getColor } = useColorPalette()
+
   return (
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: theme[colorScheme ?? 'light'].background,
+          backgroundColor: getColor('--background'),
         },
         headerShadowVisible: false,
         headerLeft: () => <BackButton />,
@@ -26,7 +26,7 @@ export default function OnboardingLayout() {
         name="step-two"
         options={{
           headerStyle: {
-            backgroundColor: theme[colorScheme ?? 'light'].muted,
+            backgroundColor: getColor('--muted'),
           },
         }}
       />

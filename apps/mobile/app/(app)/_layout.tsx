@@ -1,10 +1,9 @@
 import { AuthLocal } from '@/components/auth/auth-local'
 import { BackButton } from '@/components/common/back-button'
+import { useColorPalette } from '@/hooks/use-color-palette'
 import { useLocalAuth } from '@/hooks/use-local-auth'
 import { useScheduleNotificationTrigger } from '@/hooks/use-schedule-notification'
 import { useUserMetadata } from '@/hooks/use-user-metadata'
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { theme } from '@/lib/theme'
 import { useUser } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -14,7 +13,7 @@ import { View } from 'react-native'
 export default function AuthenticatedLayout() {
   const { isLoaded, isSignedIn } = useUser()
   const { onboardedAt } = useUserMetadata()
-  const { colorScheme } = useColorScheme()
+  const { getColor } = useColorPalette()
   const { i18n } = useLingui()
   const { shouldAuthLocal, setShouldAuthLocal } = useLocalAuth()
   useScheduleNotificationTrigger()
@@ -36,15 +35,15 @@ export default function AuthenticatedLayout() {
         screenOptions={{
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTintColor: theme[colorScheme ?? 'light'].primary,
+          headerTintColor: getColor('--foreground'),
           headerShadowVisible: false,
           headerTitleStyle: {
             fontFamily: 'Haskoy-Medium',
             fontSize: 16,
-            color: theme[colorScheme ?? 'light'].primary,
+            color: getColor('--foreground'),
           },
           headerStyle: {
-            backgroundColor: theme[colorScheme ?? 'light'].background,
+            backgroundColor: getColor('--background'),
           },
           headerLeft: () => <BackButton />,
         }}
@@ -61,7 +60,7 @@ export default function AuthenticatedLayout() {
             presentation: 'modal',
             headerTitle: '',
             headerStyle: {
-              backgroundColor: theme[colorScheme ?? 'light'].muted,
+              backgroundColor: getColor('--muted'),
             },
             // headerShown: false,
           }}

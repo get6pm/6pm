@@ -16,7 +16,7 @@ export function DraftTransactionList() {
 
   return (
     <View className="">
-      <View className="mx-6 flex-row justify-between border-muted-foreground/20 border-b bg-card py-2 pt-4 align-center">
+      <View className="mx-6 flex-row justify-between border-muted-foreground/20 border-b bg-background py-2 pt-4 align-center">
         <Text className="text-muted-foreground">{t(
           i18n,
         )`Waiting for review`}</Text>

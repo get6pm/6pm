@@ -56,7 +56,7 @@ export function NumericPad({
   return (
     <Animated.View
       className={cn(
-        'flex-row flex-wrap content-center items-center border-border border-t bg-card px-2 py-1.5',
+        'flex-row flex-wrap content-center items-center border-border border-t bg-background px-2 py-1.5',
         className,
       )}
       style={{ paddingBottom: bottom }}
@@ -83,7 +83,7 @@ export function NumericPad({
           size="lg"
           onPressIn={Haptics.selectionAsync}
         >
-          <DeleteIcon className="size-8 text-primary" />
+          <DeleteIcon className="size-7 text-secondary-foreground" />
         </Button>
       </View>
     </Animated.View>

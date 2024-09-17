@@ -20,6 +20,7 @@ import { SplashScreen, Stack, useNavigationContainerRef } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
 
 import 'react-native-reanimated'
+import { CustomPaletteWrapper } from '@/components/common/custom-palette-wrapper'
 import { ToastRoot } from '@/components/common/toast'
 import { UpdateLoader } from '@/components/common/update-loader'
 import { useNotificationObserver } from '@/hooks/use-schedule-notification'
@@ -188,26 +189,28 @@ function RootLayout() {
                 <ThemeProvider
                   value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
                 >
-                  <SafeAreaProvider>
-                    <GestureHandlerRootView>
-                      {updating ? (
-                        <UpdateLoader />
-                      ) : (
-                        <BottomSheetModalProvider>
-                          <Stack screenOptions={{ headerShown: false }}>
-                            <Stack.Screen
-                              name="(aux)"
-                              options={{
-                                presentation: 'modal',
-                              }}
-                            />
-                          </Stack>
-                          <ToastRoot />
-                          <PortalHost />
-                        </BottomSheetModalProvider>
-                      )}
-                    </GestureHandlerRootView>
-                  </SafeAreaProvider>
+                  <CustomPaletteWrapper>
+                    <SafeAreaProvider>
+                      <GestureHandlerRootView>
+                        {updating ? (
+                          <UpdateLoader />
+                        ) : (
+                          <BottomSheetModalProvider>
+                            <Stack screenOptions={{ headerShown: false }}>
+                              <Stack.Screen
+                                name="(aux)"
+                                options={{
+                                  presentation: 'modal',
+                                }}
+                              />
+                            </Stack>
+                            <ToastRoot />
+                            <PortalHost />
+                          </BottomSheetModalProvider>
+                        )}
+                      </GestureHandlerRootView>
+                    </SafeAreaProvider>
+                  </CustomPaletteWrapper>
                 </ThemeProvider>
               </LocaleProvider>
             </StoreProvider>

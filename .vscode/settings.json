@@ -20,5 +20,13 @@
     "posthog",
     "svix",
     "tanstack"
-  ]
+  ],
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": "\\.(ts|tsx|js|jsx|html)$",
+        "cmd": "pnpm @biomejs/biome lint ${file} --apply-unsafe"
+      }
+    ]
+  }
 }

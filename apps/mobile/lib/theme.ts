@@ -8,11 +8,11 @@ export const theme = {
     border: 'hsl(249, 6%, 90%)',
   },
   dark: {
-    primary: 'hsl(0, 0%, 98%)',
-    background: 'hsl(240, 10%, 3.9%)',
-    foreground: 'hsl(213, 31%, 91%)',
-    muted: 'hsl(240, 3.7%, 15.9%)',
-    mutedForeground: 'hsl(240, 5%, 64.9%)',
-    border: 'hsl(240, 3.7%, 15.9%)',
+    primary: 'hsl(0, 0%, 90%)',
+    background: 'hsl(240, 9%, 4%)',
+    foreground: 'hsl(0, 0%, 90%)',
+    muted: 'hsl(240, 5%, 19%)',
+    mutedForeground: 'hsl(228, 6%, 68%)',
+    border: 'hsl(240, 5%, 19%)',
   },
 }

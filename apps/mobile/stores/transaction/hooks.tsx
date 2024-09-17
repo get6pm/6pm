@@ -239,13 +239,14 @@ export function useCreateTransaction() {
       posthog.capture('transaction_created', {
         transaction_id: transaction.id,
         transaction_amount: transaction.amount,
-        transaction_category_id: transaction.categoryId,
-        transaction_note: transaction.note,
-        transaction_wallet_account_id: transaction.walletAccountId,
         transaction_budget_id: transaction.budgetId,
-        transaction_date: transaction.date,
+        transaction_category_id: transaction.categoryId,
+        transaction_category_name: category?.name,
         transaction_category_type: categoryType,
         transaction_currency: transaction.currency,
+        transaction_date: transaction.date,
+        transaction_note: transaction.note,
+        transaction_wallet_account_id: transaction.walletAccountId,
       })
 
       return transaction
@@ -335,13 +336,14 @@ export function useUpdateTransaction() {
       posthog.capture('transaction_updated', {
         transaction_id: transaction.id,
         transaction_amount: transaction.amount,
-        transaction_category_id: transaction.categoryId,
-        transaction_note: transaction.note,
-        transaction_wallet_account_id: transaction.walletAccountId,
         transaction_budget_id: transaction.budgetId,
-        transaction_date: transaction.date,
+        transaction_category_id: transaction.categoryId,
+        transaction_category_name: category?.name,
         transaction_category_type: categoryType,
         transaction_currency: transaction.currency,
+        transaction_date: transaction.date,
+        transaction_note: transaction.note,
+        transaction_wallet_account_id: transaction.walletAccountId,
       })
 
       return transaction

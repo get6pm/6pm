@@ -56,7 +56,7 @@ export function SelectBalanceStateField({
     >
       <SelectTrigger disabled={disabled}>
         <SelectValue
-          className="font-sans text-foreground"
+          className="text-foreground"
           placeholder={t(i18n)`Select balance state`}
         >
           {value}

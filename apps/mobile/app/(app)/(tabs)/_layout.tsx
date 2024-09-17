@@ -57,7 +57,7 @@ export default function TabLayout() {
           borderRadius: 16,
         },
         headerTitleStyle: {
-          fontFamily: 'Inter Medium',
+          fontFamily: 'Haskoy-Medium',
           fontSize: 16,
           color: theme[colorScheme ?? 'light'].primary,
         },

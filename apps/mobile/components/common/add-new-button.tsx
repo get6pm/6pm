@@ -20,7 +20,7 @@ export function AddNewButton({ label, className, onPress }: AddNewButtonProps) {
       )}
     >
       <PlusCircleIcon className="h-5 w-5 text-muted-foreground" />
-      <Text className="font-normal font-sans">{label}</Text>
+      <Text>{label}</Text>
     </Button>
   )
 }

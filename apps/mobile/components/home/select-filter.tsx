@@ -71,7 +71,7 @@ export function SelectFilter({
         />
         {value !== HomeFilter.All && (
           <SelectValue
-            className={cn('font-medium font-sans text-primary-foreground')}
+            className={cn('font-medium text-primary-foreground')}
             placeholder={t(i18n)`All Accounts`}
           >
             {value}

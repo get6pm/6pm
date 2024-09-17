@@ -18,7 +18,7 @@ export default function ReviewTransactionsScreen() {
       )}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={
-        <Text className="m-6 mb-9 text-center font-sans text-muted-foreground">
+        <Text className="m-6 mb-9 text-center text-muted-foreground">
           {t(i18n)`Your pending AI transactions will show up here`}
         </Text>
       }

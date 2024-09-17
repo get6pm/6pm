@@ -165,7 +165,7 @@ export const DraftTransactionItem: FC<DraftTransactionItemProps> = ({
         <AmountFormat
           amount={transaction.amount}
           currency={transaction.currency}
-          className="font-semibold text-md"
+          className="font-semiBold text-md"
         />
       </Pressable>
     </Link>

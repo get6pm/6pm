@@ -53,7 +53,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({ transaction }) => {
         <AmountFormat
           amount={transaction.amount}
           currency={transaction.currency}
-          className="font-semibold text-md"
+          className="font-semiBold text-md"
           displayPositiveColor
         />
       </Pressable>

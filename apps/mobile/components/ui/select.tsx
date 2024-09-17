@@ -147,7 +147,7 @@ const SelectLabel = React.forwardRef<
   <SelectPrimitive.Label
     ref={ref}
     className={cn(
-      'py-1.5 pr-2 pl-8 font-semibold text-popover-foreground text-sm native:pb-2 native:pl-10 native:text-base',
+      'py-1.5 pr-2 pl-8 font-semiBold text-popover-foreground text-sm native:pb-2 native:pl-10 native:text-base',
       className,
     )}
     {...props}
@@ -164,18 +164,18 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'web:group relative flex w-full flex-row items-center rounded-sm py-1.5 pr-2 pl-8 web:cursor-default web:select-none active:bg-accent web:focus:bg-accent web:hover:bg-accent/50 native:py-2 native:pl-10 web:outline-none',
-      props.disabled && 'opacity-50 web:pointer-events-none',
+      'web:group relative flex w-full web:cursor-default web:select-none flex-row items-center rounded-sm native:py-2 py-1.5 pr-2 native:pl-10 pl-8 web:outline-none web:hover:bg-accent/50 web:focus:bg-accent active:bg-accent',
+      props.disabled && 'web:pointer-events-none opacity-50',
       className,
     )}
     {...props}
   >
-    <View className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center native:left-3.5 native:pt-px">
+    <View className="absolute left-2 native:left-3.5 flex h-3.5 w-3.5 items-center justify-center native:pt-px">
       <SelectPrimitive.ItemIndicator>
         <Check size={16} strokeWidth={3} className="text-popover-foreground" />
       </SelectPrimitive.ItemIndicator>
     </View>
-    <SelectPrimitive.ItemText className="font-sans text-popover-foreground text-sm native:text-base web:group-focus:text-accent-foreground" />
+    <SelectPrimitive.ItemText className="font-regular native:text-base text-popover-foreground text-sm web:group-focus:text-accent-foreground" />
     {extra}
   </SelectPrimitive.Item>
 ))

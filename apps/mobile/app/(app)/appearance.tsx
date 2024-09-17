@@ -12,10 +12,10 @@ export default function AppearanceScreen() {
 
   return (
     <ScrollView className="bg-card" contentContainerClassName="px-6 py-3">
-      <Text className="font-medium font-sans text-base text-primary">
+      <Text className="font-medium text-base text-primary">
         {t(i18n)`App theme`}
       </Text>
-      <Text className="mb-4 font-sans text-muted-foreground text-sm">
+      <Text className="mb-4 text-muted-foreground text-sm">
         {t(i18n)`Choose a preferred theme for the 6pm`}
       </Text>
       <Tabs

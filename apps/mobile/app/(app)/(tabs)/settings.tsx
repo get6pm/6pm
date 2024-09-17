@@ -102,7 +102,7 @@ export default function SettingsScreen() {
           <Link href="/paywall" asChild>
             <Button className="!px-4 !h-16 mx-6 justify-between border border-muted-foreground/20 bg-muted">
               <View>
-                <Text className="!text-lg font-semibold text-foreground">
+                <Text className="!text-lg font-semiBold text-foreground">
                   {t(i18n)`Get 6pm Pro`}
                 </Text>
                 <Text className="!text-sm text-muted-foreground">
@@ -114,9 +114,7 @@ export default function SettingsScreen() {
           </Link>
         )}
         <View className="mt-4 gap-2">
-          <Text className="mx-6 font-sans text-muted-foreground">
-            {t(i18n)`General`}
-          </Text>
+          <Text className="mx-6 text-muted-foreground">{t(i18n)`General`}</Text>
           <View>
             <Link href="/wallet/accounts" asChild>
               <MenuItem
@@ -162,7 +160,7 @@ export default function SettingsScreen() {
           </View>
         </View>
         <View className="gap-2">
-          <Text className="mx-6 font-sans text-muted-foreground">
+          <Text className="mx-6 text-muted-foreground">
             {t(i18n)`App settings`}
           </Text>
           <View>
@@ -190,7 +188,7 @@ export default function SettingsScreen() {
                 icon={EarthIcon}
                 rightSection={
                   <View className="flex flex-row items-center gap-2">
-                    <Text className="font-sans text-muted-foreground uppercase">
+                    <Text className="text-muted-foreground uppercase">
                       {t(i18n)`${language}`}
                     </Text>
                     <ChevronRightIcon className="h-5 w-5 text-primary" />
@@ -233,9 +231,7 @@ export default function SettingsScreen() {
           </View>
         </View>
         <View className="gap-2">
-          <Text className="mx-6 font-sans text-muted-foreground">
-            {t(i18n)`Others`}
-          </Text>
+          <Text className="mx-6 text-muted-foreground">{t(i18n)`Others`}</Text>
           <View>
             {__DEV__ && (
               <MenuItem
@@ -335,7 +331,7 @@ export default function SettingsScreen() {
           onLongPress={handleCopyVersion}
         >
           <Logo className="mx-auto h-16 w-16" />
-          <Text className="font-mono text-muted-foreground text-sm">
+          <Text className="text-muted-foreground text-sm">
             {t(i18n)`ver.`}
             {Application.nativeApplicationVersion}
           </Text>

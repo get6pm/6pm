@@ -258,7 +258,7 @@ export default function BudgetDetailScreen() {
             <Text className="text-muted-foreground">{title}</Text>
             <AmountFormat
               amount={sum}
-              className="font-semibold text-md text-muted-foreground"
+              className="font-semiBold text-md text-muted-foreground"
               displayNegativeSign
               displayPositiveSign
               convertToDefaultCurrency

@@ -105,7 +105,7 @@ export function TextTicker({
             >
               <Animated.Text
                 style={[style, { fontSize }]}
-                className={cn(className, 'font-semibold')}
+                className={cn(className, 'font-semiBold')}
               >
                 {formattedNumber.value}
               </Animated.Text>

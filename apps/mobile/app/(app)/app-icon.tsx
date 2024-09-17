@@ -84,7 +84,7 @@ export default function AppearanceScreen() {
       keyExtractor={(i) => i.name}
       ListHeaderComponent={
         <View className="px-6">
-          <Text className="mb-4 font-sans text-muted-foreground text-sm">
+          <Text className="mb-4 text-muted-foreground text-sm">
             {t(i18n)`Choose your preferred app icon`}
           </Text>
         </View>

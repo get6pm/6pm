@@ -74,7 +74,7 @@ export function SelectBudgetTypeField({
           className="absolute left-3 h-5 w-5 text-foreground"
         />
         <SelectValue
-          className="left-8 font-sans text-foreground"
+          className="left-8 text-foreground"
           placeholder={t(i18n)`Select budget type`}
         >
           {value}

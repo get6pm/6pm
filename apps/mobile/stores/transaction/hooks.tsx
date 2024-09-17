@@ -245,6 +245,7 @@ export function useCreateTransaction() {
         transaction_budget_id: transaction.budgetId,
         transaction_date: transaction.date,
         transaction_category_type: categoryType,
+        transaction_currency: transaction.currency,
       })
 
       return transaction
@@ -340,6 +341,7 @@ export function useUpdateTransaction() {
         transaction_budget_id: transaction.budgetId,
         transaction_date: transaction.date,
         transaction_category_type: categoryType,
+        transaction_currency: transaction.currency,
       })
 
       return transaction

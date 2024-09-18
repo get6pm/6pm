@@ -19,6 +19,7 @@ import { cssInterop } from 'nativewind'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { BottomSheet } from '../common/bottom-sheet'
 import GenericIcon from '../common/generic-icon'
+import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
 
@@ -97,27 +98,28 @@ export function SelectCategoryField({
           contentContainerClassName="px-2"
           keyboardDismissMode="on-drag"
           renderSectionHeader={({ section: { title } }) => (
-            <Text className="bg-card py-2 text-center font-medium text-base">
-              {title}
-            </Text>
+            <Badge className="mx-auto my-2 px-8" variant="secondary">
+              <Text className="text-base uppercase">{title}</Text>
+            </Badge>
           )}
           contentContainerStyle={{ paddingBottom: bottom + 16 }}
           renderItem={({ section, index }) =>
             index === 0 ? (
               <FlatList
                 data={section.data}
-                numColumns={4}
+                numColumns={3}
                 columnWrapperClassName="flex-wrap"
                 keyExtractor={(i) => i.id}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
+                extraData={[value]}
                 renderItem={({ item, index: idx }) => (
                   <>
-                    <View className="w-[25%] items-center justify-center p-1.5">
+                    <View className="w-[33%] items-center justify-center p-2">
                       <Button
                         size="icon"
-                        className="flex h-20 w-full flex-1 flex-grow flex-col gap-2 px-2"
-                        variant={value === item ? 'secondary' : 'ghost'}
+                        className="flex h-20 w-full flex-1 flex-grow flex-col px-2 pt-1.5"
+                        variant={value === item.id ? 'secondary' : 'ghost'}
                         onPress={async () => {
                           Haptics.selectionAsync()
                           sheetRef.current?.close()
@@ -139,7 +141,7 @@ export function SelectCategoryField({
                           bounce
                           loop
                           animationType="bounce"
-                          className="!text-sm line-clamp-1 text-center text-muted-foreground"
+                          className="!text-base line-clamp-1 text-center text-muted-foreground"
                         >
                           {item.name}
                         </TextTicker>
@@ -147,7 +149,7 @@ export function SelectCategoryField({
                     </View>
 
                     {idx === section.data.length - 1 && (
-                      <View className="w-[25%] items-center justify-center p-1.5">
+                      <View className="w-[33%] items-center justify-center p-1.5">
                         <Link href="/category/new-category" asChild>
                           <Button
                             size="icon"

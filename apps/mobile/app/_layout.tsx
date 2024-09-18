@@ -11,17 +11,10 @@ import { isRunningInExpoGo } from 'expo'
 import { tokenCache } from '@/lib/cache'
 import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
 import {
-  Inter_200ExtraLight,
-  Inter_300Light,
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-  useFonts,
-} from '@expo-google-fonts/inter'
-import {
   SpaceMono_400Regular,
   SpaceMono_700Bold,
 } from '@expo-google-fonts/space-mono'
+import { useFonts } from 'expo-font'
 import * as Notifications from 'expo-notifications'
 import { SplashScreen, Stack, useNavigationContainerRef } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
@@ -124,11 +117,10 @@ function RootLayout() {
   const [fontsLoaded] = useFonts({
     SpaceMono_400Regular,
     SpaceMono_700Bold,
-    Inter_200ExtraLight,
-    Inter_300Light,
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
+    'Haskoy-Regular': require('../assets/fonts/Haskoy-Regular.ttf'),
+    'Haskoy-Medium': require('../assets/fonts/Haskoy-Medium.ttf'),
+    'Haskoy-SemiBold': require('../assets/fonts/Haskoy-SemiBold.ttf'),
+    'Haskoy-Bold': require('../assets/fonts/Haskoy-Bold.ttf'),
   })
   const ref = useNavigationContainerRef()
   useNotificationObserver()

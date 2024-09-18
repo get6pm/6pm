@@ -33,7 +33,7 @@ export function UserAvatar({
       <AvatarFallback className={fallbackClassName}>
         <Text
           className={cn(
-            'font-semibold uppercase leading-tight',
+            'font-semiBold uppercase leading-tight',
             fallbackLabelClassName,
           )}
         >

@@ -130,7 +130,7 @@ export function CircularProgress({
         ]}
       >
         <Text
-          className={'font-bold font-mono text-primary text-sm'}
+          className={'font-bold text-primary text-sm'}
           style={
             strokeColor
               ? {

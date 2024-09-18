@@ -6,7 +6,7 @@ export function ToastRoot() {
       extraInsets={{ top: -12 }}
       defaultStyle={{
         text: {
-          fontFamily: 'Inter Medium',
+          fontFamily: 'Haskoy-Medium',
         },
       }}
     />

@@ -31,7 +31,7 @@ export function HomeHeader({
           <UserAvatar user={user!} />
         </TouchableOpacity>
         <View className="flex-1">
-          <Text className="line-clamp-1 font-medium font-sans text-muted-foreground text-sm">
+          <Text className="line-clamp-1 font-medium text-muted-foreground text-sm">
             {user?.fullName ?? user?.primaryEmailAddress?.emailAddress}
           </Text>
           <SelectWalletAccount

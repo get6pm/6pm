@@ -39,7 +39,7 @@ export default function AuthenticatedLayout() {
           headerTintColor: theme[colorScheme ?? 'light'].primary,
           headerShadowVisible: false,
           headerTitleStyle: {
-            fontFamily: 'Inter Medium',
+            fontFamily: 'Haskoy-Medium',
             fontSize: 16,
             color: theme[colorScheme ?? 'light'].primary,
           },

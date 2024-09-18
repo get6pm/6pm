@@ -2,7 +2,7 @@ import { Text } from 'react-native'
 
 export default function TermsScreen() {
   return (
-    <Text className="m-4 font-sans">
+    <Text className="m-4">
       lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
       veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea

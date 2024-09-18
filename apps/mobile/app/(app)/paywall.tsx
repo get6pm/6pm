@@ -90,7 +90,7 @@ function PackageCard({
         >
           <Text
             className={cn(
-              'text-center font-semibold text-sm uppercase',
+              'text-center font-semiBold text-sm uppercase',
               selected ? 'text-primary-foreground' : 'text-muted-foreground',
             )}
           >
@@ -108,7 +108,7 @@ function PackageCard({
         <Text className="mb-4 text-center text-muted-foreground text-sm uppercase">
           {t(i18n)`months`}
         </Text>
-        <Text className="line-clamp-1 shrink-0 font-semibold text-2xl">
+        <Text className="line-clamp-1 shrink-0 font-semiBold text-2xl">
           {isAnnual
             ? data.product.pricePerYearString
             : data.product.pricePerMonthString}
@@ -226,7 +226,7 @@ export default function PaywallScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <Text className="mx-8 my-2 font-sans font-semibold text-3xl text-primary">
+        <Text className="mx-8 my-2 font-semiBold text-3xl text-primary">
           {t(i18n)`Complete control over your finances`}
         </Text>
         <Marquee spacing={20} speed={0.5}>
@@ -299,7 +299,7 @@ export default function PaywallScreen() {
         </View>
         <View className="mx-8">
           <Trans>
-            <Text className="text-center font-sans text-muted-foreground text-xs">
+            <Text className="text-center text-muted-foreground text-xs">
               By continuing, you acknowledge that you understand and agree to
               our{' '}
               <Link href="/privacy-policy">

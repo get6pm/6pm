@@ -68,7 +68,7 @@ export function SelectPeriodTypeField({
     >
       <SelectTrigger disabled={disabled}>
         <SelectValue
-          className="font-sans text-foreground"
+          className="text-foreground"
           placeholder={t(i18n)`Select period type`}
         >
           {value}

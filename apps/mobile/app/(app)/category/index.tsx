@@ -62,7 +62,7 @@ export default function CategoriesScreen() {
                 <Skeleton className="mx-6 mt-3 mb-5 h-4 rounded-full" />
               </>
             ) : (
-              <Text className="mt-6 mb-9 text-center font-sans text-muted-foreground">
+              <Text className="mt-6 mb-9 text-center text-muted-foreground">
                 {t(i18n)`empty`}
               </Text>
             ))}

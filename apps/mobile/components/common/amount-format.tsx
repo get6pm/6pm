@@ -7,7 +7,7 @@ import { Text } from '../ui/text'
 
 const SHOULD_ROUND_VALUE_CURRENCIES = ['VND']
 
-const amountVariants = cva('line-clamp-1 shrink-0 font-semibold', {
+const amountVariants = cva('line-clamp-1 shrink-0 font-semiBold', {
   variants: {
     size: {
       xl: 'text-5xl',

@@ -54,7 +54,7 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
           <View className="flex-1 gap-2">
             <Text
               numberOfLines={1}
-              className="line-clamp-1 flex-1 font-semibold text-lg"
+              className="line-clamp-1 flex-1 font-semiBold text-lg"
             >
               {budget.name}
             </Text>

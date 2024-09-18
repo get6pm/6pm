@@ -62,10 +62,10 @@ export default function LoginScreen() {
     >
       <Trans>
         <View className="gap-4">
-          <Text className="font-sans font-semibold text-3xl text-primary">
+          <Text className="font-semiBold text-3xl text-primary">
             Manage your expense seamlessly
           </Text>
-          <Text className="font-sans text-muted-foreground">
+          <Text className="text-muted-foreground">
             Let <Text className="text-primary">6pm</Text> a good time to spend
           </Text>
         </View>
@@ -91,7 +91,7 @@ export default function LoginScreen() {
       </View>
       <View className="px-4">
         <Trans>
-          <Text className="mx-auto text-center font-sans text-muted-foreground text-xs">
+          <Text className="mx-auto text-center text-muted-foreground text-xs">
             By continuing, you acknowledge that you understand and agree to our{' '}
             <Link href="/privacy-policy">
               <Text className="text-primary text-xs">Privacy Policy</Text>

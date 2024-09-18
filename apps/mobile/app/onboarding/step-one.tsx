@@ -21,10 +21,10 @@ export default function StepOneScreen() {
       contentContainerStyle={{ paddingBottom: bottom + 32 }}
     >
       <View className="gap-4">
-        <Text className="font-sans font-semibold text-3xl text-primary">
+        <Text className="font-semiBold text-3xl text-primary">
           {t(i18n)`Welcome to 6pm!`}
         </Text>
-        <Text className="font-sans text-muted-foreground">
+        <Text className="text-muted-foreground">
           {t(i18n)`Get started by setting your monthly budget.`}
         </Text>
       </View>

@@ -109,10 +109,10 @@ export default function StepTwoScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View className="gap-4 px-8">
-          <Text className="font-sans font-semibold text-3xl text-primary">
+          <Text className="font-semiBold text-3xl text-primary">
             {t(i18n)`Set your monthly spending goal`}
           </Text>
-          <Text className="font-sans text-muted-foreground">
+          <Text className="text-muted-foreground">
             {t(
               i18n,
             )`If you're not sure, start with how much you usually spend per month.`}
@@ -120,7 +120,7 @@ export default function StepTwoScreen() {
         </View>
         <View className="h-24 w-full items-center justify-end gap-2">
           <TransactionAmount />
-          <Text className="font-sans text-muted-foreground">
+          <Text className="text-muted-foreground">
             {t(i18n)`* you can always change this later.`}
           </Text>
         </View>

@@ -37,7 +37,7 @@ export function SelectAccountField({
     <>
       <Button
         variant="secondary"
-        className="!px-3 max-w-[140px] border border-border"
+        className="!px-3 max-w-[140px]"
         disabled={isLoading}
         onPress={() => {
           Haptics.selectionAsync()
@@ -49,7 +49,7 @@ export function SelectAccountField({
           <GenericIcon
             // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             name={selectedWalletAccount.icon as any}
-            className="h-5 w-5 text-primary"
+            className="size-5 text-secondary-foreground"
           />
         )}
         <Text className="line-clamp-1 shrink">

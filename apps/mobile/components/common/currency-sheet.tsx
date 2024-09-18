@@ -34,7 +34,7 @@ export function CurrencySheetList({ onSelect, value }: CurrencySheetListProps) {
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
       ListHeaderComponent={
-        <View className="bg-card px-4">
+        <View className="bg-background px-4">
           <SearchIcon className="absolute top-2.5 left-7 z-10 h-6 w-6 text-muted-foreground" />
           <BottomSheetTextInput
             placeholder={t(i18n)`Search currency...`}

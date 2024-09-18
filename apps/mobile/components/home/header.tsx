@@ -22,7 +22,7 @@ export function HomeHeader({
   const router = useRouter()
 
   return (
-    <View className="flex flex-row items-center justify-between gap-4 bg-card px-6 pb-3">
+    <View className="flex flex-row items-center justify-between gap-4 bg-background px-6 pb-3">
       <View className="flex flex-1 flex-row items-center gap-3">
         <TouchableOpacity
           activeOpacity={0.8}

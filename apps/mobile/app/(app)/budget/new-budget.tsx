@@ -36,7 +36,7 @@ export default function CreateBudgetScreen() {
   }
 
   return (
-    <View className="bg-card" {...rootProps}>
+    <View className="bg-background" {...rootProps}>
       <BudgetForm onSubmit={handleCreate} sideOffset={sideOffset} />
       <PortalHost name="budget-form" />
     </View>

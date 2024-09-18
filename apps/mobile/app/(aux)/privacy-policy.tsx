@@ -5,7 +5,10 @@ import { ScrollView, View } from 'react-native'
 
 export default function PrivacyScreen() {
   return (
-    <ScrollView className="bg-card" contentContainerClassName="px-6 py-3 gap-2">
+    <ScrollView
+      className="bg-background"
+      contentContainerClassName="px-6 py-3 gap-2"
+    >
       <Text>
         Hey there! Thanks for using 6pm. Here's the lowdown on what data we
         collect, how we use it, and how we keep it safe. We aim to be as

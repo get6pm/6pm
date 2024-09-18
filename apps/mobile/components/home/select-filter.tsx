@@ -65,7 +65,7 @@ export function SelectFilter({
       >
         <FilterIcon
           className={cn(
-            'h-5 w-5 text-primary',
+            'h-5 w-5 text-foreground',
             value !== HomeFilter.All && 'text-primary-foreground',
           )}
         />

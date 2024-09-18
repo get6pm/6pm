@@ -1,3 +1,4 @@
+import { Palette } from '@/lib/theme'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -9,6 +10,8 @@ interface UserSettingsStore {
   setEnabledPushNotifications: (enabledPushNotifications: boolean) => void
   enabledLocalAuth: boolean
   setEnabledLocalAuth: (enabledLocalAuth: boolean) => void
+  preferredPalette: Palette
+  setPreferredPalette: (preferredPalette: Palette) => void
 }
 
 export const useUserSettingsStore = create<UserSettingsStore>()(
@@ -21,6 +24,8 @@ export const useUserSettingsStore = create<UserSettingsStore>()(
         set({ enabledPushNotifications }),
       enabledLocalAuth: false,
       setEnabledLocalAuth: (enabledLocalAuth) => set({ enabledLocalAuth }),
+      preferredPalette: Palette.Default,
+      setPreferredPalette: (preferredPalette) => set({ preferredPalette }),
     }),
     {
       name: 'user-settings-storage',

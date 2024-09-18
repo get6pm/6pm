@@ -147,7 +147,7 @@ export const TransactionForm = ({
           <View className="flex-row items-center gap-4">
             {onDelete ? (
               <Button size="icon" variant="secondary" onPress={onDelete}>
-                <Trash2Icon className="size-6 text-primary" />
+                <Trash2Icon className="size-5 text-secondary-foreground" />
               </Button>
             ) : null}
           </View>
@@ -181,7 +181,7 @@ export const TransactionForm = ({
           />
         </View>
         <Animated.View style={translateStyle}>
-          <View className="flex-row items-center justify-between gap-3 border-border border-t bg-card p-2">
+          <View className="flex-row items-center justify-between gap-3 border-border border-t bg-background p-2">
             <View className="flex-row items-center gap-2">
               <SelectAccountField
                 onSelect={(walletAccount) => {

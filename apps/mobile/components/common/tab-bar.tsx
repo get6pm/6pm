@@ -60,7 +60,7 @@ function NewRecordButton() {
       <Button
         size="icon"
         className={cn(
-          'h-12 w-12 items-center justify-center rounded-xl border border-border bg-muted active:bg-muted/75',
+          'h-12 w-12 items-center justify-center rounded-xl border border-primary/10 bg-muted active:bg-muted/75',
         )}
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
       >

@@ -94,7 +94,7 @@ export default function HomeScreen() {
   }, [transactions])
 
   return (
-    <View className="flex-1 bg-card" style={{ paddingTop: top }}>
+    <View className="flex-1 bg-background" style={{ paddingTop: top }}>
       <HomeHeader
         walletAccountId={walletAccountId}
         onWalletAccountChange={setWalletAccountId}
@@ -128,7 +128,7 @@ export default function HomeScreen() {
             </View>
           ) : null
         }
-        className="flex-1 bg-card"
+        className="flex-1 bg-background"
         contentContainerStyle={{ paddingBottom: bottom + 80 }}
         // refreshing={isRefetching}
         // onRefresh={handleRefresh}
@@ -138,7 +138,7 @@ export default function HomeScreen() {
           <TransactionItem transaction={transaction} />
         )}
         renderSectionHeader={({ section: { title, sum } }) => (
-          <View className="mx-6 flex-row justify-between border-muted-foreground/20 border-b bg-card py-2 pt-4 align-center">
+          <View className="mx-6 flex-row justify-between border-muted-foreground/20 border-b bg-background py-2 pt-4 align-center">
             <Text className="text-muted-foreground">{title}</Text>
             <AmountFormat
               amount={sum}

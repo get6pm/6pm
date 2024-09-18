@@ -85,7 +85,7 @@ export default function EditAccountScreen() {
             )
           }
         >
-          <Trash2Icon className="size-6 text-primary" />
+          <Trash2Icon className="size-5 text-foreground" />
         </Button>
       ),
     })
@@ -96,9 +96,9 @@ export default function EditAccountScreen() {
   }
 
   return (
-    <View className="flex-1 bg-card" {...rootProps}>
+    <View className="flex-1 bg-background" {...rootProps}>
       <ScrollView
-        className="flex-1 bg-card"
+        className="flex-1 bg-background"
         contentContainerClassName="gap-4 p-6"
         automaticallyAdjustKeyboardInsets
         keyboardShouldPersistTaps="handled"

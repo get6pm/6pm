@@ -28,7 +28,7 @@ export default function CategoriesScreen() {
       headerRight: () => (
         <Link href={isPro ? '/category/new-category' : '/paywall'} asChild>
           <Button size="icon" variant="ghost">
-            <PlusIcon className="size-6 text-primary" />
+            <PlusIcon className="size-6 text-foreground" />
           </Button>
         </Link>
       ),
@@ -42,7 +42,7 @@ export default function CategoriesScreen() {
 
   return (
     <SectionList
-      className="flex-1 bg-card"
+      className="flex-1 bg-background"
       contentContainerStyle={{ paddingBottom: bottom }}
       refreshing={false}
       onRefresh={refetch}
@@ -50,7 +50,9 @@ export default function CategoriesScreen() {
       keyExtractor={(item) => item.id}
       renderItem={({ item: category }) => <CategoryItem category={category} />}
       renderSectionHeader={({ section: { title } }) => (
-        <Text className="mx-6 bg-card py-2 text-muted-foreground">{title}</Text>
+        <Text className="mx-6 bg-background py-2 text-muted-foreground">
+          {title}
+        </Text>
       )}
       renderSectionFooter={({ section }) => (
         <>

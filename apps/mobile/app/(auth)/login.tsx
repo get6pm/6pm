@@ -54,7 +54,7 @@ export default function LoginScreen() {
 
   return (
     <ScrollView
-      className="bg-card"
+      className="bg-background"
       contentContainerClassName="gap-4 p-8"
       automaticallyAdjustKeyboardInsets
       keyboardShouldPersistTaps="handled"

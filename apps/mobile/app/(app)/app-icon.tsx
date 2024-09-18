@@ -56,7 +56,7 @@ export default function AppearanceScreen() {
           setSelected(item.name)
           toast.success(t(i18n)`App icon updated!`)
         }}
-        className="flex-1 flex-row items-center justify-center gap-4 bg-card px-6 py-2 active:bg-muted/50"
+        className="flex-1 flex-row items-center justify-center gap-4 bg-background px-6 py-2 active:bg-muted/50"
       >
         <View className="flex-1 flex-row items-center gap-4">
           <Image
@@ -89,7 +89,7 @@ export default function AppearanceScreen() {
           </Text>
         </View>
       }
-      className="bg-card"
+      className="bg-background"
       renderItem={renderDynamicIcon}
       contentContainerClassName="py-4"
     />

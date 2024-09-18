@@ -12,7 +12,7 @@ export default function LanguageScreen() {
   const router = useRouter()
 
   return (
-    <ScrollView className="bg-card">
+    <ScrollView className="bg-background">
       <MenuItem
         label={t(i18n)`English`}
         rightSection={

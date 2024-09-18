@@ -163,11 +163,11 @@ export function ProfileCard() {
       >
         <UserAvatar
           user={user!}
-          fallbackClassName="bg-card"
+          fallbackClassName="bg-background"
           className="h-16 w-16"
         />
         <View className="flex-1 justify-center gap-1">
-          <Text className="line-clamp-1 font-medium text-primary">
+          <Text className="line-clamp-1 font-medium">
             {user?.fullName ?? user?.primaryEmailAddress?.emailAddress}
           </Text>
           <Badge
@@ -187,7 +187,7 @@ export function ProfileCard() {
       </TouchableOpacity>
       <Link href="/profile" asChild>
         <Button size="icon" variant="ghost">
-          <PencilIcon className="h-5 w-5 text-primary" />
+          <PencilIcon className="h-5 w-5 text-foreground" />
         </Button>
       </Link>
     </View>

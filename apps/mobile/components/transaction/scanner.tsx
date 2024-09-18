@@ -220,7 +220,7 @@ export function Scanner({
   }
 
   return (
-    <View className="flex-1 bg-card">
+    <View className="flex-1 bg-background">
       <CameraView
         ref={camera}
         className="flex-1 items-center"
@@ -250,7 +250,7 @@ export function Scanner({
             className="h-12 w-12 rounded-full"
             onPress={pickImage}
           >
-            <ImagesIcon className="size-6 text-primary" />
+            <ImagesIcon className="size-6 text-foreground" />
           </Button>
           <Button
             variant="secondary"
@@ -266,7 +266,7 @@ export function Scanner({
             className="h-12 w-12 rounded-full"
             onPress={toggleFacing}
           >
-            <SwitchCameraIcon className="size-6 text-primary" />
+            <SwitchCameraIcon className="size-6 text-foreground" />
           </Button>
         </View>
       </CameraView>

@@ -28,7 +28,7 @@ export function IconGridSheet({ icons, onSelect, value }: IconGridSheetProps) {
           onPress={() => onSelect(item)}
         >
           {/* biome-ignore lint/suspicious/noExplicitAny: <explanation> */}
-          <GenericIcon name={item as any} className="size-6 text-foreground" />
+          <GenericIcon name={item as any} className="size-6 text-primary" />
         </Button>
       )}
     />

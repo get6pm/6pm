@@ -71,7 +71,7 @@ export function SelectCategoryField({
     <>
       <Button
         variant="secondary"
-        className="!px-3 max-w-[140px] border border-border"
+        className="!px-3 max-w-[140px]"
         disabled={isLoading}
         onPress={() => {
           Haptics.selectionAsync()
@@ -82,7 +82,7 @@ export function SelectCategoryField({
         <GenericIcon
           // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           name={(selectedCategory?.icon as any) || 'Shapes'}
-          className="h-5 w-5 text-primary"
+          className="size-5 text-secondary-foreground"
         />
         <Text className="line-clamp-1 shrink">
           {selectedCategory?.name || t(i18n)`Uncategorized`}

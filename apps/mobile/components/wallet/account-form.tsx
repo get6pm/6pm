@@ -107,9 +107,9 @@ export const AccountForm = ({
             <View className="mx-auto mt-2 mb-4 flex-row items-center gap-2">
               <Text className="font-medium">{t(i18n)`Advanced`}</Text>
               {isExpanded ? (
-                <ChevronUpIcon className="h-5 w-5 text-primary" />
+                <ChevronUpIcon className="h-5 w-5 text-foreground" />
               ) : (
-                <ChevronDownIcon className="h-5 w-5 text-primary" />
+                <ChevronDownIcon className="h-5 w-5 text-foreground" />
               )}
             </View>
           </CollapsibleTrigger>

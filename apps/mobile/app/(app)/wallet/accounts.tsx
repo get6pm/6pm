@@ -30,7 +30,7 @@ export default function WalletAccountsScreen() {
       headerRight: () => (
         <Link href={isExceeded ? '/paywall' : '/wallet/new-account'} asChild>
           <Button size="icon" variant="ghost">
-            <PlusIcon className="size-6 text-primary" />
+            <PlusIcon className="size-6 text-foreground" />
           </Button>
         </Link>
       ),
@@ -39,7 +39,7 @@ export default function WalletAccountsScreen() {
 
   return (
     <FlatList
-      className="bg-card"
+      className="bg-background"
       contentContainerClassName="py-3"
       data={walletAccounts}
       renderItem={({ item }) => <WalletAccountItem data={item} />}

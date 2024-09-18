@@ -102,7 +102,7 @@ export default function EditRecordScreen() {
   }
 
   return (
-    <View className="flex-1 bg-card" {...rootProps}>
+    <View className="flex-1 bg-background" {...rootProps}>
       <TransactionForm
         sideOffset={sideOffset}
         form={transactionForm}

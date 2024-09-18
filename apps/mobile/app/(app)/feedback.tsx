@@ -44,7 +44,7 @@ export default function FeedbackScreen() {
   return (
     <FormProvider {...feedbackForm}>
       <ScrollView
-        className="bg-card"
+        className="bg-background"
         contentContainerClassName="px-6 py-3"
         automaticallyAdjustKeyboardInsets
         keyboardShouldPersistTaps="handled"

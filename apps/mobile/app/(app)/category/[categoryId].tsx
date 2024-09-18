@@ -58,7 +58,7 @@ export default function EditCategoryScreen() {
             )
           }
         >
-          <Trash2Icon className="size-6 text-primary" />
+          <Trash2Icon className="size-5 text-foreground" />
         </Button>
       ),
     })
@@ -66,7 +66,7 @@ export default function EditCategoryScreen() {
 
   if (!category) {
     return (
-      <View className="flex-1 items-center justify-center bg-card">
+      <View className="flex-1 items-center justify-center bg-background">
         <Text className="text-muted-foreground">Category not found</Text>
       </View>
     )
@@ -74,7 +74,7 @@ export default function EditCategoryScreen() {
 
   return (
     <ScrollView
-      className="bg-card px-6 py-3"
+      className="bg-background px-6 py-3"
       keyboardShouldPersistTaps="handled"
     >
       <CategoryForm

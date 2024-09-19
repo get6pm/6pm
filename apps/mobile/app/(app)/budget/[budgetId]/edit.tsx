@@ -22,7 +22,7 @@ export default function EditBudgetScreen() {
   const { i18n } = useLingui()
   const { budgetId } = useLocalSearchParams<{ budgetId: string }>()
   const { budget } = useBudget(budgetId!)
-  const { mutateAsync } = useUpdateBudget()
+  const { mutateAsync: updateUpdate } = useUpdateBudget()
   const { mutateAsync: mutateDelete } = useDeleteBudget()
   const { setDefaultBudgetId, defaultBudgetId } = useUserMetadata()
   const { sideOffset, ...rootProps } = useModalPortalRoot()
@@ -68,10 +68,14 @@ export default function EditBudgetScreen() {
   )
 
   const handleUpdate = async ({ isDefault, ...data }: BudgetFormValues) => {
-    if (isDefault) {
-      await setDefaultBudgetId(budget?.id)
+    if (isDefault && defaultBudgetId !== undefined) {
+      // only set if changed
+      setDefaultBudgetId(budget?.id)
+    } else if (defaultBudgetId === budget?.id) {
+      // unset default budget
+      setDefaultBudgetId(undefined)
     }
-    mutateAsync({
+    updateUpdate({
       data: data,
       id: budget?.id!,
     }).catch(() => {

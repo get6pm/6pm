@@ -18,7 +18,7 @@ const app = new Hono({ strict: true })
   .use(requestId())
   .use(trimTrailingSlash())
   .use(prettyJSON({ space: 2 }))
-  .use(except(() => IS_VERCEL, logger(log.error.bind(log))))
+  .use(except(() => IS_VERCEL, logger(log.info.bind(log))))
 
   // * Mounting versioned APIs
   .route('/v1', appV1)

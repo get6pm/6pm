@@ -19,6 +19,7 @@
     "@6pm/utilities": "workspace:^",
     "@6pm/validation": "workspace:^",
     "@clerk/backend": "^1.2.4",
+    "@clerk/clerk-sdk-node": "^5.0.42",
     "@hono/clerk-auth": "^2.0.0",
     "@hono/node-server": "^1.11.4",
     "@hono/zod-validator": "^0.2.2",
@@ -28,14 +29,14 @@
     "hono": "^4.4.8",
     "next": "^14.2.4",
     "openai": "^4.52.7",
-    "pino-pretty": "^11.2.1",
     "pino": "^9.2.0",
+    "pino-pretty": "^11.2.1",
     "prisma": "5.19.0",
-    "react-dom": "18.3.1",
     "react": "18.3.1",
+    "react-dom": "18.3.1",
     "svix": "^1.28.0",
-    "zod-prisma-types": "^3.1.8",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zod-prisma-types": "^3.1.8"
   },
   "devDependencies": {
     "@types/node": "18.11.18",

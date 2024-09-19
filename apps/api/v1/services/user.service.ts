@@ -18,9 +18,16 @@ export async function findUserByEmail(email: string) {
 }
 
 export async function createUser({ data }: { data: CreateUser }) {
-  return await prisma.user.create({
-    data,
+  const user = await prisma.user.upsert({
+    where: {
+      id: data.id,
+      email: data.email,
+    },
+    create: data,
+    update: data,
   })
+
+  return user
 }
 
 export async function deleteUser(userId: string) {

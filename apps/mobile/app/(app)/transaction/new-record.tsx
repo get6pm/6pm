@@ -4,6 +4,7 @@ import { TransactionForm } from '@/components/transaction/transaction-form'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useUserMetadata } from '@/hooks/use-user-metadata'
+import { useCategoryList } from '@/stores/category/hooks'
 import { useCreateTransaction } from '@/stores/transaction/hooks'
 import { useTransactionStore } from '@/stores/transaction/store'
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
@@ -32,6 +33,11 @@ import {
   View,
 } from 'react-native'
 
+const DEFAULT_CATEGORY_CONFIG = {
+  type: 'EXPENSE',
+  name: { en: 'Other Expense', vi: 'Chi phí khác' },
+}
+
 export default function NewRecordScreen() {
   const { i18n } = useLingui()
   const ref = useRef<ScrollView>(null)
@@ -45,16 +51,22 @@ export default function NewRecordScreen() {
   const navigation = useNavigation()
   const [width, setWidth] = useState(Dimensions.get('window').width)
   const { removeDraftTransaction } = useTransactionStore()
+  const { expenseCategories } = useCategoryList()
 
   const params = useLocalSearchParams()
   const parsedParams = zUpdateTransaction.parse(params)
-  const defaultValues = {
+  const defaultValues: TransactionFormValues = {
     date: new Date(),
     amount: 0,
     currency: defaultCurrency,
     note: '',
     walletAccountId: defaultWallet?.id,
     budgetId: defaultBudgetId as string,
+    categoryId: expenseCategories.find(
+      (category) =>
+        category.type === DEFAULT_CATEGORY_CONFIG.type &&
+        Object.values(DEFAULT_CATEGORY_CONFIG.name).includes(category.name),
+    )?.id,
     ...parsedParams,
   }
 

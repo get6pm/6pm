@@ -25,7 +25,7 @@
     "commands": [
       {
         "match": "\\.(ts|tsx|js|jsx|html)$",
-        "cmd": "pnpm biome lint ${file} --apply-unsafe"
+        "cmd": "pnpm biome lint ${file} --unsafe"
       }
     ]
   }

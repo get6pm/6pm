@@ -40,7 +40,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
   return (
     <TextClassContext.Provider
       value={cn(
-        'select-none text-sm native:text-lg text-foreground',
+        'select-none native:text-lg text-foreground text-sm',
         open && 'native:text-accent-foreground',
       )}
     >

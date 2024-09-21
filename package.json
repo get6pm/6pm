@@ -2,7 +2,10 @@
   "name": "6pm",
   "version": "1.0.2",
   "license": "GPL-3.0",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "api:dev": "pnpm --filter @6pm/api run dev",
     "api:build": "pnpm --filter @6pm/api run build",
@@ -20,11 +23,16 @@
     "@lingui/cli": "^4.11.1",
     "@lingui/macro": "^4.11.1",
     "babel-plugin-macros": "^3.1.0",
-    "conventional-changelog-cli": "^5.0.0"
+    "conventional-changelog-cli": "^5.0.0",
+    "lefthook": "^1.7.15"
   },
   "pnpm": {
     "peerDependencyRules": {
-      "ignoreMissing": ["@babel/*", "expo-modules-*", "typescript"]
+      "ignoreMissing": [
+        "@babel/*",
+        "expo-modules-*",
+        "typescript"
+      ]
     },
     "overrides": {
       "react": "18.3.1"

@@ -14,6 +14,16 @@ module.exports = {
         '2xl': '1400px',
       },
     },
+    fontSize: {
+      xs: '0.813rem',
+      sm: '1rem',
+      base: '1.063rem',
+      xl: '1.25rem',
+      '2xl': '1.563rem',
+      '3xl': '1.953rem',
+      '4xl': '2.441rem',
+      '5xl': '3.052rem',
+    },
     extend: {
       fontFamily: {
         regular: ['Haskoy-Regular'],

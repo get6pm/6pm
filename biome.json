@@ -1,5 +1,9 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.8.0/schema.json",
+  "files": {
+    "ignoreUnknown": true,
+    "ignore": ["apps/mobile/scripts/*"]
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -20,7 +24,7 @@
           "fix": "safe",
           "options": {
             "attributes": ["className"],
-            "functions": ["clsx", "cva", "tw"]
+            "functions": ["clsx", "cva", "tw", "cn"]
           }
         }
       },
@@ -236,7 +240,7 @@
         "noCommentText": "error",
         "noCompareNegZero": "error",
         "noConfusingLabels": "error",
-        "noConsoleLog": "warn",
+        "noConsoleLog": { "fix": "none", "level": "warn" },
         "noControlCharactersInRegex": "error",
         "noDebugger": "error",
         "noDoubleEquals": "error",

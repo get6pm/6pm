@@ -15,7 +15,7 @@ const Input = React.forwardRef<
         className,
       )}
       placeholderClassName={cn(
-        'text-muted-foreground font-regular',
+        'font-regular text-muted-foreground',
         placeholderClassName,
       )}
       {...props}

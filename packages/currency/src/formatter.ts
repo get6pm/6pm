@@ -1,4 +1,5 @@
 export function nFormatter(num: number, digits: number) {
+  'worklet'
   const lookup = [
     { value: 1, symbol: '' },
     { value: 1e3, symbol: 'k' },

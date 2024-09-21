@@ -10,10 +10,6 @@ import { isRunningInExpoGo } from 'expo'
 
 import { tokenCache } from '@/lib/cache'
 import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
-import {
-  SpaceMono_400Regular,
-  SpaceMono_700Bold,
-} from '@expo-google-fonts/space-mono'
 import { useFonts } from 'expo-font'
 import * as Notifications from 'expo-notifications'
 import { SplashScreen, Stack, useNavigationContainerRef } from 'expo-router'
@@ -116,8 +112,6 @@ function RootLayout() {
   useWarmUpBrowser()
   const { colorScheme } = useColorScheme()
   const [fontsLoaded] = useFonts({
-    SpaceMono_400Regular,
-    SpaceMono_700Bold,
     'Haskoy-Regular': require('../assets/fonts/Haskoy-Regular.ttf'),
     'Haskoy-Medium': require('../assets/fonts/Haskoy-Medium.ttf'),
     'Haskoy-SemiBold': require('../assets/fonts/Haskoy-SemiBold.ttf'),

@@ -16,7 +16,6 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        mono: ['Space Mono'],
         regular: ['Haskoy-Regular'],
         medium: ['Haskoy-Medium'],
         semiBold: ['Haskoy-SemiBold'],

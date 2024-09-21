@@ -6,16 +6,16 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { View } from 'react-native'
 
 const badgeVariants = cva(
-  'items-center rounded-full border border-border px-2.5 py-0.5 web:inline-flex web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2 web:transition-colors',
+  'web:inline-flex items-center rounded-full border border-border px-2.5 py-0.5 web:transition-colors web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2',
   {
     variants: {
       variant: {
         default:
-          'border-transparent bg-primary active:opacity-80 web:hover:opacity-80',
+          'border-transparent bg-primary web:hover:opacity-80 active:opacity-80',
         secondary:
-          'border-transparent bg-secondary active:opacity-80 web:hover:opacity-80',
+          'border-transparent bg-secondary web:hover:opacity-80 active:opacity-80',
         destructive:
-          'border-transparent bg-destructive active:opacity-80 web:hover:opacity-80',
+          'border-transparent bg-destructive web:hover:opacity-80 active:opacity-80',
         outline: 'text-foreground',
       },
     },

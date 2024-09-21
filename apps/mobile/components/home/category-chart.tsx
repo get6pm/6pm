@@ -118,8 +118,8 @@ export function CategoryChart({
               variant={selected === item.id ? 'secondary' : 'ghost'}
               size="sm"
               className={cn(
-                '!h-8 border border-primary-foreground',
-                selected === item.id && 'border-border',
+                '!h-8 border border-border',
+                selected === item.id && '!border-secondary',
               )}
               onPress={() => {
                 onSelect?.(selected === item.id ? undefined : item.id)
@@ -138,9 +138,7 @@ export function CategoryChart({
                 />
               )}
               <Text>{item.name}</Text>
-              <Text className="font-normal text-muted-foreground">
-                {item.percentage}%
-              </Text>
+              <Text className={'font-normal'}>{item.percentage}%</Text>
             </Button>
           )
         }}

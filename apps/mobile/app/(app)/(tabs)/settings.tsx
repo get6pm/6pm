@@ -2,6 +2,7 @@ import * as Application from 'expo-application'
 import * as Haptics from 'expo-haptics'
 import * as Updates from 'expo-updates'
 
+import { FooterGradient } from '@/components/common/footer-gradient'
 import { Logo } from '@/components/common/logo'
 import { MenuItem } from '@/components/common/menu-item'
 import { toast } from '@/components/common/toast'
@@ -15,8 +16,6 @@ import { Text } from '@/components/ui/text'
 import { useUserEntitlements } from '@/hooks/use-purchases'
 import { useScheduleNotification } from '@/hooks/use-schedule-notification'
 import { useSeed } from '@/hooks/use-seed'
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { theme } from '@/lib/theme'
 import { useLocale } from '@/locales/provider'
 import { useTransactionStore } from '@/stores/transaction/store'
 import { useUserSettingsStore } from '@/stores/user-settings/store'
@@ -24,7 +23,6 @@ import { useAuth } from '@clerk/clerk-expo'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import * as Clipboard from 'expo-clipboard'
-import { LinearGradient } from 'expo-linear-gradient'
 import * as Notifications from 'expo-notifications'
 import { Link } from 'expo-router'
 import {
@@ -62,7 +60,6 @@ export default function SettingsScreen() {
   const { i18n } = useLingui()
   const { bottom } = useSafeAreaInsets()
   const { language } = useLocale()
-  const { colorScheme } = useColorScheme()
   const { cancelAllScheduledNotifications } = useScheduleNotification()
   const { setEnabledPushNotifications, enabledPushNotifications } =
     useUserSettingsStore()
@@ -337,14 +334,7 @@ export default function SettingsScreen() {
           </Text>
         </TouchableOpacity>
       </ScrollView>
-      <LinearGradient
-        colors={[
-          colorScheme === 'dark' ? 'transparent' : '#ffffff00',
-          theme[colorScheme ?? 'light'].background,
-        ]}
-        className="absolute right-0 bottom-0 left-0 h-20"
-        pointerEvents="none"
-      />
+      <FooterGradient />
     </View>
   )
 }

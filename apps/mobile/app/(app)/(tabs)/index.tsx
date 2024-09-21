@@ -1,4 +1,5 @@
 import { AmountFormat } from '@/components/common/amount-format'
+import { FooterGradient } from '@/components/common/footer-gradient'
 import { ListSkeleton } from '@/components/common/list-skeleton'
 // import { Toolbar } from '@/components/common/toolbar'
 import { HomeHeader } from '@/components/home/header'
@@ -9,16 +10,13 @@ import { DraftTransactionList } from '@/components/transaction/draft-transaction
 import { HandyArrow } from '@/components/transaction/handy-arrow'
 import { TransactionItem } from '@/components/transaction/transaction-item'
 import { Text } from '@/components/ui/text'
-import { useColorScheme } from '@/hooks/useColorScheme'
 import { formatDateShort } from '@/lib/date'
-import { theme } from '@/lib/theme'
 import { useTransactionList } from '@/stores/transaction/hooks'
 import { useTransactionStore } from '@/stores/transaction/store'
 import { dayjsExtended } from '@6pm/utilities'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { format } from 'date-fns/format'
-import { LinearGradient } from 'expo-linear-gradient'
 import { groupBy, mapValues, orderBy, sumBy } from 'lodash-es'
 import { useMemo, useState } from 'react'
 import { SectionList, View } from 'react-native'
@@ -27,7 +25,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 export default function HomeScreen() {
   const { i18n } = useLingui()
   const { top, bottom } = useSafeAreaInsets()
-  const { colorScheme } = useColorScheme()
   const [walletAccountId, setWalletAccountId] = useState<string | undefined>()
   const [filter, setFilter] = useState<HomeFilter>(HomeFilter.All)
   const [view, setView] = useState<HomeView>(HomeView.SpentThisWeek)
@@ -177,14 +174,7 @@ export default function HomeScreen() {
           ) : null}
         </>
       )}
-      <LinearGradient
-        colors={[
-          colorScheme === 'dark' ? 'transparent' : '#ffffff00',
-          theme[colorScheme ?? 'light'].background,
-        ]}
-        className="absolute right-0 bottom-0 left-0 h-36"
-        pointerEvents="none"
-      />
+      <FooterGradient />
       {/* <Toolbar /> */}
     </View>
   )

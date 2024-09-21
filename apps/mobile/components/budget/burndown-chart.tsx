@@ -1,5 +1,4 @@
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { theme } from '@/lib/theme'
+import { useColorPalette } from '@/hooks/use-color-palette'
 import { useDefaultCurrency } from '@/stores/user-settings/hooks'
 import { nFormatter } from '@6pm/currency'
 import { dayjsExtended } from '@6pm/utilities'
@@ -25,15 +24,16 @@ import {
 } from 'victory-native'
 
 function AverageLine({ points }: { points: PointsArray }) {
-  const { colorScheme } = useColorScheme()
   const { path } = useLinePath(points, { curveType: 'linear' })
+  const { getColor } = useColorPalette()
+
   return (
     <Path
       path={path}
       style="stroke"
       opacity={0.3}
       strokeWidth={2.5}
-      color={theme[colorScheme].mutedForeground}
+      color={getColor('--muted-foreground')}
       strokeCap="round"
     >
       <DashPathEffect intervals={[6, 6]} />
@@ -47,9 +47,9 @@ function UsageLine({
   points,
   diffAmount,
 }: { points: PointsArray; diffAmount: number }) {
-  const { colorScheme } = useColorScheme()
-  const { path } = useLinePath(points, { curveType: 'cardinal' })
+  const { path } = useLinePath(points, { curveType: 'linear' })
   const font = useFont(SpaceMono_700Bold, 16)
+  const { getColor } = useColorPalette()
 
   const lastPoint = points.filter((i) => !!i.y).pop()
 
@@ -104,14 +104,14 @@ function UsageLine({
         path={path}
         style="stroke"
         strokeWidth={3}
-        color={theme[colorScheme].primary}
+        color={getColor('--primary')}
         strokeCap="round"
       />
       {lastPoint && (
         <Group transform={[{ translateX: 6 }]}>
           <Scatter
             points={[lastPoint]}
-            color={theme[colorScheme].primary}
+            color={getColor('--primary')}
             shape="circle"
             style="stroke"
             strokeWidth={3}
@@ -153,9 +153,9 @@ export function BurndownChart({
   anchorDay = new Date().getDate(),
 }: BurndownChartProps) {
   const font = useFont(SpaceMono_400Regular, 12)
-  const { colorScheme } = useColorScheme()
   const defaultCurrency = useDefaultCurrency()
   const daysInMonth = dayjsExtended(anchorDay).daysInMonth()
+  const { getColor } = useColorPalette()
 
   const chartData = Array.from({ length: daysInMonth + 1 }, (_, i) => ({
     day: i,
@@ -207,7 +207,7 @@ export function BurndownChart({
               y={(points.average[0].y ?? 0) + 16}
               font={font}
               text={`0.00`}
-              color={theme[colorScheme ?? 'light'].mutedForeground}
+              color={getColor('--muted-foreground')}
             />
             <SkiaText
               x={
@@ -217,7 +217,7 @@ export function BurndownChart({
               y={(points.average[points.average.length - 1].y ?? 0) - 10}
               font={font}
               text={totalText}
-              color={theme[colorScheme ?? 'light'].mutedForeground}
+              color={getColor('--muted-foreground')}
             />
           </>
         )}

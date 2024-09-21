@@ -1,6 +1,6 @@
 import { BudgetItem } from '@/components/budget/budget-item'
 import { BudgetStatistic } from '@/components/budget/budget-statistic'
-import { BurndownChart } from '@/components/budget/burndown-chart'
+import { BurndownChart } from '@/components/common/burndown-chart'
 import { FooterGradient } from '@/components/common/footer-gradient'
 import { Button } from '@/components/ui/button'
 // import { Toolbar } from '@/components/common/toolbar'
@@ -200,7 +200,7 @@ export default function BudgetsScreen() {
   return (
     <View className="flex-1 bg-background">
       <View
-        className="absolute w-full"
+        className="absolute z-50 w-full"
         onLayout={(ev) => {
           if (headerHeight.value === ev.nativeEvent.layout.height) {
             return

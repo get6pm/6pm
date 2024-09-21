@@ -1,7 +1,7 @@
 import { BudgetStatistic } from '@/components/budget/budget-statistic'
-import { BurndownChart } from '@/components/budget/burndown-chart'
 import { PeriodControl } from '@/components/budget/period-control'
 import { AmountFormat } from '@/components/common/amount-format'
+import { BurndownChart } from '@/components/common/burndown-chart'
 import { FooterGradient } from '@/components/common/footer-gradient'
 import { TransactionItem } from '@/components/transaction/transaction-item'
 import { Button } from '@/components/ui/button'
@@ -205,7 +205,7 @@ export default function BudgetDetailScreen() {
         onChange={setCurrentPeriodIndex}
       />
       <View
-        className="absolute top-12 w-full"
+        className="absolute top-12 z-50 w-full"
         onLayout={(ev) => {
           if (headerHeight.value === ev.nativeEvent.layout.height) {
             return

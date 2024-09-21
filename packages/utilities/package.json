@@ -1,6 +1,6 @@
 {
   "name": "@6pm/utilities",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Shared utilities between apps",
   "main": "src/index.ts",
   "scripts": {

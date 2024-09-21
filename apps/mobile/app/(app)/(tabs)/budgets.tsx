@@ -1,21 +1,19 @@
 import { BudgetItem } from '@/components/budget/budget-item'
 import { BudgetStatistic } from '@/components/budget/budget-statistic'
 import { BurndownChart } from '@/components/budget/burndown-chart'
+import { FooterGradient } from '@/components/common/footer-gradient'
 import { Button } from '@/components/ui/button'
 // import { Toolbar } from '@/components/common/toolbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Text } from '@/components/ui/text'
 import { useUserEntitlements } from '@/hooks/use-purchases'
-import { useColorScheme } from '@/hooks/useColorScheme'
 import { ENTITLEMENT_LIMIT } from '@/lib/constaints'
-import { theme } from '@/lib/theme'
 import { useBudgetList } from '@/stores/budget/hooks'
 import { useTransactionList } from '@/stores/transaction/hooks'
 import { dayjsExtended } from '@6pm/utilities'
 import type { Budget, BudgetPeriodConfig } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { LinearGradient } from 'expo-linear-gradient'
 import { Link, useNavigation } from 'expo-router'
 import { groupBy, map } from 'lodash-es'
 import { PlusIcon } from 'lucide-react-native'
@@ -47,7 +45,6 @@ const AnimatedSectionList = Animated.createAnimatedComponent(
 export default function BudgetsScreen() {
   const { i18n } = useLingui()
   const { bottom } = useSafeAreaInsets()
-  const { colorScheme } = useColorScheme()
   const headerAnimation = useSharedValue(0)
   const scrollY = useSharedValue(0)
   const headerHeight = useSharedValue(height)
@@ -255,14 +252,7 @@ export default function BudgetsScreen() {
           ) : null
         }
       />
-      <LinearGradient
-        colors={[
-          colorScheme === 'dark' ? 'transparent' : '#ffffff00',
-          theme[colorScheme ?? 'light'].background,
-        ]}
-        className="absolute right-0 bottom-0 left-0 h-36"
-        pointerEvents="none"
-      />
+      <FooterGradient />
       {/* <Toolbar /> */}
     </View>
   )

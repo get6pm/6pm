@@ -1,5 +1,4 @@
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { theme } from '@/lib/theme'
+import { useColorPalette } from '@/hooks/use-color-palette'
 import { useEffect } from 'react'
 import { type StyleProp, View, type ViewStyle } from 'react-native'
 import Animated, {
@@ -44,7 +43,7 @@ export function CircularProgress({
   delay = 500,
   style,
 }: AnimatedDonutProps) {
-  const { colorScheme } = useColorScheme()
+  const { getColor } = useColorPalette()
   const d = `
     M ${width / 2} 0
     H ${width - radius}
@@ -94,7 +93,7 @@ export function CircularProgress({
           strokeWidth={strokeWidth}
           d={d}
           fill="transparent"
-          stroke={strokeInactiveColor || theme[colorScheme].muted}
+          stroke={strokeInactiveColor || getColor('--muted')}
           strokeLinejoin="miter"
           strokeMiterlimit={0}
         />
@@ -107,7 +106,7 @@ export function CircularProgress({
           strokeWidth={strokeWidth}
           d={d}
           fill="transparent"
-          stroke={strokeColor || theme[colorScheme].primary}
+          stroke={strokeColor || getColor('--primary')}
           strokeDasharray={length}
           // strokeLinecap='butt'
           strokeLinejoin="miter"

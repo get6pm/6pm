@@ -2,16 +2,14 @@ import { BudgetStatistic } from '@/components/budget/budget-statistic'
 import { BurndownChart } from '@/components/budget/burndown-chart'
 import { PeriodControl } from '@/components/budget/period-control'
 import { AmountFormat } from '@/components/common/amount-format'
+import { FooterGradient } from '@/components/common/footer-gradient'
 import { TransactionItem } from '@/components/transaction/transaction-item'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { useColorScheme } from '@/hooks/useColorScheme'
 import { formatDateShort } from '@/lib/date'
-import { theme } from '@/lib/theme'
 import { useBudget, useBudgetPeriodStats } from '@/stores/budget/hooks'
 import type { TransactionPopulated } from '@6pm/validation'
 import { format } from 'date-fns'
-import { LinearGradient } from 'expo-linear-gradient'
 import { Link, useLocalSearchParams, useNavigation } from 'expo-router'
 import { groupBy, map, mapValues, orderBy, sortBy, sumBy } from 'lodash-es'
 import { SettingsIcon } from 'lucide-react-native'
@@ -38,7 +36,6 @@ const AnimatedSectionList = Animated.createAnimatedComponent(
 
 export default function BudgetDetailScreen() {
   const navigation = useNavigation()
-  const { colorScheme } = useColorScheme()
   const { bottom } = useSafeAreaInsets()
   const headerAnimation = useSharedValue(0)
   const scrollY = useSharedValue(0)
@@ -266,14 +263,7 @@ export default function BudgetDetailScreen() {
           </View>
         )}
       />
-      <LinearGradient
-        colors={[
-          colorScheme === 'dark' ? 'transparent' : '#ffffff00',
-          theme[colorScheme ?? 'light'].background,
-        ]}
-        className="absolute right-0 bottom-0 left-0 h-16"
-        pointerEvents="none"
-      />
+      <FooterGradient />
     </View>
   )
 }

@@ -15,7 +15,7 @@ export const zCreateBudget = z.object({
       amount: z
         .string({ coerce: true })
         .transform((val) => Number(`${val}`.replace(',', '.')))
-        .pipe(z.number({ coerce: true }).min(0))
+        .pipe(z.number({ coerce: true }).min(1))
         .optional(),
       startDate: z.date({ coerce: true }).optional(),
       endDate: z.date({ coerce: true }).optional(),
@@ -41,7 +41,7 @@ export const zUpdateBudget = z.object({
       amount: z
         .string({ coerce: true })
         .transform((val) => Number(`${val}`.replace(',', '.')))
-        .pipe(z.number({ coerce: true }).min(0))
+        .pipe(z.number({ coerce: true }).min(1))
         .optional(),
       startDate: z.date({ coerce: true }).optional(),
       endDate: z.date({ coerce: true }).optional(),

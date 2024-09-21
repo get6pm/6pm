@@ -93,7 +93,7 @@ export default function BudgetDetailScreen() {
             push
           >
             <Button size="icon" variant="ghost">
-              <SettingsIcon className="size-6 text-primary" />
+              <SettingsIcon className="size-6 text-foreground" />
             </Button>
           </Link>
         </View>

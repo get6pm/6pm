@@ -307,12 +307,15 @@ export function useBudgetPeriodStats(
 
   const remainingAmount = budgetAmount.add(totalBudgetUsage)
 
-  const usagePercentage = (
-    totalBudgetUsage.gt(0) ? new Decimal(0) : totalBudgetUsage.abs()
-  )
-    .div(budgetAmount!)
-    .mul(100)
-    .toNumber()
+  const usagePercentage = useMemo(() => {
+    if (budgetAmount.eq(0)) {
+      return 0
+    }
+    return (totalBudgetUsage.gt(0) ? new Decimal(0) : totalBudgetUsage.abs())
+      .div(budgetAmount!)
+      .mul(100)
+      .toNumber()
+  }, [totalBudgetUsage, budgetAmount])
 
   const averageAmountPerDay = budgetAmount.div(
     dayjsExtended(periodConfig?.endDate!).diff(

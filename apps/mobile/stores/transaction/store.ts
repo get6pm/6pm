@@ -1,4 +1,5 @@
 import {
+  type BlobObject,
   type TransactionPopulated,
   TransactionPopulatedSchema,
   type UpdateTransaction,
@@ -10,7 +11,11 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 type Transaction = TransactionPopulated
 
-type DraftTransaction = UpdateTransaction & { id: string; imageUri?: string }
+type DraftTransaction = UpdateTransaction & {
+  id: string
+  imageUri?: string
+  blobObject?: BlobObject | null
+}
 
 export interface TransactionStore {
   transactions: Transaction[]

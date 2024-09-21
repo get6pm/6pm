@@ -20,7 +20,12 @@ import { useLingui } from '@lingui/react'
 import { createId } from '@paralleldrive/cuid2'
 import { PortalHost, useModalPortalRoot } from '@rn-primitives/portal'
 import * as Haptics from 'expo-haptics'
-import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
+import {
+  Link,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from 'expo-router'
 import { CameraIcon, KeyboardIcon, Trash2Icon } from 'lucide-react-native'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -28,10 +33,12 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
+  Image,
   Keyboard,
   ScrollView,
   View,
 } from 'react-native'
+import { z } from 'zod'
 
 const DEFAULT_CATEGORY_CONFIG = {
   type: 'EXPENSE',
@@ -54,7 +61,13 @@ export default function NewRecordScreen() {
   const { expenseCategories } = useCategoryList()
 
   const params = useLocalSearchParams()
-  const parsedParams = zUpdateTransaction.parse(params)
+  const { blobObjectUrl, blobObjectId, ...parsedParams } = zUpdateTransaction
+    .extend({
+      blobObjectId: z.string().nullable().optional(),
+      blobObjectUrl: z.string().nullable().optional(),
+    })
+    .parse(params)
+
   const defaultValues: TransactionFormValues = {
     date: new Date(),
     amount: 0,
@@ -80,30 +93,45 @@ export default function NewRecordScreen() {
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: () => (
-        <Tabs
-          value={page.toString()}
-          onValueChange={(value) => {
-            setPage(Number(value))
-            Keyboard.dismiss()
-            ref.current?.scrollTo({
-              y: 0,
-              x: value === '0' ? 0 : width,
-              animated: true,
-            })
-          }}
-          className="w-[160px]"
-        >
-          <TabsList className="bg-secondary">
-            <TabsTrigger value="0">
-              <KeyboardIcon className="!text-primary size-6" />
-            </TabsTrigger>
-            <TabsTrigger value="1">
-              <CameraIcon className="!text-primary size-6" />
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-      ),
+      headerTitle: () =>
+        blobObjectUrl ? (
+          <Link
+            href={{
+              pathname: '/blob-viewer',
+              params: {
+                blobObjectUrl,
+              },
+            }}
+          >
+            <Image
+              source={{ uri: blobObjectUrl }}
+              className="size-12 rounded-md border-4 border-secondary bg-muted"
+            />
+          </Link>
+        ) : (
+          <Tabs
+            value={page.toString()}
+            onValueChange={(value) => {
+              setPage(Number(value))
+              Keyboard.dismiss()
+              ref.current?.scrollTo({
+                y: 0,
+                x: value === '0' ? 0 : width,
+                animated: true,
+              })
+            }}
+            className="w-[160px]"
+          >
+            <TabsList className="bg-secondary">
+              <TabsTrigger value="0">
+                <KeyboardIcon className="!text-primary size-6" />
+              </TabsTrigger>
+              <TabsTrigger value="1">
+                <CameraIcon className="!text-primary size-6" />
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        ),
       headerRight: () =>
         parsedParams?.id ? (
           <Button
@@ -114,11 +142,11 @@ export default function NewRecordScreen() {
               router.back()
             }}
           >
-            <Trash2Icon className="size-6 text-destructive" />
+            <Trash2Icon className="size-6 text-foreground" />
           </Button>
         ) : null,
     })
-  }, [page])
+  }, [page, blobObjectUrl])
 
   const handleCreateTransaction = async (values: TransactionFormValues) => {
     try {
@@ -134,6 +162,7 @@ export default function NewRecordScreen() {
         data: {
           ...values,
           amount: values.categoryId ? values.amount : -Math.abs(values.amount),
+          blobAttachmentIds: blobObjectId ? [blobObjectId] : undefined,
         },
       })
     } catch (error) {

@@ -166,8 +166,8 @@ export function ProfileCard() {
           fallbackClassName="bg-background"
           className="h-16 w-16"
         />
-        <View className="flex-1 justify-center gap-1">
-          <Text className="line-clamp-1 font-medium">
+        <View className="flex-1 justify-center gap-1.5">
+          <Text className="line-clamp-1 font-semiBold">
             {user?.fullName ?? user?.primaryEmailAddress?.emailAddress}
           </Text>
           <Badge
@@ -175,7 +175,7 @@ export function ProfileCard() {
             className="flex-row gap-1 self-start rounded-md"
           >
             {isPro && <CrownIcon className="size-4 text-primary-foreground" />}
-            <Text className="font-medium text-xs">
+            <Text className="font-medium text-sm">
               {isWealth
                 ? t(i18n)`Wealth`
                 : isGrowth

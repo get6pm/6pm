@@ -22,8 +22,8 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-10 flex-row items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-muted-foreground text-sm [&>span]:line-clamp-1 native:h-11 web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2 web:ring-offset-background',
-      props.disabled && 'opacity-50 web:cursor-not-allowed',
+      'flex h-10 native:h-11 flex-row items-center justify-between rounded-md border border-input bg-background px-3 py-2 font-regular text-base text-muted-foreground web:ring-offset-background web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2 [&>span]:line-clamp-1',
+      props.disabled && 'web:cursor-not-allowed opacity-50',
       className,
     )}
     {...props}
@@ -58,7 +58,7 @@ const SelectScrollUpButton = ({
   return (
     <SelectPrimitive.ScrollUpButton
       className={cn(
-        'flex items-center justify-center py-1 web:cursor-default',
+        'flex web:cursor-default items-center justify-center py-1',
         className,
       )}
       {...props}
@@ -81,7 +81,7 @@ const SelectScrollDownButton = ({
   return (
     <SelectPrimitive.ScrollDownButton
       className={cn(
-        'flex items-center justify-center py-1 web:cursor-default',
+        'flex web:cursor-default items-center justify-center py-1',
         className,
       )}
       {...props}
@@ -147,7 +147,7 @@ const SelectLabel = React.forwardRef<
   <SelectPrimitive.Label
     ref={ref}
     className={cn(
-      'py-1.5 pr-2 pl-8 font-semiBold text-popover-foreground text-sm native:pb-2 native:pl-10 native:text-base',
+      'py-1.5 pr-2 native:pb-2 native:pl-10 pl-8 font-semiBold native:text-base text-base text-popover-foreground',
       className,
     )}
     {...props}
@@ -175,7 +175,7 @@ const SelectItem = React.forwardRef<
         <Check size={16} strokeWidth={3} className="text-popover-foreground" />
       </SelectPrimitive.ItemIndicator>
     </View>
-    <SelectPrimitive.ItemText className="font-regular native:text-base text-popover-foreground text-sm web:group-focus:text-accent-foreground" />
+    <SelectPrimitive.ItemText className="font-regular native:text-base text-base text-popover-foreground web:group-focus:text-accent-foreground" />
     {extra}
   </SelectPrimitive.Item>
 ))

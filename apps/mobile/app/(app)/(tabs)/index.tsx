@@ -135,11 +135,12 @@ export default function HomeScreen() {
           <TransactionItem transaction={transaction} />
         )}
         renderSectionHeader={({ section: { title, sum } }) => (
-          <View className="mx-6 flex-row justify-between border-muted-foreground/20 border-b bg-background py-2 pt-4 align-center">
-            <Text className="text-muted-foreground">{title}</Text>
+          <View className="mx-6 flex-row justify-between border-border border-b-[0.5px] bg-background py-2 pt-4 align-center">
+            <Text className="text-foreground">{title}</Text>
             <AmountFormat
               amount={sum}
-              className="font-semiBold text-md text-muted-foreground"
+              className="text-muted-foreground"
+              size="sm"
               displayNegativeSign
               displayPositiveSign
               convertToDefaultCurrency

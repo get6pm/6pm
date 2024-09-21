@@ -14,7 +14,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #: apps/mobile/components/transaction/draft-transaction-item.tsx:87
-#: apps/mobile/components/transaction/transaction-item.tsx:29
+#: apps/mobile/components/transaction/transaction-item.tsx:30
 msgid "{0}"
 msgstr ""
 
@@ -72,7 +72,7 @@ msgstr ""
 msgid "6pm is updating, please wait..."
 msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:180
+#: apps/mobile/components/transaction/scanner.tsx:182
 msgid "6pm needs camera permissions to scan your transactions"
 msgstr ""
 
@@ -80,7 +80,7 @@ msgstr ""
 msgid "Account deleted successfully"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:171
+#: apps/mobile/app/(app)/(tabs)/index.tsx:172
 msgid "Add your first transaction here"
 msgstr ""
 
@@ -90,6 +90,10 @@ msgstr ""
 
 #: apps/mobile/app/(app)/paywall.tsx:186
 msgid "AI Insights"
+msgstr ""
+
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:114
+msgid "AI Processing..."
 msgstr ""
 
 #: apps/mobile/components/home/select-wallet-account.tsx:30
@@ -219,8 +223,8 @@ msgstr ""
 
 #: apps/mobile/components/transaction/draft-transaction-item.tsx:41
 #: apps/mobile/components/transaction/draft-transaction-item.tsx:45
-#: apps/mobile/components/transaction/scanner.tsx:72
-#: apps/mobile/components/transaction/scanner.tsx:77
+#: apps/mobile/components/transaction/scanner.tsx:74
+#: apps/mobile/components/transaction/scanner.tsx:79
 msgid "Cannot extract transaction"
 msgstr ""
 
@@ -228,7 +232,7 @@ msgstr ""
 #~ msgid "Cannot extract transaction data"
 #~ msgstr ""
 
-#: apps/mobile/components/transaction/draft-transaction-item.tsx:133
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:147
 msgid "Cannot process image"
 msgstr ""
 
@@ -274,7 +278,7 @@ msgid "Complete control over your finances"
 msgstr ""
 
 #: apps/mobile/components/auth/auth-email.tsx:201
-#: apps/mobile/components/transaction/scanner.tsx:185
+#: apps/mobile/components/transaction/scanner.tsx:187
 msgid "Continue"
 msgstr ""
 
@@ -533,7 +537,7 @@ msgstr ""
 msgid "No budget selected"
 msgstr ""
 
-#: apps/mobile/app/(app)/(tabs)/index.tsx:159
+#: apps/mobile/app/(app)/(tabs)/index.tsx:160
 msgid "No transactions"
 msgstr ""
 
@@ -541,7 +545,7 @@ msgstr ""
 #~ msgid "No transactions found"
 #~ msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:189
+#: apps/mobile/components/transaction/scanner.tsx:191
 msgid "Open settings"
 msgstr ""
 
@@ -577,13 +581,17 @@ msgstr ""
 msgid "Privacy Policy"
 msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:207
+#: apps/mobile/components/transaction/draft-transaction-item.tsx:223
+msgid "Processed by AI"
+msgstr ""
+
+#: apps/mobile/components/transaction/scanner.tsx:209
 msgid "Processing transaction..."
 msgstr ""
 
 #: apps/mobile/components/transaction/draft-transaction-item.tsx:112
-msgid "Processing..."
-msgstr ""
+#~ msgid "Processing..."
+#~ msgstr ""
 
 #: apps/mobile/app/(app)/_layout.tsx:92
 msgid "Profile"
@@ -658,7 +666,7 @@ msgstr ""
 #: apps/mobile/components/category/category-form.tsx:118
 #: apps/mobile/components/common/date-picker.tsx:49
 #: apps/mobile/components/common/date-range-picker.tsx:56
-#: apps/mobile/components/transaction/transaction-form.tsx:100
+#: apps/mobile/components/transaction/transaction-form.tsx:102
 #: apps/mobile/components/wallet/account-form.tsx:149
 msgid "Save"
 msgstr ""
@@ -692,7 +700,7 @@ msgstr ""
 msgid "Seed transactions"
 msgstr ""
 
-#: apps/mobile/components/transaction/select-account-field.tsx:56
+#: apps/mobile/components/transaction/select-account-field.tsx:57
 msgid "Select account"
 msgstr ""
 
@@ -795,7 +803,7 @@ msgstr ""
 #~ msgid "System"
 #~ msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:243
+#: apps/mobile/components/transaction/scanner.tsx:245
 msgid "Take a picture of your transaction"
 msgstr ""
 
@@ -847,11 +855,11 @@ msgstr ""
 msgid "Tomorrow"
 msgstr ""
 
-#: apps/mobile/app/(app)/transaction/new-record.tsx:190
+#: apps/mobile/app/(app)/transaction/new-record.tsx:219
 msgid "Transaction added to processing queue"
 msgstr ""
 
-#: apps/mobile/app/(app)/transaction/new-record.tsx:130
+#: apps/mobile/app/(app)/transaction/new-record.tsx:158
 msgid "Transaction created"
 msgstr ""
 
@@ -859,7 +867,7 @@ msgstr ""
 msgid "Transaction is processing..."
 msgstr ""
 
-#: apps/mobile/components/transaction/transaction-form.tsx:174
+#: apps/mobile/components/transaction/transaction-form.tsx:196
 msgid "transaction note"
 msgstr ""
 
@@ -870,7 +878,7 @@ msgstr ""
 #: apps/mobile/components/home/category-chart.tsx:61
 #: apps/mobile/components/transaction/draft-transaction-item.tsx:87
 #: apps/mobile/components/transaction/select-category-field.tsx:88
-#: apps/mobile/components/transaction/transaction-item.tsx:29
+#: apps/mobile/components/transaction/transaction-item.tsx:30
 msgid "Uncategorized"
 msgstr ""
 
@@ -949,7 +957,7 @@ msgstr ""
 msgid "Wallet accounts"
 msgstr ""
 
-#: apps/mobile/components/transaction/select-account-field.tsx:72
+#: apps/mobile/components/transaction/select-account-field.tsx:73
 msgid "Wallet Accounts"
 msgstr ""
 
@@ -978,7 +986,7 @@ msgstr ""
 msgid "Yesterday"
 msgstr ""
 
-#: apps/mobile/components/transaction/scanner.tsx:239
+#: apps/mobile/components/transaction/scanner.tsx:241
 msgid "You have reached the daily AI transaction limit"
 msgstr ""
 

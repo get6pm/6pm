@@ -137,8 +137,8 @@ export function CategoryChart({
                   style={{ opacity }}
                 />
               )}
-              <Text>{item.name}</Text>
-              <Text className={'font-normal'}>{item.percentage}%</Text>
+              <Text className="font-regular">{item.name}</Text>
+              <Text className="font-regular">{item.percentage}%</Text>
             </Button>
           )
         }}

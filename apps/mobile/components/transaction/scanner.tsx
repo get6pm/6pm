@@ -60,8 +60,10 @@ export function Scanner({
     useTransactionStore()
   const { entitlement } = useUserEntitlements()
 
-  const todayTransactions = transactions.filter((t) =>
-    dayjsExtended(t.createdAt).isSame(dayjsExtended(), 'day'),
+  const todayTransactions = transactions.filter(
+    (t) =>
+      !!t.blobAttachments?.length && // TODO: Better way to check if transaction is from AI
+      dayjsExtended(t.createdAt).isSame(dayjsExtended(), 'day'),
   )
 
   const { mutateAsync } = useMutation({
@@ -95,7 +97,7 @@ export function Scanner({
     todayTransactions.length
 
   async function processImages(uris: string[]) {
-    if (transactionQuota - uris.length <= 0) {
+    if (transactionQuota - uris.length < 0) {
       onLimitExceeded?.()
       return
     }

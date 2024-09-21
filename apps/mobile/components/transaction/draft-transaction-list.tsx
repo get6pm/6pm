@@ -17,9 +17,7 @@ export function DraftTransactionList() {
   return (
     <View className="">
       <View className="mx-6 flex-row justify-between border-muted-foreground/20 border-b bg-background py-2 pt-4 align-center">
-        <Text className="text-muted-foreground">{t(
-          i18n,
-        )`Waiting for review`}</Text>
+        <Text className="text-foreground">{t(i18n)`Waiting for review`}</Text>
         <Badge variant={draftTransactions.length ? 'default' : 'outline'}>
           <Text className="text-xs">{draftTransactions.length}</Text>
         </Badge>

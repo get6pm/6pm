@@ -75,9 +75,8 @@ export default function HomeScreen() {
   }
 
   const transactionsGroupByDate = useMemo(() => {
-    const groupedByDay = groupBy(
-      transactions,
-      (transaction) => dayjsExtended(transaction.date).format('YYYY-MM-DD'),
+    const groupedByDay = groupBy(transactions, (transaction) =>
+      dayjsExtended(transaction.date).format('YYYY-MM-DD'),
     )
 
     const sectionDict = mapValues(groupedByDay, (transactions, key) => ({

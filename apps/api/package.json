@@ -23,7 +23,7 @@
     "@hono/clerk-auth": "^2.0.0",
     "@hono/node-server": "^1.11.4",
     "@hono/zod-validator": "^0.2.2",
-    "@prisma/client": "5.19.0",
+    "@prisma/client": "5.19.1",
     "@vercel/blob": "^0.23.4",
     "got": "^14.4.1",
     "hono": "^4.4.8",
@@ -31,11 +31,11 @@
     "openai": "^4.52.7",
     "pino": "^9.2.0",
     "pino-pretty": "^11.2.1",
-    "prisma": "5.19.0",
+    "prisma": "5.19.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "svix": "^1.28.0",
-    "zod": "^3.23.8",
+    "zod": "3.23.8",
     "zod-prisma-types": "^3.1.8"
   },
   "devDependencies": {

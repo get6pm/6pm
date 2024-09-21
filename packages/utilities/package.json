@@ -11,7 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "@6pm/validation": "workspace:^",
-    "@prisma/client": "^5.16.0",
-    "dayjs": "^1.11.11"
+    "dayjs": "1.11.13"
+  },
+  "peerDependencies": {
+    "@prisma/client": "5.19.1"
   }
 }

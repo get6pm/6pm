@@ -79,7 +79,7 @@ const TAB_BAR_ICONS = {
 const TAB_BAR_ITEM_WIDTH = (3 + 1) * rem.get()
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
-  const tabIndicatorPosition = useSharedValue(0)
+  const tabIndicatorPosition = useSharedValue(state.index * TAB_BAR_ITEM_WIDTH)
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: tabIndicatorPosition.value }],

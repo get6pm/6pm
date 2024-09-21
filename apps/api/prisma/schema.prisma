@@ -23,8 +23,13 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email                        String                        @unique
-  name                         String?
+  email String  @unique
+  name  String?
+
+  entitlement                  String?
+  entitlementExpiresAt         DateTime?
+  entitlementProductIdentifier String?
+
   walletAccounts               UserWalletAccount[]
   budgetUsers                  BudgetUser[]
   transactions                 Transaction[]

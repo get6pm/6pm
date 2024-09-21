@@ -1,6 +1,7 @@
 import type { CreateTransaction, UpdateTransaction } from '@6pm/validation'
 import type {
   Budget,
+  Prisma,
   Transaction,
   User,
   UserWalletAccount,
@@ -15,6 +16,13 @@ import {
 import { getExchangeRate } from './exchange-rates.service'
 
 const VND = 'VND'
+
+const TRANSACTION_INCLUDE: Prisma.TransactionInclude = {
+  category: true,
+  blobAttachments: true,
+  walletAccount: true,
+  budget: true,
+}
 
 export async function canUserCreateTransaction({
   user,
@@ -110,7 +118,7 @@ export async function findTransaction({
 }) {
   return prisma.transaction.findUnique({
     where: { id: transactionId },
-    include: { category: true, blobAttachments: true },
+    include: TRANSACTION_INCLUDE,
   })
 }
 
@@ -149,7 +157,7 @@ export async function createTransaction({
         connect: blobAttachmentIds?.map((id) => ({ id })),
       },
     },
-    include: { category: true, blobAttachments: true },
+    include: TRANSACTION_INCLUDE,
   })
 
   return transaction
@@ -206,7 +214,7 @@ export async function updateTransaction({
       amountInVnd,
       blobAttachments: { set: blobAttachmentIds?.map((id) => ({ id })) },
     },
-    include: { category: true, blobAttachments: true },
+    include: TRANSACTION_INCLUDE,
   })
 
   return transaction
@@ -252,7 +260,7 @@ export async function listTransactions({
     },
     orderBy: { date: 'desc' },
     take: pagination.first || pagination.last,
-    include: { category: true, blobAttachments: true },
+    include: TRANSACTION_INCLUDE,
   })
 
   const totalCount = await prisma.transaction.count({

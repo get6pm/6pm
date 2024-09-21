@@ -1,5 +1,11 @@
 import { z } from 'zod'
-import { CategorySchema, TransactionSchema } from './prisma'
+import {
+  BlobObjectSchema,
+  BudgetSchema,
+  CategorySchema,
+  TransactionSchema,
+  UserWalletAccountSchema,
+} from './prisma'
 
 export const zCreateTransaction = z.object({
   id: z.string().optional(),
@@ -36,6 +42,9 @@ export const TransactionPopulatedSchema = TransactionSchema.extend({
   })
     .nullable()
     .optional(),
+  budget: BudgetSchema.nullable().optional(),
+  walletAccount: UserWalletAccountSchema.nullable().optional(),
+  blobAttachments: z.array(BlobObjectSchema).nullable().optional(),
   amount: z.number({ coerce: true }),
   amountInVnd: z.number({ coerce: true }),
 })

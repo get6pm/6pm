@@ -1701,7 +1701,7 @@ DEPENDENCIES:
   - ExpoSecureStore (from `../../../node_modules/expo-secure-store/ios`)
   - ExpoSystemUI (from `../../../node_modules/expo-system-ui/ios`)
   - ExpoWebBrowser (from `../../../node_modules/expo-web-browser/ios`)
-  - EXSplashScreen (from `../../../node_modules/expo-splash-screen/ios`)
+  - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - EXStructuredHeaders (from `../../../node_modules/expo-structured-headers/ios`)
   - EXUpdates (from `../../../node_modules/expo-updates/ios`)
   - EXUpdatesInterface (from `../../../node_modules/expo-updates-interface/ios`)
@@ -1857,7 +1857,7 @@ EXTERNAL SOURCES:
   ExpoWebBrowser:
     :path: "../../../node_modules/expo-web-browser/ios"
   EXSplashScreen:
-    :path: "../../../node_modules/expo-splash-screen/ios"
+    :path: "../node_modules/expo-splash-screen/ios"
   EXStructuredHeaders:
     :path: "../../../node_modules/expo-structured-headers/ios"
   EXUpdates:

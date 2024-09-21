@@ -123,7 +123,7 @@ export const AccountForm = ({
                     i18n,
                   )`Current state`}</Label>
                   <Label
-                    className="!text-xs mb-1.5 font-normal text-muted-foreground"
+                    className="!text-xs mb-1.5 font-regular text-muted-foreground"
                     nativeID={`label-state`}
                   >{t(
                     i18n,

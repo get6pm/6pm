@@ -29,7 +29,7 @@ type BurndownChartProps = {
 }
 
 export function BurndownChart({
-  totalBudget,
+  // totalBudget,
   averagePerDay,
   data = [],
   anchorDay = new Date().getDate(),
@@ -113,7 +113,7 @@ export function BurndownChart({
             axisSide: 'right',
             labelPosition: 'inset',
             labelColor: getColor('--foreground', { alpha: 0.5 }),
-            tickValues: [0, totalBudget / 2, totalBudget],
+            // tickValues: [0, totalBudget / 2, totalBudget],
             lineWidth: 0,
           },
         ]}

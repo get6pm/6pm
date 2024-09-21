@@ -1,5 +1,5 @@
 import { clerk } from '@/lib/client'
-import { zUpdateTransaction } from '@6pm/validation'
+import { BlobObjectSchema, zUpdateTransaction } from '@6pm/validation'
 import * as FileSystem from 'expo-file-system'
 
 export async function getAITransactionData({
@@ -27,10 +27,14 @@ export async function getAITransactionData({
 
   const body = JSON.parse(result.body)
 
-  const transaction = zUpdateTransaction.parse({
-    ...body,
-    date: body?.date ? new Date(body.date) : undefined,
-  })
+  const transaction = zUpdateTransaction
+    .extend({
+      blobObject: BlobObjectSchema.nullable().optional(),
+    })
+    .parse({
+      ...body,
+      date: body?.date ? new Date(body.date) : undefined,
+    })
 
   return { id, ...transaction }
 }

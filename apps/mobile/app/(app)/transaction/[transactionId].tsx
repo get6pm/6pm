@@ -109,6 +109,7 @@ export default function EditRecordScreen() {
         onSubmit={handleUpdate}
         onCancel={router.back}
         onDelete={handleDelete}
+        blobAttachments={transaction?.blobAttachments}
       />
       <PortalHost name="transaction-form" />
     </View>

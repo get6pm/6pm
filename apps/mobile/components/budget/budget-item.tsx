@@ -51,10 +51,10 @@ export const BudgetItem: FC<BudgetItemProps> = ({ budget }) => {
     >
       <Pressable className="mx-6 mt-1 mb-3 justify-between gap-4 rounded-lg border border-border p-4">
         <View className="flex-row items-center justify-between gap-6">
-          <View className="flex-1 gap-2">
+          <View className="flex-1 gap-3">
             <Text
               numberOfLines={1}
-              className="line-clamp-1 flex-1 font-semiBold text-lg"
+              className="line-clamp-1 flex-1 font-semiBold text-xl"
             >
               {budget.name}
             </Text>

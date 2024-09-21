@@ -1,7 +1,8 @@
 import { useUser } from '@clerk/clerk-expo'
 import { useRouter } from 'expo-router'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 import { UserAvatar } from '../common/user-avatar'
+import { Text } from '../ui/text'
 import { type HomeFilter, SelectFilter } from './select-filter'
 import { SelectWalletAccount } from './select-wallet-account'
 
@@ -30,8 +31,8 @@ export function HomeHeader({
         >
           <UserAvatar user={user!} />
         </TouchableOpacity>
-        <View className="flex-1">
-          <Text className="line-clamp-1 font-medium text-muted-foreground text-sm">
+        <View className="flex-1 gap-1">
+          <Text className="line-clamp-1 font-semiBold text-muted-foreground text-sm">
             {user?.fullName ?? user?.primaryEmailAddress?.emailAddress}
           </Text>
           <SelectWalletAccount

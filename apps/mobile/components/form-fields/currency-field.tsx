@@ -30,7 +30,7 @@ export function CurrencyField({
           className,
         )}
       >
-        <Text className="font-medium text-foreground text-sm">{value}</Text>
+        <Text className="font-regular text-foreground text-sm">{value}</Text>
       </Button>
       <BottomSheet ref={sheetRef} index={0} snapPoints={['50%', '87%']}>
         <CurrencySheetList

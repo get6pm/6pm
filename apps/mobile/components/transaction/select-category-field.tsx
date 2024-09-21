@@ -71,7 +71,7 @@ export function SelectCategoryField({
     <>
       <Button
         variant="secondary"
-        className="!px-3 max-w-[140px]"
+        className="!px-3"
         disabled={isLoading}
         onPress={() => {
           Haptics.selectionAsync()
@@ -141,7 +141,7 @@ export function SelectCategoryField({
                           bounce
                           loop
                           animationType="bounce"
-                          className="!text-base line-clamp-1 text-center text-muted-foreground"
+                          className="line-clamp-1 text-center font-regular text-muted-foreground text-sm"
                         >
                           {item.name}
                         </TextTicker>

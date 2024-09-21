@@ -102,7 +102,7 @@ export default function SettingsScreen() {
                 <Text className="!text-lg font-semiBold text-foreground">
                   {t(i18n)`Get 6pm Pro`}
                 </Text>
-                <Text className="!text-sm text-muted-foreground">
+                <Text className="!text-sm font-regular text-muted-foreground">
                   {t(i18n)`Unlocks full AI power and more!`}
                 </Text>
               </View>
@@ -315,7 +315,7 @@ export default function SettingsScreen() {
               className="!px-6 justify-start gap-6"
             >
               <LogOutIcon className="h-5 w-5 text-red-500" />
-              <Text className="font-normal text-red-500 group-active:text-red-500">
+              <Text className="font-regular text-red-500 group-active:text-red-500">
                 {t(i18n)`Sign out`}
               </Text>
             </Button>

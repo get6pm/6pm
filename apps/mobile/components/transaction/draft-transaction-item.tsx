@@ -6,7 +6,7 @@ import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { useMutation, useMutationState } from '@tanstack/react-query'
 import { Link } from 'expo-router'
-import { CircleAlert } from 'lucide-react-native'
+import { CircleAlert, SparklesIcon } from 'lucide-react-native'
 import type { FC } from 'react'
 import { ActivityIndicator, Alert, Image, Pressable, View } from 'react-native'
 import { AmountFormat } from '../common/amount-format'
@@ -89,7 +89,7 @@ export const DraftTransactionItem: FC<DraftTransactionItemProps> = ({
   if (latestState?.state?.status === 'pending') {
     return (
       <Pressable
-        className="flex h-14 flex-row items-center justify-between gap-4 px-6 active:bg-muted"
+        className="flex flex-row items-center justify-between gap-4 px-6 py-3 active:bg-muted"
         onPress={() => {
           Alert.alert('', t(i18n)`Transaction is processing...`, [
             {
@@ -106,16 +106,28 @@ export const DraftTransactionItem: FC<DraftTransactionItemProps> = ({
           ])
         }}
       >
-        <View className="line-clamp-1 flex flex-1 flex-row items-center gap-6">
-          <ActivityIndicator size="small" color="foreground" />
+        <View className="line-clamp-1 flex flex-1 flex-row items-center gap-4">
+          <View className="h-12 w-12 items-center justify-center rounded-lg bg-secondary">
+            <ActivityIndicator size="small" color="foreground" />
+          </View>
           <Text numberOfLines={1} className="flex-1">
-            {t(i18n)`Processing...`}
+            {t(i18n)`AI Processing...`}
           </Text>
         </View>
-        <Image
-          source={{ uri: transaction.imageUri! }}
-          className="size-6 rounded-md border-2 border-border bg-muted"
-        />
+        <Link
+          href={{
+            pathname: '/blob-viewer',
+            params: {
+              blobObjectUrl: transaction.imageUri,
+            },
+          }}
+          onPress={(e) => e.stopPropagation()}
+        >
+          <Image
+            source={{ uri: transaction.imageUri! }}
+            className="size-8 rounded-md border-2 border-border bg-muted"
+          />
+        </Link>
       </Pressable>
     )
   }
@@ -124,19 +136,31 @@ export const DraftTransactionItem: FC<DraftTransactionItemProps> = ({
     return (
       <Pressable
         onPress={handlePressError}
-        className="flex h-14 flex-row items-center justify-between gap-4 bg-destructive/5 px-6 active:bg-destructive/10"
+        className="flex flex-row items-center justify-between gap-4 bg-destructive/5 px-6 py-3 active:bg-destructive/10"
       >
-        <View className="line-clamp-1 flex flex-1 flex-row items-center gap-6">
-          <CircleAlert className="size-5 text-destructive" />
+        <View className="line-clamp-1 flex flex-1 flex-row items-center gap-4">
+          <View className="h-12 w-12 items-center justify-center rounded-lg bg-destructive/15">
+            <CircleAlert className="size-6 text-destructive" />
+          </View>
           <Text numberOfLines={1} className="flex-1">
             {latestState?.state?.failureReason?.message ??
               t(i18n)`Cannot process image`}
           </Text>
         </View>
-        <Image
-          source={{ uri: transaction.imageUri! }}
-          className="size-6 rounded-md border-2 border-border bg-muted"
-        />
+        <Link
+          href={{
+            pathname: '/blob-viewer',
+            params: {
+              blobObjectUrl: transaction.imageUri,
+            },
+          }}
+          onPress={(e) => e.stopPropagation()}
+        >
+          <Image
+            source={{ uri: transaction.imageUri! }}
+            className="size-8 rounded-md border-2 border-border bg-muted"
+          />
+        </Link>
       </Pressable>
     )
   }
@@ -147,26 +171,86 @@ export const DraftTransactionItem: FC<DraftTransactionItemProps> = ({
       push
       href={{
         pathname: '/transaction/new-record',
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        params: transaction as any,
+        params: {
+          ...transaction,
+          blobObjectUrl: transaction.blobObject?.url,
+          blobObjectId: transaction.blobObject?.id,
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        } as any,
       }}
     >
-      <Pressable className="flex h-14 flex-row items-center justify-between gap-4 bg-muted/50 px-6 active:bg-muted">
-        <View className="line-clamp-1 flex flex-1 flex-row items-center gap-6">
+      <Pressable className="flex flex-row items-center justify-between gap-4 px-6 py-3 active:bg-muted">
+        <View className="h-12 w-12 items-center justify-center rounded-lg bg-secondary">
           <GenericIcon
             // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             name={iconName as any}
-            className="size-5 text-foreground"
+            className="size-6 text-secondary-foreground"
           />
-          <Text numberOfLines={1} className="flex-1">
-            {transactionName}
-          </Text>
+          {transaction.blobObject && (
+            <Link
+              className="-right-2 -bottom-2 absolute"
+              href={{
+                pathname: '/blob-viewer',
+                params: {
+                  blobObjectUrl: transaction.blobObject.url,
+                },
+              }}
+            >
+              <Image
+                source={{ uri: transaction.blobObject.url }}
+                className="size-6 rounded-md border-2 border-border bg-muted"
+              />
+            </Link>
+          )}
         </View>
-        <AmountFormat
-          amount={transaction.amount}
-          currency={transaction.currency}
-          className="font-semiBold text-md"
-        />
+        <View className="flex-1 gap-1">
+          <View className="flex-row items-center gap-2">
+            <Text numberOfLines={1} className="flex-1 font-semiBold text-lg">
+              {transactionName}
+            </Text>
+
+            <AmountFormat
+              amount={transaction.amount}
+              currency={transaction.currency}
+              className="text-lg"
+              displayPositiveColor
+            />
+          </View>
+          <View className="flex-row items-center gap-3 self-start">
+            <View className="flex-row items-center gap-2">
+              <SparklesIcon className="size-4 text-foreground" />
+              <Text numberOfLines={1} className="text-foreground text-sm">
+                {t(i18n)`Processed by AI`}
+              </Text>
+            </View>
+            {/* {transaction.walletAccount && (
+              <View className="flex-row items-center gap-2">
+                <GenericIcon
+                  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+                  name={transaction.walletAccount.icon as any}
+                  className="size-4 text-muted-foreground"
+                />
+                <Text
+                  numberOfLines={1}
+                  className="text-muted-foreground text-sm"
+                >
+                  {transaction.walletAccount.name}
+                </Text>
+              </View>
+            )}
+            {transaction.budget && (
+              <View className="flex-row items-center gap-2">
+                <LandPlotIcon className="size-4 text-muted-foreground" />
+                <Text
+                  numberOfLines={1}
+                  className="text-muted-foreground text-sm"
+                >
+                  {transaction.budget.name}
+                </Text>
+              </View>
+            )} */}
+          </View>
+        </View>
       </Pressable>
     </Link>
   )

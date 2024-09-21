@@ -161,6 +161,13 @@ export default function AuthenticatedLayout() {
             headerTitle: t(i18n)`New budget`,
           }}
         />
+        <Stack.Screen
+          name="blob-viewer"
+          options={{
+            presentation: 'modal',
+            headerTitle: '',
+          }}
+        />
       </Stack>
     </View>
   )

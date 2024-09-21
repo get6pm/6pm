@@ -14,6 +14,7 @@ import { Keyboard, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { BottomSheet } from '../common/bottom-sheet'
 import GenericIcon from '../common/generic-icon'
+import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Text } from '../ui/text'
 
@@ -37,7 +38,7 @@ export function SelectAccountField({
     <>
       <Button
         variant="secondary"
-        className="!px-3 max-w-[140px]"
+        className="!px-3"
         disabled={isLoading}
         onPress={() => {
           Haptics.selectionAsync()
@@ -68,13 +69,15 @@ export function SelectAccountField({
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           ListHeaderComponent={
-            <Text className="py-2 text-center font-medium text-base">
-              {t(i18n)`Wallet Accounts`}
-            </Text>
+            <Badge className="mx-auto my-2 px-8" variant="secondary">
+              <Text className="text-base uppercase">{t(
+                i18n,
+              )`Wallet Accounts`}</Text>
+            </Badge>
           }
           contentContainerStyle={{ paddingBottom: bottom + 16 }}
           renderItem={({ item }) => (
-            <View className="w-[25%] p-1.5">
+            <View className="w-[33%] p-1.5">
               <Button
                 size="icon"
                 className="flex h-20 w-full flex-1 flex-grow flex-col gap-2 px-2"
@@ -93,7 +96,7 @@ export function SelectAccountField({
                   name={item.icon as any}
                   className="size-8 text-foreground"
                 />
-                <Text className="!text-sm line-clamp-1 text-center text-muted-foreground">
+                <Text className="!text-sm line-clamp-1 text-center font-regular text-muted-foreground">
                   {item.name}
                 </Text>
               </Button>

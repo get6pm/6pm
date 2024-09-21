@@ -2,11 +2,13 @@ import { useColorPalette } from '@/hooks/use-color-palette'
 import {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
+  type BottomSheetBackgroundProps,
   BottomSheetModal,
   type BottomSheetModalProps,
 } from '@gorhom/bottom-sheet'
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
 import { forwardRef, useCallback } from 'react'
+import { View } from 'react-native'
 import { FullWindowOverlay } from 'react-native-screens'
 
 export const BottomSheet = forwardRef<
@@ -34,12 +36,20 @@ export const BottomSheet = forwardRef<
     [],
   )
 
+  const backgroundComponent = useCallback(
+    (props: BottomSheetBackgroundProps) => (
+      <View className="overflow-hidden rounded-xl bg-background" {...props} />
+    ),
+    [],
+  )
+
   return (
     <BottomSheetModal
       ref={ref}
-      backgroundStyle={{ backgroundColor: getColor('--background') }}
+      handleIndicatorStyle={{ backgroundColor: getColor('--foreground') }}
       backdropComponent={backdropComponent}
       containerComponent={containerComponent}
+      backgroundComponent={backgroundComponent}
       keyboardBehavior="extend"
       enablePanDownToClose
       enableDismissOnClose

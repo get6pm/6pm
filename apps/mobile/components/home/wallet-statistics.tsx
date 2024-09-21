@@ -128,7 +128,7 @@ export function WalletStatistics({
           className="!border-0 h-auto native:h-auto flex-col items-center gap-3"
         >
           <View className="self-center">
-            <Text className="w-fit self-center text-center text-muted-foreground leading-tight">
+            <Text className="w-fit self-center text-center text-foreground leading-tight">
               {options.find((option) => option.value === view)?.label}
             </Text>
           </View>

@@ -1,11 +1,11 @@
 import { useUserEntitlements } from '@/hooks/use-purchases'
 import { sleep } from '@/lib/utils'
-import type { TransactionFormValues } from '@6pm/validation'
+import type { BlobObject, TransactionFormValues } from '@6pm/validation'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import * as Haptics from 'expo-haptics'
-import { useRouter } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import { Trash2Icon } from 'lucide-react-native'
 import { useRef } from 'react'
 import {
@@ -16,6 +16,7 @@ import {
   useWatch,
 } from 'react-hook-form'
 import { ScrollView, View } from 'react-native'
+import { Image } from 'react-native'
 import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
@@ -40,6 +41,7 @@ type TransactionFormProps = {
   onOpenScanner?: () => void
   form: UseFormReturn<TransactionFormValues>
   sideOffset?: number
+  blobAttachments?: BlobObject[] | null
 }
 
 export function TransactionAmount() {
@@ -96,6 +98,7 @@ function FormSubmitButton({
       onPress={form.handleSubmit(onSubmit)}
       onPressIn={Haptics.selectionAsync}
       disabled={form.formState.isLoading || !amount}
+      className="flex-shrink-0"
     >
       <Text>{t(i18n)`Save`}</Text>
     </SubmitButton>
@@ -109,6 +112,7 @@ export const TransactionForm = ({
   onDelete,
   // onOpenScanner,
   sideOffset,
+  blobAttachments,
 }: TransactionFormProps) => {
   const { i18n } = useLingui()
 
@@ -132,18 +136,37 @@ export const TransactionForm = ({
           {/* <Button size="icon" variant="secondary" onPress={onCancel}>
             <XIcon className="size-6 text-primary" />
           </Button> */}
-          <Controller
-            name="date"
-            control={form.control}
-            render={({ field: { onChange, value } }) => (
-              <DatePicker
-                value={value}
-                onChange={onChange}
-                minimumDate={new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)}
-                maximumDate={new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)}
-              />
+          <View className="flex-row items-center gap-2">
+            <Controller
+              name="date"
+              control={form.control}
+              render={({ field: { onChange, value } }) => (
+                <DatePicker
+                  value={value}
+                  onChange={onChange}
+                  minimumDate={new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)}
+                  maximumDate={new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)}
+                />
+              )}
+            />
+            {!!blobAttachments?.length && (
+              <Link
+                href={{
+                  pathname: '/blob-viewer',
+                  params: {
+                    blobObjectUrl: blobAttachments[0].url,
+                  },
+                }}
+                className="mt-1.5"
+              >
+                <Image
+                  source={{ uri: blobAttachments[0].url }}
+                  className="h-12 w-12 overflow-hidden rounded-md border-4 border-secondary bg-muted"
+                  resizeMode="contain"
+                />
+              </Link>
             )}
-          />
+          </View>
           <View className="flex-row items-center gap-4">
             {onDelete ? (
               <Button size="icon" variant="secondary" onPress={onDelete}>
@@ -182,7 +205,7 @@ export const TransactionForm = ({
         </View>
         <Animated.View style={translateStyle}>
           <View className="flex-row items-center justify-between gap-3 border-border border-t bg-background p-2">
-            <View className="flex-row items-center gap-2">
+            <View className="flex-1 flex-shrink flex-row items-center gap-2">
               <SelectAccountField
                 onSelect={(walletAccount) => {
                   form.setValue('currency', walletAccount.preferredCurrency)

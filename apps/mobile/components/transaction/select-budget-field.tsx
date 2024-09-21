@@ -106,7 +106,7 @@ export function SelectBudgetField({
         <LandPlotIcon className="h-5 w-5 text-primary" />
         <SelectValue
           className={cn(
-            'font-medium text-primary',
+            'font-medium text-base text-primary',
             (!value || value === 'NO_SELECT') && '!text-muted-foreground',
           )}
           placeholder={t(i18n)`All Accounts`}

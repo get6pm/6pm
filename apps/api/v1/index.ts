@@ -10,6 +10,7 @@ import usersApp from './routes/users'
 import walletsApp from './routes/wallets'
 
 export const hono = new Hono()
+  .get('/health', (c) => c.text('ok'))
   .route('/webhooks/clerk', clerkWebhooksApp)
 
   .use('*', authMiddleware)

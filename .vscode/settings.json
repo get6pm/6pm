@@ -18,6 +18,7 @@
     "hono",
     "openai",
     "posthog",
+    "revenuecat",
     "svix",
     "tanstack"
   ],

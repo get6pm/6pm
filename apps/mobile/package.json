@@ -1,7 +1,7 @@
 {
   "name": "@6pm/mobile",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "scripts": {
     "start": "expo start -c",
     "prebuild": "expo prebuild",

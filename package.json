@@ -1,6 +1,6 @@
 {
   "name": "6pm",
-  "version": "0.0.0",
+  "version": "1.0.2",
   "license": "GPL-3.0",
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
@@ -19,7 +19,8 @@
     "@biomejs/biome": "^1.8.0",
     "@lingui/cli": "^4.11.1",
     "@lingui/macro": "^4.11.1",
-    "babel-plugin-macros": "^3.1.0"
+    "babel-plugin-macros": "^3.1.0",
+    "conventional-changelog-cli": "^5.0.0"
   },
   "pnpm": {
     "peerDependencyRules": {

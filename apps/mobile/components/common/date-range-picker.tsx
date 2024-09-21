@@ -1,11 +1,10 @@
 import { formatDateShort } from '@/lib/date'
 import { cn, sleep } from '@/lib/utils'
+import { dayjsExtended } from '@6pm/utilities'
 import { type BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { addDays } from 'date-fns/addDays'
-import { subDays } from 'date-fns/subDays'
 import * as Haptics from 'expo-haptics'
 import { ArrowRightIcon } from 'lucide-react-native'
 import { useRef, useState } from 'react'
@@ -125,13 +124,17 @@ export function DateRangePicker({
               await sleep(500)
               onChange?.([date, toDate])
               if (!toDate) {
-                onChange?.([date, addDays(date, 1)])
+                onChange?.([date, dayjsExtended(date).add(1, 'day').toDate()])
                 sheetToRef.current?.present()
               } else {
                 onChange?.([date, toDate])
               }
             }}
-            maximumDate={toDate ? subDays(toDate, 1) : maximumDate}
+            maximumDate={
+              toDate
+                ? dayjsExtended(toDate).subtract(1, 'day').toDate()
+                : maximumDate
+            }
             minimumDate={minimumDate}
           />
         </BottomSheetView>
@@ -151,7 +154,11 @@ export function DateRangePicker({
               onChange?.([fromDate, date])
             }}
             maximumDate={maximumDate}
-            minimumDate={fromDate ? addDays(fromDate, 1) : minimumDate}
+            minimumDate={
+              fromDate
+                ? dayjsExtended(fromDate).add(1, 'day').toDate()
+                : minimumDate
+            }
           />
         </BottomSheetView>
       </BottomSheet>

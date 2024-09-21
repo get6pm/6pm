@@ -46,8 +46,8 @@ export function WalletStatistics({
   const timeRange = useMemo(() => {
     if (view === HomeView.SpentThisWeek || view === HomeView.RevenueThisWeek) {
       return {
-        from: dayjsExtended().startOf('week').toDate(),
-        to: dayjsExtended().endOf('week').toDate(),
+        from: dayjsExtended().startOf('isoWeek').toDate(),
+        to: dayjsExtended().endOf('isoWeek').toDate(),
       }
     }
 

@@ -16,7 +16,6 @@ import { useTransactionStore } from '@/stores/transaction/store'
 import { dayjsExtended } from '@6pm/utilities'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
-import { format } from 'date-fns/format'
 import { groupBy, mapValues, orderBy, sumBy } from 'lodash-es'
 import { useMemo, useState } from 'react'
 import { SectionList, View } from 'react-native'
@@ -76,8 +75,9 @@ export default function HomeScreen() {
   }
 
   const transactionsGroupByDate = useMemo(() => {
-    const groupedByDay = groupBy(transactions, (transaction) =>
-      format(new Date(transaction.date), 'yyyy-MM-dd'),
+    const groupedByDay = groupBy(
+      transactions,
+      (transaction) => dayjsExtended(transaction.date).format('YYYY-MM-DD'),
     )
 
     const sectionDict = mapValues(groupedByDay, (transactions, key) => ({

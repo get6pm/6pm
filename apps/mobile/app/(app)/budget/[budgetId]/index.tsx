@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { formatDateShort } from '@/lib/date'
 import { useBudget, useBudgetPeriodStats } from '@/stores/budget/hooks'
+import { dayjsExtended } from '@6pm/utilities'
 import type { TransactionPopulated } from '@6pm/validation'
-import { format } from 'date-fns'
 import { Link, useLocalSearchParams, useNavigation } from 'expo-router'
 import { groupBy, map, mapValues, orderBy, sortBy, sumBy } from 'lodash-es'
 import { SettingsIcon } from 'lucide-react-native'
@@ -63,7 +63,7 @@ export default function BudgetDetailScreen() {
 
   const transactionsGroupByDate = useMemo(() => {
     const groupedByDay = groupBy(transactions, (transaction) =>
-      format(new Date(transaction.date), 'yyyy-MM-dd'),
+      dayjsExtended(transaction.date).format('YYYY-MM-DD'),
     )
 
     const sectionDict = mapValues(groupedByDay, (transactions, key) => ({

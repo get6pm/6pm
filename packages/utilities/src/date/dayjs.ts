@@ -1,6 +1,6 @@
 import dayjsExtended from 'dayjs'
-import quarterOfYear from 'dayjs/plugin/quarterOfYear'
+import isoWeek from 'dayjs/plugin/isoWeek'
 
-dayjsExtended.extend(quarterOfYear)
+dayjsExtended.extend(isoWeek)
 
 export { dayjsExtended }

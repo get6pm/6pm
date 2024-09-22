@@ -18,7 +18,7 @@ export default function AuxiliaryLayout() {
           headerTintColor: getColor('--foreground'),
           headerShadowVisible: false,
           headerTitleStyle: {
-            fontFamily: 'Haskoy-Medium',
+            fontFamily: 'Haskoy-SemiBold',
             fontSize: 16,
             color: getColor('--foreground'),
           },

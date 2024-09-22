@@ -12,7 +12,7 @@ export function FooterGradient() {
         colorScheme === 'dark' ? 'transparent' : '#ffffff00',
         getColor('--background'),
       ]}
-      className="absolute right-0 bottom-0 left-0 h-36"
+      className="absolute right-0 bottom-0 left-0 h-40"
       pointerEvents="none"
     />
   )

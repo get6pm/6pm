@@ -107,6 +107,21 @@ export default function BudgetDetailScreen() {
     }
   })
 
+  const headerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: interpolate(
+            headerAnimation.value,
+            [0, chartHeight * 1.5, chartHeight * 1.7],
+            [0, 0, -chartHeight],
+            Extrapolation.EXTEND,
+          ),
+        },
+      ],
+    }
+  })
+
   const summaryStyle = useAnimatedStyle(() => {
     const extraSectionHeaderSpacing = spacing * 2
     return {
@@ -190,7 +205,9 @@ export default function BudgetDetailScreen() {
   }
 
   const chartData = map(
-    groupBy(transactions, (t) => t.date),
+    groupBy(transactions, (transaction) =>
+      dayjsExtended(transaction.date).format('YYYY-MM-DD'),
+    ),
     (transactions, key) => ({
       day: new Date(key).getDate(),
       amount: transactions.reduce((acc, t) => acc - t.amountInVnd, 0),
@@ -204,8 +221,9 @@ export default function BudgetDetailScreen() {
         index={currentPeriodIndex}
         onChange={setCurrentPeriodIndex}
       />
-      <View
-        className="absolute top-12 z-50 w-full"
+      <Animated.View
+        className="absolute top-12 z-10 w-full"
+        style={headerStyle}
         onLayout={(ev) => {
           if (headerHeight.value === ev.nativeEvent.layout.height) {
             return
@@ -237,7 +255,7 @@ export default function BudgetDetailScreen() {
             }
           />
         </Animated.View>
-      </View>
+      </Animated.View>
       <AnimatedSectionList
         onScroll={onScroll}
         showsVerticalScrollIndicator={false}

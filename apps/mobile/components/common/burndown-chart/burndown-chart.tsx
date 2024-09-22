@@ -81,10 +81,10 @@ export function BurndownChart({
     })
 
   useEffect(() => {
-    if (isFirstPressActive) {
+    if (firstTouch.x) {
       Haptics.selectionAsync().catch(() => null)
     }
-  }, [isFirstPressActive])
+  }, [firstTouch.x])
 
   return (
     <View className="min-h-[200px] w-full rounded-lg bg-muted">

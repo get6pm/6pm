@@ -1,7 +1,9 @@
+import { getPlanConfig } from '@6pm/utilities'
 import type { CreateWallet, UpdateWallet } from '@6pm/validation'
 import type { User, UserWalletAccount } from '@prisma/client'
 import prisma from '../../lib/prisma'
 import { DEFAULT_WALLETS } from '../constants/wallet.const'
+import { getUserPlan } from './user.service'
 
 export async function findUserWallet({
   user,
@@ -75,9 +77,12 @@ export async function getWalletBalance({
   return balance._sum.amountInVnd || 0
 }
 
-// biome-ignore lint/correctness/noUnusedVariables: <explanation>
 export async function canUserCreateWallet({ user }: { user: User }) {
-  return true
+  const wallets = await findUserWallets({ user })
+  const userPlan = getUserPlan(user)
+  const maxWallets = getPlanConfig(userPlan, 'maxWallets')
+
+  return maxWallets !== null && wallets.length < maxWallets
 }
 
 export async function canUserUpdateWallet({

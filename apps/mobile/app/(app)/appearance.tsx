@@ -62,7 +62,7 @@ export default function AppearanceScreen() {
 
   return (
     <ScrollView className="bg-background" contentContainerClassName="px-6 py-3">
-      <Text className="font-medium text-base text-foreground">
+      <Text className="font-semiBold text-base text-foreground">
         {t(i18n)`App theme`}
       </Text>
       <Text className="mb-4 text-muted-foreground text-sm">
@@ -93,7 +93,7 @@ export default function AppearanceScreen() {
       </Tabs>
       {isDynamicColorPaletteEnabled && (
         <>
-          <Text className="mt-8 font-medium text-base text-foreground">
+          <Text className="mt-8 font-semiBold text-base text-foreground">
             {t(i18n)`Color palette`}
           </Text>
           <Text className="mb-4 text-muted-foreground text-sm">
@@ -128,7 +128,7 @@ export default function AppearanceScreen() {
                     </Text>
                   </View>
                   <View className="absolute right-1 bottom-1 left-1 w-full rounded-b-md bg-muted py-1">
-                    <Text className="!text-sm text-center font-medium text-foreground uppercase">
+                    <Text className="!text-xs text-center font-medium text-foreground uppercase">
                       {palette.label}
                     </Text>
                   </View>

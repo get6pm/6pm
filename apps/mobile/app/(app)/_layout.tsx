@@ -38,7 +38,7 @@ export default function AuthenticatedLayout() {
           headerTintColor: getColor('--foreground'),
           headerShadowVisible: false,
           headerTitleStyle: {
-            fontFamily: 'Haskoy-Medium',
+            fontFamily: 'Haskoy-SemiBold',
             fontSize: 16,
             color: getColor('--foreground'),
           },

@@ -3,11 +3,11 @@ import { authMiddleware } from './middlewares/auth'
 import authApp from './routes/auth'
 import budgetsApp from './routes/budgets'
 import categoriesApp from './routes/categories'
-import clerkWebhooksApp from './routes/clerk-webhooks'
 import exchangeRatesApp from './routes/exchange-rates'
 import transactionsApp from './routes/transactions'
 import usersApp from './routes/users'
 import walletsApp from './routes/wallets'
+import clerkWebhooksApp from './routes/webhooks/clerk'
 
 export const hono = new Hono()
   .get('/health', (c) => c.text('ok'))

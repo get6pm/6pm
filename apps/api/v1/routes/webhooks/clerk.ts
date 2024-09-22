@@ -1,8 +1,8 @@
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { z } from 'zod'
-import { webhookAuthMiddleware } from '../middlewares/webhook-auth'
-import { deleteUser } from '../services/user.service'
+import { webhookAuthMiddleware } from '../../middlewares/webhook-auth'
+import { deleteUser } from '../../services/user.service'
 
 const zClerkUserData = z.object({ id: z.string() }) // Define more fields if needed
 
@@ -21,10 +21,13 @@ const router = new Hono()
     switch (payload.type) {
       case 'user.deleted':
         await deleteUser(payload.data.id)
-        return c.json({ message: 'user deleted' })
+        return c.json({ success: true, message: 'user deleted' })
 
       default:
-        return c.json({ message: `${payload.type} is not supported` }, 400)
+        return c.json(
+          { success: false, message: `${payload.type} is not supported` },
+          400,
+        )
     }
   })
 

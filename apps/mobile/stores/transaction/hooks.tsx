@@ -16,8 +16,10 @@ import { keyBy } from 'lodash-es'
 import { usePostHog } from 'posthog-react-native'
 import { useMemo } from 'react'
 import { z } from 'zod'
+import { useBudgetList } from '../budget/hooks'
 import { useCategoryList } from '../category/hooks'
 import type { StoreHookQueryOptions } from '../core/stores'
+import { useWalletList } from '../wallet/hooks'
 import { transactionQueries } from './queries'
 import { useTransactionStore } from './store'
 
@@ -172,6 +174,8 @@ export function useCreateTransaction() {
     (state) => state.updateTransaction,
   )
   const { categoriesDict } = useCategoryList()
+  const { budgetsDict } = useBudgetList()
+  const { walletsDict } = useWalletList()
 
   const mutation = useMutation({
     mutationFn: async ({
@@ -214,6 +218,10 @@ export function useCreateTransaction() {
     onMutate({ id, data }) {
       const category = data.categoryId ? categoriesDict[data.categoryId] : null
       const categoryType = category?.type
+      const budget = data.budgetId ? budgetsDict[data.budgetId] : null
+      const wallet = data.walletAccountId
+        ? walletsDict[data.walletAccountId]
+        : null
 
       const amount = category
         ? categoryType === 'INCOME'
@@ -232,6 +240,9 @@ export function useCreateTransaction() {
         budgetId: data.budgetId || null,
         note: data.note || null,
         categoryId: data.categoryId || null,
+        category,
+        budget,
+        walletAccount: wallet,
       }
 
       updateTransactionInStore(transaction)
@@ -264,6 +275,8 @@ export function useUpdateTransaction() {
   )
   const transactions = useTransactionStore().transactions
   const { categoriesDict } = useCategoryList()
+  const { budgetsDict } = useBudgetList()
+  const { walletsDict } = useWalletList()
 
   const mutation = useMutation({
     mutationFn: async ({
@@ -311,6 +324,10 @@ export function useUpdateTransaction() {
       const transactionInStore = transactions.find((t) => t.id === id)
       const category = data.categoryId ? categoriesDict[data.categoryId] : null
       const categoryType = category?.type
+      const budget = data.budgetId ? budgetsDict[data.budgetId] : null
+      const wallet = data.walletAccountId
+        ? walletsDict[data.walletAccountId]
+        : null
 
       const amount = getTransactionAmountBasedOnCategory(
         data.amount,
@@ -329,6 +346,9 @@ export function useUpdateTransaction() {
         budgetId: data.budgetId ?? transactionInStore?.budgetId ?? null,
         note: data.note ?? transactionInStore?.note ?? null,
         categoryId: data.categoryId ?? transactionInStore?.categoryId ?? null,
+        category,
+        budget,
+        walletAccount: wallet,
       }
 
       updateTransactionInStore(transaction)

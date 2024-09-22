@@ -1,3 +1,4 @@
+import { getPlanConfig } from '@6pm/utilities'
 import type { CreateTransaction, UpdateTransaction } from '@6pm/validation'
 import type {
   Budget,
@@ -14,6 +15,7 @@ import {
   isUserBudgetOwner,
 } from './budget.service'
 import { getExchangeRate } from './exchange-rates.service'
+import { getUserPlan } from './user.service'
 
 const VND = 'VND'
 
@@ -43,7 +45,13 @@ export async function canUserCreateTransaction({
     return false
   }
 
-  return true
+  const userPlan = getUserPlan(user)
+  const maxTransactions = getPlanConfig(userPlan, 'maxTransactions')
+  const transactionCount = await prisma.transaction.count({
+    where: { createdByUserId: user.id },
+  })
+
+  return maxTransactions !== null && transactionCount < maxTransactions
 }
 
 export async function canUserReadTransaction({

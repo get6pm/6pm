@@ -1,3 +1,4 @@
+import type { UserEntitlement } from '@6pm/utilities'
 import type { CreateUser } from '@6pm/validation'
 import type { User } from '@prisma/client'
 import { getLogger } from '../../lib/log'
@@ -99,3 +100,10 @@ export async function syncAllUsersSubscription() {
     failed,
   }
 }
+
+/** @alias getUserEntitlement */
+export const getUserPlan = (user: User): UserEntitlement => {
+  return (user.entitlement as UserEntitlement) ?? 'saver'
+}
+/** @alias getUserPlan */
+export const getUserEntitlement = getUserPlan

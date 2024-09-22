@@ -1,4 +1,7 @@
-import { calculateBudgetPeriodStartEndDates } from '@6pm/utilities'
+import {
+  calculateBudgetPeriodStartEndDates,
+  getPlanConfig,
+} from '@6pm/utilities'
 import type { CreateBudget, UpdateBudget } from '@6pm/validation'
 import {
   type Budget,
@@ -9,6 +12,7 @@ import {
 } from '@prisma/client'
 import prisma from '../../lib/prisma'
 import { inviteUserToBudget } from './budget-invitation.service'
+import { getUserPlan } from './user.service'
 
 const BUDGET_INCLUDE: Prisma.BudgetInclude = {
   periodConfigs: true,
@@ -19,12 +23,13 @@ type BudgetPopulated = Budget & {
 }
 
 export async function canUserCreateBudget({
-  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
   user,
-}: {
-  user: User
-}): Promise<boolean> {
-  return true
+}: { user: User }): Promise<boolean> {
+  const userBudgets = await findBudgetsOfUser({ user })
+  const userPlan = getUserPlan(user)
+  const maxBudgets = getPlanConfig(userPlan, 'maxBudgets')
+
+  return maxBudgets !== null && userBudgets.length < maxBudgets
 }
 
 export async function canUserReadBudget({

@@ -1,3 +1,4 @@
+import { getPlanConfig } from '@6pm/utilities'
 import type { CreateCategory, UpdateCategory } from '@6pm/validation'
 import { type Category, CategoryType, type User } from '@prisma/client'
 import prisma from '../../lib/prisma'
@@ -5,12 +6,15 @@ import {
   DEFAULT_EXPENSE_CATEGORIES,
   DEFAULT_INCOME_CATEGORIES,
 } from '../constants/category.const'
+import { getUserPlan } from './user.service'
 
 export async function canUserCreateCategory({
-  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
   user,
 }: { user: User }): Promise<boolean> {
-  return true
+  const userPlan = getUserPlan(user)
+  const canCreateCategories = getPlanConfig(userPlan, 'canCreateCategories')
+
+  return canCreateCategories === true
 }
 
 // biome-ignore lint/correctness/noEmptyPattern: <explanation>

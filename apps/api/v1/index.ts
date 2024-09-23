@@ -8,10 +8,12 @@ import transactionsApp from './routes/transactions'
 import usersApp from './routes/users'
 import walletsApp from './routes/wallets'
 import clerkWebhooksApp from './routes/webhooks/clerk'
+import revenuecatWebhooksApp from './routes/webhooks/revenuecat'
 
 export const hono = new Hono()
   .get('/health', (c) => c.text('ok'))
-  .route('/webhooks/clerk', clerkWebhooksApp)
+  .route('/webhooks/revenuecat', clerkWebhooksApp)
+  .route('/webhooks/revenuecat', revenuecatWebhooksApp)
 
   .use('*', authMiddleware)
   .route('/auth', authApp)

@@ -81,6 +81,7 @@ model Budget {
   budgetUsers   BudgetUser[]
   transactions  Transaction[]
   invitations   BudgetUserInvitation[]
+  settings      BudgetSettings         @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 enum BudgetType {
@@ -110,6 +111,18 @@ enum BudgetPeriodType {
   QUARTERLY
   YEARLY
   CUSTOM
+}
+
+model BudgetSettings {
+  id        String   @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  budget    Budget?
+
+  canMembersCreateTransactions      Boolean @default(true)
+  canMembersViewOtherTransactions   Boolean @default(false)
+  canMembersUpdateOtherTransactions Boolean @default(false)
+  canMembersDeleteOtherTransactions Boolean @default(false)
 }
 
 model BudgetUser {

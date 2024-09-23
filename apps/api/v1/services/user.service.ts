@@ -102,7 +102,7 @@ export async function syncAllUsersSubscription() {
 }
 
 /** @alias getUserEntitlement */
-export const getUserPlan = (user: User): UserEntitlement => {
+export function getUserPlan(user: User): UserEntitlement {
   return (user.entitlement as UserEntitlement) ?? 'saver'
 }
 /** @alias getUserPlan */

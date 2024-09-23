@@ -37,6 +37,18 @@ model User {
   createdFromInvitation        BudgetUserInvitationResponse?
   categories                   Category[]
   uploadedBlobObjects          BlobObject[]
+  metadata                     UserMetadata?
+}
+
+model UserMetadata {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  timezone String
 }
 
 model UserWalletAccount {

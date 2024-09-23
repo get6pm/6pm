@@ -1,6 +1,6 @@
 import type { UserEntitlement } from '@6pm/utilities'
 import type { CreateUser } from '@6pm/validation'
-import type { User } from '@prisma/client'
+import type { Prisma, User } from '@prisma/client'
 import { getLogger } from '../../lib/log'
 import prisma from '../../lib/prisma'
 import {
@@ -8,30 +8,28 @@ import {
   getOrCreateCustomer,
 } from './revenue-cat.service'
 
+const USER_INCLUDE: Prisma.UserInclude = { metadata: true }
+
 export async function findUserById(id: string) {
   return await prisma.user.findUnique({
-    where: {
-      id,
-    },
+    where: { id },
+    include: USER_INCLUDE,
   })
 }
 
 export async function findUserByEmail(email: string) {
   return await prisma.user.findUnique({
-    where: {
-      email,
-    },
+    where: { email },
+    include: USER_INCLUDE,
   })
 }
 
 export async function createUser({ data }: { data: CreateUser }) {
   const user = await prisma.user.upsert({
-    where: {
-      id: data.id,
-      email: data.email,
-    },
+    where: { id: data.id, email: data.email },
     create: data,
     update: data,
+    include: USER_INCLUDE,
   })
 
   return user
@@ -39,9 +37,8 @@ export async function createUser({ data }: { data: CreateUser }) {
 
 export async function deleteUser(userId: string) {
   return await prisma.user.delete({
-    where: {
-      id: userId,
-    },
+    where: { id: userId },
+    include: USER_INCLUDE,
   })
 }
 

@@ -1,5 +1,7 @@
 import { TRANSACTION_ICONS } from '@/lib/icons/category-icons'
+import { useBudgetList } from '@/stores/budget/hooks'
 import { useCategoryList } from '@/stores/category/hooks'
+import { useWalletList } from '@/stores/wallet/hooks'
 import type { TransactionPopulated } from '@6pm/validation'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
@@ -19,6 +21,8 @@ export const TransactionItem: FC<TransactionItemProps> = ({ transaction }) => {
   const { i18n } = useLingui()
   const { categoryId } = transaction
   const { categoriesDict } = useCategoryList()
+  const { budgetsDict } = useBudgetList()
+  const { walletsDict } = useWalletList()
   const category = (categoryId && categoriesDict[categoryId]) || null
 
   const iconName = useMemo(() => {
@@ -30,6 +34,12 @@ export const TransactionItem: FC<TransactionItemProps> = ({ transaction }) => {
       t(i18n)`${transaction.note}` || category?.name || t(i18n)`Uncategorized`
     )
   }, [transaction.note, category?.name, i18n])
+
+  const budget =
+    (transaction.budgetId && budgetsDict[transaction.budgetId]) || null
+  const walletAccount =
+    (transaction.walletAccountId && walletsDict[transaction.walletAccountId]) ||
+    null
 
   return (
     <Link
@@ -78,29 +88,29 @@ export const TransactionItem: FC<TransactionItemProps> = ({ transaction }) => {
             />
           </View>
           <View className="flex-row items-center gap-3 self-start">
-            {transaction.walletAccount && (
+            {walletAccount && (
               <View className="flex-row items-center gap-2">
                 <GenericIcon
                   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-                  name={transaction.walletAccount.icon as any}
+                  name={walletAccount.icon as any}
                   className="size-4 text-muted-foreground"
                 />
                 <Text
                   numberOfLines={1}
                   className="text-muted-foreground text-sm"
                 >
-                  {transaction.walletAccount.name}
+                  {walletAccount.name}
                 </Text>
               </View>
             )}
-            {transaction.budget && (
+            {budget && (
               <View className="flex-row items-center gap-2">
                 <LandPlotIcon className="size-4 text-muted-foreground" />
                 <Text
                   numberOfLines={1}
                   className="text-muted-foreground text-sm"
                 >
-                  {transaction.budget.name}
+                  {budget.name}
                 </Text>
               </View>
             )}

@@ -9,7 +9,6 @@ import {
   type TransactionFormValues,
   type TransactionPopulated,
   TransactionPopulatedSchema,
-  TransactionSchema,
 } from '@6pm/validation'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { keyBy } from 'lodash-es'
@@ -203,7 +202,7 @@ export function useCreateTransaction() {
       }
 
       const response = await result.json()
-      const transaction = TransactionSchema.merge(
+      const transaction = TransactionPopulatedSchema.merge(
         z.object({
           id: z.string(),
           amount: z.number({ coerce: true }),
@@ -309,12 +308,8 @@ export function useUpdateTransaction() {
       }
 
       const res = await result.json()
-      const transaction: TransactionPopulated = TransactionSchema.merge(
-        z.object({
-          amount: z.number({ coerce: true }),
-          amountInVnd: z.number({ coerce: true }),
-        }),
-      ).parse(res)
+      const transaction: TransactionPopulated =
+        TransactionPopulatedSchema.parse(res)
 
       updateTransactionInStore(transaction)
 

@@ -1,3 +1,4 @@
+import { dayjsExtended } from '@6pm/utilities'
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -17,6 +18,8 @@ const deviceLanguage = getLocales()[0]?.languageCode ?? 'en'
 const defaultLanguage = ['en', 'vi'].includes(deviceLanguage)
   ? deviceLanguage
   : 'en'
+
+dayjsExtended.locale(deviceLanguage)
 
 const messages = {
   en: enMessages,

@@ -19,7 +19,7 @@ const defaultLanguage = ['en', 'vi'].includes(deviceLanguage)
   ? deviceLanguage
   : 'en'
 
-dayjsExtended.locale(deviceLanguage)
+dayjsExtended.locale(defaultLanguage)
 
 const messages = {
   en: enMessages,

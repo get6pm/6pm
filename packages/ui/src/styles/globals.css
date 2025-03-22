@@ -1,14 +1,18 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../../../components/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
 
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
+  --accent-main-000: hsl(15 52.7% 43.9%);
+  --accent-main-100: hsl(16 53.8% 47.5%);
+  --accent-main-200: hsl(15 55.6% 52.4%);
+  --accent-main-900: hsl(15 48% 90.2%);
+  --background: oklch(0.98 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -79,6 +83,13 @@
 }
 
 @theme inline {
+  --color-accent-main-background: var(--accent-main-100);
+  --color-accent-main-foreground: var(--accent-main-900);
+  --color-accent-main: var(--accent-main-200);
+  --color-accent-main-000: var(--accent-main-000);
+  --color-accent-main-100: var(--accent-main-100);
+  --color-accent-main-200: var(--accent-main-200);
+  --color-accent-main-900: var(--accent-main-900);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

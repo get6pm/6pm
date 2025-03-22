@@ -1,0 +1,1 @@
+export { default } from "@6pm/ui/postcss.config";

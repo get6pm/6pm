@@ -61,6 +61,8 @@ model SpaceMembership {
 
   space Space @relation(fields: [spaceId], references: [id])
   user  User  @relation(fields: [userId], references: [id])
+
+  @@unique([spaceId, userId])
 }
 
 enum SpaceRole {

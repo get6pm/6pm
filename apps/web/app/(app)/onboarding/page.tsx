@@ -1,4 +1,4 @@
-import { OnboardingWizard } from '@/components/onboarding/onboarding-wizard'
+import { OnboardingWizard } from '@/app/(app)/onboarding/_components/onboarding-wizard'
 import getMetadata from '@/lib/get-metadata'
 import { getUser } from '@6pm/db/services/user'
 import { auth } from '@clerk/nextjs/server'

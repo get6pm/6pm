@@ -4,9 +4,9 @@ import type { User } from '@6pm/db'
 import { useRouter } from 'next/navigation'
 import type { FC } from 'react'
 import {
-  CreateSpaceForm,
-  type CreateSpaceFormValues,
-} from './create-space-form'
+  SpaceForm,
+  type SpaceFormValues,
+} from '../../../../components/forms/space-form'
 
 const SIDEBAR_WIDTH = 400
 
@@ -21,7 +21,7 @@ export const OnboardingWizard: FC<OnboardingWizardProps> = ({
 }) => {
   const router = useRouter()
 
-  const handleCreateSpace = async (values: CreateSpaceFormValues) => {
+  const handleCreateSpace = async (values: SpaceFormValues) => {
     const space = await createSpace(values)
     router.push(`/spaces/${space.id}`)
   }
@@ -32,7 +32,7 @@ export const OnboardingWizard: FC<OnboardingWizardProps> = ({
         className="fixed top-0 bottom-0 left-0 p-4"
         style={{ width: SIDEBAR_WIDTH }}
       >
-        <div className="h-full w-full rounded-md bg-[hsl(51,16.5%,84.5%)] p-4 backdrop-blur-md">
+        <div className="h-full w-full rounded-md border bg-gradient-to-b from-bg-300/70 to-bg-400/70 p-4 backdrop-blur">
           <h1 className="font-serif text-2xl">6pm</h1>
         </div>
       </div>
@@ -43,7 +43,7 @@ export const OnboardingWizard: FC<OnboardingWizardProps> = ({
             Let's create your first space
           </div>
           <div className="mt-8">
-            <CreateSpaceForm
+            <SpaceForm
               autoFocus
               onSubmit={handleCreateSpace}
               className="max-w-sm"

@@ -13,6 +13,31 @@
   --accent-main-100: hsl(16 53.8% 47.5%);
   --accent-main-200: hsl(15 55.6% 52.4%);
   --accent-main-900: hsl(15 48% 90.2%);
+  --constant-clay: hsl(15 63.1% 59.6%);
+  --constant-kraft: hsl(25 49.7% 66.5%);
+  --constant-manilla: hsl(40 54% 82.9%);
+  --constant-slate-000: hsl(0 0% 100%);
+  --constant-slate-050: hsl(48 33.3% 97.1%);
+  --constant-slate-100: hsl(53 28.6% 94.5%);
+  --constant-slate-1000: hsl(60 3.4% 5.7%);
+  --constant-slate-150: hsl(48 25% 92.2%);
+  --constant-slate-200: hsl(50 20.7% 88.6%);
+  --constant-slate-250: hsl(51 16.5% 84.5%);
+  --constant-slate-300: hsl(50 11.5% 79.6%);
+  --constant-slate-350: hsl(50 9% 73.7%);
+  --constant-slate-400: hsl(49 6.5% 66.9%);
+  --constant-slate-450: hsl(48 4.8% 59.2%);
+  --constant-slate-500: hsl(53 3.2% 51.4%);
+  --constant-slate-550: hsl(51 3.1% 43.7%);
+  --constant-slate-600: hsl(48 2.7% 35.9%);
+  --constant-slate-650: hsl(48 3.4% 29.2%);
+  --constant-slate-700: hsl(60 2.5% 23.3%);
+  --constant-slate-750: hsl(60 2.1% 18.4%);
+  --constant-slate-800: hsl(60 2.7% 14.5%);
+  --constant-slate-850: hsl(30 3.3% 11.8%);
+  --constant-slate-900: hsl(30 4% 9.8%);
+  --constant-slate-950: hsl(60 2.6% 7.6%);
+
   --background: oklch(0.98 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -29,7 +54,7 @@
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
+  --border: hsl(54 10% 80.39%);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
@@ -91,6 +116,17 @@
   --color-accent-main-100: var(--accent-main-100);
   --color-accent-main-200: var(--accent-main-200);
   --color-accent-main-900: var(--accent-main-900);
+  --color-bg-000: var(--constant-slate-000);
+  --color-bg-100: var(--constant-slate-050);
+  --color-bg-200: var(--constant-slate-150);
+  --color-bg-300: var(--constant-slate-200);
+  --color-bg-400: var(--constant-slate-250);
+  --color-bg-500: var(--constant-slate-300);
+  --color-border-100: var(--constant-slate-500);
+  --color-border-200: var(--constant-slate-500);
+  --color-border-300: var(--constant-slate-500);
+  --color-border-400: var(--constant-slate-500);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

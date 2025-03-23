@@ -15,30 +15,29 @@ import { Input } from '@6pm/ui/components/input'
 import { cn } from '@6pm/ui/lib/utils'
 import type { FC } from 'react'
 
-const createSpaceFormSchema = z.object({
+const spaceFormSchema = z.object({
   name: z.string().trim().min(1, 'Name is required'),
 })
 
-export type CreateSpaceFormValues = z.infer<typeof createSpaceFormSchema>
+export type SpaceFormValues = z.infer<typeof spaceFormSchema>
 
-export type CreateSpaceFormProps = {
+export type SpaceFormProps = {
   submitButtonText?: string
-  onSubmit?: (values: CreateSpaceFormValues) => void
-  initialValues?: CreateSpaceFormValues
+  onSubmit: (values: SpaceFormValues) => void
+  initialValues?: Partial<SpaceFormValues>
   autoFocus?: boolean
   className?: string
 }
 
-export const CreateSpaceForm: FC<CreateSpaceFormProps> = ({
-  // biome-ignore lint/suspicious/noEmptyBlockStatements: just a skeleton
-  onSubmit = () => {},
+export const SpaceForm: FC<SpaceFormProps> = ({
+  onSubmit,
   initialValues,
   autoFocus,
   className,
   submitButtonText = 'Create space',
 }) => {
-  const form = useForm<CreateSpaceFormValues>({
-    resolver: zodResolver(createSpaceFormSchema),
+  const form = useForm<SpaceFormValues>({
+    resolver: zodResolver(spaceFormSchema),
     defaultValues: { name: '', ...initialValues },
   })
   return (

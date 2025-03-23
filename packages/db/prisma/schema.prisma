@@ -18,4 +18,38 @@ model User {
   id        String   @id
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  primaryEmail      String            @unique
+  firstName         String?
+  lastName          String?
+  profilePictureUrl String?
+  spaceMemberships  SpaceMembership[]
+}
+
+model Space {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name             String
+  spaceMemberships SpaceMembership[]
+}
+
+model SpaceMembership {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  spaceId String
+  userId  String
+  role    SpaceRole
+
+  space Space @relation(fields: [spaceId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+}
+
+enum SpaceRole {
+  OWNER
+  ADMIN
+  MEMBER
 }

@@ -120,7 +120,27 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  primaryEmail: 'primaryEmail',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  profilePictureUrl: 'profilePictureUrl'
+};
+
+exports.Prisma.SpaceScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  name: 'name'
+};
+
+exports.Prisma.SpaceMembershipScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  spaceId: 'spaceId',
+  userId: 'userId',
+  role: 'role'
 };
 
 exports.Prisma.SortOrder = {
@@ -133,9 +153,20 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+exports.SpaceRole = exports.$Enums.SpaceRole = {
+  OWNER: 'OWNER',
+  ADMIN: 'ADMIN',
+  MEMBER: 'MEMBER'
+};
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Space: 'Space',
+  SpaceMembership: 'SpaceMembership'
 };
 
 /**

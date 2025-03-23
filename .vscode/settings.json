@@ -22,7 +22,7 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "editor.formatOnSave": true,
-  "cSpell.words": [],
+  "cSpell.words": ["cuid"],
   "emeraldwalk.runonsave": {
     "commands": [
       {

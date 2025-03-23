@@ -24,6 +24,21 @@ model User {
   lastName          String?
   profilePictureUrl String?
   spaceMemberships  SpaceMembership[]
+  metadata          UserMetadata[]
+}
+
+model UserMetadata {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  key    String
+  value  String
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, key])
 }
 
 model Space {

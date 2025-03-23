@@ -1,12 +1,18 @@
-import type { Prisma, User } from '../.generated/client/index.js'
+import type { Prisma } from '../.generated/client/index.js'
 import { prisma } from '../client.js'
 import { clerkClient } from './clerk.js'
 
-export async function findUser({ id }: { id: string }): Promise<User | null> {
-  return prisma.user.findUnique({ where: { id } })
+export async function findUser({ id }: { id: string }) {
+  return prisma.user.findUnique({
+    where: { id },
+    include: {
+      spaceMemberships: { include: { space: true } },
+      metadata: true,
+    },
+  })
 }
 
-export async function getUser({ id }: { id: string }): Promise<User> {
+export async function getUser({ id }: { id: string }) {
   const user = await findUser({ id })
 
   if (!user) {
@@ -16,7 +22,7 @@ export async function getUser({ id }: { id: string }): Promise<User> {
   return user
 }
 
-export async function syncUserFromClerk(userId: string): Promise<User> {
+export async function syncUserFromClerk(userId: string) {
   const clerkUser = await clerkClient.users.getUser(userId)
 
   const userData: Prisma.UserCreateInput = {
@@ -37,7 +43,33 @@ export async function syncUserFromClerk(userId: string): Promise<User> {
     create: {
       ...userData,
     },
+    include: {
+      spaceMemberships: { include: { space: true } },
+      metadata: true,
+    },
   })
 
   return user
+}
+
+export async function updateUserMetadata({
+  userId,
+  key,
+  value,
+}: {
+  userId: string
+  key: string
+  value: string
+}) {
+  let user = await getUser({ id: userId })
+
+  await prisma.userMetadata.upsert({
+    // biome-ignore lint/style/useNamingConvention: predefined by Prisma
+    where: { userId_key: { userId, key } },
+    update: { value },
+    create: { userId, key, value },
+  })
+
+  user = await getUser({ id: userId })
+  return user.metadata
 }

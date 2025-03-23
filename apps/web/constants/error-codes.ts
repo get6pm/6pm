@@ -3,6 +3,7 @@ enum ErrorCode {
   Unauthorized = 'UNAUTHORIZED',
   Forbidden = 'FORBIDDEN',
   InternalServerError = 'INTERNAL_SERVER_ERROR',
+  InvalidInput = 'INVALID_INPUT',
 }
 
 export default ErrorCode

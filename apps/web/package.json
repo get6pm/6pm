@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@6pm/db": "workspace:*",
     "@6pm/ui": "workspace:*",
     "@clerk/nextjs": "^6.12.8",
     "lucide-react": "^0.475.0",

@@ -1,5 +1,5 @@
 import config from '@/constants/config'
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 
 export default function getMetadata({
   title,

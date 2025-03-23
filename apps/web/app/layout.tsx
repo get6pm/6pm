@@ -1,8 +1,8 @@
-import { Inconsolata, Quicksand, Playfair_Display } from 'next/font/google'
 import { Providers } from '@/components/providers'
-import { Metadata } from 'next'
 import config from '@/constants/config'
 import { ClerkProvider } from '@clerk/nextjs'
+import type { Metadata } from 'next'
+import { Inconsolata, Playfair_Display, Quicksand } from 'next/font/google'
 import '@6pm/ui/globals.css'
 
 const fontSans = Quicksand({

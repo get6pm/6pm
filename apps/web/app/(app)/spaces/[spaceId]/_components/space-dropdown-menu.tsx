@@ -15,6 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@6pm/ui/components/tooltip'
+import { SignOutButton } from '@clerk/nextjs'
 import { CheckIcon, ChevronUpIcon, PlusIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -97,7 +98,9 @@ export const SpaceDropdownMenu: FC<SpaceDropdownMenuProps> = () => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Sign out</DropdownMenuItem>
+        <SignOutButton>
+          <DropdownMenuItem>Sign out</DropdownMenuItem>
+        </SignOutButton>
       </DropdownMenuContent>
     </DropdownMenu>
   )

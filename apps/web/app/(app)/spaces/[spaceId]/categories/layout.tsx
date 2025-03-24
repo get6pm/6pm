@@ -1,7 +1,6 @@
 import getMetadata from '@/lib/get-metadata'
-import { getSpaceSpendingCategories } from '@6pm/db/services/category'
+import { prisma } from '@6pm/db'
 import { TooltipProvider } from '@6pm/ui/components/tooltip'
-import { auth } from '@clerk/nextjs/server'
 import { type ReactNode, Suspense } from 'react'
 import { SpaceMainLayout } from '../_components/space-main-layout'
 import { AddCategoryButton } from './_components/add-category-button'
@@ -16,10 +15,12 @@ export default async function CategoriesLayout({
   params,
 }: { children: ReactNode; params: Promise<{ spaceId: string }> }) {
   const { spaceId } = await params
-  const { userId } = await auth()
-  const categories = await getSpaceSpendingCategories({
-    spaceId,
-    userId: userId!,
+  const categories = await prisma.spendingCategory.findMany({
+    where: { spaceId },
+    include: {
+      group: true,
+      budget: true,
+    },
   })
 
   return (

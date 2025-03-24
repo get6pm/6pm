@@ -1,28 +1,24 @@
 'use client'
-import type { createSpaceAction } from '@/app/(app)/onboarding/actions'
-import type { User } from '@6pm/db'
+import { createSpace } from '@/actions/create-space'
+import { SpaceForm, type SpaceFormValues } from '@/components/forms/space-form'
 import { useRouter } from 'next/navigation'
 import type { FC } from 'react'
-import {
-  SpaceForm,
-  type SpaceFormValues,
-} from '../../../../components/forms/space-form'
 
 const SIDEBAR_WIDTH = 400
 
 export type OnboardingWizardProps = {
-  user: User
-  createSpace: typeof createSpaceAction
+  userName: string | null
 }
 
-export const OnboardingWizard: FC<OnboardingWizardProps> = ({
-  user,
-  createSpace,
-}) => {
+export const OnboardingWizard: FC<OnboardingWizardProps> = ({ userName }) => {
   const router = useRouter()
 
   const handleCreateSpace = async (values: SpaceFormValues) => {
-    const space = await createSpace(values)
+    const { data: space, success, error } = await createSpace(values)
+    if (!success) {
+      console.error(error)
+      return
+    }
     router.push(`/spaces/${space.id}`)
   }
 
@@ -38,7 +34,9 @@ export const OnboardingWizard: FC<OnboardingWizardProps> = ({
       </div>
       <div className="min-h-dvh" style={{ paddingLeft: SIDEBAR_WIDTH }}>
         <div className="p-8">
-          <div className="font-serif text-2xl">Welcome, {user.firstName}</div>
+          <div className="font-serif text-2xl">
+            Welcome, {userName || 'Guest'}
+          </div>
           <div className="mt-2 text-muted-foreground">
             Let's create your first space
           </div>
@@ -47,7 +45,9 @@ export const OnboardingWizard: FC<OnboardingWizardProps> = ({
               autoFocus
               onSubmit={handleCreateSpace}
               className="max-w-sm"
-              initialValues={{ name: `${user.firstName}'s Space` }}
+              initialValues={{
+                name: `${userName ? userName : 'Personal'}'s Space`,
+              }}
             />
           </div>
         </div>

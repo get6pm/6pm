@@ -1,14 +1,19 @@
 'use client'
 
-import type { getSpaceSpendingCategories } from '@6pm/db/services/category'
+import type {
+  SpendingBudget,
+  SpendingCategory,
+  SpendingCategoryGroup,
+} from '@6pm/db'
 import { cn } from '@6pm/ui/lib/utils'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import type { FC } from 'react'
 
-type CategoryListItem = Awaited<
-  ReturnType<typeof getSpaceSpendingCategories>
->[number]
+type CategoryListItem = SpendingCategory & {
+  group: SpendingCategoryGroup | null
+  budget: SpendingBudget | null
+}
 
 export type CategoryListProps = {
   categories: CategoryListItem[]

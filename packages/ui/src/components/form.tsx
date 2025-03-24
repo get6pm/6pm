@@ -17,7 +17,6 @@ import { Label } from '@6pm/ui/components/label'
 import { cn } from '@6pm/ui/lib/utils'
 
 export * from 'react-hook-form'
-export { z } from 'zod'
 export { zodResolver } from '@hookform/resolvers/zod'
 
 const Form = FormProvider

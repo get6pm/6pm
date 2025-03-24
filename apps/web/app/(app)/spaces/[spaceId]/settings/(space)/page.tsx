@@ -1,7 +1,7 @@
+import { updateSpace } from '@/actions/update-space'
 import { SpaceForm, type SpaceFormValues } from '@/components/forms/space-form'
 import getMetadata from '@/lib/get-metadata'
-import { findSpace } from '@6pm/db/services/space'
-import { updateSpaceSettingsAction } from '../actions'
+import { prisma } from '@6pm/db'
 
 export const metadata = getMetadata({
   title: 'Space settings',
@@ -11,11 +11,11 @@ export default async function SpaceSettingsPage(props: {
   params: Promise<{ spaceId: string }>
 }) {
   const { spaceId } = await props.params
-  const space = await findSpace({ id: spaceId })
+  const space = await prisma.space.findUnique({ where: { id: spaceId } })
 
   const handleUpdateSpaceSettings = async (values: SpaceFormValues) => {
     'use server'
-    await updateSpaceSettingsAction(spaceId, values)
+    await updateSpace({ spaceId, data: values })
   }
 
   return (

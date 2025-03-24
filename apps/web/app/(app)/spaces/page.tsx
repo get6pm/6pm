@@ -1,11 +1,14 @@
-import { getUser } from '@6pm/db/services/user'
-import { auth } from '@clerk/nextjs/server'
+import { getAuthUser } from '@/actions/get-auth-user'
 import { redirect } from 'next/navigation'
 import { UserMetadataKey } from '../_components/app-context'
 
 export default async function SpacesPage() {
-  const { userId } = await auth()
-  const user = await getUser({ id: userId! })
+  const { data: user } = await getAuthUser()
+
+  if (!user) {
+    return null
+  }
+
   const { spaceMemberships } = user
 
   if (spaceMemberships.length === 0) {

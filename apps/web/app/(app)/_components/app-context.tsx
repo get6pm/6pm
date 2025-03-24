@@ -1,10 +1,10 @@
 'use client'
-import type { syncUserFromClerk } from '@6pm/db/services/user'
+import type { syncUserFromClerk } from '@/actions/sync-user-from-clerk'
+import { updateUserMetadata } from '@/actions/update-user-metadata'
 import { createContext, useContext, useState } from 'react'
-import { updateUserMetadataAction } from '../actions'
 
 export type AppContextType = {
-  user: Awaited<ReturnType<typeof syncUserFromClerk>>
+  user: NonNullable<Awaited<ReturnType<typeof syncUserFromClerk>>['data']>
 }
 
 export const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -29,8 +29,16 @@ export const useUserMetadata = () => {
     metadata.find((m) => m.key === key)?.value
 
   const handleSetMetadata = async (key: UserMetadataKey, value: string) => {
-    const updatedMetadata = await updateUserMetadataAction({ key, value })
-    setMetadata(updatedMetadata)
+    const { data: updatedMetadata, success } = await updateUserMetadata({
+      key,
+      value,
+    })
+
+    if (success) {
+      setMetadata(updatedMetadata)
+    } else {
+      console.error('Failed to update user metadata')
+    }
   }
 
   return { getMetadata, setMetadata: handleSetMetadata }

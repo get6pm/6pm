@@ -1,4 +1,5 @@
-import { findSpace } from '@6pm/db/services/space'
+import { doesUserBelongToSpace } from '@/actions/space-permission'
+import { prisma } from '@6pm/db'
 import { SidebarProvider } from '@6pm/ui/components/sidebar'
 import { cookies } from 'next/headers'
 import { RedirectType, redirect } from 'next/navigation'
@@ -13,11 +14,25 @@ export default async function SpaceLayout(
   } & PropsWithChildren,
 ) {
   const { spaceId } = await props.params
+  const { data: userBelongs } = await doesUserBelongToSpace({ spaceId })
+
+  if (!userBelongs) {
+    return redirect('/spaces', RedirectType.replace)
+  }
+
+  const space = await prisma.space.findUnique({
+    where: {
+      id: spaceId,
+    },
+    include: {
+      spaceMemberships: true,
+    },
+  })
+
   const cookieStore = await cookies()
   const defaultOpen =
     !cookieStore.get('sidebar_state')?.value ||
     cookieStore.get('sidebar_state')?.value === 'true'
-  const space = await findSpace({ id: spaceId })
 
   if (!space) {
     return redirect('/spaces', RedirectType.replace)

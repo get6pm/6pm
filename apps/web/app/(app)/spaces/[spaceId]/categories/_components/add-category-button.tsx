@@ -1,4 +1,6 @@
 'use client'
+import { createCategory } from '@/actions/create-category'
+import type { CreateCategoryValues } from '@/schemas/category'
 import { SPENDING_CATEGORY_SUGGESTIONS } from '@6pm/db/static-data/category'
 import { Button } from '@6pm/ui/components/button'
 import {
@@ -16,7 +18,6 @@ import {
 import { PlusIcon } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import type { FC } from 'react'
-import { createSpendingCategoryAction } from '../actions'
 
 export type AddCategoryButtonProps = {}
 
@@ -24,15 +25,16 @@ export const AddCategoryButton: FC<AddCategoryButtonProps> = () => {
   const { spaceId } = useParams<{ spaceId: string }>()
   const router = useRouter()
 
-  const handleCreateCategory = async (values: {
-    name: string
-    icon: string
-    color?: string
-  }) => {
-    const category = await createSpendingCategoryAction({
+  const handleCreateCategory = async (values: CreateCategoryValues) => {
+    const { data: category, success } = await createCategory({
       spaceId,
       data: values,
     })
+
+    if (!success) {
+      return
+    }
+
     router.push(`/spaces/${spaceId}/categories/${category.id}`)
   }
 

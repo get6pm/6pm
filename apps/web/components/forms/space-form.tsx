@@ -1,4 +1,5 @@
 'use client'
+import { zCreateSpace } from '@/schemas/space'
 import { Button } from '@6pm/ui/components/button'
 import {
   Form,
@@ -8,18 +9,14 @@ import {
   FormLabel,
   FormMessage,
   useForm,
-  z,
   zodResolver,
 } from '@6pm/ui/components/form'
 import { Input } from '@6pm/ui/components/input'
 import { cn } from '@6pm/ui/lib/utils'
+import type { z } from '@6pm/ui/lib/zod'
 import type { FC } from 'react'
 
-const spaceFormSchema = z.object({
-  name: z.string().trim().min(1, 'Name is required'),
-})
-
-export type SpaceFormValues = z.infer<typeof spaceFormSchema>
+export type SpaceFormValues = z.infer<typeof zCreateSpace>
 
 export type SpaceFormProps = {
   submitButtonText?: string
@@ -37,7 +34,7 @@ export const SpaceForm: FC<SpaceFormProps> = ({
   submitButtonText = 'Create space',
 }) => {
   const form = useForm<SpaceFormValues>({
-    resolver: zodResolver(spaceFormSchema),
+    resolver: zodResolver(zCreateSpace),
     defaultValues: { name: '', ...initialValues },
   })
   return (

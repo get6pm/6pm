@@ -1,10 +1,10 @@
 'use client'
 
-import type { findSpace } from '@6pm/db/services/space'
+import type { Space, SpaceMembership } from '@6pm/db'
 import { createContext, useContext } from 'react'
 
 export type SpaceContextType = {
-  space: NonNullable<Awaited<ReturnType<typeof findSpace>>>
+  space: Space & { spaceMemberships: SpaceMembership[] }
 }
 
 export const SpaceContext = createContext<SpaceContextType | undefined>(

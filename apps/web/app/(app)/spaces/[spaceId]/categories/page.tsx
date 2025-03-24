@@ -1,5 +1,4 @@
-import { getSpaceSpendingCategories } from '@6pm/db/services/category'
-import { auth } from '@clerk/nextjs/server'
+import { prisma } from '@6pm/db'
 import { PieChartIcon } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
@@ -7,11 +6,13 @@ export default async function CategoriesPage({
   params,
 }: { params: Promise<{ spaceId: string }> }) {
   const { spaceId } = await params
-  const { userId } = await auth()
 
-  const categories = await getSpaceSpendingCategories({
-    spaceId,
-    userId: userId!,
+  const categories = await prisma.spendingCategory.findMany({
+    where: { spaceId },
+    include: {
+      group: true,
+      budget: true,
+    },
   })
 
   if (!categories.length) {

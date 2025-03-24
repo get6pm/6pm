@@ -1,7 +1,6 @@
-import { findSpendingCategory } from '@6pm/db/services/category'
+import { prisma } from '@6pm/db'
 import { Button } from '@6pm/ui/components/button'
 import { TooltipProvider } from '@6pm/ui/components/tooltip'
-import { auth } from '@clerk/nextjs/server'
 import { EllipsisIcon, Pencil } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { SpaceMainLayout } from '../../_components/space-main-layout'
@@ -10,8 +9,13 @@ export default async function CategoryIdPage({
   params,
 }: { params: Promise<{ spaceId: string; categoryId: string }> }) {
   const { spaceId, categoryId } = await params
-  const { userId } = await auth()
-  const category = await findSpendingCategory({ userId: userId!, categoryId })
+  const category = await prisma.spendingCategory.findUnique({
+    where: { id: categoryId },
+    include: {
+      group: true,
+      budget: true,
+    },
+  })
 
   if (!category) {
     return redirect(`/spaces/${spaceId}/categories`)

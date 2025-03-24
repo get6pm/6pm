@@ -47,7 +47,7 @@ const MenuItem: FC<{
         href={href}
         as={as}
         className={cn(
-          'block cursor-default rounded-lg px-3 py-3.5 opacity-70 transition-colors hover:bg-bg-300/70 hover:opacity-100 active:bg-bg-300/60 lg:px-4',
+          'block rounded-lg px-3 py-3.5 opacity-70 transition-colors hover:bg-bg-300/70 hover:opacity-100 active:bg-bg-300/60 lg:px-4',
           isActive && 'active !bg-bg-400/85 font-semibold',
         )}
       >

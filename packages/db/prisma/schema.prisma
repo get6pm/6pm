@@ -48,6 +48,9 @@ model Space {
 
   name             String
   spaceMemberships SpaceMembership[]
+  categories       SpendingCategory[]
+  categoryGroups   SpendingCategoryGroup[]
+  budgets          SpendingBudget[]
 }
 
 model SpaceMembership {
@@ -69,4 +72,52 @@ enum SpaceRole {
   OWNER
   ADMIN
   MEMBER
+}
+
+model SpendingCategory {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  spaceId     String
+  groupId     String?
+  name        String
+  color       String  @default("#ccc")
+  icon        String
+  isExclusive Boolean @default(false)
+
+  space  Space                  @relation(fields: [spaceId], references: [id])
+  group  SpendingCategoryGroup? @relation(fields: [groupId], references: [id])
+  budget SpendingBudget?
+}
+
+model SpendingCategoryGroup {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  spaceId String
+  name    String
+  color   String @default("#ccc")
+
+  space      Space              @relation(fields: [spaceId], references: [id])
+  categories SpendingCategory[]
+}
+
+model SpendingBudget {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  spaceId     String
+  categoryId  String   @unique
+  amount      Float    @default(0)
+  isRecurring Boolean  @default(true)
+  startDate   DateTime
+  endDate     DateTime
+
+  space    Space            @relation(fields: [spaceId], references: [id])
+  category SpendingCategory @relation(fields: [categoryId], references: [id])
+
+  @@unique([spaceId, categoryId])
 }

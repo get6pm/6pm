@@ -1,6 +1,6 @@
-import type { Prisma } from '../.generated/client/index.js'
-import { prisma } from '../client.js'
-import { clerkClient } from './clerk.js'
+import type { Prisma } from '../.generated/client'
+import { prisma } from '../client'
+import { clerkClient } from './clerk'
 
 export async function findUser({ id }: { id: string }) {
   return prisma.user.findUnique({

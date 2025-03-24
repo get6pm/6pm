@@ -38,7 +38,7 @@ export const SpaceSidebar: FC<SpaceSidebarProps> = () => {
   return (
     <Sidebar className="border-r bg-gradient-to-b from-bg-300/70 to-bg-400/70 backdrop-blur">
       <SidebarHeader className="mt-2 flex flex-row items-center justify-between">
-        <div className="mx-2 shrink-0 cursor-default select-none font-serif text-2xl">
+        <div className="mx-2 shrink-0 select-none font-serif text-2xl">
           {config.appNameLowercase}
         </div>
         <SidebarTrigger />
@@ -85,7 +85,7 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
     <SidebarMenuButton
       asChild
       className={cn(
-        'flex cursor-default items-center rounded-lg text-sm transition-colors hover:bg-bg-400/60 active:bg-bg-400/40',
+        'flex items-center rounded-lg text-sm transition-colors hover:bg-bg-400/60 active:bg-bg-400/40',
         isActive && 'active !bg-bg-500/80',
         className,
       )}

@@ -60,7 +60,7 @@ export const SpaceDropdownMenu: FC<SpaceDropdownMenuProps> = () => {
                   variant="outline"
                   className="-mr-1 size-5 rounded-sm"
                 >
-                  <Link href="/onboarding" className="cursor-default">
+                  <Link href="/onboarding">
                     <PlusIcon className="size-3.5" />
                   </Link>
                 </Button>

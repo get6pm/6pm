@@ -1,5 +1,5 @@
-import { type Space, SpaceRole, type User } from '../.generated/client/index.js'
-import { prisma } from '../client.js'
+import { type Space, SpaceRole, type User } from '../.generated/client'
+import { prisma } from '../client'
 
 export async function createSpace(
   user: User,
@@ -34,21 +34,79 @@ export async function findSpace({
   })
 }
 
+export async function findUserSpaceMembership({
+  userId,
+  spaceId,
+}: { userId: string; spaceId: string }) {
+  return prisma.spaceMembership.findUnique({
+    where: {
+      // biome-ignore lint/style/useNamingConvention: prisma predefined
+      spaceId_userId: {
+        spaceId,
+        userId,
+      },
+    },
+    include: {
+      space: true,
+      user: true,
+    },
+  })
+}
+
+export async function doesUserBelongToSpace({
+  userId,
+  spaceId,
+}: { userId: string; spaceId: string }) {
+  const userMembership = await findUserSpaceMembership({
+    userId,
+    spaceId,
+  })
+
+  return !!userMembership
+}
+
+export async function doesUserHaveSpaceRole({
+  userId,
+  spaceId,
+  ...roleRules
+}: { userId: string; spaceId: string } & (
+  | { role: SpaceRole }
+  | { allRoles: SpaceRole[] }
+  | { anyRole: SpaceRole[] }
+)) {
+  const userMembership = await findUserSpaceMembership({
+    userId,
+    spaceId,
+  })
+
+  if (!userMembership) {
+    return false
+  }
+
+  if ('role' in roleRules) {
+    return userMembership.role === roleRules.role
+  }
+
+  if ('allRoles' in roleRules) {
+    return roleRules.allRoles.every((role) => userMembership.role === role)
+  }
+
+  if ('anyRole' in roleRules) {
+    return roleRules.anyRole.some((role) => userMembership.role === role)
+  }
+
+  return false
+}
+
 export async function canUserUpdateSpace({
   user,
   space,
 }: { user: User; space: Space }) {
-  const spaceMembership = await prisma.spaceMembership.findUnique({
-    where: {
-      // biome-ignore lint/style/useNamingConvention: prisma predefined
-      spaceId_userId: {
-        spaceId: space.id,
-        userId: user.id,
-      },
-    },
+  return doesUserHaveSpaceRole({
+    userId: user.id,
+    spaceId: space.id,
+    role: SpaceRole.OWNER,
   })
-
-  return spaceMembership?.role === SpaceRole.OWNER
 }
 
 export async function updateSpace({

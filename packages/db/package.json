@@ -5,7 +5,8 @@
   "private": true,
   "exports": {
     ".": "./index.ts",
-    "./services/*": "./services/*.ts"
+    "./services/*": "./services/*.ts",
+    "./static-data/*": "./static-data/*.ts"
   },
   "scripts": {
     "db:generate": "prisma generate",

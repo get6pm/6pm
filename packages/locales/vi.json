@@ -1,0 +1,12 @@
+{
+  "space-sidebar": {
+    "dashboard": "Dashboard",
+    "transactions": "Giao dịch",
+    "categories": "Danh mục",
+    "accounts": "Tài khoản",
+    "settings": "Cài đặt",
+    "sign-out": "Đăng xuất",
+    "my-spaces": "Không gian của tôi",
+    "create-new-space": "Tạo không gian mới"
+  }
+}

@@ -17,6 +17,7 @@ import {
 } from '@6pm/ui/components/tooltip'
 import { SignOutButton } from '@clerk/nextjs'
 import { CheckIcon, ChevronUpIcon, PlusIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { FC } from 'react'
@@ -27,6 +28,7 @@ export type SpaceDropdownMenuProps = {}
 export const SpaceDropdownMenu: FC<SpaceDropdownMenuProps> = () => {
   const { user } = useAppContext()
   const { space } = useSpaceContext()
+  const t = useTranslations('space-sidebar')
 
   return (
     <DropdownMenu>
@@ -51,7 +53,7 @@ export const SpaceDropdownMenu: FC<SpaceDropdownMenuProps> = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="z-50 w-60 bg-card">
         <DropdownMenuLabel className="flex items-center justify-between">
-          <span>My spaces</span>
+          <span>{t('my-spaces')}</span>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
@@ -67,7 +69,7 @@ export const SpaceDropdownMenu: FC<SpaceDropdownMenuProps> = () => {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Create new space</p>
+                <p>{t('create-new-space')}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -94,12 +96,12 @@ export const SpaceDropdownMenu: FC<SpaceDropdownMenuProps> = () => {
             href="/spaces/[spaceId]/settings"
             as={`/spaces/${space.id}/settings`}
           >
-            Settings
+            {t('settings')}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <SignOutButton>
-          <DropdownMenuItem>Sign out</DropdownMenuItem>
+          <DropdownMenuItem>{t('sign-out')}</DropdownMenuItem>
         </SignOutButton>
       </DropdownMenuContent>
     </DropdownMenu>

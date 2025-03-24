@@ -1,0 +1,12 @@
+{
+  "space-sidebar": {
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "categories": "Categories",
+    "accounts": "Accounts",
+    "settings": "Settings",
+    "sign-out": "Sign out",
+    "my-spaces": "My spaces",
+    "create-new-space": "Create new space"
+  }
+}

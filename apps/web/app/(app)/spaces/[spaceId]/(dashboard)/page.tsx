@@ -1,3 +1,3 @@
 export default async function SpacePage() {
-  return <>SpaceId</>
+  return <>Dashboard is not yet ready</>
 }

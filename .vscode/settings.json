@@ -7,7 +7,7 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[javascript]": {
     "editor.defaultFormatter": "biomejs.biome"
@@ -30,5 +30,11 @@
         "cmd": "pnpm biome lint ${file} --unsafe --fix"
       }
     ]
-  }
+  },
+  "i18n-ally.localesPaths": ["packages/locales"],
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.sourceLanguage": "en",
+  "i18n-ally.dirStructure": "auto",
+  "i18n-ally.enabledFrameworks": ["next-intl", "react"],
+  "i18n-ally.extract.autoDetect": true
 }

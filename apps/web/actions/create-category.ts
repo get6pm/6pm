@@ -14,7 +14,10 @@ export const canUserCreateSpaceCategory = createServerAction(
       anyRole: [SpaceRole.OWNER, SpaceRole.ADMIN],
     })
 
-    return !!isOwner
+    const exceedLimit = false
+    const yes = isOwner && !exceedLimit
+
+    return { yes, isOwner, exceedLimit }
   },
 )
 
@@ -30,7 +33,7 @@ export const createCategory = createServerAction(
 
     const canCreateCategory = await canUserCreateSpaceCategory({ spaceId })
 
-    if (!canCreateCategory) {
+    if (!canCreateCategory.data?.yes) {
       throw new Error(ErrorCode.Forbidden)
     }
 

@@ -2,6 +2,8 @@ import { Providers } from '@/components/providers'
 import config from '@/constants/config'
 import { ClerkProvider } from '@clerk/nextjs'
 import type { Metadata } from 'next'
+import { NextIntlClientProvider } from 'next-intl'
+import { getLocale } from 'next-intl/server'
 import { Inconsolata, Playfair_Display, Quicksand } from 'next/font/google'
 import '@6pm/ui/globals.css'
 
@@ -25,18 +27,22 @@ export const metadata: Metadata = {
   description: 'Financial management for the modern age',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const locale = await getLocale()
+
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
+      <html lang={locale} suppressHydrationWarning>
         <body
           className={`${fontSans.variable} ${fontMono.variable} ${fontSerif.variable} bg-background font-medium font-sans antialiased [&_*]:cursor-default`}
         >
-          <Providers>{children}</Providers>
+          <NextIntlClientProvider>
+            <Providers>{children}</Providers>
+          </NextIntlClientProvider>
         </body>
       </html>
     </ClerkProvider>

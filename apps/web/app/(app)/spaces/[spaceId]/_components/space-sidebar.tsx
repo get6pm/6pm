@@ -20,16 +20,17 @@ import {
   type LucideIcon,
   WalletIcon,
 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useParams, usePathname } from 'next/navigation'
 import type { FC } from 'react'
 import { SpaceDropdownMenu } from './space-dropdown-menu'
 
 const MENU_ITEMS = [
-  { label: 'Dashboard', path: '', icon: ChartSplineIcon },
-  { label: 'Transactions', path: '/transactions', icon: LayersIcon },
-  { label: 'Categories', path: '/categories', icon: ChartPieIcon },
-  { label: 'Accounts', path: '/accounts', icon: WalletIcon },
+  { label: 'dashboard', path: '', icon: ChartSplineIcon },
+  { label: 'transactions', path: '/transactions', icon: LayersIcon },
+  { label: 'categories', path: '/categories', icon: ChartPieIcon },
+  { label: 'accounts', path: '/accounts', icon: WalletIcon },
 ]
 
 export type SpaceSidebarProps = {}
@@ -75,6 +76,7 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
   icon: Icon,
   className,
 }) => {
+  const t = useTranslations('space-sidebar')
   const params = useParams<{ spaceId: string }>()
   const pathname = usePathname()
   const href = `/spaces/[spaceId]${path}`
@@ -92,7 +94,7 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
     >
       <Link href={href} as={as}>
         {Icon && <Icon className="inline-block size-4" />}
-        <span>{label}</span>
+        <span>{t(label)}</span>
       </Link>
     </SidebarMenuButton>
   )

@@ -14,7 +14,9 @@ export default async function SpaceLayout(
 ) {
   const { spaceId } = await props.params
   const cookieStore = await cookies()
-  const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true'
+  const defaultOpen =
+    !cookieStore.get('sidebar_state')?.value ||
+    cookieStore.get('sidebar_state')?.value === 'true'
   const space = await findSpace({ id: spaceId })
 
   if (!space) {

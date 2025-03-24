@@ -8,6 +8,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <NextThemesProvider
       attribute="class"
       defaultTheme="system"
+      forcedTheme="light"
       enableSystem
       disableTransitionOnChange
       enableColorScheme

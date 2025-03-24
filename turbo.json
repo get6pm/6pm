@@ -3,7 +3,7 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": ["^db:generate", "^build"],
+      "dependsOn": ["^db:generate", "^db:deploy", "^build"],
       "env": [
         "DATABASE_URL",
         "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
@@ -31,7 +31,8 @@
       "persistent": true
     },
     "db:deploy": {
-      "cache": false
+      "cache": false,
+      "env": ["DATABASE_URL"]
     }
   }
 }

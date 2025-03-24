@@ -15,6 +15,7 @@
     "@6pm/db": "workspace:*",
     "@6pm/ui": "workspace:*",
     "@clerk/nextjs": "^6.12.8",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^6.5.0",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.475.0",
     "next": "^15.2.0",

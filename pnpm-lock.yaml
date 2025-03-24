@@ -44,6 +44,9 @@ importers:
       '@clerk/nextjs':
         specifier: ^6.12.8
         version: 6.12.8(next@15.2.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@prisma/nextjs-monorepo-workaround-plugin':
+        specifier: ^6.5.0
+        version: 6.5.0
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
@@ -735,6 +738,9 @@ packages:
 
   '@prisma/get-platform@6.5.0':
     resolution: {integrity: sha512-xYcvyJwNMg2eDptBYFqFLUCfgi+wZLcj6HDMsj0Qw0irvauG4IKmkbywnqwok0B+k+W+p+jThM2DKTSmoPCkzw==}
+
+  '@prisma/nextjs-monorepo-workaround-plugin@6.5.0':
+    resolution: {integrity: sha512-W//PmOanuqx7+xUvj3529wpC+6ZQLwtv+JEcMR5PVubUmKyaduhOdDvVEvjACo9sN7nAqVBTFDHMBarIeOw6Ig==}
 
   '@radix-ui/primitive@1.1.1':
     resolution: {integrity: sha512-SJ31y+Q/zAyShtXJc8x83i9TYdbAfHZ++tUZnvjJJqFjzsdUnKsxPL6IEtBlxKkU7yzer//GQtZSV4GbldL3YA==}
@@ -3543,6 +3549,8 @@ snapshots:
   '@prisma/get-platform@6.5.0':
     dependencies:
       '@prisma/debug': 6.5.0
+
+  '@prisma/nextjs-monorepo-workaround-plugin@6.5.0': {}
 
   '@radix-ui/primitive@1.1.1': {}
 

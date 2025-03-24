@@ -4,6 +4,11 @@
   "tasks": {
     "build": {
       "dependsOn": ["^db:generate", "^build"],
+      "env": [
+        "DATABASE_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "CLERK_SECRET_KEY"
+      ],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"]
     },

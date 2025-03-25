@@ -1,5 +1,6 @@
 import { Providers } from '@/components/providers'
 import config from '@/constants/config'
+import { Toaster } from '@6pm/ui/components/sonner'
 import { ClerkProvider } from '@clerk/nextjs'
 import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
@@ -43,6 +44,7 @@ export default async function RootLayout({
           <NextIntlClientProvider>
             <Providers>{children}</Providers>
           </NextIntlClientProvider>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

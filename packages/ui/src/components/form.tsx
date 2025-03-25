@@ -105,10 +105,8 @@ function FormLabel({
       data-error={!!error}
       className={cn(
         'after:text-destructive data-[error=true]:text-rose-500',
+        withAsterisk && 'gap-1 after:content-["*"]',
         className,
-        {
-          'after:content-["*"]': withAsterisk,
-        },
       )}
       htmlFor={formItemId}
       {...props}

@@ -15,7 +15,11 @@ export default async function SpaceSettingsPage(props: {
 
   const handleUpdateSpaceSettings = async (values: SpaceFormValues) => {
     'use server'
-    await updateSpace({ spaceId, data: values })
+    const { success, data } = await updateSpace({ spaceId, data: values })
+    if (!success) {
+      throw new Error('Failed to update space settings')
+    }
+    return data
   }
 
   return (
@@ -23,7 +27,10 @@ export default async function SpaceSettingsPage(props: {
       <h2 className="font-bold text-xl">General</h2>
       <SpaceForm
         onSubmit={handleUpdateSpaceSettings}
-        initialValues={{ name: space?.name }}
+        initialValues={{
+          name: space?.name,
+          baseCurrencyCode: space?.baseCurrencyCode,
+        }}
         submitButtonText="Save changes"
       />
     </div>

@@ -17,9 +17,10 @@ export const OnboardingWizard: FC<OnboardingWizardProps> = ({ userName }) => {
     const { data: space, success, error } = await createSpace(values)
     if (!success) {
       console.error(error)
-      return
+      throw new Error('Failed to create space')
     }
     router.push(`/spaces/${space.id}`)
+    return space
   }
 
   return (

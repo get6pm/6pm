@@ -1,7 +1,7 @@
 import getMetadata from '@/lib/get-metadata'
 import { prisma } from '@6pm/db'
 import { TooltipProvider } from '@6pm/ui/components/tooltip'
-import { type ReactNode, Suspense } from 'react'
+import type { ReactNode } from 'react'
 import { SpaceMainLayout } from '../_components/space-main-layout'
 import { AddCategoryButton } from './_components/add-category-button'
 import { CategoryList } from './_components/category-list'
@@ -46,9 +46,7 @@ export default async function CategoriesLayout({
           )}
         </SpaceMainLayout>
       </div>
-      <div className="col-span-1">
-        <Suspense fallback="loading...">{children}</Suspense>
-      </div>
+      <div className="col-span-1">{children}</div>
     </div>
   )
 }

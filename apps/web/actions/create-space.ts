@@ -1,6 +1,6 @@
 'use server'
 import ErrorCode from '@/constants/error-codes'
-import { zCreateSpace } from '@/schemas/space'
+import { type CreateSpaceValues, zCreateSpace } from '@/schemas/space'
 import { SpaceRole, prisma } from '@6pm/db'
 import { auth } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
@@ -26,8 +26,8 @@ export const canUserCreateSpace = createServerAction(async () => {
 })
 
 export const createSpace = createServerAction(
-  async (input: { name: string }) => {
-    const { name } = zCreateSpace.parse(input)
+  async (input: CreateSpaceValues) => {
+    const parsedInput = zCreateSpace.parse(input)
     const { userId } = await auth()
 
     if (!userId) {
@@ -42,7 +42,7 @@ export const createSpace = createServerAction(
 
     const space = await prisma.space.create({
       data: {
-        name,
+        ...parsedInput,
         spaceMemberships: {
           create: {
             role: SpaceRole.OWNER,

@@ -47,6 +47,8 @@ model Space {
   updatedAt DateTime @updatedAt
 
   name             String
+  baseCurrencyCode String @default("USD")
+
   spaceMemberships SpaceMembership[]
   categories       SpendingCategory[]
   categoryGroups   SpendingCategoryGroup[]

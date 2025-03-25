@@ -52,7 +52,7 @@ export const AddCategoryButton: FC<AddCategoryButtonProps> = () => {
           <TooltipContent>Add category</TooltipContent>
         </Tooltip>
         <DropdownMenuContent side="bottom" align="start">
-          <DropdownMenuItem className="py-2">
+          <DropdownMenuItem disabled className="py-2">
             Start a new one from scratch
           </DropdownMenuItem>
           <DropdownMenuSeparator />

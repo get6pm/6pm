@@ -1,12 +1,20 @@
 {
+  "3wau3IU2uOxBZW_wAyY_N": "Thẻ tín dụng",
+  "4qGn1lh7s1H5e5bjgKncS": "Theo dõi thủ công",
+  "OOBfwmc6-ahOkx16nUh4q": "Thêm tài khoản {accountType}",
+  "_IVUeSl_0f5ZRda-pscBR": "Tiền mặt",
+  "lB8t6yJYlMJ4G4q0T1np9": "Liên kết ngân hàng hoặc tài khoản ghi nợ",
+  "oAQlpK0eVR8wbm3IfSfPo": "Tài khoản ngân hàng hoặc thẻ ghi nợ",
   "space-sidebar": {
-    "dashboard": "Dashboard",
-    "transactions": "Giao dịch",
-    "categories": "Danh mục",
     "accounts": "Tài khoản",
+    "categories": "Danh mục",
+    "create-new-space": "Tạo không gian mới",
+    "dashboard": "Dashboard",
+    "my-spaces": "Không gian của tôi",
     "settings": "Cài đặt",
     "sign-out": "Đăng xuất",
-    "my-spaces": "Không gian của tôi",
-    "create-new-space": "Tạo không gian mới"
-  }
+    "transactions": "Giao dịch"
+  },
+  "wmWgktgPbxz74naN9Dh4W": "Tạo tài khoản",
+  "yZ9en6VbEffQibTQ429FY": "Liên kết thẻ tín dụng"
 }

@@ -1,12 +1,30 @@
 {
+  "3wau3IU2uOxBZW_wAyY_N": "Credit cards",
+  "4qGn1lh7s1H5e5bjgKncS": "Track manually",
+  "EpV13KSgVY5ZOlDP4rj7Q": "Your data could be lost or corrupted at any time. We will do our best to prevent this from happening, but we cannot guarantee it.",
+  "OOBfwmc6-ahOkx16nUh4q": "Add {accountType} account",
+  "_IVUeSl_0f5ZRda-pscBR": "Cash",
+  "account-types": {
+    "cash_manual": "cash",
+    "credit_manual": "credit card",
+    "debit_manual": "debit"
+  },
+  "lB8t6yJYlMJ4G4q0T1np9": "Link a bank or debit account",
+  "lrlcNhSckdcTv9zT0X97Z": "you encounter",
+  "mHaSs3n8WUhm7eD35grgL": "report any issues",
+  "oAQlpK0eVR8wbm3IfSfPo": "Bank accounts or Debit cards",
+  "rUVAl6NhJecuFbCVNU121": "Please",
   "space-sidebar": {
-    "dashboard": "Dashboard",
-    "transactions": "Transactions",
-    "categories": "Categories",
     "accounts": "Accounts",
+    "categories": "Categories",
+    "create-new-space": "Create new space",
+    "dashboard": "Dashboard",
+    "my-spaces": "My spaces",
     "settings": "Settings",
     "sign-out": "Sign out",
-    "my-spaces": "My spaces",
-    "create-new-space": "Create new space"
-  }
+    "transactions": "Transactions"
+  },
+  "szilkCEdhAM_DDwW-cp_D": "You are using the alpha version of",
+  "wmWgktgPbxz74naN9Dh4W": "Create account",
+  "yZ9en6VbEffQibTQ429FY": "Link a credit card"
 }

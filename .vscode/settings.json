@@ -36,5 +36,7 @@
   "i18n-ally.sourceLanguage": "en",
   "i18n-ally.dirStructure": "auto",
   "i18n-ally.enabledFrameworks": ["next-intl", "react"],
-  "i18n-ally.extract.autoDetect": true
+  "i18n-ally.extract.autoDetect": true,
+  "i18n-ally.extract.keygenStrategy": "random",
+  "i18n-ally.sortKeys": true
 }

@@ -39,35 +39,33 @@ export const AddCategoryButton: FC<AddCategoryButtonProps> = () => {
   }
 
   return (
-    <>
-      <DropdownMenu>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="outline">
-                <PlusIcon />
-              </Button>
-            </DropdownMenuTrigger>
-          </TooltipTrigger>
-          <TooltipContent>Add category</TooltipContent>
-        </Tooltip>
-        <DropdownMenuContent side="bottom" align="start">
-          <DropdownMenuItem disabled className="py-2">
-            Start a new one from scratch
+    <DropdownMenu>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
+            <Button size="icon" variant="outline">
+              <PlusIcon />
+            </Button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent>Add category</TooltipContent>
+      </Tooltip>
+      <DropdownMenuContent side="bottom" align="start">
+        <DropdownMenuItem disabled className="py-2">
+          Start a new one from scratch
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        {SPENDING_CATEGORY_SUGGESTIONS.map((category) => (
+          <DropdownMenuItem
+            key={category.name}
+            className="py-1"
+            onClick={() => handleCreateCategory(category)}
+          >
+            <span className="text-lg">{category.icon}</span>
+            {category.name}
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          {SPENDING_CATEGORY_SUGGESTIONS.map((category) => (
-            <DropdownMenuItem
-              key={category.name}
-              className="py-1"
-              onClick={() => handleCreateCategory(category)}
-            >
-              <span className="text-lg">{category.icon}</span>
-              {category.name}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

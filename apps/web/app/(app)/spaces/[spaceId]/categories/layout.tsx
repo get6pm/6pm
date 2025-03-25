@@ -3,6 +3,7 @@ import { prisma } from '@6pm/db'
 import { TooltipProvider } from '@6pm/ui/components/tooltip'
 import type { ReactNode } from 'react'
 import { SpaceMainLayout } from '../_components/space-main-layout'
+import { SpaceSplitLayout } from '../_components/space-split-layout'
 import { AddCategoryButton } from './_components/add-category-button'
 import { CategoryList } from './_components/category-list'
 
@@ -24,8 +25,8 @@ export default async function CategoriesLayout({
   })
 
   return (
-    <div className="grid h-screen grid-cols-2 overflow-hidden">
-      <div className="col-span-1 border-r">
+    <SpaceSplitLayout
+      left={
         <SpaceMainLayout
           headerTitle="Categories"
           toolbar={
@@ -45,8 +46,8 @@ export default async function CategoriesLayout({
             </p>
           )}
         </SpaceMainLayout>
-      </div>
-      <div className="col-span-1">{children}</div>
-    </div>
+      }
+      right={children}
+    />
   )
 }

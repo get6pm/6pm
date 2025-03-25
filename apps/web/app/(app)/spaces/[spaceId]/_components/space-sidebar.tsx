@@ -106,6 +106,7 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
 }
 
 const BetaNotice: FC = () => {
+  const t = useTranslations()
   const defaultDismissed =
     typeof window === 'undefined'
       ? false
@@ -119,28 +120,26 @@ const BetaNotice: FC = () => {
 
   const handleDismiss = () => {
     setIsDismissed(true)
-    document.cookie = 'beta-notice-dismissed=true; max-age=31536000'
+    document.cookie = 'beta-notice-dismissed=true; max-age=604800' // 7 days
   }
 
   return (
     <div className="relative space-y-1.5 rounded-md border p-2 text-xs opacity-80 backdrop-blur-2xl">
       <div>
-        You are using the alpha version of{' '}
-        <b className="font-serif">{config.appNameLowercase}</b>. Please{' '}
+        {t('szilkCEdhAM_DDwW-cp_D')}{' '}
+        <b className="font-serif">{config.appNameLowercase}</b>.{' '}
+        {t('rUVAl6NhJecuFbCVNU121')}{' '}
         <a
           href="https://github.com/get6pm/6pm/issues"
           target="_blank"
           rel="noopener noreferrer"
           className="underline"
         >
-          report any issues
+          {t('mHaSs3n8WUhm7eD35grgL')}
         </a>{' '}
-        you encounter.
+        {t('lrlcNhSckdcTv9zT0X97Z')}.
       </div>
-      <div className="text-accent-main-200">
-        Your data could be lost or corrupted at any time. We will do our best to
-        prevent this from happening, but we cannot guarantee it.
-      </div>
+      <div className="text-accent-main-200">{t('EpV13KSgVY5ZOlDP4rj7Q')}</div>
       <button
         type="button"
         onClick={handleDismiss}

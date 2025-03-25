@@ -1,4 +1,5 @@
 'use client'
+import NoSsr from '@/components/no-ssr'
 import config from '@/constants/config'
 import {
   Sidebar,
@@ -19,11 +20,12 @@ import {
   LayersIcon,
   type LucideIcon,
   WalletIcon,
+  XIcon,
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useParams, usePathname } from 'next/navigation'
-import type { FC } from 'react'
+import { type FC, useState } from 'react'
 import { SpaceDropdownMenu } from './space-dropdown-menu'
 
 const MENU_ITEMS = [
@@ -57,6 +59,9 @@ export const SpaceSidebar: FC<SpaceSidebarProps> = () => {
         <SidebarRail />
       </SidebarContent>
       <SidebarFooter>
+        <NoSsr>
+          <BetaNotice />
+        </NoSsr>
         <SpaceDropdownMenu />
       </SidebarFooter>
     </Sidebar>
@@ -97,5 +102,52 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
         <span>{t(label)}</span>
       </Link>
     </SidebarMenuButton>
+  )
+}
+
+const BetaNotice: FC = () => {
+  const defaultDismissed =
+    typeof window === 'undefined'
+      ? false
+      : document.cookie.includes('beta-notice-dismissed=true')
+
+  const [isDismissed, setIsDismissed] = useState(defaultDismissed)
+
+  if (isDismissed) {
+    return null
+  }
+
+  const handleDismiss = () => {
+    setIsDismissed(true)
+    document.cookie = 'beta-notice-dismissed=true; max-age=31536000'
+  }
+
+  return (
+    <div className="relative space-y-1.5 rounded-md border p-2 text-xs opacity-80 backdrop-blur-2xl">
+      <div>
+        You are using the alpha version of{' '}
+        <b className="font-serif">{config.appNameLowercase}</b>. Please{' '}
+        <a
+          href="https://github.com/get6pm/6pm/issues"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline"
+        >
+          report any issues
+        </a>{' '}
+        you encounter.
+      </div>
+      <div className="text-accent-main-200">
+        Your data could be lost or corrupted at any time. We will do our best to
+        prevent this from happening, but we cannot guarantee it.
+      </div>
+      <button
+        type="button"
+        onClick={handleDismiss}
+        className="absolute top-1 right-1 opacity-60 transition-opacity hover:opacity-100"
+      >
+        <XIcon className="size-4" />
+      </button>
+    </div>
   )
 }

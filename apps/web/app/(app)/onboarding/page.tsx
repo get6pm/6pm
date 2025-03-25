@@ -11,5 +11,5 @@ export default async function OnboardingPage() {
   if (!user) {
     return null
   }
-  return <OnboardingWizard userName={user.firstName} />
+  return <OnboardingWizard userName={user.lastName} />
 }

@@ -1,9 +1,9 @@
-import { getAuthUser } from '@/actions/get-auth-user'
+import { syncUserFromClerk } from '@/actions/sync-user-from-clerk'
 import { redirect } from 'next/navigation'
 import { UserMetadataKey } from '../_components/app-context'
 
 export default async function SpacesPage() {
-  const { data: user } = await getAuthUser()
+  const { data: user } = await syncUserFromClerk()
 
   if (!user) {
     return null

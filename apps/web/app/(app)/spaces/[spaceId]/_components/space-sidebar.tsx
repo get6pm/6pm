@@ -97,7 +97,7 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
         className,
       )}
     >
-      <Link href={href} as={as}>
+      <Link prefetch href={href} as={as}>
         {Icon && <Icon className="inline-block size-4" />}
         <span>{t(label)}</span>
       </Link>

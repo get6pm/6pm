@@ -38,6 +38,7 @@ export const CategoryList: FC<CategoryListProps> = ({ categories }) => {
           <tr key={category.id}>
             <td>
               <Link
+                prefetch
                 href="/spaces/[spaceId]/categories/[categoryId]"
                 as={`/spaces/${spaceId}/categories/${category.id}`}
                 className="flex flex-nowrap items-center gap-4 overflow-hidden"

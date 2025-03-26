@@ -1,4 +1,5 @@
 'use client'
+import type { AccountType } from '@/schemas/account'
 import { Button } from '@6pm/ui/components/button'
 import {
   Dialog,
@@ -24,9 +25,7 @@ import {
   useEffect,
   useState,
 } from 'react'
-import { DebitAccountForm, DebitAccountFormContent } from './debit-account-form'
-
-type AccountType = 'debit_manual' | 'credit_manual' | 'cash_manual'
+import { AccountForm, AccountFormContent } from './account-form'
 
 type AddAccountContextValue = {
   selectedAccountType: AccountType | null
@@ -148,16 +147,19 @@ export const AddAccountDialog: FC<AddAccountDialogProps> = () => {
                 accountType: t(`account-types.${accountType}`),
               })}
           </DialogTitle>
-          {accountType === 'debit_manual' && (
-            <DebitAccountForm>
-              <DebitAccountFormContent onSubmit={console.log} className="mt-4">
+          {accountType && (
+            <AccountForm accountType={accountType}>
+              <AccountFormContent
+                onSubmit={(values) => console.log(values)}
+                className="mt-4"
+              >
                 <div className="-mt-6 flex justify-start">
                   <Button type="submit" variant="accent">
                     {t('wmWgktgPbxz74naN9Dh4W')}
                   </Button>
                 </div>
-              </DebitAccountFormContent>
-            </DebitAccountForm>
+              </AccountFormContent>
+            </AccountForm>
           )}
         </DialogHeader>
       </DialogContent>

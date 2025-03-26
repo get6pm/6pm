@@ -1,3 +1,4 @@
+import { prisma } from '@6pm/db'
 import { Button } from '@6pm/ui/components/button'
 import { DropdownMenuTrigger } from '@6pm/ui/components/dropdown-menu'
 import {
@@ -10,6 +11,7 @@ import { PlusIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { SpaceMainLayout } from '../_components/space-main-layout'
 import { SpaceSplitLayout } from '../_components/space-split-layout'
+import { AccountList } from './_components/account-list'
 import {
   AddAccount,
   AddAccountContent,
@@ -18,8 +20,13 @@ import {
 
 export default async function AccountsLayout({
   children,
-  // params,
+  params,
 }: { children: ReactNode; params: Promise<{ spaceId: string }> }) {
+  const { spaceId } = await params
+  const accounts = await prisma.account.findMany({
+    where: { spaceId },
+  })
+
   return (
     <SpaceSplitLayout
       left={
@@ -44,9 +51,13 @@ export default async function AccountsLayout({
             </TooltipProvider>
           }
         >
-          <p>
-            Your space doesn't have any accounts yet. Add one to get started!
-          </p>
+          {accounts.length ? (
+            <AccountList accounts={accounts} />
+          ) : (
+            <p>
+              Your space doesn't have any accounts yet. Add one to get started!
+            </p>
+          )}
         </SpaceMainLayout>
       }
       right={children}

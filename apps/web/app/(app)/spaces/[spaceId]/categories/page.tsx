@@ -9,10 +9,7 @@ export default async function CategoriesPage({
 
   const categories = await prisma.spendingCategory.findMany({
     where: { spaceId },
-    include: {
-      group: true,
-      budget: true,
-    },
+    select: { id: true },
   })
 
   if (!categories.length) {

@@ -1,15 +1,18 @@
 'use client'
 
 import { getColorValue } from '@/lib/get-color-value'
+import { getCurrencyInputProps } from '@/lib/get-currency-input-props'
 import type {
   SpendingBudget,
   SpendingCategory,
   SpendingCategoryGroup,
 } from '@6pm/db'
+import { NumericFormat } from '@6pm/ui/components/number-format'
 import { cn } from '@6pm/ui/lib/utils'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import type { FC } from 'react'
+import { useSpaceContext } from '../../_components/space-context'
 
 type CategoryListItem = SpendingCategory & {
   group: SpendingCategoryGroup | null
@@ -25,6 +28,7 @@ export const CategoryList: FC<CategoryListProps> = ({ categories }) => {
     spaceId: string
     categoryId?: string
   }>()
+  const { space } = useSpaceContext()
 
   return (
     <table className="w-full">
@@ -60,14 +64,30 @@ export const CategoryList: FC<CategoryListProps> = ({ categories }) => {
                 </span>
               </Link>
             </td>
-            <td className="text-right font-bold text-sm">$0</td>
+            <td>
+              <NumericFormat
+                className="text-right font-bold text-sm"
+                value={0}
+                {...getCurrencyInputProps(space.baseCurrencyCode, {
+                  noCode: true,
+                })}
+              />
+            </td>
             <td>
               {category.budget && (
                 <div className="h-2 w-full rounded-sm border bg-bg-200" />
               )}
             </td>
-            <td className="font-bold text-sm">
-              {category.budget && <span>${category.budget.amount}</span>}
+            <td>
+              {category.budget && (
+                <NumericFormat
+                  className="text-right font-bold text-sm"
+                  value={category.budget.amount}
+                  {...getCurrencyInputProps(space.baseCurrencyCode, {
+                    noCode: true,
+                  })}
+                />
+              )}
             </td>
           </tr>
         ))}

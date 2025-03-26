@@ -132,10 +132,11 @@ export const NumberInput = forwardRef<
         prefix={prefix}
         customInput={Input}
         placeholder={placeholder}
-        className="relative rounded-r-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        // className="relative [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         getInputRef={ref}
         {...props}
       />
     )
   },
 )
+export { NumericFormat }

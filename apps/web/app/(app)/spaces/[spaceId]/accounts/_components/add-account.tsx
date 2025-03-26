@@ -60,11 +60,6 @@ export const AddAccount: FC<AddAccountProps> = ({ children }) => {
   )
 }
 
-export type AddAccountTriggerProps = {
-  children: ReactNode
-  asChild?: boolean
-}
-
 export type AddAccountContentProps = {
   align?: 'start' | 'center' | 'end'
   side?: 'top' | 'right' | 'bottom' | 'left'

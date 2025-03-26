@@ -10,9 +10,9 @@ export const SpaceSplitLayout: FC<SpaceSplitLayoutProps> = ({
   right,
 }) => {
   return (
-    <div className="grid h-screen grid-cols-2 overflow-hidden">
-      <div className="col-span-1 border-r">{left}</div>
-      <div className="col-span-1">{right}</div>
+    <div className="flex h-dvh overflow-hidden">
+      <div className="flex-1 border-r">{left}</div>
+      <div className="max-w-[650px] flex-1">{right}</div>
     </div>
   )
 }

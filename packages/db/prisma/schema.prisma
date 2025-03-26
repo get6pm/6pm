@@ -53,6 +53,7 @@ model Space {
   categories       SpendingCategory[]
   categoryGroups   SpendingCategoryGroup[]
   budgets          SpendingBudget[]
+  accounts         Account[]
 }
 
 model SpaceMembership {
@@ -100,7 +101,7 @@ model SpendingCategoryGroup {
 
   spaceId String
   name    String
-  color   String @default("#ccc")
+  color   String @default("gray")
 
   space      Space              @relation(fields: [spaceId], references: [id])
   categories SpendingCategory[]
@@ -122,4 +123,27 @@ model SpendingBudget {
   category SpendingCategory @relation(fields: [categoryId], references: [id])
 
   @@unique([spaceId, categoryId])
+}
+
+model Account {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  spaceId     String
+  type        AccountType
+  name        String
+  institution String?
+  color       String      @default("gray")
+  lastDigits  String?
+  balance     Float       @default(0)
+  creditLimit Float?
+
+  space Space @relation(fields: [spaceId], references: [id])
+}
+
+enum AccountType {
+  CASH_MANUAL
+  DEBIT_MANUAL
+  CREDIT_MANUAL
 }

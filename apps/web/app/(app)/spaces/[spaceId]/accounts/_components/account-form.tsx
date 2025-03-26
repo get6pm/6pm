@@ -25,22 +25,22 @@ import { useSpaceContext } from '../../_components/space-context'
 import { AccountCardPreview } from './account-card-preview'
 
 export type AccountFormProps = {
-  accountType: AccountType
+  type: AccountType
   initialValues?: Partial<AccountValues>
   children: ReactNode
 }
 
 export const AccountForm: FC<AccountFormProps> = ({
-  accountType,
+  type,
   initialValues,
   children,
 }) => {
   const form = useForm<AccountValues>({
     defaultValues: {
       name: '',
-      institutionName: accountType === 'cash_manual' ? 'Cash' : '',
+      institution: type === 'CASH_MANUAL' ? 'Cash' : '',
       lastDigits: '',
-      accountType,
+      type,
       ...initialValues,
     },
     resolver: zodResolver(zAccount),
@@ -50,7 +50,7 @@ export const AccountForm: FC<AccountFormProps> = ({
 
 export type AccountFormContentProps = {
   onSubmit: (values: AccountValues) => void | Promise<void>
-  children?: ReactNode
+  children?: (props: { isSubmitting: boolean }) => ReactNode
   className?: string
 }
 
@@ -61,17 +61,21 @@ export const AccountFormContent: FC<AccountFormContentProps> = ({
 }) => {
   const { space } = useSpaceContext()
   const form = useFormContext<AccountValues>()
-  const { accountType, name, color, institutionName, lastDigits } = form.watch()
+  const { type, name, color, institution, lastDigits } = form.watch()
 
-  const institutionNameField = (
+  const institutionField = (
     <FormField
       control={form.control}
-      name="institutionName"
+      name="institution"
       render={({ field }) => (
         <FormItem>
           <FormLabel>Institution name</FormLabel>
           <FormControl>
-            <Input placeholder="VCB, MB, ..." {...field} />
+            <Input
+              disabled={form.formState.isSubmitting}
+              placeholder="VCB, MB, ..."
+              {...field}
+            />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -87,7 +91,11 @@ export const AccountFormContent: FC<AccountFormContentProps> = ({
         <FormItem>
           <FormLabel withAsterisk>Account name</FormLabel>
           <FormControl>
-            <Input placeholder="Account name" {...field} />
+            <Input
+              disabled={form.formState.isSubmitting}
+              placeholder="Account name"
+              {...field}
+            />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -103,7 +111,11 @@ export const AccountFormContent: FC<AccountFormContentProps> = ({
         <FormItem>
           <FormLabel>Last digits</FormLabel>
           <FormControl>
-            <Input placeholder="1234" {...field} />
+            <Input
+              disabled={form.formState.isSubmitting}
+              placeholder="1234"
+              {...field}
+            />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -120,6 +132,7 @@ export const AccountFormContent: FC<AccountFormContentProps> = ({
           <FormLabel>Balance</FormLabel>
           <FormControl>
             <NumberInput
+              disabled={form.formState.isSubmitting}
               placeholder="Balance"
               {...getCurrencyInputProps(space.baseCurrencyCode)}
               {...field}
@@ -140,6 +153,7 @@ export const AccountFormContent: FC<AccountFormContentProps> = ({
           <FormLabel>Credit limit</FormLabel>
           <FormControl>
             <NumberInput
+              disabled={form.formState.isSubmitting}
               placeholder="Credit limit"
               {...getCurrencyInputProps(space.baseCurrencyCode)}
               {...field}
@@ -155,14 +169,14 @@ export const AccountFormContent: FC<AccountFormContentProps> = ({
     <div className="mt-[18px] flex flex-col items-center gap-2">
       <AccountCardPreview
         accountName={name}
-        institutionName={institutionName}
+        institutionName={institution}
         lastDigits={lastDigits}
         color={color}
         className="shrink-0"
         scale={0.98}
       />
       <div className="mt-auto flex flex-row gap-2">
-        {Object.entries(config.accountColors).map(([key, value]) => (
+        {Object.entries(config.colors).map(([key, value]) => (
           <button
             key={key}
             type="button"
@@ -175,7 +189,7 @@ export const AccountFormContent: FC<AccountFormContentProps> = ({
     </div>
   )
 
-  if (accountType === 'cash_manual') {
+  if (type === 'CASH_MANUAL') {
     return (
       <form
         onSubmit={form.handleSubmit(onSubmit)}
@@ -188,18 +202,18 @@ export const AccountFormContent: FC<AccountFormContentProps> = ({
           </div>
           {cardPreviewEl}
         </div>
-        {children}
+        {children?.(form.formState)}
       </form>
     )
   }
 
-  if (accountType === 'credit_manual') {
+  if (type === 'CREDIT_MANUAL') {
     return (
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn('space-y-4', className)}
       >
-        {institutionNameField}
+        {institutionField}
         {nameField}
         {lastDigitsField}
         <div className="flex gap-4">
@@ -209,7 +223,7 @@ export const AccountFormContent: FC<AccountFormContentProps> = ({
           </div>
           {cardPreviewEl}
         </div>
-        {children}
+        {children?.(form.formState)}
       </form>
     )
   }
@@ -219,7 +233,7 @@ export const AccountFormContent: FC<AccountFormContentProps> = ({
       onSubmit={form.handleSubmit(onSubmit)}
       className={cn('space-y-4', className)}
     >
-      {institutionNameField}
+      {institutionField}
       {nameField}
       <div className="flex gap-4">
         <div className="flex-1 space-y-4">
@@ -228,7 +242,7 @@ export const AccountFormContent: FC<AccountFormContentProps> = ({
         </div>
         {cardPreviewEl}
       </div>
-      {children}
+      {children?.(form.formState)}
     </form>
   )
 }

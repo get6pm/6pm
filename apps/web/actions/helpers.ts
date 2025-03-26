@@ -1,3 +1,6 @@
+import ErrorCode from '@/constants/error-codes'
+import { getTranslations } from 'next-intl/server'
+
 export const createServerAction = <
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   Args extends any[] = unknown[],
@@ -20,12 +23,21 @@ export const createServerAction = <
         error: null,
       }
     } catch (error) {
+      const t = await getTranslations('errors')
       console.error(`Error executing server action ${fn.name}:`, error)
+
+      let errorMessage =
+        error instanceof Error ? error.message : 'Unknown error'
+
+      // @ts-ignore
+      if (Object.values(ErrorCode).includes(errorMessage)) {
+        errorMessage = t(errorMessage)
+      }
 
       return {
         success: false,
         data: null,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: errorMessage,
       }
     }
   }

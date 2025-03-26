@@ -1,5 +1,6 @@
 'use client'
-import type { AccountType } from '@/schemas/account'
+import { createAccount } from '@/actions/create-account'
+import type { AccountType, AccountValues } from '@/schemas/account'
 import { Button } from '@6pm/ui/components/button'
 import {
   Dialog,
@@ -16,6 +17,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@6pm/ui/components/dropdown-menu'
+import { toast } from '@6pm/ui/components/sonner'
 import { useTranslations } from 'next-intl'
 import {
   type FC,
@@ -25,6 +27,7 @@ import {
   useEffect,
   useState,
 } from 'react'
+import { useSpaceContext } from '../../_components/space-context'
 import { AccountForm, AccountFormContent } from './account-form'
 
 type AddAccountContextValue = {
@@ -86,7 +89,7 @@ export const AddAccountContent: FC<AddAccountContentProps> = ({
               {t('lB8t6yJYlMJ4G4q0T1np9')}
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => setSelectedAccountType('debit_manual')}
+              onClick={() => setSelectedAccountType('DEBIT_MANUAL')}
             >
               {t('4qGn1lh7s1H5e5bjgKncS')}
             </DropdownMenuItem>
@@ -103,14 +106,14 @@ export const AddAccountContent: FC<AddAccountContentProps> = ({
               {t('yZ9en6VbEffQibTQ429FY')}
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => setSelectedAccountType('credit_manual')}
+              onClick={() => setSelectedAccountType('CREDIT_MANUAL')}
             >
               {t('4qGn1lh7s1H5e5bjgKncS')}
             </DropdownMenuItem>
           </DropdownMenuSubContent>
         </DropdownMenuPortal>
       </DropdownMenuSub>
-      <DropdownMenuItem onClick={() => setSelectedAccountType('cash_manual')}>
+      <DropdownMenuItem onClick={() => setSelectedAccountType('CASH_MANUAL')}>
         {t('_IVUeSl_0f5ZRda-pscBR')}
       </DropdownMenuItem>
     </DropdownMenuContent>
@@ -120,6 +123,7 @@ export const AddAccountContent: FC<AddAccountContentProps> = ({
 export type AddAccountDialogProps = {}
 
 export const AddAccountDialog: FC<AddAccountDialogProps> = () => {
+  const { space } = useSpaceContext()
   const { selectedAccountType, setSelectedAccountType } =
     useContext(AddAccountContext)
   const [accountType, setAccountType] = useState<AccountType | null>(null)
@@ -127,6 +131,22 @@ export const AddAccountDialog: FC<AddAccountDialogProps> = () => {
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
+      setSelectedAccountType(null)
+    }
+  }
+
+  const handleCreateAccount = async (values: AccountValues) => {
+    const { success, error, data } = await createAccount({
+      spaceId: space.id,
+      data: values,
+    })
+
+    if (error) {
+      toast.error(t('b3ztS001UdqTfPG47tct5'), { description: error })
+    }
+
+    if (success) {
+      toast.success(t('0Hrqik0jBtIfdR8tCM2W6', { name: data.name }))
       setSelectedAccountType(null)
     }
   }
@@ -148,16 +168,22 @@ export const AddAccountDialog: FC<AddAccountDialogProps> = () => {
               })}
           </DialogTitle>
           {accountType && (
-            <AccountForm accountType={accountType}>
+            <AccountForm type={accountType}>
               <AccountFormContent
-                onSubmit={(values) => console.log(values)}
+                onSubmit={handleCreateAccount}
                 className="mt-4"
               >
-                <div className="-mt-6 flex justify-start">
-                  <Button type="submit" variant="accent">
-                    {t('wmWgktgPbxz74naN9Dh4W')}
-                  </Button>
-                </div>
+                {({ isSubmitting }) => (
+                  <div className="-mt-6 flex justify-start">
+                    <Button
+                      type="submit"
+                      variant="accent"
+                      disabled={isSubmitting}
+                    >
+                      {t('wmWgktgPbxz74naN9Dh4W')}
+                    </Button>
+                  </div>
+                )}
               </AccountFormContent>
             </AccountForm>
           )}

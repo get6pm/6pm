@@ -1,5 +1,6 @@
 'use client'
 
+import { getColorValue } from '@/lib/get-color-value'
 import type {
   SpendingBudget,
   SpendingCategory,
@@ -45,7 +46,7 @@ export const CategoryList: FC<CategoryListProps> = ({ categories }) => {
               >
                 <div
                   className="size-2 shrink-0 rounded-full"
-                  style={{ background: category.color }}
+                  style={{ background: getColorValue(category.color) }}
                 />
                 <span className="shrink-0 text-lg">{category.icon}</span>
                 <span

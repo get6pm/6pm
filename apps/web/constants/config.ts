@@ -1,7 +1,7 @@
 const config = {
   appNameLowercase: '6pm',
   appNameUppercase: '6PM',
-  accountColors: {
+  colors: {
     blue: '#2B6CB0',
     green: '#2F855A',
     red: '#C53030',

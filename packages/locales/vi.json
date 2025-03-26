@@ -3,6 +3,7 @@
   "4qGn1lh7s1H5e5bjgKncS": "Theo dõi thủ công",
   "OOBfwmc6-ahOkx16nUh4q": "Thêm tài khoản {accountType}",
   "_IVUeSl_0f5ZRda-pscBR": "Tiền mặt",
+  "b3ztS001UdqTfPG47tct5": "Không thể tạo tài khoản",
   "lB8t6yJYlMJ4G4q0T1np9": "Liên kết ngân hàng hoặc tài khoản ghi nợ",
   "oAQlpK0eVR8wbm3IfSfPo": "Tài khoản ngân hàng hoặc thẻ ghi nợ",
   "space-sidebar": {
@@ -14,6 +15,13 @@
     "settings": "Cài đặt",
     "sign-out": "Đăng xuất",
     "transactions": "Giao dịch"
+  },
+  "errors": {
+    "FORBIDDEN": "Bạn không được phép truy cập vào tài nguyên này.",
+    "INTERNAL_SERVER_ERROR": "Đã xảy ra lỗi máy chủ nội bộ.",
+    "INVALID_INPUT": "Dữ liệu đầu vào không hợp lệ.",
+    "NOT_FOUND": "Không tìm thấy tài nguyên.",
+    "UNAUTHORIZED": "Bạn chưa được xác thực."
   },
   "wmWgktgPbxz74naN9Dh4W": "Tạo tài khoản",
   "yZ9en6VbEffQibTQ429FY": "Liên kết thẻ tín dụng"

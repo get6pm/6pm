@@ -1,13 +1,22 @@
 {
+  "0Hrqik0jBtIfdR8tCM2W6": "Account {name} created",
   "3wau3IU2uOxBZW_wAyY_N": "Credit cards",
   "4qGn1lh7s1H5e5bjgKncS": "Track manually",
   "EpV13KSgVY5ZOlDP4rj7Q": "Your data could be lost or corrupted at any time. We will do our best to prevent this from happening, but we cannot guarantee it.",
   "OOBfwmc6-ahOkx16nUh4q": "Add {accountType} account",
   "_IVUeSl_0f5ZRda-pscBR": "Cash",
   "account-types": {
-    "cash_manual": "cash",
-    "credit_manual": "credit card",
-    "debit_manual": "debit"
+    "CASH_MANUAL": "cash",
+    "CREDIT_MANUAL": "credit card",
+    "DEBIT_MANUAL": "debit"
+  },
+  "b3ztS001UdqTfPG47tct5": "Unable to create account",
+  "errors": {
+    "FORBIDDEN": "You are not allowed to access this resource.",
+    "INTERNAL_SERVER_ERROR": "An error occurred while processing your request.",
+    "INVALID_INPUT": "The input provided is invalid.",
+    "NOT_FOUND": "The resource you are looking for does not exist.",
+    "UNAUTHORIZED": "You are not authorized to access this resource."
   },
   "lB8t6yJYlMJ4G4q0T1np9": "Link a bank or debit account",
   "lrlcNhSckdcTv9zT0X97Z": "you encounter",

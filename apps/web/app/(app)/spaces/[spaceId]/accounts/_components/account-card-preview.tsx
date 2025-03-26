@@ -1,5 +1,5 @@
 'use client'
-import config from '@/constants/config'
+import { getColorValue } from '@/lib/get-color-value'
 import type { FC } from 'react'
 
 const BASE_SCALE = 2
@@ -33,10 +33,7 @@ export const AccountCardPreview: FC<AccountCardPreviewProps> = ({
         borderRadius: `${BASE_RADIUS * scale}px`,
         fontSize: `${14 * scale}px`,
         padding: `${8 * scale}px ${12 * scale}px`,
-        backgroundColor:
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          (config.accountColors as any)[color ?? 'gray'] ||
-          config.accountColors.gray,
+        backgroundColor: getColorValue(color),
         color: 'white',
       }}
     >

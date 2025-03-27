@@ -25,6 +25,7 @@ model User {
   profilePictureUrl String?
   spaceMemberships  SpaceMembership[]
   metadata          UserMetadata[]
+  transactions      Transaction[]
 }
 
 model UserMetadata {
@@ -54,6 +55,8 @@ model Space {
   categoryGroups   SpendingCategoryGroup[]
   budgets          SpendingBudget[]
   accounts         Account[]
+  transactions     Transaction[]
+  tags             SpaceTag[]
 }
 
 model SpaceMembership {
@@ -89,9 +92,10 @@ model SpendingCategory {
   icon        String
   isExclusive Boolean @default(false)
 
-  space  Space                  @relation(fields: [spaceId], references: [id])
-  group  SpendingCategoryGroup? @relation(fields: [groupId], references: [id])
-  budget SpendingBudget?
+  space        Space                  @relation(fields: [spaceId], references: [id])
+  group        SpendingCategoryGroup? @relation(fields: [groupId], references: [id])
+  budget       SpendingBudget?
+  transactions Transaction[]
 }
 
 model SpendingCategoryGroup {
@@ -139,11 +143,56 @@ model Account {
   balance     Float       @default(0)
   creditLimit Float?
 
-  space Space @relation(fields: [spaceId], references: [id])
+  space        Space         @relation(fields: [spaceId], references: [id])
+  transactions Transaction[]
 }
 
 enum AccountType {
   CASH_MANUAL
   DEBIT_MANUAL
   CREDIT_MANUAL
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  spaceId     String
+  userId      String
+  accountId   String
+  categoryId  String?
+  amount      Float
+  description String?
+  date        DateTime
+  notes       String?
+  isExclusive Boolean         @default(false)
+  type        TransactionType
+
+  space    Space             @relation(fields: [spaceId], references: [id])
+  user     User              @relation(fields: [userId], references: [id])
+  account  Account           @relation(fields: [accountId], references: [id])
+  category SpendingCategory? @relation(fields: [categoryId], references: [id])
+  tags     SpaceTag[]        @relation("SpaceTagTransactions")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+}
+
+model SpaceTag {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  spaceId String
+  name    String
+  color   String @default("gray")
+
+  space        Space         @relation(fields: [spaceId], references: [id])
+  transactions Transaction[] @relation("SpaceTagTransactions")
+
+  @@unique([spaceId, name])
 }

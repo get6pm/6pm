@@ -33,6 +33,11 @@
     "sign-out": "Sign out",
     "transactions": "Transactions"
   },
+  "transaction-types": {
+    "EXPENSE": "regular",
+    "INCOME": "income",
+    "TRANSFER": "internal transfer"
+  },
   "szilkCEdhAM_DDwW-cp_D": "You are using the alpha version of",
   "wmWgktgPbxz74naN9Dh4W": "Create account",
   "yZ9en6VbEffQibTQ429FY": "Link a credit card"

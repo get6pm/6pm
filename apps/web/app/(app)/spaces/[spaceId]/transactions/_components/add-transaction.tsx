@@ -1,5 +1,6 @@
 'use client'
-import { TransactionValues } from '@/schemas/transaction'
+import type { TransactionValues } from '@/schemas/transaction'
+import type { Account, SpendingCategory } from '@6pm/db'
 import { Button } from '@6pm/ui/components/button'
 import { useFormContext } from '@6pm/ui/components/form'
 import {
@@ -13,9 +14,15 @@ import { TransactionForm, TransactionFormContent } from './transaction-form'
 
 export type AddTransactionProps = {
   children: ReactNode
+  categories: SpendingCategory[]
+  accounts: Account[]
 }
 
-export const AddTransaction: FC<AddTransactionProps> = ({ children }) => {
+export const AddTransaction: FC<AddTransactionProps> = ({
+  children,
+  categories,
+  accounts,
+}) => {
   return (
     <Sheet>
       {children}
@@ -24,7 +31,12 @@ export const AddTransaction: FC<AddTransactionProps> = ({ children }) => {
         className="!max-w-none w-[650px] [&>.sheet-close-button]:top-6.5"
       >
         <TransactionForm>
-          <TransactionFormContent className="p-4" onSubmit={() => {}}>
+          <TransactionFormContent
+            className="p-4"
+            onSubmit={(values) => console.log(values)}
+            categories={categories}
+            accounts={accounts}
+          >
             {({ isSubmitting }) => (
               <SheetHeader>
                 <SheetTitle className="mr-8 flex items-center justify-between">

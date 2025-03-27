@@ -1,12 +1,14 @@
 import { z } from '@6pm/ui/lib/zod'
 
 export type AccountType = 'DEBIT_MANUAL' | 'CREDIT_MANUAL' | 'CASH_MANUAL'
+export const AccountType = {
+  DEBIT_MANUAL: 'DEBIT_MANUAL',
+  CREDIT_MANUAL: 'CREDIT_MANUAL',
+  CASH_MANUAL: 'CASH_MANUAL',
+} as const
 
 export const zAccount = z.object({
-  type: z
-    .literal('DEBIT_MANUAL')
-    .or(z.literal('CREDIT_MANUAL'))
-    .or(z.literal('CASH_MANUAL')),
+  type: z.nativeEnum(AccountType),
   name: z.string().trim().max(50).nonempty(),
   institution: z.string().trim().max(50).optional(),
   lastDigits: z.string().trim().optional(),

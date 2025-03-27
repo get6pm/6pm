@@ -57,8 +57,8 @@ export const TransactionForm: FC<TransactionFormProps> = ({
       name: '',
       // amount: 0,
       date: new Date(),
-      accountId: '',
-      categoryId: '',
+      // accountId: '',
+      // categoryId: '',
       notes: '',
       isExclusive: false,
       tagIds: [],
@@ -97,8 +97,6 @@ export const TransactionFormContent: FC<TransactionFormContentProps> = ({
     form.setValue('categoryId', undefined)
   }, [type])
 
-  console.log(form.formState.errors)
-
   const typeField = (
     <FormField
       control={form.control}
@@ -116,9 +114,6 @@ export const TransactionFormContent: FC<TransactionFormContentProps> = ({
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {/* <SelectItem value="m@example.com">m@example.com</SelectItem>
-              <SelectItem value="m@google.com">m@google.com</SelectItem>
-              <SelectItem value="m@support.com">m@support.com</SelectItem> */}
               {Object.values(TransactionType).map((type) => (
                 <SelectItem key={type} value={type}>
                   {capitalize(t(`transaction-types.${type}`))}
@@ -182,7 +177,7 @@ export const TransactionFormContent: FC<TransactionFormContentProps> = ({
       name="date"
       render={({ field }) => (
         <FormItem className="col-span-1">
-          <FormLabel>Date</FormLabel>
+          <FormLabel withAsterisk>Date</FormLabel>
           <Popover>
             <PopoverTrigger asChild disabled={form.formState.isSubmitting}>
               <FormControl>
@@ -261,7 +256,7 @@ export const TransactionFormContent: FC<TransactionFormContentProps> = ({
       name="categoryId"
       render={({ field }) => (
         <FormItem className="col-span-1">
-          <FormLabel>Category</FormLabel>
+          <FormLabel withAsterisk>Category</FormLabel>
           <Select onValueChange={field.onChange} value={field.value}>
             <FormControl>
               <SelectTrigger
@@ -349,9 +344,9 @@ export const TransactionFormContent: FC<TransactionFormContentProps> = ({
         {amountField}
         {dateField}
         <div className="col-span-1" />
-        {categoryField}
-        {type !== TransactionType.EXPENSE ? (
-          accountField
+        {accountField}
+        {type === TransactionType.EXPENSE ? (
+          categoryField
         ) : (
           <div className="col-span-1" />
         )}

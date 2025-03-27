@@ -162,6 +162,7 @@ model Transaction {
   userId      String
   accountId   String
   categoryId  String?
+  name        String
   amount      Float
   description String?
   date        DateTime
@@ -174,6 +175,12 @@ model Transaction {
   account  Account           @relation(fields: [accountId], references: [id])
   category SpendingCategory? @relation(fields: [categoryId], references: [id])
   tags     SpaceTag[]        @relation("SpaceTagTransactions")
+
+  @@index([spaceId])
+  @@index([spaceId, type])
+  @@index([spaceId, accountId])
+  @@index([spaceId, categoryId])
+  @@index([spaceId, userId])
 }
 
 enum TransactionType {

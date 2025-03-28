@@ -1,24 +1,22 @@
-import { prisma } from '@6pm/db'
+'use client'
+import { Redirect } from '@/components/redirect'
+import { useSpaceCategories } from '@/store/hooks'
 import { Button } from '@6pm/ui/components/button'
 import { TooltipProvider } from '@6pm/ui/components/tooltip'
 import { EllipsisIcon, Pencil } from 'lucide-react'
-import { redirect } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { SpaceMainLayout } from '../../_components/space-main-layout'
 
-export default async function CategoryIdPage({
-  params,
-}: { params: Promise<{ spaceId: string; categoryId: string }> }) {
-  const { spaceId, categoryId } = await params
-  const category = await prisma.spendingCategory.findUnique({
-    where: { id: categoryId },
-    include: {
-      group: true,
-      budget: true,
-    },
-  })
+export default function CategoryIdPage() {
+  const { spaceId, categoryId } = useParams<{
+    spaceId: string
+    categoryId: string
+  }>()
+  const categories = useSpaceCategories()
+  const category = categories[categoryId]
 
   if (!category) {
-    return redirect(`/spaces/${spaceId}/categories`)
+    return <Redirect to={`/spaces/${spaceId}/categories`} />
   }
 
   return (

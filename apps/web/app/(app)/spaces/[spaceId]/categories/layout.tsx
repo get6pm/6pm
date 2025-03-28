@@ -1,5 +1,4 @@
 import getMetadata from '@/lib/get-metadata'
-import { prisma } from '@6pm/db'
 import { TooltipProvider } from '@6pm/ui/components/tooltip'
 import type { ReactNode } from 'react'
 import { SpaceMainLayout } from '../_components/space-main-layout'
@@ -13,17 +12,7 @@ export const metadata = getMetadata({
 
 export default async function CategoriesLayout({
   children,
-  params,
-}: { children: ReactNode; params: Promise<{ spaceId: string }> }) {
-  const { spaceId } = await params
-  const categories = await prisma.spendingCategory.findMany({
-    where: { spaceId },
-    include: {
-      group: true,
-      budget: true,
-    },
-  })
-
+}: { children: ReactNode }) {
   return (
     <SpaceSplitLayout
       left={
@@ -37,14 +26,7 @@ export default async function CategoriesLayout({
             </TooltipProvider>
           }
         >
-          {categories.length ? (
-            <CategoryList categories={categories} />
-          ) : (
-            <p>
-              Your space doesn't have any categories yet. Add one to get
-              started!
-            </p>
-          )}
+          <CategoryList />
         </SpaceMainLayout>
       }
       right={children}

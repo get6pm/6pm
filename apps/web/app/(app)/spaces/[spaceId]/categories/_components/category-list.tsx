@@ -2,11 +2,7 @@
 
 import { getColorValue } from '@/lib/get-color-value'
 import { getCurrencyInputProps } from '@/lib/get-currency-input-props'
-import type {
-  SpendingBudget,
-  SpendingCategory,
-  SpendingCategoryGroup,
-} from '@6pm/db'
+import { useSpaceCategories } from '@/store/hooks'
 import { NumericFormat } from '@6pm/ui/components/number-format'
 import { cn } from '@6pm/ui/lib/utils'
 import Link from 'next/link'
@@ -14,21 +10,22 @@ import { useParams } from 'next/navigation'
 import type { FC } from 'react'
 import { useSpaceContext } from '../../_components/space-context'
 
-type CategoryListItem = SpendingCategory & {
-  group: SpendingCategoryGroup | null
-  budget: SpendingBudget | null
-}
+export type CategoryListProps = {}
 
-export type CategoryListProps = {
-  categories: CategoryListItem[]
-}
-
-export const CategoryList: FC<CategoryListProps> = ({ categories }) => {
+export const CategoryList: FC<CategoryListProps> = () => {
+  const categoryDict = useSpaceCategories()
+  const categories = Object.values(categoryDict)
   const { spaceId, categoryId } = useParams<{
     spaceId: string
     categoryId?: string
   }>()
   const { space } = useSpaceContext()
+
+  if (!categories.length) {
+    return (
+      <p>Your space doesn't have any categories yet. Add one to get started!</p>
+    )
+  }
 
   return (
     <table className="w-full">
@@ -74,12 +71,12 @@ export const CategoryList: FC<CategoryListProps> = ({ categories }) => {
               />
             </td>
             <td>
-              {category.budget && (
+              {/* {category.budget && (
                 <div className="h-2 w-full rounded-sm border bg-bg-200" />
-              )}
+              )} */}
             </td>
             <td>
-              {category.budget && (
+              {/* {category.budget && (
                 <NumericFormat
                   className="text-right font-bold text-sm"
                   value={category.budget.amount}
@@ -87,7 +84,7 @@ export const CategoryList: FC<CategoryListProps> = ({ categories }) => {
                     noCode: true,
                   })}
                 />
-              )}
+              )} */}
             </td>
           </tr>
         ))}

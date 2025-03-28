@@ -1,18 +1,14 @@
-import { prisma } from '@6pm/db'
+'use client'
+import { Redirect } from '@/components/redirect'
+import { useCurrentSpaceId, useSpaceCategories } from '@/store/hooks'
+import { isEmpty } from 'lodash-es'
 import { PieChartIcon } from 'lucide-react'
-import { redirect } from 'next/navigation'
 
-export default async function CategoriesPage({
-  params,
-}: { params: Promise<{ spaceId: string }> }) {
-  const { spaceId } = await params
+export default function CategoriesPage() {
+  const spaceId = useCurrentSpaceId()
+  const categories = useSpaceCategories()
 
-  const categories = await prisma.spendingCategory.findMany({
-    where: { spaceId },
-    select: { id: true },
-  })
-
-  if (!categories.length) {
+  if (isEmpty(categories)) {
     return (
       <div className="grid h-full w-full place-items-center">
         <PieChartIcon className="size-[300px] text-[300px] text-accent-main-900/80" />
@@ -20,5 +16,9 @@ export default async function CategoriesPage({
     )
   }
 
-  return redirect(`/spaces/${spaceId}/categories/${categories[0]?.id}`)
+  return (
+    <Redirect
+      to={`/spaces/${spaceId}/categories/${Object.values(categories)[0]?.id}`}
+    />
+  )
 }

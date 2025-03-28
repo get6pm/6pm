@@ -1,7 +1,8 @@
 import { syncUserFromClerk } from '@/actions/sync-user-from-clerk'
+import { AppProvider } from '@/store/app-provider'
 import { RedirectType, redirect } from 'next/navigation'
 import type { PropsWithChildren } from 'react'
-import { AppProvider } from './_components/app-provider'
+import { AppProvider as LegacyAppProvider } from './_components/app-provider'
 
 export default async function AppLayout(props: PropsWithChildren) {
   // Find the user in the database or sync it from Clerk
@@ -11,5 +12,11 @@ export default async function AppLayout(props: PropsWithChildren) {
     return redirect('/', RedirectType.replace)
   }
 
-  return <AppProvider user={user}>{props.children}</AppProvider>
+  return (
+    <LegacyAppProvider user={user}>
+      <AppProvider user={user} spaceMemberships={user.spaceMemberships}>
+        {props.children}
+      </AppProvider>
+    </LegacyAppProvider>
+  )
 }

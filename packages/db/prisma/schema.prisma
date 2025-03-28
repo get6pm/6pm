@@ -88,7 +88,7 @@ model SpendingCategory {
   spaceId     String
   groupId     String?
   name        String
-  color       String  @default("#ccc")
+  color       String  @default("gray")
   icon        String
   isExclusive Boolean @default(false)
 

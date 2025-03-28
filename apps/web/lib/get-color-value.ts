@@ -1,7 +1,7 @@
 import config from '@/constants/config'
 
 export function getColorValue(color: string = 'gray') {
-  if (color.startsWith('#')) {
+  if (color.startsWith('#') && color !== '#ccc') {
     return color
   }
 

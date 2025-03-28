@@ -1,5 +1,6 @@
 'use client'
 import { getTransactionList } from '@/actions/get-transaction-list'
+import { getColorValue } from '@/lib/get-color-value'
 import { getCurrencyInputProps } from '@/lib/get-currency-input-props'
 import { NumericFormat } from '@6pm/ui/components/number-format'
 import { format, isThisYear, isToday, isYesterday } from '@6pm/ui/lib/date-fns'
@@ -70,10 +71,10 @@ export const TransactionList: FC<TransactionListProps> = ({ spaceId }) => {
       <div className="w-full space-y-4">
         {Object.entries(transactionsByDate).map(([date, transactions]) => (
           <div key={date}>
-            <h2 className="mb-1 font-bold text-muted-foreground text-xs uppercase">
+            <h2 className="mb-3 font-bold text-muted-foreground text-xs uppercase">
               {date}
             </h2>
-            <div className="space-y-1">
+            <div className="space-y-3">
               {transactions.map((transaction) => (
                 <div
                   key={transaction.id}
@@ -85,7 +86,7 @@ export const TransactionList: FC<TransactionListProps> = ({ spaceId }) => {
                     as={`/spaces/${spaceId}/transactions/${transaction.id}`}
                     className="flex-1 space-x-4"
                   >
-                    <span className="font-bold">{transaction.name}</span>
+                    <span className="font">{transaction.name}</span>
                     <span className="text-muted-foreground text-sm">
                       {transaction.account.name}{' '}
                       {transaction.account.lastDigits}
@@ -93,9 +94,11 @@ export const TransactionList: FC<TransactionListProps> = ({ spaceId }) => {
                   </Link>
                   {transaction.category && (
                     <div
-                      className="flex items-center gap-1.5 rounded-full bg-gray-100 px-2 py-0.5 text-sm"
+                      className="flex items-center gap-1.5 rounded-full bg-gray-100 px-2 py-1 font-bold text-gray-100 text-sm"
                       style={{
-                        backgroundColor: transaction.category.color,
+                        backgroundColor: getColorValue(
+                          transaction.category.color,
+                        ),
                       }}
                     >
                       <span>{transaction.category.icon}</span>

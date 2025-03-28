@@ -12,6 +12,7 @@ import type { ReactNode } from 'react'
 import { SpaceMainLayout } from '../_components/space-main-layout'
 import { SpaceSplitLayout } from '../_components/space-split-layout'
 import { AddTransaction } from './_components/add-transaction'
+import { TransactionList } from './_components/transaction-list'
 
 export default async function TransactionsLayout({
   children,
@@ -64,10 +65,7 @@ export default async function TransactionsLayout({
             </TooltipProvider>
           }
         >
-          <p>
-            Your space doesn't have any transactions yet. Add one to get
-            started!
-          </p>
+          <TransactionList spaceId={spaceId} />
         </SpaceMainLayout>
       }
       right={children}

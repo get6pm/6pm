@@ -41,9 +41,9 @@ export const createTransaction = createServerAction(
       },
     })
 
-    revalidatePath(`/app/spaces/${spaceId}/transactions`)
-    revalidatePath(`/app/spaces/${spaceId}/accounts`)
-    revalidatePath(`/app/spaces/${spaceId}/categories`)
+    revalidatePath(`/spaces/${spaceId}/transactions`)
+    revalidatePath(`/spaces/${spaceId}/accounts`)
+    revalidatePath(`/spaces/${spaceId}/categories`)
 
     return newTransaction
   },

@@ -1,7 +1,7 @@
 'use client'
 import { getColorValue } from '@/lib/get-color-value'
 import { getCurrencyInputProps } from '@/lib/get-currency-input-props'
-import type { AccountType, Transaction } from '@6pm/db'
+import type { AccountType, SpaceRole, Transaction } from '@6pm/db'
 import { Label } from '@6pm/ui/components/label'
 import { NumericFormat } from '@6pm/ui/components/number-format'
 import { Textarea } from '@6pm/ui/components/textarea'
@@ -14,11 +14,15 @@ import type { FC } from 'react'
 export type TransactionDetailsProps = {
   transaction: Transaction & {
     space: { baseCurrencyCode: string }
-    user: {
+    member: {
+      user: {
+        id: string
+        firstName: string | null
+        lastName: string | null
+        profilePictureUrl: string | null
+      }
       id: string
-      firstName: string | null
-      lastName: string | null
-      profilePictureUrl: string | null
+      role: SpaceRole
     }
     account: {
       id: string
@@ -99,14 +103,15 @@ export const TransactionDetails: FC<TransactionDetailsProps> = ({
           <Label>Created by</Label>
           <div className="flex items-center gap-2 font-bold text-sm">
             <Image
-              alt={`${transaction.user.firstName} ${transaction.user.lastName}`}
-              src={transaction.user.profilePictureUrl!}
+              alt={`${transaction.member.user.firstName} ${transaction.member.user.lastName}`}
+              src={transaction.member.user.profilePictureUrl!}
               width={36}
               height={36}
               className="rounded-full"
             />
             <span>
-              {transaction.user.firstName} {transaction.user.lastName}
+              {transaction.member.user.firstName}{' '}
+              {transaction.member.user.lastName}
             </span>
           </div>
         </div>

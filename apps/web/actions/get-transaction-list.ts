@@ -48,12 +48,18 @@ export const getTransactionList = createServerAction(
         date: 'desc',
       },
       include: {
-        user: {
+        member: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
-            profilePictureUrl: true,
+            role: true,
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                profilePictureUrl: true,
+              },
+            },
           },
         },
         account: {

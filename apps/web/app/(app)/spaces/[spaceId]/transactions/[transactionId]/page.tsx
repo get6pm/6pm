@@ -10,12 +10,18 @@ export default async function TransactionIdPage({
     where: { id: transactionId, spaceId },
     include: {
       space: { select: { baseCurrencyCode: true } },
-      user: {
+      member: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
-          profilePictureUrl: true,
+          role: true,
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              profilePictureUrl: true,
+            },
+          },
         },
       },
       account: {

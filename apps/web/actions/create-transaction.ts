@@ -2,9 +2,9 @@
 import ErrorCode from '@/constants/error-codes'
 import { type TransactionValues, zTransaction } from '@/schemas/transaction'
 import { prisma } from '@6pm/db'
-import { auth } from '@clerk/nextjs/server'
 import { omit } from 'lodash-es'
 import { revalidatePath } from 'next/cache'
+import { getUserSpaceMembership } from './get-user-space-membership'
 import { createServerAction } from './helpers'
 import { doesUserBelongToSpace } from './space-permission'
 
@@ -24,9 +24,9 @@ export const createTransaction = createServerAction(
     data = zTransaction.parse(data)
 
     const canCreate = await canUserCreateSpaceTransaction({ spaceId })
-    const { userId } = await auth()
+    const { data: membership } = await getUserSpaceMembership({ spaceId })
 
-    if (!canCreate.data?.yes) {
+    if (!(canCreate.data?.yes && membership)) {
       throw new Error(ErrorCode.Forbidden)
     }
 
@@ -37,7 +37,7 @@ export const createTransaction = createServerAction(
         ...omit(data, 'isNegative', 'amount', 'tagIds'),
         amount,
         spaceId,
-        userId: userId!,
+        memberId: membership.id,
       },
     })
 

@@ -25,7 +25,6 @@ model User {
   profilePictureUrl String?
   spaceMemberships  SpaceMembership[]
   metadata          UserMetadata[]
-  transactions      Transaction[]
 }
 
 model UserMetadata {
@@ -68,8 +67,9 @@ model SpaceMembership {
   userId  String
   role    SpaceRole
 
-  space Space @relation(fields: [spaceId], references: [id])
-  user  User  @relation(fields: [userId], references: [id])
+  space        Space         @relation(fields: [spaceId], references: [id])
+  user         User          @relation(fields: [userId], references: [id])
+  transactions Transaction[]
 
   @@unique([spaceId, userId])
 }
@@ -159,7 +159,7 @@ model Transaction {
   updatedAt DateTime @updatedAt
 
   spaceId     String
-  userId      String
+  memberId    String
   accountId   String
   categoryId  String?
   name        String
@@ -171,7 +171,7 @@ model Transaction {
   type        TransactionType
 
   space    Space             @relation(fields: [spaceId], references: [id])
-  user     User              @relation(fields: [userId], references: [id])
+  member   SpaceMembership   @relation(fields: [memberId], references: [id])
   account  Account           @relation(fields: [accountId], references: [id])
   category SpendingCategory? @relation(fields: [categoryId], references: [id])
   tags     SpaceTag[]        @relation("SpaceTagTransactions")
@@ -180,7 +180,7 @@ model Transaction {
   @@index([spaceId, type])
   @@index([spaceId, accountId])
   @@index([spaceId, categoryId])
-  @@index([spaceId, userId])
+  @@index([spaceId, memberId])
 }
 
 enum TransactionType {

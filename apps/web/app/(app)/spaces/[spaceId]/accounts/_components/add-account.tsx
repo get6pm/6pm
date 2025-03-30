@@ -1,6 +1,7 @@
 'use client'
-import { createAccount } from '@/actions/create-account'
 import type { AccountType, AccountValues } from '@/schemas/account'
+import { useAppContext } from '@/store/app-provider'
+import { useCurrentSpaceId } from '@/store/hooks'
 import { Button } from '@6pm/ui/components/button'
 import {
   Dialog,
@@ -27,7 +28,6 @@ import {
   useEffect,
   useState,
 } from 'react'
-import { useSpaceContext } from '../../_components/space-context'
 import { AccountForm, AccountFormContent } from './account-form'
 
 type AddAccountContextValue = {
@@ -118,7 +118,10 @@ export const AddAccountContent: FC<AddAccountContentProps> = ({
 export type AddAccountDialogProps = {}
 
 export const AddAccountDialog: FC<AddAccountDialogProps> = () => {
-  const { space } = useSpaceContext()
+  const spaceId = useCurrentSpaceId()
+  const { createAccount } = useAppContext((state) => ({
+    createAccount: state.createAccount,
+  }))
   const { selectedAccountType, setSelectedAccountType } =
     useContext(AddAccountContext)
   const [accountType, setAccountType] = useState<AccountType | null>(null)
@@ -132,7 +135,7 @@ export const AddAccountDialog: FC<AddAccountDialogProps> = () => {
 
   const handleCreateAccount = async (values: AccountValues) => {
     const { success, error, data } = await createAccount({
-      spaceId: space.id,
+      spaceId,
       data: values,
     })
 

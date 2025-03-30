@@ -1,26 +1,31 @@
 'use client'
 import { getColorValue } from '@/lib/get-color-value'
 import { getCurrencyInputProps } from '@/lib/get-currency-input-props'
-import type { Account } from '@6pm/db'
+import { useAppContext } from '@/store/app-provider'
 import { NumericFormat } from '@6pm/ui/components/number-format'
 import { cn } from '@6pm/ui/lib/utils'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import type { FC } from 'react'
-import { useSpaceContext } from '../../_components/space-context'
 
-type AccountListItem = Account
+export type AccountListProps = {}
 
-export type AccountListProps = {
-  accounts: AccountListItem[]
-}
-
-export const AccountList: FC<AccountListProps> = ({ accounts }) => {
+export const AccountList: FC<AccountListProps> = () => {
   const { spaceId, accountId } = useParams<{
     spaceId: string
     accountId?: string
   }>()
-  const { space } = useSpaceContext()
+  const { space } = useAppContext((state) => ({
+    space: state.spaces[spaceId],
+  }))
+
+  const accounts = Object.values(space?.accounts || [])
+
+  if (!space || !accounts.length) {
+    return (
+      <p>Your space doesn't have any accounts yet. Add one to get started!</p>
+    )
+  }
 
   return (
     <table className="w-full">

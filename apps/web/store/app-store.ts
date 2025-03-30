@@ -1,4 +1,6 @@
+import { createAccount } from '@/actions/create-account'
 import { getUserSpaceMemberships } from '@/actions/get-user-space-memberships'
+import type { AccountValues } from '@/schemas/account'
 import type {
   Account,
   Space,
@@ -7,7 +9,9 @@ import type {
   Transaction,
   User,
 } from '@6pm/db'
+import { createId } from '@paralleldrive/cuid2'
 import { keyBy } from 'lodash-es'
+import * as R from 'ramda'
 import { createStore } from 'zustand'
 
 type AppState = {
@@ -26,12 +30,16 @@ type AppState = {
 
 type AppActions = {
   fetchSpacesData: (stale?: number) => Promise<void>
+  createAccount: (args: {
+    spaceId: string
+    data: AccountValues
+  }) => ReturnType<typeof createAccount>
 }
 
 export const createAppStore = (initialState: AppState) => {
   return createStore<AppState & AppActions>()((set, get) => ({
     ...initialState,
-    fetchSpacesData: async (stale = 60000) => {
+    fetchSpacesData: async (stale: number | false = 60000) => {
       const { data: spaceMemberships, error } = await getUserSpaceMemberships()
 
       if (stale) {
@@ -66,6 +74,44 @@ export const createAppStore = (initialState: AppState) => {
           ),
         },
       }))
+    },
+    createAccount: async ({ spaceId, data }) => {
+      const id = createId()
+
+      const account: Account = {
+        id,
+        spaceId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        balance: data.balance ?? 0,
+        color: data.color ?? 'gray',
+        institution: data.institution ?? null,
+        creditLimit: data.creditLimit ?? null,
+        lastDigits: data.lastDigits ?? null,
+        name: data.name,
+        type: data.type,
+      }
+
+      set((state) =>
+        R.assocPath(['spaces', spaceId, 'accounts', id], account, state),
+      )
+
+      const result = await createAccount({ spaceId, data })
+
+      if (result.data) {
+        set((state) =>
+          R.assocPath(['spaces', spaceId, 'accounts', id], result.data, state),
+        )
+      }
+
+      if (result.error) {
+        console.error('Failed to create account', result.error)
+        set((state) => R.dissocPath(['spaces', spaceId, 'accounts', id], state))
+      }
+
+      get().fetchSpacesData(0)
+
+      return result
     },
   }))
 }

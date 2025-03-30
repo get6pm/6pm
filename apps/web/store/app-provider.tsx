@@ -81,7 +81,22 @@ export const SpacesDataFetcher: FC<SpacesDataFetcherProps> = () => {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    fetchSpacesData()
+    let timeout: NodeJS.Timeout | null = null
+    const fetchData = async () => {
+      try {
+        await fetchSpacesData()
+      } finally {
+        timeout = setTimeout(fetchData, 1000 * 30)
+      }
+    }
+
+    fetchData()
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout)
+      }
+    }
   }, [])
 
   return null

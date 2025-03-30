@@ -17,6 +17,7 @@ export const getUserSpaceMemberships = createServerAction(async () => {
         include: {
           accounts: true,
           categories: true,
+          transactions: true,
         },
       },
     },

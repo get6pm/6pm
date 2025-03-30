@@ -29,7 +29,7 @@ type AppState = {
 }
 
 type AppActions = {
-  fetchSpacesData: (stale?: number) => Promise<void>
+  fetchSpacesData: () => Promise<void>
   createAccount: (args: {
     spaceId: string
     data: AccountValues
@@ -39,14 +39,8 @@ type AppActions = {
 export const createAppStore = (initialState: AppState) => {
   return createStore<AppState & AppActions>()((set, get) => ({
     ...initialState,
-    fetchSpacesData: async (stale: number | false = 60000) => {
+    fetchSpacesData: async () => {
       const { data: spaceMemberships, error } = await getUserSpaceMemberships()
-
-      if (stale) {
-        setTimeout(() => {
-          get().fetchSpacesData(stale)
-        }, stale)
-      }
 
       if (error) {
         console.error('Failed to fetch space memberships', error)
@@ -66,8 +60,7 @@ export const createAppStore = (initialState: AppState) => {
               spaceMembership,
               categories: keyBy(spaceMembership.space.categories, 'id'),
               accounts: keyBy(spaceMembership.space.accounts, 'id'),
-              transactions:
-                state.spaces[spaceMembership.spaceId]?.transactions || {},
+              transactions: keyBy(spaceMembership.space.transactions, 'id'),
               spaceMemberships: keyBy(spaceMemberships, 'id'),
             })),
             'id',
@@ -75,6 +68,8 @@ export const createAppStore = (initialState: AppState) => {
         },
       }))
     },
+
+    // accounts
     createAccount: async ({ spaceId, data }) => {
       const id = createId()
 
@@ -109,7 +104,7 @@ export const createAppStore = (initialState: AppState) => {
         set((state) => R.dissocPath(['spaces', spaceId, 'accounts', id], state))
       }
 
-      get().fetchSpacesData(0)
+      get().fetchSpacesData()
 
       return result
     },

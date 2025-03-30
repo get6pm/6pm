@@ -13,7 +13,7 @@ export const useCategories = () => {
 
 export const useCategoryList = ({
   includeDeleted,
-}: { includeDeleted?: boolean }) => {
+}: { includeDeleted?: boolean } = {}) => {
   const categories = useCategories()
   const categoryList = Object.values(categories)
 
@@ -42,15 +42,10 @@ export const useCreateCategory = () => {
   }) => {
     setIsPending(true)
 
-    try {
-      const { spaceId, data } = args
-      const result = await createCategoryAction({ spaceId, data })
-      return result
-    } catch (error) {
-      console.error('Failed to create category', error)
-    } finally {
-      setIsPending(false)
-    }
+    const { spaceId, data } = args
+    const result = await createCategoryAction({ spaceId, data })
+    setIsPending(false)
+    return result
   }
 
   return { createCategory, isPending }

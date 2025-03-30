@@ -9,6 +9,7 @@ export const TransactionType = {
 
 export const zTransaction = z
   .object({
+    id: z.string().cuid2().optional(),
     name: z.string().trim().max(50).nonempty(),
     amount: z.coerce.number(),
     date: z.coerce.date(),

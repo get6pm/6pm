@@ -1,7 +1,5 @@
 'use client'
-import { createTransaction } from '@/actions/create-transaction'
 import type { TransactionValues } from '@/schemas/transaction'
-import type { Account, SpendingCategory } from '@6pm/db'
 import { Button } from '@6pm/ui/components/button'
 import {
   Sheet,
@@ -11,21 +9,21 @@ import {
 } from '@6pm/ui/components/sheet'
 import { toast } from '@6pm/ui/components/sonner'
 import { type FC, type ReactNode, useState } from 'react'
-import { useSpaceContext } from '../../_components/space-context'
+import { useAccountList } from '../../_hooks/accounts'
+import { useCategoryList } from '../../_hooks/categories'
+import { useSpace } from '../../_hooks/spaces'
+import { useCreateTransaction } from '../../_hooks/transactions'
 import { TransactionForm, TransactionFormContent } from './transaction-form'
 
 export type AddTransactionProps = {
   children: ReactNode
-  categories: SpendingCategory[]
-  accounts: Account[]
 }
 
-export const AddTransaction: FC<AddTransactionProps> = ({
-  children,
-  categories,
-  accounts,
-}) => {
-  const { space } = useSpaceContext()
+export const AddTransaction: FC<AddTransactionProps> = ({ children }) => {
+  const space = useSpace()
+  const categories = useCategoryList()
+  const accounts = useAccountList()
+  const { createTransaction } = useCreateTransaction()
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const handleCreateTransaction = async (values: TransactionValues) => {
     const { error, success } = await createTransaction({

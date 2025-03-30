@@ -3,19 +3,19 @@ import { useAppContext } from '@/store/app-provider'
 import { useState } from 'react'
 import { useSpace } from './spaces'
 
-export const useCategories = () => {
+export const useAccounts = () => {
   const space = useSpace()
-  const { categories } = useAppContext((state) => ({
-    categories: state.spaces[space.id]?.categories,
+  const { accounts } = useAppContext((state) => ({
+    accounts: state.spaces[space.id]?.accounts,
   }))
-  return categories ?? {}
+  return accounts ?? {}
 }
 
 export const useAccountList = ({
   includeDeleted,
-}: { includeDeleted?: boolean }) => {
-  const categories = useCategories()
-  const accountList = Object.values(categories)
+}: { includeDeleted?: boolean } = {}) => {
+  const accounts = useAccounts()
+  const accountList = Object.values(accounts)
 
   if (!includeDeleted) {
     return accountList.filter((account) => !account.deletedAt)
@@ -25,8 +25,8 @@ export const useAccountList = ({
 }
 
 export const useAccount = (accountId: string) => {
-  const categories = useCategories()
-  return categories[accountId] ?? null
+  const accounts = useAccounts()
+  return accounts[accountId] ?? null
 }
 
 export const useCreateAccount = () => {
@@ -41,16 +41,10 @@ export const useCreateAccount = () => {
     data: AccountValues
   }) => {
     setIsPending(true)
-
-    try {
-      const { spaceId, data } = args
-      const result = await createAccountAction({ spaceId, data })
-      return result
-    } catch (error) {
-      console.error('Failed to create account', error)
-    } finally {
-      setIsPending(false)
-    }
+    const { spaceId, data } = args
+    const result = await createAccountAction({ spaceId, data })
+    setIsPending(false)
+    return result
   }
 
   return { createAccount, isPending }

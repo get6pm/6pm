@@ -1,4 +1,3 @@
-import { prisma } from '@6pm/db'
 import { Button } from '@6pm/ui/components/button'
 import { SheetTrigger } from '@6pm/ui/components/sheet'
 import {
@@ -20,19 +19,6 @@ export default async function TransactionsLayout({
 }: { children: ReactNode; params: Promise<{ spaceId: string }> }) {
   const { spaceId } = await params
 
-  const [categories, accounts] = await Promise.all([
-    prisma.spendingCategory.findMany({
-      where: {
-        spaceId: spaceId,
-      },
-    }),
-    prisma.account.findMany({
-      where: {
-        spaceId: spaceId,
-      },
-    }),
-  ])
-
   return (
     <SpaceSplitLayout
       left={
@@ -50,7 +36,7 @@ export default async function TransactionsLayout({
                   <TooltipContent>Search</TooltipContent>
                 </Tooltip>
                 <Tooltip>
-                  <AddTransaction categories={categories} accounts={accounts}>
+                  <AddTransaction>
                     <TooltipTrigger asChild>
                       <SheetTrigger asChild>
                         <Button size="icon" variant="outline">

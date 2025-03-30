@@ -1,12 +1,14 @@
 import { createAccount } from '@/actions/create-account'
 import { createCategory } from '@/actions/create-category'
+import { createTransaction } from '@/actions/create-transaction'
 import { deleteAccount } from '@/actions/delete-account'
 import { deleteCategory } from '@/actions/delete-category'
 import { getUserSpaceMemberships } from '@/actions/get-user-space-memberships'
 import { updateAccount } from '@/actions/update-account'
 import { updateCategory } from '@/actions/update-category'
-import type { AccountValues } from '@/schemas/account'
-import type { CategoryValues } from '@/schemas/category'
+import { type AccountValues, zAccount } from '@/schemas/account'
+import { type CategoryValues, zCategory } from '@/schemas/category'
+import type { TransactionValues } from '@/schemas/transaction'
 import type {
   Account,
   Space,
@@ -62,6 +64,19 @@ type AppActions = {
   deleteCategory: (args: {
     id: string
   }) => ReturnType<typeof deleteCategory>
+
+  // transactions
+  createTransaction: (args: {
+    spaceId: string
+    data: TransactionValues
+  }) => ReturnType<typeof createTransaction>
+  // updateTransaction: (args: {
+  //   spaceId: string
+  //   data: TransactionValues
+  // }) => ReturnType<typeof updateTransaction>
+  // deleteTransaction: (args: {
+  //   id: string
+  // }) => ReturnType<typeof deleteTransaction>
 }
 
 export const createAppStore = (initialState: AppState) => {
@@ -138,7 +153,7 @@ export const createAppStore = (initialState: AppState) => {
       return result
     },
     updateAccount: async ({ spaceId, data }) => {
-      const { id } = data
+      const { id = createId() } = zAccount.parse(data)
 
       const existingAccount = get().spaces[spaceId]?.accounts[id]
 
@@ -269,7 +284,7 @@ export const createAppStore = (initialState: AppState) => {
       return result
     },
     updateCategory: async ({ spaceId, data }) => {
-      const { id } = data
+      const { id = createId() } = zCategory.parse(data)
 
       const existingCategory = get().spaces[spaceId]?.categories[id]
 
@@ -355,6 +370,67 @@ export const createAppStore = (initialState: AppState) => {
             existingCategory,
             state,
           ),
+        )
+      }
+
+      get().fetchSpacesData()
+
+      return result
+    },
+
+    // transactions
+    createTransaction: async ({ spaceId, data }) => {
+      const id = createId()
+
+      const amount = Math.abs(data.amount) * (data.isNegative ? -1 : 1)
+      const spaceMembership = get().spaces[spaceId]?.spaceMembership
+
+      if (!spaceMembership) {
+        throw new Error('Space membership not found')
+      }
+
+      const transaction: Transaction = {
+        id,
+        spaceId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        amount,
+        date: data.date,
+        accountId: data.accountId,
+        categoryId: data.categoryId ?? null,
+        notes: data.notes ?? null,
+        isExclusive: data.isExclusive ?? false,
+        type: data.type,
+        deletedAt: null,
+        name: data.name,
+        description: null,
+        memberId: spaceMembership.id,
+      }
+
+      set((state) =>
+        R.assocPath(
+          ['spaces', spaceId, 'transactions', id],
+          transaction,
+          state,
+        ),
+      )
+
+      const result = await createTransaction({ spaceId, data })
+
+      if (result.data) {
+        set((state) =>
+          R.assocPath(
+            ['spaces', spaceId, 'transactions', id],
+            result.data,
+            state,
+          ),
+        )
+      }
+
+      if (result.error) {
+        console.error('Failed to create transaction', result.error)
+        set((state) =>
+          R.dissocPath(['spaces', spaceId, 'transactions', id], state),
         )
       }
 

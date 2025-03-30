@@ -1,6 +1,6 @@
 'use client'
 import { createCategory } from '@/actions/create-category'
-import type { CreateCategoryValues } from '@/schemas/category'
+import type { CategoryValues } from '@/schemas/category'
 import { SPENDING_CATEGORY_SUGGESTIONS } from '@6pm/db/static-data/category'
 import { Button } from '@6pm/ui/components/button'
 import {
@@ -25,7 +25,7 @@ export const AddCategoryButton: FC<AddCategoryButtonProps> = () => {
   const { spaceId } = useParams<{ spaceId: string }>()
   const router = useRouter()
 
-  const handleCreateCategory = async (values: CreateCategoryValues) => {
+  const handleCreateCategory = async (values: CategoryValues) => {
     const { data: category, success } = await createCategory({
       spaceId,
       data: values,

@@ -14,7 +14,7 @@ export type CategoryListProps = {}
 
 export const CategoryList: FC<CategoryListProps> = () => {
   const categoryDict = useSpaceCategories()
-  const categories = Object.values(categoryDict)
+  const categories = Object.values(categoryDict).filter((c) => !c.deletedAt)
   const { spaceId, categoryId } = useParams<{
     spaceId: string
     categoryId?: string

@@ -1,7 +1,7 @@
 'use server'
 
 import ErrorCode from '@/constants/error-codes'
-import { type CreateCategoryValues, zCreateCategory } from '@/schemas/category'
+import { type CategoryValues, zCategory } from '@/schemas/category'
 import { SpaceRole, prisma } from '@6pm/db'
 import { revalidatePath } from 'next/cache'
 import { createServerAction } from './helpers'
@@ -27,9 +27,9 @@ export const createCategory = createServerAction(
     data,
   }: {
     spaceId: string
-    data: CreateCategoryValues
+    data: CategoryValues
   }) => {
-    data = zCreateCategory.parse(data)
+    data = zCategory.parse(data)
 
     const canCreateCategory = await canUserCreateSpaceCategory({ spaceId })
 

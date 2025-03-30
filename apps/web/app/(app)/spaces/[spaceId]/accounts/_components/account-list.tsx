@@ -19,7 +19,9 @@ export const AccountList: FC<AccountListProps> = () => {
     space: state.spaces[spaceId],
   }))
 
-  const accounts = Object.values(space?.accounts || [])
+  const accounts = Object.values(space?.accounts || []).filter(
+    (account) => !account.deletedAt,
+  )
 
   if (!space || !accounts.length) {
     return (

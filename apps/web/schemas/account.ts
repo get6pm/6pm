@@ -8,7 +8,7 @@ export const AccountType = {
 } as const
 
 export const zAccount = z.object({
-  id: z.string().cuid2().optional(),
+  id: z.string().cuid2(),
   type: z.nativeEnum(AccountType),
   name: z.string().trim().max(50).nonempty(),
   institution: z.string().trim().max(50).optional(),

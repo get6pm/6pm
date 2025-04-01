@@ -8,6 +8,7 @@ import { getColorValue } from '@/lib/get-color-value'
 import { format, isThisYear, isToday, isYesterday } from '@6pm/ui/lib/date-fns'
 import { cn } from '@6pm/ui/lib/utils'
 import { groupBy, orderBy } from 'lodash-es'
+import { TextIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import type { FC } from 'react'
@@ -61,6 +62,7 @@ export const TransactionList: FC<TransactionListProps> = () => {
                 spaceId={transaction.spaceId}
                 categoryId={transaction.categoryId}
                 accountId={transaction.accountId}
+                notes={transaction.notes}
               />
             ))}
           </div>
@@ -77,6 +79,7 @@ export type TransactionItemProps = {
   spaceId: string
   categoryId?: string | null
   accountId?: string | null
+  notes?: string | null
 }
 
 export const TransactionItem: FC<TransactionItemProps> = ({
@@ -86,6 +89,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
   spaceId,
   accountId,
   categoryId,
+  notes,
 }) => {
   const params = useParams<{ transactionId: string }>()
   const isActive = transactionId === params.transactionId
@@ -106,7 +110,10 @@ export const TransactionItem: FC<TransactionItemProps> = ({
       as={`/s/${spaceId}/transactions/${transactionId}`}
     >
       <div className="flex items-center justify-between">
-        <span className="">{name}</span>
+        <span className="flex items-baseline gap-2">
+          {name}
+          {notes && <TextIcon className="size-3 text-muted-foreground" />}
+        </span>
         <span className="font-bold text-sm">
           <AmountCurrency amount={amount} />
         </span>

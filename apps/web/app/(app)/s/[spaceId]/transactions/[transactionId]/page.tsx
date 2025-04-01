@@ -12,6 +12,7 @@ import {
 import { useSpaceTransaction, useUpdateTransaction } from '@/hooks/transactions'
 import type { TransactionValues } from '@/schemas/transaction'
 import { useParams } from 'next/navigation'
+import { DeleteTransaction } from './_components/delete-transaction'
 
 export default function TransactionIdPage() {
   const { spaceId, transactionId } = useParams<{
@@ -33,7 +34,8 @@ export default function TransactionIdPage() {
   }
 
   return (
-    <div className="p-4">
+    <div className="relative p-4">
+      <DeleteTransaction />
       <TransactionForm
         className="flex flex-col gap-4"
         initialValues={{

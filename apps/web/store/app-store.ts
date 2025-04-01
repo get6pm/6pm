@@ -6,6 +6,8 @@ import { deleteCategory } from '@/actions/delete-category'
 import { getUserSpaceMemberships } from '@/actions/get-user-space-memberships'
 import { updateAccount } from '@/actions/update-account'
 import { updateCategory } from '@/actions/update-category'
+import { updateTransaction } from '@/actions/update-transaction'
+import ErrorCode from '@/constants/error-codes'
 import { type AccountValues, zAccount } from '@/schemas/account'
 import { type CategoryValues, zCategory } from '@/schemas/category'
 import type { TransactionValues } from '@/schemas/transaction'
@@ -23,6 +25,7 @@ import * as R from 'ramda'
 import { createStore } from 'zustand'
 
 type AppState = {
+  lastSyncedAt: Date | null
   user: User
   spaces: Record<
     string,
@@ -70,10 +73,10 @@ type AppActions = {
     spaceId: string
     data: TransactionValues
   }) => ReturnType<typeof createTransaction>
-  // updateTransaction: (args: {
-  //   spaceId: string
-  //   data: TransactionValues
-  // }) => ReturnType<typeof updateTransaction>
+  updateTransaction: (args: {
+    spaceId: string
+    data: TransactionValues
+  }) => ReturnType<typeof updateTransaction>
   // deleteTransaction: (args: {
   //   id: string
   // }) => ReturnType<typeof deleteTransaction>
@@ -95,6 +98,7 @@ export const createAppStore = (initialState: AppState) => {
       }
 
       set((state) => ({
+        lastSyncedAt: new Date(),
         spaces: {
           ...state.spaces,
           ...keyBy(
@@ -431,6 +435,68 @@ export const createAppStore = (initialState: AppState) => {
         console.error('Failed to create transaction', result.error)
         set((state) =>
           R.dissocPath(['spaces', spaceId, 'transactions', id], state),
+        )
+      }
+
+      get().fetchSpacesData()
+
+      return result
+    },
+    updateTransaction: async ({ data, spaceId }) => {
+      const id = data.id
+
+      if (!id) {
+        throw new Error(ErrorCode.InvalidInput)
+      }
+
+      const currentTransaction = get().spaces[spaceId]?.transactions[id]
+
+      if (!currentTransaction) {
+        throw new Error(ErrorCode.NotFound)
+      }
+
+      const amount = Math.abs(data.amount) * (data.isNegative ? -1 : 1)
+      const updatedTransaction = {
+        ...currentTransaction,
+        amount,
+        updatedAt: new Date(),
+        date: data.date,
+        accountId: data.accountId,
+        categoryId: data.categoryId ?? null,
+        notes: data.notes ?? null,
+        isExclusive: data.isExclusive ?? false,
+        name: data.name,
+        description: null,
+      }
+
+      set((state) =>
+        R.assocPath(
+          ['spaces', spaceId, 'transactions', id],
+          updatedTransaction,
+          state,
+        ),
+      )
+
+      const result = await updateTransaction({ data })
+
+      if (result.data) {
+        set((state) =>
+          R.assocPath(
+            ['spaces', spaceId, 'transactions', id],
+            result.data,
+            state,
+          ),
+        )
+      }
+
+      if (result.error) {
+        console.error('Failed to create transaction', result.error)
+        set((state) =>
+          R.assocPath(
+            ['spaces', spaceId, 'transactions', id],
+            currentTransaction,
+            state,
+          ),
         )
       }
 

@@ -20,7 +20,6 @@ export const zTransaction = z
     tagIds: z.array(z.string().cuid2()).optional().default([]),
     type: z.nativeEnum(TransactionType),
     isNegative: z.boolean().optional().default(true),
-    transactionId: z.string().cuid2().optional(),
   })
   .refine(
     (data) => data.type !== TransactionType.EXPENSE || !!data.categoryId,

@@ -5,11 +5,33 @@ import { ClerkProvider } from '@clerk/nextjs'
 import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale } from 'next-intl/server'
-import { Inconsolata, Playfair_Display, Quicksand } from 'next/font/google'
+import { Inconsolata, Playfair_Display } from 'next/font/google'
+import localFont from 'next/font/local'
 import '@6pm/ui/globals.css'
 
-const fontSans = Quicksand({
-  subsets: ['latin'],
+const fontSans = localFont({
+  src: [
+    {
+      path: '../public/fonts/AirbnbCereal-Book.ttf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/AirbnbCereal-Medium.ttf',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/AirbnbCereal-Bold.ttf',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/AirbnbCereal-Light.ttf',
+      weight: '300',
+      style: 'normal',
+    },
+  ],
   variable: '--font-sans',
 })
 
@@ -39,7 +61,7 @@ export default async function RootLayout({
     <ClerkProvider>
       <html lang={locale} suppressHydrationWarning>
         <body
-          className={`${fontSans.variable} ${fontMono.variable} ${fontSerif.variable} bg-background font-medium font-sans antialiased [&_*]:cursor-default`}
+          className={`${fontSans.variable} ${fontMono.variable} ${fontSerif.variable} bg-background`}
         >
           <NextIntlClientProvider>
             <Providers>{children}</Providers>

@@ -80,3 +80,32 @@ export const useUpdateTransaction = () => {
 
   return { updateTransaction, isPending }
 }
+
+export const useDeleteTransaction = () => {
+  const [isPending, setIsPending] = useState(false)
+
+  const { deleteTransaction: deleteTransactionAction } = useAppContext(
+    (state) => ({
+      deleteTransaction: state.deleteTransaction,
+    }),
+  )
+
+  const deleteTransaction = async (args: {
+    spaceId: string
+    transactionId: string
+  }) => {
+    setIsPending(true)
+
+    try {
+      const { spaceId, transactionId } = args
+      const result = await deleteTransactionAction({ transactionId, spaceId })
+      return result
+    } catch (error) {
+      console.error('Failed to update transaction', error)
+    } finally {
+      setIsPending(false)
+    }
+  }
+
+  return { deleteTransaction, isPending }
+}

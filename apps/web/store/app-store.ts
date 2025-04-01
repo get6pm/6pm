@@ -3,6 +3,7 @@ import { createCategory } from '@/actions/create-category'
 import { createTransaction } from '@/actions/create-transaction'
 import { deleteAccount } from '@/actions/delete-account'
 import { deleteCategory } from '@/actions/delete-category'
+import { deleteTransaction } from '@/actions/delete-transaction'
 import { getUserSpaceMemberships } from '@/actions/get-user-space-memberships'
 import { updateAccount } from '@/actions/update-account'
 import { updateCategory } from '@/actions/update-category'
@@ -77,9 +78,10 @@ type AppActions = {
     spaceId: string
     data: TransactionValues
   }) => ReturnType<typeof updateTransaction>
-  // deleteTransaction: (args: {
-  //   id: string
-  // }) => ReturnType<typeof deleteTransaction>
+  deleteTransaction: (args: {
+    spaceId: string
+    transactionId: string
+  }) => ReturnType<typeof deleteTransaction>
 }
 
 export const createAppStore = (initialState: AppState) => {
@@ -495,6 +497,52 @@ export const createAppStore = (initialState: AppState) => {
           R.assocPath(
             ['spaces', spaceId, 'transactions', id],
             currentTransaction,
+            state,
+          ),
+        )
+      }
+
+      get().fetchSpacesData()
+
+      return result
+    },
+    deleteTransaction: async ({ transactionId: id, spaceId }) => {
+      if (!id) {
+        throw new Error(ErrorCode.InvalidInput)
+      }
+
+      const currentTransaction = get().spaces[spaceId]?.transactions[id]
+
+      if (!currentTransaction) {
+        throw new Error(ErrorCode.NotFound)
+      }
+
+      set((state) =>
+        R.assocPath(
+          ['spaces', spaceId, 'transactions', id, 'deletedAt'],
+          new Date(),
+          state,
+        ),
+      )
+
+      const result = await deleteTransaction({ id })
+
+      if (result.data) {
+        set((state) =>
+          R.assocPath(
+            ['spaces', spaceId, 'transactions', id],
+            result.data,
+            state,
+          ),
+        )
+      }
+
+      if (result.error) {
+        console.error('Failed to create transaction', result.error)
+        set((state) =>
+          R.assocPath(
+            ['spaces', spaceId, 'transactions', id, 'deletedAt'],
+            null,
             state,
           ),
         )

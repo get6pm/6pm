@@ -35,7 +35,7 @@ export default function TransactionIdPage() {
 
   return (
     <div className="relative p-4">
-      <DeleteTransaction />
+      <DeleteTransaction transactionId={transactionId} />
       <TransactionForm
         className="flex flex-col gap-4"
         initialValues={{

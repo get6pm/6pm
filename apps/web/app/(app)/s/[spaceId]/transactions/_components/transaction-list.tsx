@@ -17,7 +17,9 @@ export type TransactionListProps = {}
 
 export const TransactionList: FC<TransactionListProps> = () => {
   const space = useCurrentSpace()
-  const transactions = useSpaceTransactionList(space.id)
+  const allTransactions = useSpaceTransactionList(space.id)
+
+  const transactions = allTransactions.filter((t) => !t.deletedAt)
 
   if (transactions.length === 0) {
     return (

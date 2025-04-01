@@ -1,21 +1,27 @@
 'use client'
 import { useCurrentSpace } from '@/hooks/spaces'
+import { useDeleteTransaction } from '@/hooks/transactions'
 import { Button } from '@6pm/ui/components/button'
 import { cn } from '@6pm/ui/lib/utils'
 import { Trash2Icon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { type FC, useRef, useState } from 'react'
 
-export type DeleteTransactionProps = {}
+export type DeleteTransactionProps = {
+  transactionId: string
+}
 
-export const DeleteTransaction: FC<DeleteTransactionProps> = () => {
+export const DeleteTransaction: FC<DeleteTransactionProps> = ({
+  transactionId,
+}) => {
   const [confirm, setConfirm] = useState(false)
   const [hover, setHover] = useState(false)
   const router = useRouter()
   const space = useCurrentSpace()
   const timeoutRef = useRef<NodeJS.Timeout>(null)
+  const { deleteTransaction } = useDeleteTransaction()
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
     }
@@ -25,6 +31,7 @@ export const DeleteTransaction: FC<DeleteTransactionProps> = () => {
       return
     }
 
+    deleteTransaction({ spaceId: space.id, transactionId })
     router.replace(`/s/${space.id}/transactions`)
   }
   const handleMouseLeave = () => {

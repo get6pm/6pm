@@ -38,6 +38,7 @@ export const AppProvider: FC<AppProviderProps> = ({
     }))
 
     const store = createAppStore({
+      lastSyncedAt: null,
       user,
       spaces: keyBy(
         spaces.map((space) => ({
@@ -54,10 +55,10 @@ export const AppProvider: FC<AppProviderProps> = ({
   }
 
   return (
-    <AppContext.Provider value={storeRef.current}>
+    <AppContext value={storeRef.current}>
       {children}
       <SpacesDataFetcher />
-    </AppContext.Provider>
+    </AppContext>
   )
 }
 

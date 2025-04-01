@@ -3,7 +3,6 @@ import ErrorCode from '@/constants/error-codes'
 import { type TransactionValues, zTransaction } from '@/schemas/transaction'
 import { prisma } from '@6pm/db'
 import { omit } from 'lodash-es'
-import { revalidatePath } from 'next/cache'
 import { getUserSpaceMembership } from './get-user-space-membership'
 import { createServerAction } from './helpers'
 import { doesUserBelongToSpace } from './space-permission'
@@ -40,10 +39,6 @@ export const createTransaction = createServerAction(
         memberId: membership.id,
       },
     })
-
-    revalidatePath(`/spaces/${spaceId}/transactions`)
-    revalidatePath(`/spaces/${spaceId}/accounts`)
-    revalidatePath(`/spaces/${spaceId}/categories`)
 
     return newTransaction
   },

@@ -78,9 +78,9 @@ const NavItem: FC<NavItemProps> = ({ label, path, icon: Icon, className }) => {
         {Icon && <Icon className="inline-block size-4 stroke-3" />}
         <span
           className={cn(
-            'max-w-0 overflow-hidden opacity-0 transition-[max-width,margin-left,opacity] delay-200 duration-500 ease-in-out',
+            'max-w-0 overflow-hidden opacity-0 transition-[max-width,margin-left,opacity] delay-0 duration-500 ease-in-out',
             isActive &&
-              'ml-2 max-w-[150px] opacity-100 duration-500 ease-in-out',
+              'ml-2 max-w-[150px] opacity-100 delay-300 duration-500 ease-in-out',
           )}
         >
           {t(label)}

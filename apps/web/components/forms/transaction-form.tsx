@@ -223,10 +223,14 @@ export const TransactionAmountField: FC<{
               )}
               placeholder="Transaction amount"
               disabled={form.formState.isSubmitting}
+              inputMode="decimal"
               {...getCurrencyInputProps(space.baseCurrencyCode)}
               {...field}
+              allowedDecimalSeparators={['.', ',']}
               onChange={(event) => {
-                const value = event.target.value.replace(/\D/g, '')
+                const value = event.target.value
+                  .replace(/,/g, '.')
+                  .replace(/[^0-9]/g, '')
                 field.onChange(value ? parseFloat(value) : 0)
               }}
             />

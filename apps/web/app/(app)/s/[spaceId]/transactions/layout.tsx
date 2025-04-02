@@ -17,7 +17,6 @@ export default function TransactionsLayout({ children }: PropsWithChildren) {
   const showChildren =
     transactionId || pathname.endsWith('/transactions/create')
 
-  // return children
   return (
     <div
       className={cn(
@@ -25,7 +24,7 @@ export default function TransactionsLayout({ children }: PropsWithChildren) {
         showChildren && 'md:pr-[514px]',
       )}
     >
-      <div className="container mx-auto hidden max-w-md space-y-8 py-4 md:block md:py-8">
+      <div className="container mx-auto hidden max-w-md space-y-8 px-4 py-4 md:block md:py-8">
         <div className="flex items-center justify-between">
           <h1 className="font-medium text-2xl">Transactions</h1>
           <Button
@@ -49,7 +48,7 @@ export default function TransactionsLayout({ children }: PropsWithChildren) {
 
       <div
         className={cn(
-          'md:fixed md:top-8 md:right-8 md:bottom-8 md:w-[450px] md:translate-x-[482px] md:rounded-xl md:border md:opacity-0 md:shadow-none md:transition-all md:duration-500 md:ease-in-out',
+          'backdrop-blur md:fixed md:top-8 md:right-8 md:bottom-8 md:w-[450px] md:translate-x-[482px] md:rounded-xl md:border md:opacity-0 md:shadow-none md:transition-all md:duration-500 md:ease-in-out',
           showChildren && 'md:translate-x-0 md:opacity-100 md:shadow-sm',
         )}
       >

@@ -106,7 +106,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
       className={cn(
         'block w-full space-y-0.5 rounded-lg p-2',
         'transition-all duration-200 ease-in-out hover:ring hover:ring-foreground/10 active:ring-2',
-        isActive && '!ring-2 !ring-primary/20',
+        isActive && '!ring-2 !ring-ring',
       )}
       href="/s/[spaceId]/transactions/[transactionId]"
       as={`/s/${spaceId}/transactions/${transactionId}`}

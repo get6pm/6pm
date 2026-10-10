@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { SQLiteProvider } from 'expo-sqlite';
+import { StatusBar } from 'expo-status-bar';
 import type { ReactNode } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -12,7 +13,7 @@ import { I18nProvider } from '../i18n/i18n';
 import { sheet, takeover } from '../ui/navigation/presentations';
 import { ClockProvider } from '../ui/theme/clock';
 import { ThemeProvider, useTheme } from '../ui/theme/theme';
-import { ToastHost, useToastShowing } from '../ui/toast/toast-host';
+import { ToastHost } from '../ui/toast/toast-host';
 import { UndoHost } from '../ui/undo/undo-host';
 
 // The splash stays until the encrypted database is open and migrated: no screen ever renders
@@ -22,15 +23,12 @@ SplashScreen.setOptions({ duration: 280, fade: true });
 
 function Screens() {
   const { palette } = useTheme();
-  const toastShowing = useToastShowing();
   return (
     <>
+      <StatusBar style={palette.dark ? 'light' : 'dark'} animated />
       <Stack
         screenOptions={{
           headerShown: false,
-          statusBarStyle: palette.dark ? 'light' : 'dark',
-          statusBarHidden: toastShowing,
-          statusBarAnimation: 'fade',
           contentStyle: { backgroundColor: palette.sheetSolid },
         }}
       >

@@ -30,8 +30,7 @@ const SHOW_MS = 3000;
 /** The prototype's island spring: `all .55s cubic-bezier(.2,.95,.25,1.1)`. */
 const morph = { duration: 550, easing: Easing.bezier(0.2, 0.95, 0.25, 1.1) };
 
-const ToastContext = createContext<((text: string) => void) | null>(null);
-const ShowingContext = createContext(false);
+const ToastContext = createContext<((text: string, holdMs?: number) => void) | null>(null);
 
 /**
  * The companion's toasts: the Dynamic Island swells into a black pill with the companion and its
@@ -41,16 +40,16 @@ const ShowingContext = createContext(false);
 export function ToastHost({ children }: { readonly children: ReactNode }) {
   const [text, setText] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const show = useCallback((line: string) => {
+  const show = useCallback((line: string, holdMs = SHOW_MS) => {
     clearTimeout(timer.current);
     setText(line);
     AccessibilityInfo.announceForAccessibility(line);
-    timer.current = setTimeout(() => setText(null), SHOW_MS);
+    timer.current = setTimeout(() => setText(null), holdMs);
   }, []);
   useEffect(() => () => clearTimeout(timer.current), []);
   return (
     <ToastContext value={show}>
-      <ShowingContext value={text !== null}>{children}</ShowingContext>
+      {children}
       <Island text={text} onDismiss={() => setText(null)} />
     </ToastContext>
   );
@@ -122,19 +121,30 @@ function Island({
                   width: full,
                   height: TOAST.height,
                   flexDirection: 'row',
-                  alignItems: 'center',
+                  alignItems: 'flex-end',
                   gap: 12,
                   paddingLeft: 14,
                   paddingRight: 22,
+                  paddingBottom: 6,
                 }}
               >
                 <Companion size={48} mood={serious ? 'plain' : 'happy'} serious={serious} />
-                <Text
-                  numberOfLines={2}
-                  style={{ ...body(15, 550, -0.01), lineHeight: 19.5, color: '#fff', flex: 1 }}
+                {/* Below the camera cutout, which would cover a line drawn through the middle. */}
+                <View
+                  style={{
+                    flex: 1,
+                    alignSelf: 'stretch',
+                    justifyContent: 'center',
+                    paddingTop: ISLAND.height - 6,
+                  }}
                 >
-                  {shown}
-                </Text>
+                  <Text
+                    numberOfLines={2}
+                    style={{ ...body(15, 550, -0.01), lineHeight: 19.5, color: '#fff' }}
+                  >
+                    {shown}
+                  </Text>
+                </View>
               </Animated.View>
             ) : null}
           </Pressable>
@@ -149,9 +159,4 @@ export function useToast() {
   const show = use(ToastContext);
   if (!show) throw new Error('useToast needs a ToastHost above it');
   return show;
-}
-
-/** True while a line is in the island: the status bar steps aside for it. */
-export function useToastShowing() {
-  return use(ShowingContext);
 }

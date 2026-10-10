@@ -54,7 +54,8 @@ export function DevCommands() {
         router.replace('/');
         if (route !== '/') setTimeout(() => router.push(route as Href), 400);
       }
-      if (line) setTimeout(() => toast(line), 1200);
+      // Held long enough for a headless screenshot to catch it.
+      if (line) setTimeout(() => toast(line, 20_000), 1200);
     };
     void run();
     const subscription = AppState.addEventListener('change', (state) => {

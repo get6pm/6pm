@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
 
@@ -173,7 +173,7 @@ export function OnboardingFlow() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen options={{ statusBarStyle: pal.dark ? 'light' : 'dark' }} />
+      <StatusBar style={pal.dark ? 'light' : 'dark'} animated />
       <OnboardingSky step={o.step} safeTop={insets.top} />
       <View
         style={{

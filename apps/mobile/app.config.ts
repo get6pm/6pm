@@ -99,9 +99,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     config: { usesNonExemptEncryption: false },
     infoPlist: {
       CFBundleAllowMixedLocalizations: true,
-      // iOS 27 ignores the app-wide status bar calls; each screen sets its own (style per palette,
-      // hidden while the island toast covers it).
-      UIViewControllerBasedStatusBarAppearance: true,
     },
     // The App Group (shared with widgets and the share extension) is declared with those targets:
     // App Store Connect's API cannot register app groups, so they arrive in that native batch.

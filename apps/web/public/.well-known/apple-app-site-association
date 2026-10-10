@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["YFND2EEW8S.ai.sixpm.app", "YFND2EEW8S.ai.sixpm.app.dev"],
+        "components": [{ "/": "/app/*", "comment": "Links that open 6pm" }]
+      }
+    ]
+  },
+  "webcredentials": { "apps": ["YFND2EEW8S.ai.sixpm.app", "YFND2EEW8S.ai.sixpm.app.dev"] }
+}

@@ -1,9 +1,11 @@
 import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
-import { formatShort, lineUsed, payCycleOn, type DailyNumber } from '@6pm/domain';
+import { formatShort, lineUsed, type DailyNumber } from '@6pm/domain';
 
+import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { PLAN_SECTIONS } from '../plan/plan-page';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
@@ -20,14 +22,19 @@ export function HomeTopNav({
   tab,
   day,
   onPressTop,
+  planSection,
+  onPlanSection,
 }: {
   readonly tab: HomeTab;
   readonly day: DailyNumber;
   readonly onPressTop: () => void;
+  readonly planSection: number;
+  readonly onPlanSection: (index: number) => void;
 }) {
   const { palette } = useTheme();
   const { t, language } = useI18n();
-  const { today, now } = useClock();
+  const { now } = useClock();
+  const { cycle } = useMoney();
   const used = day.safe < 0 ? 1 : lineUsed(day);
   const meter = useAnimatedStyle(() => ({ width: `${used * 100}%` }));
   const meterTrack = palette.dark ? 'rgba(255,255,255,.2)' : 'rgba(27,30,46,.12)';
@@ -85,7 +92,7 @@ export function HomeTopNav({
     );
   }
 
-  const { daysLeft } = payCycleOn(today, { kind: 'sameDay', day: 31 });
+  const { daysLeft } = cycle;
   const month = new Intl.DateTimeFormat(language === 'vi' ? 'vi-VN' : 'en-GB', {
     month: 'long',
     year: 'numeric',
@@ -100,6 +107,30 @@ export function HomeTopNav({
           {tab === 'plan' ? t('plan.daysToPayday', { count: daysLeft }) : month}
         </Text>
       </View>
+      {tab === 'plan' ? (
+        <View style={{ flexDirection: 'row', gap: 6, justifyContent: 'center' }}>
+          {PLAN_SECTIONS.map((section, k) => {
+            const on = k === planSection;
+            return (
+              <PressScale
+                key={section}
+                onPress={() => onPlanSection(k)}
+                style={{
+                  height: 30,
+                  paddingHorizontal: 12,
+                  borderRadius: 99,
+                  backgroundColor: on ? palette.btnBg : palette.chipBg,
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={{ ...body(13, 600), color: on ? palette.btnFg : palette.ink }}>
+                  {t(section === 'overview' ? 'plan.section.overview' : `plan.river.${section}`)}
+                </Text>
+              </PressScale>
+            );
+          })}
+        </View>
+      ) : null}
     </TopNav>
   );
 }

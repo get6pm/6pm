@@ -11,6 +11,7 @@ import { I18nProvider } from '../i18n/i18n';
 import { sheet, takeover } from '../ui/navigation/presentations';
 import { ClockProvider } from '../ui/theme/clock';
 import { ThemeProvider, useTheme } from '../ui/theme/theme';
+import { UndoHost } from '../ui/undo/undo-host';
 
 // The splash stays until the encrypted database is open and migrated: no screen ever renders
 // without its data, so there is never a blank or half-drawn first frame.
@@ -34,6 +35,10 @@ function Screens() {
         <Stack.Screen name="scan" options={takeover} />
         <Stack.Screen name="inbox" options={sheet} />
         <Stack.Screen name="close" options={takeover} />
+        <Stack.Screen name="spend/[id]" options={sheet} />
+        <Stack.Screen name="missed-day" options={sheet} />
+        <Stack.Screen name="money-diary" options={sheet} />
+        <Stack.Screen name="new-pot" options={sheet} />
         <Stack.Screen name="(dev)/tools" options={sheet} />
       </Stack>
     </>
@@ -48,7 +53,9 @@ export default function RootLayout() {
           <ClockProvider>
             <MoneyProvider>
               <ThemeProvider>
-                <Screens />
+                <UndoHost>
+                  <Screens />
+                </UndoHost>
                 {__DEV__ ? <DevCommands /> : null}
               </ThemeProvider>
             </MoneyProvider>

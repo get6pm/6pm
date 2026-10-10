@@ -1,0 +1,152 @@
+import { useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+
+import {
+  dayBarFraction,
+  dayBarScale,
+  formatShort,
+  whatIfDaily,
+  type DailyNumber,
+} from '@6pm/domain';
+import { curves } from '@6pm/theme';
+
+import { usePlanActions } from '../../data/plan-actions';
+import { useI18n } from '../../i18n/i18n';
+import { haptics } from '../../ui/haptics';
+import { useTheme } from '../../ui/theme/theme';
+import { body, display, mono, tabular } from '../../ui/type/fonts';
+import type { PlanColours } from './plan-colours';
+import type { PlanFormat } from './plan-format';
+import { PlanCard } from './plan-parts';
+import { barDays, sliderMax } from './plan-view';
+import { WhatIfSlider } from './what-if-slider';
+
+const enter = Easing.bezier(...curves.enter);
+const BAR_MS = 450;
+const ROW = 44;
+
+function DayBar({ fraction, colour }: { readonly fraction: number; readonly colour: string }) {
+  const reduceMotion = useReducedMotion();
+  const h = useSharedValue(fraction * ROW);
+  useEffect(() => {
+    h.value = withTiming(fraction * ROW, { duration: reduceMotion ? 0 : BAR_MS, easing: enter });
+  }, [fraction, h, reduceMotion]);
+  const style = useAnimatedStyle(() => ({ height: h.value }));
+  return <Animated.View style={[{ flex: 1, borderRadius: 3, backgroundColor: colour }, style]} />;
+}
+
+/**
+ * The daily number until payday, a bar for each day left (today in the accent, weekends warm)
+ * and the what-if slider for Future you. Dragging shows the real daily number at every step;
+ * letting go commits the new amount, which moves every number on the page.
+ */
+export function DailyCard({
+  day,
+  today,
+  payday,
+  daysLeft,
+  committed,
+  colours,
+  format,
+}: {
+  readonly day: DailyNumber;
+  readonly today: string;
+  readonly payday: string;
+  readonly daysLeft: number;
+  /** Future you's monthly amount in the plan. */
+  readonly committed: number;
+  readonly colours: PlanColours;
+  readonly format: PlanFormat;
+}) {
+  const { palette } = useTheme();
+  const { t } = useI18n();
+  const actions = usePlanActions();
+  const [candidate, setCandidate] = useState(committed);
+  // The note compares against the amount the page opened with, so the trade-off stays readable
+  // after the new amount is committed.
+  const [baseline] = useState(committed);
+  useEffect(() => setCandidate(committed), [committed]);
+
+  const daily = whatIfDaily(day.free, committed, candidate, daysLeft);
+  const change = daily - whatIfDaily(day.free, committed, baseline, daysLeft);
+  const scale = dayBarScale(day.free, committed, daysLeft);
+  const fraction = dayBarFraction(daily, scale);
+  const delta = baseline - candidate;
+  const note =
+    delta === 0
+      ? t('plan.whatIf.same')
+      : delta > 0
+        ? t('plan.whatIf.less', { amount: formatShort(delta), daily: formatShort(change) })
+        : t('plan.whatIf.more', { amount: formatShort(-delta), daily: formatShort(-change) });
+
+  return (
+    <PlanCard padding={{ top: 18, side: 18, bottom: 18 }} gap={14}>
+      <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 10 }}>
+        <Text
+          style={{ ...display(64, 500, -0.03), lineHeight: 64, ...tabular, color: palette.ink }}
+        >
+          {formatShort(daily)}
+        </Text>
+        <Text style={{ ...body(15), color: palette.inkSoft, flexShrink: 1 }}>
+          {t('plan.daily.perDay', { count: daysLeft })}
+        </Text>
+      </View>
+      <View style={{ flexDirection: 'row', gap: 3, height: ROW, alignItems: 'flex-end' }}>
+        {barDays(today, payday).map((d) => (
+          <DayBar
+            key={d.day}
+            fraction={fraction}
+            colour={d.isToday ? colours.barToday : d.weekend ? colours.barWeekend : colours.barDay}
+          />
+        ))}
+      </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: -6 }}>
+        {[format.weekdayDay(today), t('plan.daily.payday', { day: format.dayNumber(payday) })].map(
+          (label) => (
+            <Text
+              key={label}
+              style={{
+                ...mono(10.5, 400, 0.08),
+                textTransform: 'uppercase',
+                color: palette.inkSoft,
+              }}
+            >
+              {label}
+            </Text>
+          ),
+        )}
+      </View>
+      <View style={{ borderTopWidth: 0.5, borderColor: palette.hair, marginVertical: 2 }} />
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ ...body(15, 600), color: palette.ink }}>{t('plan.whatIf.title')}</Text>
+        <Text style={{ ...display(22, 500), ...tabular, color: palette.ink }}>
+          {formatShort(candidate)}
+        </Text>
+      </View>
+      <WhatIfSlider
+        value={candidate}
+        max={sliderMax(committed)}
+        colours={colours}
+        label={t('plan.whatIf.title')}
+        onStep={(v) => {
+          haptics.tick();
+          setCandidate(v);
+        }}
+        onCommit={(v) => {
+          setCandidate(v);
+          void actions.setFutureYou(v);
+        }}
+      />
+      <Text style={{ ...body(13), lineHeight: 18.2, minHeight: 18, color: palette.inkSoft }}>
+        {note}
+      </Text>
+    </PlanCard>
+  );
+}

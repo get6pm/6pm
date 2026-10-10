@@ -92,6 +92,18 @@ export function moneyActions(store: MoneyStore) {
         ),
     /** "Was this one for work?" — a work spend moves to Claim back, out of the daily number. */
     markForWork: (id: string, forWork: boolean) => update(id, { forWork }),
+    /** "Always file Circle K as Shopping": the next catch from this merchant gets this category. */
+    rememberMerchant: async (merchant: string, categoryId: string) => {
+      const merchantKey = merchant.trim().toLowerCase();
+      const existing = await tables.rules.get(merchantKey);
+      await tables.rules.put({
+        merchantKey,
+        merchant: merchant.trim(),
+        categoryId,
+        learnedTimes: existing?.learnedTimes ?? 0,
+        setByUser: true,
+      });
+    },
     /** Files the day's receipt: the Diary, the week strip and the streak read it. */
     closeDay: async (row: ClosedDayRow) => {
       await tables.closedDays.put(row);

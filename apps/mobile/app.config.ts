@@ -97,9 +97,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     infoPlist: {
       CFBundleAllowMixedLocalizations: true,
     },
-    entitlements: {
-      'com.apple.security.application-groups': [variant.appGroup],
-    },
+    // The App Group (shared with widgets and the share extension) is declared with those targets:
+    // App Store Connect's API cannot register app groups, so they arrive in that native batch.
   },
   android: {
     package: variant.bundleIdentifier,

@@ -5,7 +5,9 @@ import Animated, { useAnimatedStyle, type AnimatedRef } from 'react-native-reani
 import type { DailyNumber } from '@6pm/domain';
 
 import { useMoney, useMoneyActions } from '../../data/money-provider';
+import { useI18n } from '../../i18n/i18n';
 import { useClock } from '../../ui/theme/clock';
+import { useOfferUndo } from '../../ui/undo/undo-host';
 import { useTheme } from '../../ui/theme/theme';
 import { useHomePageScroll, useHomeScroll } from '../home/home-scroll';
 import { CompanionGreeting } from './companion-greeting';
@@ -36,6 +38,8 @@ export function TodayPage({
   const { hour } = useClock();
   const snap = useMoney();
   const actions = useMoneyActions();
+  const offerUndo = useOfferUndo();
+  const { t } = useI18n();
   const onScroll = useHomePageScroll('today');
   const view = todayView(snap, hour, day.spent, useSpendLabels());
   const { y } = useHomeScroll();
@@ -100,9 +104,13 @@ export function TodayPage({
           waiting={view.queue.length}
           spentLabel={view.spentLabel}
           onOpenInbox={() => router.push('/inbox')}
-          onOpenSpend={() => undefined}
+          onOpenSpend={(id) => router.push(`/spend/${id}`)}
           onConfirm={(id) => void actions.setStatus(id, 'kept')}
-          onDelete={(id) => void actions.setStatus(id, 'deleted')}
+          onDelete={(id) => {
+            const name = snap.cycleSpends.find((s) => s.id === id)?.merchant ?? '';
+            void actions.setStatus(id, 'deleted');
+            offerUndo(t('undo.deleted', { name }), t('undo.action'), () => void actions.undo(id));
+          }}
         />
       </View>
     </Animated.ScrollView>

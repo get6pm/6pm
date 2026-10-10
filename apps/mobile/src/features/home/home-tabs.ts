@@ -3,6 +3,10 @@ import type { SymbolName } from '../../ui/icons/symbols.generated';
 export const HOME_TABS = ['today', 'plan', 'diary'] as const;
 export type HomeTab = (typeof HOME_TABS)[number];
 
+export function isHomeTab(value: unknown): value is HomeTab {
+  return typeof value === 'string' && (HOME_TABS as readonly string[]).includes(value);
+}
+
 export const TAB_META: Record<
   HomeTab,
   { readonly icon: SymbolName; readonly label: 'tabs.today' | 'tabs.plan' | 'tabs.diary' }

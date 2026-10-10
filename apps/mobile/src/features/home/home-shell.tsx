@@ -1,10 +1,11 @@
 import { useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   Easing,
   runOnJS,
+  runOnUI,
   scrollTo,
   useAnimatedRef,
   useAnimatedStyle,
@@ -23,7 +24,7 @@ import { Sky } from '../../ui/sky/sky';
 import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
 import { DiaryPage } from '../diary/diary-page';
-import { PlanPage } from '../plan/plan-page';
+import { PlanPage, type PlanSectionsHandle } from '../plan/plan-page';
 import { TodayPage } from '../today/today-page';
 import { HomeScrollProvider, useHomeScroll } from './home-scroll';
 import { HOME_TABS, type HomeTab } from './home-tabs';
@@ -37,19 +38,21 @@ const ENTER_MS = 420;
 const SETTLE_MS = 450;
 const FLICK = 600;
 
-function Shell({ day }: { readonly day: DailyNumber }) {
+function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initialTab: HomeTab }) {
   const router = useRouter();
   const { palette, look, serious } = useTheme();
   const { hour } = useClock();
   const { t } = useI18n();
   const { bottom } = useDesignInsets();
   const { y, nav, barMin } = useHomeScroll();
-  const [tab, setTab] = useState<HomeTab>('today');
+  const [tab, setTab] = useState<HomeTab>(initialTab);
   const refs: Record<HomeTab, AnimatedRef<Animated.ScrollView>> = {
     today: useAnimatedRef<Animated.ScrollView>(),
     plan: useAnimatedRef<Animated.ScrollView>(),
     diary: useAnimatedRef<Animated.ScrollView>(),
   };
+  const planSections = useRef<PlanSectionsHandle>(null);
+  const [planSection, setPlanSection] = useState(0);
   const index = HOME_TABS.indexOf(tab);
   const drag = useSharedValue(0);
   const enterX = useSharedValue(0);
@@ -67,6 +70,13 @@ function Shell({ day }: { readonly day: DailyNumber }) {
       enterOpacity.value = 0;
       enterX.value = withTiming(0, { duration: ENTER_MS, easing: enterEase });
       enterOpacity.value = withTiming(1, { duration: ENTER_MS, easing: enterEase });
+      // Every tab opens at its top, as the prototype's resetScroll does.
+      const incoming = refs[next];
+      runOnUI(() => {
+        'worklet';
+        scrollTo(incoming, 0, 0, false);
+      })();
+      setPlanSection(0);
       setTab(next);
     },
     [tab, drag, y, nav, barMin, enterX, enterOpacity],
@@ -104,7 +114,10 @@ function Shell({ day }: { readonly day: DailyNumber }) {
 
   const scrollTop = () => {
     const ref = refs[tab];
-    scrollTo(ref, 0, 0, true);
+    runOnUI(() => {
+      'worklet';
+      scrollTo(ref, 0, 0, true);
+    })();
   };
 
   return (
@@ -121,14 +134,24 @@ function Shell({ day }: { readonly day: DailyNumber }) {
             />
           </View>
           <View style={[StyleSheet.absoluteFill, tab !== 'plan' && styles.hidden]}>
-            <PlanPage scrollRef={refs.plan} />
+            <PlanPage
+              scrollRef={refs.plan}
+              sectionsRef={planSections}
+              onSectionChange={setPlanSection}
+            />
           </View>
           <View style={[StyleSheet.absoluteFill, tab !== 'diary' && styles.hidden]}>
             <DiaryPage scrollRef={refs.diary} />
           </View>
         </Animated.View>
       </GestureDetector>
-      <HomeTopNav tab={tab} day={day} onPressTop={scrollTop} />
+      <HomeTopNav
+        tab={tab}
+        day={day}
+        onPressTop={scrollTop}
+        planSection={planSection}
+        onPlanSection={(k) => planSections.current?.scrollToSection(k)}
+      />
       <View
         pointerEvents="box-none"
         style={{ position: 'absolute', left: 0, right: 0, bottom: bottom(26) }}
@@ -150,10 +173,16 @@ function Shell({ day }: { readonly day: DailyNumber }) {
 const styles = StyleSheet.create({ hidden: { display: 'none' } });
 
 /** Home: Today, Plan and Diary as one swipeable surface under the glass tab bar and scan button. */
-export function HomeShell({ day }: { readonly day: DailyNumber }) {
+export function HomeShell({
+  day,
+  initialTab = 'today',
+}: {
+  readonly day: DailyNumber;
+  readonly initialTab?: HomeTab;
+}) {
   return (
     <HomeScrollProvider>
-      <Shell day={day} />
+      <Shell day={day} initialTab={initialTab} />
     </HomeScrollProvider>
   );
 }

@@ -1,0 +1,15 @@
+{
+  "name": "@6pm/i18n",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "English and Vietnamese catalogues, translate and completeness",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  }
+}

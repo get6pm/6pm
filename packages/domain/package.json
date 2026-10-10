@@ -1,0 +1,21 @@
+{
+  "name": "@6pm/domain",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Pure logic: money, pay cycle, the daily number, close time, parsers",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "fast-check": "catalog:"
+  }
+}

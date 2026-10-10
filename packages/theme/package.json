@@ -1,0 +1,18 @@
+{
+  "name": "@6pm/theme",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Looks catalogue, time-of-day palettes, colour tokens and motion curves",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "fast-check": "catalog:"
+  }
+}

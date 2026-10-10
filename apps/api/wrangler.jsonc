@@ -1,0 +1,70 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Two environments only: `--env dev` (Worker `sixpm-api-dev`) and `--env prd` (`sixpm-api`).
+  // Bindings are not inherited, so each environment declares its own. Local runs and the tests use
+  // `dev` with simulated bindings, which need no Cloudflare account.
+  // There is no dedicated 6pm domain: each environment owns `<host>/api/*` on oddeggs.studio and the
+  // website serves the rest of the host.
+  "name": "sixpm-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-01",
+  // Secrets are set per environment with `wrangler secret put <NAME> --env <dev|prd>`; their names
+  // are listed in `src/env.ts`.
+  "env": {
+    "dev": {
+      "name": "sixpm-api-dev",
+      "routes": [{ "pattern": "6pm-dev.oddeggs.studio/api/*", "zone_name": "oddeggs.studio" }],
+      // COMMIT_SHA is overridden at deploy time (`--var COMMIT_SHA:<sha>`).
+      "vars": { "ENVIRONMENT": "dev", "COMMIT_SHA": "local" },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "sixpm-dev",
+          // Placeholder until `wrangler d1 create sixpm-dev`; local runs and tests do not need it.
+          "database_id": "00000000-0000-0000-0000-000000000000",
+          "migrations_dir": "migrations",
+        },
+      ],
+      "r2_buckets": [{ "binding": "FILES", "bucket_name": "sixpm-dev" }],
+      // Rate limit namespaces need no resource: the id is any integer unique within the account.
+      "ratelimits": [
+        {
+          "name": "IP_RATE_LIMIT",
+          "namespace_id": "6301",
+          "simple": { "limit": 120, "period": 60 },
+        },
+        {
+          "name": "DEVICE_RATE_LIMIT",
+          "namespace_id": "6302",
+          "simple": { "limit": 60, "period": 60 },
+        },
+      ],
+    },
+    "prd": {
+      "name": "sixpm-api",
+      "routes": [{ "pattern": "6pm.oddeggs.studio/api/*", "zone_name": "oddeggs.studio" }],
+      "vars": { "ENVIRONMENT": "prd", "COMMIT_SHA": "local" },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "sixpm",
+          "database_id": "00000000-0000-0000-0000-000000000000",
+          "migrations_dir": "migrations",
+        },
+      ],
+      "r2_buckets": [{ "binding": "FILES", "bucket_name": "sixpm" }],
+      "ratelimits": [
+        {
+          "name": "IP_RATE_LIMIT",
+          "namespace_id": "6311",
+          "simple": { "limit": 120, "period": 60 },
+        },
+        {
+          "name": "DEVICE_RATE_LIMIT",
+          "namespace_id": "6312",
+          "simple": { "limit": 60, "period": 60 },
+        },
+      ],
+    },
+  },
+}

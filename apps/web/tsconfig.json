@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "jsx": "preserve",
+    "jsxImportSource": "astro",
+    "types": []
+  },
+  "include": ["src", "*.mjs", ".astro/types.d.ts"]
+}

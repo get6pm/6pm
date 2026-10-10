@@ -1,0 +1,144 @@
+---
+import { personas, type Persona } from '../data/personas';
+import DuskBuddy from './dusk-buddy.astro';
+
+const start: Persona = 'Cheeky';
+const names = Object.keys(personas) as Persona[];
+const first = personas[start];
+---
+
+<section class="companion" data-companion>
+  <div class="cast">
+    <div class="glow" data-glow style={`background:${first.glow}`}></div>
+    <div class="bubbles" data-bubbles aria-live="polite">
+      {
+        first.lines.map(([when, line], i) => (
+          <p class="bubble entrance" style={`animation-delay:${(i * 0.12).toFixed(2)}s`}>
+            <span class="when">{when}</span>
+            {line}
+          </p>
+        ))
+      }
+    </div>
+    <DuskBuddy size={220} mood={first.mood} name="companion" />
+  </div>
+  <div class="words">
+    <span class="eyebrow">CO-STARRING</span>
+    <h2 class="headline">It <em>talks back.</em></h2>
+    <div class="vi-line" lang="vi">Nó biết nói đấy.</div>
+    <p class="lede">A little sun that watches your day. Pick how honest it gets.</p>
+    <div class="picker" role="group" aria-label="How honest it gets">
+      {
+        names.map((name) => (
+          <button type="button" class="persona" data-persona={name} aria-pressed={name === start ? 'true' : 'false'}>
+            {name}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .companion {
+    position: relative;
+    min-height: 100vh;
+    max-width: 1320px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 120px clamp(20px, 6vw, 88px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    align-items: center;
+    gap: clamp(40px, 6vw, 96px);
+  }
+  .cast {
+    position: relative;
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+  }
+  .glow {
+    --size: min(70vw, 460px);
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    width: var(--size);
+    height: var(--size);
+    margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.55;
+    transition: background 0.8s;
+  }
+  .bubbles {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+    width: min(80vw, 360px);
+  }
+  .bubble {
+    margin: 0;
+    align-self: flex-start;
+    max-width: 86%;
+    box-sizing: content-box;
+    padding: 12px 16px 13px;
+    border-radius: 22px 22px 22px 6px;
+    background: var(--ink);
+    color: var(--on-accent);
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(17px, 1.6vw, 21px);
+    line-height: 1.25;
+    box-shadow: 0 14px 30px rgba(3, 1, 10, 0.35);
+    animation: bubbleIn 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  }
+  .bubble:nth-child(2) {
+    align-self: flex-end;
+  }
+  .when {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: rgba(42, 20, 36, 0.5);
+    margin-bottom: 4px;
+  }
+  .words {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-width: 0;
+  }
+  .picker {
+    display: flex;
+    padding: 4px;
+    border-radius: 99px;
+    background: rgba(251, 244, 236, 0.1);
+    border: 0.5px solid var(--hairline);
+    align-self: flex-start;
+  }
+  .persona {
+    height: 44px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 99px;
+    background: transparent;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 650;
+    cursor: pointer;
+    transition:
+      background 0.25s,
+      color 0.25s;
+  }
+  .persona[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--on-accent);
+  }
+</style>

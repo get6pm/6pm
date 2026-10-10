@@ -1,0 +1,206 @@
+---
+import { odoSlots, odoSteps } from '../data/odometer';
+import { sums } from '../data/story';
+
+const digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+// The odometer as it stands before the scene scrolls: the month's money in.
+const start = String(odoSteps[0]).padStart(8, '0');
+const shift = (slot: number): string => `translateY(${-Number(start[slot]) * 1.04}em)`;
+---
+
+<section class="odo" data-scene="odo">
+  <div class="stage" data-shake>
+    <div class="ghost" aria-hidden="true">18:01</div>
+    <div class="eclipse" aria-hidden="true">
+      <div class="eclipse-sun"></div>
+      <div class="eclipse-shade"></div>
+    </div>
+    <div class="words">
+      <span class="eyebrow">18:01</span>
+      <h2 class="headline">What’s <em>safe</em> today.</h2>
+      <div class="vi-line" lang="vi">Hôm nay tiêu được bao nhiêu.</div>
+    </div>
+    <div class="result">
+      <div class="number">
+        <span class="sr-only">312.000₫ safe to spend today</span>
+        <span class="reels" aria-hidden="true">
+          {
+            odoSlots.map((slot, j) =>
+              slot === 'dot' ? (
+                <span class="dot" data-dot={j === 2 ? 0 : 1}>
+                  .
+                </span>
+              ) : (
+                <span class="reel">
+                  <span class="reel-digits" data-digit={slot} style={`transform:${shift(slot)}`}>
+                    {digits.map((n) => (
+                      <span>{n}</span>
+                    ))}
+                  </span>
+                </span>
+              ),
+            )
+          }
+          <span class="dong">₫</span>
+        </span>
+      </div>
+      <div class="sums">
+        {
+          sums.map((s) => (
+            <div class="sum" style={`--d:${s.d}`}>
+              <span class="sum-label">{s.label}</span>
+              <span class="sum-value" style={`color:${s.ink}`}>
+                {s.value}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .odo {
+    position: relative;
+    height: 240vh;
+  }
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    box-sizing: border-box;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 96px clamp(20px, 6vw, 88px) 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(20px, 4vh, 40px);
+  }
+  .ghost {
+    position: absolute;
+    z-index: -1;
+    right: -2vw;
+    top: 4vh;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-variation-settings:
+      'wdth' 75,
+      'opsz' 96;
+    font-size: min(34vw, 62vh);
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(251, 244, 236, 0.09);
+    pointer-events: none;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .eclipse {
+    --lit: clamp(0, var(--k, 0) / 0.66, 1);
+    position: absolute;
+    z-index: -1;
+    right: -10vmin;
+    top: 50%;
+    width: 64vmin;
+    height: 64vmin;
+    margin-top: -32vmin;
+    pointer-events: none;
+  }
+  .eclipse-sun {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 45% 40%, #fff4dc, #ffc46b 45%, #ff6b35 100%);
+    box-shadow: 0 0 calc(4vmin + var(--lit) * 18vmin) calc(var(--lit) * 7vmin)
+      rgba(255, 160, 90, calc(0.2 + var(--lit) * 0.55));
+  }
+  .eclipse-shade {
+    position: absolute;
+    inset: -1%;
+    border-radius: 50%;
+    background: #0a0612;
+    transform: translateX(calc((1 - var(--lit)) * 92%));
+    box-shadow: inset 8px 0 22px rgba(255, 200, 140, 0.14);
+  }
+  .words {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .words .headline {
+    font-size: clamp(40px, 5vw, 80px);
+    line-height: 0.92;
+    max-width: 900px;
+  }
+  .result {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: clamp(20px, 4vw, 64px);
+  }
+  .number {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(64px, 13vw, 220px);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .reels {
+    display: flex;
+    align-items: flex-start;
+  }
+  .reel {
+    display: block;
+    height: 1.04em;
+    overflow: hidden;
+    transition: opacity 0.3s;
+  }
+  .reel-digits {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.45s cubic-bezier(0.3, 1.25, 0.5, 1);
+  }
+  .reel-digits span {
+    display: block;
+    height: 1.04em;
+    line-height: 1.04;
+  }
+  .dot {
+    line-height: 1.04;
+    transition: opacity 0.3s;
+  }
+  .dong {
+    font-size: 0.4em;
+    margin: 0.12em 0 0 0.08em;
+    color: var(--accent);
+  }
+  .sums {
+    flex: 1;
+    min-width: 280px;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    padding-bottom: 1vw;
+  }
+  .sum {
+    --on: clamp(0, (var(--k, 0) - var(--d)) * 9, 1);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-top: 0.5px solid var(--hairline);
+    opacity: calc(0.18 + 0.82 * var(--on));
+    transform: translateX(calc((1 - var(--on)) * 18px));
+  }
+  .sum-label {
+    font-weight: 600;
+  }
+  .sum-value {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

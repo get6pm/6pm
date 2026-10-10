@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // A Worker made only of static assets: `astro build` writes the site, `wrangler deploy --env <dev|prd>`
+  // uploads it. No script runs per request.
+  //
+  // There is no dedicated 6pm domain. Each environment's site takes every path of its host on the
+  // oddeggs.studio zone; the API Worker's route `<host>/api/*` is more specific, so it wins for the
+  // API and the site never sees those requests.
+  "name": "sixpm-web",
+  "compatibility_date": "2026-08-01",
+  "assets": { "directory": "./dist", "html_handling": "auto-trailing-slash" },
+  "env": {
+    "dev": {
+      "name": "sixpm-web-dev",
+      "routes": [{ "pattern": "6pm-dev.oddeggs.studio/*", "zone_name": "oddeggs.studio" }],
+    },
+    "prd": {
+      "name": "sixpm-web",
+      "routes": [{ "pattern": "6pm.oddeggs.studio/*", "zone_name": "oddeggs.studio" }],
+    },
+  },
+}

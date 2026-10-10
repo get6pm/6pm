@@ -1,0 +1,9 @@
+# Read by Workers static assets. Built scripts carry a content hash in their name; fonts are
+# renamed whenever they change.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

@@ -1,0 +1,128 @@
+---
+import { countLabel, habits, priceLabel, tileInks } from '../data/habits';
+import LeakCard from './leak-card.astro';
+---
+
+<section id="your-leak" class="your-leak" data-calculator>
+  <div class="intro">
+    <span class="eyebrow">YOUR TURN</span>
+    <h2 class="headline">How big is <em>your</em> leak?</h2>
+    <div class="vi-line" lang="vi">Bạn đang rò rỉ bao nhiêu?</div>
+    <ul class="habits">
+      {
+        habits.map((h) => {
+          const inks = tileInks(h.hue);
+          return (
+            <li class="habit" data-habit={h.id}>
+              <span class="tile" style={`background:${inks.tile};color:${inks.glyph}`}>
+                <span class="icon icon-filled">{h.icon}</span>
+              </span>
+              <span class="habit-text">
+                <span class="habit-label">{h.label}</span>
+                <span class="habit-price">{priceLabel(h)}</span>
+              </span>
+              <button type="button" class="step" data-step="-1" aria-label={`Less ${h.label}`}>
+                <span class="icon">remove</span>
+              </button>
+              <span class="count" data-count aria-live="polite">
+                {countLabel(h, h.start)}
+              </span>
+              <button type="button" class="step" data-step="1" aria-label={`More ${h.label}`}>
+                <span class="icon">add</span>
+              </button>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+  <LeakCard />
+</section>
+
+<style>
+  .your-leak {
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    max-width: 1320px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 120px clamp(20px, 6vw, 88px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
+    gap: clamp(36px, 5vw, 80px);
+    align-items: center;
+  }
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+  }
+  .intro .headline {
+    line-height: 0.92;
+  }
+  .habits {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    border-top: 0.5px solid var(--hairline);
+  }
+  .habit {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--hairline);
+  }
+  .tile {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .habit-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .habit-label {
+    font-size: 16px;
+    font-weight: 650;
+  }
+  .habit-price {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-60);
+  }
+  .step {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(251, 244, 236, 0.1);
+    color: var(--ink);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 20px;
+  }
+  .count {
+    min-width: 84px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

@@ -1,0 +1,24 @@
+{
+  "name": "@6pm/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The 6pm 2.0 Coming Soon page: a static Astro site served by Cloudflare Workers static assets at <host>/",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "astro check",
+    "deploy:dev": "astro build && wrangler deploy --env dev",
+    "deploy:prd": "astro build && wrangler deploy --env prd"
+  },
+  "dependencies": {
+    "@6pm/domain": "workspace:*",
+    "astro": "catalog:"
+  },
+  "devDependencies": {
+    "@astrojs/check": "catalog:",
+    "typescript": "catalog:",
+    "wrangler": "catalog:"
+  }
+}

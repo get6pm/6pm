@@ -1,0 +1,242 @@
+---
+import { formatShort } from '@6pm/domain';
+
+import { leakPerMonth, startCounts } from '../data/habits';
+
+interface Props {
+  /** "FRI 6 NOV, 18:00". */
+  launchUpper: string;
+}
+
+const { launchUpper } = Astro.props;
+---
+
+<form class="ticket-form" data-ticket-form novalidate>
+  <div class="ticket" data-ticket-paper>
+    <div class="edge edge-top"></div>
+    <div class="paper">
+      <div class="head">
+        <span>6PM · EARLY LIST</span><span class="number">Nº <span data-ticket>----</span></span>
+      </div>
+      <div class="dash"></div>
+      <label for="ticket-email" class="label">EMAIL</label>
+      <input
+        id="ticket-email"
+        type="email"
+        name="email"
+        autocomplete="email"
+        placeholder="you@example.com"
+        aria-describedby="ticket-message"
+        data-email
+      />
+      <div class="row"><span class="key">VERSION</span><span>2.0</span></div>
+      <div class="row">
+        <span class="key">LEAK</span><span data-leak-ticket
+          >{formatShort(leakPerMonth(startCounts))} / mo</span
+        >
+      </div>
+      <div class="row"><span class="key">ARRIVES</span><span>{launchUpper}</span></div>
+      <div class="dash"></div>
+      <div class="actions" data-when="open">
+        <button type="button" class="hold" data-hold>
+          <span>HOLD TO STAMP</span>
+          <span class="hold-fill" aria-hidden="true">HOLD TO STAMP</span>
+        </button>
+        <button type="submit" class="sr-only" tabindex="-1">Join the list</button>
+      </div>
+      <div class="listed" data-when="listed" hidden>
+        <span class="see-you">see you at six.<br />— 6pm</span>
+        <span class="on-list entrance">ON THE<br />LIST</span>
+      </div>
+    </div>
+    <div class="edge edge-bottom"></div>
+  </div>
+  <div class="message" id="ticket-message" data-ticket-message aria-live="polite"></div>
+  <p class="sr-only" role="status" data-ticket-status></p>
+  <button type="button" class="quiet" data-retry hidden>Try again</button>
+  <button type="button" class="quiet" data-again hidden>Use a different email</button>
+</form>
+
+<style>
+  .ticket-form {
+    min-width: 0;
+    justify-self: center;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .ticket {
+    transform: rotate(-1.2deg);
+    filter: drop-shadow(0 30px 40px rgba(3, 1, 10, 0.55));
+  }
+  .ticket[data-stamped] {
+    animation: shake 0.45s 0.1s both;
+  }
+  .edge {
+    height: 11px;
+  }
+  .edge-top {
+    background: radial-gradient(circle at 7px 0, transparent 6.5px, var(--paper) 7px) 0 0 / 14px
+      11px repeat-x;
+  }
+  .edge-bottom {
+    background: radial-gradient(circle at 7px 11px, transparent 6.5px, var(--paper) 7px) 0 0 /
+      14px 11px repeat-x;
+  }
+  .paper {
+    position: relative;
+    background: var(--paper);
+    color: var(--paper-ink);
+    padding: 18px 26px 24px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .head {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+  }
+  .number {
+    opacity: 0.55;
+  }
+  .dash {
+    border-top: 1px dashed rgba(43, 37, 48, 0.35);
+  }
+  .label {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: rgba(43, 37, 48, 0.6);
+  }
+  input {
+    height: 44px;
+    padding: 0;
+    border: none;
+    border-bottom: 1.5px dashed rgba(43, 37, 48, 0.45);
+    background: transparent;
+    color: var(--paper-ink);
+    font-family: var(--font-mono);
+    font-size: 17px;
+    outline: none;
+    border-radius: 0;
+  }
+  input[aria-invalid='true'] {
+    border-bottom-color: var(--stamp);
+  }
+  .row {
+    display: flex;
+    gap: 12px;
+  }
+  .key {
+    color: rgba(43, 37, 48, 0.55);
+    width: 78px;
+  }
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .actions[hidden],
+  .listed[hidden] {
+    display: none;
+  }
+  .hold {
+    position: relative;
+    height: 64px;
+    border: 3px solid var(--stamp);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--stamp);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.16em;
+    cursor: pointer;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .hold-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--stamp);
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.25s ease-out;
+  }
+  .hold[data-holding] .hold-fill {
+    clip-path: inset(0 0% 0 0);
+    transition: clip-path 0.9s linear;
+  }
+  .hold[data-sending] .hold-fill {
+    clip-path: inset(0 0% 0 0);
+    transition: none;
+  }
+  .listed {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 92px;
+  }
+  .see-you {
+    font-family: var(--font-hand);
+    font-size: 25px;
+    line-height: 1.05;
+    color: #4a3550;
+    transform: rotate(-2deg);
+  }
+  .on-list {
+    padding: 8px 12px 6px;
+    border: 3.5px solid var(--stamp);
+    color: var(--stamp);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.14em;
+    line-height: 1.15;
+    text-align: center;
+    mix-blend-mode: multiply;
+    opacity: 0.94;
+    transform: rotate(-8deg);
+    animation: stampIn 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  }
+  .message {
+    min-height: 24px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    font-size: 14px;
+    color: var(--leak);
+  }
+  .quiet {
+    align-self: center;
+    height: 40px;
+    padding: 0 14px;
+    border: none;
+    background: transparent;
+    color: rgba(251, 244, 236, 0.75);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .quiet[hidden] {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ticket[data-stamped] {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,24 @@
+{
+  "name": "@6pm/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The 6pm API: Hono on Cloudflare Workers with D1 and R2, served at <host>/api",
+  "scripts": {
+    "dev": "wrangler dev --env dev",
+    "generate": "tsx ../../tools/scripts/generate-index.ts src/routes",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx ../../tools/scripts/generate-index.ts --check src/routes && vitest run"
+  },
+  "dependencies": {
+    "@6pm/domain": "workspace:*",
+    "hono": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "catalog:",
+    "@cloudflare/workers-types": "catalog:",
+    "vitest": "4.1.11",
+    "wrangler": "catalog:"
+  }
+}

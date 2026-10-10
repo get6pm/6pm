@@ -1,0 +1,91 @@
+---
+import { titleLines } from '../data/story';
+---
+
+<section class="titles" data-scene="titles">
+  <div class="stage">
+    <div class="dim" aria-hidden="true"></div>
+    <div class="bar bar-top" aria-hidden="true"></div>
+    <div class="bar bar-bottom" aria-hidden="true"></div>
+    {
+      titleLines.map((line) => (
+        <div class="card" style={`--a:${line.a};--b:${line.b}`}>
+          <p class="line">{line.en}</p>
+          <p class="line-vi" lang="vi">
+            {line.vi}
+          </p>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .titles {
+    position: relative;
+    height: 250vh;
+  }
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .dim {
+    position: absolute;
+    inset: 0;
+    background: #040209;
+    opacity: calc(0.18 + var(--k, 0) * 0.42);
+  }
+  .bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 9vh;
+    background: #000;
+  }
+  .bar-top {
+    top: 0;
+  }
+  .bar-bottom {
+    bottom: 0;
+  }
+  .card {
+    --in: clamp(0, (var(--k, 0) - var(--a)) * 9, 1);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    padding: 0 clamp(20px, 8vw, 120px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    opacity: calc(var(--in) * (1 - clamp(0, (var(--k, 0) - var(--b)) * 9, 1)));
+    transform: translateY(-50%) scale(calc(0.96 + (var(--k, 0) - var(--a)) * 0.25));
+    filter: blur(calc((1 - var(--in)) * 10px));
+  }
+  .line {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(40px, 6.6vw, 112px);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    max-width: 1100px;
+  }
+  .line-vi {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: clamp(12px, 1.1vw, 15px);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(251, 244, 236, 0.55);
+  }
+</style>

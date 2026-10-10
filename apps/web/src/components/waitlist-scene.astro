@@ -1,0 +1,122 @@
+---
+import { launchAt } from '../data/launch';
+import WaitlistTicket from './waitlist-ticket.astro';
+
+interface Props {
+  /** "FRI 6 NOV, 18:00". */
+  launchUpper: string;
+}
+
+const { launchUpper } = Astro.props;
+const units = ['DAYS', 'HOURS', 'MINUTES', 'SECONDS'];
+const digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+---
+
+<section id="list" class="waitlist">
+  <div class="words">
+    <span class="eyebrow">{launchUpper}</span>
+    <h2 class="headline">Be there <em>at six.</em></h2>
+    <div class="vi-line" lang="vi">Hẹn bạn lúc sáu giờ.</div>
+    <div class="countdown" data-countdown={launchAt} role="timer">
+      <span class="sr-only" data-countdown-text>Time until launch</span>
+      {
+        units.map((unit) => (
+          <div class="unit" aria-hidden="true">
+            <div class="reels">
+              {[0, 1].map(() => (
+                <div class="reel">
+                  <div class="reel-digits" data-countdown-digit>
+                    {digits.map((n) => (
+                      <span>{n}</span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <span class="unit-label">{unit}</span>
+          </div>
+        ))
+      }
+    </div>
+    <p class="lede">One email, at six, on launch day.</p>
+  </div>
+  <WaitlistTicket launchUpper={launchUpper} />
+</section>
+
+<style>
+  .waitlist {
+    position: relative;
+    min-height: 100vh;
+    max-width: 1320px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 120px clamp(20px, 6vw, 88px) 120px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: clamp(40px, 5vw, 80px);
+    align-items: center;
+  }
+  .words {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    min-width: 0;
+  }
+  .words .headline {
+    font-size: clamp(60px, 8.6vw, 140px);
+    line-height: 0.86;
+    text-wrap: wrap;
+  }
+  .countdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(14px, 2vw, 28px);
+  }
+  .unit {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .reels {
+    display: flex;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(44px, 5vw, 76px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .reel {
+    height: 1.04em;
+    overflow: hidden;
+    clip-path: inset(0);
+  }
+  .reel-digits {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .countdown:not([data-ready]) .reel-digits {
+    transition: none;
+  }
+  .reel-digits span {
+    display: block;
+    height: 1.04em;
+    line-height: 1.04;
+  }
+  .unit-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--ink-70);
+  }
+  .lede {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reel-digits {
+      transition: none;
+    }
+  }
+</style>

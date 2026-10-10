@@ -1,0 +1,122 @@
+---
+import { stars } from '../data/story';
+---
+
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false" data-ripple>
+  <filter id="ripple" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.004 0.11" numOctaves="2" seed="4" result="n">
+      <animate
+        attributeName="baseFrequency"
+        dur="16s"
+        values="0.004 0.11;0.006 0.15;0.004 0.11"
+        repeatCount="indefinite"></animate>
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="26" xChannelSelector="R" yChannelSelector="G"
+    ></feDisplacementMap>
+  </filter>
+</svg>
+
+<div class="sky" aria-hidden="true"></div>
+<div class="stars" aria-hidden="true">
+  {
+    stars.map((s) => (
+      <i
+        class="loop"
+        style={`left:${s.x};top:${s.y};width:${s.z};height:${s.z};animation-delay:${s.d}`}
+      />
+    ))
+  }
+</div>
+<div class="moon" aria-hidden="true"></div>
+<div class="blooms" aria-hidden="true">
+  <div class="bloom bloom-1 loop"></div>
+  <div class="bloom bloom-2 loop"></div>
+</div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="flash" aria-hidden="true" data-flash></div>
+<div class="grain loop" aria-hidden="true"></div>
+
+<style>
+  .defs {
+    position: absolute;
+  }
+  .sky,
+  .stars,
+  .blooms,
+  .vignette,
+  .flash,
+  .grain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+  }
+  .sky {
+    background: linear-gradient(180deg, var(--s0) 0%, var(--s1) 58%, var(--s2) 100%);
+  }
+  .stars {
+    opacity: var(--night);
+  }
+  .stars i {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--ink);
+    animation: tw 3.2s ease-in-out infinite;
+  }
+  .moon {
+    position: fixed;
+    right: 16vw;
+    top: calc(30vh - var(--night) * 16vh);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #f4ecda;
+    box-shadow:
+      0 0 70px 18px rgba(244, 236, 218, 0.14),
+      inset -11px -5px 0 rgba(30, 26, 60, 0.38);
+    opacity: var(--night);
+    pointer-events: none;
+  }
+  .blooms {
+    overflow: hidden;
+    mix-blend-mode: screen;
+    opacity: 0.4;
+  }
+  .bloom {
+    position: absolute;
+    border-radius: 50%;
+  }
+  .bloom-1 {
+    left: -20vw;
+    top: 40vh;
+    width: 70vw;
+    height: 70vw;
+    background: radial-gradient(circle, var(--b1) 0%, transparent 70%);
+    filter: blur(60px);
+    animation: drift1 22s ease-in-out infinite alternate;
+  }
+  .bloom-2 {
+    right: -25vw;
+    top: -20vh;
+    width: 65vw;
+    height: 65vw;
+    background: radial-gradient(circle, var(--b2) 0%, transparent 70%);
+    filter: blur(70px);
+    animation: drift2 28s ease-in-out infinite alternate;
+  }
+  .vignette {
+    z-index: 29;
+    background: radial-gradient(130% 100% at 50% 40%, transparent 55%, rgba(4, 2, 10, 0.55) 100%);
+  }
+  .flash {
+    z-index: 40;
+    background: #fff6e8;
+    opacity: 0;
+  }
+  .grain {
+    z-index: 30;
+    opacity: 0.26;
+    mix-blend-mode: overlay;
+    animation: grain 0.8s steps(1) infinite;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+</style>

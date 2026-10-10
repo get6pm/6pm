@@ -1,0 +1,262 @@
+---
+import DuskBuddy from './dusk-buddy.astro';
+---
+
+<section class="close" data-close-demo>
+  <div class="ghost" aria-hidden="true">18:00</div>
+  <div class="words">
+    <span class="eyebrow">18:00</span>
+    <h2 class="headline">The close is <em>one swipe.</em></h2>
+    <div class="vi-line" lang="vi">Chốt ngày chỉ bằng một lần vuốt.</div>
+  </div>
+  <div class="demo">
+    <div class="day" data-day>
+      <div class="day-top">
+        <div class="day-text">
+          <span class="day-date">FRIDAY 09 OCT</span>
+          <span class="day-total">199.000₫</span>
+          <span class="day-under">113k under your line</span>
+        </div>
+        <DuskBuddy size={72} mood="calm" name="close" />
+      </div>
+      <div class="closed-stamp" data-closed-stamp hidden>
+        <div class="stamp entrance">CLOSED<br />18:00</div>
+      </div>
+    </div>
+    <div class="track" data-track>
+      <div class="fill" data-fill></div>
+      <div class="track-label" data-track-label aria-hidden="true">Swipe to close Friday</div>
+      <button type="button" class="thumb" data-thumb aria-label="Swipe to close Friday">
+        <span class="icon nudge loop" data-thumb-icon>arrow_forward</span>
+      </button>
+    </div>
+    <div class="after" aria-live="polite">
+      <span data-close-note></span>
+      <button type="button" class="undo" data-undo hidden>Undo</button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .close {
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 120px clamp(20px, 6vw, 88px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    text-align: center;
+  }
+  .ghost {
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-variation-settings:
+      'wdth' 75,
+      'opsz' 96;
+    font-size: min(34vw, 62vh);
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(251, 244, 236, 0.09);
+    pointer-events: none;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .words {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    max-width: 860px;
+  }
+  .demo {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+  }
+  .day {
+    position: relative;
+    border-radius: 30px;
+    padding: 22px 22px 20px;
+    background: rgba(16, 10, 28, 0.5);
+    border: 0.5px solid var(--hairline);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .day[data-closed] {
+    animation: shake 0.45s 0.12s both;
+  }
+  .day-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .day-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .day-date {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    color: var(--ink-70);
+  }
+  .day-total {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 40px;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .day-under {
+    font-size: 14px;
+    color: rgba(251, 244, 236, 0.75);
+  }
+  .closed-stamp {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .closed-stamp[hidden] {
+    display: none;
+  }
+  .stamp {
+    padding: 12px 22px 10px;
+    border: 5px solid var(--stamp-light);
+    color: var(--stamp-light);
+    border-radius: 12px;
+    background: rgba(20, 10, 28, 0.35);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: clamp(30px, 5vw, 44px);
+    letter-spacing: 0.14em;
+    line-height: 1.1;
+    text-align: center;
+    opacity: 0.94;
+    transform: rotate(-8deg);
+    animation: stampIn 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  }
+  .track {
+    --drag: 0px;
+    position: relative;
+    height: 76px;
+    border-radius: 99px;
+    background: rgba(251, 244, 236, 0.1);
+    border: 0.5px solid rgba(251, 244, 236, 0.18);
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+  }
+  .fill,
+  .thumb {
+    transition:
+      transform 0.5s cubic-bezier(0.3, 1.4, 0.5, 1),
+      width 0.5s cubic-bezier(0.3, 1.4, 0.5, 1);
+  }
+  .track[data-dragging] .fill,
+  .track[data-dragging] .thumb {
+    transition: none;
+  }
+  .fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: calc(var(--drag) + 76px);
+    border-radius: 99px;
+    background: var(--accent);
+  }
+  .track-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 60px;
+    font-weight: 650;
+    font-size: 17px;
+    color: var(--ink);
+    pointer-events: none;
+  }
+  .track[data-closed] .track-label {
+    color: var(--on-accent);
+  }
+  .thumb {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    width: 64px;
+    height: 64px;
+    border: none;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--on-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    touch-action: none;
+    box-shadow: 0 6px 18px rgba(10, 4, 20, 0.35);
+    transform: translateX(var(--drag));
+    font-size: 28px;
+  }
+  .nudge {
+    animation: nudge 2.4s ease-in-out infinite;
+  }
+  .track[data-dragging] .nudge,
+  .track[data-moved] .nudge,
+  .track[data-closed] .nudge {
+    animation: none;
+  }
+  .after {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 15px;
+    color: var(--ink-80);
+  }
+  .undo {
+    height: 36px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 99px;
+    background: rgba(251, 244, 236, 0.1);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .undo[hidden] {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .day[data-closed] {
+      animation: none;
+    }
+  }
+</style>

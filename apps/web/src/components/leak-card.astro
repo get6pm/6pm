@@ -1,0 +1,172 @@
+---
+import { formatShort, formatVnd } from '@6pm/domain';
+
+import { leakEquivalent, leakPerMonth, startCounts } from '../data/habits';
+
+const month = leakPerMonth(startCounts);
+---
+
+<div class="card">
+  <span class="card-label">YOUR LEAK · PER MONTH</span>
+  <span class="month numeral" data-leak-month>{formatVnd(Math.round(month / 1000) * 1000)}</span>
+  <span class="year">
+    That’s <strong data-leak-year>{formatShort(month * 12)}</strong> a year. Roughly <span
+      data-leak-equivalent>{leakEquivalent(month)}</span
+    >.
+  </span>
+  <span class="note">Not all of it is a leak. 6pm just makes sure you chose it.</span>
+  <div class="rule"></div>
+  <div data-when="open">
+    <form class="quick" data-quick-form novalidate>
+      <label class="sr-only" for="quick-email">Email</label>
+      <input
+        id="quick-email"
+        type="email"
+        name="email"
+        autocomplete="email"
+        placeholder="you@example.com"
+        data-email
+      />
+      <button type="submit" class="plug">Plug it at six</button>
+    </form>
+    <p class="quick-message" data-quick-message aria-live="polite">
+      One email, at six, on launch day. That’s it.
+    </p>
+  </div>
+  <div class="listed" data-when="listed" hidden>
+    <span class="listed-line">You’re on the list. See you at six.</span>
+    <span class="listed-stamp entrance">Nº <span data-ticket>----</span></span>
+  </div>
+</div>
+
+<style>
+  .card {
+    position: relative;
+    min-width: 0;
+    border-radius: 34px;
+    padding: clamp(24px, 3vw, 36px);
+    background: rgba(16, 10, 28, 0.62);
+    border: 0.5px solid var(--hairline);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+    box-shadow: 0 40px 80px rgba(3, 1, 10, 0.45);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .card-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--ink-70);
+  }
+  .month {
+    font-size: clamp(64px, 8vw, 132px);
+    line-height: 0.9;
+    letter-spacing: -0.045em;
+    font-variant-numeric: tabular-nums;
+    color: var(--leak);
+    text-shadow: 0 0 50px rgba(255, 90, 70, 0.3);
+  }
+  .year {
+    font-size: clamp(17px, 1.5vw, 20px);
+    line-height: 1.45;
+    color: rgba(251, 244, 236, 0.85);
+    text-wrap: pretty;
+  }
+  .year strong {
+    color: var(--ink);
+  }
+  .note {
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--ink-60);
+    text-wrap: pretty;
+  }
+  .rule {
+    border-top: 1px dashed rgba(251, 244, 236, 0.2);
+    margin: 4px 0;
+  }
+  [data-when='open'] {
+    display: contents;
+  }
+  [data-when='open'][hidden] {
+    display: none;
+  }
+  .quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .quick input {
+    flex: 1 1 220px;
+    min-width: 0;
+    height: 56px;
+    box-sizing: border-box;
+    padding: 0 20px;
+    border-radius: 99px;
+    border: 0.5px solid rgba(251, 244, 236, 0.25);
+    background: rgba(251, 244, 236, 0.08);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 16px;
+    outline: none;
+  }
+  .plug {
+    flex: 0 0 auto;
+    height: 56px;
+    padding: 0 24px;
+    border: none;
+    border-radius: 99px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 12px 30px rgba(255, 120, 70, 0.35);
+  }
+  .plug:hover {
+    filter: brightness(1.08);
+  }
+  .quick-message {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-70);
+    min-height: 18px;
+  }
+  .quick-message[data-error] {
+    color: var(--leak);
+  }
+  .listed {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .listed[hidden] {
+    display: none;
+  }
+  .listed-line {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.25;
+  }
+  .listed-stamp {
+    padding: 8px 12px 6px;
+    border: 3px solid var(--stamp-light);
+    color: var(--stamp-light);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.14em;
+    line-height: 1.2;
+    text-align: center;
+    opacity: 0.94;
+    transform: rotate(-8deg);
+    animation: stampIn 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  }
+</style>

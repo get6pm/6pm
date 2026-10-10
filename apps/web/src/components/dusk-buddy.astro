@@ -1,0 +1,30 @@
+---
+interface Props {
+  size: number;
+  mood: string;
+  /** Lets a script find this buddy to change its mood. */
+  name?: string;
+}
+
+const { size, mood, name } = Astro.props;
+// The design's buddy sits on a text baseline, so its box is the drawing plus the 4px descent of
+// the 16px body type under it. The box is reserved here, before the drawing exists.
+const height = size + 4;
+---
+
+<dusk-buddy
+  size={size}
+  mood={mood}
+  data-buddy={name}
+  aria-hidden="true"
+  style={`width:${size}px;height:${height}px`}></dusk-buddy>
+
+<style>
+  dusk-buddy {
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  dusk-buddy :global(canvas) {
+    display: block;
+  }
+</style>

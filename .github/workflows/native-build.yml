@@ -4,7 +4,11 @@ name: native-build
 # native-build-job.yml for where each build goes, and e2e/README.md for the secrets it needs.
 #   gh workflow run native-build.yml -f ref=<branch> -f profile=e2e-test
 #   gh workflow run native-build.yml -f ref=<branch> -f profile=dev -f submit=true
+#   git tag testflight/<anything> && git push origin --tags   (the signed prd build, to TestFlight)
+# A tag works before this file reaches the default branch, which manual dispatch needs.
 on:
+  push:
+    tags: ['testflight/*']
   workflow_dispatch:
     inputs:
       ref:
@@ -22,12 +26,12 @@ on:
         type: boolean
         default: false
 
-run-name: native build ${{ inputs.profile }} at ${{ inputs.ref }}
+run-name: native build ${{ inputs.profile || 'prd' }} at ${{ inputs.ref || github.ref_name }}
 
 # One build per ref and profile at a time: a second dispatch waits instead of doubling up on the
 # few macOS runners that device runs and CI share.
 concurrency:
-  group: native-build-${{ inputs.ref }}-${{ inputs.profile }}
+  group: native-build-${{ inputs.ref || github.ref_name }}-${{ inputs.profile || 'prd' }}
   cancel-in-progress: false
 
 permissions:
@@ -39,9 +43,9 @@ jobs:
     permissions:
       contents: write
     with:
-      ref: ${{ inputs.ref }}
-      profile: ${{ inputs.profile }}
-      submit: ${{ inputs.submit }}
+      ref: ${{ inputs.ref || github.ref }}
+      profile: ${{ inputs.profile || 'prd' }}
+      submit: ${{ github.event_name == 'push' || inputs.submit }}
     secrets:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       EXPO_ASC_API_KEY_P8: ${{ secrets.EXPO_ASC_API_KEY_P8 }}

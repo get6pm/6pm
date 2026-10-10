@@ -1,0 +1,62 @@
+{
+  "name": "@6pm/mobile",
+  "version": "0.0.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "dev": "expo start --dev-client",
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@6pm/domain": "workspace:*",
+    "@6pm/i18n": "workspace:*",
+    "@6pm/theme": "workspace:*",
+    "@expo/log-box": "catalog:",
+    "@expo/metro-runtime": "catalog:",
+    "@react-native/metro-config": "catalog:",
+    "@shopify/react-native-skia": "catalog:",
+    "expo": "catalog:",
+    "expo-application": "catalog:",
+    "expo-asset": "catalog:",
+    "expo-blur": "catalog:",
+    "expo-build-properties": "catalog:",
+    "expo-constants": "catalog:",
+    "expo-crypto": "catalog:",
+    "expo-dev-client": "catalog:",
+    "expo-device": "catalog:",
+    "expo-file-system": "catalog:",
+    "expo-font": "catalog:",
+    "expo-haptics": "catalog:",
+    "expo-linking": "catalog:",
+    "expo-localization": "catalog:",
+    "expo-router": "catalog:",
+    "expo-secure-store": "catalog:",
+    "expo-splash-screen": "catalog:",
+    "expo-sqlite": "catalog:",
+    "expo-status-bar": "catalog:",
+    "expo-system-ui": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "react-native-gesture-handler": "catalog:",
+    "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-native-screens": "catalog:",
+    "react-native-worklets": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@babel/core": "catalog:",
+    "@jest/globals": "catalog:",
+    "@react-native/jest-preset": "catalog:",
+    "@types/react": "catalog:",
+    "babel-preset-expo": "catalog:",
+    "expo-doctor": "catalog:",
+    "jest": "catalog:",
+    "jest-expo": "catalog:",
+    "typescript": "catalog:"
+  },
+  "jest": {
+    "preset": "jest-expo"
+  }
+}

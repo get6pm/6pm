@@ -1,0 +1,6 @@
+# Prebuild output is never committed: with these folders present EAS treats the app as bare.
+/ios
+/android
+
+.expo/
+expo-env.d.ts

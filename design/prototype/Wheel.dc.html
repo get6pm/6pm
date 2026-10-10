@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div ref="{{ setEl }}" onPointerDown="{{ down }}" onPointerMove="{{ move }}" onPointerUp="{{ up }}" onPointerCancel="{{ up }}" style="position:relative; width:100%; height: {{ hPx }}; overflow:hidden; touch-action:none; cursor:grab; user-select:none; -webkit-user-select:none; -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 34%, #000 66%, transparent 100%); mask-image:linear-gradient(180deg, transparent 0%, #000 34%, #000 66%, transparent 100%);">
+  <div style="position:absolute; left:0; right:0; top:0; transform: {{ colTf }}; transition: {{ colTr }}; will-change:transform;">
+    <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+      <div onClick="{{ r.go }}" style="height: {{ itemPx }}; display:flex; align-items:center; justify-content: {{ align }}; padding: {{ padX }}; box-sizing:border-box; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size: {{ fs }}; font-weight:600; letter-spacing:-.03em; font-variant-numeric:tabular-nums; white-space:nowrap; color: {{ ink }}; opacity: {{ r.op }}; transform: {{ r.tf }}; transition: {{ itemTr }}; cursor:pointer;">{{ r.label }}</div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:120,&quot;height&quot;:180},&quot;items&quot;:{&quot;editor&quot;:null,&quot;default&quot;:[&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;],&quot;tsType&quot;:&quot;string[]&quot;},&quot;index&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;tsType&quot;:&quot;number&quot;},&quot;onChange&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(i:number)=&gt;void&quot;},&quot;size&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:28,&quot;tsType&quot;:&quot;number&quot;},&quot;rows&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[3,5],&quot;default&quot;:3,&quot;tsType&quot;:&quot;number&quot;},&quot;align&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;center&quot;,&quot;flex-start&quot;,&quot;flex-end&quot;],&quot;default&quot;:&quot;center&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;ink&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#1b1e2e&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { pos: null, live: false };
+  H() { return Math.round((this.props.size ?? 28) * 1.4); }
+  n() { return (this.props.items || []).length; }
+  clamp(p) { return Math.max(0, Math.min(this.n() - 1, p)); }
+  pos() { return this.state.pos ?? (this.props.index ?? 0); }
+  emit(p) {
+    const i = Math.round(this.clamp(p));
+    if (i !== this.lastI) {
+      this.lastI = i;
+      try { navigator.vibrate && navigator.vibrate(4); } catch (err) {}
+      if (i !== this.props.index && this.props.onChange) { this.seen = i; this.props.onChange(i); }
+    }
+  }
+  snapTo(i) { i = Math.round(this.clamp(i)); this.setState({ pos: i, live: false }); this.emit(i); }
+  setEl = (el) => {
+    if (el === this.el) return;
+    if (this.el && this.onWheel) this.el.removeEventListener('wheel', this.onWheel);
+    this.el = el;
+    if (!el) return;
+    this.lastI = this.props.index ?? 0; this.seen = this.lastI;
+    this.onWheel = (e) => {
+      e.preventDefault();
+      const p = this.clamp(this.pos() + e.deltaY / this.H() * 0.6);
+      this.setState({ pos: p, live: true }); this.emit(p);
+      clearTimeout(this.wt); this.wt = setTimeout(() => this.snapTo(this.pos()), 140);
+    };
+    el.addEventListener('wheel', this.onWheel, { passive: false });
+  };
+  down = (e) => {
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+    this.drag = { y: e.clientY, p: this.pos(), t: performance.now(), ly: e.clientY, v: 0, moved: false };
+  };
+  move = (e) => {
+    const d = this.drag; if (!d) return;
+    const dy = e.clientY - d.y;
+    if (Math.abs(dy) > 3) d.moved = true;
+    if (!d.moved) return;
+    const now = performance.now(), dt = Math.max(1, now - d.t);
+    d.v = (e.clientY - d.ly) / dt; d.ly = e.clientY; d.t = now;
+    const raw = d.p - dy / this.H(), lo = 0, hi = this.n() - 1;
+    const p = raw < lo ? lo - (lo - raw) * 0.3 : raw > hi ? hi + (raw - hi) * 0.3 : raw;
+    this.setState({ pos: p, live: true }); this.emit(p);
+  };
+  up = () => {
+    const d = this.drag; if (!d) return;
+    this.drag = null;
+    if (!d.moved) return;
+    this.snapTo(this.pos() - d.v * 220 / this.H());
+  };
+  componentDidUpdate() {
+    const i = this.props.index;
+    if (i === this.seen || this.drag) return;
+    this.seen = i;
+    if (i !== Math.round(this.pos())) { this.lastI = i; this.setState({ pos: i, live: false }); }
+  }
+  componentWillUnmount() { clearTimeout(this.wt); if (this.el && this.onWheel) this.el.removeEventListener('wheel', this.onWheel); }
+  renderVals() {
+    const items = this.props.items || [], rows = this.props.rows ?? 3, H = this.H(), pos = this.pos(), live = this.state.live;
+    const pad = ((rows - 1) / 2) * H;
+    return {
+      setEl: this.setEl, down: this.down, move: this.move, up: this.up,
+      hPx: H * rows + 'px', itemPx: H + 'px',
+      fs: (this.props.size ?? 28) + 'px', padX: '0 ' + (this.props.padX ?? 4) + 'px', align: this.props.align ?? 'center', ink: this.props.ink ?? '#1b1e2e',
+      colTf: `translateY(${(pad - pos * H).toFixed(2)}px)`,
+      colTr: live ? 'none' : 'transform .38s cubic-bezier(.2,.9,.25,1)',
+      itemTr: live ? 'none' : 'opacity .38s, transform .38s cubic-bezier(.2,.9,.25,1)',
+      rows: items.map((label, i) => {
+        const d = i - pos, a = Math.min(Math.abs(d), 3);
+        return {
+          label,
+          op: Math.max(0.1, 1 - a * 0.36).toFixed(3),
+          tf: `perspective(320px) rotateX(${(-Math.max(-3, Math.min(3, d)) * 22).toFixed(1)}deg) scale(${(1 - a * 0.07).toFixed(3)})`,
+          go: () => this.snapTo(i)
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

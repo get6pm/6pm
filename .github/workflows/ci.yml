@@ -1,0 +1,75 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [v2, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: typecheck, lint, format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+      # The look engine is copied from the prototype; a stale copy means colours drift from the design.
+      - run: pnpm exec tsx tools/design/extract-prototype-logic.ts --check
+
+  test:
+    name: package tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+
+  # The API's tests run inside the Workers runtime, simulated locally: no Docker, no Cloudflare login.
+  api:
+    name: api tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @6pm/api test
+
+  mobile:
+    name: mobile tests and bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @6pm/mobile test
+      - run: pnpm --filter @6pm/mobile exec expo export --platform ios --output-dir "$RUNNER_TEMP/export"
+
+  # The single required check for merging.
+  ci-passed:
+    if: always()
+    needs: [checks, test, api, mobile]
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          if [ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" = "true" ]; then
+            echo "::error::A required job failed"; exit 1
+          fi

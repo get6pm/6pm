@@ -1,0 +1,73 @@
+# 6pm v2: technical decisions
+
+Decided 10 Oct 2026. Change one only with new evidence, and record the change here. The shape follows Scootch (`~/Projects/scootch/docs/tech-decisions.md`); research: `plans/reports/researcher-261010-1732-old-6pm-and-reference-stacks-report.md`.
+
+## 1. Shape of the system
+
+| Part | Choice | Why |
+|---|---|---|
+| App | Expo 58, React Native 0.88 (New Architecture, Hermes), Expo Router native stack | Same pins as Scootch; most fixes ship over the air |
+| Motion | Reanimated 4 (worklets on the UI thread), Gesture Handler 3, native-stack transitions, expo-haptics | The native feel is the product. No JS-thread animation, no `Animated` from RN |
+| Sky and atmosphere | `@shopify/react-native-skia`: gradients, blurred blooms, grain/halftone/rain as runtime shaders | 60/120 fps full-screen effects; CSS layer stacks do not port to views |
+| Colour | All colour comes from `@6pm/theme` (port of the prototype's `palette()`/`themes()`, oklch converted to sRGB hex in code). Hex in components is a lint smell | One engine, colour-exact to the prototype |
+| Wide colour | The design's oklch tints render as sRGB hex (identical to the browser renders). Display P3 output (`oklch()` in `@6pm/theme`) waits on React Native parsing `color(display-p3 …)` in JS; native iOS already accepts it | Ship what matches the renders; upgrade without touching screens |
+| Fonts | expo-font with static Google Fonts instances: Bricolage Grotesque, Be Vietnam Pro, IBM Plex Mono, Patrick Hand, plus per-look display fonts. UI body is SF Pro on iOS | Matches the prototype's type roles |
+| Icons | Material Symbols Rounded as two static font instances (outline wght 400, filled wght 500) generated from the variable font, with a typed codepoint map | Pixel-exact glyphs incl. FILL axis; vector-icons lacks FILL |
+| Data on the phone | expo-sqlite (SQLCipher on), the source of truth. Migrations one file each; repositories validated by zod contracts | Local first; the close never needs the network |
+| Money | Integer đồng (`number`, safe to 9e15). All maths in `@6pm/domain`, pure and tested | Finance correctness lives in one tested package |
+| API | Hono on Cloudflare Workers, D1, R2; Email Workers for receipt email | No servers to run; inbound email is native to the platform |
+| Auth | Anonymous device token (Keychain, hash on server). Sign in with Apple only for Budget together | No account for the core app |
+| AI | Server only: DeepSeek (Anthropic-compatible endpoint, forced tool call with zod schema) for merchant/category naming and Ask phrasing; Jev for closed-label category picks. Every call in a cost ledger | Code decides numbers; models name things |
+| Purchases | RevenueCat (StoreKit 2): looks (non-consumable), Max (subscription, 7-day trial) | Entitlements and restore without a receipt server |
+| Native surfaces | `@bacons/apple-targets`: widgets, Live Activity, controls, share extension; local Expo modules for Vision OCR and Live Activity | Declared once in the first native batch |
+| Website | Astro on Cloudflare for the Coming Soon / waitlist page (launch countdown), waitlist stored in D1 | Same platform as the API |
+| i18n | Typed TS catalogues in `@6pm/i18n` (en, vi) with a completeness test | Scootch pattern; no runtime catalogue loading |
+| Errors | Sentry (DSN optional) | |
+| Repo | pnpm 12 workspace with `catalog:` pins, TS 6 strict, ESLint flat config, Prettier, Vitest (packages, api), Jest (mobile) | Scootch tooling verbatim |
+
+Deliberately absent: Postgres, PowerSync, Redis, Docker, Turbo, NativeWind/Tailwind, TanStack Query, Lingui, an admin dashboard.
+
+## 2. Environments
+
+| | dev | prd |
+|---|---|---|
+| App | `ai.sixpm.app.dev` "6pm Dev", scheme `sixpm-dev` | `ai.sixpm.app` "6pm", scheme `sixpm` |
+| API / D1 / R2 | `sixpm-api-dev` | `sixpm-api` |
+| Host | `6pm-dev.oddeggs.studio` | `6pm.oddeggs.studio` |
+| Updates channel | `dev` | `prd` |
+| Purchases | sandbox | real |
+
+One host per environment, on the founder's `oddeggs.studio` zone (no dedicated 6pm domain): the Astro site serves `/`, the API Worker owns the route `<host>/api/*`, Email Routing delivers `*@<host>` to the API Worker, and the site serves `/.well-known/apple-app-site-association` for universal links. Hosts stay one level below the zone so Cloudflare's universal certificate covers them.
+
+`APP_VARIANT` = `dev` (default) | `prd` | `e2e-test`. Runtime version policy: fingerprint. The v1 runtime `1.0.2` is never published to.
+
+## 3. Workspace layout
+
+```
+apps/mobile      Expo app (src/app routes, src/features, src/ui, src/db, src/data)
+apps/api         Hono Worker (routes registry, D1 migrations, email handler, cron)
+apps/web         Astro Coming Soon page
+packages/domain  money, time, plan maths, close state machine, VietQR, amount parser, contracts
+packages/theme   looks catalogue, keyframe palettes, token derivation, oklch, motion curves
+packages/i18n    en/vi catalogues, translate, completeness
+tools/scripts    repo hygiene checks
+```
+
+Workspace packages are `@6pm/<dir>`, ESM, export TypeScript source (`"exports": {".": "./src/index.ts"}`). Relative imports are extensionless (Metro). Named exports only, except route files and configs. Files ≤ 300 lines.
+
+## 4. Motion contract
+
+- Curves from the prototype, as Reanimated springs/beziers in `@6pm/theme/motion`: house overshoot `cubic-bezier(.2,.9,.25,1.12)`, entrance `(.2,.9,.2,1)`, wheel snap `(.2,.9,.25,1)` 380 ms.
+- Gestures drive shared values directly; release uses velocity-aware springs. Thresholds from the prototype (card fling 90 px, row confirm 90, delete reveal −48 / commit −150, sheet dismiss 120 or flick).
+- Haptics: selection for ticks/thresholds, light impact for actions, success notification for close, reveal and purchases.
+- Reduce Motion: springs become 200 ms fades; atmosphere freezes; nothing loops.
+
+## 5. Native surface, declared once
+
+First native batch declares: App Group, Keychain sharing, iCloud KVS, push + time-sensitive notifications, Live Activities, Sign in with Apple, In-App Purchase, camera, microphone + speech, Face ID, App Intents, and the widget, Live Activity, controls and share-extension targets. After that, feature work is JavaScript and ships over the air.
+
+## 6. Verification on this Mac
+
+- Unit tests per package (Vitest) and Jest for app logic; run only the file you changed locally.
+- The iOS simulator is allowed for design-beside-device checks; delete `apps/mobile/ios` and DerivedData after, and check `df -h /` first (keep ≥ 10 GB free).
+- `pnpm --filter @6pm/mobile exec expo export --platform ios` proves the bundle builds.

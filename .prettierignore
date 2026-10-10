@@ -1,0 +1,17 @@
+pnpm-lock.yaml
+design/
+docs/
+plans/
+.claude/
+**/dist/
+**/.astro/
+**/.expo/
+apps/mobile/ios/
+apps/mobile/android/
+**/*.md
+
+# Written by tools/scripts/generate-index.ts (formatting follows the generator)
+**/index.generated.ts
+
+# Generated from the prototype or by the font build (formatting follows the generator)
+**/*.generated.*

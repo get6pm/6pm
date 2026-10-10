@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&display=block" rel="stylesheet">
+<script src="./companion.js"></script>
+<style>
+body{margin:0;background:#120e1a}
+a{color:#f3b27a}
+a:hover{color:#ffd2a8}
+</style>
+</helmet>
+<div style="min-height:100vh; background:#120e1a; color:#f6efe6; padding:64px 56px 96px; box-sizing:border-box; display:flex; flex-direction:column; gap:88px; font-family:-apple-system, 'SF Pro Text', 'Be Vietnam Pro', system-ui, sans-serif; -webkit-font-smoothing:antialiased; letter-spacing:-.01em;">
+
+  <div style="display:flex; align-items:flex-end; gap:20px;">
+    <dusk-buddy size="80" mood="happy"></dusk-buddy>
+    <div style="display:flex; flex-direction:column; gap:6px;">
+      <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:64px; line-height:.95; letter-spacing:-.02em;">6pm, outside the app</div>
+      <div style="font-size:16px; color:rgba(246,239,230,.65);">System surfaces, Android, serious mode and edge states · v2.0</div>
+    </div>
+  </div>
+
+  <!-- 1. LOCK + HOME -->
+  <section data-screen-label="Lock Screen & Home Screen" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">01</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">iPhone · Lock Screen and Home Screen</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Lock Screen" style="position:relative; height:100%; overflow:hidden; color:#fff; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; left:50%; top:610px; width:220px; height:220px; transform:translateX(-50%); border-radius:50%; background:radial-gradient(circle at 50% 40%, #ffe2b0, #ffb26e 70%); box-shadow:0 0 140px 70px rgba(255,160,100,.35);"></div>
+          <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; padding:66px 16px 30px; box-sizing:border-box;">
+            <div style="font-size:19px; font-weight:600; opacity:.9;">Friday 9 October</div>
+            <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:112px; line-height:1; letter-spacing:-.03em;">18:07</div>
+            <div style="display:flex; gap:12px; margin-top:12px;">
+              <div style="width:72px; height:72px; border-radius:50%; background:conic-gradient(#fff 0 70%, rgba(255,255,255,.22) 70% 100%); display:flex; align-items:center; justify-content:center;">
+                <div style="width:62px; height:62px; border-radius:50%; background:rgba(60,35,80,.85); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;">
+                  <span style="font-size:17px; font-weight:700; letter-spacing:-.02em;">245k</span><span style="font-size:10px; font-weight:600; opacity:.75;">left</span>
+                </div>
+              </div>
+              <div style="width:158px; height:72px; border-radius:20px; background:rgba(255,255,255,.16); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); padding:10px 14px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; gap:2px;">
+                <span style="font-size:12px; font-weight:600; opacity:.75;">6pm · Safe today</span>
+                <span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:28px; line-height:1;">245k</span>
+                <span style="font-size:12px; font-weight:600; opacity:.75;">2 pending</span>
+              </div>
+            </div>
+            <div style="flex:1;"></div>
+            <div style="width:100%; display:flex; flex-direction:column; gap:8px;">
+              <div style="border-radius:26px; background:rgba(20,12,30,.55); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px); padding:14px 14px 14px 16px; display:flex; align-items:center; gap:12px;">
+                <dusk-buddy size="44" mood="calm"></dusk-buddy>
+                <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;">
+                  <span style="font-size:12px; font-weight:600; opacity:.6;">Waiting · tap when paid</span>
+                  <span style="font-size:15px; font-weight:650;">45.000₫ to Phở Hòa</span>
+                </div>
+                <span style="height:34px; padding:0 14px; border-radius:99px; background:#f6a46a; color:#2a1424; font-weight:650; font-size:14px; display:flex; align-items:center;">Paid</span>
+              </div>
+              <div style="border-radius:24px; background:rgba(255,255,255,.2); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px); padding:12px 14px; display:flex; gap:12px;">
+                <div style="width:38px; height:38px; flex-shrink:0; border-radius:10px; background:linear-gradient(180deg,#3b3270 0%,#c4607a 62%,#f0975a 100%); position:relative; overflow:hidden; display:flex; align-items:flex-end; justify-content:center; box-shadow:inset 0 1px 0 rgba(255,255,255,.25);"><div style="margin-bottom:-3px;"><dusk-buddy size="33" mood="calm"></dusk-buddy></div></div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:2px;">
+                  <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="font-weight:650;">6pm</span><span style="opacity:.6;">now</span></div>
+                  <div style="font-size:15px; line-height:1.3;">It’s six. Close your day: 4 caught, about a minute.</div>
+                </div>
+              </div>
+              <div style="border-radius:24px; background:rgba(255,255,255,.2); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px); overflow:hidden;">
+                <div style="padding:12px 14px; display:flex; gap:12px;">
+                  <div style="width:38px; height:38px; flex-shrink:0; border-radius:10px; background:linear-gradient(180deg,#3b3270 0%,#c4607a 62%,#f0975a 100%); position:relative; overflow:hidden; display:flex; align-items:flex-end; justify-content:center; box-shadow:inset 0 1px 0 rgba(255,255,255,.25);"><div style="margin-bottom:-3px;"><dusk-buddy size="33" mood="calm"></dusk-buddy></div></div>
+                  <div style="flex:1; display:flex; flex-direction:column; gap:2px;">
+                    <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="font-weight:650;">6pm</span><span style="opacity:.6;">12:11</span></div>
+                    <div style="font-size:15px; line-height:1.3;">Caught 45.000₫ · Phở Hòa</div>
+                  </div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; border-top:0.5px solid rgba(255,255,255,.2);">
+                  <div style="padding:12px; text-align:center; font-size:15px; font-weight:600;">Confirm</div>
+                  <div style="padding:12px; text-align:center; font-size:15px; font-weight:600; border-left:0.5px solid rgba(255,255,255,.2);">Edit</div>
+                </div>
+              </div>
+            </div>
+            <div style="width:100%; display:flex; justify-content:space-between; padding:22px 30px 0; box-sizing:border-box;">
+              <div style="width:50px; height:50px; border-radius:50%; background:rgba(20,12,30,.4); backdrop-filter:blur(20px); display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-size:24px; line-height:1;">flashlight_on</span></div>
+              <div style="width:50px; height:50px; border-radius:50%; background:rgba(20,12,30,.4); backdrop-filter:blur(20px); display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-size:24px; line-height:1;">qr_code_scanner</span></div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Home Screen widgets" style="position:relative; height:100%; overflow:hidden; color:#fff; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 52%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; padding:66px 24px 26px; box-sizing:border-box; display:flex; flex-direction:column; gap:22px;">
+            <div style="height:170px; border-radius:26px; background:linear-gradient(160deg,#3a2f6a,#b45d78 70%,#ec9058); padding:16px; box-sizing:border-box; display:flex; gap:14px; box-shadow:0 10px 30px rgba(0,0,0,.25);">
+              <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+                <span style="font-size:13px; font-weight:600; opacity:.8;">Safe to spend today</span>
+                <span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:56px; line-height:1; letter-spacing:-.02em;">245k</span>
+                <span style="font-size:12px; font-weight:600; opacity:.8;">Tomorrow ≈ 250k · 2 pending</span>
+              </div>
+              <div style="width:96px; display:flex; flex-direction:column; gap:8px;">
+                <div style="flex:1; border-radius:18px; background:#f6a46a; color:#2a1424; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;"><span style="font-family:'Material Symbols Rounded'; font-size:26px; line-height:1;">qr_code_scanner</span><span style="font-size:12px; font-weight:650;">Scan QR</span></div>
+                <div style="flex:1; border-radius:18px; background:rgba(255,255,255,.2); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;"><span style="font-family:'Material Symbols Rounded'; font-size:26px; line-height:1;">add</span><span style="font-size:12px; font-weight:650;">Quick add</span></div>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:170px 1fr; gap:22px; align-items:start;">
+              <div style="height:170px; border-radius:26px; background:#fbf4ec; color:#2a1d30; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 10px 30px rgba(0,0,0,.25);">
+                <dusk-buddy size="40" mood="calm"></dusk-buddy>
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                  <span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:44px; line-height:1;">245k</span>
+                  <span style="font-size:12px; font-weight:600; opacity:.6;">safe today</span>
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px; padding-top:4px;">
+                <div style="width:66px; height:66px; flex-shrink:0; border-radius:16px; background:linear-gradient(180deg,#3b3270 0%,#c4607a 62%,#f0975a 100%); position:relative; overflow:hidden; display:flex; align-items:flex-end; justify-content:center; box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 6px 16px rgba(0,0,0,.25);"><div style="margin-bottom:-5px;"><dusk-buddy size="57" mood="calm"></dusk-buddy></div></div>
+                <span style="font-size:12px; font-weight:500;">6pm</span>
+              </div>
+            </div>
+            <div style="border-radius:26px; background:#fbf4ec; color:#2a1d30; padding:16px 16px 10px; display:flex; flex-direction:column; gap:2px; box-shadow:0 10px 30px rgba(0,0,0,.25);">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; padding-bottom:6px;"><span style="font-size:15px; font-weight:700;">Today</span><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">245k left</span></div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-top:0.5px solid rgba(42,29,48,.1); font-size:14px;"><span style="display:flex; align-items:center; gap:9px;"><span style="width:26px; height:26px; border-radius:9px; flex-shrink:0; background:linear-gradient(155deg, oklch(0.9 0.07 45), oklch(0.78 0.12 45)); color:oklch(0.34 0.09 45); display:inline-flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; white-space:nowrap; font-size:16px; font-variation-settings:'FILL' 1;">bakery_dining</span></span>Bánh mì Cô Ba</span><span style="font-weight:600;">25.000₫</span></div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-top:0.5px solid rgba(42,29,48,.1); font-size:14px;"><span style="display:flex; align-items:center; gap:9px;"><span style="width:26px; height:26px; border-radius:9px; flex-shrink:0; background:linear-gradient(155deg, oklch(0.9 0.07 45), oklch(0.78 0.12 45)); color:oklch(0.34 0.09 45); display:inline-flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; white-space:nowrap; font-size:16px; font-variation-settings:'FILL' 1;">ramen_dining</span></span>Phở Hòa <span style="font-size:11px; font-weight:700; color:#b8622a; letter-spacing:.04em;">PENDING</span></span><span style="font-weight:600;">45.000₫</span></div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-top:0.5px solid rgba(42,29,48,.1); font-size:14px;"><span style="display:flex; align-items:center; gap:9px;"><span style="width:26px; height:26px; border-radius:9px; flex-shrink:0; background:linear-gradient(155deg, oklch(0.9 0.07 25), oklch(0.78 0.12 25)); color:oklch(0.34 0.09 25); display:inline-flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; white-space:nowrap; font-size:16px; font-variation-settings:'FILL' 1;">emoji_food_beverage</span></span>Trà sữa</span><span style="font-weight:600;">45.000₫</span></div>
+              <div style="display:flex; justify-content:space-between; padding:7px 0; border-top:0.5px solid rgba(42,29,48,.1); font-size:14px; opacity:.55;"><span>+2 more</span><span></span></div>
+            </div>
+            <div style="flex:1;"></div>
+            <div style="height:88px; border-radius:32px; background:rgba(255,255,255,.18); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); display:flex; align-items:center; justify-content:space-around; padding:0 10px;">
+              <div style="width:62px; height:62px; border-radius:16px; background:rgba(255,255,255,.22);"></div>
+              <div style="width:62px; height:62px; border-radius:16px; background:rgba(255,255,255,.22);"></div>
+              <div style="width:62px; height:62px; border-radius:16px; background:rgba(255,255,255,.22);"></div>
+              <div style="width:62px; height:62px; border-radius:16px; background:rgba(255,255,255,.22);"></div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+
+      <div style="width:420px; display:flex; flex-direction:column; gap:22px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55);">DYNAMIC ISLAND</div>
+        <div style="display:flex; flex-direction:column; gap:14px; align-items:flex-start;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="width:206px; height:37px; border-radius:24px; background:#000; display:flex; align-items:center; justify-content:space-between; padding:0 14px 0 8px; box-sizing:border-box;"><dusk-buddy size="24" mood="calm"></dusk-buddy><span style="font-weight:650; font-size:14px; color:#f6a46a;">55k</span></div>
+            <span style="font-size:13px; color:rgba(246,239,230,.6);">Waiting after a QR hand-off</span>
+          </div>
+          <div style="width:374px; height:84px; border-radius:42px; background:#000; display:flex; align-items:center; gap:12px; padding:0 14px; box-sizing:border-box;">
+            <dusk-buddy size="46" mood="calm"></dusk-buddy>
+            <div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:12px; font-weight:600; color:rgba(255,255,255,.55);">Waiting · tap when paid</span><span style="font-size:15px; font-weight:650;">45.000₫ to Phở Hòa</span></div>
+            <span style="height:36px; padding:0 16px; border-radius:99px; background:#f6a46a; color:#2a1424; font-weight:650; font-size:14px; display:flex; align-items:center;">Paid</span>
+          </div>
+          <div style="width:374px; border-radius:42px; background:#000; padding:16px 20px 18px; box-sizing:border-box; display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; align-items:center; gap:10px;"><span style="font-family:'Material Symbols Rounded'; font-size:20px; line-height:1; color:#f6a46a;">flight</span><span style="font-size:13px; font-weight:600; color:rgba(255,255,255,.6);">Bangkok · today</span><span style="flex:1;"></span><span style="font-size:13px; font-weight:600; color:rgba(255,255,255,.6);">฿560 left</span></div>
+            <div style="display:flex; align-items:baseline; gap:8px;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:34px; line-height:1;">฿640</span><span style="font-size:14px; color:rgba(255,255,255,.6);">of ฿1.200 · ≈ 469.000₫</span></div>
+            <div style="height:6px; border-radius:6px; background:rgba(255,255,255,.15);"><div style="width:53%; height:100%; border-radius:6px; background:#f6a46a;"></div></div>
+          </div>
+        </div>
+
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55); padding-top:10px;">CONTROL CENTER · ACTION BUTTON</div>
+        <div style="display:flex; gap:16px; align-items:center;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px;"><div style="width:72px; height:72px; border-radius:50%; background:#f6a46a; color:#2a1424; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-size:32px; line-height:1;">qr_code_scanner</span></div><span style="font-size:12px; font-weight:600;">Scan QR</span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px;"><div style="width:72px; height:72px; border-radius:50%; background:rgba(255,255,255,.14); display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-size:32px; line-height:1;">add</span></div><span style="font-size:12px; font-weight:600;">Quick add</span></div>
+          <div style="flex:1; height:72px; border-radius:24px; background:rgba(255,255,255,.08); border:0.5px solid rgba(255,255,255,.14); display:flex; align-items:center; gap:12px; padding:0 16px;">
+            <div style="width:8px; height:36px; border-radius:4px; background:#f6a46a;"></div>
+            <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-size:12px; color:rgba(246,239,230,.6);">Action button</span><span style="font-size:15px; font-weight:650;">Scan QR in 6pm</span></div>
+          </div>
+        </div>
+
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55); padding-top:10px;">SIRI</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div style="align-self:flex-end; padding:10px 16px; border-radius:20px 20px 4px 20px; background:rgba(255,255,255,.12); font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:20px;">“Log 45k phở in 6pm”</div>
+          <div style="border-radius:26px; background:#fbf4ec; color:#2a1d30; padding:14px 16px; display:flex; align-items:center; gap:12px;">
+            <dusk-buddy size="44" mood="happy"></dusk-buddy>
+            <div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:15px; font-weight:650;">Logged. Phở · Food</span><span style="font-size:13px; opacity:.6;">Safe today is now 200k</span></div>
+            <span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:26px;">45.000₫</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. SHARE + SERIOUS -->
+  <section data-screen-label="Share extension & Serious mode" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">02</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Share to 6pm, and serious mode</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" time="16:41" hint-size="402px,874px">
+        <div data-screen-label="Share sheet extension" style="position:relative; height:100%; overflow:hidden; background:#ece9e4;">
+          <div style="position:absolute; inset:0; background:repeating-linear-gradient(135deg, #e6e2dc 0 14px, #eeebe6 14px 28px);"></div>
+          <div style="position:absolute; left:0; right:0; top:300px; text-align:center; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(30,26,40,.4);">BANK APP · TRANSFER RECEIPT</div>
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.28);"></div>
+          <div style="position:absolute; left:8px; right:8px; bottom:8px; border-radius:44px; background:rgba(251,248,243,.96); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px); color:#1f1a28; padding:10px 20px 20px; display:flex; flex-direction:column; gap:16px; box-shadow:0 -10px 40px rgba(10,5,20,.25);">
+            <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(31,26,40,.25);"></div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <dusk-buddy size="40" mood="calm"></dusk-buddy>
+              <div style="flex:1; display:flex; flex-direction:column; gap:1px;"><span style="font-size:17px; font-weight:650;">Add to 6pm</span><span style="font-size:13px; color:rgba(31,26,40,.6);">Read on this iPhone from your Vietcombank receipt</span></div>
+            </div>
+            <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:64px; line-height:1; letter-spacing:-.02em;">120.000<span style="font-size:.42em; margin-left:4px; opacity:.55;">₫</span></div>
+            <div style="border-radius:22px; background:#fff; border:0.5px solid rgba(31,26,40,.08);">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin:0 14px; padding:12px 0; font-size:15px;">
+                <span style="color:rgba(31,26,40,.6);">To</span>
+                <span style="display:flex; align-items:center; gap:6px; padding:3px 8px; border-radius:8px; border:1.5px dashed #d88a3c; background:oklch(0.95 0.04 70); font-weight:600;">CIRCLE K VN<span style="font-family:'Material Symbols Rounded'; font-size:16px; line-height:1; color:#b8622a;">help</span></span>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin:0 14px; padding:12px 0; border-top:0.5px solid rgba(31,26,40,.08); font-size:15px;"><span style="color:rgba(31,26,40,.6);">When</span><span style="font-weight:600;">Today · 16:40</span></div>
+              <div style="display:flex; justify-content:space-between; margin:0 14px; padding:12px 0; border-top:0.5px solid rgba(31,26,40,.08); font-size:15px;"><span style="color:rgba(31,26,40,.6);">Code</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:14px;">FT26282·91740</span></div>
+              <div style="display:flex; justify-content:space-between; margin:0 14px; padding:12px 0; border-top:0.5px solid rgba(31,26,40,.08); font-size:15px;"><span style="color:rgba(31,26,40,.6);">Category</span><span style="font-weight:600;">Shopping</span></div>
+            </div>
+            <div style="font-size:13px; color:#9a4f1c; margin-top:-6px; padding:0 4px;">Not sure about the name. Tap it to check.</div>
+            <div style="display:flex; gap:8px;">
+              <div style="flex:1; height:54px; border-radius:99px; background:rgba(31,26,40,.07); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:16px;">Edit</div>
+              <div style="flex:2; height:54px; border-radius:99px; background:#1f1a28; color:#fbf3ea; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Confirm</div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Serious mode" style="position:relative; height:100%; overflow:hidden; color:#eef0f3; background:linear-gradient(180deg,#2b2f37 0%,#353a44 60%,#40454f 100%);">
+          <div style="position:absolute; inset:0; padding:64px 18px 30px; box-sizing:border-box; display:flex; flex-direction:column; gap:22px;">
+            <div style="display:flex; flex-direction:column; gap:1px; padding:0 4px;"><span style="font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:rgba(238,240,243,.6);">Friday</span><span style="font-size:22px; font-weight:700;">9 October</span></div>
+            <div style="display:flex; flex-direction:column; gap:6px; padding:30px 4px 10px;">
+              <span style="font-size:15px; color:rgba(238,240,243,.7);">Safe to spend today</span>
+              <span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:84px; line-height:1; letter-spacing:-.02em;">120.000<span style="font-size:.4em; margin-left:4px; opacity:.55;">₫</span></span>
+              <span style="font-size:15px; line-height:1.45; color:rgba(238,240,243,.7); max-width:300px;">This month is tight. That’s okay. Here’s one thing that would help.</span>
+            </div>
+            <div style="border-radius:26px; background:rgba(255,255,255,.07); border:0.5px solid rgba(255,255,255,.1); padding:18px; display:flex; flex-direction:column; gap:12px;">
+              <div style="font-size:17px; font-weight:650;">Pause Future you for October</div>
+              <div style="font-size:15px; line-height:1.45; color:rgba(238,240,243,.75);">Frees 2.000.000₫. Your daily number goes from 120k to 210k. You can turn it back on any time.</div>
+              <div style="display:flex; gap:8px; padding-top:4px;">
+                <div style="flex:1; height:48px; border-radius:99px; background:#eef0f3; color:#2b2f37; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:15px;">Pause it</div>
+                <div style="flex:1; height:48px; border-radius:99px; background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:15px;">Not now</div>
+              </div>
+            </div>
+            <div style="border-radius:26px; background:rgba(255,255,255,.07); border:0.5px solid rgba(255,255,255,.1); overflow:hidden;">
+              <div style="display:flex; align-items:center; gap:12px; padding:14px 16px;"><span style="font-family:'Material Symbols Rounded'; font-size:22px; line-height:1;">call</span><div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px; font-weight:550;">Talk to someone</span><span style="font-size:13px; color:rgba(238,240,243,.6);">Free, confidential debt advice</span></div><span style="font-family:'Material Symbols Rounded'; font-size:20px; line-height:1; opacity:.4;">chevron_right</span></div>
+              <div style="display:flex; align-items:center; gap:12px; padding:14px 16px; border-top:0.5px solid rgba(255,255,255,.1);"><span style="font-family:'Material Symbols Rounded'; font-size:22px; line-height:1;">list_alt</span><div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px; font-weight:550;">See what’s due before payday</span><span style="font-size:13px; color:rgba(238,240,243,.6);">2 bills · 600.000₫</span></div><span style="font-family:'Material Symbols Rounded'; font-size:20px; line-height:1; opacity:.4;">chevron_right</span></div>
+            </div>
+            <div style="font-size:13px; line-height:1.5; color:rgba(238,240,243,.55); padding:0 6px; text-wrap:pretty;">Serious mode: muted colours, no companion, no jokes. Turned on by you, or offered when debt or stress shows up.</div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+  </section>
+
+  <!-- 3. STATES -->
+  <section data-screen-label="System states" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">03</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">States and edge cases</span></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(330px, 1fr)); gap:16px; max-width:1420px;">
+      <sc-for list="{{ states }}" as="c" hint-placeholder-count="9">
+        <div style="border-radius:30px; background: {{ c.bg }}; color: {{ c.fg }}; padding:22px 22px 20px; box-shadow:0 18px 40px rgba(0,0,0,.25); display:flex; flex-direction:column; gap:12px; min-height:220px; box-sizing:border-box;">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; opacity:.6;">{{ c.tag }}</span>
+            <span style="display:flex; align-items:center; gap:8px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; white-space:nowrap; font-size:22px; opacity:.7;">{{ c.icon }}</span><dusk-buddy size="40" mood="{{ c.mood }}"></dusk-buddy></span>
+          </div>
+          <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:30px; line-height:1.08; letter-spacing:-.01em; text-wrap:pretty;">{{ c.title }}</div>
+          <div style="font-size:15px; line-height:1.45; opacity:.75; text-wrap:pretty;">{{ c.body }}</div>
+          <div style="flex:1;"></div>
+          <div style="display:flex; gap:8px;">
+            <span style="height:42px; padding:0 18px; border-radius:99px; background: {{ c.btnBg }}; color: {{ c.btnFg }}; display:flex; align-items:center; font-weight:650; font-size:15px;">{{ c.cta }}</span>
+            <sc-if value="{{ c.hasAlt }}" hint-placeholder-val="{{ false }}"><span style="height:42px; padding:0 16px; border-radius:99px; border:0.5px solid {{ c.line }}; display:flex; align-items:center; font-weight:600; font-size:15px;">{{ c.alt }}</span></sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 4. ANDROID -->
+  <section data-screen-label="Android" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">04</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Android</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:32px; align-items:flex-start;">
+      <div style="width:360px; height:200px; border-radius:32px; background:linear-gradient(160deg,#3a2f6a,#b45d78 70%,#ec9058); padding:20px; box-sizing:border-box; display:flex; gap:14px;">
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+          <span style="font-size:14px; font-weight:600; opacity:.85;">Safe to spend today</span>
+          <span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:60px; line-height:1;">245k</span>
+          <span style="font-size:13px; opacity:.8;">2 waiting in Inbox</span>
+        </div>
+        <div style="width:100px; display:flex; flex-direction:column; gap:10px;">
+          <div style="flex:1; border-radius:24px; background:#f6a46a; color:#2a1424; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-size:30px; line-height:1;">qr_code_scanner</span></div>
+          <div style="flex:1; border-radius:24px; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-size:30px; line-height:1;">add</span></div>
+        </div>
+      </div>
+      <div style="width:380px; border-radius:28px; background:#2a2530; padding:16px 18px; display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; align-items:center; gap:8px; font-size:13px; color:rgba(246,239,230,.6);"><span style="width:20px; height:20px; border-radius:50%; background:linear-gradient(180deg,#3b3270,#e4885a);"></span>6pm · now</div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px; font-weight:650;">Caught 45.000₫ · Phở Hòa</span><span style="font-size:14px; color:rgba(246,239,230,.65);">From your MB Bank notification · read on this phone</span></div>
+          <dusk-buddy size="40" mood="calm"></dusk-buddy>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <span style="height:40px; padding:0 20px; border-radius:99px; background:#f6a46a; color:#2a1424; display:flex; align-items:center; font-weight:650; font-size:14px;">Confirm</span>
+          <span style="height:40px; padding:0 20px; border-radius:99px; background:rgba(255,255,255,.1); display:flex; align-items:center; font-weight:600; font-size:14px;">Edit</span>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="width:200px; height:72px; border-radius:22px; background:#f6a46a; color:#2a1424; display:flex; align-items:center; gap:12px; padding:0 18px; box-sizing:border-box;">
+          <span style="font-family:'Material Symbols Rounded'; font-size:26px; line-height:1;">qr_code_scanner</span>
+          <div style="display:flex; flex-direction:column;"><span style="font-size:15px; font-weight:650;">Scan QR</span><span style="font-size:12px; opacity:.7;">6pm</span></div>
+        </div>
+        <span style="font-size:13px; color:rgba(246,239,230,.6);">Quick Settings tile</span>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const light = { bg: '#fbf4ec', fg: '#2a1d30', btnBg: '#2a1d30', btnFg: '#fbf4ec', line: 'rgba(42,29,48,.25)' };
+    const dusk = { bg: 'linear-gradient(160deg,#3a2f6a,#9c4f74 75%,#d27a5a)', fg: '#fbf4ec', btnBg: '#fbf4ec', btnFg: '#2a1d30', line: 'rgba(255,255,255,.35)' };
+    const night = { bg: '#221c33', fg: '#fbf4ec', btnBg: '#f6a46a', btnFg: '#2a1424', line: 'rgba(255,255,255,.25)' };
+    const S = [
+      [dusk, 'WELCOME BACK', 'waving_hand', 'Welcome back. I caught 14 things while you were away.', 'No catching up on days you missed. Just a quick look at what came in.', 'Review 14', 'Later'],
+      [light, 'OVERSPEND DAY', 'event_repeat', 'Tomorrow’s 180k instead of 245k. Month still lands.', 'Big days happen. The plan spreads it out over the rest of the month.', 'See the plan', ''],
+      [night, 'LATE CLOSE · 00:40', 'bedtime', 'Still counts for Friday.', 'Closing after midnight files everything under yesterday.', 'Close Friday', ''],
+      [light, 'FIRST DAY', 'wb_twilight', 'Nothing caught yet.', 'Scan a QR, share a bank receipt to 6pm, or tap + when you spend.', 'Scan QR', 'Quick add'],
+      [light, 'ZERO-SPEND DAY', 'spa', 'A quiet day. That counts too.', 'No confetti. Tomorrow just gets a little roomier.', 'Done', ''],
+      [night, 'OFFLINE', 'cloud_off', 'You’re offline. Nothing’s broken.', 'Everything works on this iPhone. Backup catches up when you’re back.', 'Okay', ''],
+      [light, 'CAMERA OFF', 'no_photography', '6pm can’t see the camera.', 'Turn it on to scan QR codes, or type the amount instead.', 'Open Settings', 'Type it'],
+      [light, 'QR UNREADABLE', 'qr_code_2', 'Couldn’t read that QR.', 'Try more light, hold a little further back, or type it in.', 'Try again', 'Type it'],
+      [dusk, 'ABROAD', 'public', 'This is a Thai PromptPay QR.', 'Paying it from 6pm isn’t supported yet. Log it and we’ll show ₫ underneath.', 'Log ฿120 by hand', ''],
+      [light, 'OCR FAILED', 'document_scanner', 'Couldn’t read this receipt.', 'We kept what we could: 120.000₫. Add the rest by hand.', 'Finish it', ''],
+      [night, 'BACKUP', 'cloud_done', 'Backed up 2 minutes ago.', 'iCloud · 284 items · encrypted. 6pm still works without it.', 'Manage', ''],
+      [light, 'NOTIFICATIONS OFF', 'notifications_off', 'No 6pm reminder tonight.', 'Your day still closes. Open 6pm whenever, or turn reminders back on.', 'Turn on', 'Not now']
+    ];
+    return {
+      states: S.map(([p, tag, icon, title, body, cta, alt]) => Object.assign({ tag, icon, title, body, cta, alt, hasAlt: !!alt, mood: { 'WELCOME BACK': 'wave', 'OVERSPEND DAY': 'nod', 'LATE CLOSE · 00:40': 'sleepy', 'FIRST DAY': 'wave', 'ZERO-SPEND DAY': 'happy', 'OFFLINE': 'calm', 'CAMERA OFF': 'think', 'QR UNREADABLE': 'think', 'ABROAD': 'calm', 'OCR FAILED': 'nod', 'BACKUP': 'calm', 'NOTIFICATIONS OFF': 'sleepy' }[tag] || 'calm' }, p))
+    };
+  }
+}
+</script>
+</body>
+</html>

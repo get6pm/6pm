@@ -1,0 +1,11 @@
+{
+  "name": "@6pm/scripts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Repo scripts: registry index generator, design extraction, checks",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  }
+}

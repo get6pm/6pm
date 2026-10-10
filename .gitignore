@@ -1,0 +1,20 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.dev.vars
+certs/
+.expo/
+.wrangler/
+.astro/
+dist/
+build/
+coverage/
+*.log
+.DS_Store
+/apps/mobile/ios
+/apps/mobile/android
+.claude/agent-memory/
+# Reference renders are regenerated from the prototype (tools/design); only comparison sheets are kept.
+/design/renders/*
+!/design/renders/compare/

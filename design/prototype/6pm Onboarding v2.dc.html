@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&display=block" rel="stylesheet">
+<script src="./companion.js"></script>
+<style>
+body{margin:0;background:#0b0912}
+a{color:#f3b27a}
+a:hover{color:#ffd2a8}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.12);opacity:1}100%{transform:scale(1)}}
+@keyframes bubbleA{from{opacity:0;transform:scale(.7) translateY(6px)}to{opacity:1;transform:none}}
+@keyframes bubbleB{from{opacity:0;transform:scale(.7) translateY(6px)}to{opacity:1;transform:none}}
+@keyframes shimmer{0%,100%{opacity:.25}50%{opacity:.6}}
+@keyframes growX{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes inR{from{opacity:0;transform:translateX(44px)}to{opacity:1;transform:none}}
+@keyframes inL{from{opacity:0;transform:translateX(-44px)}to{opacity:1;transform:none}}
+@keyframes cardIn{from{opacity:0;transform:translateY(22px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes flyR{from{opacity:1;transform:none}to{opacity:0;transform:translateX(115%) rotate(10deg)}}
+@keyframes flyL{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-115%) rotate(-10deg)}}
+@keyframes scan{0%,100%{top:14%}50%{top:80%}}
+@keyframes tapRing{0%,100%{box-shadow:0 0 0 0 rgba(246,164,106,.8)}60%{box-shadow:0 0 0 9px rgba(246,164,106,0)}}
+@keyframes slideMail{0%,20%{transform:translateX(0);opacity:1}55%,100%{transform:translateX(70px);opacity:0}}
+@keyframes alertIn{from{opacity:0;transform:scale(1.12)}to{opacity:1;transform:none}}
+@keyframes leave{from{opacity:0}to{opacity:1}}
+</style>
+</helmet>
+<div style="min-height:100vh; background: {{ pageBg }}; transition: background 1.2s; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:64px; padding:48px 24px; box-sizing:border-box; font-family:-apple-system, 'SF Pro Text', 'Be Vietnam Pro', system-ui, sans-serif;">
+  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ dark }}" time="{{ clock }}" hint-size="402px,874px">
+    <div data-screen-label="Onboarding" style="position:relative; height:100%; overflow:hidden; color: {{ ink }}; -webkit-font-smoothing:antialiased; font-family:-apple-system, 'SF Pro Text', 'Be Vietnam Pro', system-ui, sans-serif; letter-spacing:-.01em;">
+      <div style="position:absolute; inset:0; background: {{ sky }}; transition: background 1.2s;"></div>
+      <div style="position:absolute; left: {{ sun.left }}; top: {{ sun.top }}; width: {{ sun.size }}; height: {{ sun.size }}; border-radius:50%; background: {{ sun.color }}; box-shadow: {{ sun.glow }}; opacity: {{ sun.op }}; transform:translate(-50%,-50%); transition: all 1.2s cubic-bezier(.3,.8,.3,1); pointer-events:none;"></div>
+
+      <div style="position:absolute; inset:0; display:flex; flex-direction:column; padding:60px 20px 30px; box-sizing:border-box;">
+        <div style="display:flex; align-items:center; gap:12px; min-height:44px; flex-shrink:0;">
+          <button style-active="transform:scale(.92);" onClick="{{ back }}" style="width:44px; height:44px; flex-shrink:0; border-radius:50%; border:none; background: {{ cell }}; box-shadow: {{ cardShadow }}; color: {{ ink }}; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; opacity: {{ backOp }}; pointer-events: {{ backPe }}; transition:opacity .3s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; white-space:nowrap; font-size:22px;">arrow_back</span></button>
+          <div style="flex:1; display:flex; gap:4px;">
+            <sc-for list="{{ segs }}" as="g" hint-placeholder-count="8">
+              <div style="flex:1; height:4px; border-radius:4px; background: {{ track }}; overflow:hidden;"><div style="height:100%; width: {{ g.w }}; border-radius:4px; background: {{ ink }}; transition:width .5s cubic-bezier(.2,.9,.2,1);"></div></div>
+            </sc-for>
+          </div>
+          <button style-active="transform:scale(.92);" onClick="{{ skip }}" style="min-width:44px; height:44px; border:none; background:transparent; color: {{ inkSoft }}; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; opacity: {{ skipOp }}; pointer-events: {{ skipPe }};">Skip</button>
+        </div>
+
+        <sc-if value="{{ hasLine }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute; right:18px; top:112px; display:flex; flex-direction:column; align-items:flex-end; gap:4px; z-index:2; pointer-events:none;">
+            <div style="padding:7px 12px; border-radius:14px 14px 4px 14px; background: {{ btnBg }}; color: {{ btnFg }}; font-size:13px; font-weight:600; max-width:140px; line-height:1.25; animation: {{ bubbleAnim }}; transform-origin:100% 100%;">{{ stepLine }}</div>
+            <dusk-buddy size="52" mood="{{ stepMood }}"></dusk-buddy>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ s0 }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1; display:flex; flex-direction:column; gap:18px; animation:rise .6s both;">
+            <div style="flex:1; display:flex; align-items:center; justify-content:center; position:relative; min-height:230px;">
+              <div style="position:absolute; left:15%; right:15%; top:calc(62% + 18px); height:3px; border-radius:3px; background:rgba(255,226,200,.6); animation:shimmer 2.4s infinite;"></div>
+              <div style="position:absolute; left:28%; right:28%; top:calc(62% + 36px); height:3px; border-radius:3px; background:rgba(255,226,200,.5); animation:shimmer 2.4s .6s infinite;"></div>
+              <div style="position:absolute; left:38%; right:38%; top:calc(62% + 54px); height:3px; border-radius:3px; background:rgba(255,226,200,.4); animation:shimmer 2.4s 1.2s infinite;"></div>
+              <div style="position:relative; animation:pop .8s .2s cubic-bezier(.2,1.2,.4,1) both;"><dusk-buddy size="170" mood="wave"></dusk-buddy></div>
+            </div>
+            <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:52px; line-height:.95; letter-spacing:-.035em; text-wrap:balance;">Close your day at six.</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <sc-for list="{{ promises }}" as="p" hint-placeholder-count="3">
+                <div style="display:flex; align-items:center; gap:12px; animation:rise .5s both; animation-delay: {{ p.delay }};">
+                  <div style="width:36px; height:36px; border-radius:12px; flex-shrink:0; background: {{ p.tile }}; color: {{ p.glyph }}; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; white-space:nowrap; font-size:20px; font-variation-settings:'FILL' 1;">{{ p.icon }}</span></div>
+                  <div style="font-size:16px; font-weight:550;">{{ p.text }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <button style-active="transform:scale(.97);" onClick="{{ next }}" style="height:58px; margin-top:4px; border:none; border-radius:99px; background: {{ btnBg }}; color: {{ btnFg }}; font-family:inherit; font-weight:700; font-size:17px; cursor:pointer;">Get started</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ s1 }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1; min-height:0; display:flex; flex-direction:column; gap:14px; animation: {{ enter }};">
+            <div style="padding-top:20px; padding-right:76px; display:flex; flex-direction:column; gap:10px;">
+              <div style="max-width:220px; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:36px; line-height:1; letter-spacing:-.03em; text-wrap:balance;">Money in</div>
+              <div style="font-size:15px; line-height:1.45; color: {{ inkSoft }}; text-wrap:pretty;">Roughly what lands each month, after tax. Spin to set it.</div>
+            </div>
+            <div style="border-radius:26px; background: {{ cell }}; box-shadow: {{ cardShadow }}; padding:12px 16px 14px; display:flex; flex-direction:column; gap:6px;">
+              <div style="position:relative; display:flex; align-items:center; justify-content:center;">
+                <div style="position:absolute; left:0; right:0; top:50%; height:54px; transform:translateY(-50%); border-radius:16px; background: {{ chipBg }};"></div>
+                <div style="position:relative; display:flex; align-items:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:38px; letter-spacing:-.03em;">
+                  <dc-import name="Wheel" items="{{ incMItems }}" index="{{ incMIdx }}" on-change="{{ incMChange }}" size="{{ 38 }}" rows="{{ 3 }}" pad-x="{{ 0 }}" align="flex-end" ink="{{ ink }}" hint-size="72px,159px" style="width:72px;"></dc-import>
+                  <span>.</span>
+                  <dc-import name="Wheel" items="{{ digits }}" index="{{ incKIdx }}" on-change="{{ incKChange }}" size="{{ 38 }}" rows="{{ 3 }}" pad-x="{{ 0 }}" ink="{{ ink }}" hint-size="24px,159px" style="width:24px;"></dc-import>
+                  <span>00.000</span><span style="font-size:.5em; margin-left:4px; opacity:.55; align-self:flex-start; margin-top:58px;">₫</span>
+                </div>
+              </div>
+              <div style="text-align:center; font-size:13px; color: {{ inkSoft }};">{{ incDaily }}</div>
+            </div>
+            <div style="border-radius:26px; background: {{ cell }}; box-shadow: {{ cardShadow }}; padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:15px; font-weight:650;">Payday</span></div>
+              <div style="display:flex; padding:3px; border-radius:12px; background: {{ chipBg }};">
+                <sc-for list="{{ payModes }}" as="m" hint-placeholder-count="3">
+                  <button onClick="{{ m.pick }}" style="flex:1; height:34px; border:none; border-radius:9px; background: {{ m.bg }}; box-shadow: {{ m.shadow }}; color: {{ ink }}; font-family:inherit; font-weight:600; font-size:13.5px; cursor:pointer; transition:background .2s;">{{ m.label }}</button>
+                </sc-for>
+              </div>
+              <sc-if value="{{ payFixed }}" hint-placeholder-val="{{ true }}">
+                <div style="position:relative; display:flex; align-items:center; gap:10px; font-size:16px; font-weight:550; animation:fade .3s both;">
+                  <span style="flex:1; text-align:right;">Paid on the</span>
+                  <div style="position:relative; width:76px;">
+                    <div style="position:absolute; left:0; right:0; top:50%; height:34px; transform:translateY(-50%); border-radius:11px; background: {{ chipBg }};"></div>
+                    <dc-import name="Wheel" items="{{ dayItems }}" index="{{ dayIdx }}" on-change="{{ dayChange }}" size="{{ 22 }}" rows="{{ 3 }}" ink="{{ ink }}" hint-size="76px,93px" style="width:76px;"></dc-import>
+                  </div>
+                  <span style="flex:1;">of each month</span>
+                </div>
+              </sc-if>
+              <sc-if value="{{ payLast }}" hint-placeholder-val="{{ false }}">
+                <div style="min-height:93px; display:flex; align-items:center; font-size:14px; line-height:1.45; color: {{ inkSoft }}; text-wrap:pretty; animation:fade .3s both;">The last day of each month.</div>
+              </sc-if>
+              <sc-if value="{{ payVaries }}" hint-placeholder-val="{{ false }}">
+                <div style="min-height:93px; display:flex; align-items:center; font-size:14px; line-height:1.45; color: {{ inkSoft }}; text-wrap:pretty; animation:fade .3s both;">Freelance or shifts? The number above is used as a monthly estimate. Edit it any time.</div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ s2 }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1; min-height:0; display:flex; flex-direction:column; gap:14px; animation: {{ enter }};">
+            <div style="padding-top:20px; padding-right:76px; display:flex; flex-direction:column; gap:10px;">
+              <div style="max-width:220px; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:36px; line-height:1; letter-spacing:-.03em; text-wrap:balance;">Fixed bills</div>
+              <div style="font-size:15px; line-height:1.45; color: {{ inkSoft }}; text-wrap:pretty;">Yes or no, then spin in what you pay. Not sure of an amount? Add it later.</div>
+            </div>
+            <div style="position:relative; height:340px; flex-shrink:0;">
+              <sc-if value="{{ peek1 }}" hint-placeholder-val="{{ true }}"><div style="position:absolute; left:28px; right:28px; top:24px; bottom:-20px; border-radius:30px; background: {{ cell }}; opacity:.35; transition:opacity .3s;"></div></sc-if>
+              <sc-if value="{{ peek0 }}" hint-placeholder-val="{{ true }}"><div style="position:absolute; left:14px; right:14px; top:12px; bottom:-10px; border-radius:30px; background: {{ cell }}; opacity:.6; box-shadow: {{ cardShadow }}; transition:opacity .3s;"></div></sc-if>
+              <sc-for list="{{ bSlots }}" as="c" hint-placeholder-count="1">
+                <div style="position:absolute; inset:0; animation: {{ c.anim }}; pointer-events: {{ c.pe }}; z-index: {{ c.z }}; visibility: {{ c.vis }};">
+                  <div style="height:100%; box-sizing:border-box; border-radius:30px; background: {{ cell }}; box-shadow: {{ cardShadow }}; padding:18px; display:flex; flex-direction:column; gap:10px;">
+                    <sc-if value="{{ c.isQ }}" hint-placeholder-val="{{ true }}">
+                      <div style="display:flex; align-items:center; justify-content:space-between;">
+                        <span style="width:46px; height:46px; border-radius:15px; background: {{ c.tile }}; color: {{ c.glyph }}; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; white-space:nowrap; font-size:24px; font-variation-settings:'FILL' 1;">{{ c.icon }}</span></span>
+                        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.08em; color: {{ inkSoft }};">{{ c.count }}</span>
+                      </div>
+                      <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:26px; line-height:1.05; letter-spacing:-.025em; padding-top:4px; text-wrap:balance;">{{ c.q }}</div>
+                      <div style="font-size:13.5px; line-height:1.4; color: {{ inkSoft }};">{{ c.sub }}</div>
+                      <div style="flex:1;"></div>
+                      <sc-if value="{{ c.isAsk }}" hint-placeholder-val="{{ true }}">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                          <button style-active="transform:scale(.96);" onClick="{{ c.no }}" style="height:56px; border-radius:18px; border:none; background: {{ chipBg }}; color: {{ ink }}; font-family:inherit; font-weight:650; font-size:16px; cursor:pointer;">No</button>
+                          <button style-active="transform:scale(.96);" onClick="{{ c.yes }}" style="height:56px; border-radius:18px; border:none; background: {{ btnBg }}; color: {{ btnFg }}; font-family:inherit; font-weight:650; font-size:16px; cursor:pointer;">Yes</button>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ c.isMulti }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px;">
+                          <sc-for list="{{ c.chips }}" as="o" hint-placeholder-count="6">
+                            <button style-active="transform:scale(.95);" onClick="{{ o.pick }}" style="height:48px; min-width:0; padding:0 8px; box-sizing:border-box; border-radius:16px; border:none; background: {{ o.bg }}; color: {{ o.fg }}; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; transition:background .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; font-size:17px; flex-shrink:0; font-variation-settings:'FILL' 1;">{{ o.icon }}</span><span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13.5px; font-weight:650;">{{ o.label }}</span></button>
+                          </sc-for>
+                        </div>
+                        <div style="display:flex; gap:6px;">
+                          <button style-active="transform:scale(.97);" onClick="{{ c.no }}" style="flex:1; height:44px; border-radius:99px; border:none; background:transparent; color: {{ inkSoft }}; font-family:inherit; font-weight:650; font-size:15px; cursor:pointer;">{{ c.noLabel }}</button>
+                          <button style-active="transform:scale(.97);" onClick="{{ c.done }}" style="flex:2; height:44px; border-radius:99px; border:none; background: {{ c.doneBg }}; color: {{ c.doneFg }}; font-family:inherit; font-weight:650; font-size:15px; cursor:pointer; transition:background .2s;">{{ c.doneLabel }}</button>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ c.isAmt }}" hint-placeholder-val="{{ false }}">
+                        <div style="position:relative; display:flex; align-items:center; justify-content:center;">
+                          <div style="position:absolute; left:0; right:0; top:50%; height:44px; transform:translateY(-50%); border-radius:14px; background: {{ chipBg }};"></div>
+                          <div style="position:relative; display:flex; align-items:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:30px; letter-spacing:-.03em;">
+                            <dc-import name="Wheel" items="{{ c.mItems }}" index="{{ c.mIdx }}" on-change="{{ c.mChange }}" size="{{ 30 }}" rows="{{ 3 }}" pad-x="{{ 0 }}" align="flex-end" ink="{{ ink }}" hint-size="54px,126px" style="width:54px;"></dc-import>
+                            <span>.</span>
+                            <dc-import name="Wheel" items="{{ c.dItems }}" index="{{ c.hIdx }}" on-change="{{ c.hChange }}" size="{{ 30 }}" rows="{{ 3 }}" pad-x="{{ 0 }}" ink="{{ ink }}" hint-size="19px,126px" style="width:19px;"></dc-import>
+                            <dc-import name="Wheel" items="{{ c.dItems }}" index="{{ c.tIdx }}" on-change="{{ c.tChange }}" size="{{ 30 }}" rows="{{ 3 }}" pad-x="{{ 0 }}" ink="{{ ink }}" hint-size="19px,126px" style="width:19px;"></dc-import>
+                            <span>0.000</span><span style="font-size:.5em; margin-left:4px; opacity:.55; align-self:flex-start; margin-top:48px;">₫</span>
+                          </div>
+                        </div>
+                        <div style="display:flex; gap:6px;">
+                          <button style-active="transform:scale(.97);" onClick="{{ c.later }}" style="flex:1; height:44px; border-radius:99px; border:none; background:transparent; color: {{ inkSoft }}; font-family:inherit; font-weight:650; font-size:15px; cursor:pointer;">Add later</button>
+                          <button style-active="transform:scale(.97);" onClick="{{ c.save }}" style="flex:2; height:44px; border-radius:99px; border:none; background: {{ c.saveBg }}; color: {{ c.saveFg }}; font-family:inherit; font-weight:650; font-size:15px; cursor:pointer; transition:background .2s;">{{ c.saveLabel }}</button>
+                        </div>
+                      </sc-if>
+                    </sc-if>
+                    <sc-if value="{{ c.isEnd }}" hint-placeholder-val="{{ false }}">
+                      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center;">
+                        <span style="width:52px; height:52px; border-radius:50%; background:oklch(0.76 0.13 150); color:#173322; display:flex; align-items:center; justify-content:center; animation:pop .5s .15s both;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; font-size:28px;">check</span></span>
+                        <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:26px; letter-spacing:-.025em; padding-top:6px;">{{ endTitle }}</div>
+                        <div style="font-size:14px; line-height:1.45; color: {{ inkSoft }}; max-width:260px; text-wrap:pretty;">Missed one? Add or edit bills any time in Plan.</div>
+                      </div>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="flex:1;"></div>
+            <div style="border-radius:22px; background: {{ cell }}; box-shadow: {{ cardShadow }}; padding:12px 14px; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:14px; font-weight:600; color: {{ inkSoft }};">{{ billsCount }}</span><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:24px; letter-spacing:-.02em;">{{ billsOdo }}</span></div>
+              <sc-if value="{{ hasTray }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                  <sc-for list="{{ tray }}" as="b" hint-placeholder-count="3">
+                    <button onClick="{{ b.edit }}" style="height:30px; padding:0 10px 0 6px; border-radius:99px; border:none; background: {{ chipBg }}; color: {{ ink }}; font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; animation:pop .35s both;"><span style="width:20px; height:20px; border-radius:7px; background: {{ b.tile }}; color: {{ b.glyph }}; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; font-size:13px; font-variation-settings:'FILL' 1;">{{ b.icon }}</span></span>{{ b.label }}<span style="opacity:.55;">{{ b.amt }}</span></button>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ s3 }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1; min-height:0; display:flex; flex-direction:column; gap:14px; animation: {{ enter }};">
+            <div style="padding-top:20px; padding-right:76px; display:flex; flex-direction:column; gap:10px;">
+              <div style="max-width:220px; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:36px; line-height:1; letter-spacing:-.03em; text-wrap:balance;">Pay future you first</div>
+              <div style="font-size:15px; line-height:1.45; color: {{ inkSoft }}; text-wrap:pretty;">Set aside on payday, before anything counts as spendable. Move it to savings in your bank app.</div>
+            </div>
+            <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+              <div style="width:200px; height:200px; border-radius:50%; background: {{ savRing }}; display:flex; align-items:center; justify-content:center; box-shadow: {{ cardShadow }}; transition:background .3s;">
+                <div style="width:168px; height:168px; border-radius:50%; background: {{ cell }}; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;">
+                  <span style="font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color: {{ inkSoft }};">Each payday</span>
+                  <span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:44px; line-height:1; letter-spacing:-.03em;">{{ savFmt }}</span>
+                  <span style="font-size:12.5px; font-weight:600; color: {{ inkSoft }};">{{ savYear }}</span>
+                </div>
+              </div>
+            </div>
+            <div style="border-radius:26px; background: {{ cell }}; box-shadow: {{ cardShadow }}; padding:8px 16px; display:flex; align-items:center; gap:10px; font-size:16px; font-weight:550;">
+              <span style="flex:1; text-align:right;">Set aside</span>
+              <div style="position:relative; width:84px;">
+                <div style="position:absolute; left:0; right:0; top:50%; height:42px; transform:translateY(-50%); border-radius:13px; background: {{ chipBg }};"></div>
+                <dc-import name="Wheel" items="{{ pctItems }}" index="{{ savPct }}" on-change="{{ savChange }}" size="{{ 28 }}" rows="{{ 3 }}" ink="{{ ink }}" hint-size="84px,117px" style="width:84px;"></dc-import>
+              </div>
+              <span style="flex:1;">of money in</span>
+            </div>
+            <div style="font-size:13px; line-height:1.45; color: {{ inkSoft }}; padding:0 6px; text-wrap:pretty;">{{ savNote }}</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ s4 }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1; min-height:0; display:flex; flex-direction:column; gap:14px; animation: {{ enter }};">
+            <div style="padding-top:20px; padding-right:76px; display:flex; flex-direction:column; gap:10px;">
+              <div style="max-width:220px; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:36px; line-height:1; letter-spacing:-.03em; text-wrap:balance;">What do you pay with?</div>
+              <div style="font-size:15px; line-height:1.45; color: {{ inkSoft }}; text-wrap:pretty;">So 6pm recognises their receipts and QR codes. Pick all that apply.</div>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; padding-top:4px;">
+              <sc-for list="{{ banks }}" as="b" hint-placeholder-count="9">
+                <button style-active="transform:scale(.95);" onClick="{{ b.pick }}" style="position:relative; height:92px; border-radius:22px; border:2px solid {{ b.border }}; background: {{ cell }}; box-shadow: {{ cardShadow }}; color: {{ ink }}; font-family:inherit; font-weight:650; font-size:13px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; transition:border-color .2s;">
+                  <span style="width:34px; height:34px; border-radius:11px; background: {{ b.tint }}; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; letter-spacing:-.02em;">{{ b.mono }}</span>{{ b.label }}
+                  <sc-if value="{{ b.on }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:50%; background:#f6a46a; color:#2a1424; display:flex; align-items:center; justify-content:center; animation:pop .35s both;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; font-size:15px;">check</span></span></sc-if>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ s5 }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1; min-height:0; display:flex; flex-direction:column; gap:14px; animation: {{ enter }};">
+            <div style="padding-top:20px; padding-right:76px; display:flex; flex-direction:column; gap:10px;">
+              <div style="max-width:220px; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:36px; line-height:1; letter-spacing:-.03em; text-wrap:balance;">How 6pm catches spending</div>
+              <div style="font-size:15px; line-height:1.45; color: {{ inkSoft }}; text-wrap:pretty;">QR works already. The others take a few seconds each, now or later in Settings.</div>
+            </div>
+            <div onScroll="{{ capScroll }}" style="display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; margin:0 -20px; padding:4px 20px 14px; scroll-padding:0 20px;">
+
+              <div style="flex-shrink:0; width:300px; scroll-snap-align:start; border-radius:28px; background: {{ cell }}; box-shadow: {{ cardShadow }}; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px;">
+                <div style="position:relative; height:176px; border-radius:20px; background:#16131d; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+                  <div style="position:absolute; inset:0; background:repeating-linear-gradient(135deg, #1b1823 0 12px, #1f1c28 12px 24px);"></div>
+                  <div style="position:relative; width:108px; height:108px; border-radius:10px; background:repeating-conic-gradient(#f6efe6 0 25%, #16131d 0 50%) 0 0/18px 18px; opacity:.85;"></div>
+                  <div style="position:absolute; width:132px; height:132px; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:22px; box-shadow:0 0 0 2px #f6a46a;"></div>
+                  <div style="position:absolute; left:calc(50% - 66px); width:132px; height:2px; background:#f6a46a; box-shadow:0 0 12px 2px rgba(246,164,106,.7); animation:scan 2.4s ease-in-out infinite;"></div>
+                  <div style="position:absolute; left:10px; right:10px; bottom:10px; height:30px; border-radius:99px; background:rgba(251,244,236,.94); color:#2a1424; font-size:12px; font-weight:650; display:flex; align-items:center; justify-content:center; gap:6px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; font-size:16px;">qr_code_2</span>VietQR · Bún chả Cô Lan · 55.000₫</div>
+                </div>
+                <div style="padding:0 8px; display:flex; flex-direction:column; gap:4px;">
+                  <div style="font-size:18px; font-weight:650; letter-spacing:-.015em;">Scan to pay</div>
+                  <div style="font-size:13.5px; line-height:1.4; color: {{ inkSoft }}; text-wrap:pretty;">Scan a VietQR in 6pm, then pay in your bank app. 6pm logs the amount.</div>
+                </div>
+                <div style="flex:1;"></div>
+                <div style="margin:0 6px 6px; height:42px; border-radius:99px; background:oklch(0.76 0.13 150 / .18); color: {{ okInk }}; display:flex; align-items:center; justify-content:center; gap:6px; font-size:14px; font-weight:650;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; font-size:18px;">check_circle</span>Ready, nothing to set up</div>
+              </div>
+
+              <div style="flex-shrink:0; width:300px; scroll-snap-align:start; border-radius:28px; background: {{ cell }}; box-shadow: {{ cardShadow }}; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px;">
+                <div style="position:relative; height:176px; border-radius:20px; background:#ece7e0; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding:14px 12px 10px; box-sizing:border-box; gap:10px; color:#1f1a28;">
+                  <div style="width:150px; flex:1; border-radius:12px; background:#fff; box-shadow:0 4px 14px rgba(40,25,20,.08); padding:10px 12px; box-sizing:border-box; display:flex; flex-direction:column; gap:6px;">
+                    <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:9px; letter-spacing:.1em; opacity:.5;">TRANSFER RECEIPT</div>
+                    <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:20px; line-height:1;">120.000₫</div>
+                    <div style="height:5px; width:80%; border-radius:3px; background:rgba(31,26,40,.1);"></div>
+                    <div style="height:5px; width:55%; border-radius:3px; background:rgba(31,26,40,.1);"></div>
+                  </div>
+                  <div style="width:100%; border-radius:16px; background:rgba(255,255,255,.85); padding:8px; box-sizing:border-box; display:flex; justify-content:space-around;">
+                    <span style="width:36px; height:36px; border-radius:10px; background:rgba(31,26,40,.1);"></span>
+                    <span style="width:36px; height:36px; border-radius:10px; background:linear-gradient(180deg,#3b3270 0%,#c4607a 62%,#f0975a 100%); animation:tapRing 1.8s infinite; display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px; font-weight:800;">6pm</span>
+                    <span style="width:36px; height:36px; border-radius:10px; background:rgba(31,26,40,.1);"></span>
+                    <span style="width:36px; height:36px; border-radius:10px; background:rgba(31,26,40,.1);"></span>
+                  </div>
+                </div>
+                <div style="padding:0 8px; display:flex; flex-direction:column; gap:4px;">
+                  <div style="font-size:18px; font-weight:650; letter-spacing:-.015em;">Share a bank receipt</div>
+                  <div style="font-size:13.5px; line-height:1.4; color: {{ inkSoft }}; text-wrap:pretty;">After paying in your bank app, tap Share and pick 6pm to log the receipt.</div>
+                </div>
+                <div style="flex:1;"></div>
+                <button style-active="transform:scale(.97);" onClick="{{ capShare.go }}" style="margin:0 6px 6px; height:42px; border-radius:99px; border:none; background: {{ capShare.bg }}; color: {{ capShare.fg }}; font-family:inherit; font-size:14px; font-weight:650; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:background .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; font-size:18px;">{{ capShare.icon }}</span>{{ capShare.label }}</button>
+              </div>
+
+              <div style="flex-shrink:0; width:300px; scroll-snap-align:start; border-radius:28px; background: {{ cell }}; box-shadow: {{ cardShadow }}; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px;">
+                <div style="position:relative; height:176px; border-radius:20px; background:#e9edf3; overflow:hidden; padding:14px; box-sizing:border-box; display:flex; flex-direction:column; gap:8px; color:#1f1a28;">
+                  <div style="display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:12px; background:#fff; font-size:12px; animation:slideMail 3s infinite;"><span style="width:22px; height:22px; border-radius:50%; background:#2f9e5b; flex-shrink:0;"></span><span style="flex:1; display:flex; flex-direction:column;"><b style="font-weight:650;">Grab</b><span style="opacity:.6;">Your receipt · 68.000₫</span></span></div>
+                  <div style="display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:12px; background:#fff; font-size:12px; animation:slideMail 3s 1.5s infinite;"><span style="width:22px; height:22px; border-radius:50%; background:#e2552c; flex-shrink:0;"></span><span style="flex:1; display:flex; flex-direction:column;"><b style="font-weight:650;">Shopee</b><span style="opacity:.6;">Order paid · 249.000₫</span></span></div>
+                  <div style="flex:1;"></div>
+                  <div style="align-self:center; display:flex; align-items:center; gap:6px; height:30px; padding:0 12px; border-radius:99px; background:#1f1a28; color:#fbf4ec; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; font-size:15px;">forward_to_inbox</span>linh@6pm.oddeggs.studio</div>
+                </div>
+                <div style="padding:0 8px; display:flex; flex-direction:column; gap:4px;">
+                  <div style="font-size:18px; font-weight:650; letter-spacing:-.015em;">Forward receipt emails</div>
+                  <div style="font-size:13.5px; line-height:1.4; color: {{ inkSoft }}; text-wrap:pretty;">Forward Grab, Shopee or bank receipt emails to this address to log them.</div>
+                </div>
+                <div style="flex:1;"></div>
+                <button style-active="transform:scale(.97);" onClick="{{ capEmail.go }}" style="margin:0 6px 6px; height:42px; border-radius:99px; border:none; background: {{ capEmail.bg }}; color: {{ capEmail.fg }}; font-family:inherit; font-size:14px; font-weight:650; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:background .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; font-size:18px;">{{ capEmail.icon }}</span>{{ capEmail.label }}</button>
+              </div>
+
+              <div style="flex-shrink:0; width:300px; scroll-snap-align:start; border-radius:28px; background: {{ cell }}; box-shadow: {{ cardShadow }}; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px;">
+                <div style="position:relative; height:176px; border-radius:20px; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 55%,#e0855a 100%); overflow:hidden; color:#fff; display:flex; flex-direction:column; align-items:center; padding-top:14px; box-sizing:border-box; gap:2px;">
+                  <div style="font-size:11px; font-weight:600; opacity:.85;">Friday 9 October</div>
+                  <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:50px; line-height:1; letter-spacing:-.03em;">18:07</div>
+                  <div style="display:flex; gap:8px; margin-top:8px;">
+                    <div style="width:44px; height:44px; border-radius:50%; background:conic-gradient(#fff 0 70%, rgba(255,255,255,.25) 0); display:flex; align-items:center; justify-content:center; animation:tapRing 1.8s infinite;"><div style="width:37px; height:37px; border-radius:50%; background:rgba(60,35,80,.9); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;">245k</div></div>
+                    <div style="width:96px; height:44px; border-radius:13px; background:rgba(255,255,255,.18); padding:6px 9px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center;"><span style="font-size:9px; font-weight:600; opacity:.75;">Safe today</span><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:17px; font-weight:500; line-height:1;">245k</span></div>
+                  </div>
+                  <div style="position:absolute; left:18px; bottom:12px; width:30px; height:30px; border-radius:50%; background:rgba(20,12,30,.45); display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; font-size:16px;">flashlight_on</span></div>
+                  <div style="position:absolute; right:18px; bottom:12px; width:30px; height:30px; border-radius:50%; background:#f6a46a; color:#2a1424; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; font-size:16px;">qr_code_scanner</span></div>
+                </div>
+                <div style="padding:0 8px; display:flex; flex-direction:column; gap:4px;">
+                  <div style="font-size:18px; font-weight:650; letter-spacing:-.015em;">Lock Screen and Action button</div>
+                  <div style="font-size:13.5px; line-height:1.4; color: {{ inkSoft }}; text-wrap:pretty;">See what’s safe without unlocking, and scan a QR in one press.</div>
+                </div>
+                <div style="flex:1;"></div>
+                <button style-active="transform:scale(.97);" onClick="{{ capWidget.go }}" style="margin:0 6px 6px; height:42px; border-radius:99px; border:none; background: {{ capWidget.bg }}; color: {{ capWidget.fg }}; font-family:inherit; font-size:14px; font-weight:650; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:background .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; font-size:18px;">{{ capWidget.icon }}</span>{{ capWidget.label }}</button>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:center; gap:6px; margin-top:-4px;">
+              <sc-for list="{{ capDots }}" as="d" hint-placeholder-count="4">
+                <span style="height:6px; width: {{ d.w }}; border-radius:6px; background: {{ ink }}; opacity: {{ d.op }}; transition:all .3s;"></span>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ s6 }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1; min-height:0; display:flex; flex-direction:column; gap:14px; animation: {{ enter }};">
+            <div style="padding-top:20px; padding-right:76px; display:flex; flex-direction:column; gap:10px;">
+              <div style="max-width:220px; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:36px; line-height:1; letter-spacing:-.03em; text-wrap:balance;">When should your day close?</div>
+              <div style="font-size:15px; line-height:1.45; color: {{ inkSoft }}; text-wrap:pretty;">Pick when you’re usually home. You’ll get one reminder a day.</div>
+            </div>
+            <div style="position:relative; display:flex; align-items:center; justify-content:center; padding:6px 0;">
+              <div style="position:absolute; left:40px; right:40px; top:50%; height:72px; transform:translateY(-50%); border-radius:22px; background: {{ cell }}; box-shadow: {{ cardShadow }};"></div>
+              <div style="position:relative; display:flex; align-items:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:52px; letter-spacing:-.04em;">
+                <dc-import name="Wheel" items="{{ hourItems }}" index="{{ hourIdx }}" on-change="{{ hourChange }}" size="{{ 52 }}" rows="{{ 3 }}" align="flex-end" ink="{{ ink }}" hint-size="80px,219px" style="width:80px;"></dc-import>
+                <span style="padding:0 2px 6px;">:</span>
+                <dc-import name="Wheel" items="{{ minItems }}" index="{{ minIdx }}" on-change="{{ minChange }}" size="{{ 52 }}" rows="{{ 3 }}" align="flex-start" ink="{{ ink }}" hint-size="80px,219px" style="width:80px;"></dc-import>
+              </div>
+            </div>
+            <div style="flex:1;"></div>
+            <div style="font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color: {{ inkSoft }}; padding:0 6px;">At {{ closeAt }} you’ll get</div>
+            <div style="border-radius:24px; background: {{ notifBg }}; backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px); padding:12px 14px; display:flex; gap:12px;">
+              <div style="width:38px; height:38px; flex-shrink:0; border-radius:10px; background:linear-gradient(180deg,#3b3270 0%,#c4607a 62%,#f0975a 100%); overflow:hidden; display:flex; align-items:flex-end; justify-content:center;"><div style="margin-bottom:-3px;"><dusk-buddy size="33" mood="calm"></dusk-buddy></div></div>
+              <div style="flex:1; display:flex; flex-direction:column; gap:2px;">
+                <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="font-weight:650;">6pm</span><span style="opacity:.6;">now</span></div>
+                <div style="font-size:15px; line-height:1.3;">{{ notifText }}</div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ s7 }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; animation:fade .8s both;">
+            <div style="flex:.6;"></div>
+            <div style="animation:pop .8s .2s cubic-bezier(.2,1.2,.4,1) both;"><dusk-buddy size="120" mood="happy"></dusk-buddy></div>
+            <div style="font-size:16px; font-weight:600; color: {{ inkSoft }};">Safe to spend each day</div>
+            <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:84px; letter-spacing:-.04em; line-height:1; transform: {{ revealScale }}; transition:transform .6s cubic-bezier(.2,.9,.2,1);">{{ revealOdo }}</div>
+            <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:21px; line-height:1.2; max-width:300px; text-wrap:balance;">{{ revealLine }}</div>
+            <div style="width:100%; margin-top:12px; border-radius:24px; background: {{ cell }}; box-shadow: {{ cardShadow }}; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:10px; text-align:left; animation:rise .5s 1s both;">
+              <div style="display:flex; height:14px; gap:3px; border-radius:8px; overflow:hidden;">
+                <sc-for list="{{ split }}" as="p" hint-placeholder-count="3">
+                  <div style="flex: {{ p.flex }}; background: {{ p.color }}; animation:growX .8s 1.2s cubic-bezier(.2,.9,.2,1) both; transform-origin:0 50%;"></div>
+                </sc-for>
+              </div>
+              <div style="display:flex; justify-content:space-between; gap:8px;">
+                <sc-for list="{{ split }}" as="p" hint-placeholder-count="3">
+                  <div style="display:flex; flex-direction:column; gap:2px;"><span style="display:flex; align-items:center; gap:6px; font-size:12px; color: {{ inkSoft }};"><span style="width:8px; height:8px; border-radius:3px; background: {{ p.color }};"></span>{{ p.label }}</span><span style="font-size:15px; font-weight:700;">{{ p.val }}</span></div>
+                </sc-for>
+              </div>
+              <div style="font-size:12.5px; line-height:1.4; color: {{ inkSoft }}; text-wrap:pretty;">{{ revealMath }}</div>
+            </div>
+            <div style="flex:1;"></div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showNext }}" hint-placeholder-val="{{ false }}">
+          <button style-active="transform:scale(.97);" onClick="{{ next }}" style="height:58px; margin-top:16px; flex-shrink:0; border:none; border-radius:99px; background: {{ ctaBg }}; color: {{ ctaFg }}; font-family:inherit; font-weight:700; font-size:17px; cursor:pointer; box-shadow: {{ ctaShadow }}; display:flex; align-items:center; justify-content:center; gap:8px; transition:background .4s, color .4s;">{{ nextLabel }}<span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; font-size:20px;">{{ nextIcon }}</span></button>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ askNotif }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="Notification permission" style="position:absolute; inset:0; z-index:8; display:flex; align-items:center; justify-content:center;">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.42); animation:fade .25s both;"></div>
+          <div style="position:relative; width:270px; border-radius:14px; background:rgba(242,240,245,.92); backdrop-filter:blur(30px) saturate(180%); -webkit-backdrop-filter:blur(30px) saturate(180%); color:#111; text-align:center; overflow:hidden; animation:alertIn .28s cubic-bezier(.2,.9,.3,1.2) both; font-family:-apple-system, 'SF Pro Text', system-ui, sans-serif;">
+            <div style="padding:19px 16px 16px; display:flex; flex-direction:column; gap:4px;">
+              <div style="font-size:17px; font-weight:600; line-height:1.3;">“6pm” Would Like to Send You Notifications</div>
+              <div style="font-size:13px; line-height:1.35;">Notifications may include alerts, sounds and icon badges. These can be configured in Settings.</div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; border-top:0.5px solid rgba(60,60,67,.3);">
+              <button onClick="{{ deny }}" style="height:44px; border:none; background:transparent; color:#007aff; font-family:inherit; font-size:17px; cursor:pointer;">Don’t Allow</button>
+              <button onClick="{{ allow }}" style="height:44px; border:none; border-left:0.5px solid rgba(60,60,67,.3); background:transparent; color:#007aff; font-family:inherit; font-size:17px; font-weight:600; cursor:pointer;">Allow</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ leaving }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute; inset:0; z-index:9; background: {{ leaveBg }}; animation:leave .6s ease-in both; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:#fbf4ec;">
+          <div style="font-size:14px; font-weight:600; opacity:.7;">Safe to spend today</div>
+          <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:56px; letter-spacing:-.03em; animation:rise .5s .1s both;">{{ revealShort }}</div>
+        </div>
+      </sc-if>
+    </div>
+  </x-import>
+
+  <div style="width:280px; max-width:100%; display:flex; flex-direction:column; gap:18px; color:#f6efe6;">
+    <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.6);">ONBOARDING V2 · {{ stepLabel }}</div>
+    <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:40px; line-height:1; letter-spacing:-.03em;">{{ stepName }}</div>
+    <div style="font-size:14px; line-height:1.55; color:rgba(246,239,230,.7); text-wrap:pretty;">{{ stepNote }}</div>
+    <div style="display:flex; flex-direction:column;">
+      <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="8">
+        <button onClick="{{ j.go }}" style="text-align:left; padding:9px 0; border:none; border-bottom:0.5px solid rgba(246,239,230,.14); background:transparent; color: {{ j.fg }}; font-family:inherit; font-size:14px; font-weight:500; cursor:pointer; display:flex; gap:12px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; opacity:.5;">{{ j.n }}</span>{{ j.label }}</button>
+      </sc-for>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px; font-size:14px; font-weight:600;">
+      <a href="6pm App.dc.html">Open the app prototype →</a>
+      <a href="6pm Onboarding.dc.html" style="color:rgba(246,239,230,.55);">Compare with v1</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { step: 0, dir: 1, income: 15500000, payMode: 'fixed', payday: 25, ans: {}, amts: {}, bAct: 0, bSlots: [0, null], bDir: 1, billIdx: 0, savPct: 12, banks: { 'MB Bank': true, 'MoMo': true, 'Cash': true }, cap: {}, capIdx: 0, closeH: 18, closeM: 0, notif: null, askNotif: false, reveal: 0, leaving: false };
+  NAMES = ['Welcome', 'Money in', 'Fixed bills', 'Future you', 'Pay with', 'Catching spending', 'Close time', 'First number'];
+  NOTES = [
+    'Language and currency now come from the iPhone and live in Settings, so the first question is about money.',
+    'Two iOS-style wheels set millions and hundred-thousands; they read as the real number. Payday is a segmented choice with an inline day wheel.',
+    'No suggested amounts, so nobody is judged against a range. Each bill is a yes/no card; yes opens an amount card with digit wheels starting at zero. Subscriptions are picked first, then each gets its own amount card. Add later keeps the bill without a number. Tap a chip in the tray to revisit it.',
+    'A percent wheel drives the ring. Copy no longer implies 6pm moves money.',
+    'Monogram tiles stand in for real bank logos.',
+    'Swipeable cards, each with a live mini demo. Scan QR is already on; the others mark themselves ready.',
+    'Hour and minute wheels. Continue triggers the iOS notification prompt.',
+    'Math uses a full pay cycle. Open 6pm fades into the app’s home number.'
+  ];
+  MILL = Array.from({ length: 99 }, (_, i) => String(i + 1));
+  DIG = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  DAYS = Array.from({ length: 31 }, (_, i) => { const n = i + 1; return n + ([1, 21, 31].includes(n) ? 'st' : [2, 22].includes(n) ? 'nd' : [3, 23].includes(n) ? 'rd' : 'th'); });
+  PCT = Array.from({ length: 41 }, (_, i) => i + '%');
+  HRS = ['15', '16', '17', '18', '19', '20', '21', '22', '23'];
+  MINS = ['00', '15', '30', '45'];
+  num(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  short(n) { if (n >= 1e6) return (Math.round(n / 1e5) / 10).toString().replace('.', ',') + 'tr'; return Math.round(n / 1000) + 'k'; }
+  hex(h) { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+  mix(a, b, t) { const A = this.hex(a), B = this.hex(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); }
+  buzz() { try { navigator.vibrate && navigator.vibrate(10); } catch (e) {} }
+  cards() {
+    return [
+      { k: 'rent', icon: 'home', h: 30, label: 'Rent', q: 'Do you pay rent or a home loan?', sub: 'Only fixed payments that repeat each month.' },
+      { k: 'power', icon: 'bolt', h: 80, label: 'Power & water', q: 'Electricity and water?', sub: 'If it changes month to month, a rough number is fine.' },
+      { k: 'phone', icon: 'wifi', h: 250, label: 'Phone & net', q: 'Phone and internet?', sub: 'Count them together, or just one.' },
+      { k: 'subs', icon: 'subscriptions', h: 330, multi: true, q: 'Which subscriptions?', sub: 'Tap all you pay for. Amounts come next.', opts: [['Spotify', 'music_note'], ['YouTube', 'smart_display'], ['Netflix', 'movie'], ['iCloud+', 'cloud'], ['ChatGPT', 'auto_awesome'], ['Apple One', 'apps']] },
+      { k: 'other', icon: 'event_repeat', h: 150, multi: true, q: 'Anything else every month?', sub: 'Things that leave on a schedule.', opts: [['Gym', 'fitness_center'], ['Insurance', 'health_and_safety'], ['Instalment', 'credit_card'], ['Family', 'family_restroom'], ['Tuition', 'school'], ['Parking', 'local_parking']] }
+    ];
+  }
+  deck() {
+    const a = this.state.ans, out = [];
+    this.cards().forEach((c, ci) => {
+      if (!c.multi) {
+        out.push({ type: 'ask', c, ci });
+        if (a[c.k] === true) out.push({ type: 'amt', c, ci, key: c.k, label: c.label, icon: c.icon });
+      } else {
+        out.push({ type: 'multi', c, ci });
+        const m = a[c.k];
+        if (m && m.done) c.opts.forEach(([n, icon]) => { if (m.picked[n]) out.push({ type: 'amt', c, ci, key: c.k + ':' + n, label: n, icon }); });
+      }
+    });
+    return out;
+  }
+  billList() {
+    const am = this.state.amts;
+    return this.deck().map((it, idx) => Object.assign({ idx }, it)).filter(it => it.type === 'amt' && it.key in am).map(it => ({ label: it.label, v: am[it.key] || 0, icon: it.icon, h: it.c.h, idx: it.idx }));
+  }
+  billTotal() { return this.billList().reduce((s, b) => s + b.v, 0); }
+  sav() { return Math.round(this.state.income * this.state.savPct / 100 / 1e5) * 1e5; }
+  safe() { return Math.max(0, Math.floor((this.state.income - this.billTotal() - this.sav()) / 30 / 1000) * 1000); }
+  closeAt() { return this.HRS[this.HRS.indexOf(String(this.state.closeH))] + ':' + String(this.state.closeM).padStart(2, '0'); }
+  go(n) {
+    if (n > 7) { this.leave(); return; }
+    n = Math.max(0, n);
+    this.buzz();
+    this.setState(s => ({ step: n, dir: n >= s.step ? 1 : -1, reveal: 0 }));
+    clearTimeout(this.rt);
+    if (n === 7) this.rt = setTimeout(() => this.setState({ reveal: this.safe() }), 900);
+  }
+  leave() { this.setState({ leaving: true }); clearTimeout(this.lt); this.lt = setTimeout(() => { window.location.href = './6pm App.dc.html'; }, 1100); }
+  billGo(n, dir) { this.buzz(); this.setState(s => { const act = 1 - s.bAct, slots = s.bSlots.slice(); slots[act] = n; return { bAct: act, bSlots: slots, bDir: dir, billIdx: n }; }); }
+  componentWillUnmount() { clearTimeout(this.rt); clearTimeout(this.lt); }
+  odo(value, size, opts) {
+    const E = React.createElement, h = Math.round(size * 1.04);
+    const str = opts && opts.raw ? value : this.num(value);
+    const ch = String(str).split(''), n = ch.length;
+    const parts = ch.map((c, i) => /\d/.test(c)
+      ? E('span', { key: 'p' + (n - i), style: { display: 'inline-block', height: h, overflow: 'hidden' } },
+        E('span', { style: { display: 'flex', flexDirection: 'column', transform: `translateY(${-(+c) * h}px)`, transition: `transform ${700 + (n - i) * 70}ms cubic-bezier(.2,.9,.2,1)` } },
+          [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(x => E('span', { key: x, style: { height: h, display: 'block' } }, x))))
+      : E('span', { key: 'p' + (n - i) + 's', style: { display: 'inline-block', height: h } }, c));
+    if (!(opts && opts.raw)) parts.push(E('span', { key: 'cur', style: { fontSize: '0.42em', lineHeight: 1, marginLeft: size * 0.05, marginTop: size * 0.14, opacity: 0.55 } }, '₫'));
+    return E('span', { style: { display: 'inline-flex', alignItems: 'flex-start', height: h, lineHeight: h + 'px', fontVariantNumeric: 'tabular-nums' } }, parts);
+  }
+  renderVals() {
+    const s = this.state, st = s.step, t = st / 7;
+    const K = [[0, '#9fb3d4', '#d9dce8', '#f3dccb'], [0.3, '#9cc6ec', '#d4e7f6', '#f4efe6'], [0.6, '#8fa9d6', '#e1c9c2', '#f3c495'], [0.82, '#5d5c9c', '#d48a8c', '#f5ae70'], [1, '#2f2a5e', '#b7577a', '#ee8f55']];
+    let i = 0; while (i < K.length - 2 && t > K[i + 1][0]) i++;
+    const a = K[i], b = K[i + 1], u = Math.max(0, Math.min(1, (t - a[0]) / (b[0] - a[0])));
+    const sky3 = [1, 2, 3].map(k => this.mix(a[k], b[k], u));
+    const dark = t > 0.7;
+    const pg = sky3.map(c => this.mix(c, '#09070f', 0.62));
+    const ink = dark ? '#fbf4ec' : '#1b1e2e', inkSoft = dark ? 'rgba(251,244,236,.74)' : 'rgba(27,30,46,.64)';
+    const btnBg = dark ? '#fbf4ec' : '#1b1e2e', btnFg = dark ? '#26182f' : '#fbf4ec';
+    const cell = dark ? this.mix(sky3[2], '#2b2138', .8) : '#fffdf9';
+    const chipBg = dark ? 'rgba(255,255,255,.09)' : 'rgba(70,45,30,.06)';
+    const T = (h) => ({ tile: `linear-gradient(155deg, oklch(0.9 0.07 ${h}) 0%, oklch(0.78 0.12 ${h}) 100%)`, glyph: `oklch(0.34 0.09 ${h})` });
+    const sel = (on) => ({ bg: on ? btnBg : chipBg, fg: on ? btnFg : ink });
+    const hours = 7 + t * 11.1, hh = Math.floor(hours), mm = Math.floor((hours - hh) * 60);
+    const tints = [['MB Bank', '#1d3f9a', 'MB'], ['Vietcombank', '#1f7a4d', 'VCB'], ['Techcombank', '#c8102e', 'TCB'], ['VPBank', '#0b8a4a', 'VP'], ['ACB', '#1a4c9c', 'ACB'], ['BIDV', '#0b6e6e', 'BIDV'], ['MoMo', '#a5146a', 'Mo'], ['ZaloPay', '#0068ff', 'Zalo'], ['Cash', '#b8895a', '₫']];
+    const M = Math.max(1, Math.min(99, Math.floor(s.income / 1e6))), Kd = Math.round((s.income % 1e6) / 1e5) % 10;
+    const setInc = (m, k) => this.setState({ income: m * 1e6 + k * 1e5 });
+    const cards = this.cards(), deck = this.deck(), bl = this.billList(), bt = this.billTotal(), sv = this.sav(), free = s.income - bt - sv;
+    const nBanks = Object.values(s.banks).filter(Boolean).length;
+    const nCap = 1 + ['share', 'email', 'widget'].filter(k => s.cap[k]).length;
+    const closeAt = this.closeAt();
+    const lines = [null, s.payMode === 'varies' ? 'I’ll learn as it lands.' : s.payMode === 'last' ? 'End of month, got it.' : `The ${this.DAYS[s.payday - 1]}. Noted.`, s.billIdx >= deck.length ? 'All noted.' : bl.length ? `${bl.length} so far.` : 'Quick ones, promise.', s.savPct === 0 ? 'Totally fine. Start whenever.' : s.savPct >= 20 ? 'Future you is dancing.' : 'Future you says thanks.', `I’ll learn ${nBanks === 1 ? 'its' : 'their'} receipts.`, `${nCap} of 4 ready.`, `See you at ${closeAt}.`, null];
+    const moods = ['wave', 'think', 'calm', s.savPct >= 20 ? 'happy' : 'calm', 'calm', nCap === 4 ? 'happy' : 'calm', 'calm', 'happy'];
+    const ctaHot = st === 7;
+    const capBtn = (k, idle, idleIcon, act) => {
+      const on = !!s.cap[k];
+      return { label: on ? 'Ready' : idle, icon: on ? 'check_circle' : idleIcon, bg: on ? 'oklch(0.76 0.13 150 / .18)' : btnBg, fg: on ? (dark ? 'oklch(0.86 0.1 150)' : 'oklch(0.42 0.1 150)') : btnFg,
+        go: () => { this.buzz(); if (act) act(); this.setState({ cap: Object.assign({}, s.cap, { [k]: !on }) }); } };
+    };
+    const MI = this.MI || (this.MI = Array.from({ length: 51 }, (_, k) => String(k)));
+    const slotData = (idx, isAct) => {
+      if (idx === null || idx === undefined) return { vis: 'hidden', pe: 'none', z: 0, anim: 'none', isQ: false, isEnd: false, isAsk: false, isMulti: false, isAmt: false, chips: [] };
+      const anim = isAct ? 'cardIn .42s cubic-bezier(.2,.9,.25,1.1) both' : (s.bDir > 0 ? 'flyR .45s cubic-bezier(.4,0,.6,1) both' : 'flyL .45s cubic-bezier(.4,0,.6,1) both');
+      const base = { vis: 'visible', pe: isAct ? 'auto' : 'none', z: isAct ? 2 : 3, anim, isAsk: false, isMulti: false, isAmt: false, chips: [] };
+      if (idx >= deck.length) return Object.assign(base, { isQ: false, isEnd: true });
+      const it = deck[idx], c = it.c, setAns = (v) => this.setState(st => ({ ans: Object.assign({}, st.ans, { [c.k]: v }) }));
+      const d = Object.assign(base, T(c.h), { isQ: true, isEnd: false, icon: it.icon || c.icon, count: `${it.ci + 1} / ${cards.length}` });
+      if (it.type === 'ask') {
+        Object.assign(d, { isAsk: true, q: c.q, sub: c.sub,
+          yes: () => { setAns(true); this.billGo(idx + 1, 1); },
+          no: () => { setAns(false); this.billGo(idx + 1, -1); } });
+      } else if (it.type === 'multi') {
+        const m = s.ans[c.k] || { picked: {}, done: false }, cnt = c.opts.filter(o => m.picked[o[0]]).length;
+        Object.assign(d, { isMulti: true, q: c.q, sub: c.sub,
+          chips: c.opts.map(([n, icon]) => Object.assign(sel(!!m.picked[n]), { label: n, icon, pick: () => { this.buzz(); setAns({ picked: Object.assign({}, m.picked, { [n]: !m.picked[n] }), done: false }); } })),
+          noLabel: cnt ? 'Clear' : 'None',
+          no: () => { setAns({ picked: {}, done: !cnt }); if (!cnt) this.billGo(idx + 1, -1); },
+          doneLabel: cnt ? `Next · ${cnt} picked` : 'Pick or tap None', doneBg: cnt ? btnBg : chipBg, doneFg: cnt ? btnFg : inkSoft,
+          done: () => { if (!cnt) return; setAns({ picked: m.picked, done: true }); this.billGo(idx + 1, 1); } });
+      } else {
+        const v = s.amts[it.key] || 0, Mv = Math.floor(v / 1e6), Hv = Math.floor((v % 1e6) / 1e5), Tv = Math.floor((v % 1e5) / 1e4);
+        const setV = (m, h, t) => this.setState(st => ({ amts: Object.assign({}, st.amts, { [it.key]: m * 1e6 + h * 1e5 + t * 1e4 }) }));
+        Object.assign(d, { isAmt: true, q: `How much for ${it.label}?`, sub: 'Each month. A rough number is fine.',
+          mItems: MI, dItems: this.DIG, mIdx: Mv, hIdx: Hv, tIdx: Tv,
+          mChange: (k) => setV(k, Hv, Tv), hChange: (k) => setV(Mv, k, Tv), tChange: (k) => setV(Mv, Hv, k),
+          saveLabel: v ? `Save ${this.num(v)}₫` : 'Spin to set', saveBg: v ? btnBg : chipBg, saveFg: v ? btnFg : inkSoft,
+          save: () => { if (v) this.billGo(idx + 1, 1); },
+          later: () => { this.setState(st => ({ amts: Object.assign({}, st.amts, { [it.key]: 0 }) })); this.billGo(idx + 1, 1); } });
+      }
+      return d;
+    };
+    const left = deck.length - s.billIdx;
+    return {
+      dark, ink, inkSoft, btnBg, btnFg, cell, chipBg,
+      cardShadow: dark ? 'inset 0 1px 0 rgba(255,255,255,.05), 0 10px 26px rgba(4,0,10,.28)' : '0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08)',
+      track: dark ? 'rgba(255,255,255,.16)' : 'rgba(27,30,46,.12)',
+      okInk: dark ? 'oklch(0.86 0.1 150)' : 'oklch(0.42 0.1 150)',
+      clock: String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0'),
+      sky: `linear-gradient(180deg, ${sky3[0]} 0%, ${sky3[1]} 55%, ${sky3[2]} 100%)`,
+      pageBg: `radial-gradient(120% 80% at 50% 100%, ${pg[2]} 0%, ${pg[1]} 45%, ${pg[0]} 100%)`,
+      sun: { left: (18 + t * 64) + '%', top: (st === 7 ? 700 : 150 + Math.pow(t, 2) * 470) + 'px', size: (80 + t * 70) + 'px', op: st === 0 ? 0 : 1,
+        color: t > 0.6 ? 'radial-gradient(circle at 50% 40%, #ffe2b0, #ffb26e 70%)' : 'radial-gradient(circle at 50% 40%, #fffaf0, #fff0cc 70%)',
+        glow: t > 0.6 ? '0 0 140px 70px rgba(255,160,100,.4)' : '0 0 100px 40px rgba(255,246,220,.55)' },
+      enter: s.dir > 0 ? 'inR .45s cubic-bezier(.2,.9,.2,1) both' : 'inL .45s cubic-bezier(.2,.9,.2,1) both',
+      bubbleAnim: (st % 2 ? 'bubbleA' : 'bubbleB') + ' .35s cubic-bezier(.2,1.3,.4,1) both',
+      segs: this.NAMES.map((_, k) => ({ w: k <= st ? '100%' : '0%' })),
+      back: () => this.go(st - 1), backOp: st === 0 ? 0 : 1, backPe: st === 0 ? 'none' : 'auto',
+      skip: () => this.go(st + 1), skipOp: (st >= 2 && st <= 5) ? 1 : 0, skipPe: (st >= 2 && st <= 5) ? 'auto' : 'none',
+      next: () => { if (st === 6 && s.notif === null) { this.buzz(); this.setState({ askNotif: true }); return; } this.go(st + 1); },
+      showNext: st >= 1,
+      nextLabel: st === 7 ? 'Open 6pm' : st === 6 ? (s.notif === null ? `Remind me at ${closeAt}` : 'Continue') : st === 2 && left > 0 ? (bl.length ? 'That’s all my bills' : 'Skip bills for now') : 'Continue',
+      nextIcon: st === 6 && s.notif === null ? 'notifications' : 'arrow_forward',
+      ctaBg: ctaHot ? '#f6a46a' : btnBg, ctaFg: ctaHot ? '#2a1424' : btnFg, ctaShadow: ctaHot ? '0 12px 30px rgba(240,130,80,.4), inset 0 1px 0 rgba(255,255,255,.5)' : 'none',
+      hasLine: !!lines[st], stepLine: lines[st] || '', stepMood: moods[st],
+      s0: st === 0, s1: st === 1, s2: st === 2, s3: st === 3, s4: st === 4, s5: st === 5, s6: st === 6, s7: st === 7,
+      promises: [['bolt', 'Catch spending as it happens', 60], ['swipe', 'At six, swipe through your day', 25], ['wb_twilight', 'Wake up to one number', 300]].map(([icon, text, h], k) => Object.assign(T(h), { icon, text, delay: (300 + k * 120) + 'ms' })),
+      incMItems: this.MILL, incMIdx: M - 1, incMChange: (k) => setInc(k + 1, Kd),
+      digits: this.DIG, incKIdx: Kd, incKChange: (k) => setInc(M, k),
+      incDaily: `About ${this.short(s.income / 30)} a day, before bills`,
+      payModes: [['fixed', 'Same day'], ['last', 'Last day'], ['varies', 'It varies']].map(([k, label]) => ({ label, bg: s.payMode === k ? (dark ? 'rgba(255,255,255,.16)' : '#fff') : 'transparent', shadow: s.payMode === k ? '0 1px 3px rgba(0,0,0,.12)' : 'none', pick: () => { this.buzz(); this.setState({ payMode: k }); } })),
+      payFixed: s.payMode === 'fixed', payLast: s.payMode === 'last', payVaries: s.payMode === 'varies',
+      dayItems: this.DAYS, dayIdx: s.payday - 1, dayChange: (k) => this.setState({ payday: k + 1 }),
+      bSlots: [0, 1].map(k => slotData(s.bSlots[k], k === s.bAct)),
+      peek0: left > 1, peek1: left > 2,
+      endTitle: bl.length ? (bt ? `${bl.length} bills, ${this.short(bt)} a month` : `${bl.length} bills`) : 'No fixed bills',
+      tray: bl.map(x => Object.assign(T(x.h), { label: x.label, icon: x.icon, amt: x.v ? this.short(x.v) : 'amount later', edit: () => this.billGo(x.idx, -1) })),
+      hasTray: bl.length > 0,
+      billsCount: bl.length ? `${bl.length} bill${bl.length > 1 ? 's' : ''} a month` : 'Nothing yet',
+      billsOdo: this.odo(bt, 24),
+      pctItems: this.PCT, savPct: s.savPct, savChange: (k) => this.setState({ savPct: k }),
+      savRing: `conic-gradient(oklch(0.76 0.13 150) 0 ${Math.min(100, s.savPct * 2.5)}%, ${dark ? 'rgba(255,255,255,.12)' : 'rgba(27,30,46,.08)'} 0 100%)`,
+      savFmt: this.short(sv), savYear: sv ? `${this.short(sv * 12)} by next October` : 'Skip for now',
+      savNote: free > 0 ? `After bills and this, ${this.short(free)} is yours to spend each month. No guilt.` : 'That leaves nothing to spend. Try a smaller slice.',
+      banks: tints.map(([k, tint, mono]) => ({ label: k, tint, mono, on: !!s.banks[k], border: s.banks[k] ? '#f6a46a' : 'transparent', pick: () => { this.buzz(); this.setState({ banks: Object.assign({}, s.banks, { [k]: !s.banks[k] }) }); } })),
+      capScroll: (e) => { const ix = Math.round(e.currentTarget.scrollLeft / 310); if (ix !== s.capIdx) this.setState({ capIdx: ix }); },
+      capDots: [0, 1, 2, 3].map(k => ({ w: k === s.capIdx ? '18px' : '6px', op: k === s.capIdx ? 0.9 : 0.25 })),
+      capShare: capBtn('share', 'Got it, I’ll try it', 'ios_share'),
+      capEmail: capBtn('email', 'Copy address', 'content_copy', () => { try { navigator.clipboard.writeText('linh@6pm.oddeggs.studio'); } catch (e) {} }),
+      capWidget: capBtn('widget', 'Add to Lock Screen', 'add_to_home_screen'),
+      hourItems: this.HRS, hourIdx: Math.max(0, this.HRS.indexOf(String(s.closeH))), hourChange: (k) => this.setState({ closeH: +this.HRS[k] }),
+      minItems: this.MINS, minIdx: s.closeM / 15, minChange: (k) => this.setState({ closeM: k * 15 }),
+      closeAt,
+      notifBg: dark ? 'rgba(255,255,255,.14)' : 'rgba(255,255,255,.72)',
+      notifText: closeAt === '18:00' ? 'It’s six. Time to close your day.' : `It’s ${closeAt}. Time to close your day.`,
+      askNotif: s.askNotif,
+      allow: () => { this.setState({ notif: true, askNotif: false }); this.go(7); },
+      deny: () => { this.setState({ notif: false, askNotif: false }); this.go(7); },
+      revealOdo: this.odo(s.reveal, 84), revealScale: s.leaving ? 'scale(.7) translateY(-40px)' : 'none',
+      revealLine: s.notif === false ? `No reminder set. Open 6pm around ${closeAt}.` : `That’s it. See you at ${closeAt}.`,
+      split: [['Bills', bt, dark ? '#b7a5d8' : '#6d5a8f'], ['Future you', sv, 'oklch(0.76 0.13 150)'], ['To spend', free, '#f6a46a']].map(([label, v, color]) => ({ label, color, flex: String(Math.max(v, 1)), val: this.short(Math.max(0, v)) })),
+      revealMath: `${this.short(s.income)} in, minus bills and future you, spread over a 30-day month.`,
+      leaving: s.leaving, leaveBg: `linear-gradient(180deg, ${sky3[0]}, ${sky3[2]})`, revealShort: this.short(this.safe()),
+      stepLabel: `${st + 1} / ${this.NAMES.length}`, stepName: this.NAMES[st], stepNote: this.NOTES[st],
+      jumps: this.NAMES.map((label, k) => ({ label, n: String(k + 1).padStart(2, '0'), go: () => this.go(k), fg: k === st ? '#f6a46a' : '#f6efe6' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+import { describe, expect, it, jest } from '@jest/globals';
+
+import { sql as createSettings } from '../db/migrations/0001-create-settings';
+import { sql as createMoneyTables } from '../db/migrations/0002-create-money-tables';
+import { dayOf, createMoneyStore } from './money-store';
+import { completeOnboarding, readWallets, type OnboardingAnswers } from './onboarding';
+import type { SqlDatabase, SqlValue } from './table';
+
+jest.mock('expo-crypto', () => ({ randomUUID: () => crypto.randomUUID() }));
+
+// A real SQLite database in memory, from Node's own module (see migrate.test.ts).
+const { DatabaseSync } = process.getBuiltinModule('node:sqlite');
+
+function openStore(today: string) {
+  const sqlite = new DatabaseSync(':memory:');
+  sqlite.exec(createSettings);
+  sqlite.exec(createMoneyTables);
+  const db: SqlDatabase = {
+    getAllAsync: <T>(source: string, params: SqlValue[]) =>
+      Promise.resolve(sqlite.prepare(source).all(...params) as T[]),
+    runAsync: (source, params) => Promise.resolve(sqlite.prepare(source).run(...params)),
+    withTransactionAsync: async (task) => {
+      sqlite.exec('BEGIN');
+      try {
+        await task();
+        sqlite.exec('COMMIT');
+      } catch (error) {
+        sqlite.exec('ROLLBACK');
+        throw error;
+      }
+    },
+  };
+  return createMoneyStore(db, today);
+}
+
+const answers: OnboardingAnswers = {
+  income: 15_500_000,
+  payday: { kind: 'sameDay', day: 25 },
+  futureYou: 1_900_000,
+  bills: [
+    { name: 'Tiền nhà', icon: 'home', hue: 30, amount: 4_000_000 },
+    { name: 'Spotify', icon: 'music_note', hue: 330, amount: 0 },
+  ],
+  wallets: ['MB', 'MOMO', 'CASH', 'MB'],
+  closeAt: '19:30',
+};
+
+describe('completeOnboarding', () => {
+  it('sets the month up and Home reads the same number the reveal showed', async () => {
+    const store = openStore('2026-10-10');
+    expect(dayOf(store.getSnapshot())).toBeNull();
+
+    await completeOnboarding(store, answers, { today: '2026-10-10', language: 'vi' });
+
+    const snap = store.getSnapshot();
+    expect(snap.plan).toMatchObject({
+      income: 15_500_000,
+      payday: { kind: 'sameDay', day: 25 },
+      futureYou: 1_900_000,
+      closeAt: '19:30',
+      persona: 'cheeky',
+      serious: false,
+    });
+    expect(snap.categories.map((c) => [c.id, c.name, c.icon, c.hue])).toEqual([
+      ['food', 'Ăn uống', 'restaurant', 45],
+      ['drinks', 'Đồ uống', 'local_cafe', 25],
+      ['transport', 'Đi lại', 'two_wheeler', 245],
+      ['groceries', 'Đi chợ', 'shopping_basket', 140],
+      ['shopping', 'Mua sắm', 'local_mall', 300],
+      ['gifts', 'Quà tặng', 'redeem', 350],
+    ]);
+    expect(snap.bills.map((b) => [b.name, b.amount, b.dueDay, b.sort])).toEqual([
+      ['Tiền nhà', 4_000_000, 1, 0],
+      ['Spotify', 0, 1, 1],
+    ]);
+    expect(await readWallets(store)).toEqual(['MB', 'MOMO', 'CASH']);
+
+    // 10 Oct with payday the 25th: 15 days left, 16 days covered.
+    // (15.500.000 − 4.000.000 − 1.900.000) ÷ 16 = 600.000.
+    expect(dayOf(snap)?.line).toBe(600_000);
+  });
+
+  it('keeps categories the user already has', async () => {
+    const store = openStore('2026-10-10');
+    await store.tables.categories.put({
+      id: 'coffee',
+      name: 'Coffee',
+      icon: 'local_cafe',
+      hue: 25,
+      countsDaily: true,
+      sort: 0,
+      archivedAt: null,
+    });
+    await completeOnboarding(store, answers, { today: '2026-10-10', language: 'en' });
+    expect(store.getSnapshot().categories.map((c) => c.id)).toEqual(['coffee']);
+  });
+});

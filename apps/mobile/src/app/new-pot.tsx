@@ -17,6 +17,7 @@ import {
 import { usePlanFormat } from '../features/plan/plan-format';
 import { potMonthAt, stepPotMonth, POT_MONTHS_AHEAD } from '../features/plan/plan-view';
 import { useI18n } from '../i18n/i18n';
+import { useCompanionToast } from '../features/companion/use-companion-toast';
 import { haptics } from '../ui/haptics';
 import { Symbol } from '../ui/icons/symbol';
 import { SheetFrame } from '../ui/navigation/sheet-frame';
@@ -37,6 +38,7 @@ export default function NewPot() {
   const router = useRouter();
   const { palette } = useTheme();
   const { t } = useI18n();
+  const say = useCompanionToast();
   const snap = useMoney();
   const actions = usePlanActions();
   const format = usePlanFormat(snap.today);
@@ -68,6 +70,7 @@ export default function NewPot() {
     });
     haptics.success();
     router.back();
+    say('potMade');
   };
 
   const header = (

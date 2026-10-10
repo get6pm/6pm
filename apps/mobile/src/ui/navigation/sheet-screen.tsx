@@ -16,8 +16,11 @@ export function SheetScreen({
   title,
   children,
   footer,
+  gap = 22,
 }: {
   readonly title: string;
+  /** Space between the body's sections (Settings spaces its cards wider). */
+  readonly gap?: number;
   readonly children?: ReactNode;
   /** Pinned under the scroll area (e.g. "Confirm all"). */
   readonly footer?: ReactNode;
@@ -54,7 +57,7 @@ export function SheetScreen({
     <SheetFrame header={header}>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingTop: 6, paddingHorizontal: 16, paddingBottom: 44, gap: 22 }}
+        contentContainerStyle={{ paddingTop: 6, paddingHorizontal: 16, paddingBottom: 44, gap }}
         showsVerticalScrollIndicator={false}
       >
         {children}

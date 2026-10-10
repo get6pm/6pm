@@ -15,6 +15,7 @@ import { curves } from '@6pm/theme';
 
 import { usePlanActions } from '../../data/plan-actions';
 import { useI18n } from '../../i18n/i18n';
+import { useCompanionToast } from '../companion/use-companion-toast';
 import { CategoryTile } from '../../ui/category-tile';
 import { haptics } from '../../ui/haptics';
 import { isSymbolName, Symbol } from '../../ui/icons/symbol';
@@ -44,6 +45,7 @@ function Jar({
   const { palette } = useTheme();
   const { t } = useI18n();
   const actions = usePlanActions();
+  const say = useCompanionToast();
   const reduceMotion = useReducedMotion();
   const level = Math.max(0.06, view.progress);
   const fill = useSharedValue(level);
@@ -57,6 +59,7 @@ function Jar({
     if (full) return;
     haptics.tap();
     void actions.topUp(pot.id, TOP_UP);
+    if (view.saved + TOP_UP >= pot.goal) say('potFull');
   };
   return (
     <View

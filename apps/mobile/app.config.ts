@@ -83,7 +83,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: 'automatic',
   backgroundColor: LAUNCH_BACKGROUND,
   // A build only takes updates made from the same native code; v1's fixed runtime is never reused.
-  runtimeVersion: { policy: 'fingerprint' },
+  // EXPO_LOCAL_RUNTIME is for the simulator harness only: the dev server re-hashes the native
+  // fingerprint on every manifest request, which can outlast the dev client's 10 s timeout on a
+  // busy machine. The dev client never checks the runtime against Metro, so a fixed one is safe there.
+  runtimeVersion: process.env.EXPO_LOCAL_RUNTIME ? 'local' : { policy: 'fingerprint' },
   updates: variant.updates
     ? { url: `https://u.expo.dev/${EAS_PROJECT_ID}` }
     : { enabled: false, checkAutomatically: 'NEVER' },
@@ -96,6 +99,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     config: { usesNonExemptEncryption: false },
     infoPlist: {
       CFBundleAllowMixedLocalizations: true,
+      // iOS 27 ignores the app-wide status bar calls; each screen sets its own (style per palette,
+      // hidden while the island toast covers it).
+      UIViewControllerBasedStatusBarAppearance: true,
     },
     // The App Group (shared with widgets and the share extension) is declared with those targets:
     // App Store Connect's API cannot register app groups, so they arrive in that native batch.
@@ -113,6 +119,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     ['expo-build-properties', { android: { compileSdkVersion: 37, targetSdkVersion: 36 } }],
     ['expo-localization', { supportedLocales: ['en', 'vi'] }],
+    // Local reminders only (the close at six); no remote push yet.
+    ['expo-notifications', { enableBackgroundRemoteNotifications: false }],
   ],
   experiments: {
     typedRoutes: true,

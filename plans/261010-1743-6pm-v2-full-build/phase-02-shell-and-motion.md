@@ -20,7 +20,7 @@ status: in progress
 5. Sheets drawn by `SheetFrame` (58 pt top, 40 pt corners, header drag to dismiss) over transparent modals — native form sheets mis-laid out content on iOS 27 + RN 0.88 rc; full-screen takeovers native. — built, checked on simulator
 6. Sky (Skia atmosphere: Basic, Golden Hour, serious) behind home. — done, ≤0.7/255 mean diff vs prototype
 7. Companion (Skia, moods, Max form) + line catalogue en/vi. — done
-8. Dynamic-Island-style toast host and the undo pill. — todo
+8. Dynamic-Island-style toast host and the undo pill. — built: the island swells into the companion's line over every sheet (`ui/toast/toast-host.tsx`, `features/companion/use-companion-toast.ts`)
 9. Today sheet contents: companion bubble, tonight card, week strip, list rows with swipe confirm/delete. — phase 03
 
 ## Done when

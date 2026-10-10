@@ -11,15 +11,15 @@ Inputs: `docs/product-decisions.md`, `docs/tech-decisions.md`, `docs/design-syst
 | 02 | [Shell and motion](phase-02-shell-and-motion.md): tab pager + scrub/condense bar, FAB, sheets, island toasts, Skia sky (Basic, Golden Hour), companion, odometer | 01 | in progress |
 | 03 | [Today, Inbox, Details, store](phase-03-today-and-store.md) | 02 | in progress |
 | 04 | [Quick add and the 6pm Close](phase-04-quick-add-and-close.md) | 03 | in progress |
-| 05 | Plan: river, daily bars + what-if, bills, Future you, occasions/pots | 03 | todo |
-| 06 | Diary: week recap, calendar, day receipt, missed day, money diaries | 04 | todo |
-| 07 | Onboarding v2 (wheels), Settings, close reminder notifications, serious mode | 03 | todo |
+| 05 | Plan: river, daily bars + what-if, bills, Future you, occasions/pots | 03 | built (simulator-checked) |
+| 06 | Diary: week recap, calendar, day receipt, missed day, money diaries | 04 | built (simulator-checked) |
+| 07 | Onboarding v2 (wheels), Settings, close reminder notifications, serious mode, Categories and rules | 03 | in progress: Settings (companion, serious, close time, language, privacy, delete all) built |
 | 08 | Capture: VietQR scan-to-pay + pending, share extension OCR, receipt email (API), App Intent, voice | 04 | todo |
 | 09 | System surfaces: widgets, Live Activity, controls, notification actions (native batch) | 08 | todo |
 | 10 | Looks (all 11 + try-on), RevenueCat purchases, Max paywall, welcome and gates | 02 | todo |
 | 11 | Ask 6pm, encrypted backup and export, travel/FX | 05, 10 | todo |
-| 12 | Coming Soon site + waitlist (built, verified locally); deploy dev/prd on `6pm.oddeggs.studio` (needs D1 ids + go-ahead) | 01 | in progress |
-| 13 | Release: signed builds on `ai.sixpm.app`, TestFlight, store listing | all | todo |
+| 12 | Coming Soon site + waitlist; deployed dev/prd on `6pm.oddeggs.studio` | 01 | done |
+| 13 | Release: signed builds on `ai.sixpm.app`, TestFlight, store listing | all | in progress: tag `testflight/*` builds and submits (build 59 submitted) |
 
 ## Acceptance (launch)
 

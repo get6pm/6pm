@@ -21,6 +21,7 @@ import { useSpendLabels } from '../features/today/use-spend-rows';
 import { useI18n } from '../i18n/i18n';
 import { CategoryTile } from '../ui/category-tile';
 import { Companion } from '../ui/companion/companion';
+import { useCompanionToast } from '../features/companion/use-companion-toast';
 import { haptics } from '../ui/haptics';
 import { PressScale } from '../ui/primitives/press-scale';
 import { useTheme } from '../ui/theme/theme';
@@ -38,6 +39,7 @@ export default function MissedDay() {
   const { palette, serious } = useTheme();
   const { t } = useI18n();
   const dates = useDiaryDates();
+  const say = useCompanionToast();
   const labels = useSpendLabels();
   const { height } = useWindowDimensions();
   const snap = useMoney();
@@ -81,6 +83,7 @@ export default function MissedDay() {
     await actions.reload();
     haptics.success();
     dismiss();
+    say('lateClose', { day: dates.weekday(day) });
   };
 
   const weekday = day ? dates.weekday(day) : '';

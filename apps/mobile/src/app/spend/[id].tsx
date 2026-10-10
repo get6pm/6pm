@@ -19,6 +19,7 @@ import { body, display, tabular } from '../../ui/type/fonts';
 import { RulePrompt } from '../../features/details/rule-prompt';
 import { SourceTrail } from '../../features/details/source-trail';
 import { useOfferUndo } from '../../ui/undo/undo-host';
+import { useCompanionToast } from '../../features/companion/use-companion-toast';
 
 const WALLETS = ['Cash', 'MB Bank', 'Vietcombank', 'MoMo'];
 const DELETE_RED = oklchSrgbHex(0.64, 0.19, 25);
@@ -33,6 +34,7 @@ export default function SpendDetails() {
   const actions = useMoneyActions();
   const labels = useSpendLabels();
   const offerUndo = useOfferUndo();
+  const say = useCompanionToast();
   const spend = snap.cycleSpends.find((s) => s.id === id);
   const [askRule, setAskRule] = useState(false);
   const [note, setNote] = useState(spend?.note ?? '');
@@ -159,6 +161,7 @@ export default function SpendDetails() {
             onAlways={() => {
               void actions.rememberMerchant(spend.merchant, category.id);
               setAskRule(false);
+              say('ruleSaved');
             }}
           />
         ) : null}

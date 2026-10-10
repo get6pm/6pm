@@ -8,6 +8,7 @@ import { curves } from '@6pm/theme';
 
 import { usePlanActions } from '../../data/plan-actions';
 import { useI18n } from '../../i18n/i18n';
+import { useCompanionToast } from '../companion/use-companion-toast';
 import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
 import { useTheme } from '../../ui/theme/theme';
@@ -87,7 +88,8 @@ export function FutureYouCard({
   readonly format: PlanFormat;
 }) {
   const { palette } = useTheme();
-  const { t } = useI18n();
+  const { t, weekday } = useI18n();
+  const say = useCompanionToast();
   const actions = usePlanActions();
   const split = shareSplit(goals);
   const step = formatShort(TOP_UP);
@@ -198,6 +200,7 @@ export function FutureYouCard({
               onPress={() => {
                 haptics.tap();
                 void actions.topUp(g.pot.id, TOP_UP);
+                say('save', { day: weekday(new Date()) });
               }}
             />
           </View>

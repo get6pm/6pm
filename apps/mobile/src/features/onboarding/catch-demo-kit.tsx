@@ -1,0 +1,103 @@
+import { Skia } from '@shopify/react-native-skia';
+import type { ReactNode } from 'react';
+import { View } from 'react-native';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+
+import { useLoop } from './onboarding-motion';
+import { DEMO } from './onboarding-palette';
+
+/** Shared by the capture demos: their size, sample data, easing, tap ring and Skia shapes. */
+
+export const W = 280;
+export const H = 176;
+/** Sample merchants for the pictures: what a scanned code and two receipt emails look like. */
+export const SAMPLE = {
+  qrMerchant: 'Bún chả Cô Lan',
+  qr: 55_000,
+  transfer: 120_000,
+  grab: 68_000,
+  shopee: 249_000,
+};
+
+export const box = { height: H, borderRadius: 20, overflow: 'hidden' } as const;
+
+/** CSS `ease-in-out` on 0–1. */
+export function inOut(x: number): number {
+  'worklet';
+  return x < 0.5 ? 2 * x * x : 1 - 2 * (1 - x) * (1 - x);
+}
+
+/** `tapRing`: a warm halo swells 9 pt out and fades, then gathers back, every 1.8 s. */
+export function TapRing({
+  size,
+  radius,
+  children,
+}: {
+  readonly size: number;
+  readonly radius: number;
+  readonly children: ReactNode;
+}) {
+  const phase = useLoop(1800, 0, 0.6);
+  const halo = useAnimatedStyle(() => {
+    const p = phase.value;
+    const q = p < 0.6 ? inOut(p / 0.6) : 1 - inOut((p - 0.6) / 0.4);
+    const spread = 9 * q;
+    const [r, g, b] = DEMO.tapRing;
+    return {
+      left: -spread,
+      top: -spread,
+      width: size + 2 * spread,
+      height: size + 2 * spread,
+      borderRadius: radius + spread,
+      backgroundColor: `rgba(${Math.round((r ?? 0) * 255)},${Math.round((g ?? 0) * 255)},${Math.round((b ?? 0) * 255)},${0.8 * (1 - q)})`,
+    };
+  });
+  return (
+    <View style={{ width: size, height: size }}>
+      <Animated.View style={[{ position: 'absolute' }, halo]} />
+      {children}
+    </View>
+  );
+}
+
+/** Built on first use: Skia is ready by the time a demo draws, not necessarily at import. */
+let stripesPath: ReturnType<typeof Skia.Path.Make> | null = null;
+export function stripes() {
+  if (stripesPath) return stripesPath;
+  const path = Skia.Path.Make();
+  for (let s = 12; s < (W + H) / Math.SQRT2 + 24; s += 24) {
+    const c1 = s * Math.SQRT2;
+    const c2 = (s + 12) * Math.SQRT2;
+    path.moveTo(c1, 0);
+    path.lineTo(c2, 0);
+    path.lineTo(c2 - H, H);
+    path.lineTo(c1 - H, H);
+    path.close();
+  }
+  stripesPath = path;
+  return path;
+}
+
+let checkerPath: ReturnType<typeof Skia.Path.Make> | null = null;
+export function checker() {
+  if (checkerPath) return checkerPath;
+  const path = Skia.Path.Make();
+  for (let r = 0; r < 12; r++) {
+    for (let c = 0; c < 12; c++)
+      if ((r + c) % 2 === 1) path.addRect(Skia.XYWHRect(c * 9, r * 9, 9, 9));
+  }
+  checkerPath = path;
+  return path;
+}
+
+/** The lock-screen ring: 70% of a turn in white over a faint track. */
+let ringPath: ReturnType<typeof Skia.Path.Make> | null = null;
+export function ring() {
+  if (ringPath) return ringPath;
+  const path = Skia.Path.Make();
+  path.moveTo(22, 22);
+  path.arcToOval(Skia.XYWHRect(0, 0, 44, 44), -90, 252, false);
+  path.close();
+  ringPath = path;
+  return path;
+}

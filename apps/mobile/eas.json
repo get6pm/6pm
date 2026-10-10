@@ -1,0 +1,44 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "dev",
+      "node": "24.21.0",
+      "pnpm": "12.6.0",
+      "env": { "APP_VARIANT": "dev" }
+    },
+    "e2e-test": {
+      "distribution": "internal",
+      "withoutCredentials": true,
+      "node": "24.21.0",
+      "pnpm": "12.6.0",
+      "env": { "APP_VARIANT": "e2e-test" },
+      "ios": { "simulator": true, "image": "latest" }
+    },
+    "dev": {
+      "distribution": "store",
+      "channel": "dev",
+      "autoIncrement": true,
+      "node": "24.21.0",
+      "pnpm": "12.6.0",
+      "env": { "APP_VARIANT": "dev" }
+    },
+    "prd": {
+      "distribution": "store",
+      "channel": "prd",
+      "autoIncrement": true,
+      "node": "24.21.0",
+      "pnpm": "12.6.0",
+      "env": { "APP_VARIANT": "prd" }
+    }
+  },
+  "submit": {
+    "dev": { "ios": {} },
+    "prd": { "ios": {} }
+  }
+}

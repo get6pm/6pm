@@ -1,0 +1,49 @@
+name: native-build
+
+# Builds the iOS app on GitHub's macOS runners (`eas build --local`, no EAS build minutes). See
+# native-build-job.yml for where each build goes, and e2e/README.md for the secrets it needs.
+#   gh workflow run native-build.yml -f ref=<branch> -f profile=e2e-test
+#   gh workflow run native-build.yml -f ref=<branch> -f profile=dev -f submit=true
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch, tag or commit to build
+        required: true
+        default: v2
+      profile:
+        description: e2e-test (simulator app), dev (signed, 6pm Dev) or prd (signed, the 6pm app)
+        required: true
+        type: choice
+        options: [e2e-test, dev, prd]
+      submit:
+        description: Send a signed build to TestFlight (signed builds must be submitted)
+        required: false
+        type: boolean
+        default: false
+
+run-name: native build ${{ inputs.profile }} at ${{ inputs.ref }}
+
+# One build per ref and profile at a time: a second dispatch waits instead of doubling up on the
+# few macOS runners that device runs and CI share.
+concurrency:
+  group: native-build-${{ inputs.ref }}-${{ inputs.profile }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    uses: ./.github/workflows/native-build-job.yml
+    permissions:
+      contents: write
+    with:
+      ref: ${{ inputs.ref }}
+      profile: ${{ inputs.profile }}
+      submit: ${{ inputs.submit }}
+    secrets:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      EXPO_ASC_API_KEY_P8: ${{ secrets.EXPO_ASC_API_KEY_P8 }}
+      EXPO_ASC_KEY_ID: ${{ secrets.EXPO_ASC_KEY_ID }}
+      EXPO_ASC_ISSUER_ID: ${{ secrets.EXPO_ASC_ISSUER_ID }}

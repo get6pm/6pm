@@ -20,8 +20,7 @@
         {
           "binding": "DB",
           "database_name": "sixpm-dev",
-          // Placeholder until `wrangler d1 create sixpm-dev`; local runs and tests do not need it.
-          "database_id": "00000000-0000-0000-0000-000000000000",
+          "database_id": "94cb7646-0777-4a00-bb3f-fb944421f4e6",
           "migrations_dir": "migrations",
         },
       ],
@@ -48,7 +47,7 @@
         {
           "binding": "DB",
           "database_name": "sixpm",
-          "database_id": "00000000-0000-0000-0000-000000000000",
+          "database_id": "94098e3b-7564-4e44-9331-cf4646e0a5ec",
           "migrations_dir": "migrations",
         },
       ],

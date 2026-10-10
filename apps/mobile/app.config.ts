@@ -78,6 +78,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: variant.scheme,
   version: '2.0.0',
   orientation: 'portrait',
+  // The companion on the Golden Hour sky, rendered from the prototype's own drawing.
+  icon: './assets/icon/icon.png',
   userInterfaceStyle: 'automatic',
   backgroundColor: LAUNCH_BACKGROUND,
   // A build only takes updates made from the same native code; v1's fixed runtime is never reused.

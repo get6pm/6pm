@@ -1,0 +1,142 @@
+name: native-build-job
+
+# Builds the iOS app on a GitHub macOS runner with `eas build --local` (no EAS build minutes).
+# Called by native-build.yml; it has no trigger of its own.
+#
+# - `e2e-test` (the simulator app, no Apple credentials) is kept as a 14-day run artifact.
+# - `dev` and `prd` (signed for the App Store) go straight from the runner to TestFlight: `dev` to
+#   the 6pm Dev app (variable ASC_DEV_APP_ID), `prd` to the 6pm app (variable ASC_APP_ID). This
+#   repository is public, so the signed .ipa is never a run artifact or a release asset.
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Branch, tag or commit to build
+        required: true
+        type: string
+      profile:
+        description: eas.json build profile (e2e-test, dev or prd)
+        required: true
+        type: string
+      submit:
+        description: Send the dev build to TestFlight
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      EXPO_TOKEN:
+        description: Expo access token (every build)
+        required: false
+      EXPO_ASC_API_KEY_P8:
+        description: App Store Connect API key file contents (dev)
+        required: false
+      EXPO_ASC_KEY_ID:
+        description: App Store Connect API key id (dev)
+        required: false
+      EXPO_ASC_ISSUER_ID:
+        description: App Store Connect API issuer id (dev)
+        required: false
+
+env:
+  EAS_CLI: eas-cli@24.8.0
+
+jobs:
+  ios:
+    name: ${{ inputs.profile }} ios
+    # macOS 26 with Xcode 26.6, selected below: the image and Xcode the sister repository builds
+    # this Expo SDK with, and the image device runs install the simulator build on.
+    runs-on: macos-26
+    timeout-minutes: 120
+    permissions:
+      contents: write
+    env:
+      PROFILE: ${{ inputs.profile }}
+    steps:
+      # Before anything slow: a missing secret must not surface half-way through a build.
+      - name: Check the request and the secrets
+        env:
+          SUBMIT: ${{ inputs.submit }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          ASC_API_KEY_P8: ${{ secrets.EXPO_ASC_API_KEY_P8 }}
+          ASC_KEY_ID: ${{ secrets.EXPO_ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.EXPO_ASC_ISSUER_ID }}
+          ASC_APP_ID: ${{ inputs.profile == 'dev' && vars.ASC_DEV_APP_ID || vars.ASC_APP_ID }}
+        run: |
+          fail() { echo "::error::$1"; exit 1; }
+          missing=()
+          [ -n "$EXPO_TOKEN" ] || missing+=("secret EXPO_TOKEN")
+          case "$PROFILE" in
+            e2e-test)
+              [ "$SUBMIT" != true ] || fail "An e2e-test build is the simulator app: it cannot be submitted. Use submit=false."
+              ;;
+            dev|prd)
+              [ "$SUBMIT" = true ] || fail "A signed build on a public repository must be submitted (submit=true): the signed .ipa is never kept as an artifact."
+              [ -n "$ASC_API_KEY_P8" ] || missing+=("secret EXPO_ASC_API_KEY_P8")
+              [ -n "$ASC_KEY_ID" ] || missing+=("secret EXPO_ASC_KEY_ID")
+              [ -n "$ASC_ISSUER_ID" ] || missing+=("secret EXPO_ASC_ISSUER_ID")
+              [ -n "$ASC_APP_ID" ] || missing+=("variable ASC_APP_ID (prd) or ASC_DEV_APP_ID (dev)")
+              ;;
+            *) fail "profile must be e2e-test, dev or prd, not \"$PROFILE\"" ;;
+          esac
+          if [ "${#missing[@]}" -gt 0 ]; then
+            list=$(printf '%s, ' "${missing[@]}")
+            fail "Missing in this repository's Actions settings: ${list%, }. Nothing was built."
+          fi
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: pnpm }
+      - name: Select Xcode 26.6
+        run: |
+          xcode=/Applications/Xcode_26.6.app
+          if [ ! -d "$xcode" ]; then
+            echo "::error::Xcode 26.6 is not on this runner image. Installed: $(echo /Applications/Xcode*.app)"
+            exit 1
+          fi
+          sudo xcode-select -s "$xcode"
+          xcodebuild -version
+      # The build itself runs in a fresh copy of the project, so only download caches carry over.
+      - uses: actions/cache@v5
+        with:
+          path: ~/Library/Caches/CocoaPods
+          key: native-cocoapods-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: native-cocoapods-
+      - run: pnpm install --frozen-lockfile
+      - name: Build
+        id: build
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          # The build tools give "expo doctor" thirty seconds and crash (kill ESRCH) when it
+          # finishes just as that runs out, which it now does. Its report never stopped a build.
+          EAS_BUILD_DISABLE_EXPO_DOCTOR_STEP: '1'
+          # A signed build may need a provisioning profile made or renewed: a new extension, or
+          # a capability added to an App ID. EAS does that through App Store Connect with the
+          # same key the submit step uses. The simulator build is never given it.
+          ASC_API_KEY_P8: ${{ inputs.profile != 'e2e-test' && secrets.EXPO_ASC_API_KEY_P8 || '' }}
+          EXPO_ASC_KEY_ID: ${{ inputs.profile != 'e2e-test' && secrets.EXPO_ASC_KEY_ID || '' }}
+          EXPO_ASC_ISSUER_ID: ${{ inputs.profile != 'e2e-test' && secrets.EXPO_ASC_ISSUER_ID || '' }}
+        run: tools/scripts/native-build-ios.sh "$PROFILE" "$RUNNER_TEMP/native"
+
+      - name: Keep the simulator app
+        if: inputs.profile == 'e2e-test'
+        uses: actions/upload-artifact@v5
+        with:
+          name: e2e-test-ios-${{ github.run_id }}
+          path: ${{ steps.build.outputs.artifact }}
+          retention-days: 14
+
+      - name: Submit to TestFlight
+        if: inputs.profile != 'e2e-test'
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          ASC_API_KEY_P8: ${{ secrets.EXPO_ASC_API_KEY_P8 }}
+          EXPO_ASC_KEY_ID: ${{ secrets.EXPO_ASC_KEY_ID }}
+          EXPO_ASC_ISSUER_ID: ${{ secrets.EXPO_ASC_ISSUER_ID }}
+          ASC_APP_ID: ${{ inputs.profile == 'dev' && vars.ASC_DEV_APP_ID || vars.ASC_APP_ID }}
+          ARTIFACT: ${{ steps.build.outputs.artifact }}
+        run: tools/scripts/native-submit-ios.sh "$PROFILE" "$ARTIFACT"
+      - name: Remove the signed build
+        if: always() && inputs.profile != 'e2e-test'
+        run: rm -rf "$RUNNER_TEMP/native" "$RUNNER_TEMP/asc-api-key.p8"

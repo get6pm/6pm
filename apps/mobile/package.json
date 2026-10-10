@@ -36,6 +36,7 @@
     "expo-sqlite": "catalog:",
     "expo-status-bar": "catalog:",
     "expo-system-ui": "catalog:",
+    "expo-updates": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
     "react-native-gesture-handler": "catalog:",

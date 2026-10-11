@@ -1,10 +1,10 @@
-import { Redirect } from 'expo-router';
+import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useState, type ReactNode } from 'react';
 import { Pressable, Text, View, type LayoutChangeEvent } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { configFor, lookById, type LookConfig } from '@6pm/theme';
+import { configFor, isLookId, LOOK_IDS, lookById, type LookConfig } from '@6pm/theme';
 
 import { Sky } from '../../ui/sky/sky';
 import { body, mono, tabular } from '../../ui/type/fonts';
@@ -13,7 +13,7 @@ import { body, mono, tabular } from '../../ui/type/fonts';
 // scrub the hour, switch look, variant, intensity, effects and serious mode. Tap the sky to hide
 // the panel. Its labels are identifiers, not interface copy.
 
-const LOOKS = ['golden', 'basic'] as const;
+const LOOKS = LOOK_IDS;
 type SkyLook = (typeof LOOKS)[number];
 
 /** The prototype's presets: 18:07 is its designed Friday (18.12). */
@@ -116,11 +116,13 @@ function Label({ children }: { readonly children: ReactNode }) {
 
 function SkyLab() {
   const insets = useSafeAreaInsets();
-  const [hour, setHour] = useState(18.12);
-  const [look, setLook] = useState<SkyLook>('golden');
+  // `?look=neon&hour=21.5&panel=0` opens a state directly, for headless screenshots.
+  const params = useLocalSearchParams<{ look?: string; hour?: string; panel?: string }>();
+  const [hour, setHour] = useState(params.hour ? Number(params.hour) : 18.12);
+  const [look, setLook] = useState<SkyLook>(isLookId(params.look) ? params.look : 'golden');
   const [configs, setConfigs] = useState<Partial<Record<SkyLook, Partial<LookConfig>>>>({});
   const [serious, setSerious] = useState(false);
-  const [panel, setPanel] = useState(true);
+  const [panel, setPanel] = useState(params.panel !== '0');
 
   const definition = lookById(look);
   const override = configs[look];

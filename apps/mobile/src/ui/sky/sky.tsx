@@ -10,7 +10,7 @@ import {
   type SharedValue,
 } from 'react-native-reanimated';
 
-import type { LookConfig, LookId } from '@6pm/theme';
+import { configFor, type LookConfig, type LookId } from '@6pm/theme';
 
 import { SkyBlooms } from './sky-blooms';
 import { SkyBokeh } from './sky-bokeh';
@@ -26,6 +26,21 @@ import { useSkyClock } from './sky-motion';
 import { SLOT } from './sky-slots';
 import { SkySun, SUN_PARALLAX } from './sky-sun';
 import { SkyVignette } from './sky-vignette';
+import { LivingBackdrop } from './scenes/living/living-backdrop';
+import { LivingMiddle } from './scenes/living/living-middle';
+import { LivingSun } from './scenes/living/living-sun';
+import type { SceneProps } from './scenes/scene-props';
+import {
+  SurfaceBlooms,
+  SurfaceMiddle,
+  SurfaceSky,
+  SurfaceSun,
+  SurfaceTop,
+  surfaceOwnsBlooms,
+  surfaceOwnsSky,
+  surfaceOwnsSun,
+} from './scenes/surface';
+import { WeatherMiddle, WeatherTop } from './scenes/weather/weather-scene';
 
 /** The prototype eases every hour-driven change over 1 s with CSS `ease`. */
 const TRANSITION = { duration: 1000, easing: Easing.bezier(0.25, 0.1, 0.25, 1) };
@@ -107,15 +122,41 @@ export function Sky({ look, config, hour, serious, scrollY, showSun = true }: Sk
     grain: useShown(at(SLOT.grainOp)),
   };
   const props: SkyLayerProps = { frame, layout, width, height, time, scrollY: scroll };
+  const lookConfig = useMemo(() => configFor(look, config), [look, config]);
+  const scene: SceneProps = {
+    look,
+    config: lookConfig,
+    hour,
+    serious,
+    atm: target.atm,
+    palette: target.palette,
+    width,
+    height,
+    time,
+    scrollY: scroll,
+  };
+  // Looks that draw their own sun in place of the shared one.
+  const sharedSun = !surfaceOwnsSun(look) && look !== 'paper';
 
   return (
     <Canvas style={[StyleSheet.absoluteFill, styles.passThrough]}>
-      <SkyGradient frame={frame} width={width} height={height} />
-      {shown.blooms && <SkyBlooms {...props} />}
+      {surfaceOwnsSky(look) ? (
+        <SurfaceSky {...scene} />
+      ) : (
+        <SkyGradient frame={frame} width={width} height={height} />
+      )}
+      <LivingBackdrop {...scene} />
+      {surfaceOwnsBlooms(look) ? (
+        <SurfaceBlooms {...scene} />
+      ) : (
+        shown.blooms && <SkyBlooms {...props} />
+      )}
       <Group transform={sunLift}>
-        {shown.sun && <SkySun frame={frame} width={width} />}
+        {shown.sun && sharedSun && <SkySun frame={frame} width={width} />}
         {shown.flare && <SkyFlare frame={frame} layout={layout} width={width} />}
+        <LivingSun {...scene} showSun={showSun} />
       </Group>
+      <SurfaceSun {...scene} showSun={showSun} />
       {shown.moon && <SkyMoon frame={frame} width={width} />}
       {shown.bokeh && (
         <Group transform={bokehLift}>
@@ -128,10 +169,15 @@ export function Sky({ look, config, hour, serious, scrollY, showSun = true }: Sk
         </Group>
       )}
       {shown.leak && <SkyLeak {...props} />}
+      <WeatherMiddle {...scene} />
+      <SurfaceMiddle {...scene} />
+      <LivingMiddle {...scene} />
       {shown.vignette && (
         <SkyVignette frame={frame} layout={layout} width={width} height={height} />
       )}
       {shown.grain && <SkyGrain {...props} />}
+      <WeatherTop {...scene} />
+      <SurfaceTop {...scene} />
     </Canvas>
   );
 }

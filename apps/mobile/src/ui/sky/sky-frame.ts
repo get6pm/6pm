@@ -1,4 +1,4 @@
-import { atmosphereFor, paletteFor, sunFor, type FrameInput } from '@6pm/theme';
+import { atmosphereFor, paletteFor, sunFor, type FrameInput, type Palette } from '@6pm/theme';
 
 import { bloomProfile, type RadialProfile } from './blur-profile';
 import {
@@ -68,6 +68,9 @@ export interface SkyLayout {
 export interface SkyFrame {
   readonly values: number[];
   readonly layout: SkyLayout;
+  /** The hour's palette and atmosphere, for the looks' own layers (`scenes/`). */
+  readonly palette: Palette;
+  readonly atm: Readonly<Record<string, unknown>>;
 }
 
 export interface SkyInput extends FrameInput {
@@ -242,5 +245,5 @@ export function skyFrame(input: SkyInput): SkyFrame {
     bokeh: bokeh.map(({ spot }) => spot),
     grainBlend: blendOf(atm.grainBlend),
   };
-  return { values: v, layout };
+  return { values: v, layout, palette, atm };
 }

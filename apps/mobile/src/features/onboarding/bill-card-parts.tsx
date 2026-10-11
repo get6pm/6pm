@@ -29,7 +29,8 @@ export function Pill({
   readonly label: string;
   readonly bg: string;
   readonly fg: string;
-  readonly flex: number;
+  /** Share of a row's width; leave it out in a column, where it would collapse the height. */
+  readonly flex?: number;
   readonly height: number;
   readonly radius?: number;
   readonly onPress: () => void;
@@ -42,7 +43,7 @@ export function Pill({
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
-      style={{ flex, minWidth: 0 }}
+      style={{ ...(flex === undefined ? {} : { flex }), minWidth: 0 }}
     >
       <Animated.View
         style={[

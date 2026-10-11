@@ -1,5 +1,4 @@
 import { useState, type ReactNode } from 'react';
-import { View } from 'react-native';
 import Animated, { useAnimatedStyle, useReducedMotion, withTiming } from 'react-native-reanimated';
 
 import { BillCardFace, type BillCardProps } from './bill-card';
@@ -19,6 +18,11 @@ export interface DeckNav {
 export const DECK_START: DeckNav = { index: 0, from: null, direction: 1, moves: 0 };
 
 const DECK_HEIGHT = 340;
+/**
+ * An amount card holds a two-line question and three wheel rows (126 pt) above its buttons: 372 pt
+ * fits them, where the design's 340 pt let the wheels run into the buttons.
+ */
+const AMOUNT_DECK_HEIGHT = 372;
 
 /** `cardIn`: up 22 pt from 94% and in, with a slight overshoot, .42 s. */
 function DealtCard({ children }: { readonly children: ReactNode }) {
@@ -121,13 +125,21 @@ export function BillDeckView({
 }) {
   const [width, setWidth] = useState(362);
   const left = deck.length - nav.index;
+  const reduceMotion = useReducedMotion();
+  const tall = deck[nav.index]?.type === 'amount';
+  const height = useAnimatedStyle(() => {
+    const target = tall ? AMOUNT_DECK_HEIGHT : DECK_HEIGHT;
+    return {
+      height: reduceMotion ? target : withTiming(target, { duration: 420, easing: ease.card }),
+    };
+  });
   const face = (index: number) => (
     <BillCardFace {...card} item={deck[index] ?? null} deckIndex={index} />
   );
   return (
-    <View
+    <Animated.View
       onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
-      style={{ height: DECK_HEIGHT, flexShrink: 0 }}
+      style={[{ flexShrink: 0 }, height]}
     >
       <Peek shown={left > 2} inset={28} top={24} opacity={0.35} shadow={false} pal={card.pal} />
       <Peek shown={left > 1} inset={14} top={12} opacity={0.6} shadow pal={card.pal} />
@@ -137,6 +149,6 @@ export function BillDeckView({
           {face(nav.from)}
         </FlungCard>
       ) : null}
-    </View>
+    </Animated.View>
   );
 }

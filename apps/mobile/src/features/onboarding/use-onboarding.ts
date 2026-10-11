@@ -24,13 +24,13 @@ export const BILLS_STEP = 2;
 export const CLOSE_STEP = 6;
 
 /** Onboarding's answers and moves, and what follows from them. */
-export function useOnboarding() {
+export function useOnboarding(startStep = 0) {
   const router = useRouter();
   const store = useMoneyStore();
   const i18n = useI18n();
   const { today } = useClock();
 
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(startStep);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [income, setIncome] = useState<number>(START.income);
   const [sameDay, setSameDay] = useState<number>(START.payday);

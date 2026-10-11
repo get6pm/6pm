@@ -42,19 +42,22 @@ export function TapRing({
     const p = phase.value;
     const q = p < 0.6 ? inOut(p / 0.6) : 1 - inOut((p - 0.6) / 0.4);
     const spread = 9 * q;
-    const [r, g, b] = DEMO.tapRing;
     return {
       left: -spread,
       top: -spread,
       width: size + 2 * spread,
       height: size + 2 * spread,
       borderRadius: radius + spread,
-      backgroundColor: `rgba(${Math.round((r ?? 0) * 255)},${Math.round((g ?? 0) * 255)},${Math.round((b ?? 0) * 255)},${0.8 * (1 - q)})`,
+      // Fade with opacity, not a colour string: a computed alpha can print as 3e-7, which is not
+      // a colour Reanimated (or a release build) accepts.
+      opacity: 1 - q,
     };
   });
+  const [r, g, b] = DEMO.tapRing;
+  const ringColour = `rgba(${Math.round((r ?? 0) * 255)},${Math.round((g ?? 0) * 255)},${Math.round((b ?? 0) * 255)},0.8)`;
   return (
     <View style={{ width: size, height: size }}>
-      <Animated.View style={[{ position: 'absolute' }, halo]} />
+      <Animated.View style={[{ position: 'absolute', backgroundColor: ringColour }, halo]} />
       {children}
     </View>
   );

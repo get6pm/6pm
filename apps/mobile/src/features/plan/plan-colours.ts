@@ -5,7 +5,8 @@ import type { RiverSegment } from '@6pm/domain';
 /** `#rrggbb` at an alpha, for the prototype's `oklch(… / a)` tints. */
 export function withAlpha(hex: string, alpha: number): string {
   const n = parseInt(hex.slice(1), 16);
-  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
+  // Rounded: a tiny alpha would otherwise print in exponent form, which is not a CSS colour.
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${Math.round(alpha * 1000) / 1000})`;
 }
 
 /** Ink on the accent (the payday marker), as on the scan button. */

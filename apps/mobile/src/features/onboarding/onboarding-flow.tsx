@@ -92,8 +92,8 @@ function ctaFor(o: Onboarding, { t }: I18n) {
  * Onboarding: eight steps from morning to dusk that set up the month (money in, payday, bills,
  * Future you, banks, close time) and end on the first real number.
  */
-export function OnboardingFlow() {
-  const o = useOnboarding();
+export function OnboardingFlow({ startStep = 0 }: { readonly startStep?: number }) {
+  const o = useOnboarding(startStep);
   const i18n = useI18n();
   const reduceMotion = useReducedMotion();
   const { top, bottom, insets } = useDesignInsets();

@@ -143,7 +143,6 @@ export function BillCardFace({
                 label={label}
                 bg={on ? pal.btnBg : pal.chipBg}
                 fg={on ? pal.btnFg : pal.ink}
-                flex={1}
                 height={48}
                 radius={16}
                 onPress={() =>

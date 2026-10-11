@@ -65,7 +65,8 @@ const GREEN = oklchSrgbHex(0.76, 0.13, 150);
 /** `#rrggbb` at an alpha, for the prototype's `oklch(… / a)` tints. */
 function withAlpha(hex: string, alpha: number): string {
   const n = parseInt(hex.slice(1), 16);
-  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
+  // Rounded: a tiny alpha would otherwise print in exponent form, which is not a CSS colour.
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${Math.round(alpha * 1000) / 1000})`;
 }
 
 /** Every ink and surface onboarding draws with, for one step. */

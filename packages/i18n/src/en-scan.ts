@@ -40,4 +40,6 @@ export const enScan = {
   'scan.return.paid': 'Paid',
   'scan.return.later': 'Not yet',
   'scan.return.cancelled': 'Cancelled',
+  'scan.error.pay': 'Couldn’t save that payment. Nothing was opened, so try again.',
+  'scan.error.answer': 'Couldn’t save your answer. The payment stays marked as waiting.',
 } as const;

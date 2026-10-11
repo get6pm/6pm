@@ -43,4 +43,6 @@ export const viScan: { readonly [Key in keyof typeof enScan]: Entry } = {
   'scan.return.paid': 'Rồi',
   'scan.return.later': 'Chưa',
   'scan.return.cancelled': 'Huỷ rồi',
+  'scan.error.pay': 'Chưa lưu được khoản này. Chưa mở app nào, bạn thử lại nhé.',
+  'scan.error.answer': 'Chưa lưu được câu trả lời. Khoản này vẫn đang chờ.',
 };

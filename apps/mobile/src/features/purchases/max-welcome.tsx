@@ -21,6 +21,7 @@ import { useDesignInsets } from '../../ui/layout/design-insets';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
 import { body, display } from '../../ui/type/fonts';
+import { useBackupStatus } from '../backup/use-backup-status';
 import { lookCopy } from '../looks/look-copy';
 import { useLookSettings } from '../looks/look-settings-provider';
 import { confettiPieces, type ConfettiPiece } from './confetti';
@@ -146,6 +147,8 @@ export function MaxWelcome() {
   const { config } = useLookSettings();
   const [evolved, setEvolved] = useState(false);
   const pieces = useMemo(() => confettiPieces(), []);
+  // Backup is only "on" once the user has turned it on; buying Max does not do it for them.
+  const backup = useBackupStatus();
 
   // The companion starts as it was and grows into its Max form once the screen has settled.
   useEffect(() => {
@@ -160,7 +163,7 @@ export function MaxWelcome() {
       scenes: SCENE_LOOKS.length,
     }),
     t('max.welcome.win.ask'),
-    t('max.welcome.win.backup'),
+    backup.status?.kind === 'on' ? t('max.welcome.win.backup') : t('max.welcome.win.backupReady'),
     t('max.welcome.win.icons'),
     t('max.welcome.win.buddy'),
     t('max.welcome.win.more'),
@@ -234,7 +237,7 @@ export function MaxWelcome() {
         </Rise>
         <View style={{ width: '100%', maxWidth: 300, marginTop: 8, gap: 8 }}>
           {wins.map((win, i) => (
-            <Rise key={win} delay={0.6 + i * 0.12} seconds={0.4}>
+            <Rise key={i} delay={0.6 + i * 0.12} seconds={0.4}>
               <View
                 style={{
                   height: 40,

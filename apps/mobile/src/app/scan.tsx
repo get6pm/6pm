@@ -1,7 +1,7 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Linking, StyleSheet, View } from 'react-native';
 
 import { useCompanionToast } from '../features/companion/use-companion-toast';
@@ -13,6 +13,7 @@ import { ScanPreview } from '../features/scan/scan-preview';
 import { ScanViewfinder } from '../features/scan/scan-viewfinder';
 import { useScan, type ScanPhase } from '../features/scan/use-scan';
 import { useI18n } from '../i18n/i18n';
+import { useToast } from '../ui/toast/toast-host';
 
 const HINTS: Record<ScanPhase['kind'], 'camera' | 'blurry' | 'got' | null> = {
   camera: 'camera',
@@ -28,11 +29,14 @@ export default function Scan() {
   const router = useRouter();
   const { t } = useI18n();
   const say = useCompanionToast();
+  const toast = useToast();
   const scan = useScan();
   const { phase } = scan;
   const [permission, requestPermission] = useCameraPermissions();
   // Simulator runs have no camera: a payload can be handed in to drive the rest of the flow.
   const { qr } = useLocalSearchParams<{ qr?: string }>();
+  // One answer per return card: a second tap while the first is saving is ignored.
+  const answering = useRef(false);
 
   useEffect(() => {
     if (permission && !permission.granted && permission.canAskAgain) void requestPermission();
@@ -97,7 +101,11 @@ export default function Scan() {
           payee={phase.payee}
           categoryId={phase.categoryId}
           options={scan.options}
-          onPay={(amount, bank) => void scan.pay(phase, amount, bank)}
+          onPay={(amount, bank) => {
+            scan.pay(phase, amount, bank).catch(() => {
+              toast(t('scan.error.pay'));
+            });
+          }}
         />
       ) : null}
       {phase.kind === 'handoff' ? (
@@ -107,10 +115,18 @@ export default function Scan() {
         <ScanReturn
           payment={phase.payment}
           onAnswer={(answer) => {
-            void scan.answer(phase.payment, answer).then(() => {
-              if (answer === 'paid') say('capture');
-              router.back();
-            });
+            if (answering.current) return;
+            answering.current = true;
+            scan
+              .answer(phase.payment, answer)
+              .then(() => {
+                if (answer === 'paid') say('capture');
+              })
+              .catch(() => {
+                // The spend is already saved as pending, so leaving is safe: it waits in the inbox.
+                toast(t('scan.error.answer'));
+              })
+              .finally(() => router.back());
           }}
         />
       ) : null}

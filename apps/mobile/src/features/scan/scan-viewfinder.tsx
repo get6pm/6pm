@@ -54,7 +54,9 @@ function ScanLine() {
     t.value = withRepeat(withTiming(1, { duration: 1100, easing: sweepEase }), -1, true);
     return () => cancelAnimation(t);
   }, [reduce, t]);
-  const style = useAnimatedStyle(() => ({ top: FRAME * (0.08 + 0.8 * t.value) }));
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateY: FRAME * (0.08 + 0.8 * t.value) }],
+  }));
   return (
     <Animated.View
       entering={FadeIn.duration(250)}
@@ -62,6 +64,7 @@ function ScanLine() {
       style={[
         {
           position: 'absolute',
+          top: 0,
           left: 18,
           right: 18,
           height: 1.5,

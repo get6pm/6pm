@@ -53,6 +53,10 @@ export function useScan() {
   const [walletIds, setWalletIds] = useState<readonly string[]>([]);
   // The camera reports the same code many times a second; only the first read counts.
   const reading = useRef(false);
+  // Set while an Open tap is saving the pending spend, so a second tap cannot add another.
+  const paying = useRef(false);
+  // Whether 6pm went to the background during this hand-off; read when it comes back.
+  const left = useRef(false);
 
   useEffect(() => {
     readWallets(store)
@@ -60,20 +64,24 @@ export function useScan() {
       .catch(() => undefined);
   }, [store]);
 
-  // Back from the bank app: ask whether it went through.
+  // Back from the bank app: ask whether it went through. One listener per hand-off, and the
+  // "left" flag lives in a ref so a re-render in between cannot lose it.
   useEffect(() => {
     if (phase.kind !== 'handoff') return;
-    let left = false;
+    left.current = false;
     const sub = AppState.addEventListener('change', (state) => {
-      if (state === 'background') left = true;
-      if (state === 'active' && left) setPhase({ kind: 'return', payment: phase.payment });
+      if (state === 'background') left.current = true;
+      if (state !== 'active' || !left.current) return;
+      left.current = false;
+      setPhase((p) => (p.kind === 'handoff' ? { kind: 'return', payment: p.payment } : p));
     });
     return () => sub.remove();
-  }, [phase]);
+  }, [phase.kind]);
 
   /** The category a payee files under: what the user taught 6pm, else what is likely now. */
   const categoryFor = async (payee: string) => {
-    const rule = await store.tables.rules.get(payee.trim().toLowerCase());
+    // A rule that cannot be read must not strand the scan: fall through to the likely category.
+    const rule = await store.tables.rules.get(payee.trim().toLowerCase()).catch(() => undefined);
     if (rule && snap.categories.some((c) => c.id === rule.categoryId)) return rule.categoryId;
     const likely = likelyCategoriesAt(hour).map((name) => name.toLowerCase());
     const match = snap.categories.find((c) => likely.includes(c.id));
@@ -112,25 +120,32 @@ export function useScan() {
       reading.current = false;
       setPhase({ kind: 'camera' });
     },
+    /** Saves the spend as pending, then opens the bank. Rejects when the spend could not be saved. */
     pay: async (
       { qr, payee, categoryId }: Pick<Payment, 'qr' | 'payee' | 'categoryId'>,
       amount: number,
       bank: BankInfo | null,
     ) => {
-      const row = await actions.addSpend({
-        amount,
-        categoryId,
-        merchant: payee,
-        source: 'qr',
-        status: 'pending',
-        wallet: bank?.shortName ?? null,
-        note: qr.note,
-        detail: `${qr.bank?.shortName ?? qr.bin} · ${qr.accountMasked}`,
-      });
-      const payment: Payment = { qr, payee, categoryId, amount, bank, spendId: row.id };
-      setPhase({ kind: 'handoff', payment, result: null });
-      const result = await handOff(bank, amount).catch((): HandoffResult => 'manual');
-      setPhase((p) => (p.kind === 'handoff' ? { ...p, result } : p));
+      if (paying.current) return;
+      paying.current = true;
+      try {
+        const row = await actions.addSpend({
+          amount,
+          categoryId,
+          merchant: payee,
+          source: 'qr',
+          status: 'pending',
+          wallet: bank?.shortName ?? null,
+          note: qr.note,
+          detail: `${qr.bank?.shortName ?? qr.bin} · ${qr.accountMasked}`,
+        });
+        const payment: Payment = { qr, payee, categoryId, amount, bank, spendId: row.id };
+        setPhase({ kind: 'handoff', payment, result: null });
+        const result = await handOff(bank, amount).catch((): HandoffResult => 'manual');
+        setPhase((p) => (p.kind === 'handoff' ? { ...p, result } : p));
+      } finally {
+        paying.current = false;
+      }
     },
     /** For when the bank app never took over: the user says they are back. */
     back: () =>

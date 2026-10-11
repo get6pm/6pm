@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { memo, useEffect } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -11,7 +12,8 @@ import type { SymbolName } from '../../ui/icons/symbols.generated';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
-import { ICON_PACKS, type IconPack } from './icon-packs';
+import { useEntitlement } from '../purchases/purchases-provider';
+import { ICON_PACKS, isPackLocked, type IconPack } from './icon-packs';
 
 const COLUMNS = 6;
 
@@ -56,14 +58,13 @@ function IconCell({
   return (
     <PressScale
       scaleTo={0.92}
-      disabled={locked}
       onPress={() => {
         haptics.tick();
         onPick(icon);
       }}
       accessibilityRole="button"
       accessibilityLabel={locked ? `${spoken} · ${lockedLabel}` : spoken}
-      accessibilityState={{ selected, disabled: locked }}
+      accessibilityState={{ selected }}
       style={{
         flex: 1,
         height: 46,
@@ -146,7 +147,7 @@ function PackHeader({ pack, locked }: { readonly pack: IconPack; readonly locked
 
 /**
  * The editor's icon grid: every pack, six to a row, in a well that scrolls on its own. Packs that
- * come with 6pm Max show locked until it is owned.
+ * come with 6pm Max show locked until it is owned, and tapping one opens the Max sheet.
  */
 export const IconPicker = memo(function IconPicker({
   icon,
@@ -158,7 +159,11 @@ export const IconPicker = memo(function IconPicker({
   readonly onPick: (icon: SymbolName) => void;
 }) {
   const { t } = useI18n();
+  const router = useRouter();
+  const { max } = useEntitlement();
   const lockedLabel = t('categories.edit.locked');
+  // A locked icon opens the Max sheet instead of picking.
+  const offerMax = () => router.push({ pathname: '/max', params: { from: 'icons' } });
   return (
     <ScrollView
       style={{ maxHeight: 292 }}
@@ -167,7 +172,7 @@ export const IconPicker = memo(function IconPicker({
       nestedScrollEnabled
     >
       {ICON_PACKS.map((pack) => {
-        const locked = !pack.free;
+        const locked = isPackLocked(pack, max);
         const rows: SymbolName[][] = [];
         for (let i = 0; i < pack.icons.length; i += COLUMNS) {
           rows.push(pack.icons.slice(i, i + COLUMNS));
@@ -186,7 +191,7 @@ export const IconPicker = memo(function IconPicker({
                     selected={name === icon}
                     locked={locked}
                     lockedLabel={lockedLabel}
-                    onPick={onPick}
+                    onPick={locked ? offerMax : onPick}
                   />
                 ))}
               </View>

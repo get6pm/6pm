@@ -1,31 +1,36 @@
 import * as Application from 'expo-application';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import { Linking, Text, View } from 'react-native';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 import { oklchSrgbHex } from '@6pm/theme';
 
 import { useMoney, useMoneyStore } from '../data/money-provider';
 import { DEFAULT_PLAN } from '../data/plan-settings';
 import { settingsActions } from '../data/settings-actions';
-import { cancelCloseReminder, scheduleCloseReminder } from '../features/onboarding/close-reminder';
+import { askForReminders, cancelCloseReminder } from '../features/onboarding/close-reminder';
+import {
+  refreshReminderPermission,
+  useReminderPermission,
+} from '../features/reminders/reminder-permission';
 import { BackupRow } from '../features/backup/backup-row';
 import { useDeleteBackup } from '../features/backup/use-backup';
 import { useLookSettingsStore } from '../features/looks/look-settings-provider';
+import { CloseTimePicker } from '../features/settings/close-time-picker';
 import { CompanionCard } from '../features/settings/companion-card';
 import { SettingsLookCard } from '../features/settings/settings-look-card';
 import { SettingsMaxCard } from '../features/settings/settings-max-card';
 import { SettingRow, SettingsSection } from '../features/settings/setting-rows';
+import { useCloseTimeDraft } from '../features/settings/use-close-time-draft';
 import { useI18n } from '../i18n/i18n';
 import { haptics } from '../ui/haptics';
 import { SheetScreen } from '../ui/navigation/sheet-screen';
 import { PressScale } from '../ui/primitives/press-scale';
+import { useToast } from '../ui/toast/toast-host';
 import { useTheme } from '../ui/theme/theme';
 import { body, display } from '../ui/type/fonts';
 
-/** The prototype's close-time stops: a tap moves to the next. */
-const CLOSE_TIMES = ['17:30', '18:00', '18:30', '19:00', '21:00'];
 const DELETE_RED = oklchSrgbHex(0.66, 0.19, 25);
 /** How long "Tap again to delete everything" stays armed. */
 const ARM_MS = 3000;
@@ -34,6 +39,7 @@ export default function Settings() {
   const router = useRouter();
   const { palette } = useTheme();
   const { t, language, setLanguage } = useI18n();
+  const toast = useToast();
   const snap = useMoney();
   const store = useMoneyStore();
   const actions = useMemo(() => settingsActions(store), [store]);
@@ -42,12 +48,16 @@ export default function Settings() {
   const plan = snap.plan ?? DEFAULT_PLAN;
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [armed, setArmed] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [pickingClose, setPickingClose] = useState(false);
+  const reminders = useReminderPermission();
+  // The wheels move the time at once; the plan (and the reminder that follows it) is saved when they rest.
+  const close = useCloseTimeDraft(plan.closeAt, (closeAt) => void actions.updatePlan({ closeAt }));
   const disarm = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(disarm.current), []);
 
-  const nextCloseTime =
-    CLOSE_TIMES[(CLOSE_TIMES.indexOf(plan.closeAt) + 1) % CLOSE_TIMES.length] ?? '18:00';
   const deleteAll = () => {
+    if (deleting) return;
     haptics.tap();
     if (!armed) {
       setArmed(true);
@@ -55,13 +65,31 @@ export default function Settings() {
       return;
     }
     clearTimeout(disarm.current);
-    setLanguage(null);
-    void cancelCloseReminder().catch(() => undefined);
+    close.discard();
+    setArmed(false);
+    setDeleting(true);
     // The server copy goes first, while the key that names it is still on the phone.
-    void deleteBackup()
+    deleteBackup()
       .then(() => actions.deleteAll())
-      .then(() => lookStore.reload())
-      .then(() => router.dismissTo('/'));
+      .then(() => {
+        // The data is gone: what follows must not turn a finished delete into an error.
+        setLanguage(null);
+        void cancelCloseReminder().catch(() => undefined);
+        return lookStore.reload().catch(() => undefined);
+      })
+      .then(() => router.dismissTo('/'))
+      .catch(() => toast(t('settings.deleteFailed')))
+      .finally(() => setDeleting(false));
+  };
+  const askOrOpenSettings = () => {
+    haptics.tick();
+    if (reminders === 'ask') {
+      askForReminders()
+        .then(() => refreshReminderPermission())
+        .catch(() => undefined);
+    } else {
+      void Linking.openSettings();
+    }
   };
 
   return (
@@ -92,23 +120,35 @@ export default function Settings() {
         <SettingRow
           icon="schedule"
           label={t('settings.closeTime')}
-          value={plan.closeAt}
+          value={close.value}
           onPress={() => {
             haptics.tick();
-            void actions.updatePlan({ closeAt: nextCloseTime });
-            // Moves the daily reminder; it stays silent if notifications were never allowed.
-            void scheduleCloseReminder(language, nextCloseTime).catch(() => undefined);
+            setPickingClose((open) => !open);
           }}
         />
+        {pickingClose ? (
+          <Animated.View entering={FadeIn.duration(250)} exiting={FadeOut.duration(150)}>
+            <CloseTimePicker closeAt={close.value} onChange={close.set} />
+          </Animated.View>
+        ) : null}
+        {reminders !== null && reminders !== 'granted' ? (
+          <Animated.View entering={FadeIn.duration(250)} exiting={FadeOut.duration(150)}>
+            <SettingRow
+              icon="notifications_off"
+              label={t('settings.reminders')}
+              value={t('settings.remindersOff')}
+              onPress={askOrOpenSettings}
+            />
+          </Animated.View>
+        ) : null}
         <SettingRow
           icon="translate"
           label={t('settings.language')}
           value={t('settings.languageName')}
           onPress={() => {
             haptics.tick();
-            const next = language === 'vi' ? 'en' : 'vi';
-            setLanguage(next);
-            void scheduleCloseReminder(next, plan.closeAt).catch(() => undefined);
+            // The reminder's words follow the language on their own.
+            setLanguage(language === 'vi' ? 'en' : 'vi');
           }}
         />
       </SettingsSection>
@@ -143,6 +183,7 @@ export default function Settings() {
         </SettingsSection>
         <PressScale
           accessibilityRole="button"
+          accessibilityState={{ busy: deleting }}
           onPress={deleteAll}
           style={{
             height: 50,
@@ -154,7 +195,11 @@ export default function Settings() {
           }}
         >
           <Text style={{ ...body(16, 600), color: DELETE_RED }}>
-            {armed ? t('settings.deleteAllConfirm') : t('settings.deleteAll')}
+            {deleting
+              ? t('settings.deleting')
+              : armed
+                ? t('settings.deleteAllConfirm')
+                : t('settings.deleteAll')}
           </Text>
         </PressScale>
       </View>

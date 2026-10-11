@@ -60,26 +60,29 @@ export function tileRows(order: readonly MaxFrom[]): MaxFrom[][] {
   return rows;
 }
 
-export type WelcomeRoute = '/looks' | '/new-pot' | '/categories' | '/settings' | '/money-diary';
+export type WelcomeRoute =
+  '/looks' | '/new-pot' | '/categories' | '/settings' | '/backup' | '/money-diary' | '/ask';
 
 /** The welcome's button: which label key it takes, and the screen it opens (none: back to the day). */
 export interface WelcomeAction {
-  readonly label: 'looks' | 'pots' | 'travel' | 'backup' | 'diary' | 'icons' | 'look' | null;
+  readonly label:
+    'looks' | 'pots' | 'travel' | 'backup' | 'diary' | 'icons' | 'look' | 'ask' | null;
   readonly href: WelcomeRoute | null;
 }
 
 const ROUTES: Readonly<Partial<Record<MaxFrom, WelcomeAction>>> = {
   looks: { label: 'looks', href: '/looks' },
+  ask: { label: 'ask', href: '/ask' },
   pots: { label: 'pots', href: '/new-pot' },
   travel: { label: 'travel', href: '/settings' },
-  backup: { label: 'backup', href: '/settings' },
+  backup: { label: 'backup', href: '/backup' },
   diary: { label: 'diary', href: '/money-diary' },
   icons: { label: 'icons', href: '/categories' },
 };
 
 /**
  * Where the welcome's button leads. A look that was being tried on is already worn, so the
- * button is "See it on my day". Gates whose screen is not built (Ask, sharing, widgets, the
+ * button is "See it on my day". Gates whose screen is not built (sharing, widgets, the
  * companion) have nothing to open: the label is null and the only way on is back to the day.
  */
 export function welcomeAction(from: MaxFrom, triedLook: boolean): WelcomeAction {

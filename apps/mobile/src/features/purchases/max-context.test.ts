@@ -48,9 +48,10 @@ describe('the welcome button', () => {
   it('opens a screen that exists', () => {
     expect(welcomeAction('pots', false)).toEqual({ label: 'pots', href: '/new-pot' });
     expect(welcomeAction('icons', false).href).toBe('/categories');
+    expect(welcomeAction('backup', false).href).toBe('/backup');
   });
   it('has nothing to open for a screen that is not built', () => {
-    expect(welcomeAction('ask', false)).toEqual({ label: null, href: null });
+    expect(welcomeAction('ask', false)).toEqual({ label: 'ask', href: '/ask' });
     expect(welcomeAction('widgets', false).href).toBeNull();
   });
 });

@@ -128,7 +128,8 @@ function Island({
                   paddingBottom: 6,
                 }}
               >
-                <Companion size={48} mood={serious ? 'plain' : 'happy'} serious={serious} />
+                {/* Serious mode removes the companion; its words stay. */}
+                {!serious ? <Companion size={48} mood="happy" /> : null}
                 {/* Below the camera cutout, which would cover a line drawn through the middle. */}
                 <View
                   style={{

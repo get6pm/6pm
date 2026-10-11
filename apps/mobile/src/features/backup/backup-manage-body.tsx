@@ -67,6 +67,12 @@ export function BackupManageBody(props: BackupManageBodyProps): ReactNode {
             onPress={props.onReplace}
           />
         ) : null}
+        <BackupButton
+          danger
+          disabled={busy}
+          label={armed === 'delete' ? t('backup.deleteConfirm') : t('backup.delete')}
+          onPress={props.onDelete}
+        />
       </>
     );
   }

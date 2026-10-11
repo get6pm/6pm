@@ -11,12 +11,15 @@ import { DatabaseGate } from '../db/database-gate';
 import { BackupHost } from '../features/backup/backup-host';
 import { CloseNudge } from '../features/companion/close-nudge';
 import { DevCommands } from '../features/dev/dev-commands';
+import { CloseReminderSync } from '../features/reminders/close-reminder-sync';
+import { ReminderTap } from '../features/reminders/reminder-tap';
 import { LookSettingsProvider, useThemeLook } from '../features/looks/look-settings-provider';
 import { PurchasesProvider } from '../features/purchases/purchases-provider';
 import { I18nProvider } from '../i18n/i18n';
 import { sheet, takeover } from '../ui/navigation/presentations';
 import { ClockProvider } from '../ui/theme/clock';
 import { ThemeProvider, useTheme } from '../ui/theme/theme';
+import { StartupError } from '../ui/startup-error';
 import { ToastHost } from '../ui/toast/toast-host';
 import { UndoHost } from '../ui/undo/undo-host';
 
@@ -53,12 +56,16 @@ function Screens() {
         <Stack.Screen name="categories" options={sheet} />
         <Stack.Screen name="quick-add" options={sheet} />
         <Stack.Screen name="scan" options={takeover} />
+        <Stack.Screen name="ask" options={takeover} />
         <Stack.Screen name="inbox" options={sheet} />
         <Stack.Screen name="close" options={takeover} />
         <Stack.Screen name="spend/[id]" options={sheet} />
         <Stack.Screen name="missed-day" options={sheet} />
         <Stack.Screen name="money-diary" options={sheet} />
         <Stack.Screen name="new-pot" options={sheet} />
+        <Stack.Screen name="pot/[id]" options={sheet} />
+        <Stack.Screen name="bill/[id]" options={sheet} />
+        <Stack.Screen name="month" options={sheet} />
         <Stack.Screen name="looks" options={sheet} />
         <Stack.Screen name="look/[id]" options={sheet} />
         <Stack.Screen name="max" options={sheet} />
@@ -92,13 +99,15 @@ function RootLayout() {
           <LookSettingsProvider>
             <I18nProvider>
               <ClockProvider>
-                <MoneyProvider>
+                <MoneyProvider failed={(retry) => <StartupError onRetry={retry} />}>
                   <PlanTheme>
                     <ToastHost>
                       <UndoHost>
                         <Screens />
                       </UndoHost>
                       <CloseNudge />
+                      <CloseReminderSync />
+                      <ReminderTap />
                       <BackupHost />
                       {__DEV__ ? <DevCommands /> : null}
                     </ToastHost>

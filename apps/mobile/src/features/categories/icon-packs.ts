@@ -123,3 +123,8 @@ export const MAX_ICON_COUNT = ICON_PACKS.filter((p) => !p.free).reduce(
   (n, p) => n + p.icons.length,
   0,
 );
+
+/** A pack is locked for a customer when it comes with Max and Max is not on. */
+export function isPackLocked(pack: Pick<IconPack, 'free'>, hasMax: boolean): boolean {
+  return !pack.free && !hasMax;
+}

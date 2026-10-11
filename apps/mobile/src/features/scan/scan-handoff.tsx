@@ -1,5 +1,5 @@
 import { BlurView } from 'expo-blur';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
   cancelAnimation,
@@ -51,6 +51,9 @@ function Spinner() {
   );
 }
 
+/** After this long without the bank app taking over, "I'm back" is offered anyway. */
+const BACK_AFTER_MS = 4000;
+
 /**
  * While the bank app takes over: "Opening MB Bank…" over the dimmed camera. When 6pm has no link
  * to the bank, or it is not installed, the line says so and an "I'm back" button waits instead.
@@ -75,6 +78,18 @@ export function ScanHandoff({
           ? t('scan.handoff.store', { wallet })
           : t('scan.handoff.opening', { wallet });
   const waiting = result === 'manual' || result === 'store';
+  // The bank app may open and never hand control back: the way out always appears.
+  const [late, setLate] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setLate(true), BACK_AFTER_MS);
+    return () => clearTimeout(timer);
+  }, []);
+  const canGoBack = waiting || late;
+  const shown = useSharedValue(0);
+  useEffect(() => {
+    shown.value = withTiming(canGoBack ? 1 : 0, { duration: 250, easing: Easing.out(Easing.quad) });
+  }, [canGoBack, shown]);
+  const backSlot = useAnimatedStyle(() => ({ opacity: shown.value }));
   return (
     <Animated.View entering={FadeIn.duration(300)} style={StyleSheet.absoluteFill}>
       <BlurView intensity={40} tint="dark" style={StyleSheet.absoluteFill} />
@@ -99,12 +114,17 @@ export function ScanHandoff({
         <Text style={{ ...body(14), color: c.sub, textAlign: 'center' }}>
           {t('scan.handoff.copied')}
         </Text>
-        {waiting ? (
+        {/* The slot is always there, so the text above never shifts when the button appears. */}
+        <Animated.View
+          pointerEvents={canGoBack ? 'auto' : 'none'}
+          accessibilityElementsHidden={!canGoBack}
+          importantForAccessibility={canGoBack ? 'auto' : 'no-hide-descendants'}
+          style={[{ marginTop: 8, height: 44 }, backSlot]}
+        >
           <PressScale
             accessibilityRole="button"
             onPress={onBack}
             style={{
-              marginTop: 8,
               height: 44,
               paddingHorizontal: 20,
               borderRadius: 99,
@@ -114,7 +134,7 @@ export function ScanHandoff({
           >
             <Text style={{ ...body(15, 600), color: c.onGlass }}>{t('scan.handoff.back')}</Text>
           </PressScale>
-        ) : null}
+        </Animated.View>
       </View>
     </Animated.View>
   );
@@ -158,7 +178,7 @@ export function ScanReturn({
             borderColor: palette.glassBorder,
           }}
         >
-          <Companion size={56} mood={serious ? 'plain' : 'calm'} serious={serious} />
+          {!serious ? <Companion size={56} mood="calm" /> : null}
           <Text style={{ ...display(38, 500, -0.01), lineHeight: 40, color: palette.ink }}>
             {t('scan.return.title')}
           </Text>

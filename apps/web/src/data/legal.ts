@@ -1,10 +1,11 @@
 /**
- * The facts the legal pages share. `OWNER` and `CONTACT_EMAIL` fill the `{{OWNER}}` and
- * `{{CONTACT_EMAIL}}` tokens in the documents under `src/legal`; set them here, once, when the
- * operating entity and the contact address are decided.
+ * The facts the legal pages share: they fill the `{{OWNER}}`, `{{CONTACT_PHONE}}` and
+ * `{{CONTACT_TEL}}` tokens in the documents under `src/legal`.
  */
-export const OWNER = '{{OWNER}}';
-export const CONTACT_EMAIL = '{{CONTACT_EMAIL}}';
+export const OWNER = 'Khanh Bui';
+/** As people read it, and as a `tel:` link dials it. */
+export const CONTACT_PHONE = '+84 949 840 370';
+export const CONTACT_TEL = '+84949840370';
 
 export type LegalLang = 'en' | 'vi';
 export type LegalSlug = 'privacy' | 'terms';

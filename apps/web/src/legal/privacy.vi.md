@@ -10,11 +10,11 @@ updated: '2026-10-11'
 - Chi tiêu, kế hoạch và nhật ký của bạn nằm trên iPhone, trong một cơ sở dữ liệu được mã hoá. Chúng tôi không đọc được.
 - Không có tài khoản, không cần đăng nhập. Chúng tôi không hỏi tên, số điện thoại hay thông tin đăng nhập ngân hàng của bạn.
 - Chúng tôi không chạy quảng cáo, không bán dữ liệu, không dùng công cụ phân tích hay theo dõi, cả trong ứng dụng lẫn trên trang web này.
-- Có một vài thứ nhỏ rời khỏi điện thoại: mã thiết bị ẩn danh, trạng thái mua hàng, bản cập nhật ứng dụng và, chỉ khi bạn bật, bản sao lưu đã mã hoá. Từng thứ được giải thích bên dưới.
+- Có một vài thứ nhỏ rời khỏi điện thoại: mã thiết bị ẩn danh, trạng thái mua hàng, bản cập nhật ứng dụng, báo cáo lỗi và, chỉ khi bạn bật, bản sao lưu đã mã hoá. Từng thứ được giải thích bên dưới.
 
 ## Chúng tôi là ai
 
-6pm do {{OWNER}} ("chúng tôi") thực hiện. Bạn có thể liên hệ qua [{{CONTACT_EMAIL}}](mailto:{{CONTACT_EMAIL}}).
+6pm do {{OWNER}} ("chúng tôi") thực hiện. Bạn có thể liên hệ qua số [{{CONTACT_PHONE}}](tel:{{CONTACT_TEL}}).
 
 Chính sách này áp dụng cho ứng dụng 6pm trên iPhone và trang web 6pm.oddeggs.studio.
 
@@ -47,6 +47,10 @@ Nhờ vậy Max và các giao diện của bạn luôn được mở khoá, và 
 ### Cập nhật ứng dụng
 
 Chúng tôi gửi một số bản sửa lỗi qua mạng bằng dịch vụ cập nhật của Expo. Điện thoại của bạn hỏi Expo xem có bản cập nhật nào đang chờ không. Yêu cầu đó gồm phiên bản ứng dụng, nền tảng và địa chỉ IP. Nó không mang theo gì từ chuyện tiền bạc của bạn.
+
+### Báo cáo lỗi
+
+Khi ứng dụng bị treo hoặc gặp lỗi, nó gửi một báo cáo tới Sentry để chúng tôi sửa: lỗi gì trong mã, xảy ra ở màn hình nào, phiên bản ứng dụng, đời iPhone, phiên bản iOS và một mã cài đặt ngẫu nhiên. Báo cáo không bao giờ chứa khoản chi, số tiền, ghi chú, kế hoạch hay tên của bạn, và chúng tôi không gắn kèm địa chỉ IP.
 
 ### Sao lưu mã hoá (6pm Max)
 
@@ -87,6 +91,7 @@ Các công ty này vận hành những phần của dịch vụ đã nêu ở tr
 - **Apple** xử lý thanh toán và Chuỗi khoá iCloud. [Chính sách quyền riêng tư của Apple](https://www.apple.com/legal/privacy/).
 - **RevenueCat** ghi lại trạng thái mua hàng. [Chính sách quyền riêng tư của RevenueCat](https://www.revenuecat.com/privacy).
 - **Cloudflare** lưu trữ trang web và máy chủ của chúng tôi. [Chính sách quyền riêng tư của Cloudflare](https://www.cloudflare.com/privacypolicy/).
+- **Sentry** nhận báo cáo lỗi. [Chính sách quyền riêng tư của Sentry](https://sentry.io/privacy/).
 - **Expo** gửi các bản cập nhật ứng dụng qua mạng. [Chính sách quyền riêng tư của Expo](https://expo.dev/privacy).
 
 Chúng tôi chỉ dùng họ cho những mục đích này.
@@ -95,6 +100,7 @@ Chúng tôi chỉ dùng họ cho những mục đích này.
 
 - **Trên điện thoại.** Cho đến khi bạn xoá. "Xoá toàn bộ dữ liệu" trong Cài đặt sẽ xoá các khoản chi, kế hoạch và nhật ký khỏi điện thoại và tắt lời nhắc. Xoá ứng dụng cũng xoá dữ liệu.
 - **Mã thiết bị.** Chừng nào ứng dụng còn được dùng trên thiết bị đó.
+- **Báo cáo lỗi.** Tối đa 90 ngày, sau đó bị xoá.
 - **Sao lưu.** Cho đến khi bạn xoá. Khi bạn xoá, chúng tôi xoá dữ liệu mã hoá khỏi máy chủ.
 - **Danh sách chờ.** Cho đến khi bạn yêu cầu xoá email của mình.
 - **Hồ sơ mua hàng.** Apple và RevenueCat lưu theo chính sách của họ và theo quy định pháp luật.
@@ -103,7 +109,7 @@ Chúng tôi chỉ dùng họ cho những mục đích này.
 
 Bạn kiểm soát dữ liệu trên điện thoại: có thể sửa hoặc xoá bất kỳ thứ gì ngay trong ứng dụng.
 
-Với bất kỳ thông tin nào chúng tôi giữ về bạn, bạn có thể yêu cầu cho biết đó là gì, chỉnh sửa, xoá, hoặc ngừng sử dụng. Hãy viết cho [{{CONTACT_EMAIL}}](mailto:{{CONTACT_EMAIL}}). Chúng tôi sẽ trả lời sớm và trong thời hạn pháp luật quy định. Máy chủ của chúng tôi giữ rất ít thông tin chỉ ra một con người cụ thể, nên có thể chúng tôi sẽ nhờ bạn cung cấp thêm điều giúp tìm ra nó, ví dụ email bạn đã dùng để đăng ký danh sách chờ.
+Với bất kỳ thông tin nào chúng tôi giữ về bạn, bạn có thể yêu cầu cho biết đó là gì, chỉnh sửa, xoá, hoặc ngừng sử dụng. Hãy liên hệ qua số [{{CONTACT_PHONE}}](tel:{{CONTACT_TEL}}). Chúng tôi sẽ trả lời sớm và trong thời hạn pháp luật quy định. Máy chủ của chúng tôi giữ rất ít thông tin chỉ ra một con người cụ thể, nên có thể chúng tôi sẽ nhờ bạn cung cấp thêm điều giúp tìm ra nó, ví dụ email bạn đã dùng để đăng ký danh sách chờ.
 
 Bạn cũng có thể khiếu nại với cơ quan bảo vệ dữ liệu nơi bạn sinh sống.
 
@@ -123,4 +129,4 @@ Khi thay đổi chính sách này, chúng tôi sẽ cập nhật ngày ở đầ
 
 Chúng tôi xử lý dữ liệu cá nhân theo pháp luật Việt Nam, trong đó có Luật Bảo vệ dữ liệu cá nhân. Nếu bạn sống ở nơi khác, các quyền mà pháp luật nước bạn trao vẫn được giữ nguyên.
 
-Có câu hỏi? Hãy viết cho {{OWNER}} qua [{{CONTACT_EMAIL}}](mailto:{{CONTACT_EMAIL}}).
+Có câu hỏi? Hãy gọi hoặc nhắn cho {{OWNER}} qua số [{{CONTACT_PHONE}}](tel:{{CONTACT_TEL}}).

@@ -10,11 +10,11 @@ updated: '2026-10-11'
 - Your spending, plan and diary live on your iPhone, in an encrypted database. We cannot read them.
 - There is no account and no sign-in. We never ask for your name, phone number or bank login.
 - We do not run ads, sell data, or use analytics or tracking tools, in the app or on this website.
-- A few small things do leave your phone: an anonymous device ID, your purchase status, app updates and, only if you turn it on, your encrypted backup. Each one is explained below.
+- A few small things do leave your phone: an anonymous device ID, your purchase status, app updates, crash reports and, only if you turn it on, your encrypted backup. Each one is explained below.
 
 ## Who we are
 
-6pm is made by {{OWNER}} ("we", "us"). You can reach us at [{{CONTACT_EMAIL}}](mailto:{{CONTACT_EMAIL}}).
+6pm is made by {{OWNER}} ("we", "us"). You can reach us on [{{CONTACT_PHONE}}](tel:{{CONTACT_TEL}}).
 
 This policy covers the 6pm app for iPhone and the website at 6pm.oddeggs.studio.
 
@@ -47,6 +47,10 @@ This is how Max and your looks stay unlocked, and how "Restore purchases" works.
 ### App updates
 
 We send some fixes to the app over the air, using Expo's update service. Your phone asks Expo whether an update is waiting. That request includes the app version, the platform and your IP address. It carries nothing from your money.
+
+### Crash reports
+
+When the app crashes or hits an error, it sends a report to Sentry so we can fix it: what went wrong in the code, the screen it happened on, the app version, the iPhone model and iOS version, and a random installation ID. Reports never include your spends, amounts, notes, plan or names, and we do not attach your IP address.
 
 ### Encrypted backup (6pm Max)
 
@@ -87,6 +91,7 @@ These companies run the parts of the service described above. They may handle yo
 - **Apple** processes payments and iCloud Keychain. [Apple's privacy policy](https://www.apple.com/legal/privacy/).
 - **RevenueCat** records purchase status. [RevenueCat's privacy policy](https://www.revenuecat.com/privacy).
 - **Cloudflare** hosts our website and server. [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/).
+- **Sentry** receives crash reports. [Sentry's privacy policy](https://sentry.io/privacy/).
 - **Expo** delivers over-the-air app updates. [Expo's privacy policy](https://expo.dev/privacy).
 
 We use them only for these purposes.
@@ -95,6 +100,7 @@ We use them only for these purposes.
 
 - **On your phone.** Until you delete it. "Delete all data" in Settings erases your spends, plan and diary from the phone and turns off the reminder. Deleting the app removes the data too.
 - **Device ID.** For as long as the app is used on that device.
+- **Crash reports.** Up to 90 days, then deleted.
 - **Backup.** Until you delete it. When you do, we delete the encrypted data from our server.
 - **Launch list.** Until you ask us to remove your email.
 - **Purchase records.** Apple and RevenueCat keep these under their own policies and the law.
@@ -103,7 +109,7 @@ We use them only for these purposes.
 
 You control the data on your phone: you can change or delete any of it in the app.
 
-For anything we hold about you, you can ask us to tell you what it is, correct it, delete it, or stop using it. Write to [{{CONTACT_EMAIL}}](mailto:{{CONTACT_EMAIL}}). We will answer promptly, and within the time the law gives us. Our server holds very little that points to a person, so we may ask you for something that helps us find it, such as the email you used for the launch list.
+For anything we hold about you, you can ask us to tell you what it is, correct it, delete it, or stop using it. Contact us on [{{CONTACT_PHONE}}](tel:{{CONTACT_TEL}}). We will answer promptly, and within the time the law gives us. Our server holds very little that points to a person, so we may ask you for something that helps us find it, such as the email you used for the launch list.
 
 You can also complain to the data protection authority where you live.
 
@@ -123,4 +129,4 @@ When we change this policy, we will update the date at the top. If the change ma
 
 We handle personal data under Vietnamese law, including the Personal Data Protection Law. If you live elsewhere, the rights your own country gives you still apply.
 
-Questions? Write to {{OWNER}} at [{{CONTACT_EMAIL}}](mailto:{{CONTACT_EMAIL}}).
+Questions? Call or message {{OWNER}} on [{{CONTACT_PHONE}}](tel:{{CONTACT_TEL}}).

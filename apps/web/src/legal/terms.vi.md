@@ -100,4 +100,4 @@ Các điều khoản này chịu sự điều chỉnh của pháp luật Việt 
 
 ## Liên hệ
 
-Có câu hỏi về các điều khoản này? Hãy viết cho {{OWNER}} qua [{{CONTACT_EMAIL}}](mailto:{{CONTACT_EMAIL}}).
+Có câu hỏi về các điều khoản này? Hãy gọi hoặc nhắn cho {{OWNER}} qua số [{{CONTACT_PHONE}}](tel:{{CONTACT_TEL}}).

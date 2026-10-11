@@ -100,4 +100,4 @@ These terms are governed by the laws of Vietnam. If we have a disagreement, plea
 
 ## Contact
 
-Questions about these terms? Write to {{OWNER}} at [{{CONTACT_EMAIL}}](mailto:{{CONTACT_EMAIL}}).
+Questions about these terms? Call or message {{OWNER}} on [{{CONTACT_PHONE}}](tel:{{CONTACT_TEL}}).

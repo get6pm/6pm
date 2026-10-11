@@ -2,7 +2,8 @@
 import type { MarkdownHeading } from 'astro';
 
 import {
-  CONTACT_EMAIL,
+  CONTACT_PHONE,
+  CONTACT_TEL,
   OWNER,
   legalPath,
   legalStrings,
@@ -46,7 +47,8 @@ const sections = doc.getHeadings().filter((heading) => heading.depth === 2);
 // The documents are plain markdown, so the owner and the contact address come in as tokens.
 const body = (await Astro.slots.render('default'))
   .replaceAll('{{OWNER}}', OWNER)
-  .replaceAll('{{CONTACT_EMAIL}}', CONTACT_EMAIL);
+  .replaceAll('{{CONTACT_PHONE}}', CONTACT_PHONE)
+  .replaceAll('{{CONTACT_TEL}}', CONTACT_TEL);
 ---
 
 <PageLayout

@@ -11,7 +11,8 @@
       "node": "24.21.0",
       "pnpm": "12.6.0",
       "env": {
-        "APP_VARIANT": "dev"
+        "APP_VARIANT": "dev",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://b5b15ea854702ef41e7209d9ccda136b@o139974.ingest.us.sentry.io/4512236393136128"
       }
     },
     "e2e-test": {
@@ -34,7 +35,8 @@
       "node": "24.21.0",
       "pnpm": "12.6.0",
       "env": {
-        "APP_VARIANT": "dev"
+        "APP_VARIANT": "dev",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://b5b15ea854702ef41e7209d9ccda136b@o139974.ingest.us.sentry.io/4512236393136128"
       }
     },
     "prd": {
@@ -45,7 +47,8 @@
       "pnpm": "12.6.0",
       "env": {
         "APP_VARIANT": "prd",
-        "EXPO_PUBLIC_REVENUECAT_IOS_KEY": "appl_qOKJkasxcPJpkCyLFXlxJiKxTAs"
+        "EXPO_PUBLIC_REVENUECAT_IOS_KEY": "appl_qOKJkasxcPJpkCyLFXlxJiKxTAs",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://b5b15ea854702ef41e7209d9ccda136b@o139974.ingest.us.sentry.io/4512236393136128"
       }
     }
   },

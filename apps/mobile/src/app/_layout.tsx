@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/react-native';
+import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { SQLiteProvider } from 'expo-sqlite';
@@ -7,6 +9,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { MoneyProvider, useMoney } from '../data/money-provider';
 import { DATABASE_NAME, prepareDatabase } from '../db/database';
+import { BackupHost } from '../features/backup/backup-host';
 import { CloseNudge } from '../features/companion/close-nudge';
 import { DevCommands } from '../features/dev/dev-commands';
 import { LookSettingsProvider, useThemeLook } from '../features/looks/look-settings-provider';
@@ -21,6 +24,17 @@ import { UndoHost } from '../ui/undo/undo-host';
 // The splash stays until the encrypted database is open and migrated: no screen ever renders
 // without its data, so there is never a blank or half-drawn first frame.
 void SplashScreen.preventAutoHideAsync();
+
+// Crash reports start only when a DSN is set; no money, names or notes are attached to them.
+const sentryDsn = process.env['EXPO_PUBLIC_SENTRY_DSN'];
+if (sentryDsn) {
+  Sentry.init({
+    dsn: sentryDsn,
+    environment: String(Constants.expoConfig?.extra?.['appVariant'] ?? 'dev'),
+    sendDefaultPii: false,
+    enabled: !__DEV__,
+  });
+}
 SplashScreen.setOptions({ duration: 280, fade: true });
 
 function Screens() {
@@ -50,6 +64,7 @@ function Screens() {
         <Stack.Screen name="look/[id]" options={sheet} />
         <Stack.Screen name="max" options={sheet} />
         <Stack.Screen name="max-welcome" options={takeover} />
+        <Stack.Screen name="backup" options={sheet} />
         <Stack.Screen name="(dev)/tools" options={sheet} />
       </Stack>
     </>
@@ -70,7 +85,7 @@ function PlanTheme({ children }: { readonly children: ReactNode }) {
   );
 }
 
-export default function RootLayout() {
+function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SQLiteProvider databaseName={DATABASE_NAME} onInit={prepareDatabase}>
@@ -85,6 +100,7 @@ export default function RootLayout() {
                         <Screens />
                       </UndoHost>
                       <CloseNudge />
+                      <BackupHost />
                       {__DEV__ ? <DevCommands /> : null}
                     </ToastHost>
                   </PlanTheme>
@@ -97,3 +113,5 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
+
+export default Sentry.wrap(RootLayout);

@@ -160,6 +160,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         recordAudioAndroid: false,
       },
     ],
+    // Crash reports. Source maps and debug symbols upload only when the build has a Sentry token.
+    [
+      '@sentry/react-native/expo',
+      {
+        organization: 'quocs',
+        project: '6pm',
+        url: 'https://sentry.io/',
+        disableAutoUpload: !process.env['SENTRY_AUTH_TOKEN'],
+      },
+    ],
     // Local reminders only (the close at six); no remote push yet.
     ['expo-notifications', { enableBackgroundRemoteNotifications: false }],
   ],

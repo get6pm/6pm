@@ -34,6 +34,8 @@ catalog:
   expo-asset: 58.0.12
   expo-blur: 58.0.3
   expo-build-properties: 58.0.10
+  expo-camera: 58.0.9
+  expo-clipboard: 58.0.3
   expo-constants: 58.0.10
   expo-crypto: 58.0.5
   expo-dev-client: 58.0.11
@@ -63,6 +65,7 @@ catalog:
   react-native: 0.88.0-rc.3
   react-native-gesture-handler: 3.2.1
   react-native-keychain: 10.0.0
+  react-native-purchases: 10.11.0
   react-native-reanimated: 4.7.0
   react-native-safe-area-context: 5.9.1
   react-native-screens: 4.28.0

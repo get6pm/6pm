@@ -10,17 +10,18 @@ const suggestionsIn = (language: Language, pot: string | null) =>
 
 describe('the suggested questions', () => {
   it('offers the pot question only when there is a pot', () => {
-    expect(suggestionsIn('en', null)).toHaveLength(3);
-    expect(suggestionsIn('en', 'Tết & lì xì')).toContain('When is Tết & lì xì full?');
-    expect(suggestionsIn('vi', 'Tết')).toContain('Khi nào hũ Tết đầy?');
+    expect(suggestionsIn('en', null)).toHaveLength(4);
+    expect(suggestionsIn('en', 'Tết & lì xì')).toContain('When is Tết & lì xì covered?');
+    expect(suggestionsIn('vi', 'Tết')).toContain('Khi nào đủ tiền Tết?');
   });
 
   it.each<Language>(['en', 'vi'])(
     'reads every one in %s the way it was meant, offline',
     (language) => {
-      const [afford, weekend, save, pot] = suggestionsIn(language, 'Tết');
+      const [afford, weekend, spend, pot, save] = suggestionsIn(language, 'Tết');
       expect(readIntent(afford ?? '', ['Tết'])).toEqual({ kind: 'afford', amount: 2_000_000 });
       expect(readIntent(weekend ?? '', ['Tết'])).toEqual({ kind: 'weekend' });
+      expect(readIntent(spend ?? '', ['Tết'])).toEqual({ kind: 'afford', amount: 450_000 });
       expect(readIntent(save ?? '', ['Tết'])).toEqual({ kind: 'saveMore', amount: 500_000 });
       expect(readIntent(pot ?? '', ['Tết'])).toEqual({ kind: 'potFull', pot: 'Tết' });
     },

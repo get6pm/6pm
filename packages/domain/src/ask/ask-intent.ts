@@ -24,7 +24,7 @@ export type AskIntent = z.infer<typeof askIntentSchema>;
 
 const WEEKEND = /weekend|cuối tuần|cuoi tuan|saturday and sunday|thứ bảy và chủ nhật/;
 const SAVE = /\bsave|saving|future you|tiết kiệm|tiet kiem|để dành|de danh/;
-const POT = /\bpot\b|hũ|hu\b|quỹ|quy\b|full|đầy|day du|đủ/;
+const POT = /\bpot\b|hũ|hu\b|quỹ|quy\b|full|covered|đầy|day du|đủ/;
 const TODAY = /today|hôm nay|hom nay/;
 
 /**

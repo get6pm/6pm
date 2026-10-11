@@ -221,7 +221,12 @@ export function AskComposer({ chat }: { readonly chat: AskChat }) {
             paddingHorizontal: 8,
           }}
         >
-          <Text style={{ ...body(12.5), flexShrink: 1, color: palette.inkSoft }}>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.85}
+            style={{ ...body(12.5), flexShrink: 1, color: palette.inkSoft }}
+          >
             {t('ask.meter', { left: freeLeft, total: chat.freeTotal })}
           </Text>
           <UnlimitedWithMax onPress={chat.openMax} />

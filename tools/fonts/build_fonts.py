@@ -4,7 +4,9 @@
 
 Sources (fetched once, outside the repo): google/fonts ofl/bricolagegrotesque (variable),
 ofl/bevietnampro, ofl/ibmplexmono, ofl/patrickhand, and google/material-design-icons
-variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf + .codepoints.
+variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf + .codepoints. The looks' display
+faces: ofl/barlowcondensed (Medium, SemiBold), and the variable ofl/baloo2, ofl/lora,
+ofl/playfairdisplay, ofl/cormorantgaramond and ofl/unbounded.
 
 Bricolage Grotesque and Material Symbols ship as variable fonts: React Native applies
 `fontVariationSettings` on iOS and Android, so the app sets the same axes the browser does
@@ -101,6 +103,34 @@ def build_static(src: Path) -> None:
         save(font, f"{family}.ttf")
 
 
+# The looks' display faces, at the weights the prototype loads; the default instance is 500, the
+# weight display text uses most.
+LOOK_FACES = (
+    ("Baloo2[wght].ttf", "Baloo2", (500, 500, 700)),
+    ("Lora[wght].ttf", "Lora", (500, 500, 600)),
+    ("PlayfairDisplay[wght].ttf", "PlayfairDisplay", (500, 500, 600)),
+    ("CormorantGaramond[wght].ttf", "CormorantGaramond", (500, 500, 600)),
+    ("Unbounded[wght].ttf", "Unbounded", (400, 500, 600)),
+)
+
+
+def build_look_faces(src: Path) -> None:
+    for file_name, family in (
+        ("BarlowCondensed-Medium.ttf", "BarlowCondensed-Medium"),
+        ("BarlowCondensed-SemiBold.ttf", "BarlowCondensed-SemiBold"),
+    ):
+        font = TTFont(src / file_name)
+        subset_font(font, unicodes=TEXT_UNICODES)
+        rename(font, family, family)
+        save(font, f"{family}.ttf")
+    for file_name, family, weights in LOOK_FACES:
+        font = TTFont(src / file_name)
+        subset_font(font, unicodes=TEXT_UNICODES)
+        font = instancer.instantiateVariableFont(font, {"wght": weights}, updateFontNames=False)
+        rename(font, family, f"{family}-Variable")
+        save(font, f"{family}-Variable.ttf")
+
+
 def used_icon_names(codepoints: dict) -> list:
     """Every Material Symbols name that appears as a word in the prototypes."""
     words = set()
@@ -142,6 +172,7 @@ def main() -> None:
     src = parser.parse_args().src
     print("Bricolage Grotesque"); build_bricolage(src)
     print("Static faces"); build_static(src)
+    print("Look faces"); build_look_faces(src)
     print("Material Symbols Rounded"); build_symbols(src)
     print(json.dumps({"out": str(OUT.relative_to(ROOT))}))
 

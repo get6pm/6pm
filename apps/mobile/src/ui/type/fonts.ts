@@ -14,22 +14,79 @@ export const families = {
   symbols: 'MaterialSymbolsRounded',
 } as const;
 
-/** The display face's axis ranges (the browser clamps optical size the same way). */
+/** The display face's optical-size range (the browser clamps optical size the same way). */
 const OPSZ_MIN = 12;
 const OPSZ_MAX = 96;
 
 /**
- * The display face at a size and weight, set the way the browser sets it: optical size follows the
- * font size (`font-optical-sizing: auto`), so a 92 pt hero and a 21 pt card title each get the
- * drawing made for their size. Letter spacing is given in em, as the prototype writes it.
+ * How a display face is set: a variable file takes the weight on its axis (and Bricolage its optical
+ * size); a static family has one file per weight.
  */
-export function display(size: number, weight = 500, letterSpacingEm = 0): TextStyle {
+type DisplayFace =
+  | { readonly family: string; readonly opsz: boolean }
+  | { readonly byWeight: (weight: number) => string };
+
+/** Each look's display face, keyed by the first family in the look's CSS `dispFont`. */
+const FACES: Readonly<Record<string, DisplayFace>> = {
+  'Bricolage Grotesque': { family: families.display, opsz: true },
+  'Be Vietnam Pro': {
+    byWeight: (w) => (w >= 600 ? 'BeVietnamPro-SemiBold' : 'BeVietnamPro-Medium'),
+  },
+  'Barlow Condensed': {
+    byWeight: (w) => (w >= 600 ? 'BarlowCondensed-SemiBold' : 'BarlowCondensed-Medium'),
+  },
+  'Baloo 2': { family: 'Baloo2', opsz: false },
+  Lora: { family: 'Lora', opsz: false },
+  'Playfair Display': { family: 'PlayfairDisplay', opsz: false },
+  'Cormorant Garamond': { family: 'CormorantGaramond', opsz: false },
+  Unbounded: { family: 'Unbounded', opsz: false },
+  'IBM Plex Mono': {
+    byWeight: (w) =>
+      w >= 600 ? families.monoSemiBold : w >= 500 ? families.monoMedium : families.mono,
+  },
+};
+const BRICOLAGE = FACES['Bricolage Grotesque'] as DisplayFace;
+
+/** "'Playfair Display', Georgia, serif" → the face 6pm ships for it (Bricolage when unknown). */
+function faceOf(cssFont: string): DisplayFace {
+  const first =
+    cssFont
+      .split(',')[0]
+      ?.trim()
+      .replace(/^['"]|['"]$/g, '') ?? '';
+  return FACES[first] ?? BRICOLAGE;
+}
+
+let current: DisplayFace = BRICOLAGE;
+
+/**
+ * Sets the display face to the look's (`palette.dispFont`). The theme calls it as it renders, so
+ * every display text drawn after a look change uses the new face.
+ */
+export function setDisplayFont(cssFont: string) {
+  current = faceOf(cssFont);
+}
+
+/**
+ * The look's display face at a size and weight, set the way the browser sets it: optical size
+ * follows the font size (`font-optical-sizing: auto`) where the face has that axis, so a 92 pt hero
+ * and a 21 pt card title each get the drawing made for their size. Letter spacing is in em, as the
+ * prototype writes it. `cssFont` draws in another look's face (a look's preview card).
+ */
+export function display(
+  size: number,
+  weight = 500,
+  letterSpacingEm = 0,
+  cssFont?: string,
+): TextStyle {
+  const face = cssFont === undefined ? current : faceOf(cssFont);
+  const spacing = { fontSize: size, letterSpacing: letterSpacingEm * size };
+  if ('byWeight' in face) return { fontFamily: face.byWeight(weight), ...spacing };
   const opsz = Math.min(OPSZ_MAX, Math.max(OPSZ_MIN, size));
   return {
-    fontFamily: families.display,
-    fontSize: size,
-    fontVariationSettings: `'opsz' ${opsz}, 'wght' ${weight}`,
-    letterSpacing: letterSpacingEm * size,
+    fontFamily: face.family,
+    fontVariationSettings: face.opsz ? `'opsz' ${opsz}, 'wght' ${weight}` : `'wght' ${weight}`,
+    ...spacing,
   };
 }
 

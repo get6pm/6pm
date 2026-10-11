@@ -2,6 +2,7 @@ import { createContext, use, useMemo, type ReactNode } from 'react';
 
 import { DEFAULT_LOOK, paletteFor, type LookConfig, type LookId, type Palette } from '@6pm/theme';
 
+import { setDisplayFont } from '../type/fonts';
 import { useClock } from './clock';
 
 export interface Theme {
@@ -30,14 +31,12 @@ export function ThemeProvider({
   children,
 }: ThemeProviderProps) {
   const { hour } = useClock();
-  const theme = useMemo<Theme>(
-    () => ({
-      look,
-      serious,
-      palette: paletteFor({ look, hour, serious, ...(config ? { config } : {}) }),
-    }),
-    [look, config, serious, hour],
-  );
+  const theme = useMemo<Theme>(() => {
+    const palette = paletteFor({ look, hour, serious, ...(config ? { config } : {}) });
+    // Before any child renders, so display text below is drawn in this look's face.
+    setDisplayFont(palette.dispFont);
+    return { look, serious, palette };
+  }, [look, config, serious, hour]);
   return <ThemeContext value={theme}>{children}</ThemeContext>;
 }
 

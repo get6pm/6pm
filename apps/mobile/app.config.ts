@@ -68,6 +68,14 @@ const FONTS = [
   'IBMPlexMono-SemiBold',
   'PatrickHand-Regular',
   'MaterialSymbolsRounded-Variable',
+  // The looks' display faces.
+  'BarlowCondensed-Medium',
+  'BarlowCondensed-SemiBold',
+  'Baloo2-Variable',
+  'Lora-Variable',
+  'PlayfairDisplay-Variable',
+  'CormorantGaramond-Variable',
+  'Unbounded-Variable',
 ].map((name) => `./assets/fonts/${name}.ttf`);
 
 export default ({ config }: ConfigContext): ExpoConfig => ({

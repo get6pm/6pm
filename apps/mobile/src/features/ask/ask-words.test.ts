@@ -22,6 +22,7 @@ const ctx: AskContext = {
   daysLeft: 22,
   payday: '2026-10-31',
   futureYou: 2_000_000,
+  share: 1,
   pots: [{ name: 'Tết', goal: 3_000_000, saved: 1_200_000, monthly: 450_000 }],
 };
 

@@ -3,11 +3,12 @@ import type { SpendSource, SpendStatus } from '../spend/spend';
 /** Two sightings of one payment arrive within this long of each other. */
 export const DUPLICATE_WINDOW_MS = 3 * 60_000;
 
-/** Sources 6pm hears about a payment from. The user typing it in is not a second witness. */
+/**
+ * Sources 6pm hears about a payment from. Two of these seeing one payment are two witnesses of it;
+ * something the user typed (Quick add, voice, cash) is a spend they chose to record, never a
+ * second sighting of a capture.
+ */
 const OBSERVED: ReadonlySet<SpendSource> = new Set(['qr', 'shared', 'email', 'applePay']);
-
-/** Cash leaves no trace anywhere else, so it can never be the same payment as another source. */
-const UNSEEN: SpendSource = 'cash';
 
 export interface SightedSpend {
   readonly id: string;
@@ -25,11 +26,10 @@ export interface NewSighting {
 }
 
 /**
- * The spend a new capture is the same payment as: same amount, a different source, within three
- * minutes (the ones nearest in time win). Skipped and deleted spends never absorb a capture, and
- * two things the user typed themselves (Quick add, voice) are never merged, because each was
- * entered on purpose, and cash never merges at all; at least one side has to be something 6pm
- * observed.
+ * The spend a new capture is the same payment as: same amount, a different capture source (QR,
+ * shared receipt, email, Apple Pay), within three minutes (the nearest in time wins). Skipped and
+ * deleted spends never absorb a capture. A spend the user typed (Quick add, voice, cash) is never
+ * merged with anything: each was entered on purpose, and no other source can have seen cash.
  */
 export function findDuplicate(
   incoming: NewSighting,
@@ -42,8 +42,7 @@ export function findDuplicate(
   for (const spend of existing) {
     if (spend.status === 'skipped' || spend.status === 'deleted') continue;
     if (spend.amount !== incoming.amount || spend.source === incoming.source) continue;
-    if (spend.source === UNSEEN || incoming.source === UNSEEN) continue;
-    if (!OBSERVED.has(spend.source) && !OBSERVED.has(incoming.source)) continue;
+    if (!OBSERVED.has(spend.source) || !OBSERVED.has(incoming.source)) continue;
     const gap = Math.abs(Date.parse(spend.at) - at);
     if (gap <= DUPLICATE_WINDOW_MS && gap < bestGap) {
       best = spend;

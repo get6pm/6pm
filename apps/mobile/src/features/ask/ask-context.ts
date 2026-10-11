@@ -1,4 +1,4 @@
-import type { AskContext, AskPot } from '@6pm/domain';
+import { joinedShare, type AskContext, type AskPot } from '@6pm/domain';
 
 import { dayOf, type MoneySnapshot } from '../../data/money-store';
 import { goalViews, occasionViews } from '../plan/plan-view';
@@ -29,6 +29,7 @@ export function askContextOf(snap: MoneySnapshot): AskContext | null {
     daysLeft: snap.cycle.daysLeft,
     payday: snap.cycle.payday,
     futureYou: snap.plan.futureYou,
+    share: joinedShare(snap.cycle, snap.plan.startedOn ?? null),
     pots: askPots(snap),
   };
 }

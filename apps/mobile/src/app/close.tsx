@@ -4,7 +4,8 @@ import { View } from 'react-native';
 
 import { clockOf, formatShort, stepPosition, tally } from '@6pm/domain';
 
-import { useDay, useMoney, useMoneyActions } from '../data/money-provider';
+import { readDayNumber } from '../data/diary-queries';
+import { useMoney, useMoneyActions, useMoneyStore } from '../data/money-provider';
 import { CashCustom } from '../features/close/cash-custom';
 import { CloseCards } from '../features/close/close-cards';
 import { CloseEdit } from '../features/close/close-edit';
@@ -14,6 +15,7 @@ import { CashStep, SortedStep, type CashChip } from '../features/close/close-ste
 import { WorkQuestionStep } from '../features/close/close-work-question';
 import { CloseTopBar } from '../features/close/close-top-bar';
 import { useClose } from '../features/close/use-close';
+import { useClosingNumber } from '../features/close/use-closing-number';
 import { useRuleOffer } from '../features/close/use-rule-offer';
 import { useCompanionToast } from '../features/companion/use-companion-toast';
 import { RulePrompt } from '../features/details/rule-prompt';
@@ -39,10 +41,12 @@ export default function Close() {
   const { now } = useClock();
   const { top, bottom } = useDesignInsets();
   const snap = useMoney();
-  const day = useDay();
+  const store = useMoneyStore();
   const actions = useMoneyActions();
   const say = useCompanionToast();
   const close = useClose();
+  // The number of the day being closed, even when the money day turns over mid-close.
+  const day = useClosingNumber(close.day);
   const { state, dispatch, run } = close;
   const [editing, setEditing] = useState<string | null>(null);
   const [typingCash, setTypingCash] = useState(false);
@@ -87,6 +91,8 @@ export default function Close() {
         source: 'cash',
         status: 'kept',
         wallet: 'Cash',
+        // Cash handed over while closing a day belongs to that day, even past 04:00.
+        day: close.day,
       });
     });
   };
@@ -94,17 +100,20 @@ export default function Close() {
   const finish = async () => {
     if (finishing.current) return;
     finishing.current = true;
-    const saved = await run(() =>
-      actions.closeDay({
+    const saved = await run(async () => {
+      // Worked out for the closed day itself, with the cash just added, so a close that crossed
+      // 04:00 still files that day's receipt.
+      const number = (await readDayNumber(store, store.getSnapshot(), close.day)) ?? day;
+      await actions.closeDay({
         day: close.day,
         closedAt: new Date().toISOString(),
         late: false,
-        spent: day.spent,
-        line: day.line,
-        tomorrow: day.tomorrow,
+        spent: number.spent,
+        line: number.line,
+        tomorrow: number.tomorrow,
         note: null,
-      }),
-    );
+      });
+    });
     if (!saved) {
       finishing.current = false;
       return;

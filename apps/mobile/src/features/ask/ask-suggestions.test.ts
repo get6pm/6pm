@@ -36,6 +36,7 @@ describe('the suggested questions', () => {
           daysLeft: 22,
           payday: '2026-10-31',
           futureYou: 0,
+          share: 1,
           pots: [],
         }).kind,
       ).not.toBe('help');

@@ -6,6 +6,7 @@ import { groupDigits, type SpendRow } from '@6pm/domain';
 import { oklchSrgbHex } from '@6pm/theme';
 
 import { useMoney, useMoneyActions } from '../../data/money-provider';
+import { findSpend } from '../../data/money-store';
 import type { Sighting } from '../../data/money-actions';
 import { merchantIcon } from '../../features/today/merchant-icon';
 import { useSpendLabels } from '../../features/today/use-spend-rows';
@@ -39,7 +40,7 @@ export default function SpendDetails() {
   const offerUndo = useOfferUndo();
   const say = useCompanionToast();
   const run = useRunAction();
-  const spend = snap.cycleSpends.find((s) => s.id === id);
+  const spend = findSpend(snap, id);
   const [askRule, setAskRule] = useState(false);
   const [note, setNote] = useState(spend?.note ?? '');
   const autosave = useAutosavedNote(spend?.id, spend?.note ?? null);

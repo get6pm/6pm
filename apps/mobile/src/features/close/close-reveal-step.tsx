@@ -1,4 +1,4 @@
-import { addDays, formatShort, type DailyNumber, type LocalDate } from '@6pm/domain';
+import { addDays, formatShort, payCycleOn, type DailyNumber, type LocalDate } from '@6pm/domain';
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
@@ -47,7 +47,10 @@ export function CloseRevealStep({
             })
       }
       mood={event === 'replan' ? 'nod' : 'happy'}
-      sub={t('close.reveal.free', { free: formatShort(number.free), days: snap.cycle.daysLeft })}
+      sub={t('close.reveal.free', {
+        free: formatShort(number.free),
+        days: payCycleOn(day, plan.payday).daysLeft,
+      })}
       month={monthName.toUpperCase()}
       monthDays={monthDays}
       streak={t('close.reveal.streak', {

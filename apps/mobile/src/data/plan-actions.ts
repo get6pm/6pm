@@ -7,6 +7,7 @@ import { useMoneyStore } from './money-provider';
 import type { MoneyStore } from './money-store';
 import { writePlan } from './plan-settings';
 import { clearCycleSetAside, moveCycleRecords } from './pot-moves';
+import { inTurn } from './store-queue';
 
 export interface NewBill {
   readonly name: string;
@@ -50,7 +51,8 @@ export interface CycleTopUps {
  */
 export function planActions(store: MoneyStore) {
   const { tables, db } = store;
-  const reload = () => store.load(store.getSnapshot().today);
+  // Every action below runs in the store's turn, so its reload is the one that is already in turn.
+  const reload = () => store.loadInTurn(store.getSnapshot().today);
 
   const putBill = async (row: BillRow) => {
     await tables.bills.put(row);
@@ -82,7 +84,7 @@ export function planActions(store: MoneyStore) {
     return moved;
   };
 
-  return {
+  return inTurn(store.exclusive, {
     /** Ticks a bill off for this pay cycle, or puts it back to due. */
     setBillPaid: async (id: string, paid: boolean) => {
       const snap = store.getSnapshot();
@@ -227,7 +229,21 @@ export function planActions(store: MoneyStore) {
     restorePot: async (id: string) => {
       const pot = await tables.pots.get(id);
       if (!pot) return;
-      await tables.pots.put({ ...pot, archivedAt: null });
+      const touched: string[] = [];
+      await db.withTransactionAsync(async () => {
+        await tables.pots.put({ ...pot, archivedAt: null });
+        if (pot.kind !== 'goal') return;
+        // The goals that took its share when it went give it back: the shares add up to one again.
+        const rest = store.getSnapshot().pots.filter((p) => p.id !== id);
+        const shares = rebalanceShares({ ...goalShares(rest), [id]: pot.share ?? 0 }, id);
+        touched.push(...(await putShares(rest, shares)));
+        const share = shares[id];
+        if (share !== undefined && share !== pot.share) {
+          await tables.pots.put({ ...pot, archivedAt: null, share });
+          touched.push(id);
+        }
+        await refreshSetAsides(touched);
+      });
       await reload();
     },
 
@@ -260,7 +276,7 @@ export function planActions(store: MoneyStore) {
       });
       await reload();
     },
-  };
+  });
 }
 
 export type PlanActions = ReturnType<typeof planActions>;

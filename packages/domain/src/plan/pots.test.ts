@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { cycleMonth, payCycleOn, type Payday } from './pay-cycle';
+import { payCycleOn, type Payday } from './pay-cycle';
 import {
   dueSetAsides,
   occasionsOf,
@@ -35,22 +35,6 @@ const run = (
   payday: Payday = lastDay,
   futureYou = 2_000_000,
 ) => dueSetAsides({ pots, moves, futureYou, payday, today, dayOf });
-
-describe('cycleMonth', () => {
-  it('names the month most of the cycle lies in, whatever the payday', () => {
-    expect(cycleMonth(payCycleOn('2026-10-11', lastDay))).toBe('2026-10');
-    expect(cycleMonth(payCycleOn('2026-10-31', lastDay))).toBe('2026-11');
-    expect(cycleMonth(payCycleOn('2026-10-11', { kind: 'sameDay', day: 25 }))).toBe('2026-10');
-    expect(cycleMonth(payCycleOn('2026-10-01', { kind: 'sameDay', day: 1 }))).toBe('2026-10');
-  });
-
-  it('holds still across the 1st of a month in the middle of the cycle', () => {
-    const payday: Payday = { kind: 'sameDay', day: 25 };
-    expect(cycleMonth(payCycleOn('2026-09-28', payday))).toBe(
-      cycleMonth(payCycleOn('2026-10-05', payday)),
-    );
-  });
-});
 
 describe('potSetAside', () => {
   const cycle = payCycleOn('2026-10-11', lastDay);
@@ -180,6 +164,32 @@ describe('dueSetAsides', () => {
     expect(run([occasion()], moves, '2026-10-11', payday)).toEqual([]);
     expect(run([occasion()], moves, '2026-10-25', payday)).toEqual([
       { potId: 'japan', cycle: '2026-10-25', amount: 1_500_000 },
+    ]);
+  });
+});
+
+describe('set-asides recorded under the old cycle label', () => {
+  const payday: Payday = { kind: 'sameDay', day: 16 };
+
+  it('are kept as they are and never written a second time', () => {
+    // Recorded by an earlier build that named both 16 Sep to 16 Oct and 16 Oct to 16 Nov October.
+    const old: PotMove[] = [
+      { potId: 'japan', kind: 'setAside', cycle: '2026-08-16', amount: 1_000_000 },
+      { potId: 'japan', kind: 'setAside', cycle: '2026-09-16', amount: 2_000_000 },
+      { potId: 'japan', kind: 'setAside', cycle: '2026-10-16', amount: 0 },
+    ];
+    const pot = occasion({ neededBy: '2026-12', createdAt: '2026-08-20T03:00:00.000Z' });
+    expect(run([pot], old, '2026-10-20', payday)).toEqual([]);
+    // Only the cycle that has not been written yet is new.
+    expect(run([pot], old, '2026-11-16', payday)).toEqual([
+      { potId: 'japan', cycle: '2026-11-16', amount: 0 },
+    ]);
+  });
+
+  it('give every cycle its own month from now on, so a new pot spreads evenly', () => {
+    const pot = occasion({ neededBy: '2026-12', createdAt: '2026-08-20T03:00:00.000Z' });
+    expect(run([pot], [], '2026-10-20', payday).map((d) => d.amount)).toEqual([
+      1_000_000, 1_000_000, 1_000_000,
     ]);
   });
 });

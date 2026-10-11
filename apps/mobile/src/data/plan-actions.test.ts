@@ -169,6 +169,29 @@ describe('Future you goals', () => {
     expect(shares()).toEqual({ [a.id]: 1 });
   });
 
+  it('give their shares back when a deleted goal is restored, adding up to one again', async () => {
+    const { store, actions } = await open('2026-10-11');
+    const a = await actions.createPot(goal);
+    const b = await actions.createPot({ ...goal, name: 'Japan', share: 0.4 });
+    const c = await actions.createPot({ ...goal, name: 'Car', share: 0.2 });
+    const shares = () => Object.fromEntries(store.getSnapshot().pots.map((p) => [p.id, p.share]));
+    const total = () => Object.values(shares()).reduce<number>((sum, x) => sum + (x ?? 0), 0);
+    const before = shares();
+    await actions.archivePot(b.id);
+    expect(total()).toBeCloseTo(1, 10);
+    await actions.restorePot(b.id);
+    expect(total()).toBeCloseTo(1, 10);
+    expect(shares()).toEqual(before);
+    // What the goals set aside this cycle still adds up to Future you, not more.
+    const setAside = Object.values(store.getSnapshot().setAsideThisCycle).reduce(
+      (x, y) => x + y,
+      0,
+    );
+    expect(setAside).toBe(2_000_000);
+    expect(shares()[a.id]).toBe(before[a.id]);
+    expect(shares()[c.id]).toBe(0.2);
+  });
+
   it('follow the what-if when Future you changes', async () => {
     const { store, actions } = await open('2026-10-11');
     const made = await actions.createPot(goal);

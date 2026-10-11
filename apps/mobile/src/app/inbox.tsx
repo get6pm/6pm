@@ -1,9 +1,10 @@
 import { Text, View } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';
 
-import { needsReview, type SpendRow } from '@6pm/domain';
+import type { SpendRow } from '@6pm/domain';
 
 import { useMoney, useMoneyActions } from '../data/money-provider';
+import { waitingOf } from '../data/money-store';
 import { useRunAction } from '../features/companion/use-run-action';
 import { InboxRow } from '../features/inbox/inbox-row';
 import { toRowViews } from '../features/today/today-view';
@@ -25,8 +26,8 @@ export default function Inbox() {
   const actions = useMoneyActions();
   const run = useRunAction();
   const labels = useSpendLabels();
-  // Oldest first: the order they were caught in. Every waiting item shows, whatever day it is from.
-  const waiting = snap.cycleSpends.filter(needsReview).slice().reverse();
+  // Oldest first: the order they were caught in. Every waiting item shows, whatever day or pay cycle it is from.
+  const waiting = waitingOf(snap).reverse();
   const closedDays = new Set(snap.closedDays.map((d) => d.day));
   const rowsOf = (spends: readonly SpendRow[]) =>
     toRowViews(spends, snap.categories, labels, false);

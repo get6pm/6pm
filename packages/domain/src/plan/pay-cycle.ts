@@ -71,11 +71,13 @@ export function joinedShare(cycle: PayCycle, joinedOn: LocalDate | null): number
 }
 
 /**
- * The calendar month ('YYYY-MM') most of the cycle's days fall in. It is the same on every day of
+ * The calendar month ('YYYY-MM') a cycle is named after: the month holding the day before its
+ * payday. Paydays fall once a month, so every calendar month gets exactly one cycle, in order, for
+ * every payday from the 1st to the 31st, the last day and "varies". It is the same on every day of
  * the cycle, so anything counted in months (a pot's months left) holds still until payday: 30 Sep
- * to 31 Oct is October's cycle, and so is 25 Sep to 25 Oct.
+ * to 31 Oct is October's cycle, and so is 25 Sep to 25 Oct. A payday on the 1st ends the cycle
+ * in the month just gone (1 Sep to 1 Oct is September's).
  */
 export function cycleMonth(cycle: PayCycle): string {
-  const middle = addDays(cycle.start, Math.floor(diffDays(cycle.payday, cycle.start) / 2));
-  return middle.slice(0, 7);
+  return addDays(cycle.payday, -1).slice(0, 7);
 }

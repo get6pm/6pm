@@ -5,6 +5,7 @@ import type { CategoryRow, MerchantRuleRow, SpendRow } from '@6pm/domain';
 
 import { useMoneyStore } from './money-provider';
 import type { MoneyStore } from './money-store';
+import { inTurn } from './store-queue';
 
 export interface CategoryInput {
   readonly name: string;
@@ -56,7 +57,7 @@ export function categoryActions(store: MoneyStore) {
     store.publish({ ...snap, categories });
   };
 
-  return {
+  return inTurn(store.exclusive, {
     /** Saves a new category (no id) or an edit of an existing one. Returns null for a blank name. */
     saveCategory: async (input: CategoryInput, id?: string): Promise<CategoryRow | null> => {
       const name = input.name.trim();
@@ -95,7 +96,7 @@ export function categoryActions(store: MoneyStore) {
         await tables.rules.removeWhere('categoryId', id);
         await tables.categories.put({ ...gone, archivedAt: now });
       });
-      await store.load(store.getSnapshot().today);
+      await store.loadInTurn(store.getSnapshot().today);
       return to;
     },
 
@@ -108,7 +109,7 @@ export function categoryActions(store: MoneyStore) {
 
     /** Forgets one merchant: the next catch from it goes back to being guessed. */
     removeRule: (merchantKey: string) => tables.rules.remove(merchantKey),
-  };
+  });
 }
 
 export type CategoryActions = ReturnType<typeof categoryActions>;

@@ -59,6 +59,7 @@ const snap: MoneySnapshot = {
   cycle,
   categories: [],
   cycleSpends: [],
+  waitingBefore: [],
   bills: [
     bill('rent', 3_500_000, 1, true),
     bill('phone', 100_000, 3, true),

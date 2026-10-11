@@ -63,25 +63,28 @@ describe('moneyActions', () => {
       spend({ source: 'qr', status: 'pending', at, detail: 'MB · ••4821' }),
     );
     const typed = await ctx.actions.addSpend(
-      spend({ source: 'manual', status: 'kept', at: new Date(at.getTime() + 90_000) }),
+      spend({ source: 'email', status: 'kept', at: new Date(at.getTime() + 90_000) }),
     );
     expect(typed.id).toBe(qr.id);
     expect(typed.status).toBe('kept');
     expect(ctx.store.getSnapshot().cycleSpends).toHaveLength(1);
     const sightings = await ctx.actions.sightings(qr.id);
-    expect(sightings.map((s) => s.source).sort()).toEqual(['manual', 'qr']);
+    expect(sightings.map((s) => s.source).sort()).toEqual(['email', 'qr']);
     // Editing the spend afterwards must not cost it its trail.
     await ctx.actions.update(qr.id, { note: 'with Lan' });
     expect(await ctx.actions.sightings(qr.id)).toHaveLength(2);
   });
 
-  it('keeps two payments apart when the amount differs, the gap is long, or the user typed both', async () => {
+  it('keeps two payments apart when the amount differs, the gap is long, or the user typed it', async () => {
     const at = new Date(2026, 9, 11, 12, 10);
     await ctx.actions.addSpend(spend({ source: 'qr', status: 'pending', at }));
     await ctx.actions.addSpend(spend({ amount: 50_000, at }));
     await ctx.actions.addSpend(spend({ at: new Date(at.getTime() + 4 * 60_000) }));
     await ctx.actions.addSpend(spend({ source: 'cash', at }));
     expect(ctx.store.getSnapshot().cycleSpends).toHaveLength(4);
+    // Something the user typed is never the same payment as a capture, cash or not.
+    await ctx.actions.addSpend(spend({ source: 'manual', wallet: 'Cash', at }));
+    expect(ctx.store.getSnapshot().cycleSpends).toHaveLength(5);
   });
 
   it('puts an edited card back as it arrived when undone', async () => {

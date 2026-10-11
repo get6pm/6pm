@@ -11,6 +11,7 @@ import {
 } from '@6pm/domain';
 
 import { useMoney, useMoneyActions } from '../../data/money-provider';
+import { findSpend } from '../../data/money-store';
 import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
 import { useRunAction } from '../companion/use-run-action';
@@ -35,17 +36,17 @@ interface Start {
  * cards step picks up at that step with the same queue and the cash already added. Waiting
  * spends from earlier days are part of the queue.
  */
-function startOf(cycleSpends: readonly SpendRow[], day: string): Start {
+function startOf(spends: readonly SpendRow[], day: string): Start {
   const parked = parkedClose(day);
   if (parked !== null && parked.state.step !== 'cards' && parked.state.step !== 'done') {
-    const byId = new Map(cycleSpends.map((s) => [s.id, s]));
+    const byId = new Map(spends.map((s) => [s.id, s]));
     return {
       queue: parked.queueIds.flatMap((id) => byId.get(id) ?? []),
       state: closeReducer(parked.state, { type: 'resume' }),
       cash: parked.cash,
     };
   }
-  const queue = closeQueue(cycleSpends, day);
+  const queue = closeQueue(spends, day);
   const askWorkId = workCandidate(queue);
   return {
     queue,
@@ -76,7 +77,7 @@ export function useClose() {
   const [day] = useState(snap.today);
 
   // Fixed when the close opens; its order never changes underneath the user.
-  const [start] = useState(() => startOf(snap.cycleSpends, day));
+  const [start] = useState(() => startOf([...snap.cycleSpends, ...snap.waitingBefore], day));
   const { queue } = start;
   const askWorkId = useMemo(() => workCandidate(queue), [queue]);
   const [state, dispatch] = useReducer(closeReducer, start.state);
@@ -124,7 +125,7 @@ export function useClose() {
 
   const keptBefore = queue
     .filter((s) => state.verdicts[s.id] === 'kept' || state.verdicts[s.id] === 'edited')
-    .reduce((sum, s) => sum + (snap.cycleSpends.find((c) => c.id === s.id)?.amount ?? s.amount), 0);
+    .reduce((sum, s) => sum + (findSpend(snap, s.id)?.amount ?? s.amount), 0);
   const remaining = remainingCards(state);
   const cards: CloseCardContent[] = remaining.map((card) => {
     const spend = queue.find((s) => s.id === card.id);

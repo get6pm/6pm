@@ -33,6 +33,7 @@ const snap: MoneySnapshot = {
   cycle: payCycleOn(today, { kind: 'sameDay', day: 31 }),
   categories: [],
   cycleSpends: [],
+  waitingBefore: [],
   bills: [],
   pots: [
     pot({ id: 'Japan', kind: 'goal', goal: 6_000_000, share: 0.6, neededBy: '2027-03' }),
@@ -53,12 +54,19 @@ describe('askContextOf', () => {
       daysLeft: 22,
       payday: '2026-10-31',
       futureYou: 2_000_000,
+      share: 1,
     });
     expect(ctx?.pots).toEqual([
       { name: 'Japan', goal: 6_000_000, saved: 3_600_000, monthly: 1_200_000 },
       { name: 'Tết', goal: 3_000_000, saved: 1_200_000, monthly: 450_000 },
       { name: 'Paused', goal: 1_000_000, saved: 0, monthly: 0 },
     ]);
+  });
+
+  it('carries the joined share of the cycle, so saving more costs only the part still to come', () => {
+    // Set up on 9 October: 23 of the cycle's 32 days (30 Sep to 31 Oct) are still to come.
+    const joined = askContextOf({ ...snap, plan: snap.plan && { ...snap.plan, startedOn: today } });
+    expect(joined?.share).toBeCloseTo(23 / 32, 5);
   });
 
   it('has nothing to work from before the month is set up', () => {

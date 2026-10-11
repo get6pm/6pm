@@ -87,7 +87,7 @@ interface GoalMoveRow {
 
 /**
  * What went to Future you in a calendar month, and everything there by its end. A pay cycle's
- * set-aside belongs to the month most of the cycle lies in; a top-up to the month it was made.
+ * set-aside belongs to the month the cycle is named after (`cycleMonth`); a top-up to the month it was made.
  */
 export function futureYouOfMonth(
   moves: readonly GoalMoveRow[],

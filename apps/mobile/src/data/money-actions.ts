@@ -7,10 +7,11 @@ import {
   merchantKeyOf,
   moneyDayOf,
   type ClosedDayRow,
+  type LocalDate,
   type SpendRow,
 } from '@6pm/domain';
 
-import type { MoneyStore } from './money-store';
+import { findSpend, type MoneyStore } from './money-store';
 
 export interface NewSpend {
   readonly amount: number;
@@ -25,6 +26,22 @@ export interface NewSpend {
   readonly foreignAmount?: SpendRow['foreignAmount'];
   /** When it happened; now unless the source says otherwise. */
   readonly at?: Date;
+  /**
+   * The money day to file it under, when that is not the day the screens show: cash added to a
+   * close that ran past 04:00 belongs to the day being closed.
+   */
+  readonly day?: LocalDate;
+}
+
+/**
+ * What saving a capture did: a new row, or the sighting of a payment that was already there.
+ * `before` is the row as it was ahead of a merge, so the sighting can be taken out again.
+ */
+export interface Capture {
+  readonly row: SpendRow;
+  readonly merged: boolean;
+  readonly before: SpendRow | null;
+  readonly sighting: { readonly source: SpendRow['source']; readonly seenAt: string };
 }
 
 /** One way a spend was seen: the source trail on Details. */
@@ -44,30 +61,38 @@ export type UndoRestore = Partial<Pick<SpendRow, 'amount' | 'categoryId'>>;
 export function moneyActions(store: MoneyStore) {
   const { tables } = store;
 
-  // Writes run one after another: each reads the row as the one before it left it, so two quick
-  // edits to the same spend (an amount, then a status) never overwrite each other.
-  let queue: Promise<unknown> = Promise.resolve();
-  const inTurn = <T>(task: () => Promise<T>): Promise<T> => {
-    const run = queue.then(task);
-    queue = run.catch(() => undefined);
-    return run;
-  };
+  // Writes run one after another, and after any load in flight: each reads the row as the one
+  // before it left it, so two quick edits to the same spend (an amount, then a status) never
+  // overwrite each other, and a reload never publishes what it read before a write.
+  const inTurn = store.exclusive;
+
+  const newestFirst = (rows: readonly SpendRow[]) =>
+    [...rows].sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
 
   const replaceSpend = (row: SpendRow) => {
     const snap = store.getSnapshot();
-    const others = snap.cycleSpends.filter((s) => s.id !== row.id);
-    // A row outside the loaded pay cycle (a waiting item from before payday) is saved but not shown.
-    const inCycle = row.day >= snap.cycle.start && row.day <= snap.today;
+    const others = (list: readonly SpendRow[]) => list.filter((s) => s.id !== row.id);
+    if (row.day < snap.cycle.start) {
+      // A waiting item from before payday stays in the snapshot after it is answered (its details
+      // and the close's running total still read it) until the next load drops it.
+      const waitingBefore =
+        row.status === 'deleted'
+          ? others(snap.waitingBefore)
+          : newestFirst([row, ...others(snap.waitingBefore)]);
+      store.publish({ ...snap, waitingBefore });
+      return;
+    }
+    const inCycle = row.day <= snap.today;
     const cycleSpends =
       row.status === 'deleted' || !inCycle
-        ? others
-        : [row, ...others].sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
+        ? others(snap.cycleSpends)
+        : newestFirst([row, ...others(snap.cycleSpends)]);
     store.publish({ ...snap, cycleSpends });
   };
 
   /** The row as the screen holds it, else as the database does (one read, not two). */
   const current = async (id: string): Promise<SpendRow | null> =>
-    store.getSnapshot().cycleSpends.find((s) => s.id === id) ?? (await tables.spends.get(id));
+    findSpend(store.getSnapshot(), id) ?? (await tables.spends.get(id));
 
   const patchNow = async (row: SpendRow, patch: Partial<SpendRow>): Promise<SpendRow> => {
     const next: SpendRow = { ...row, ...patch, updatedAt: new Date().toISOString() };
@@ -83,7 +108,7 @@ export function moneyActions(store: MoneyStore) {
     });
 
   /** The same payment seen a second way: one item, its sightings recorded, never two rows. */
-  const mergeInto = async (twin: SpendRow, input: NewSpend, seenAt: string): Promise<SpendRow> => {
+  const mergeInto = async (twin: SpendRow, input: NewSpend, seenAt: string): Promise<Capture> => {
     const next: SpendRow = {
       ...twin,
       status: mergedStatus(twin.status, input.status),
@@ -100,10 +125,10 @@ export function moneyActions(store: MoneyStore) {
       await tables.spends.put(next);
     });
     replaceSpend(next);
-    return next;
+    return { row: next, merged: true, before: twin, sighting: { source: input.source, seenAt } };
   };
 
-  const addNow = async (input: NewSpend): Promise<SpendRow> => {
+  const captureNow = async (input: NewSpend): Promise<Capture> => {
     const at = input.at ?? new Date();
     const snap = store.getSnapshot();
     const twin = findDuplicate(
@@ -118,7 +143,7 @@ export function moneyActions(store: MoneyStore) {
     const row: SpendRow = {
       id: randomUUID(),
       // Captured now, it belongs to the day the screens are showing; a recorded time files itself.
-      day: input.at ? moneyDayOf(input.at) : snap.today,
+      day: input.day ?? (input.at ? moneyDayOf(input.at) : snap.today),
       at: at.toISOString(),
       amount: Math.round(input.amount),
       categoryId: input.categoryId,
@@ -136,11 +161,54 @@ export function moneyActions(store: MoneyStore) {
     };
     await tables.spends.put(row);
     replaceSpend(row);
-    return row;
+    return { row, merged: false, before: null, sighting: { source: row.source, seenAt: row.at } };
+  };
+
+  /**
+   * Takes back what a capture did and nothing else: a row it created is deleted; a payment it
+   * only added a sighting to loses that sighting (and goes back to how it was, when nothing has
+   * touched it since) and stays.
+   */
+  const withdrawNow = async (capture: Capture): Promise<SpendRow | null> => {
+    const row = await current(capture.row.id);
+    if (!row) return null;
+    if (!capture.merged) return patchNow(row, { status: 'deleted', previousStatus: row.status });
+    const { db } = store;
+    const merged = capture.row;
+    const untouched =
+      capture.before !== null &&
+      row.status === merged.status &&
+      row.note === merged.note &&
+      row.wallet === merged.wallet;
+    const restored =
+      untouched && capture.before
+        ? { ...capture.before, updatedAt: new Date().toISOString() }
+        : row;
+    await db.withTransactionAsync(async () => {
+      await db.runAsync(
+        'DELETE FROM spend_sightings WHERE spend_id = ? AND source = ? AND seen_at = ?',
+        [row.id, capture.sighting.source, capture.sighting.seenAt],
+      );
+      const left = await db.getAllAsync<{ n: number }>(
+        'SELECT COUNT(*) AS n FROM spend_sightings WHERE spend_id = ?',
+        [row.id],
+      );
+      // A payment seen once has no trail: the first sighting is only kept alongside a second.
+      if ((left[0]?.n ?? 0) <= 1) {
+        await db.runAsync('DELETE FROM spend_sightings WHERE spend_id = ?', [row.id]);
+      }
+      if (restored !== row) await tables.spends.put(restored);
+    });
+    replaceSpend(restored);
+    return restored;
   };
 
   return {
-    addSpend: (input: NewSpend) => inTurn(() => addNow(input)),
+    addSpend: (input: NewSpend) => inTurn(async () => (await captureNow(input)).row),
+    /** `addSpend`, also saying whether the payment merged into one already there. */
+    captureSpend: (input: NewSpend) => inTurn(() => captureNow(input)),
+    /** Takes back a capture (a cancelled payment) without touching anything it did not make. */
+    withdrawCapture: (capture: Capture) => inTurn(() => withdrawNow(capture)),
     update,
     /**
      * Keep, not mine, delete: remembers the old status so the undo pill can put it back. An edit

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { DailyNumber } from '../plan/daily-number';
+import { dailyNumber, type DailyNumber, type DailyNumberInput } from '../plan/daily-number';
+import { whatIfDaily } from '../plan/plan-river';
 import { answerAsk, type AskContext } from './ask-engine';
 import { readIntent } from './ask-intent';
 import { freeAsksLeft } from './ask-quota';
@@ -22,6 +23,7 @@ const ctx: AskContext = {
   daysLeft: 22,
   payday: '2026-10-31',
   futureYou: 2_000_000,
+  share: 1,
   pots: [{ name: 'Tết & lì xì', goal: 3_000_000, saved: 1_200_000, monthly: 450_000 }],
 };
 
@@ -85,6 +87,31 @@ describe('answerAsk', () => {
   it('prices saving more as money a day', () => {
     const a = answerAsk({ kind: 'saveMore', amount: 500_000 }, ctx);
     expect(a).toMatchObject({ kind: 'saveMore', perDay: 22_000, bars: { after: 331_000 } });
+  });
+
+  it('takes only the joined share of the cycle out of free money when saving more', () => {
+    // Joined halfway through the cycle: 500.000 more to Future you costs the half still to come.
+    // (7.783.000 − 250.000) ÷ 22 = 342.409 → 342.000, so 11.000 a day.
+    const a = answerAsk({ kind: 'saveMore', amount: 500_000 }, { ...ctx, share: 0.5 });
+    expect(a).toMatchObject({ kind: 'saveMore', perDay: 11_000, bars: { after: 342_000 } });
+  });
+
+  it('agrees with the what-if slider, which runs the daily number engine', () => {
+    const input: DailyNumberInput = {
+      plan: { income: 20_000_000, bills: 5_000_000, futureYou: 2_000_000, occasions: 0, topUps: 0 },
+      spentBefore: 0,
+      today: [],
+      notDaily: new Set(),
+      daysLeft: 9,
+      share: 0.5,
+    };
+    const now = dailyNumber(input);
+    const slider = whatIfDaily(input, 2_500_000);
+    const asked = answerAsk(
+      { kind: 'saveMore', amount: 500_000 },
+      { ...ctx, day: now, daysLeft: 9, share: 0.5 },
+    );
+    expect(asked).toMatchObject({ kind: 'saveMore', bars: { after: slider } });
   });
 
   it('works out when a pot fills', () => {

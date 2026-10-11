@@ -11,7 +11,7 @@ import {
 } from '@6pm/domain';
 
 import { isSymbolName } from '../../ui/icons/symbol';
-import type { MoneySnapshot } from '../../data/money-store';
+import { waitingOf, type MoneySnapshot } from '../../data/money-store';
 import { merchantIcon } from './merchant-icon';
 import type { SpendRowView } from './spend-row';
 
@@ -112,7 +112,7 @@ export function todayView(
 
   return {
     moment,
-    queue: snap.cycleSpends.filter(needsReview),
+    queue: waitingOf(snap),
     closedAt: closedRow?.closedAt ?? null,
     rows,
     spentLabel: formatVnd(spent),

@@ -37,10 +37,10 @@ Rules that never bend:
 | M4 | **Occasions (pots).** Each pot has a monthly set-aside = ceil((goal − have) ÷ monthsLeft ÷ 50k) × 50k. OCC = Σ pot set-asides, so a new pot does change the daily number, as the copy promises |
 | M5 | **What-if slider** commits Future you on release and the note shows the real change in the daily number (prototype note bug fixed) |
 | M6 | **Late items** (caught after the close) reduce the next day's start. **The money day ends at 04:00 everywhere**: before 04:00, Today, the close, the Diary and every capture still belong to the previous day. Decided 2026-10-11 |
-| M1a | **Earlier waiting items** (caught or pending from a day already past) join tonight's close and Today's Inbox count, so nothing that counts is ever out of reach. Decided 2026-10-11 |
+| M1a | **Earlier waiting items** (caught or pending from a day already past) join tonight's close and Today's Inbox count, so nothing that counts is ever out of reach. Such an item already counted in the pay cycle it was caught in (M1), so it is listed but never lowers the new cycle's number a second time. Decided 2026-10-11 |
 | M7 | **Missed day.** Closing a missed day confirms its items; they were already counted under M1 |
 | M8 | **Merchant rules** apply to every new capture (merchant → category). Categories have no limits; `daily: false` excludes a category from the daily number |
-| M9 | **Duplicates.** Same amount, different sources, within 3 minutes → merged into one item with a source trail ("Seen 2 ways") |
+| M9 | **Duplicates.** Same amount, different capture sources (QR, shared receipt, email, Apple Pay), within 3 minutes → merged into one item with a source trail ("Seen 2 ways"). Something the user typed (Quick add, voice, cash) is never merged with anything. Cancelling a scanned payment takes back only the scan's own sighting |
 | M10 | **Work spends.** The close asks once a day, about the largest waiting spend of 100.000₫ or more read from a bank receipt or email *(default)*. Marked "for work" in the close → Claim back, excluded from the daily number |
 | M11 | Rounding: daily lines floor to 1.000₫; pot set-asides ceil to 50.000₫; formatting per design (dot thousands, `₫`, U+2212 minus, `tr`/`k` short forms) |
 

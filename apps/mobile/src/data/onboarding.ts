@@ -47,7 +47,15 @@ const FIRST_DUE_DAY = 1;
  * (only when there are none yet), the chosen bills and the banks and wallets the user pays with.
  * Then reloads the store for `today`, so Home opens on the same number the reveal showed.
  */
-export async function completeOnboarding(
+export function completeOnboarding(
+  store: MoneyStore,
+  answers: OnboardingAnswers,
+  { today, language }: { readonly today: LocalDate; readonly language: Language },
+): Promise<void> {
+  return store.exclusive(() => setUp(store, answers, { today, language }));
+}
+
+async function setUp(
   store: MoneyStore,
   answers: OnboardingAnswers,
   { today, language }: { readonly today: LocalDate; readonly language: Language },
@@ -105,7 +113,7 @@ export async function completeOnboarding(
       JSON.stringify([...new Set(answers.wallets)]),
     ]);
   });
-  await store.load(today);
+  await store.loadInTurn(today);
 }
 
 /** The banks and wallets chosen in onboarding, for capture and the scan hand-off. */

@@ -13,7 +13,7 @@ const at = (ms: number) => new Date(Date.parse(base.at) + ms).toISOString();
 
 describe('findDuplicate', () => {
   it('finds the same amount from another source within three minutes', () => {
-    const hit = findDuplicate({ amount: 45_000, source: 'manual', at: at(2 * 60_000) }, [base]);
+    const hit = findDuplicate({ amount: 45_000, source: 'email', at: at(2 * 60_000) }, [base]);
     expect(hit?.id).toBe('a');
   });
 
@@ -30,45 +30,58 @@ describe('findDuplicate', () => {
   });
 
   it('needs the same amount and a different source', () => {
-    expect(findDuplicate({ amount: 46_000, source: 'manual', at: at(0) }, [base])).toBeNull();
+    expect(findDuplicate({ amount: 46_000, source: 'email', at: at(0) }, [base])).toBeNull();
     expect(findDuplicate({ amount: 45_000, source: 'qr', at: at(0) }, [base])).toBeNull();
   });
 
   it('ignores skipped and deleted spends', () => {
     for (const status of ['skipped', 'deleted'] as const) {
       expect(
-        findDuplicate({ amount: 45_000, source: 'manual', at: at(0) }, [{ ...base, status }]),
+        findDuplicate({ amount: 45_000, source: 'email', at: at(0) }, [{ ...base, status }]),
       ).toBeNull();
     }
   });
 
-  it('never merges two things the user typed themselves', () => {
+  it('never merges something the user typed with a capture, or with another typed spend', () => {
     const typed = { ...base, source: 'manual' as const, status: 'kept' as const };
     expect(findDuplicate({ amount: 45_000, source: 'voice', at: at(0) }, [typed])).toBeNull();
-    expect(
-      findDuplicate({ amount: 45_000, source: 'applePay', at: at(0) }, [typed]),
-    ).not.toBeNull();
+    expect(findDuplicate({ amount: 45_000, source: 'applePay', at: at(0) }, [typed])).toBeNull();
+    expect(findDuplicate({ amount: 45_000, source: 'manual', at: at(0) }, [base])).toBeNull();
+    expect(findDuplicate({ amount: 45_000, source: 'voice', at: at(0) }, [base])).toBeNull();
+  });
+
+  it('merges any two different capture sources', () => {
+    const sources = ['qr', 'shared', 'email', 'applePay'] as const;
+    for (const first of sources) {
+      for (const second of sources) {
+        const hit = findDuplicate({ amount: 45_000, source: second, at: at(0) }, [
+          { ...base, source: first },
+        ]);
+        expect(hit !== null).toBe(first !== second);
+      }
+    }
   });
 
   it('never merges cash, which no other source can have seen', () => {
     expect(findDuplicate({ amount: 45_000, source: 'cash', at: at(0) }, [base])).toBeNull();
     const cash = { ...base, source: 'cash' as const, status: 'kept' as const };
     expect(findDuplicate({ amount: 45_000, source: 'qr', at: at(0) }, [cash])).toBeNull();
+    expect(findDuplicate({ amount: 45_000, source: 'email', at: at(0) }, [cash])).toBeNull();
   });
 
   it('picks the nearest in time', () => {
     const near = { ...base, id: 'near', at: at(60_000) };
     const far = { ...base, id: 'far', at: at(-150_000) };
-    expect(findDuplicate({ amount: 45_000, source: 'manual', at: at(0) }, [far, near])?.id).toBe(
+    expect(findDuplicate({ amount: 45_000, source: 'email', at: at(0) }, [far, near])?.id).toBe(
       'near',
     );
   });
 
   it('refuses a zero amount or an unreadable time', () => {
     expect(
-      findDuplicate({ amount: 0, source: 'manual', at: at(0) }, [{ ...base, amount: 0 }]),
+      findDuplicate({ amount: 0, source: 'email', at: at(0) }, [{ ...base, amount: 0 }]),
     ).toBeNull();
-    expect(findDuplicate({ amount: 45_000, source: 'manual', at: 'nope' }, [base])).toBeNull();
+    expect(findDuplicate({ amount: 45_000, source: 'email', at: 'nope' }, [base])).toBeNull();
   });
 });
 

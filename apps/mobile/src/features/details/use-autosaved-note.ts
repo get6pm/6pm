@@ -16,11 +16,21 @@ export function useAutosavedNote(spendId: string | undefined, initial: string | 
     target.current = { spendId, actions, run };
   });
   const [autosave] = useState(() =>
-    createAutosave(initial, (value) => {
+    createAutosave(initial, async (value) => {
       const { spendId: id, actions: write, run: guarded } = target.current;
-      if (id) void guarded(() => write.update(id, { note: value }));
+      if (!id) return;
+      // `run` has already told the user it did not save; rejecting leaves the note unsaved so the
+      // next flush tries again.
+      if (!(await guarded(() => write.update(id, { note: value })))) {
+        throw new Error('The note did not save');
+      }
     }),
   );
-  useEffect(() => autosave.flush, [autosave]);
+  useEffect(
+    () => () => {
+      void autosave.flush();
+    },
+    [autosave],
+  );
   return autosave;
 }

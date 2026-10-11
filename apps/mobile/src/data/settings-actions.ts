@@ -1,5 +1,6 @@
 import type { MoneyStore } from './money-store';
 import { DEFAULT_PLAN, writePlan, type PlanSettings } from './plan-settings';
+import { inTurn } from './store-queue';
 
 /** Children before parents, so the foreign keys never see an orphan mid-wipe. */
 const EVERY_TABLE = [
@@ -20,9 +21,9 @@ const EVERY_TABLE = [
  */
 export function settingsActions(store: MoneyStore) {
   const { db } = store;
-  const reload = () => store.load(store.getSnapshot().today);
+  const reload = () => store.loadInTurn(store.getSnapshot().today);
 
-  return {
+  return inTurn(store.exclusive, {
     updatePlan: async (patch: Partial<PlanSettings>) => {
       await writePlan(db, { ...(store.getSnapshot().plan ?? DEFAULT_PLAN), ...patch });
       await reload();
@@ -33,5 +34,5 @@ export function settingsActions(store: MoneyStore) {
       });
       await reload();
     },
-  };
+  });
 }

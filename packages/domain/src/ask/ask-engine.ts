@@ -21,6 +21,12 @@ export interface AskContext {
   readonly payday: LocalDate;
   /** Future you each month, as the plan stands. */
   readonly futureYou: Vnd;
+  /**
+   * The part of the cycle's free money still to come (`joinedShare`): 1 except in the cycle the
+   * user joined. Money taken out of the plan's monthly amounts (more to Future you) comes out of
+   * free money only by this share, as the daily number itself does.
+   */
+  readonly share: number;
   readonly pots: readonly AskPot[];
 }
 
@@ -125,7 +131,8 @@ export function answerAsk(intent: AskIntent, ctx: AskContext): AskAnswer {
       return { kind: 'weekend', days, total: days.reduce((sum, d) => sum + d.amount, 0) };
     }
     case 'saveMore': {
-      const after = Math.max(0, lineFrom(day.free - intent.amount, daysLeft));
+      const taken = Math.round(intent.amount * ctx.share);
+      const after = Math.max(0, lineFrom(day.free - taken, daysLeft));
       return {
         kind: 'saveMore',
         amount: intent.amount,

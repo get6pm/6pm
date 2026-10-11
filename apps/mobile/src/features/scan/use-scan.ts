@@ -9,6 +9,7 @@ import {
   type VietQRFailure,
 } from '@6pm/domain';
 
+import type { Capture } from '../../data/money-actions';
 import { useMoney, useMoneyActions, useMoneyStore } from '../../data/money-provider';
 import { readWallets } from '../../data/onboarding';
 import { haptics } from '../../ui/haptics';
@@ -24,6 +25,8 @@ export interface Payment {
   readonly amount: number;
   readonly bank: BankInfo | null;
   readonly spendId: string;
+  /** What saving the pending spend did, so a cancelled payment takes back only that. */
+  readonly capture: Capture;
 }
 
 export type ScanPhase =
@@ -42,7 +45,8 @@ export type ScanPhase =
 /**
  * Scan to pay, from camera to "Did it go through?". The spend is written as pending before the
  * bank app opens, so a payment survives 6pm being closed while the user is in their bank; the
- * answer on return keeps it, leaves it pending, or deletes it.
+ * answer on return keeps it, leaves it pending, or takes back what the scan saved: the row it
+ * made is deleted, and a payment it only joined (the same one seen another way) stays.
  */
 export function useScan() {
   const store = useMoneyStore();
@@ -81,8 +85,8 @@ export function useScan() {
   /** The category a payee files under: what the user taught 6pm, else what is likely now. */
   const categoryFor = async (payee: string) => {
     // A rule that cannot be read must not strand the scan: fall through to the likely category.
-    const rule = await store.tables.rules.get(payee.trim().toLowerCase()).catch(() => undefined);
-    if (rule && snap.categories.some((c) => c.id === rule.categoryId)) return rule.categoryId;
+    const learned = await actions.ruleCategory(payee).catch(() => null);
+    if (learned !== null) return learned;
     const likely = likelyCategoriesAt(hour).map((name) => name.toLowerCase());
     const match = snap.categories.find((c) => likely.includes(c.id));
     return match?.id ?? snap.categories[0]?.id ?? '';
@@ -129,7 +133,7 @@ export function useScan() {
       if (paying.current) return;
       paying.current = true;
       try {
-        const row = await actions.addSpend({
+        const capture = await actions.captureSpend({
           amount,
           categoryId,
           merchant: payee,
@@ -139,7 +143,15 @@ export function useScan() {
           note: qr.note,
           detail: `${qr.bank?.shortName ?? qr.bin} · ${qr.accountMasked}`,
         });
-        const payment: Payment = { qr, payee, categoryId, amount, bank, spendId: row.id };
+        const payment: Payment = {
+          qr,
+          payee,
+          categoryId,
+          amount,
+          bank,
+          spendId: capture.row.id,
+          capture,
+        };
         setPhase({ kind: 'handoff', payment, result: null });
         const result = await handOff(bank, amount).catch((): HandoffResult => 'manual');
         setPhase((p) => (p.kind === 'handoff' ? { ...p, result } : p));
@@ -152,7 +164,7 @@ export function useScan() {
       setPhase((p) => (p.kind === 'handoff' ? { kind: 'return', payment: p.payment } : p)),
     answer: async (payment: Payment, answer: 'paid' | 'later' | 'cancelled') => {
       if (answer === 'paid') await actions.update(payment.spendId, { status: 'kept' });
-      if (answer === 'cancelled') await actions.update(payment.spendId, { status: 'deleted' });
+      if (answer === 'cancelled') await actions.withdrawCapture(payment.capture);
     },
   };
 }

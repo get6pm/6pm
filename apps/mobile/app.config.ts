@@ -78,6 +78,29 @@ const FONTS = [
   'Unbounded-Variable',
 ].map((name) => `./assets/fonts/${name}.ttf`);
 
+/**
+ * The bank apps Scan hands a payment to, as `canOpenURL` must be told in advance. Mirrors the iOS
+ * schemes in the VietQR bank catalogue (`@6pm/domain`), which this config cannot import.
+ */
+const BANK_SCHEMES = [
+  'mbbank',
+  'vietcombankmobile',
+  'tcb',
+  'vpbankneo',
+  'acbone',
+  'bidv.smartbanking.partner',
+  'vietinbankipay',
+  'agribankmobile',
+  'hydro',
+  'myvib2',
+  'shbmobile',
+  'newomni-app',
+  'seamobile',
+  'hdbankmobile',
+  'cake.vn',
+  'plus',
+];
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: variant.name,
@@ -107,6 +130,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     config: { usesNonExemptEncryption: false },
     infoPlist: {
       CFBundleAllowMixedLocalizations: true,
+      LSApplicationQueriesSchemes: BANK_SCHEMES,
     },
     // The App Group (shared with widgets and the share extension) is declared with those targets:
     // App Store Connect's API cannot register app groups, so they arrive in that native batch.
@@ -114,6 +138,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     package: variant.bundleIdentifier,
   },
+  // Permission prompts in Vietnamese; English comes from the plugins below.
+  locales: { vi: './locales/vi.json' },
   plugins: [
     'expo-router',
     ['expo-sqlite', { useSQLCipher: true }],
@@ -124,6 +150,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     ['expo-build-properties', { android: { compileSdkVersion: 37, targetSdkVersion: 36 } }],
     ['expo-localization', { supportedLocales: ['en', 'vi'] }],
+    // Scan reads VietQR codes; it never records, so no microphone.
+    [
+      'expo-camera',
+      {
+        cameraPermission: '6pm uses the camera to read VietQR codes when you scan to pay.',
+        microphonePermission: false,
+        recordAudioAndroid: false,
+      },
+    ],
     // Local reminders only (the close at six); no remote push yet.
     ['expo-notifications', { enableBackgroundRemoteNotifications: false }],
   ],

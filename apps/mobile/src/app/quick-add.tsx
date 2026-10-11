@@ -2,39 +2,22 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
-import { emptyKeypad, keypadVnd, likelyCategoriesAt, pressKey, type KeypadKey } from '@6pm/domain';
+import { emptyKeypad, keypadVnd, likelyCategoriesAt, pressKey } from '@6pm/domain';
 
 import { useMoney, useMoneyActions } from '../data/money-provider';
 import { QuickTicket } from '../features/quick-add/quick-ticket';
 import { useI18n } from '../i18n/i18n';
 import { CategoryTile } from '../ui/category-tile';
 import { haptics } from '../ui/haptics';
+import { Keypad } from '../ui/keypad';
 import { isSymbolName, Symbol } from '../ui/icons/symbol';
 import type { SymbolName } from '../ui/icons/symbols.generated';
 import { PressScale } from '../ui/primitives/press-scale';
 import { useClock } from '../ui/theme/clock';
 import { SheetFrame } from '../ui/navigation/sheet-frame';
 import { useTheme } from '../ui/theme/theme';
-import { body, display } from '../ui/type/fonts';
+import { body } from '../ui/type/fonts';
 
-const KEYS: (KeypadKey | null)[] = [
-  '1',
-  '2',
-  '3',
-  'back',
-  '4',
-  '5',
-  '6',
-  'k',
-  '7',
-  '8',
-  '9',
-  '000',
-  null,
-  '0',
-  null,
-  null,
-];
 const WALLETS: { id: string; icon: SymbolName }[] = [
   { id: 'Cash', icon: 'payments' },
   { id: 'MB Bank', icon: 'account_balance' },
@@ -62,10 +45,6 @@ export default function QuickAdd() {
   const locale = language === 'vi' ? 'vi-VN' : 'en-GB';
   const stamp = `${new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', month: 'short' }).format(now)} · ${new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit', hour12: false }).format(now)}`;
 
-  const press = (key: KeypadKey) => {
-    haptics.tick();
-    setKeys((s) => pressKey(s, key));
-  };
   const save = async () => {
     if (amount <= 0 || !category) return;
     await actions.addSpend({
@@ -190,40 +169,7 @@ export default function QuickAdd() {
             );
           })}
         </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-          {KEYS.map((key, i) =>
-            key === null ? (
-              <View key={i} style={{ width: '23.5%', height: 48 }} />
-            ) : (
-              <PressScale
-                key={key}
-                scaleTo={0.92}
-                onPress={() => press(key)}
-                style={{
-                  width: '23.5%',
-                  height: 48,
-                  borderRadius: 15,
-                  backgroundColor: palette.chipBg,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                {key === 'back' ? (
-                  <Symbol name="backspace" size={22} color={palette.ink} />
-                ) : (
-                  <Text
-                    style={{
-                      ...(/\d/.test(key) && key.length === 1 ? display(24, 500) : body(17, 650)),
-                      color: palette.ink,
-                    }}
-                  >
-                    {key}
-                  </Text>
-                )}
-              </PressScale>
-            ),
-          )}
-        </View>
+        <Keypad onPress={(key) => setKeys((k) => pressKey(k, key))} />
         <PressScale
           scaleTo={0.97}
           onPress={() => void save()}

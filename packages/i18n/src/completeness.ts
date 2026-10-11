@@ -9,6 +9,7 @@ export const sameInBothLanguages: readonly string[] = [
   'MAX',
   'Inbox',
   'VietQR',
+  'VietQR · NAPAS 247',
   'MB Bank',
   'Email',
   'Apple Pay',

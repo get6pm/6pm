@@ -7,6 +7,7 @@ import { useTheme } from '../../ui/theme/theme';
 
 /** Events the companion has a line for in every voice: `companion.<event>.<persona|plain>`. */
 export type CompanionEvent =
+  | 'capture'
   | 'catSaved'
   | 'copied'
   | 'export'

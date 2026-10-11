@@ -14,7 +14,7 @@ Inputs: `docs/product-decisions.md`, `docs/tech-decisions.md`, `docs/design-syst
 | 05 | Plan: river, daily bars + what-if, bills, Future you, occasions/pots | 03 | built (simulator-checked) |
 | 06 | Diary: week recap, calendar, day receipt, missed day, money diaries | 04 | built (simulator-checked) |
 | 07 | Onboarding v2 (wheels), Settings, close reminder notifications, serious mode, Categories and rules | 03 | built; Settings and Categories simulator-checked, onboarding welcome checked (later steps need taps) |
-| 08 | Capture: VietQR scan-to-pay + pending, share extension OCR, receipt email (API), App Intent, voice | 04 | todo |
+| 08 | Capture: VietQR scan-to-pay + pending, share extension OCR, receipt email (API), App Intent, voice | 04 | in progress: Scan to pay built (camera, pay card, bank hand-off, pending); share extension, receipt email, App Intent and voice todo |
 | 09 | System surfaces: widgets, Live Activity, controls, notification actions (native batch) | 08 | todo |
 | 10 | Looks (all 11 + try-on), RevenueCat purchases, Max paywall, welcome and gates | 02 | todo |
 | 11 | Ask 6pm, encrypted backup and export, travel/FX | 05, 10 | todo |

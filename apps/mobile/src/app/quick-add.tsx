@@ -1,28 +1,34 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
-import { emptyKeypad, keypadVnd, likelyCategoriesAt, pressKey } from '@6pm/domain';
+import {
+  emptyKeypad,
+  keypadVnd,
+  likelyCategoriesAt,
+  pressKey,
+  ruleCategoryFor,
+  ruleIndex,
+  type MerchantRuleRow,
+} from '@6pm/domain';
 
-import { useMoney, useMoneyActions } from '../data/money-provider';
+import { useMoney, useMoneyActions, useMoneyStore } from '../data/money-provider';
+import { useCompanionToast } from '../features/companion/use-companion-toast';
+import { useRunAction } from '../features/companion/use-run-action';
 import { QuickTicket } from '../features/quick-add/quick-ticket';
+import { useWalletOptions } from '../features/quick-add/use-wallet-options';
+import { CASH_WALLET } from '../features/quick-add/wallet-options';
+import { WalletRow } from '../features/quick-add/wallet-row';
 import { useI18n } from '../i18n/i18n';
 import { CategoryTile } from '../ui/category-tile';
 import { haptics } from '../ui/haptics';
 import { Keypad } from '../ui/keypad';
 import { isSymbolName, Symbol } from '../ui/icons/symbol';
-import type { SymbolName } from '../ui/icons/symbols.generated';
 import { PressScale } from '../ui/primitives/press-scale';
 import { useClock } from '../ui/theme/clock';
 import { SheetFrame } from '../ui/navigation/sheet-frame';
 import { useTheme } from '../ui/theme/theme';
 import { body } from '../ui/type/fonts';
-
-const WALLETS: { id: string; icon: SymbolName }[] = [
-  { id: 'Cash', icon: 'payments' },
-  { id: 'MB Bank', icon: 'account_balance' },
-  { id: 'MoMo', icon: 'account_balance_wallet' },
-];
 
 /** Quick add: type it in a few taps, the category most likely at this hour already picked. */
 export default function QuickAdd() {
@@ -32,30 +38,64 @@ export default function QuickAdd() {
   const { now, hour } = useClock();
   const snap = useMoney();
   const actions = useMoneyActions();
+  const store = useMoneyStore();
+  const run = useRunAction();
+  const say = useCompanionToast();
   const [keys, setKeys] = useState(emptyKeypad);
   const [note, setNote] = useState('');
-  const [wallet, setWallet] = useState('Cash');
+  const [wallet, setWallet] = useState(CASH_WALLET);
+  const wallets = useWalletOptions();
+  const saving = useRef(false);
+  // What the user taught 6pm: typing a merchant it knows picks that merchant's category.
+  const [rules, setRules] = useState<readonly MerchantRuleRow[]>([]);
+  useEffect(() => {
+    let live = true;
+    store.tables.rules
+      .all()
+      .then((rows) => live && setRules(rows))
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [store]);
   const likely = likelyCategoriesAt(hour).map((name) => name.toLowerCase());
   const ordered = [...snap.categories].sort(
     (a, b) => (likely.indexOf(a.id) + 1 || 9) - (likely.indexOf(b.id) + 1 || 9),
   );
-  const [categoryId, setCategoryId] = useState(ordered[0]?.id ?? '');
+  // The hour's likely category is settled when the sheet opens, so it never shifts under the user.
+  const [likelyId] = useState(ordered[0]?.id ?? '');
+  const [picked, setPicked] = useState<string | null>(null);
+  const learned = ruleCategoryFor(
+    ruleIndex(rules),
+    note,
+    new Set(snap.categories.map((c) => c.id)),
+  );
+  const categoryId = picked ?? learned ?? likelyId;
   const category = snap.categories.find((c) => c.id === categoryId);
   const amount = keypadVnd(keys, 0);
   const locale = language === 'vi' ? 'vi-VN' : 'en-GB';
   const stamp = `${new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', month: 'short' }).format(now)} · ${new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit', hour12: false }).format(now)}`;
 
   const save = async () => {
-    if (amount <= 0 || !category) return;
-    await actions.addSpend({
-      amount,
-      categoryId: category.id,
-      merchant: note.trim() || category.name,
-      source: 'manual',
-      status: 'kept',
-      wallet,
-    });
+    // A second tap before the sheet has closed must not write the spend again.
+    if (amount <= 0 || !category || saving.current) return;
+    saving.current = true;
+    const saved = await run(() =>
+      actions.addSpend({
+        amount,
+        categoryId: category.id,
+        merchant: note.trim() || category.name,
+        source: 'manual',
+        status: 'kept',
+        wallet,
+      }),
+    );
+    if (!saved) {
+      saving.current = false;
+      return;
+    }
     haptics.success();
+    say('capture');
     router.back();
   };
 
@@ -94,7 +134,7 @@ export default function QuickAdd() {
           onNote={setNote}
           icon={category && isSymbolName(category.icon) ? category.icon : 'payments'}
           hue={category?.hue ?? 80}
-          categoryLine={`${category?.name ?? ''} · ${wallet}`}
+          categoryLine={`${category?.name ?? ''} · ${wallets.find((w) => w.value === wallet)?.label ?? wallet}`}
         />
         <ScrollView
           horizontal
@@ -109,7 +149,7 @@ export default function QuickAdd() {
                 key={c.id}
                 onPress={() => {
                   haptics.tick();
-                  setCategoryId(c.id);
+                  setPicked(c.id);
                 }}
                 style={{ width: 62, alignItems: 'center', gap: 6 }}
               >
@@ -140,35 +180,7 @@ export default function QuickAdd() {
             );
           })}
         </ScrollView>
-        <View style={{ flexDirection: 'row', gap: 6 }}>
-          {WALLETS.map((w) => {
-            const on = w.id === wallet;
-            return (
-              <PressScale
-                key={w.id}
-                onPress={() => {
-                  haptics.tick();
-                  setWallet(w.id);
-                }}
-                style={{
-                  flex: 1,
-                  height: 38,
-                  borderRadius: 12,
-                  backgroundColor: on ? palette.btnBg : palette.chipBg,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 5,
-                }}
-              >
-                <Symbol name={w.icon} size={17} color={on ? palette.btnFg : palette.ink} />
-                <Text style={{ ...body(13, 650), color: on ? palette.btnFg : palette.ink }}>
-                  {w.id}
-                </Text>
-              </PressScale>
-            );
-          })}
-        </View>
+        <WalletRow options={wallets} value={wallet} onChange={setWallet} />
         <Keypad onPress={(key) => setKeys((k) => pressKey(k, key))} />
         <PressScale
           scaleTo={0.97}

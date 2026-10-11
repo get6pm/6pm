@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   Easing,
@@ -100,55 +100,104 @@ export function SpendRow({
   });
 
   const front = useAnimatedStyle(() => ({ transform: [{ translateX: x.value }] }));
-  const confirmBg = useAnimatedStyle(() => ({
+  // The colour grows from half the row to all of it past the commit point. It is a transform, not
+  // a width, so the swipe never makes layout run.
+  const confirmFill = useAnimatedStyle(() => ({
     opacity: x.value > 0 ? Math.min(1, x.value / 50) : 0,
-    width: x.value > gestures.rowConfirm ? '100%' : '50%',
+    transform: [{ scaleX: x.value > gestures.rowConfirm ? 1 : 0.5 }],
   }));
-  const deleteBg = useAnimatedStyle(() => ({
+  const deleteFill = useAnimatedStyle(() => ({
     opacity: x.value < 0 ? Math.min(1, -x.value / 50) : 0,
-    width: x.value < gestures.rowCommitDelete ? '100%' : '50%',
+    transform: [{ scaleX: x.value < gestures.rowCommitDelete ? 1 : 0.5 }],
   }));
+  const confirmLabelStyle = useAnimatedStyle(() => ({
+    opacity: x.value > 0 ? Math.min(1, x.value / 50) : 0,
+  }));
+  const deleteLabelStyle = useAnimatedStyle(() => ({
+    opacity: x.value < 0 ? Math.min(1, -x.value / 50) : 0,
+  }));
+  const deleteFromPanel = () => {
+    haptics.tap();
+    x.value = withTiming(-420, { duration: 200, easing: settle }, (finished) => {
+      'worklet';
+      if (finished) runOnJS(onDelete)(row.id);
+    });
+  };
 
   return (
     <View style={{ overflow: 'hidden' }}>
-      <View
-        style={{
-          position: 'absolute',
-          inset: 0,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
-      >
+      <View style={{ position: 'absolute', inset: 0 }} pointerEvents="box-none">
         <Animated.View
+          pointerEvents="none"
           style={[
             {
+              position: 'absolute',
+              inset: 0,
               backgroundColor: palette.accent,
+              transformOrigin: 'left',
+            },
+            confirmFill,
+          ]}
+        />
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            {
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              bottom: 0,
               justifyContent: 'center',
               alignItems: 'flex-start',
               gap: 3,
               paddingLeft: 22,
             },
-            confirmBg,
+            confirmLabelStyle,
           ]}
         >
           <Symbol name="check_circle" size={22} fill={1} color="#2a1424" />
           <Text style={{ ...body(11.5, 700), color: '#2a1424' }}>{confirmLabel}</Text>
         </Animated.View>
         <Animated.View
+          pointerEvents="none"
           style={[
             {
+              position: 'absolute',
+              inset: 0,
               backgroundColor: DELETE_RED,
-              justifyContent: 'center',
-              alignItems: 'flex-end',
-              gap: 3,
-              paddingRight: 24,
+              transformOrigin: 'right',
             },
-            deleteBg,
+            deleteFill,
           ]}
+        />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={deleteLabel}
+          onPress={deleteFromPanel}
+          style={{
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: gestures.rowDeleteWidth,
+          }}
         >
-          <Symbol name="delete" size={22} color="#fff" />
-          <Text style={{ ...body(11.5, 700), color: '#fff' }}>{deleteLabel}</Text>
-        </Animated.View>
+          <Animated.View
+            style={[
+              {
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'flex-end',
+                gap: 3,
+                paddingRight: 24,
+              },
+              deleteLabelStyle,
+            ]}
+          >
+            <Symbol name="delete" size={22} color="#fff" />
+            <Text style={{ ...body(11.5, 700), color: '#fff' }}>{deleteLabel}</Text>
+          </Animated.View>
+        </Pressable>
       </View>
       <GestureDetector gesture={Gesture.Exclusive(pan, tap)}>
         <Animated.View

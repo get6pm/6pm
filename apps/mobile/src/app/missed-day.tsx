@@ -22,6 +22,7 @@ import { useI18n } from '../i18n/i18n';
 import { CategoryTile } from '../ui/category-tile';
 import { Companion } from '../ui/companion/companion';
 import { useCompanionToast } from '../features/companion/use-companion-toast';
+import { useRunAction } from '../features/companion/use-run-action';
 import { haptics } from '../ui/haptics';
 import { PressScale } from '../ui/primitives/press-scale';
 import { useTheme } from '../ui/theme/theme';
@@ -40,6 +41,7 @@ export default function MissedDay() {
   const { t } = useI18n();
   const dates = useDiaryDates();
   const say = useCompanionToast();
+  const run = useRunAction();
   const labels = useSpendLabels();
   const { height } = useWindowDimensions();
   const snap = useMoney();
@@ -68,22 +70,30 @@ export default function MissedDay() {
     if (!day || busy) return;
     setBusy(true);
     haptics.tap();
-    await Promise.all(waiting.map((s) => actions.setStatus(s.id, 'kept')));
-    const number = await readDayNumber(store, store.getSnapshot(), day);
-    await actions.closeDay({
-      day,
-      closedAt: new Date().toISOString(),
-      late: true,
-      spent: number?.spent ?? spent,
-      line: number?.line ?? 0,
-      tomorrow: number?.tomorrow ?? 0,
-      note: null,
-    });
-    // The day may sit before this pay cycle: re-read so the snapshot holds only this cycle again.
-    await actions.reload();
-    haptics.success();
-    dismiss();
-    say('lateClose', { day: dates.weekday(day) });
+    try {
+      const saved = await run(async () => {
+        await Promise.all(waiting.map((s) => actions.setStatus(s.id, 'kept')));
+        const number = await readDayNumber(store, store.getSnapshot(), day);
+        await actions.closeDay({
+          day,
+          closedAt: new Date().toISOString(),
+          late: true,
+          spent: number?.spent ?? spent,
+          line: number?.line ?? 0,
+          tomorrow: number?.tomorrow ?? 0,
+          note: null,
+        });
+        // The day may sit before this pay cycle: re-read so the snapshot holds only this cycle again.
+        await actions.reload();
+      });
+      if (!saved) return;
+      haptics.success();
+      dismiss();
+      say('lateClose', { day: dates.weekday(day) });
+    } finally {
+      // A failed filing leaves the button usable again; a good one is dismissing anyway.
+      setBusy(false);
+    }
   };
 
   const weekday = day ? dates.weekday(day) : '';

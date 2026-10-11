@@ -1,17 +1,29 @@
 import { createContext, use, useEffect, useState, type ReactNode } from 'react';
 import { AppState } from 'react-native';
 
-import { hourOf, localDateOf, type LocalDate } from '@6pm/domain';
+import { hourOf, moneyDayOf, moneyHourOf, type LocalDate } from '@6pm/domain';
 
 export interface Clock {
   readonly now: Date;
+  /** The money day: the phone's day, except before 04:00, when it is still yesterday. */
   readonly today: LocalDate;
-  /** Decimal hour: the sky, the close and the companion all follow it. */
+  /** Noon on the money day, for printing its weekday and date. */
+  readonly dayDate: Date;
+  /** Decimal hour on the phone's clock: the sky and the companion follow it. */
   readonly hour: number;
+  /** The hour on the money day's clock (01:30 is 25.5), for how late tonight's close is. */
+  readonly closeHour: number;
 }
 
 function read(now: Date): Clock {
-  return { now, today: localDateOf(now), hour: hourOf(now) };
+  const today = moneyDayOf(now);
+  return {
+    now,
+    today,
+    dayDate: new Date(`${today}T12:00:00`),
+    hour: hourOf(now),
+    closeHour: moneyHourOf(now),
+  };
 }
 
 const ClockContext = createContext<Clock>(read(new Date()));

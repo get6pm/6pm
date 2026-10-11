@@ -31,7 +31,7 @@ export interface Table<Row> {
   where(field: keyof Row & string, value: SqlValue): Promise<Row[]>;
   /** Rows matching a SQL clause (`WHERE …`, `ORDER BY …`) with bound parameters. */
   select(clause: string, params: SqlValue[]): Promise<Row[]>;
-  /** Inserts the row, or replaces the one with the same key. */
+  /** Inserts the row, or updates the one with the same key in place. */
   put(row: Row): Promise<void>;
   remove(key: string): Promise<void>;
   removeWhere(field: keyof Row & string, value: SqlValue): Promise<void>;
@@ -82,8 +82,17 @@ export function createTable<Row extends object>(db: SqlDatabase, spec: TableSpec
     select,
     put: async (row) => {
       const checked = spec.schema.parse(row) as Record<string, unknown>;
+      // An upsert updates the row where it is. "INSERT OR REPLACE" would delete it and insert a
+      // new one, and with foreign keys on, that delete cascades to the rows that belong to it (a
+      // spend's sightings, a pot's moves).
+      const assignments = columns
+        .filter((column) => column !== keyColumn)
+        .map((column) => `${column} = excluded.${column}`);
       await db.runAsync(
-        `INSERT OR REPLACE INTO ${spec.name} (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')})`,
+        `INSERT INTO ${spec.name} (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')}) ` +
+          (assignments.length > 0
+            ? `ON CONFLICT (${keyColumn}) DO UPDATE SET ${assignments.join(', ')}`
+            : `ON CONFLICT (${keyColumn}) DO NOTHING`),
         fields.map((field) => encode(field, checked[field])),
       );
     },

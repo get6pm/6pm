@@ -20,11 +20,16 @@ export interface WeekDay {
   readonly closed: boolean;
   readonly isToday: boolean;
   readonly future: boolean;
+  /** A past day since 6pm began that was never closed: its dot opens the catch-up sheet. */
+  readonly missed: boolean;
 }
 
 export interface TodayView {
   readonly moment: CloseMoment;
+  /** Everything waiting for a yes: today's, and earlier days' that were never settled. */
   readonly queue: readonly SpendRow[];
+  /** When today was closed, if it was: the stamp on tonight's card. */
+  readonly closedAt: string | null;
   readonly rows: readonly SpendRowView[];
   readonly spentLabel: string;
   readonly week: readonly WeekDay[];
@@ -70,16 +75,21 @@ export function toRowViews(
   });
 }
 
-/** What Today shows, read from the store: the close moment, the review queue, rows and the week. */
+/**
+ * What Today shows, read from the store: the close moment, the review queue, rows and the week.
+ * `closeHour` is the hour on the money day's clock, so after midnight tonight's close is still late.
+ */
 export function todayView(
   snap: MoneySnapshot,
-  hour: number,
+  closeHour: number,
   spent: number,
   labels: Labels,
 ): TodayView {
   const { today } = snap;
-  const closed = snap.closedDays.some((d) => d.day === today);
-  const moment = closeMoment(hour, snap.plan?.closeAt ?? '18:00', closed);
+  const closedRow = snap.closedDays.find((d) => d.day === today);
+  const closed = closedRow !== undefined;
+  const moment = closeMoment(closeHour, snap.plan?.closeAt ?? '18:00', closed);
+  const startedOn = snap.plan?.startedOn ?? null;
   const todays = snap.cycleSpends.filter((s) => s.day === today);
 
   const rows = toRowViews(todays, snap.categories, labels);
@@ -88,14 +98,22 @@ export function todayView(
   const closedDays = new Set(snap.closedDays.map((d) => d.day));
   const week = Array.from({ length: 7 }, (_, i): WeekDay => {
     const day = addDays(monday, i);
-    return { day, closed: closedDays.has(day), isToday: day === today, future: day > today };
+    const isClosed = closedDays.has(day);
+    return {
+      day,
+      closed: isClosed,
+      isToday: day === today,
+      future: day > today,
+      missed: !isClosed && day < today && startedOn !== null && day >= startedOn,
+    };
   });
   const monthPrefix = today.slice(0, 7);
   const elapsed = Number(today.slice(8, 10)) - (closed ? 0 : 1);
 
   return {
     moment,
-    queue: todays.filter(needsReview),
+    queue: snap.cycleSpends.filter(needsReview),
+    closedAt: closedRow?.closedAt ?? null,
     rows,
     spentLabel: formatVnd(spent),
     week,

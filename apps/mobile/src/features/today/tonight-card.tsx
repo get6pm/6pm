@@ -1,4 +1,5 @@
 import { Text, View } from 'react-native';
+import Animated, { Keyframe } from 'react-native-reanimated';
 
 import { formatShort, type CloseMoment, type DailyNumber } from '@6pm/domain';
 
@@ -6,8 +7,18 @@ import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, mono } from '../../ui/type/fonts';
 import type { WeekDay } from './today-view';
+
+/** The CLOSED stamp lands the way the receipt's does: big and tilted, then down with a thump. */
+const stampIn = new Keyframe({
+  0: { opacity: 0, transform: [{ rotate: '-14deg' }, { scale: 2.4 }] },
+  60: { opacity: 1, transform: [{ rotate: '-7deg' }, { scale: 0.94 }] },
+  100: { opacity: 0.92, transform: [{ rotate: '-7deg' }, { scale: 1 }] },
+}).duration(500);
+
+/** Where a paused close stands: with cards still to confirm, or only the receipt to go. */
+export type PausedClose = 'cards' | 'later';
 
 /**
  * Tonight's card: what the close looks like right now (ahead, due, late, closed), the button to
@@ -21,7 +32,12 @@ export function TonightCard({
   week,
   closedThisMonth,
   daysThisMonth,
+  paused,
+  closedStamp,
+  monthName,
   onClose,
+  onOpenDay,
+  onOpenReceipt,
 }: {
   readonly moment: CloseMoment;
   readonly closeAt: string;
@@ -30,38 +46,56 @@ export function TonightCard({
   readonly week: readonly WeekDay[];
   readonly closedThisMonth: number;
   readonly daysThisMonth: number;
+  readonly paused: PausedClose | null;
+  /** The time today was closed, for the stamp; null while it is open. */
+  readonly closedStamp: string | null;
+  readonly monthName: string;
   readonly onClose: () => void;
+  readonly onOpenDay: (day: WeekDay) => void;
+  readonly onOpenReceipt: () => void;
 }) {
   const { palette, serious } = useTheme();
   const { t, language } = useI18n();
   const due = moment === 'due' || moment === 'open' || moment === 'late';
-  const lit = due && !serious;
+  const resuming = paused !== null && moment !== 'closed';
+  const lit = (due || resuming) && !serious;
+  const stampInk = palette.dark ? '#ffb19a' : '#c0443a';
 
   const title =
     moment === 'closed'
       ? t('today.tonight.closedTitle')
-      : moment === 'late'
-        ? t('today.tonight.late')
-        : moment === 'open'
-          ? t('today.tonight.open')
-          : moment === 'due'
-            ? closeAt === '18:00'
-              ? t('today.tonight.due')
-              : t('today.tonight.dueLater', { time: closeAt })
-            : t('today.tonight.before', { time: closeAt });
+      : resuming
+        ? t('today.tonight.paused')
+        : moment === 'late'
+          ? t('today.tonight.late')
+          : moment === 'open'
+            ? t('today.tonight.open')
+            : moment === 'due'
+              ? closeAt === '18:00'
+                ? t('today.tonight.due')
+                : t('today.tonight.dueLater', { time: closeAt })
+              : t('today.tonight.before', { time: closeAt });
   const sub =
     moment === 'closed'
       ? t('today.tonight.closedSub', { amount: formatShort(day.tomorrow), time: closeAt })
-      : due
-        ? toConfirm
-          ? t('today.tonight.toConfirm', { count: toConfirm })
-          : t('today.tonight.sweep')
-        : toConfirm
-          ? t('today.tonight.caughtSoFar', { count: toConfirm })
-          : t('today.tonight.nothingYet');
+      : resuming
+        ? paused === 'cards'
+          ? t('today.tonight.pausedCards', { count: toConfirm })
+          : t('today.tonight.pausedAlmost')
+        : due
+          ? toConfirm
+            ? t('today.tonight.toConfirm', { count: toConfirm })
+            : t('today.tonight.sweep')
+          : toConfirm
+            ? t('today.tonight.caughtSoFar', { count: toConfirm })
+            : t('today.tonight.nothingYet');
   const icon = moment === 'closed' ? 'task_alt' : moment === 'late' ? 'bedtime' : 'wb_twilight';
-  const letters = new Intl.DateTimeFormat(language === 'vi' ? 'vi-VN' : 'en-GB', {
-    weekday: 'narrow',
+  const locale = language === 'vi' ? 'vi-VN' : 'en-GB';
+  const letters = new Intl.DateTimeFormat(locale, { weekday: 'narrow' });
+  const dayLabel = new Intl.DateTimeFormat(locale, {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
   });
 
   return (
@@ -116,11 +150,47 @@ export function TonightCard({
           }}
         >
           <Text style={{ ...body(16, 650), color: lit ? '#2a1424' : palette.btnFg }}>
-            {due ? t('today.cta.start') : t('today.cta.early')}
+            {resuming ? t('today.cta.resume') : due ? t('today.cta.start') : t('today.cta.early')}
           </Text>
           <Symbol name="arrow_forward" size={20} color={lit ? '#2a1424' : palette.btnFg} />
         </PressScale>
-      ) : null}
+      ) : (
+        <PressScale
+          scaleTo={0.98}
+          accessibilityRole="button"
+          onPress={onOpenReceipt}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}
+        >
+          <Animated.View
+            entering={stampIn}
+            style={{
+              paddingTop: 6,
+              paddingHorizontal: 10,
+              paddingBottom: 5,
+              borderWidth: 2.5,
+              borderColor: stampInk,
+              borderRadius: 6,
+            }}
+          >
+            <Text
+              style={{
+                ...mono(13, 600, 0.14),
+                lineHeight: 15,
+                color: stampInk,
+                textAlign: 'center',
+              }}
+            >
+              {t('close.receipt.closed')}
+              {'\n'}
+              {closedStamp ?? closeAt}
+            </Text>
+          </Animated.View>
+          <Text style={{ ...body(14), lineHeight: 19.6, color: palette.inkSoft, flex: 1 }}>
+            {t('today.closedFiled', { month: monthName })}
+          </Text>
+          <Symbol name="chevron_right" size={20} color={palette.ink} style={{ opacity: 0.45 }} />
+        </PressScale>
+      )}
 
       <View
         style={{
@@ -137,8 +207,13 @@ export function TonightCard({
             const ring = palette.dark ? 'rgba(255,255,255,.22)' : 'rgba(27,30,46,.18)';
             const date = new Date(`${w.day}T12:00:00`);
             return (
-              <View
+              <PressScale
                 key={w.day}
+                scaleTo={0.9}
+                disabled={w.future}
+                accessibilityRole="button"
+                accessibilityLabel={dayLabel.format(date)}
+                onPress={() => onOpenDay(w)}
                 style={{ alignItems: 'center', gap: 5, opacity: w.future ? 0.45 : 1 }}
               >
                 <View
@@ -159,7 +234,7 @@ export function TonightCard({
                 <Text style={{ ...body(10.5, 600), color: palette.inkSoft }}>
                   {letters.format(date)}
                 </Text>
-              </View>
+              </PressScale>
             );
           })}
         </View>

@@ -66,12 +66,17 @@ export interface CloseCardsProps {
 }
 
 /**
- * The cards step: drag the top card right to keep, left to edit, down if it isn't yours, or use
- * the three buttons. Flung cards leave the screen and are decided 300 ms later, as designed.
+ * The three round buttons and the stack of cards for one top card. It is keyed by the top card, so
+ * each new top card mounts with its own drag at zero: nothing is reset after a fling, and the next
+ * card is already where the old top card's drag had brought it.
  */
-export function CloseCards(props: CloseCardsProps) {
+function CardStack({
+  cards,
+  buttons,
+  onDecide,
+  onEdit,
+}: Pick<CloseCardsProps, 'cards' | 'buttons' | 'onDecide' | 'onEdit'>) {
   const { palette } = useTheme();
-  const { cards } = props;
   const top = cards[0];
   const dx = useSharedValue(0);
   const dy = useSharedValue(0);
@@ -80,23 +85,18 @@ export function CloseCards(props: CloseCardsProps) {
     dx.value = withTiming(0, { duration: 450, easing: springBack });
     dy.value = withTiming(0, { duration: 450, easing: springBack });
   };
-  const commit = (id: string, verdict: Exclude<CardVerdict, 'edited'>) => {
-    props.onDecide(id, verdict);
-    dx.value = 0;
-    dy.value = 0;
-  };
   const fling = (verdict: 'kept' | 'notMine' | 'edit') => {
     if (!top) return;
     haptics.tap();
     if (verdict === 'edit') {
       settle();
-      props.onEdit(top.row.id);
+      onEdit(top.row.id);
       return;
     }
     const id = top.row.id;
     const done = (finished?: boolean) => {
       'worklet';
-      if (finished) runOnJS(commit)(id, verdict);
+      if (finished) runOnJS(onDecide)(id, verdict);
     };
     if (verdict === 'kept') dx.value = withTiming(560, { duration: COMMIT_MS }, done);
     else dy.value = withTiming(820, { duration: COMMIT_MS }, done);
@@ -152,6 +152,41 @@ export function CloseCards(props: CloseCardsProps) {
   );
 
   return (
+    <>
+      <View style={{ height: 390 }}>
+        {cards
+          .slice(1, 3)
+          .map((card, i) => (
+            <BackCard key={card.row.id} content={card} index={i + 1} dx={dx} dy={dy} />
+          ))
+          .reverse()}
+        {top ? (
+          <GestureDetector gesture={pan}>
+            <Animated.View
+              style={[{ position: 'absolute', left: 4, right: 4, top: 0, zIndex: 10 }, topStyle]}
+            >
+              <CloseCard content={top} dx={dx} dy={dy} top />
+            </Animated.View>
+          </GestureDetector>
+        ) : null}
+      </View>
+
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 30 }}>
+        {button('edit', buttons.edit, false, () => fling('edit'))}
+        {button('south', buttons.notMine, false, () => fling('notMine'))}
+        {button('check', buttons.keep, true, () => fling('kept'))}
+      </View>
+    </>
+  );
+}
+
+/**
+ * The cards step: drag the top card right to keep, left to edit, down if it isn't yours, or use
+ * the three buttons. Flung cards leave the screen and are decided 300 ms later, as designed.
+ */
+export function CloseCards(props: CloseCardsProps) {
+  const { palette } = useTheme();
+  return (
     <View style={{ flex: 1, gap: 20, paddingTop: 22 }}>
       <View style={{ gap: 6 }}>
         <Text style={{ ...mono(11, 400, 0.14), color: palette.inkSoft }}>{props.kicker}</Text>
@@ -190,30 +225,13 @@ export function CloseCards(props: CloseCardsProps) {
           <Text style={{ ...body(15), lineHeight: 32, color: palette.inkSoft }}>{props.hint}</Text>
         )}
       </View>
-
-      <View style={{ height: 390 }}>
-        {cards
-          .slice(1, 3)
-          .map((card, i) => (
-            <BackCard key={card.row.id} content={card} index={i + 1} dx={dx} dy={dy} />
-          ))
-          .reverse()}
-        {top ? (
-          <GestureDetector gesture={pan}>
-            <Animated.View
-              style={[{ position: 'absolute', left: 4, right: 4, top: 0, zIndex: 10 }, topStyle]}
-            >
-              <CloseCard content={top} dx={dx} dy={dy} top />
-            </Animated.View>
-          </GestureDetector>
-        ) : null}
-      </View>
-
-      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 30 }}>
-        {button('edit', props.buttons.edit, false, () => fling('edit'))}
-        {button('south', props.buttons.notMine, false, () => fling('notMine'))}
-        {button('check', props.buttons.keep, true, () => fling('kept'))}
-      </View>
+      <CardStack
+        key={props.cards[0]?.row.id ?? 'none'}
+        cards={props.cards}
+        buttons={props.buttons}
+        onDecide={props.onDecide}
+        onEdit={props.onEdit}
+      />
     </View>
   );
 }

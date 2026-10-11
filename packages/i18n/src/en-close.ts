@@ -56,4 +56,7 @@ export const enClose = {
   'close.reveal.nudge': 'I’ll nudge you tomorrow at {time}.',
   'close.reveal.done': 'Done for today',
   'close.edit.save': 'Save and keep',
+  'close.cash.other': 'Other amount',
+  'close.cash.otherTitle': 'How much in cash?',
+  'close.cash.add': 'Add to cash today',
 } as const;

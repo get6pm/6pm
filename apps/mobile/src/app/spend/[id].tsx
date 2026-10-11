@@ -1,11 +1,12 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
 import { groupDigits, type SpendRow } from '@6pm/domain';
 import { oklchSrgbHex } from '@6pm/theme';
 
 import { useMoney, useMoneyActions } from '../../data/money-provider';
+import type { Sighting } from '../../data/money-actions';
 import { merchantIcon } from '../../features/today/merchant-icon';
 import { useSpendLabels } from '../../features/today/use-spend-rows';
 import { useI18n } from '../../i18n/i18n';
@@ -20,8 +21,10 @@ import { RulePrompt } from '../../features/details/rule-prompt';
 import { SourceTrail } from '../../features/details/source-trail';
 import { useOfferUndo } from '../../ui/undo/undo-host';
 import { useCompanionToast } from '../../features/companion/use-companion-toast';
+import { useRunAction } from '../../features/companion/use-run-action';
+import { useAutosavedNote } from '../../features/details/use-autosaved-note';
+import { useWalletOptions } from '../../features/quick-add/use-wallet-options';
 
-const WALLETS = ['Cash', 'MB Bank', 'Vietcombank', 'MoMo'];
 const DELETE_RED = oklchSrgbHex(0.64, 0.19, 25);
 
 /** One spend: what it was, how much, its category, where it came from, and delete with undo. */
@@ -35,9 +38,27 @@ export default function SpendDetails() {
   const labels = useSpendLabels();
   const offerUndo = useOfferUndo();
   const say = useCompanionToast();
+  const run = useRunAction();
   const spend = snap.cycleSpends.find((s) => s.id === id);
   const [askRule, setAskRule] = useState(false);
   const [note, setNote] = useState(spend?.note ?? '');
+  const autosave = useAutosavedNote(spend?.id, spend?.note ?? null);
+  const wallets = useWalletOptions(spend?.wallet);
+  // Every way the spend was seen. A merge changes the row, so it is read again then.
+  const [sightings, setSightings] = useState<readonly Sighting[]>([]);
+  const sightingsOf = spend?.id;
+  const stamp = spend?.updatedAt;
+  useEffect(() => {
+    if (!sightingsOf) return;
+    let live = true;
+    actions
+      .sightings(sightingsOf)
+      .then((rows) => live && setSightings(rows))
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [actions, sightingsOf, stamp]);
   if (!spend) return <SheetScreen title={t('details.title')} />;
 
   const category = snap.categories.find((c) => c.id === spend.categoryId);
@@ -59,7 +80,7 @@ export default function SpendDetails() {
         : s === 'caught'
           ? t('details.status.caught')
           : t('details.status.skipped');
-  const update = (patch: Partial<SpendRow>) => void actions.update(spend.id, patch);
+  const update = (patch: Partial<SpendRow>) => void run(() => actions.update(spend.id, patch));
 
   const fields: { key: string; label: string; value: string; onPress?: () => void }[] = [
     {
@@ -71,18 +92,33 @@ export default function SpendDetails() {
     {
       key: 'wallet',
       label: t('details.paidWith'),
-      value: spend.wallet ?? WALLETS[0] ?? '',
-      onPress: () =>
-        update({
-          wallet: WALLETS[(WALLETS.indexOf(spend.wallet ?? 'Cash') + 1) % WALLETS.length] ?? null,
-        }),
+      value: wallets.find((w) => w.value === (spend.wallet ?? 'Cash'))?.label ?? spend.wallet ?? '',
+      onPress: () => {
+        const at = wallets.findIndex((w) => w.value === (spend.wallet ?? 'Cash'));
+        update({ wallet: wallets[(at + 1) % wallets.length]?.value ?? null });
+      },
     },
     { key: 'status', label: t('details.status'), value: statusLabel(spend.status) },
   ];
-  const trail = [
-    spend.detail,
-    t('details.added', { time: labels.time(spend.createdAt), source: labels.source(spend.source) }),
-  ].filter((line): line is string => Boolean(line));
+  // One line per way it was seen, headed "Seen 2 ways" when more than one source reported it.
+  const trail =
+    sightings.length > 1
+      ? [
+          t('details.seenWays', {
+            count: sightings.length,
+            sources: [...new Set(sightings.map((s) => labels.source(s.source)))].join(' + '),
+          }),
+          ...sightings.map((s) =>
+            [labels.time(s.seenAt), labels.source(s.source), s.detail].filter(Boolean).join(' · '),
+          ),
+        ]
+      : [
+          spend.detail,
+          t('details.added', {
+            time: labels.time(spend.createdAt),
+            source: labels.source(spend.source),
+          }),
+        ].filter((line): line is string => Boolean(line));
 
   return (
     <SheetScreen title={t('details.title')}>
@@ -159,9 +195,12 @@ export default function SpendDetails() {
             always={t('rule.always')}
             onOnce={() => setAskRule(false)}
             onAlways={() => {
-              void actions.rememberMerchant(spend.merchant, category.id);
               setAskRule(false);
-              say('ruleSaved');
+              void run(() => actions.rememberMerchant(spend.merchant, category.id)).then(
+                (saved) => {
+                  if (saved) say('ruleSaved');
+                },
+              );
             }}
           />
         ) : null}
@@ -213,8 +252,11 @@ export default function SpendDetails() {
           <Text style={{ ...body(16), color: palette.inkSoft }}>{t('details.note')}</Text>
           <TextInput
             value={note}
-            onChangeText={setNote}
-            onEndEditing={() => update({ note: note.trim() || null })}
+            onChangeText={(text) => {
+              setNote(text);
+              autosave.change(text);
+            }}
+            onEndEditing={autosave.flush}
             placeholder={t('details.notePlaceholder')}
             placeholderTextColor={palette.inkSoft}
             style={{ flex: 1, textAlign: 'right', fontSize: 16, color: palette.ink, padding: 0 }}
@@ -229,13 +271,15 @@ export default function SpendDetails() {
           scaleTo={0.97}
           onPress={() => {
             haptics.tap();
-            void actions.setStatus(spend.id, 'deleted');
-            offerUndo(
-              t('undo.deleted', { name: spend.merchant }),
-              t('undo.action'),
-              () => void actions.undo(spend.id),
-            );
-            router.back();
+            void run(() => actions.setStatus(spend.id, 'deleted')).then((saved) => {
+              if (!saved) return;
+              offerUndo(
+                t('undo.deleted', { name: spend.merchant }),
+                t('undo.action'),
+                () => void run(() => actions.undo(spend.id)),
+              );
+              router.back();
+            });
           }}
           style={{
             alignSelf: 'stretch',

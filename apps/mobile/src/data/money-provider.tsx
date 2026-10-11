@@ -6,12 +6,12 @@ import {
   use,
   useEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
   type ReactNode,
 } from 'react';
 
-import { StartupError } from '../ui/startup-error';
 import { useClock } from '../ui/theme/clock';
 import { moneyActions, type MoneyActions } from './money-actions';
 import { createMoneyStore, dayOf, type MoneySnapshot, type MoneyStore } from './money-store';
@@ -22,7 +22,14 @@ const StoreContext = createContext<{ store: MoneyStore; actions: MoneyActions } 
  * Opens the money store on the encrypted database and keeps it on the phone's current day: it
  * reloads when the day turns over, so midnight starts a fresh Today without a relaunch.
  */
-export function MoneyProvider({ children }: { readonly children: ReactNode }) {
+export function MoneyProvider({
+  children,
+  failed,
+}: {
+  readonly children: ReactNode;
+  /** Drawn instead of the app when the first read fails; `retry` reads again. */
+  readonly failed: (retry: () => void) => ReactNode;
+}) {
   const db = useSQLiteContext();
   const { today } = useClock();
   const value = useMemo(() => {
@@ -51,14 +58,10 @@ export function MoneyProvider({ children }: { readonly children: ReactNode }) {
   }, [value, today, attempt]);
 
   if (state === 'failed') {
-    return (
-      <StartupError
-        onRetry={() => {
-          setState('loading');
-          setAttempt((n) => n + 1);
-        }}
-      />
-    );
+    return failed(() => {
+      setState('loading');
+      setAttempt((n) => n + 1);
+    });
   }
   return <StoreContext value={value}>{state === 'ready' ? children : null}</StoreContext>;
 }
@@ -85,9 +88,47 @@ export function useMoneyActions(): MoneyActions & { reload: () => Promise<void> 
   );
 }
 
-/** Today's one number, or null before the month is set up. */
+function shallowEqual<T extends object>(a: T, b: T): boolean {
+  const keys = Object.keys(a) as (keyof T)[];
+  return keys.length === Object.keys(b).length && keys.every((key) => Object.is(a[key], b[key]));
+}
+
+/**
+ * Reads one part of the snapshot. The component renders again only when the selected value
+ * changes (by `isEqual`, default `Object.is`), not on every write to the money database.
+ */
+export function useMoneySelector<T>(
+  selector: (snapshot: MoneySnapshot) => T,
+  isEqual: (a: T, b: T) => boolean = Object.is,
+): T {
+  const { store } = useStore();
+  const last = useRef<{
+    snapshot: MoneySnapshot;
+    selector: (snapshot: MoneySnapshot) => T;
+    value: T;
+  } | null>(null);
+  const read = () => {
+    const snapshot = store.getSnapshot();
+    const previous = last.current;
+    if (previous && previous.snapshot === snapshot && previous.selector === selector) {
+      return previous.value;
+    }
+    const next = selector(snapshot);
+    const value = previous && isEqual(previous.value, next) ? previous.value : next;
+    last.current = { snapshot, selector, value };
+    return value;
+  };
+  return useSyncExternalStore((listener) => store.subscribe(listener), read, read);
+}
+
+/**
+ * Today's one number, or null before the month is set up. The same object comes back until the
+ * number itself changes, so memoised children are not redrawn by unrelated writes.
+ */
 export function useDay() {
-  return dayOf(useMoney());
+  return useMoneySelector(dayOf, (a, b) =>
+    a === null || b === null ? a === b : shallowEqual(a, b),
+  );
 }
 
 /** The store itself, for developer tools that write fixtures straight to the database. */

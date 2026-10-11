@@ -1,10 +1,11 @@
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 import { formatShort, lineUsed, type DailyNumber } from '@6pm/domain';
 import { curves } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
+import { useHomeNav } from '../home/home-nav';
 import { Symbol } from '../../ui/icons/symbol';
 import { useDesignInsets } from '../../ui/layout/design-insets';
 import { Odometer } from '../../ui/odometer';
@@ -29,8 +30,9 @@ export function TodayHero({
   readonly onQuickAdd: () => void;
 }) {
   const { palette } = useTheme();
-  const { now } = useClock();
+  const { dayDate } = useClock();
   const { t, weekday, dayMonth } = useI18n();
+  const { goToTab } = useHomeNav();
   const { top } = useDesignInsets();
 
   const over = day.safe < 0;
@@ -68,9 +70,9 @@ export function TodayHero({
               color: palette.inkSoft,
             }}
           >
-            {weekday(now)}
+            {weekday(dayDate)}
           </Text>
-          <Text style={{ ...body(22, 700, -0.02), color: palette.ink }}>{dayMonth(now)}</Text>
+          <Text style={{ ...body(22, 700, -0.02), color: palette.ink }}>{dayMonth(dayDate)}</Text>
         </View>
         <View style={{ flexDirection: 'row', gap: 8 }}>
           <GlassButton icon="tune" label={t('home.settings')} onPress={onSettings} />
@@ -78,7 +80,13 @@ export function TodayHero({
         </View>
       </View>
 
-      <View style={{ gap: 6 }}>
+      {/* The number opens the plan behind it, as in the prototype (`toPlan`). */}
+      <Pressable
+        onPress={() => goToTab('plan')}
+        accessibilityRole="button"
+        accessibilityHint={t('home.openPlan')}
+        style={{ gap: 6 }}
+      >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
           <Text style={{ ...body(15, 500), color: palette.inkSoft }}>{t('today.safeToSpend')}</Text>
           <Symbol name="info" size={18} color={palette.inkSoft} style={{ opacity: 0.6 }} />
@@ -104,7 +112,7 @@ export function TodayHero({
             <Text style={{ ...body(13.5, 500), ...tabular, color: palette.inkSoft }}>{right}</Text>
           </View>
         </View>
-      </View>
+      </Pressable>
     </View>
   );
 }

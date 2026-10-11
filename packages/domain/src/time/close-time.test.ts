@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { CLOSE_TIME_OPTIONS, clockOf, closeMoment, filingDay } from './close-time';
+import {
+  CLOSE_TIME_OPTIONS,
+  clockOf,
+  closeMoment,
+  filingDay,
+  moneyDayOf,
+  moneyHourOf,
+} from './close-time';
 
 describe('closeMoment', () => {
   it('walks the evening around an 18:00 close', () => {
@@ -33,5 +40,26 @@ describe('clock helpers', () => {
   it('files a close after midnight under the day before', () => {
     expect(filingDay('2026-10-10', 0.67)).toBe('2026-10-09');
     expect(filingDay('2026-10-10', 9)).toBe('2026-10-10');
+  });
+});
+
+describe('the money day', () => {
+  it('ends at 04:00, not at midnight', () => {
+    expect(moneyDayOf(new Date(2026, 9, 12, 0, 30))).toBe('2026-10-11');
+    expect(moneyDayOf(new Date(2026, 9, 12, 3, 59))).toBe('2026-10-11');
+    expect(moneyDayOf(new Date(2026, 9, 12, 4, 0))).toBe('2026-10-12');
+    expect(moneyDayOf(new Date(2026, 9, 11, 23, 59))).toBe('2026-10-11');
+  });
+
+  it('rolls back across a month and a year', () => {
+    expect(moneyDayOf(new Date(2026, 10, 1, 1, 0))).toBe('2026-10-31');
+    expect(moneyDayOf(new Date(2027, 0, 1, 2, 0))).toBe('2026-12-31');
+  });
+
+  it('keeps the evening clock counting past midnight, so the close stays late', () => {
+    expect(moneyHourOf(new Date(2026, 9, 12, 0, 30))).toBe(24.5);
+    expect(moneyHourOf(new Date(2026, 9, 12, 4, 0))).toBe(4);
+    expect(closeMoment(moneyHourOf(new Date(2026, 9, 12, 1, 0)), '18:00', false)).toBe('late');
+    expect(closeMoment(moneyHourOf(new Date(2026, 9, 12, 5, 0)), '18:00', false)).toBe('before');
   });
 });

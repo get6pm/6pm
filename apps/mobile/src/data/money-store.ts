@@ -1,21 +1,25 @@
 import {
-  ceilToFiftyThousand,
   dailyNumber,
   joinedShare,
+  occasionsOf,
   payCycleOn,
+  potTotals,
   type BillRow,
   type CategoryRow,
   type ClosedDayRow,
   type DailyNumber,
+  type DailyNumberInput,
   type LocalDate,
   type PayCycle,
   type PotRow,
   type SpendRow,
+  startOfWeek,
   sumCounted,
 } from '@6pm/domain';
 
 import { openMoneyTables, type MoneyTables } from './money-tables';
 import { readPlan, type PlanSettings } from './plan-settings';
+import { readPotMoves, recordDueSetAsides } from './pot-moves';
 import type { SqlDatabase } from './table';
 
 /** Everything the screens read, as one immutable snapshot of the phone's money database. */
@@ -32,6 +36,8 @@ export interface MoneySnapshot {
   /** Saved per pot, from its moves. */
   readonly potSaved: Readonly<Record<string, number>>;
   readonly topUpsThisCycle: number;
+  /** What each pot sets aside this pay cycle, recorded when the cycle began. */
+  readonly setAsideThisCycle: Readonly<Record<string, number>>;
   readonly closedDays: readonly ClosedDayRow[];
 }
 
@@ -46,21 +52,8 @@ export interface MoneyStore {
   publish(next: MoneySnapshot): void;
 }
 
-function monthsBetween(from: LocalDate, toMonth: string): number {
-  const [fy = 0, fm = 0] = from.split('-').map(Number);
-  const [ty = 0, tm = 0] = toMonth.split('-').map(Number);
-  return Math.max(1, (ty - fy) * 12 + (tm - fm));
-}
-
-/** What each occasion pot sets aside a month: what is left, spread over the months to its date. */
-export function potMonthly(pot: PotRow, saved: number, today: LocalDate): number {
-  if (pot.paused || pot.kind !== 'occasion' || pot.neededBy === null) return 0;
-  const left = Math.max(0, pot.goal - saved);
-  return left === 0 ? 0 : ceilToFiftyThousand(left / monthsBetween(today, pot.neededBy));
-}
-
-/** The one number for the snapshot's today. */
-export function dayOf(snapshot: MoneySnapshot): DailyNumber | null {
+/** What the daily number is worked out from, for the snapshot's today. */
+export function dailyInputOf(snapshot: MoneySnapshot): DailyNumberInput | null {
   const { plan, today } = snapshot;
   if (plan === null) return null;
   const notDaily = new Set(snapshot.categories.filter((c) => !c.countsDaily).map((c) => c.id));
@@ -75,11 +68,8 @@ export function dayOf(snapshot: MoneySnapshot): DailyNumber | null {
     notDaily,
   );
   const bills = snapshot.bills.reduce((sum, b) => sum + b.amount, 0);
-  const occasions = snapshot.pots.reduce(
-    (sum, p) => sum + potMonthly(p, snapshot.potSaved[p.id] ?? 0, today),
-    0,
-  );
-  return dailyNumber({
+  const occasions = occasionsOf(snapshot.pots, snapshot.setAsideThisCycle);
+  return {
     plan: {
       income: plan.income,
       bills,
@@ -92,7 +82,23 @@ export function dayOf(snapshot: MoneySnapshot): DailyNumber | null {
     notDaily,
     daysLeft: snapshot.cycle.daysLeft,
     share: joinedShare(snapshot.cycle, plan.startedOn ?? null),
-  });
+  };
+}
+
+/** The one number for the snapshot's today. */
+export function dayOf(snapshot: MoneySnapshot): DailyNumber | null {
+  const input = dailyInputOf(snapshot);
+  return input === null ? null : dailyNumber(input);
+}
+
+/**
+ * How far back closed days are loaded: the pay cycle, and also this week and this calendar month,
+ * which the week strip, the month dots and "closed X of Y days" read even when payday sits in the
+ * middle of them.
+ */
+function closedSince(day: LocalDate, cycleStart: LocalDate): LocalDate {
+  const monthStart = `${day.slice(0, 8)}01`;
+  return [cycleStart, monthStart, startOfWeek(day)].reduce((a, b) => (a < b ? a : b));
 }
 
 export function createMoneyStore(db: SqlDatabase, today: LocalDate): MoneyStore {
@@ -108,6 +114,7 @@ export function createMoneyStore(db: SqlDatabase, today: LocalDate): MoneyStore 
     pots: [],
     potSaved: {},
     topUpsThisCycle: 0,
+    setAsideThisCycle: {},
     closedDays: [],
   };
 
@@ -119,7 +126,7 @@ export function createMoneyStore(db: SqlDatabase, today: LocalDate): MoneyStore 
   const load = async (day: LocalDate) => {
     const plan = await readPlan(db);
     const cycle = payCycleOn(day, plan?.payday ?? { kind: 'lastDay' });
-    const [categories, cycleSpends, bills, pots, moves, closedDays] = await Promise.all([
+    const [categories, cycleSpends, bills, pots, recorded, closedDays] = await Promise.all([
       tables.categories.select('WHERE archived_at IS NULL ORDER BY sort', []),
       tables.spends.select("WHERE day >= ? AND day <= ? AND status != 'deleted' ORDER BY at DESC", [
         cycle.start,
@@ -127,18 +134,25 @@ export function createMoneyStore(db: SqlDatabase, today: LocalDate): MoneyStore 
       ]),
       tables.bills.select('WHERE archived_at IS NULL ORDER BY sort', []),
       tables.pots.select('WHERE archived_at IS NULL ORDER BY created_at', []),
-      db.getAllAsync<{ pot_id: string; amount: number; kind: string; cycle: string }>(
-        'SELECT pot_id, amount, kind, cycle FROM pot_moves',
-        [],
-      ),
-      tables.closedDays.select('WHERE day >= ? ORDER BY day', [cycle.start]),
+      readPotMoves(db),
+      tables.closedDays.select('WHERE day >= ? ORDER BY day', [closedSince(day, cycle.start)]),
     ]);
-    const potSaved: Record<string, number> = {};
-    let topUpsThisCycle = 0;
-    for (const move of moves) {
-      potSaved[move.pot_id] = (potSaved[move.pot_id] ?? 0) + move.amount;
-      if (move.kind === 'topUp' && move.cycle === cycle.start) topUpsThisCycle += move.amount;
-    }
+    // Each pay cycle puts the month's set-aside into every pot, once; a launch after missed
+    // days or cycles catches up here before anything is counted.
+    const caughtUp = plan
+      ? await recordDueSetAsides(db, {
+          pots,
+          moves: recorded,
+          futureYou: plan.futureYou,
+          payday: plan.payday,
+          today: day,
+        })
+      : [];
+    const {
+      saved: potSaved,
+      setAside,
+      topUps,
+    } = potTotals([...recorded, ...caughtUp], new Set(pots.map((p) => p.id)), cycle.start);
     publish({
       today: day,
       plan,
@@ -148,7 +162,8 @@ export function createMoneyStore(db: SqlDatabase, today: LocalDate): MoneyStore 
       bills,
       pots,
       potSaved,
-      topUpsThisCycle,
+      topUpsThisCycle: topUps,
+      setAsideThisCycle: setAside,
       closedDays,
     });
   };

@@ -1,30 +1,27 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Text, View } from 'react-native';
-import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { useRef, useState } from 'react';
+import { View } from 'react-native';
 
-import { addDays, clockOf, formatShort, stepPosition, tally } from '@6pm/domain';
+import { clockOf, formatShort, stepPosition, tally } from '@6pm/domain';
 
 import { useDay, useMoney, useMoneyActions } from '../data/money-provider';
+import { CashCustom } from '../features/close/cash-custom';
 import { CloseCards } from '../features/close/close-cards';
 import { CloseEdit } from '../features/close/close-edit';
-import { CloseReceipt } from '../features/close/close-receipt';
-import { CloseReveal } from '../features/close/close-reveal';
-import {
-  CashStep,
-  SortedStep,
-  WorkQuestionStep,
-  type CashChip,
-} from '../features/close/close-steps';
-import { monthDots } from '../features/close/month-dots';
+import { CloseReceiptStep } from '../features/close/close-receipt-step';
+import { CloseRevealStep } from '../features/close/close-reveal-step';
+import { CashStep, SortedStep, type CashChip } from '../features/close/close-steps';
+import { WorkQuestionStep } from '../features/close/close-work-question';
+import { CloseTopBar } from '../features/close/close-top-bar';
 import { useClose } from '../features/close/use-close';
+import { useRuleOffer } from '../features/close/use-rule-offer';
+import { useCompanionToast } from '../features/companion/use-companion-toast';
+import { RulePrompt } from '../features/details/rule-prompt';
 import { useI18n } from '../i18n/i18n';
 import { haptics } from '../ui/haptics';
 import { useDesignInsets } from '../ui/layout/design-insets';
-import { GlassButton } from '../ui/primitives/glass-button';
 import { useClock } from '../ui/theme/clock';
 import { useTheme } from '../ui/theme/theme';
-import { mono } from '../ui/type/fonts';
 
 const STEP_KEYS = [
   'close.step.cards',
@@ -33,17 +30,6 @@ const STEP_KEYS = [
   'close.step.receipt',
   'close.step.tomorrow',
 ] as const;
-
-function Dot({ index, current }: { readonly index: number; readonly current: number }) {
-  const { palette } = useTheme();
-  const style = useAnimatedStyle(() => ({
-    opacity: withTiming(index <= current ? 1 : 0.22, { duration: 400 }),
-    backgroundColor: withTiming(index === current ? palette.accent : palette.ink, {
-      duration: 400,
-    }),
-  }));
-  return <Animated.View style={[{ flex: 1, height: 3, borderRadius: 3 }, style]} />;
-}
 
 /** The 6pm Close: about a minute from caught to tomorrow's number. */
 export default function Close() {
@@ -55,16 +41,20 @@ export default function Close() {
   const snap = useMoney();
   const day = useDay();
   const actions = useMoneyActions();
+  const say = useCompanionToast();
   const close = useClose();
-  const { state, dispatch } = close;
+  const { state, dispatch, run } = close;
   const [editing, setEditing] = useState<string | null>(null);
-  const [cash, setCash] = useState<CashChip[]>([]);
+  const [typingCash, setTypingCash] = useState(false);
+  const rules = useRuleOffer(actions, state.step);
   const [closedAt] = useState(() => clockOf(now.getHours() + now.getMinutes() / 60));
+  const finishing = useRef(false);
+
   if (!day || !snap.plan) return null;
 
   const locale = language === 'vi' ? 'vi-VN' : 'en-GB';
-  // Companion keys are composed from the event and persona; every one takes the same placeholders.
-  const lineFor = t as unknown as (key: string, params: Record<string, string | number>) => string;
+  const closingDate = new Date(`${close.day}T12:00:00`);
+
   const shortDate = (d: Date) =>
     new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', month: 'short' })
       .format(d)
@@ -80,33 +70,55 @@ export default function Close() {
   ];
   const categoryFor = (key: string) =>
     snap.categories.find((c) => c.id === key)?.id ?? snap.categories[0]?.id ?? key;
-  const todays = snap.cycleSpends.filter((s) => s.day === snap.today);
-  const kept = todays.filter((s) => s.status === 'kept').sort((a, b) => (a.at < b.at ? -1 : 1));
-  const work = kept.find((s) => s.forWork);
-  const time = new Intl.DateTimeFormat(locale, {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
-  const persona = snap.plan.persona;
-  const revealEvent = day.spent === 0 ? 'zero' : day.replan ? 'replan' : 'reveal';
-  const tomorrowDate = new Date(`${addDays(snap.today, 1)}T12:00:00`);
-  const monthName = new Intl.DateTimeFormat(locale, { month: 'long' }).format(now);
-  const monthDays = monthDots(now, snap.today, snap.closedDays);
-  const closedThisMonth = monthDays.filter((d) => d !== 'open').length;
+  const rule = rules.offer
+    ? snap.categories.find((c) => c.id === rules.offer?.categoryId)
+    : undefined;
+
+  const addCash = (name: string, amount: number, categoryId: string, key: string) => {
+    haptics.tap();
+    close.setCash((c) => [...c, { key, name, amount }]);
+    void run(async () => {
+      // A merchant the user taught 6pm keeps its category, as everywhere else.
+      const learned = await actions.ruleCategory(name);
+      await actions.addSpend({
+        amount,
+        categoryId: learned ?? categoryId,
+        merchant: name,
+        source: 'cash',
+        status: 'kept',
+        wallet: 'Cash',
+      });
+    });
+  };
 
   const finish = async () => {
-    await actions.closeDay({
-      day: snap.today,
-      closedAt: new Date().toISOString(),
-      late: false,
-      spent: day.spent,
-      line: day.line,
-      tomorrow: day.tomorrow,
-      note: null,
-    });
+    if (finishing.current) return;
+    finishing.current = true;
+    const saved = await run(() =>
+      actions.closeDay({
+        day: close.day,
+        closedAt: new Date().toISOString(),
+        late: false,
+        spent: day.spent,
+        line: day.line,
+        tomorrow: day.tomorrow,
+        note: null,
+      }),
+    );
+    if (!saved) {
+      finishing.current = false;
+      return;
+    }
+    close.settle();
     haptics.success();
     router.back();
+  };
+
+  const edit = (amount: number, categoryId: string) => {
+    if (!editingSpend) return;
+    close.decide(editingSpend.id, 'edited', { amount, categoryId });
+    setEditing(null);
+    rules.changed(editingSpend.merchant, editingSpend.categoryId, categoryId);
   };
 
   return (
@@ -119,28 +131,14 @@ export default function Close() {
         paddingBottom: bottom(30),
       }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, minHeight: 44 }}>
-        <GlassButton
-          icon="close"
-          label={t('common.done')}
-          onPress={() => (state.step === 'reveal' ? void finish() : router.back())}
-        />
-        <View style={{ flex: 1, flexDirection: 'row', gap: 4 }}>
-          {STEP_KEYS.map((key, i) => (
-            <Dot key={key} index={i} current={position.index - 1} />
-          ))}
-        </View>
-        <Text
-          style={{
-            ...mono(11, 400, 0.14),
-            color: palette.inkSoft,
-            minWidth: 64,
-            textAlign: 'right',
-          }}
-        >
-          {t(STEP_KEYS[position.index - 1] ?? 'close.step.cards')} · {position.index}/{position.of}
-        </Text>
-      </View>
+      <CloseTopBar
+        keys={STEP_KEYS}
+        index={position.index}
+        of={position.of}
+        label={t(STEP_KEYS[position.index - 1] ?? 'close.step.cards')}
+        closeLabel={t('common.done')}
+        onClose={() => (state.step === 'reveal' ? void finish() : router.back())}
+      />
 
       {state.step === 'cards' ? (
         <CloseCards
@@ -148,12 +146,16 @@ export default function Close() {
           kicker={
             counts.kept + counts.edited > 0
               ? t('close.kicker', {
-                  date: shortDate(now),
+                  date: shortDate(closingDate),
                   n: close.queue.length - close.cards.length + 1,
                   total: close.queue.length,
                   kept: formatShort(close.keptBefore).toUpperCase(),
                 })
-              : t('close.kickerStart', { date: shortDate(now), n: 1, total: close.queue.length })
+              : t('close.kickerStart', {
+                  date: shortDate(closingDate),
+                  n: 1,
+                  total: close.queue.length,
+                })
           }
           title={t('close.title', { count: close.queue.length })}
           hint={t('close.hint')}
@@ -183,21 +185,13 @@ export default function Close() {
           title={state.sweep ? t('close.cash.sweep') : t('close.cash.title')}
           sub={t('close.cash.sub')}
           chips={chips}
-          added={cash}
+          added={close.cash}
           totalLabel={t('close.cash.total')}
           doneLabel={t('close.cash.done')}
           noneLabel={t('close.cash.none')}
-          onAdd={(chip) => {
-            haptics.tap();
-            setCash((c) => [...c, chip]);
-            void actions.addSpend({
-              amount: chip.amount,
-              categoryId: categoryFor(chip.key),
-              merchant: chip.name,
-              source: 'cash',
-              status: 'kept',
-            });
-          }}
+          otherLabel={t('close.cash.other')}
+          onAdd={(chip) => addCash(chip.name, chip.amount, categoryFor(chip.key), chip.key)}
+          onOther={() => setTypingCash(true)}
           onDone={() => dispatch({ type: 'cashDone' })}
         />
       ) : null}
@@ -206,12 +200,18 @@ export default function Close() {
           line={
             snap.plan.serious
               ? null
-              : t(`companion.question.${persona}` as 'companion.question.cheeky')
+              : t(`companion.question.${snap.plan.persona}` as 'companion.question.cheeky')
           }
           receiptLine={(() => {
             const s = close.queue.find((q) => q.id === close.askWorkId);
             return {
-              time: s ? time.format(new Date(s.at)) : '',
+              time: s
+                ? new Intl.DateTimeFormat(locale, {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                  }).format(new Date(s.at))
+                : '',
               name: s?.merchant ?? '',
               amount: s?.amount ?? 0,
             };
@@ -222,71 +222,44 @@ export default function Close() {
           no={t('close.work.no')}
           onAnswer={(forWork) => {
             haptics.tap();
-            if (forWork && close.askWorkId) void actions.markForWork(close.askWorkId, true);
+            const id = close.askWorkId;
+            if (forWork && id) void run(() => actions.markForWork(id, true));
             dispatch({ type: 'answerWork' });
           }}
         />
       ) : null}
       {state.step === 'receipt' ? (
-        <CloseReceipt
-          no={String(snap.closedDays.length + 1).padStart(4, '0')}
-          dateLine={`${new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(now).toUpperCase()} ${snap.today.split('-').reverse().join('.')} · ${closedAt}`}
-          rows={kept
-            .filter((s) => !s.forWork)
-            .map((s) => ({
-              time: time.format(new Date(s.at)),
-              name: s.merchant.toUpperCase(),
-              amount: s.amount,
-            }))}
-          claimBack={work ? { name: work.merchant.toUpperCase(), amount: work.amount } : null}
-          total={day.spent}
-          tomorrow={day.tomorrow}
-          note={day.spent === 0 ? t('close.receipt.noteQuiet') : t('close.receipt.note')}
+        <CloseReceiptStep
+          day={close.day}
           closedAt={closedAt}
-          labels={{
-            daily: t('close.receipt.daily', {
-              no: String(snap.closedDays.length + 1).padStart(4, '0'),
-            }),
-            empty: t('close.receipt.empty'),
-            total: t('close.receipt.total'),
-            tomorrow: t('close.receipt.tomorrow'),
-            thanks: t('close.receipt.thanks'),
-            closed: t('close.receipt.closed'),
-            share: t('close.receipt.share'),
-            next: t('close.receipt.next'),
-            claimBack: t('close.receipt.claimBack', { name: work?.merchant.toUpperCase() ?? '' }),
-          }}
-          onShare={() => undefined}
+          spent={day.spent}
+          tomorrow={day.tomorrow}
           onNext={() => dispatch({ type: 'receiptDone' })}
         />
       ) : null}
       {state.step === 'reveal' ? (
-        <CloseReveal
-          kicker={t('close.reveal.kicker', { date: shortDate(tomorrowDate) })}
-          from={Math.max(0, day.safe)}
-          to={day.tomorrow}
-          line={
-            snap.plan.serious
-              ? null
-              : lineFor(`companion.${revealEvent}.${persona}`, {
-                  t: formatShort(day.tomorrow),
-                  b: formatShort(day.line),
-                  day: new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(now),
-                })
-          }
-          mood={revealEvent === 'replan' ? 'nod' : 'happy'}
-          sub={t('close.reveal.free', { free: formatShort(day.free), days: snap.cycle.daysLeft })}
-          month={monthName.toUpperCase()}
-          monthDays={monthDays}
-          streak={t('close.reveal.streak', {
-            closed: closedThisMonth,
-            days: Number(snap.today.slice(8, 10)),
-            month: monthName,
-          })}
-          nudge={t('close.reveal.nudge', { time: snap.plan.closeAt })}
-          doneLabel={t('close.reveal.done')}
-          onDone={() => void finish()}
-        />
+        <CloseRevealStep day={close.day} number={day} onDone={() => void finish()} />
+      ) : null}
+
+      {rules.offer && rule ? (
+        <View style={{ position: 'absolute', left: 16, right: 16, bottom: bottom(24), zIndex: 15 }}>
+          <RulePrompt
+            text={t('rule.ask', { merchant: rules.offer.merchant, category: rule.name })}
+            once={t('rule.once')}
+            always={t('rule.always')}
+            onOnce={rules.dismiss}
+            onAlways={() => {
+              const offer = rules.offer;
+              if (!offer) return;
+              rules.dismiss();
+              void run(() => actions.rememberMerchant(offer.merchant, offer.categoryId)).then(
+                (saved) => {
+                  if (saved) say('ruleSaved');
+                },
+              );
+            }}
+          />
+        </View>
       ) : null}
 
       {editingSpend ? (
@@ -297,10 +270,20 @@ export default function Close() {
           categories={snap.categories}
           saveLabel={t('close.edit.save')}
           onCancel={() => setEditing(null)}
-          onSave={(amount, categoryId) => {
-            void actions.update(editingSpend.id, { amount, categoryId });
-            close.decide(editingSpend.id, 'edited');
-            setEditing(null);
+          onSave={edit}
+        />
+      ) : null}
+      {typingCash ? (
+        <CashCustom
+          title={t('close.cash.otherTitle')}
+          addLabel={t('close.cash.add')}
+          categories={snap.categories}
+          initialCategoryId={categoryFor('food')}
+          onCancel={() => setTypingCash(false)}
+          onAdd={(amount, categoryId) => {
+            setTypingCash(false);
+            const name = snap.categories.find((c) => c.id === categoryId)?.name ?? t('source.cash');
+            addCash(name, amount, categoryId, 'custom');
           }}
         />
       ) : null}

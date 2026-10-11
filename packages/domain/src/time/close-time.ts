@@ -1,4 +1,4 @@
-import { addDays, type LocalDate } from './local-date';
+import { addDays, hourOf, localDateOf, type LocalDate } from './local-date';
 
 /** 'HH:MM' on the phone's clock. */
 export type ClockTime = string;
@@ -51,4 +51,21 @@ export function closeMoment(hour: number, closeAt: ClockTime, closed: boolean): 
 /** The day a close made now belongs to: after midnight and before the cutoff, it is yesterday. */
 export function filingDay(today: LocalDate, hour: number): LocalDate {
   return hour < LATE_CLOSE_CUTOFF_HOUR ? addDays(today, -1) : today;
+}
+
+/**
+ * The money day an instant belongs to: the phone's calendar day, except before 04:00, when it is
+ * still the day before. Today, the close, the Diary and every capture follow this one rule.
+ */
+export function moneyDayOf(instant: Date): LocalDate {
+  return filingDay(localDateOf(instant), hourOf(instant));
+}
+
+/**
+ * The hour on the money day's own clock: 01:30 after midnight is hour 25.5 of the day before, so
+ * "how late is it for tonight's close" keeps counting up through the small hours.
+ */
+export function moneyHourOf(instant: Date): number {
+  const hour = hourOf(instant);
+  return hour < LATE_CLOSE_CUTOFF_HOUR ? hour + 24 : hour;
 }

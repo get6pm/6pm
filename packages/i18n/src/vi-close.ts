@@ -58,4 +58,7 @@ export const viClose: { readonly [Key in keyof typeof enClose]: Entry } = {
   'close.reveal.nudge': 'Mai mình nhắc bạn lúc {time} nha.',
   'close.reveal.done': 'Xong hôm nay',
   'close.edit.save': 'Lưu và giữ',
+  'close.cash.other': 'Số khác',
+  'close.cash.otherTitle': 'Bao nhiêu tiền mặt?',
+  'close.cash.add': 'Thêm vào tiền mặt hôm nay',
 };

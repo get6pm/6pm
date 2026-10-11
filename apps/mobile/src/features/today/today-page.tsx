@@ -1,19 +1,22 @@
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { View } from 'react-native';
 import Animated, { useAnimatedStyle, type AnimatedRef } from 'react-native-reanimated';
 
-import type { DailyNumber } from '@6pm/domain';
+import { clockOf, hourOf, type DailyNumber } from '@6pm/domain';
 
 import { useMoney, useMoneyActions } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
 import { useClock } from '../../ui/theme/clock';
 import { useOfferUndo } from '../../ui/undo/undo-host';
 import { useTheme } from '../../ui/theme/theme';
+import { useRunAction } from '../companion/use-run-action';
+import { useParkedClose } from '../close/close-session';
 import { useHomePageScroll, useHomeScroll } from '../home/home-scroll';
 import { CompanionGreeting } from './companion-greeting';
+import { requestDiaryDay } from './diary-request';
 import { TodayHero } from './today-hero';
 import { TodayList } from './today-list';
-import { todayView } from './today-view';
+import { todayView, type WeekDay } from './today-view';
 import { useSpendLabels } from './use-spend-rows';
 import { TonightCard } from './tonight-card';
 
@@ -27,21 +30,38 @@ export function TodayPage({
   scrollRef,
   onSettings,
   onQuickAdd,
+  onOpenDiary,
 }: {
   readonly day: DailyNumber;
   readonly scrollRef: AnimatedRef<Animated.ScrollView>;
   readonly onSettings: () => void;
   readonly onQuickAdd: () => void;
+  /** Switches the home surface to the Diary tab; the day to show is already requested. */
+  readonly onOpenDiary?: () => void;
 }) {
   const { palette } = useTheme();
   const router = useRouter();
-  const { hour } = useClock();
+  const { closeHour, dayDate } = useClock();
   const snap = useMoney();
   const actions = useMoneyActions();
+  const run = useRunAction();
   const offerUndo = useOfferUndo();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const parked = useParkedClose(snap.today);
   const onScroll = useHomePageScroll('today');
-  const view = todayView(snap, hour, day.spent, useSpendLabels());
+  const view = todayView(snap, closeHour, day.spent, useSpendLabels());
+  const monthName = new Intl.DateTimeFormat(language === 'vi' ? 'vi-VN' : 'en-GB', {
+    month: 'long',
+  }).format(dayDate);
+  const showDiary = (target: string) => {
+    requestDiaryDay(target);
+    onOpenDiary?.();
+  };
+  const openWeekDay = (w: WeekDay) => {
+    if (w.closed) showDiary(w.day);
+    else if (w.isToday) router.push('/close');
+    else if (w.missed) router.push(`/missed-day?day=${w.day}` as Href);
+  };
   const { y } = useHomeScroll();
   const parallax = useAnimatedStyle(() => ({
     transformOrigin: '50% 100%',
@@ -80,13 +100,15 @@ export function TodayPage({
             event={
               view.moment === 'closed'
                 ? 'closedIdle'
-                : view.moment === 'late'
-                  ? 'late'
-                  : day.safe < 0
-                    ? 'replan'
-                    : 'idle'
+                : parked
+                  ? 'paused'
+                  : view.moment === 'late'
+                    ? 'late'
+                    : day.safe < 0
+                      ? 'replan'
+                      : 'idle'
             }
-            onPress={() => undefined}
+            onPress={() => router.push('/ask')}
           />
         ) : null}
         <TonightCard
@@ -97,7 +119,12 @@ export function TodayPage({
           week={view.week}
           closedThisMonth={view.closedThisMonth}
           daysThisMonth={view.daysThisMonth}
+          paused={parked === null ? null : parked.state.step === 'cards' ? 'cards' : 'later'}
+          closedStamp={view.closedAt === null ? null : clockOf(hourOf(new Date(view.closedAt)))}
+          monthName={monthName}
           onClose={() => router.push('/close')}
+          onOpenDay={openWeekDay}
+          onOpenReceipt={() => showDiary(snap.today)}
         />
         <TodayList
           rows={view.rows}
@@ -105,11 +132,18 @@ export function TodayPage({
           spentLabel={view.spentLabel}
           onOpenInbox={() => router.push('/inbox')}
           onOpenSpend={(id) => router.push(`/spend/${id}`)}
-          onConfirm={(id) => void actions.setStatus(id, 'kept')}
+          onConfirm={(id) => void run(() => actions.setStatus(id, 'kept'))}
           onDelete={(id) => {
             const name = snap.cycleSpends.find((s) => s.id === id)?.merchant ?? '';
-            void actions.setStatus(id, 'deleted');
-            offerUndo(t('undo.deleted', { name }), t('undo.action'), () => void actions.undo(id));
+            void run(() => actions.setStatus(id, 'deleted')).then((saved) => {
+              if (saved) {
+                offerUndo(
+                  t('undo.deleted', { name }),
+                  t('undo.action'),
+                  () => void run(() => actions.undo(id)),
+                );
+              }
+            });
           }}
         />
       </View>

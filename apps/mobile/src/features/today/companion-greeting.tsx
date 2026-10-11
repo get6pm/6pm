@@ -12,7 +12,7 @@ import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
 import { display } from '../../ui/type/fonts';
 
-type HomeEvent = 'idle' | 'closedIdle' | 'late' | 'replan';
+type HomeEvent = 'idle' | 'closedIdle' | 'late' | 'replan' | 'paused';
 
 /**
  * The companion on the lip of Today's sheet with its speech bubble. Hidden in serious mode: no

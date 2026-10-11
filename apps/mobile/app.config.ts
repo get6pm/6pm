@@ -125,7 +125,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: variant.bundleIdentifier,
     appleTeamId: APPLE_TEAM_ID,
     deploymentTarget: IOS_DEPLOYMENT_TARGET,
-    supportsTablet: false,
+    // v1 shipped on iPad, and an App Store update may not drop a device family it supported.
+    supportsTablet: true,
     associatedDomains: [`applinks:${variant.host}`, `webcredentials:${variant.host}`],
     config: { usesNonExemptEncryption: false },
     infoPlist: {

@@ -73,3 +73,4 @@ fakes behaviour the app cannot fake. Founder review.
 | Look detail | Intensity slider | Own Gesture Handler slider (4 pt track in the accent, 28 pt white thumb) | The render set has no try-on frame; the prototype used a browser range input |
 | Max | Development app (`ai.sixpm.app.dev`) | Purchases unavailable: no price, buy disabled | Products and RevenueCat exist for `ai.sixpm.app` only; purchases are tested on TestFlight builds |
 | Max | Yearly price | 599.000₫ (49.900₫ a month) | App Store has no 598.000₫ price point in Vietnam; the app reads the price from the store |
+| Every screen | iPad | The phone layout, stretched to the iPad's width | v1 shipped on iPad and an update may not drop it; there is no iPad design |

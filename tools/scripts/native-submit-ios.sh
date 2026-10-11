@@ -37,7 +37,7 @@ mv eas.json.new eas.json
 export EXPO_ASC_API_KEY_PATH=$key_file
 export EXPO_APPLE_TEAM_ID=YFND2EEW8S EXPO_APPLE_TEAM_TYPE=INDIVIDUAL
 npx --yes "${EAS_CLI:?}" submit --profile "$profile" --platform ios --path "$ipa" \
-  --non-interactive --no-wait
+  --non-interactive --wait
 
-echo "Submitted the \`$profile\` build of \`$(git rev-parse --short=12 HEAD)\` to App Store Connect; it appears in TestFlight when Apple has processed it." \
+echo "Apple accepted the \`$profile\` build of \`$(git rev-parse --short=12 HEAD)\`; it appears in TestFlight when processing ends." \
   >>"${GITHUB_STEP_SUMMARY:-/dev/stdout}"

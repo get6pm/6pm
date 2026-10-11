@@ -81,6 +81,28 @@ describe('completeOnboarding', () => {
     expect(dayOf(snap)?.line).toBe(309_000);
   });
 
+  it('keeps each bill’s due day and counts the ones already due before today as paid', async () => {
+    const store = openStore('2026-10-10');
+    await completeOnboarding(
+      store,
+      {
+        ...answers,
+        bills: [
+          { name: 'Rent', icon: 'home', hue: 30, amount: 4_000_000, dueDay: 5 },
+          { name: 'Power', icon: 'bolt', hue: 80, amount: 500_000, dueDay: 20 },
+          { name: 'Gym', icon: 'fitness_center', hue: 150, amount: 300_000, dueDay: 10 },
+        ],
+      },
+      { today: '2026-10-10', language: 'en' },
+    );
+    const snap = store.getSnapshot();
+    expect(snap.bills.map((b) => [b.name, b.dueDay, b.paidCycle])).toEqual([
+      ['Rent', 5, snap.cycle.start],
+      ['Power', 20, null],
+      ['Gym', 10, null],
+    ]);
+  });
+
   it('keeps categories the user already has', async () => {
     const store = openStore('2026-10-10');
     await store.tables.categories.put({

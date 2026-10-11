@@ -1,32 +1,23 @@
-import { useEffect } from 'react';
-import { Pressable, Text, View } from 'react-native';
-import Animated, {
-  Easing,
-  interpolateColor,
-  useAnimatedStyle,
-  useReducedMotion,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import { useRouter } from 'expo-router';
+import { Text, View } from 'react-native';
 
-import { cyclePosition, formatVnd, type PayCycle } from '@6pm/domain';
-import { curves } from '@6pm/theme';
+import { cyclePosition, type PayCycle } from '@6pm/domain';
 
 import { usePlanActions } from '../../data/plan-actions';
 import { useI18n } from '../../i18n/i18n';
-import { CategoryTile } from '../../ui/category-tile';
 import { haptics } from '../../ui/haptics';
 import { isSymbolName, Symbol } from '../../ui/icons/symbol';
 import type { SymbolName } from '../../ui/icons/symbols.generated';
+import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, mono, tabular } from '../../ui/type/fonts';
+import { body, mono } from '../../ui/type/fonts';
+import { useRunAction } from '../companion/use-run-action';
 import { markerTint, ON_ACCENT, type PlanColours } from './plan-colours';
 import type { PlanFormat } from './plan-format';
 import { PlanCard } from './plan-parts';
+import { planRoutes } from './plan-routes';
+import { BillRowView } from './bill-row';
 import type { BillView } from './plan-view';
-
-const ease = Easing.bezier(...curves.enter);
-const TOGGLE_MS = 250;
 
 interface Marker {
   readonly key: string;
@@ -81,101 +72,6 @@ function Timeline({ markers, today }: { readonly markers: Marker[]; readonly tod
   );
 }
 
-function BillRowView({
-  view,
-  first,
-  sub,
-  subColour,
-  label,
-  onToggle,
-}: {
-  readonly view: BillView;
-  readonly first: boolean;
-  readonly sub: string;
-  readonly subColour: string;
-  readonly label: string;
-  readonly onToggle: () => void;
-}) {
-  const { palette } = useTheme();
-  const reduceMotion = useReducedMotion();
-  const paid = useSharedValue(view.paid ? 1 : 0);
-  const pressed = useSharedValue(0);
-  useEffect(() => {
-    paid.value = withTiming(view.paid ? 1 : 0, {
-      duration: reduceMotion ? 0 : TOGGLE_MS,
-      easing: ease,
-    });
-  }, [view.paid, paid, reduceMotion]);
-  const row = useAnimatedStyle(() => ({ opacity: 1 - 0.4 * paid.value }));
-  const ring = useAnimatedStyle(() => ({
-    borderColor: interpolateColor(paid.value, [0, 1], [palette.inkSoft, palette.btnBg]),
-    backgroundColor: interpolateColor(paid.value, [0, 1], ['rgba(0,0,0,0)', palette.btnBg]),
-    transform: [{ scale: 1 - 0.05 * pressed.value }],
-  }));
-  const tick = useAnimatedStyle(() => ({
-    opacity: paid.value,
-    transform: [{ scale: 0.6 + 0.4 * paid.value }],
-  }));
-  const { bill } = view;
-  return (
-    <Animated.View
-      style={[
-        {
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 12,
-          paddingVertical: 10,
-          borderTopWidth: 0.5,
-          borderColor: first ? 'transparent' : palette.hair,
-        },
-        row,
-      ]}
-    >
-      <CategoryTile icon={isSymbolName(bill.icon) ? bill.icon : 'payments'} hue={bill.hue} />
-      <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
-        <Text numberOfLines={1} style={{ ...body(16, 550), color: palette.ink }}>
-          {bill.name}
-        </Text>
-        <Text style={{ ...body(13), color: subColour }}>{sub}</Text>
-      </View>
-      <Text style={{ ...body(15, 600), ...tabular, color: palette.ink }}>
-        {formatVnd(bill.amount)}
-      </Text>
-      <Pressable
-        accessibilityRole="checkbox"
-        accessibilityState={{ checked: view.paid }}
-        accessibilityLabel={label}
-        hitSlop={6}
-        onPress={onToggle}
-        onPressIn={() => {
-          pressed.value = withTiming(1, { duration: 60 });
-        }}
-        onPressOut={() => {
-          pressed.value = withTiming(0, { duration: 240 });
-        }}
-      >
-        <Animated.View
-          style={[
-            {
-              width: 34,
-              height: 34,
-              borderRadius: 17,
-              borderWidth: 1.5,
-              alignItems: 'center',
-              justifyContent: 'center',
-            },
-            ring,
-          ]}
-        >
-          <Animated.View style={tick}>
-            <Symbol name="check" size={20} color={palette.btnFg} />
-          </Animated.View>
-        </Animated.View>
-      </Pressable>
-    </Animated.View>
-  );
-}
-
 /** Bills: the cycle as a line (unpaid bills, what is paid, today, payday) and the list with ticks. */
 export function BillsCard({
   bills,
@@ -193,6 +89,8 @@ export function BillsCard({
   const { palette } = useTheme();
   const { t } = useI18n();
   const actions = usePlanActions();
+  const run = useRunAction();
+  const router = useRouter();
   const paidCount = bills.filter((b) => b.paid).length;
   const todayAt = cyclePosition(cycle, today);
   const markers: Marker[] = [
@@ -258,12 +156,46 @@ export function BillsCard({
             label={t(b.paid ? 'plan.bills.markUnpaid' : 'plan.bills.markPaid', {
               name: b.bill.name,
             })}
+            editLabel={t('plan.bills.edit', { name: b.bill.name })}
             onToggle={() => {
               haptics.tap();
-              void actions.setBillPaid(b.bill.id, !b.paid);
+              void run(() => actions.setBillPaid(b.bill.id, !b.paid));
+            }}
+            onEdit={() => {
+              haptics.tap();
+              router.push(planRoutes.bill(b.bill.id));
             }}
           />
         ))}
+        <PressScale
+          accessibilityRole="button"
+          onPress={() => {
+            haptics.tap();
+            router.push(planRoutes.newBill);
+          }}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+            paddingVertical: 12,
+            borderTopWidth: bills.length > 0 ? 0.5 : 0,
+            borderColor: palette.hair,
+          }}
+        >
+          <View
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: 12,
+              backgroundColor: palette.chipBg,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Symbol name="add" size={20} color={palette.ink} />
+          </View>
+          <Text style={{ ...body(16, 550), color: palette.ink }}>{t('plan.bill.add')}</Text>
+        </PressScale>
       </View>
     </PlanCard>
   );

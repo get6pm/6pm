@@ -68,9 +68,13 @@ export interface BillAnswers {
   readonly multis: Readonly<Partial<Record<MultiKey, MultiAnswer>>>;
   /** Monthly amount per bill key ('rent', 'subs:spotify'); a key is present once it was answered. */
   readonly amounts: Readonly<Record<string, number>>;
+  /** Day of the month each bill is due, by the same keys; the 1st until the wheel is turned. */
+  readonly dueDays: Readonly<Record<string, number>>;
 }
 
-export const NO_BILL_ANSWERS: BillAnswers = { asks: {}, multis: {}, amounts: {} };
+export const NO_BILL_ANSWERS: BillAnswers = { asks: {}, multis: {}, amounts: {}, dueDays: {} };
+
+export const DEFAULT_DUE_DAY = 1;
 
 /** A card in the order the deck deals it. */
 export type DeckItem =
@@ -119,6 +123,8 @@ export interface ChosenBill {
   readonly icon: SymbolName;
   readonly hue: number;
   readonly amount: number;
+  /** Day of the month it is due. */
+  readonly dueDay: number;
   /** Where its amount card sits in the deck, to revisit it from the tray. */
   readonly deckIndex: number;
 }
@@ -135,6 +141,7 @@ export function chosenBills(deck: readonly DeckItem[], answers: BillAnswers): Ch
       icon: item.icon,
       hue: item.card.hue,
       amount: answers.amounts[item.key] ?? 0,
+      dueDay: answers.dueDays[item.key] ?? DEFAULT_DUE_DAY,
       deckIndex,
     });
   });

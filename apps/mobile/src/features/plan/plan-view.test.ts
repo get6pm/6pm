@@ -1,12 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { dailyNumber, payCycleOn, type BillRow, type PotRow } from '@6pm/domain';
+import { dailyNumber, joinedShare, payCycleOn, type BillRow, type PotRow } from '@6pm/domain';
 
 import type { MoneySnapshot } from '../../data/money-store';
 import {
   barDays,
   billViews,
   goalViews,
+  newPotLocked,
   occasionViews,
   occasionsMonthly,
   riverOf,
@@ -73,6 +74,13 @@ const snap: MoneySnapshot = {
   ],
   potSaved: { japan: 3_600_000, cushion: 5_000_000, tet: 1_200_000, wedding: 500_000 },
   topUpsThisCycle: 0,
+  setAsideThisCycle: {
+    japan: 1_200_000,
+    cushion: 800_000,
+    tet: 450_000,
+    wedding: 0,
+    dalat: 1_350_000,
+  },
   closedDays: [],
 };
 
@@ -86,10 +94,10 @@ describe('plan view', () => {
   });
 
   it('puts every pot at its designed pace', () => {
-    expect(occasionViews(snap).map((o) => [o.monthly, o.full])).toEqual([
-      [450_000, false],
-      [0, true],
-      [1_350_000, false],
+    expect(occasionViews(snap).map((o) => [o.monthly, o.full, o.paused])).toEqual([
+      [450_000, false, false],
+      [0, true, false],
+      [1_350_000, false, false],
     ]);
     expect(occasionsMonthly(snap)).toBe(1_800_000);
     const goals = goalViews(snap);
@@ -114,7 +122,34 @@ describe('plan view', () => {
     });
     const river = riverOf(snap, day, { goal: 0, occasion: 0 });
     expect(river.bills).toBe(4_200_000);
+    expect(river.before).toBe(0);
     expect(river.spent).toBe(2_365_000);
+    expect(Object.values(river).reduce((a, b) => a + b, 0)).toBe(17_400_000);
+  });
+
+  it('shows the free money gone before joining as its own segment', () => {
+    const joined: MoneySnapshot = {
+      ...snap,
+      plan: snap.plan && { ...snap.plan, startedOn: '2026-10-16' },
+    };
+    const share = joinedShare(cycle, '2026-10-16');
+    const day = dailyNumber({
+      plan: {
+        income: 17_400_000,
+        bills: 4_200_000,
+        futureYou: 2_000_000,
+        occasions: 1_800_000,
+        topUps: 0,
+      },
+      spentBefore: 0,
+      today: [],
+      notDaily: new Set(),
+      daysLeft: cycle.daysLeft,
+      share,
+    });
+    const river = riverOf(joined, day, { goal: 0, occasion: 0 });
+    expect(river.before).toBeGreaterThan(0);
+    expect(river.spent).toBe(0);
     expect(Object.values(river).reduce((a, b) => a + b, 0)).toBe(17_400_000);
   });
 
@@ -138,7 +173,19 @@ describe('plan view', () => {
     expect(stepPotMonth(8, -1)).toBe(5);
     expect(stepPotMonth(1, -1)).toBe(0);
     expect(stepPotMonth(0, -1)).toBe(0);
-    expect(potMonthAt(today, 3)).toBe('2027-01');
-    expect(potMonthAt(today, 0)).toBeNull();
+    expect(potMonthAt('2026-10', 3)).toBe('2027-01');
+    expect(potMonthAt('2026-10', 0)).toBeNull();
+  });
+
+  it('puts the second occasion pot behind Max, and goals never', () => {
+    expect(newPotLocked([], false)).toBe(false);
+    expect(newPotLocked(snap.pots, false)).toBe(true);
+    expect(newPotLocked(snap.pots, true)).toBe(false);
+    expect(
+      newPotLocked(
+        snap.pots.filter((p) => p.kind === 'goal'),
+        false,
+      ),
+    ).toBe(false);
   });
 });

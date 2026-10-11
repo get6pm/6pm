@@ -63,6 +63,7 @@ describe('bill deck', () => {
       asks: { rent: true, power: false },
       multis: { subs: { picked: ['spotify', 'icloud'], done: true } },
       amounts: {},
+      dueDays: {},
     };
     const deck = dealDeck(answers);
     expect(deck.map((d) => (d.type === 'amount' ? d.key : d.type))).toEqual([
@@ -83,12 +84,13 @@ describe('bill deck', () => {
       asks: { rent: true },
       multis: { subs: { picked: ['spotify'], done: true } },
       amounts: { rent: 5_000_000, 'subs:spotify': 0, 'subs:netflix': 260_000 },
+      dueDays: { rent: 5 },
     };
     const bills = chosenBills(dealDeck(answers), answers);
     // Netflix was unpicked after its amount was set: it is not a bill any more.
-    expect(bills.map((b) => [b.key, b.amount, b.deckIndex])).toEqual([
-      ['rent', 5_000_000, 1],
-      ['subs:spotify', 0, 5],
+    expect(bills.map((b) => [b.key, b.amount, b.deckIndex, b.dueDay])).toEqual([
+      ['rent', 5_000_000, 1, 5],
+      ['subs:spotify', 0, 5, 1],
     ]);
     expect(billTotal(bills)).toBe(5_000_000);
   });

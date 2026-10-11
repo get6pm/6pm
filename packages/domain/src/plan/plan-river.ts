@@ -1,4 +1,4 @@
-import { ceilToFiftyThousand, floorToThousand, type Vnd } from '../money/format';
+import { ceilToFiftyThousand, type Vnd } from '../money/format';
 import {
   addDays,
   daysInMonth,
@@ -7,10 +7,21 @@ import {
   parts,
   type LocalDate,
 } from '../time/local-date';
+import { dailyNumber, type DailyNumberInput } from './daily-number';
 import type { PayCycle } from './pay-cycle';
 
-/** The money river's segments, left to right. */
-export const RIVER_SEGMENTS = ['bills', 'futureYou', 'occasions', 'spent', 'free'] as const;
+/**
+ * The money river's segments, left to right. `before` is the part of the cycle's free money that
+ * was already gone when the user joined 6pm: it is empty in every other cycle.
+ */
+export const RIVER_SEGMENTS = [
+  'bills',
+  'futureYou',
+  'occasions',
+  'before',
+  'spent',
+  'free',
+] as const;
 export type RiverSegment = (typeof RIVER_SEGMENTS)[number];
 
 export interface RiverInput {
@@ -26,42 +37,54 @@ export interface RiverInput {
   readonly occasionTopUps: Vnd;
   /** Free money right now (`DailyNumber.free`). */
   readonly free: Vnd;
+  /** The share of the cycle's free money still to come (`joinedShare`); 1 outside the joined cycle. */
+  readonly share?: number;
 }
 
 /**
  * Where the month's money goes: bills, Future you (with its top-ups), occasions (with theirs),
- * everything spent so far, and what is still free. The segments add up to the income.
+ * what was gone before 6pm started counting (only in the cycle the user joined), everything spent
+ * since, and what is still free. The segments add up to the income.
  */
 export function moneyRiver(input: RiverInput): Readonly<Record<RiverSegment, Vnd>> {
+  const { share = 1 } = input;
   const futureYou = input.futureYou + input.goalTopUps;
   const occasions = input.occasions + input.occasionTopUps;
+  const planned = input.income - input.bills - input.futureYou - input.occasions;
+  // The engine scales the cycle's free money by `share`; what it drops was spent before joining.
+  const before = planned > 0 ? planned - Math.round(planned * share) : 0;
   return {
     bills: input.bills,
     futureYou,
     occasions,
-    spent: input.income - input.bills - futureYou - occasions - input.free,
+    before,
+    spent: input.income - input.bills - futureYou - occasions - before - input.free,
     free: input.free,
   };
 }
 
 /**
- * The daily number from tomorrow if Future you got `candidate` instead of `committed`: the
- * difference goes back to (or comes out of) the free money, split over the days left.
+ * Tomorrow's daily number if Future you got `candidate`: the same engine as the committed number
+ * (so the joined cycle's share applies and a release never jumps), with only Future you changed.
  */
-export function whatIfDaily(free: Vnd, committed: Vnd, candidate: Vnd, daysLeft: number): Vnd {
-  if (daysLeft <= 0) return 0;
-  return Math.max(0, floorToThousand((free + committed - candidate) / daysLeft));
+export function whatIfDaily(input: DailyNumberInput, candidate: Vnd): Vnd {
+  if (input.daysLeft <= 0) return 0;
+  return dailyNumber({ ...input, plan: { ...input.plan, futureYou: candidate } }).tomorrow;
 }
 
-/** How a day changes per extra amount set aside now: "about 5k a day" for 100k over 22 days. */
-export function aboutPerDay(amount: Vnd, daysLeft: number): Vnd {
-  if (daysLeft <= 0) return amount;
-  return Math.round(amount / daysLeft / 1000) * 1000;
+/**
+ * How a day changes per extra amount set aside now: "about 5k a day" for 100k over 22 days. A pot
+ * that sets money aside out of the cycle's free money takes only the joined `share` of it.
+ */
+export function aboutPerDay(amount: Vnd, daysLeft: number, share = 1): Vnd {
+  const taken = amount * share;
+  if (daysLeft <= 0) return Math.round(taken);
+  return Math.round(taken / daysLeft / 1000) * 1000;
 }
 
 /** The day bars' full height: 600k, or the most a day could be with nothing set aside. */
-export function dayBarScale(free: Vnd, committed: Vnd, daysLeft: number): Vnd {
-  return Math.max(600_000, whatIfDaily(free, committed, 0, daysLeft));
+export function dayBarScale(input: DailyNumberInput): Vnd {
+  return Math.max(600_000, whatIfDaily(input, 0));
 }
 
 /** A day bar's height as a fraction of the row: never below 8%, never above full. */
@@ -82,21 +105,26 @@ export function addMonthsTo(month: string, by: number): string {
   return `${Math.floor(index / 12)}-${String((index % 12) + 1).padStart(2, '0')}`;
 }
 
+/** Months from one month ('YYYY-MM') to another, at least one: the last month still counts. */
+export function monthsBetween(from: string, to: string): number {
+  const [fy = 0, fm = 0] = from.split('-').map(Number);
+  const [ty = 0, tm = 0] = to.split('-').map(Number);
+  return Math.max(1, (ty - fy) * 12 + (tm - fm));
+}
+
 /** Months from `today`'s month to `month` ('YYYY-MM'), at least one. */
 export function monthsUntil(today: LocalDate, month: string): number {
-  const [fy = 0, fm = 0] = monthKey(today).split('-').map(Number);
-  const [ty = 0, tm = 0] = month.split('-').map(Number);
-  return Math.max(1, (ty - fy) * 12 + (tm - fm));
+  return monthsBetween(monthKey(today), month);
 }
 
 /**
  * An occasion pot's monthly set-aside: what is left, spread over the months to its date, rounded
- * up to 50.000₫. Nothing when it is full or has no date.
+ * up to 50.000₫ but never more than what is left. Nothing when it is full or has no date.
  */
 export function potMonthlyNeed(goal: Vnd, saved: Vnd, monthsLeft: number | null): Vnd {
   const left = Math.max(0, goal - saved);
   if (left === 0 || monthsLeft === null || monthsLeft <= 0) return 0;
-  return ceilToFiftyThousand(left / monthsLeft);
+  return Math.min(left, ceilToFiftyThousand(left / monthsLeft));
 }
 
 /** A goal's share of Future you, each month. */

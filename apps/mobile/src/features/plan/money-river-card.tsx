@@ -36,6 +36,7 @@ function Segment({
   amount,
   colour,
   index,
+  last,
   state,
   onPress,
   label,
@@ -43,6 +44,8 @@ function Segment({
   readonly amount: Vnd;
   readonly colour: string;
   readonly index: number;
+  /** The river's last segment, which rounds its right end. */
+  readonly last: boolean;
   readonly state: 'none' | 'on' | 'off';
   readonly onPress: () => void;
   readonly label: string;
@@ -69,7 +72,6 @@ function Segment({
       transform: [{ scaleX: press }, { scaleY: press * (1 + 0.14 * on.value) }],
     };
   });
-  const last = index === RIVER_SEGMENTS.length - 1;
   const outer = 14;
   return (
     <Animated.View style={[{ flexBasis: 0, flexShrink: 1, minWidth: 8 }, style]}>
@@ -158,8 +160,8 @@ function Chip({
 }
 
 /**
- * "Money in this month": the stacked money river (Bills, Future you, Occasions, Spent, Free) and
- * its legend. Tapping a colour or a chip selects that segment: the others dim, it stands taller,
+ * "Money in this month": the stacked money river (Bills, Future you, Occasions, Spent, Free; and
+ * "Before 6pm" in the cycle the user joined) and its legend. Tapping a colour or a chip selects that segment: the others dim, it stands taller,
  * and the header tells what it holds. Widths follow the numbers with the entrance curve.
  */
 export function MoneyRiverCard({
@@ -175,17 +177,20 @@ export function MoneyRiverCard({
 }) {
   const { palette } = useTheme();
   const [selected, setSelected] = useState<RiverSegment | null>(null);
+  // "Before 6pm" exists only in the cycle the user joined; every other cycle shows the five.
+  const segments = RIVER_SEGMENTS.filter((id) => id !== 'before' || river.before > 0);
+  const shown = selected !== null && !segments.includes(selected) ? null : selected;
   const pick = (id: RiverSegment) => {
     haptics.tick();
     setSelected((current) => (current === id ? null : id));
   };
-  const label = selected ? copy.label[selected] : copy.total;
-  const value = formatShort(selected ? river[selected] : income);
-  const note = selected ? copy.note[selected] : copy.hint;
+  const label = shown ? copy.label[shown] : copy.total;
+  const value = formatShort(shown ? river[shown] : income);
+  const note = shown ? copy.note[shown] : copy.hint;
   return (
     <PlanCard padding={{ top: 18, side: 18, bottom: 18 }} gap={16}>
       <Animated.View
-        key={selected ?? 'all'}
+        key={shown ?? 'all'}
         entering={FadeIn.duration(SELECT_MS)}
         style={{
           flexDirection: 'row',
@@ -215,25 +220,26 @@ export function MoneyRiverCard({
         </Text>
       </Animated.View>
       <View style={{ flexDirection: 'row', height: 46, gap: 3 }}>
-        {RIVER_SEGMENTS.map((id, k) => (
+        {segments.map((id, k) => (
           <Segment
             key={id}
             index={k}
+            last={k === segments.length - 1}
             amount={river[id]}
             colour={colours.river[id]}
             label={`${copy.label[id]} ${formatShort(river[id])}`}
-            state={selected === null ? 'none' : selected === id ? 'on' : 'off'}
+            state={shown === null ? 'none' : shown === id ? 'on' : 'off'}
             onPress={() => pick(id)}
           />
         ))}
       </View>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-        {RIVER_SEGMENTS.map((id) => (
+        {segments.map((id) => (
           <Chip
             key={id}
             label={copy.label[id]}
             colour={colours.river[id]}
-            on={selected === id}
+            on={shown === id}
             idle={palette.chipBg}
             active={colours.chipOn}
             ink={palette.ink}

@@ -1,4 +1,5 @@
 import { Canvas, Circle, Path, rect, Skia } from '@shopify/react-native-skia';
+import { useRouter } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { Easing, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -9,13 +10,16 @@ import { curves } from '@6pm/theme';
 import { usePlanActions } from '../../data/plan-actions';
 import { useI18n } from '../../i18n/i18n';
 import { useCompanionToast } from '../companion/use-companion-toast';
+import { useRunAction } from '../companion/use-run-action';
 import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
+import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, tabular } from '../../ui/type/fonts';
 import type { PlanColours } from './plan-colours';
 import type { PlanFormat } from './plan-format';
 import { ChipButton, Pill } from './plan-parts';
+import { planRoutes } from './plan-routes';
 import { shareSplit, TOP_UP, type GoalView } from './plan-view';
 
 const ease = Easing.bezier(...curves.enter);
@@ -91,6 +95,8 @@ export function FutureYouCard({
   const { t, weekday } = useI18n();
   const say = useCompanionToast();
   const actions = usePlanActions();
+  const run = useRunAction();
+  const router = useRouter();
   const split = shareSplit(goals);
   const step = formatShort(TOP_UP);
   return (
@@ -171,41 +177,89 @@ export function FutureYouCard({
             key={g.pot.id}
             style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 2 }}
           >
-            <GoalRing
-              progress={g.progress}
-              colours={colours}
-              label={`${Math.round(g.progress * 100)}%`}
-            />
-            <View style={{ flex: 1, minWidth: 0, gap: 5, alignItems: 'flex-start' }}>
-              <Text style={{ ...body(16, 650), lineHeight: 19.2, color: palette.ink }}>
-                {g.pot.name}
-              </Text>
-              <Text style={{ ...body(13), ...tabular, color: palette.inkSoft }}>
-                {t('plan.future.progress', {
-                  have: formatShort(g.saved),
-                  goal: formatShort(g.pot.goal),
-                  eta: etaText,
-                })}
-              </Text>
-              <Pill
-                label={statusText}
-                bg={ok ? colours.okBg : colours.behindBg}
-                fg={ok ? colours.ok : colours.warn}
-                padX={9}
+            <PressScale
+              accessibilityRole="button"
+              accessibilityLabel={t('plan.future.edit', { name: g.pot.name })}
+              scaleTo={0.98}
+              onPress={() => {
+                haptics.tap();
+                router.push(planRoutes.pot(g.pot.id));
+              }}
+              style={{ flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 14 }}
+            >
+              <GoalRing
+                progress={g.progress}
+                colours={colours}
+                label={`${Math.round(g.progress * 100)}%`}
               />
-            </View>
+              <View style={{ flex: 1, minWidth: 0, gap: 5, alignItems: 'flex-start' }}>
+                <Text style={{ ...body(16, 650), lineHeight: 19.2, color: palette.ink }}>
+                  {g.pot.name}
+                </Text>
+                <Text style={{ ...body(13), ...tabular, color: palette.inkSoft }}>
+                  {t('plan.future.progress', {
+                    have: formatShort(g.saved),
+                    goal: formatShort(g.pot.goal),
+                    eta: etaText,
+                  })}
+                </Text>
+                <Pill
+                  label={statusText}
+                  bg={ok ? colours.okBg : colours.behindBg}
+                  fg={ok ? colours.ok : colours.warn}
+                  padX={9}
+                />
+              </View>
+            </PressScale>
             <ChipButton
               label={`+${step}`}
               accessibilityLabel={t('plan.future.add', { amount: step, name: g.pot.name })}
               onPress={() => {
                 haptics.tap();
-                void actions.topUp(g.pot.id, TOP_UP);
+                void run(() => actions.topUp(g.pot.id, TOP_UP));
                 say('save', { day: weekday(new Date()) });
               }}
             />
           </View>
         );
       })}
+      <PressScale
+        accessibilityRole="button"
+        onPress={() => {
+          haptics.tap();
+          router.push(planRoutes.newGoal);
+        }}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 12,
+          paddingVertical: 10,
+          paddingHorizontal: 14,
+          borderRadius: 18,
+          borderWidth: 1.5,
+          borderStyle: 'dashed',
+          borderColor: colours.dashLine,
+        }}
+      >
+        <View
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: 12,
+            backgroundColor: palette.chipBg,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Symbol name="add" size={21} color={palette.ink} />
+        </View>
+        <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
+          <Text style={{ ...body(15, 650), color: palette.ink }}>{t('plan.future.newGoal')}</Text>
+          <Text style={{ ...body(13), lineHeight: 17.55, color: palette.inkSoft }}>
+            {t('plan.future.newGoalSub')}
+          </Text>
+        </View>
+      </PressScale>
       <Text
         style={{
           ...body(12.5),

@@ -59,7 +59,8 @@ export const enOnboarding = {
   'onboarding.bills.next': 'Next · {count} picked',
   'onboarding.bills.pickOrNone': 'Pick or tap None',
   'onboarding.bills.amountQ': 'How much for {name}?',
-  'onboarding.bills.amountSub': 'Each month. A rough number is fine.',
+  'onboarding.bills.amountSub': 'Each month, and the day it’s due. A rough number is fine.',
+  'onboarding.bills.dueDay': 'Due day',
   'onboarding.bills.later': 'Add later',
   'onboarding.bills.save': 'Save {amount}',
   'onboarding.bills.spin': 'Spin to set',
@@ -97,7 +98,7 @@ export const enOnboarding = {
 
   'onboarding.catch.title': 'How 6pm catches spending',
   'onboarding.catch.sub':
-    'QR works already. The others take a few seconds each, now or later in Settings.',
+    'QR works already. The others are coming to Settings, a few seconds each.',
   'onboarding.catch.scan.title': 'Scan to pay',
   'onboarding.catch.scan.body':
     'Scan a VietQR in 6pm, then pay in your bank app. 6pm logs the amount.',
@@ -115,7 +116,7 @@ export const enOnboarding = {
   'onboarding.catch.lock.title': 'Lock Screen and Action button',
   'onboarding.catch.lock.body': 'See what’s safe without unlocking, and scan a QR in one press.',
   'onboarding.catch.lock.safe': 'Safe today',
-  'onboarding.catch.later': 'Set it up later in Settings',
+  'onboarding.catch.later': 'Coming to Settings',
 
   'onboarding.close.title': 'When should your day close?',
   'onboarding.close.sub': 'Pick when you’re usually home. You’ll get one reminder a day.',

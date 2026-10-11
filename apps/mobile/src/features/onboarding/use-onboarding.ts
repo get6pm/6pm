@@ -69,6 +69,7 @@ export function useOnboarding(startStep = 0) {
             icon: b.icon,
             hue: b.hue,
             amount: b.amount,
+            dueDay: b.dueDay,
           })),
           wallets,
           closeAt,

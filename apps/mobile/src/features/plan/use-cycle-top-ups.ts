@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native';
 import { useEffect, useState } from 'react';
 
 import { useMoneyStore } from '../../data/money-provider';
@@ -19,9 +20,13 @@ export function useCycleTopUps(snap: MoneySnapshot): CycleTopUps | null {
       setSplit({ goal: 0, occasion: 0 });
       return;
     }
-    void readCycleTopUps(store).then((next) => {
-      if (live) setSplit(next);
-    });
+    readCycleTopUps(store).then(
+      (next) => {
+        if (live) setSplit(next);
+      },
+      // The river keeps the last split, and the total is right either way.
+      (error: unknown) => Sentry.captureException(error),
+    );
     return () => {
       live = false;
     };

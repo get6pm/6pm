@@ -7,6 +7,7 @@ import { useI18n } from '../../i18n/i18n';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, mono, tabular } from '../../ui/type/fonts';
+import { PageButton } from './calendar-page-button';
 import { dots, inkWash, paper } from './diary-colours';
 
 const SELECT_MS = 200;
@@ -157,6 +158,9 @@ export function MonthCalendar({
   onSelect,
   onToday,
   onMissed,
+  canPrevious,
+  canNext,
+  onPage,
 }: {
   readonly title: string;
   readonly summary: string;
@@ -166,6 +170,10 @@ export function MonthCalendar({
   readonly onSelect: (day: string) => void;
   readonly onToday: () => void;
   readonly onMissed: (day: string) => void;
+  /** Whether a month with days in it lies before / after the one shown. */
+  readonly canPrevious: boolean;
+  readonly canNext: boolean;
+  readonly onPage: (by: 1 | -1) => void;
 }) {
   const { palette } = useTheme();
   const { t } = useI18n();
@@ -190,9 +198,25 @@ export function MonthCalendar({
           paddingHorizontal: 4,
         }}
       >
-        <View style={{ flexShrink: 1, gap: 2 }}>
-          <Text style={{ ...body(17, 700, -0.01), color: palette.ink }}>{title}</Text>
-          <Text style={{ ...body(12.5), color: palette.inkSoft }}>{summary}</Text>
+        <View style={{ flexShrink: 1, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <PageButton
+            direction="previous"
+            enabled={canPrevious}
+            label={t('diary.cal.previous')}
+            onPress={() => onPage(-1)}
+          />
+          <View style={{ flexShrink: 1, gap: 2 }}>
+            <Text style={{ ...body(17, 700, -0.01), color: palette.ink }}>{title}</Text>
+            <Text numberOfLines={2} style={{ ...body(12.5), color: palette.inkSoft }}>
+              {summary}
+            </Text>
+          </View>
+          <PageButton
+            direction="next"
+            enabled={canNext}
+            label={t('diary.cal.next')}
+            onPress={() => onPage(1)}
+          />
         </View>
         <View style={{ alignItems: 'flex-end', gap: 3 }}>
           <Legend colour={dots.under} label={t('diary.cal.under')} />

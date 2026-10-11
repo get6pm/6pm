@@ -6,9 +6,9 @@ import {
   diffDays,
   goalMonthly,
   goalPlan,
+  joinedShare,
   moneyRiver,
-  monthsUntil,
-  potMonthlyNeed,
+  occasionsOf,
   weekdayMondayFirst,
   type BillRow,
   type DailyNumber,
@@ -32,15 +32,17 @@ export function sliderMax(committed: Vnd): Vnd {
   return Math.max(WHAT_IF_MAX, Math.ceil(committed / WHAT_IF_STEP) * WHAT_IF_STEP);
 }
 
-/** Σ the occasion pots' monthly set-asides, as the daily number counts them. */
+/** Σ what the occasion pots set aside this pay cycle, as the daily number counts them. */
 export function occasionsMonthly(snap: MoneySnapshot): Vnd {
-  return snap.pots.reduce((sum, p) => sum + occasionNeed(p, snap), 0);
+  return occasionsOf(snap.pots, snap.setAsideThisCycle);
 }
 
-function occasionNeed(pot: PotRow, snap: MoneySnapshot): Vnd {
-  if (pot.kind !== 'occasion' || pot.paused || pot.neededBy === null) return 0;
-  const saved = snap.potSaved[pot.id] ?? 0;
-  return potMonthlyNeed(pot.goal, saved, monthsUntil(snap.today, pot.neededBy));
+/** The pots a customer without Max can have of their own: one occasion pot. */
+export const FREE_OCCASION_POTS = 1;
+
+/** Whether New pot is behind the Max sheet: the free pot is used and Max is not held. */
+export function newPotLocked(pots: readonly PotRow[], max: boolean): boolean {
+  return !max && pots.filter((p) => p.kind === 'occasion').length >= FREE_OCCASION_POTS;
 }
 
 export function riverOf(
@@ -58,6 +60,7 @@ export function riverOf(
     goalTopUps,
     occasionTopUps: snap.topUpsThisCycle - goalTopUps,
     free: day.free,
+    share: joinedShare(snap.cycle, snap.plan?.startedOn ?? null),
   });
 }
 
@@ -125,6 +128,8 @@ export interface OccasionView {
   readonly saved: Vnd;
   readonly progress: number;
   readonly full: boolean;
+  readonly paused: boolean;
+  /** What it sets aside this pay cycle. */
   readonly monthly: Vnd;
 }
 
@@ -138,7 +143,8 @@ export function occasionViews(snap: MoneySnapshot): OccasionView[] {
         saved,
         progress: pot.goal > 0 ? Math.min(1, saved / pot.goal) : 1,
         full: saved >= pot.goal,
-        monthly: occasionNeed(pot, snap),
+        paused: pot.paused,
+        monthly: snap.setAsideThisCycle[pot.id] ?? 0,
       };
     });
 }
@@ -158,11 +164,12 @@ export function barDays(today: LocalDate, payday: LocalDate): BarDay[] {
   });
 }
 
-/** "Needed by" choices for a new pot: months ahead of this one, then "No date" (0). */
+/** "Needed by" choices for a new pot: months ahead of the pay cycle's month, then "No date" (0). */
 export const POT_MONTHS_AHEAD = [1, 2, 3, 4, 5, 8] as const;
 
-export function potMonthAt(today: LocalDate, ahead: number): string | null {
-  return ahead > 0 ? addMonthsTo(today.slice(0, 7), ahead) : null;
+/** The month 'YYYY-MM' that is `ahead` months after `from`; null for "No date" (0). */
+export function potMonthAt(from: string, ahead: number): string | null {
+  return ahead > 0 ? addMonthsTo(from, ahead) : null;
 }
 
 /** One step through the choices: earlier from the nearest month goes to "No date". */
@@ -170,4 +177,33 @@ export function stepPotMonth(ahead: number, by: 1 | -1): number {
   const order = [0, ...POT_MONTHS_AHEAD];
   const i = Math.max(0, order.indexOf(ahead));
   return order[Math.min(order.length - 1, Math.max(0, i + by))] ?? 0;
+}
+
+/**
+ * One step on a pot's goal: 500.000₫ up to 10tr, 1tr up to 50tr, 5tr beyond, so a 15tr cushion
+ * does not take thirty taps. Never below 500.000₫.
+ */
+export function stepGoal(goal: Vnd, by: 1 | -1): Vnd {
+  const from = by > 0 ? goal : goal - 1;
+  const step = from >= 50_000_000 ? 5_000_000 : from >= 10_000_000 ? 1_000_000 : 500_000;
+  return Math.max(500_000, goal + by * step);
+}
+
+/** How far ahead a pot's month may be set when editing: three years. */
+const NEEDED_BY_REACH = 36;
+
+/**
+ * One month step on a saved pot's "needed by", from the pay cycle's month: earlier than the cycle's
+ * own month goes to "No date" (null), later from "No date" starts at the next month.
+ */
+export function stepNeededBy(month: string | null, by: 1 | -1, from: string): string | null {
+  if (month === null) return by > 0 ? addMonthsTo(from, 1) : null;
+  const next = addMonthsTo(month, by);
+  if (by < 0) return next < from ? null : next;
+  return next > addMonthsTo(from, NEEDED_BY_REACH) ? month : next;
+}
+
+/** Whether `stepNeededBy` has anywhere further to go in a direction. */
+export function canStepNeededBy(month: string | null, by: 1 | -1, from: string): boolean {
+  return stepNeededBy(month, by, from) !== month;
 }

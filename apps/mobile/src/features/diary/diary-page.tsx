@@ -7,6 +7,7 @@ import { useDesignInsets } from '../../ui/layout/design-insets';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
 import { useHomePageScroll, useHomeScroll } from '../home/home-scroll';
+import { useEntitlement } from '../purchases/purchases-provider';
 import { AskEntry } from './ask-entry';
 import { DayReceipt } from './day-receipt';
 import { MoneyDiaries } from './money-diaries';
@@ -27,6 +28,7 @@ export function DiaryPage({ scrollRef }: { readonly scrollRef: AnimatedRef<Anima
   const onScroll = useHomePageScroll('diary');
   const { y } = useHomeScroll();
   const diary = useDiary();
+  const { max } = useEntitlement();
   const header = useAnimatedStyle(() => ({
     opacity: Math.max(0, Math.min(1, 1 - y.value / 70)),
     transform: [{ translateY: Math.min(y.value, 80) * 0.3 }],
@@ -71,6 +73,9 @@ export function DiaryPage({ scrollRef }: { readonly scrollRef: AnimatedRef<Anima
           onSelect={diary.select}
           onToday={() => router.push('/close')}
           onMissed={(day) => router.push(`/missed-day?day=${day}` as Href)}
+          canPrevious={diary.canPrevious}
+          canNext={diary.canNext}
+          onPage={diary.page}
         />
       </ScrollReveal>
 
@@ -78,14 +83,18 @@ export function DiaryPage({ scrollRef }: { readonly scrollRef: AnimatedRef<Anima
 
       <ScrollReveal>
         {/* Ask 6pm has no screen yet: the entry is drawn and does nothing until it lands. */}
-        <AskEntry onAsk={() => undefined} />
+        <AskEntry
+          onAsk={(q) => router.push(q === undefined ? '/ask' : { pathname: '/ask', params: { q } })}
+        />
       </ScrollReveal>
 
       <ScrollReveal>
         <MoneyDiaries
           shelf={diary.shelf}
           year={diary.year}
+          yearLocked={!max}
           onOpen={(month) => router.push(`/money-diary?month=${month}` as Href)}
+          onYearLocked={() => router.push({ pathname: '/max', params: { from: 'diary' } })}
         />
       </ScrollReveal>
     </Animated.ScrollView>

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import {
   dayDot,
@@ -27,16 +27,22 @@ import type { ZineStat } from './zine-cover';
 import type { ZineDay, ZinePlace, ZineTicket } from './zine-pages';
 
 /** Everything a month's money diary prints, read from the database. Null while it loads. */
-// `month` is 'YYYY-MM', or empty when the link carried none.
+// `month` is 'YYYY-MM'.
 export function useMoneyDiary(month: string, showAmounts: boolean) {
   const snap = useMoney();
   const { t } = useI18n();
   const dates = useDiaryDates();
+  const { plan, closedDays, cycleSpends, potSaved } = snap;
+  const payday = useMemo(() => plan?.payday ?? { kind: 'lastDay' as const }, [plan]);
   const read = useCallback(
-    (store: MoneyStore) => (month ? readMonthDiary(store, month) : Promise.resolve(null)),
-    [month],
+    (store: MoneyStore) => readMonthDiary(store, month, payday),
+    [month, payday],
   );
-  const data = useStoreQuery(read);
+  const watch = useMemo(
+    () => ({ closedDays, cycleSpends, potSaved }),
+    [closedDays, cycleSpends, potSaved],
+  );
+  const data = useStoreQuery(read, watch);
   if (data === null) return null;
 
   const diary = monthDiary({

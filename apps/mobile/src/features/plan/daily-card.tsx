@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import Animated, {
   Easing,
@@ -13,12 +13,13 @@ import {
   dayBarScale,
   formatShort,
   whatIfDaily,
-  type DailyNumber,
+  type DailyNumberInput,
 } from '@6pm/domain';
 import { curves } from '@6pm/theme';
 
 import { usePlanActions } from '../../data/plan-actions';
 import { useI18n } from '../../i18n/i18n';
+import { useRunAction } from '../companion/use-run-action';
 import { haptics } from '../../ui/haptics';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, mono, tabular } from '../../ui/type/fonts';
@@ -48,35 +49,45 @@ function DayBar({ fraction, colour }: { readonly fraction: number; readonly colo
  * letting go commits the new amount, which moves every number on the page.
  */
 export function DailyCard({
-  day,
+  input,
   today,
   payday,
   daysLeft,
   committed,
+  active,
   colours,
   format,
 }: {
-  readonly day: DailyNumber;
+  /** What the committed daily number is worked out from; the preview changes only Future you. */
+  readonly input: DailyNumberInput;
   readonly today: string;
   readonly payday: string;
   readonly daysLeft: number;
   /** Future you's monthly amount in the plan. */
   readonly committed: number;
+  /** Whether the Plan tab is the one on show: each time it is shown the note starts afresh. */
+  readonly active: boolean;
   readonly colours: PlanColours;
   readonly format: PlanFormat;
 }) {
   const { palette } = useTheme();
   const { t } = useI18n();
   const actions = usePlanActions();
+  const run = useRunAction();
   const [candidate, setCandidate] = useState(committed);
-  // The note compares against the amount the page opened with, so the trade-off stays readable
-  // after the new amount is committed.
-  const [baseline] = useState(committed);
+  // The note compares against the amount the tab was shown with, so the trade-off stays readable
+  // after the new amount is committed, and starts afresh the next time the tab is shown.
+  const [baseline, setBaseline] = useState(committed);
+  const wasActive = useRef(active);
+  useEffect(() => {
+    if (active && !wasActive.current) setBaseline(committed);
+    wasActive.current = active;
+  }, [active, committed]);
   useEffect(() => setCandidate(committed), [committed]);
 
-  const daily = whatIfDaily(day.free, committed, candidate, daysLeft);
-  const change = daily - whatIfDaily(day.free, committed, baseline, daysLeft);
-  const scale = dayBarScale(day.free, committed, daysLeft);
+  const daily = whatIfDaily(input, candidate);
+  const change = daily - whatIfDaily(input, baseline);
+  const scale = dayBarScale(input);
   const fraction = dayBarFraction(daily, scale);
   const delta = baseline - candidate;
   const note =
@@ -141,7 +152,9 @@ export function DailyCard({
         }}
         onCommit={(v) => {
           setCandidate(v);
-          void actions.setFutureYou(v);
+          void run(() => actions.setFutureYou(v)).then((saved) => {
+            if (!saved) setCandidate(committed);
+          });
         }}
       />
       <Text style={{ ...body(13), lineHeight: 18.2, minHeight: 18, color: palette.inkSoft }}>

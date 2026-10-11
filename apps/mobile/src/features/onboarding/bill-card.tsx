@@ -7,8 +7,9 @@ import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
 import { body, display } from '../../ui/type/fonts';
 import { AmountWheels, CardTop, Pill, Question } from './bill-card-parts';
+import { DayOfMonthWheel } from './money-in-controls';
 import { billName, cardCopy, optionLabel } from './bill-copy';
-import type { BillAnswers, DeckItem } from './bill-deck';
+import { DEFAULT_DUE_DAY, type BillAnswers, type DeckItem } from './bill-deck';
 import { popEntering } from './onboarding-motion';
 import type { OnboardingPalette } from './onboarding-palette';
 import { Grid3 } from './step-parts';
@@ -200,8 +201,11 @@ export function BillCardFace({
 
   const name = billName(i18n, item.card, item.option);
   const value = answers.amounts[item.key] ?? 0;
+  const dueDay = answers.dueDays[item.key] ?? DEFAULT_DUE_DAY;
   const setValue = (next: number) =>
     onAnswers({ ...answers, amounts: { ...answers.amounts, [item.key]: next } });
+  const setDueDay = (next: number) =>
+    onAnswers({ ...answers, dueDays: { ...answers.dueDays, [item.key]: next } });
   return (
     <View style={face}>
       <CardTop item={item} pal={pal} />
@@ -210,7 +214,22 @@ export function BillCardFace({
         sub={t('onboarding.bills.amountSub')}
         pal={pal}
       />
-      <AmountWheels value={value} pal={pal} onValue={setValue} />
+      <View
+        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+      >
+        <AmountWheels value={value} ink={pal.ink} band={pal.chipBg} onValue={setValue} />
+        <View style={{ alignItems: 'center', gap: 4 }}>
+          <DayOfMonthWheel
+            day={dueDay}
+            onDay={setDueDay}
+            label={t('onboarding.bills.dueDay')}
+            colours={pal}
+          />
+          <Text style={{ ...body(11.5, 600), color: pal.inkSoft }}>
+            {t('onboarding.bills.dueDay')}
+          </Text>
+        </View>
+      </View>
       <View style={{ flexDirection: 'row', gap: 6 }}>
         <Pill
           label={t('onboarding.bills.later')}

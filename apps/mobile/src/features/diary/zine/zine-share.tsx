@@ -28,7 +28,7 @@ function AmountsSwitch({ on, onToggle }: { readonly on: boolean; readonly onTogg
               width: 27,
               height: 27,
               borderRadius: 13.5,
-              backgroundColor: '#fff',
+              backgroundColor: zineInk.knob,
               boxShadow: '0 2px 6px rgba(0,0,0,.22)',
             },
             knob,

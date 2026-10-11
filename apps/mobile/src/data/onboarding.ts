@@ -1,6 +1,6 @@
 import { randomUUID } from 'expo-crypto';
 
-import type { LocalDate, Payday } from '@6pm/domain';
+import { billDueIn, payCycleOn, type LocalDate, type Payday } from '@6pm/domain';
 import { t, type Language } from '@6pm/i18n';
 
 import type { MoneyStore } from './money-store';
@@ -25,7 +25,7 @@ export interface OnboardingBill {
   readonly hue: number;
   /** 0 when the user chose "Add later". */
   readonly amount: number;
-  /** Day of the month it is due; onboarding does not ask, so the 1st. */
+  /** Day of the month it is due; the 1st when left out. */
   readonly dueDay?: number;
 }
 
@@ -80,17 +80,21 @@ export async function completeOnboarding(
       }
     }
 
+    // A bill whose day in this pay cycle has already gone by was paid before 6pm started
+    // counting: it is not shown overdue.
+    const cycle = payCycleOn(today, answers.payday);
     const bills = await tables.bills.all();
     let sort = bills.reduce((max, b) => Math.max(max, b.sort + 1), 0);
     for (const bill of answers.bills) {
+      const dueDay = bill.dueDay ?? FIRST_DUE_DAY;
       await tables.bills.put({
         id: randomUUID(),
         name: bill.name,
         icon: bill.icon,
         hue: bill.hue,
         amount: Math.max(0, Math.round(bill.amount)),
-        dueDay: bill.dueDay ?? FIRST_DUE_DAY,
-        paidCycle: null,
+        dueDay,
+        paidCycle: billDueIn(cycle, dueDay) < today ? cycle.start : null,
         sort: sort++,
         archivedAt: null,
       });

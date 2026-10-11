@@ -3,8 +3,12 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   calendarCells,
   diaryShelf,
+  floorToThousand,
   formatShort,
+  monthEnd,
   monthOf,
+  previousMonth,
+  nextMonthStart,
   startOfWeek,
   underCount,
   weekRecap,
@@ -13,16 +17,19 @@ import {
 
 import {
   notDailyOf,
+  readClosedBetween,
   readDayReceipt,
   readDiary,
   toDiarySpend,
   useStoreQuery,
   type DiaryData,
 } from '../../data/diary-queries';
-import { useDay, useMoney } from '../../data/money-provider';
+import { useDay, useMoneySelector } from '../../data/money-provider';
+import type { MoneySnapshot } from '../../data/money-store';
 import type { MoneyStore } from '../../data/money-store';
 import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
+import { useDiaryRequest } from '../today/diary-request';
 import { useDiaryDates } from './diary-dates';
 import type { DayReceiptView } from './day-receipt';
 
@@ -34,28 +41,86 @@ function latestFiled(closed: readonly ClosedDayRow[]): ClosedDayRow | null {
   );
 }
 
+const NO_DAYS: readonly ClosedDayRow[] = [];
+
+/** The parts of the snapshot the Diary reads: a write to anything else leaves it alone. */
+const diaryInputs = ({ today, closedDays, cycleSpends, categories }: MoneySnapshot) => ({
+  today,
+  closedDays,
+  cycleSpends,
+  categories,
+});
+const sameInputs = (a: ReturnType<typeof diaryInputs>, b: ReturnType<typeof diaryInputs>) =>
+  a.today === b.today &&
+  a.closedDays === b.closedDays &&
+  a.cycleSpends === b.cycleSpends &&
+  a.categories === b.categories;
+
 /**
  * Everything the Diary tab shows, from the database through the domain maths. Closing a day (here
- * or late, from the missed-day sheet) selects it, as the prototype does.
+ * or late, from the missed-day sheet) selects it, as the prototype does. The calendar opens on
+ * this month and pages back through the months 6pm has days for.
+ *
+ * The snapshot already holds this month's and this week's closed days; the queries below re-run
+ * only when a closed day or a spend changed, not for every write the store publishes.
  */
 export function useDiary() {
-  const snap = useMoney();
   const day = useDay();
+  const { today, closedDays, cycleSpends, categories } = useMoneySelector(diaryInputs, sameInputs);
   const { t } = useI18n();
   const dates = useDiaryDates();
-  const { today } = snap;
-  const month = monthOf(today);
+  const current = monthOf(today);
   const monday = startOfWeek(today);
+  const [paged, setPaged] = useState<string | null>(null);
+  // A month the clock has moved past (or one that is today's again) falls back to this month.
+  const month = paged !== null && paged < current ? paged : current;
+  const watch = useMemo(() => ({ closedDays, cycleSpends }), [closedDays, cycleSpends]);
 
   const readPage = useCallback(
-    (store: MoneyStore): Promise<DiaryData> => readDiary(store, month, { from: monday, to: today }),
-    [month, monday, today],
+    (store: MoneyStore): Promise<DiaryData> => readDiary(store, { from: monday, to: today }),
+    [monday, today],
   );
-  const data = useStoreQuery(readPage);
+  const data = useStoreQuery(readPage, watch);
 
-  const monthClosed = useMemo(() => data?.monthClosed ?? [], [data]);
+  const readEarlier = useCallback(
+    (store: MoneyStore) =>
+      month === current
+        ? Promise.resolve(null)
+        : readClosedBetween(store, `${month}-01`, monthEnd(month)),
+    [month, current],
+  );
+  const earlier = useStoreQuery(readEarlier, watch);
+  const monthClosed = useMemo(
+    () =>
+      month === current ? closedDays.filter((d) => monthOf(d.day) === month) : (earlier ?? NO_DAYS),
+    [month, current, closedDays, earlier],
+  );
+  const weekClosed = useMemo(
+    () => closedDays.filter((d) => d.day >= monday && d.day <= today),
+    [closedDays, monday, today],
+  );
+  const firstMonth = data?.since ? monthOf(data.since) : null;
+  const page = useCallback(
+    (by: 1 | -1) => {
+      haptics.tick();
+      setPaged((from) => {
+        const at = from !== null && from < current ? from : current;
+        const next = by === -1 ? previousMonth(at) : monthOf(nextMonthStart(at));
+        return next < current ? next : null;
+      });
+    },
+    [current],
+  );
   const latest = latestFiled(monthClosed);
   const [pick, setPick] = useState<{ readonly day: string; readonly after: string } | null>(null);
+  // Today's week strip and closed card ask for a day's receipt; each request is taken up once.
+  const request = useDiaryRequest();
+  const [taken, setTaken] = useState(request?.token ?? 0);
+  if (request !== null && request.token !== taken) {
+    setTaken(request.token);
+    setPaged(null);
+    setPick({ day: request.day, after: latest?.closedAt ?? '' });
+  }
   const selected =
     pick !== null && pick.after === latest?.closedAt && monthClosed.some((d) => d.day === pick.day)
       ? pick.day
@@ -68,24 +133,25 @@ export function useDiary() {
     [latest],
   );
 
+  const notDaily = useMemo(() => notDailyOf({ categories }), [categories]);
   const readReceipt = useCallback(
-    (store: MoneyStore) => (selected ? readDayReceipt(store, selected) : Promise.resolve(null)),
-    [selected],
+    (store: MoneyStore) =>
+      selected ? readDayReceipt(store, selected, notDaily) : Promise.resolve(null),
+    [selected, notDaily],
   );
-  const receiptData = useStoreQuery(readReceipt);
+  const receiptData = useStoreQuery(readReceipt, watch);
 
   const line = day?.line ?? 0;
-  const notDaily = useMemo(() => notDailyOf(snap), [snap]);
   const recap = useMemo(
     () =>
       weekRecap({
         today,
         line,
-        closed: data?.weekClosed ?? [],
+        closed: weekClosed,
         spends: (data?.weekSpends ?? []).map(toDiarySpend),
         notDaily,
       }),
-    [today, line, data, notDaily],
+    [today, line, data, weekClosed, notDaily],
   );
 
   const row = monthClosed.find((d) => d.day === receiptData?.day);
@@ -116,11 +182,16 @@ export function useDiary() {
       : null;
 
   const under = underCount(monthClosed);
+  // Earlier months show the line their own days kept, not today's.
+  const monthLine =
+    month === current || monthClosed.length === 0
+      ? line
+      : floorToThousand(monthClosed.reduce((sum, d) => sum + d.line, 0) / monthClosed.length);
   return {
     ready: data !== null,
     kicker: t('diary.kicker', {
-      closed: monthClosed.length,
-      month: dates.month(month),
+      closed: closedDays.filter((d) => monthOf(d.day) === current).length,
+      month: dates.month(current),
       all: data?.allClosed ?? 0,
     }),
     recap,
@@ -133,12 +204,15 @@ export function useDiary() {
         : t('diary.cal.summary', {
             closed: monthClosed.length,
             under,
-            line: formatShort(line),
+            line: formatShort(monthLine),
           }),
     cells: calendarCells({ month, today, closed: monthClosed, since: data?.since ?? null }),
     selected,
     select,
     receipt,
+    canPrevious: firstMonth !== null && month > firstMonth,
+    canNext: month < current,
+    page,
     shelf: diaryShelf(today, data?.months ?? []),
     year: today.slice(0, 4),
   };

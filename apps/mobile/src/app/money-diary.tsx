@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
+import { monthOf } from '@6pm/domain';
+
+import { useMoney } from '../data/money-provider';
 import { coverTint, zineInk } from '../features/diary/diary-colours';
 import { ZineCover } from '../features/diary/zine/zine-cover';
 import { ZineGrain } from '../features/diary/zine/zine-grain';
@@ -26,7 +29,9 @@ const MONTH = /^\d{4}-\d{2}$/;
 export default function MoneyDiary() {
   const router = useRouter();
   const params = useLocalSearchParams<{ month?: string }>();
-  const month = params.month && MONTH.test(params.month) ? params.month : '';
+  const { today } = useMoney();
+  // A link without a month (the Max welcome's button) opens this month's diary.
+  const month = params.month && MONTH.test(params.month) ? params.month : monthOf(today);
   const { serious } = useTheme();
   const { t } = useI18n();
   const [showAmounts, setShowAmounts] = useState(false);

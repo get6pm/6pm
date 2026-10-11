@@ -69,3 +69,13 @@ export function joinedShare(cycle: PayCycle, joinedOn: LocalDate | null): number
   const covered = diffDays(cycle.payday, joinedOn) + 1;
   return Math.min(1, Math.max(0, covered / total));
 }
+
+/**
+ * The calendar month ('YYYY-MM') most of the cycle's days fall in. It is the same on every day of
+ * the cycle, so anything counted in months (a pot's months left) holds still until payday: 30 Sep
+ * to 31 Oct is October's cycle, and so is 25 Sep to 25 Oct.
+ */
+export function cycleMonth(cycle: PayCycle): string {
+  const middle = addDays(cycle.start, Math.floor(diffDays(cycle.payday, cycle.start) / 2));
+  return middle.slice(0, 7);
+}

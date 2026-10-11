@@ -94,7 +94,7 @@ function Dot({
 
 /**
  * How 6pm catches spending: swipeable cards, each with a small live picture. Scan to pay works
- * already; the others are set up later from Settings, so they say so instead of pretending.
+ * already; the others are not set up from the app yet, so they say that instead of pretending.
  */
 export function StepCatching({
   pal,

@@ -63,7 +63,8 @@ export const viOnboarding: { readonly [Key in keyof typeof enOnboarding]: Entry 
   'onboarding.bills.next': 'Tiếp · đã chọn {count}',
   'onboarding.bills.pickOrNone': 'Chọn, hoặc chạm Không có',
   'onboarding.bills.amountQ': '{name} hết bao nhiêu?',
-  'onboarding.bills.amountSub': 'Mỗi tháng. Ước chừng là được.',
+  'onboarding.bills.amountSub': 'Mỗi tháng, và ngày đến hạn. Ước chừng là được.',
+  'onboarding.bills.dueDay': 'Ngày đến hạn',
   'onboarding.bills.later': 'Để sau',
   'onboarding.bills.save': 'Lưu {amount}',
   'onboarding.bills.spin': 'Xoay để chỉnh',
@@ -98,7 +99,7 @@ export const viOnboarding: { readonly [Key in keyof typeof enOnboarding]: Entry 
 
   'onboarding.catch.title': '6pm bắt khoản chi thế nào',
   'onboarding.catch.sub':
-    'Quét QR là xài được liền. Mấy cách còn lại mỗi cái mất vài giây, cài bây giờ hoặc để sau trong Cài đặt.',
+    'Quét QR là xài được liền. Mấy cách còn lại sắp có trong Cài đặt, mỗi cái mất vài giây.',
   'onboarding.catch.scan.title': 'Quét để trả',
   'onboarding.catch.scan.body':
     'Quét mã VietQR trong 6pm rồi trả trong app ngân hàng. 6pm tự ghi số tiền.',
@@ -117,7 +118,7 @@ export const viOnboarding: { readonly [Key in keyof typeof enOnboarding]: Entry 
   'onboarding.catch.lock.body':
     'Xem tiêu được bao nhiêu mà không cần mở khoá, quét QR chỉ một nút.',
   'onboarding.catch.lock.safe': 'Hôm nay',
-  'onboarding.catch.later': 'Để sau cài trong Cài đặt',
+  'onboarding.catch.later': 'Sắp có trong Cài đặt',
 
   'onboarding.close.title': 'Mấy giờ thì chốt ngày?',
   'onboarding.close.sub': 'Chọn giờ bạn hay về tới nhà. Mỗi ngày mình nhắc đúng một lần.',

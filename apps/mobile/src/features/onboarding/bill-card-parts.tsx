@@ -113,19 +113,22 @@ export function Question({
 
 export function AmountWheels({
   value,
-  pal,
+  ink,
+  band,
   onValue,
 }: {
   readonly value: number;
-  readonly pal: OnboardingPalette;
+  readonly ink: string;
+  /** The soft band behind the chosen row. */
+  readonly band: string;
   readonly onValue: (value: number) => void;
 }) {
   const { t } = useI18n();
   const { millions, hundreds, tens } = billDigits(value);
-  const number = { ...display(30, 600, -0.03), color: pal.ink };
+  const number = { ...display(30, 600, -0.03), color: ink };
   return (
     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-      <WheelBand height={44} radius={14} color={pal.chipBg} />
+      <WheelBand height={44} radius={14} color={band} />
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Wheel
           items={BILL_MILLIONS}
@@ -134,7 +137,7 @@ export function AmountWheels({
           size={30}
           padX={0}
           align="flex-end"
-          ink={pal.ink}
+          ink={ink}
           width={54}
           label={t('onboarding.bills.millions')}
         />
@@ -145,7 +148,7 @@ export function AmountWheels({
           onChange={(k) => onValue(billOf(millions, k, tens))}
           size={30}
           padX={0}
-          ink={pal.ink}
+          ink={ink}
           width={19}
           label={t('onboarding.bills.hundreds')}
         />
@@ -155,7 +158,7 @@ export function AmountWheels({
           onChange={(k) => onValue(billOf(millions, hundreds, k))}
           size={30}
           padX={0}
-          ink={pal.ink}
+          ink={ink}
           width={19}
           label={t('onboarding.bills.tens')}
         />
@@ -163,7 +166,7 @@ export function AmountWheels({
         <Text
           style={{
             ...display(15, 600),
-            color: pal.ink,
+            color: ink,
             marginLeft: 4,
             opacity: 0.55,
             alignSelf: 'flex-start',

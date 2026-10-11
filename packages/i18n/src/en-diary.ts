@@ -91,4 +91,6 @@ export const enDiary = {
   'diary.zine.shareFooter': 'CLOSE YOUR DAY · 6PM',
   'diary.zine.showAmounts': 'Show amounts',
   'diary.zine.showAmountsSub': 'Off by default. Money is personal.',
+  'diary.cal.previous': 'Earlier month',
+  'diary.cal.next': 'Later month',
 } as const;

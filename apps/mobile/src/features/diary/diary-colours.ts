@@ -1,29 +1,8 @@
-import { oklchSrgbHex } from '@6pm/theme';
+import { oklchSrgbHex, paperInk, planInk, zineInk } from '@6pm/theme';
 
-/**
- * The Diary's fixed inks. Receipts, stamps and zines are paper, so they keep the same colours in
- * every look and at every hour, as the prototype draws them.
- */
-export const paper = {
-  sheet: '#fbf7ef',
-  ink: '#2b2530',
-  soft: 'rgba(43,37,48,.5)',
-  rule: 'rgba(43,37,48,.35)',
-  hand: '#4a3550',
-  stamp: '#c0443a',
-} as const;
-
-export const zineInk = {
-  ink: '#2a1424',
-  light: '#fbf4ec',
-  stamp: '#b5433a',
-  track: 'rgba(42,20,36,.12)',
-  grabber: 'rgba(42,20,36,.3)',
-  noteBg: oklchSrgbHex(0.94, 0.08, 95),
-  noteInk: '#3a2a40',
-  switchOn: oklchSrgbHex(0.62, 0.15, 150),
-  switchOff: 'rgba(42,20,36,.2)',
-} as const;
+/** The Diary's fixed inks live in the theme package; the Diary reads them under its own names. */
+export const paper = paperInk;
+export { zineInk };
 
 /** The calendar's dots: under the line or over it. */
 export const dots = {
@@ -36,7 +15,7 @@ export const dots = {
 
 /** The recap story's highlighted words. */
 export function recapAccent(dark: boolean): string {
-  return dark ? '#ffbe8a' : '#b8622a';
+  return dark ? planInk.recapWord.dark : planInk.recapWord.light;
 }
 
 /** Lines and ghost fills that sit on the page's ink. */

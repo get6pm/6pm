@@ -1,6 +1,7 @@
 import { Text, View } from 'react-native';
 
 import { formatShort, type ShelfDiary } from '@6pm/domain';
+import { yearBookInk } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
@@ -9,12 +10,6 @@ import { useTheme } from '../../ui/theme/theme';
 import { body, display, mono } from '../../ui/type/fonts';
 import { coverTint, inkWash, zineInk } from './diary-colours';
 import { useDiaryDates } from './diary-dates';
-
-const YEAR_BG = '#1f1b26';
-const YEAR_FG = '#f6efe6';
-const YEAR_GOLD = '#e6c27a';
-const YEAR_SOFT = 'rgba(246,239,230,.65)';
-const YEAR_BADGE_FG = '#16131c';
 
 /** One diary on the shelf: a bound cover with a spine, or this month's dashed outline. */
 function DiaryCover({
@@ -109,32 +104,23 @@ function DiaryCover({
     justifyContent: 'space-between',
     overflow: 'hidden',
   } as const;
-  if (open) {
-    return (
-      <View
-        style={[
-          frame,
-          {
-            borderWidth: 1.5,
-            borderStyle: 'dashed',
-            borderColor: inkWash(palette.dark).shelfDashed,
-          },
-        ]}
-      >
-        {face}
-      </View>
-    );
-  }
+  // The month still being written opens too, as the diary so far.
   return (
     <PressScale
       accessibilityRole="button"
       onPress={onOpen}
       style={[
         frame,
-        {
-          backgroundColor: coverTint(diary.month),
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.45), 0 12px 24px rgba(20,8,30,.28)',
-        },
+        open
+          ? {
+              borderWidth: 1.5,
+              borderStyle: 'dashed',
+              borderColor: inkWash(palette.dark).shelfDashed,
+            }
+          : {
+              backgroundColor: coverTint(diary.month),
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,.45), 0 12px 24px rgba(20,8,30,.28)',
+            },
       ]}
     >
       {face}
@@ -142,18 +128,33 @@ function DiaryCover({
   );
 }
 
-/** The year book: every diary bound into one. A Max feature, shown locked. */
-function YearBook({ year }: { readonly year: string }) {
+/**
+ * The year book: every diary bound into one. A Max feature: locked it opens the Max sheet; for a
+ * member the lock is gone and the book waits to be bound.
+ */
+function YearBook({
+  year,
+  locked,
+  onLocked,
+}: {
+  readonly year: string;
+  readonly locked: boolean;
+  readonly onLocked: () => void;
+}) {
   const { t } = useI18n();
   return (
-    <View
+    <PressScale
+      accessibilityRole={locked ? 'button' : 'text'}
+      disabled={!locked}
+      scaleTo={0.98}
+      onPress={onLocked}
       style={{
         height: 86,
         borderTopLeftRadius: 4,
         borderBottomLeftRadius: 4,
         borderTopRightRadius: 18,
         borderBottomRightRadius: 18,
-        backgroundColor: YEAR_BG,
+        backgroundColor: yearBookInk.cloth,
         paddingLeft: 22,
         paddingRight: 14,
         flexDirection: 'row',
@@ -174,29 +175,37 @@ function YearBook({ year }: { readonly year: string }) {
             'linear-gradient(90deg, rgba(0,0,0,.4), rgba(255,255,255,.05))',
         }}
       />
-      <Text style={{ ...display(34, 500, -0.03), lineHeight: 34, color: YEAR_GOLD }}>{year}</Text>
+      <Text style={{ ...display(34, 500, -0.03), lineHeight: 34, color: yearBookInk.gold }}>
+        {year}
+      </Text>
       <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
-        <Text style={{ ...body(15.5, 650), color: YEAR_FG }}>{t('diary.year.title')}</Text>
-        <Text style={{ ...body(12.5), lineHeight: 16.9, color: YEAR_SOFT }}>
+        <Text style={{ ...body(15.5, 650), color: yearBookInk.light }}>
+          {t('diary.year.title')}
+        </Text>
+        <Text style={{ ...body(12.5), lineHeight: 16.9, color: yearBookInk.soft }}>
           {t('diary.year.sub')}
         </Text>
       </View>
-      <View
-        style={{
-          height: 20,
-          paddingLeft: 5,
-          paddingRight: 7,
-          borderRadius: 6,
-          backgroundColor: YEAR_FG,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 3,
-        }}
-      >
-        <Symbol name="lock" size={12} fill={1} color={YEAR_BADGE_FG} />
-        <Text style={{ ...body(10, 800, 0.1), color: YEAR_BADGE_FG }}>{t('diary.year.max')}</Text>
-      </View>
-    </View>
+      {locked ? (
+        <View
+          style={{
+            height: 20,
+            paddingLeft: 5,
+            paddingRight: 7,
+            borderRadius: 6,
+            backgroundColor: yearBookInk.light,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 3,
+          }}
+        >
+          <Symbol name="lock" size={12} fill={1} color={yearBookInk.badgeInk} />
+          <Text style={{ ...body(10, 800, 0.1), color: yearBookInk.badgeInk }}>
+            {t('diary.year.max')}
+          </Text>
+        </View>
+      ) : null}
+    </PressScale>
   );
 }
 
@@ -204,11 +213,16 @@ function YearBook({ year }: { readonly year: string }) {
 export function MoneyDiaries({
   shelf,
   year,
+  yearLocked,
   onOpen,
+  onYearLocked,
 }: {
   readonly shelf: readonly ShelfDiary[];
   readonly year: string;
+  /** The year book is a Max feature: true until the customer holds Max. */
+  readonly yearLocked: boolean;
   readonly onOpen: (month: string) => void;
+  readonly onYearLocked: () => void;
 }) {
   const { palette } = useTheme();
   const { t } = useI18n();
@@ -240,7 +254,7 @@ export function MoneyDiaries({
           ))}
         </View>
       ))}
-      <YearBook year={year} />
+      <YearBook year={year} locked={yearLocked} onLocked={onYearLocked} />
     </View>
   );
 }

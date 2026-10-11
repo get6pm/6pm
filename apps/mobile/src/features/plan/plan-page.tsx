@@ -1,16 +1,26 @@
+import { useRouter } from 'expo-router';
 import type { Ref } from 'react';
 import { Text, View } from 'react-native';
-import Animated, { useAnimatedStyle, type AnimatedRef } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useScrollOffset,
+  type AnimatedRef,
+  type SharedValue,
+} from 'react-native-reanimated';
 
-import { addDays, formatShort, type DailyNumber } from '@6pm/domain';
+import { formatShort, type DailyNumber } from '@6pm/domain';
 
-import { dayOf, type MoneySnapshot } from '../../data/money-store';
+import { dailyInputOf, dayOf, type MoneySnapshot } from '../../data/money-store';
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { haptics } from '../../ui/haptics';
+import { Symbol } from '../../ui/icons/symbol';
 import { useDesignInsets } from '../../ui/layout/design-insets';
+import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
-import { useHomePageScroll, useHomeScroll } from '../home/home-scroll';
+import { useHomePageScroll } from '../home/home-scroll';
+import { useEntitlement } from '../purchases/purchases-provider';
 import { BillsCard } from './bills-section';
 import { DailyCard } from './daily-card';
 import { FutureYouCard } from './future-you-section';
@@ -19,7 +29,8 @@ import { OccasionsStrip } from './occasions-section';
 import { planColours } from './plan-colours';
 import { usePlanFormat, type PlanFormat } from './plan-format';
 import { SectionHeader } from './plan-parts';
-import { billViews, goalViews, occasionViews, riverOf } from './plan-view';
+import { planRoutes } from './plan-routes';
+import { billViews, goalViews, newPotLocked, occasionViews, riverOf } from './plan-view';
 import { Reveal } from './reveal';
 import { useCycleTopUps } from './use-cycle-top-ups';
 import { usePlanSections, type PlanSectionsHandle } from './use-plan-sections';
@@ -33,15 +44,24 @@ export interface PlanPageProps {
   readonly sectionsRef?: Ref<PlanSectionsHandle>;
   /** The section under the compact bar, reported when it changes. */
   readonly onSectionChange?: (index: number) => void;
+  /** Whether the Plan tab is the one on show; true when the shell does not say. */
+  readonly active?: boolean;
 }
 
 /** Plan: the month's money river, the daily number, bills, Future you and occasions. */
-export function PlanPage({ scrollRef, sectionsRef, onSectionChange }: PlanPageProps) {
+export function PlanPage({
+  scrollRef,
+  sectionsRef,
+  onSectionChange,
+  active = true,
+}: PlanPageProps) {
   const { palette } = useTheme();
   const { top } = useDesignInsets();
   const snap = useMoney();
   const day = dayOf(snap);
-  const { y } = useHomeScroll();
+  // The page's own scroll offset, not the shared one the other tabs write: scrolling Today or the
+  // Diary behind a hidden Plan must not run its section tracking or re-render the shell.
+  const y = useScrollOffset(scrollRef);
   const onScroll = useHomePageScroll('plan');
   const sections = usePlanSections({
     y,
@@ -72,6 +92,8 @@ export function PlanPage({ scrollRef, sectionsRef, onSectionChange }: PlanPagePr
         <PlanContent
           snap={snap}
           day={day}
+          y={y}
+          active={active}
           sections={sections}
           ink={palette.ink}
           inkSoft={palette.inkSoft}
@@ -84,19 +106,24 @@ export function PlanPage({ scrollRef, sectionsRef, onSectionChange }: PlanPagePr
 function PlanContent({
   snap,
   day,
+  y,
+  active,
   sections,
   ink,
   inkSoft,
 }: {
   readonly snap: MoneySnapshot;
   readonly day: DailyNumber;
+  readonly y: SharedValue<number>;
+  readonly active: boolean;
   readonly sections: ReturnType<typeof usePlanSections>;
   readonly ink: string;
   readonly inkSoft: string;
 }) {
   const { palette } = useTheme();
   const { t } = useI18n();
-  const { y } = useHomeScroll();
+  const router = useRouter();
+  const { max } = useEntitlement();
   const format = usePlanFormat(snap.today);
   const colours = planColours(palette);
   const topUps = useCycleTopUps(snap);
@@ -106,7 +133,8 @@ function PlanContent({
     transform: [{ translateY: Math.min(y.value, 80) * 0.3 }],
   }));
   const plan = snap.plan;
-  if (!plan) return null;
+  const input = dailyInputOf(snap);
+  if (!plan || !input) return null;
   const { cycle, today } = snap;
   const river = riverOf(snap, day, topUps);
   const bills = billViews(snap);
@@ -120,9 +148,32 @@ function PlanContent({
         <Text style={{ ...body(13, 600, 0.06), textTransform: 'uppercase', color: inkSoft }}>
           {t('plan.kicker', { month: format.month(today), payday: format.dayMonth(cycle.payday) })}
         </Text>
-        <Text accessibilityRole="header" style={{ ...body(34, 700, -0.03), color: ink }}>
-          {t('tabs.plan')}
-        </Text>
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+        >
+          <Text accessibilityRole="header" style={{ ...body(34, 700, -0.03), color: ink }}>
+            {t('tabs.plan')}
+          </Text>
+          <PressScale
+            accessibilityRole="button"
+            accessibilityLabel={t('plan.month.edit')}
+            hitSlop={6}
+            onPress={() => {
+              haptics.tap();
+              router.push(planRoutes.month);
+            }}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 18,
+              backgroundColor: palette.chipBg,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Symbol name="edit" size={19} color={ink} />
+          </PressScale>
+        </View>
         <Text style={{ ...body(15), lineHeight: 21.75, paddingTop: 8, color: inkSoft }}>
           {t(plan.futureYou > 0 ? 'plan.lede' : 'plan.ledeNoFuture', {
             free: formatShort(day.free),
@@ -142,11 +193,12 @@ function PlanContent({
 
       <Reveal {...reveal}>
         <DailyCard
-          day={day}
+          input={input}
           today={today}
           payday={cycle.payday}
           daysLeft={cycle.daysLeft}
           committed={plan.futureYou}
+          active={active}
           colours={colours}
           format={format}
         />
@@ -186,7 +238,12 @@ function PlanContent({
             amount: formatShort(occasions.reduce((sum, o) => sum + o.saved, 0)),
           })}
         />
-        <OccasionsStrip occasions={occasions} colours={colours} format={format} />
+        <OccasionsStrip
+          occasions={occasions}
+          locked={newPotLocked(snap.pots, max)}
+          colours={colours}
+          format={format}
+        />
       </Reveal>
     </>
   );
@@ -207,6 +264,7 @@ function riverCopy(
       bills: t('plan.river.bills'),
       futureYou: t('plan.river.futureYou'),
       occasions: t('plan.river.occasions'),
+      before: t('plan.river.before'),
       spent: t('plan.river.spent'),
       free: t('plan.river.free'),
     },
@@ -220,8 +278,9 @@ function riverCopy(
             })
           : t('plan.river.futureNote'),
       occasions: t('plan.river.occasionsNote'),
+      before: t('plan.river.beforeNote'),
       spent: t('plan.river.spentNote', {
-        from: format.dayFrom(addDays(snap.cycle.start, 1), snap.today),
+        from: format.dayFrom(snap.cycle.start, snap.today),
         to: format.dayLongMonth(snap.today),
       }),
       free: t('plan.river.freeNote'),

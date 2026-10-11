@@ -58,8 +58,8 @@ export function PotIconPicker({
   draft,
   onChange,
 }: {
-  readonly draft: PotDraft;
-  readonly onChange: (patch: Partial<PotDraft>) => void;
+  readonly draft: Pick<PotDraft, 'icon' | 'hue'>;
+  readonly onChange: (patch: Partial<Pick<PotDraft, 'icon' | 'hue'>>) => void;
 }) {
   const { palette } = useTheme();
   const tile = categoryTile(draft.hue);

@@ -86,4 +86,6 @@ export const viDiary: { readonly [Key in keyof typeof enDiary]: Entry } = {
   'diary.zine.shareFooter': 'CHỐT NGÀY · 6PM',
   'diary.zine.showAmounts': 'Hiện số tiền',
   'diary.zine.showAmountsSub': 'Mặc định tắt. Tiền bạc là chuyện riêng.',
+  'diary.cal.previous': 'Tháng trước',
+  'diary.cal.next': 'Tháng sau',
 };

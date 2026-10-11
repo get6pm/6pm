@@ -16,7 +16,7 @@ export function drawRays(canvas: SkCanvas, fr: Frame): void {
   const { s, cx, cy, rx, ry, lw, el, mood } = fr;
   const pulse = mood === 'happy' ? 1.25 + Math.sin(el * 8) * 0.12 : mood === 'sleepy' ? 0.7 : 1;
   const rays = fr.mx ? MAX_RAYS : BASE_RAYS;
-  const line = stroke(INK, lw * 1.05);
+  const line = stroke(fr, INK, lw * 1.05);
   for (let n = 0; n < rays.length; n++) {
     const a = -Math.PI / 2 + (rays[n] ?? 0) + Math.sin(el * 1.8 + n) * 0.05;
     const mid = n === (rays.length - 1) / 2;

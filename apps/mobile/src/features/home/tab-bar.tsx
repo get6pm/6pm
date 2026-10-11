@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { memo, useEffect, useState, type ReactNode } from 'react';
 import { Pressable, Text, View, type LayoutChangeEvent } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -27,7 +27,7 @@ const PILL_MS = 400;
  * or slide along the bar to scrub between tabs with a tick per tab. It condenses from 64 to 52 pt
  * while scrolling down and hides its labels.
  */
-export function TabBar({
+export const TabBar = memo(function TabBar({
   active,
   onSelect,
   onReselect,
@@ -172,7 +172,7 @@ export function TabBar({
       </Animated.View>
     </GestureDetector>
   );
-}
+});
 
 /** The bar's container: 16 pt from each side, 26 pt above the home indicator line. */
 export function TabBarRow({ children }: { readonly children: ReactNode }) {

@@ -1,6 +1,6 @@
-import { Skia, type SkCanvas, type SkFont } from '@shopify/react-native-skia';
+import { type SkCanvas, type SkFont } from '@shopify/react-native-skia';
 
-import { INK, fill, stroke, type Frame } from './draw-kit';
+import { INK, fill, pathBuilder, stroke, type Frame } from './draw-kit';
 import { GOLD } from './draw-max';
 
 /** The two italic serif faces the sleeping "z"s are set in. */
@@ -24,21 +24,21 @@ const THOUGHTS = [
 function drawSparkles(canvas: SkCanvas, fr: Frame): void {
   'worklet';
   const { s, lw, el } = fr;
-  const gold = fill(GOLD);
-  const outline = stroke(INK, lw * 0.6);
+  const gold = fill(fr, GOLD);
+  const outline = stroke(fr, INK, lw * 0.6);
   for (const [px = 0, py = 0, ph = 0] of SPARKLES) {
     const r = s * 0.045 * Math.max(0, Math.sin(el * 3 + ph));
     if (r < 0.5) continue;
     const x = px * s;
     const y = py * s;
     const k = r * 0.35;
-    const tallShape = Skia.PathBuilder.Make();
+    const tallShape = pathBuilder(fr);
     tallShape.moveTo(x, y - r);
     tallShape.lineTo(x + k, y);
     tallShape.lineTo(x, y + r);
     tallShape.lineTo(x - k, y);
     const tall = tallShape.close().build();
-    const wideShape = Skia.PathBuilder.Make();
+    const wideShape = pathBuilder(fr);
     wideShape.moveTo(x - r, y);
     wideShape.lineTo(x, y + k);
     wideShape.lineTo(x + r, y);
@@ -56,7 +56,7 @@ function drawSleep(canvas: SkCanvas, fr: Frame, fonts: SleepFonts): void {
   'worklet';
   const { s, el } = fr;
   const ph = (el * 0.5) % 1;
-  const paint = fill('#c9b8ff', Math.sin(ph * Math.PI));
+  const paint = fill(fr, '#c9b8ff', Math.sin(ph * Math.PI));
   canvas.drawText('z', s * (0.74 + ph * 0.08), s * (0.3 - ph * 0.14), paint, fonts.large);
   canvas.drawText('z', s * (0.86 + ph * 0.05), s * (0.16 - ph * 0.1), paint, fonts.small);
 }
@@ -65,8 +65,8 @@ function drawSleep(canvas: SkCanvas, fr: Frame, fonts: SleepFonts): void {
 function drawThoughts(canvas: SkCanvas, fr: Frame): void {
   'worklet';
   const { s, lw, el } = fr;
-  const cloud = fill('rgba(255,255,255,0.85)');
-  const outline = stroke(INK, lw * 0.6);
+  const cloud = fill(fr, 'rgba(255,255,255,0.85)');
+  const outline = stroke(fr, INK, lw * 0.6);
   for (let n = 0; n < THOUGHTS.length; n++) {
     const [px = 0, py = 0, r = 0] = THOUGHTS[n] ?? [];
     const y = py * s - Math.sin(el * 2 + n) * s * 0.01;

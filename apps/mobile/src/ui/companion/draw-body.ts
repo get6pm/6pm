@@ -1,6 +1,18 @@
-import { ClipOp, Skia, type SkCanvas, type SkPath } from '@shopify/react-native-skia';
+import { ClipOp, type SkCanvas, type SkPath } from '@shopify/react-native-skia';
 
-import { INK, degrees, ellipse, fill, jitter, linear, stroke, type Frame } from './draw-kit';
+import {
+  INK,
+  box,
+  degrees,
+  ellipse,
+  fill,
+  fillShader,
+  jitter,
+  pathBuilder,
+  stroke,
+  unitGradient,
+  type Frame,
+} from './draw-kit';
 
 const BODY_POINTS = 22;
 const WAVE_STEPS = 24;
@@ -8,7 +20,16 @@ const WAVE_STEPS = 24;
 export function drawGroundShadow(canvas: SkCanvas, fr: Frame): void {
   'worklet';
   const { s, cx, rx, hop } = fr;
-  ellipse(canvas, cx, s * 0.92, rx * (0.85 + hop / s), s * 0.03, 0, fill('rgba(30,10,30,0.16)'));
+  ellipse(
+    canvas,
+    fr,
+    cx,
+    s * 0.92,
+    rx * (0.85 + hop / s),
+    s * 0.03,
+    0,
+    fill(fr, 'rgba(30,10,30,0.16)'),
+  );
 }
 
 export function drawFeet(canvas: SkCanvas, fr: Frame): void {
@@ -21,13 +42,14 @@ export function drawFeet(canvas: SkCanvas, fr: Frame): void {
     const x = cx + k * s * 0.11 + jitter(fr, 90 + n, 0.003);
     ellipse(
       canvas,
+      fr,
       x,
       cy + ry * 0.98,
       s * 0.062,
       s * 0.034,
       0,
-      fill(color),
-      stroke(INK, lw * 0.85),
+      fill(fr, color),
+      stroke(fr, INK, lw * 0.85),
     );
   }
 }
@@ -45,13 +67,14 @@ export function drawArm(canvas: SkCanvas, fr: Frame, side: number, up: boolean, 
   canvas.rotate(degrees(rot), 0, 0);
   ellipse(
     canvas,
+    fr,
     0,
     up ? -s * 0.03 : 0,
     s * 0.045,
     s * 0.07,
     0,
-    fill(color),
-    stroke(INK, lw * 0.85),
+    fill(fr, color),
+    stroke(fr, INK, lw * 0.85),
   );
   canvas.restore();
 }
@@ -70,7 +93,7 @@ function bodyPath(fr: Frame): SkPath {
   }
   const x = (i: number) => xs[(i + BODY_POINTS) % BODY_POINTS] ?? cx;
   const y = (i: number) => ys[(i + BODY_POINTS) % BODY_POINTS] ?? cy;
-  const path = Skia.PathBuilder.Make();
+  const path = pathBuilder(fr);
   path.moveTo((x(-1) + x(0)) / 2, (y(-1) + y(0)) / 2);
   for (let i = 0; i < BODY_POINTS; i++) {
     path.quadTo(x(i), y(i), (x(i) + x(i + 1)) / 2, (y(i) + y(i + 1)) / 2);
@@ -79,38 +102,72 @@ function bodyPath(fr: Frame): SkPath {
   return path.build();
 }
 
-/** The horizon as a gently moving wave across the whole square. */
+/**
+ * The horizon as a gently moving wave across the whole square. Closed below it is the sea, in the
+ * space of the sea's gradient (the horizon at 0, the body's bottom at 1); open it is the line.
+ */
 function wavePath(fr: Frame, closeBelow: boolean): SkPath {
   'worklet';
   const { s, hz, el } = fr;
-  const path = Skia.PathBuilder.Make();
-  if (closeBelow) path.moveTo(0, hz);
+  const seaLength = fr.cy + fr.ry - hz;
+  const path = pathBuilder(fr);
+  if (closeBelow) path.moveTo(0, 0);
   for (let i = 0; i <= WAVE_STEPS; i++) {
     const x = (i * s) / WAVE_STEPS;
-    const y = hz + Math.sin((x / s) * 14 + el * 2.4) * s * 0.008;
-    if (i === 0 && !closeBelow) path.moveTo(x, y);
-    else path.lineTo(x, y);
+    const rise = Math.sin((x / s) * 14 + el * 2.4) * s * 0.008;
+    if (closeBelow) path.lineTo(x, rise / seaLength);
+    else if (i === 0) path.moveTo(x, hz + rise);
+    else path.lineTo(x, hz + rise);
   }
   if (closeBelow) {
-    path.lineTo(s, s);
-    path.lineTo(0, s);
+    path.lineTo(s, (s - hz) / seaLength);
+    path.lineTo(0, (s - hz) / seaLength);
     path.close();
   }
   return path.build();
 }
 
-function skyColors(fr: Frame): { colors: string[]; stops: number[] } {
+const SKY = {
+  plain: { key: 'sky-plain', colors: ['#ece6e1', '#cfc6c0'], stops: [0, 1] },
+  max: { key: 'sky-max', colors: ['#fff1c4', '#ffa8c8', '#b48cff'], stops: [0, 0.5, 1] },
+  base: { key: 'sky-base', colors: ['#ffe2a6', '#ffb070', '#ff8a5c'], stops: [0, 0.55, 1] },
+} as const;
+
+const SEA = {
+  plain: { key: 'sea-plain', colors: ['#a79ea4', '#8d848a'] },
+  max: { key: 'sea-max', colors: ['#5a46c0', '#241a6e'] },
+  base: { key: 'sea-base', colors: ['#e8607a', '#a8406c'] },
+} as const;
+const SEA_STOPS = [0, 1] as const;
+
+function variantOf(fr: Frame): 'plain' | 'max' | 'base' {
   'worklet';
-  if (fr.plain) return { colors: ['#ece6e1', '#cfc6c0'], stops: [0, 1] };
-  if (fr.mx) return { colors: ['#fff1c4', '#ffa8c8', '#b48cff'], stops: [0, 0.5, 1] };
-  return { colors: ['#ffe2a6', '#ffb070', '#ff8a5c'], stops: [0, 0.55, 1] };
+  return fr.plain ? 'plain' : fr.mx ? 'max' : 'base';
 }
 
-function seaColors(fr: Frame): string[] {
+/**
+ * Fills the square with a top-to-bottom gradient from `top` to `bottom`, through the one unit
+ * gradient of its variant stretched to fit.
+ */
+function fillGradient(
+  canvas: SkCanvas,
+  fr: Frame,
+  key: string,
+  colors: readonly string[],
+  stops: readonly number[],
+  top: number,
+  bottom: number,
+): void {
   'worklet';
-  if (fr.plain) return ['#a79ea4', '#8d848a'];
-  if (fr.mx) return ['#5a46c0', '#241a6e'];
-  return ['#e8607a', '#a8406c'];
+  const length = bottom - top;
+  canvas.save();
+  canvas.translate(0, top);
+  canvas.scale(1, length);
+  canvas.drawRect(
+    box(fr, 0, -top / length, fr.s, fr.s / length),
+    fillShader(fr, unitGradient(fr, key, colors, stops)),
+  );
+  canvas.restore();
 }
 
 /** Glints on the water, and the Max form's twinkles under the horizon. */
@@ -119,7 +176,7 @@ function drawSeaLights(canvas: SkCanvas, fr: Frame): void {
   const { s, cx, cy, rx, ry, hz, el, lw } = fr;
   const sea = cy + ry - hz;
   if (!fr.plain) {
-    const glint = stroke('rgba(255,225,200,0.75)', lw * 0.55);
+    const glint = stroke(fr, 'rgba(255,225,200,0.75)', lw * 0.55);
     const glints = [
       [0.12, 0.55, 0.07],
       [-0.14, 0.72, 0.05],
@@ -142,7 +199,7 @@ function drawSeaLights(canvas: SkCanvas, fr: Frame): void {
     for (let n = 0; n < twinkles.length; n++) {
       const [px = 0, py = 0] = twinkles[n] ?? [];
       const alpha = 0.4 + 0.6 * Math.abs(Math.sin(el * 2.2 + n * 1.7));
-      const paint = fill('#fff0ff', alpha);
+      const paint = fill(fr, '#fff0ff', alpha);
       canvas.drawCircle(cx - rx + px * rx * 2, hz + sea * py, s * 0.009, paint);
     }
   }
@@ -156,23 +213,28 @@ export function drawBody(canvas: SkCanvas, fr: Frame): void {
 
   canvas.save();
   canvas.clipPath(body, ClipOp.Intersect, true);
-  const sky = skyColors(fr);
-  const skyPaint = fill('#000000');
-  skyPaint.setShader(linear(0, cy - ry, 0, hz, sky.colors, sky.stops));
-  canvas.drawRect(Skia.XYWHRect(0, 0, s, s), skyPaint);
+  const variant = variantOf(fr);
+  const sky = SKY[variant];
+  fillGradient(canvas, fr, sky.key, sky.colors, sky.stops, cy - ry, hz);
 
-  const seaPaint = fill('#000000');
-  seaPaint.setShader(linear(0, hz, 0, cy + ry, seaColors(fr), [0, 1]));
-  canvas.drawPath(wavePath(fr, true), seaPaint);
+  const sea = SEA[variant];
+  canvas.save();
+  canvas.translate(0, hz);
+  canvas.scale(1, cy + ry - hz);
+  canvas.drawPath(
+    wavePath(fr, true),
+    fillShader(fr, unitGradient(fr, sea.key, sea.colors, SEA_STOPS)),
+  );
+  canvas.restore();
   const horizon = fr.plain ? 'rgba(60,50,60,0.35)' : 'rgba(90,20,50,0.45)';
-  canvas.drawPath(wavePath(fr, false), stroke(horizon, lw * 0.6));
+  canvas.drawPath(wavePath(fr, false), stroke(fr, horizon, lw * 0.6));
 
   drawSeaLights(canvas, fr);
 
-  const shine = fill('rgba(255,255,255,0.55)');
-  ellipse(canvas, cx - rx * 0.48, cy - ry * 0.58, s * 0.05, s * 0.025, -0.6, shine);
+  const shine = fill(fr, 'rgba(255,255,255,0.55)');
+  ellipse(canvas, fr, cx - rx * 0.48, cy - ry * 0.58, s * 0.05, s * 0.025, -0.6, shine);
   canvas.drawCircle(cx - rx * 0.22, cy - ry * 0.78, s * 0.011, shine);
   canvas.restore();
 
-  canvas.drawPath(body, stroke(INK, lw));
+  canvas.drawPath(body, stroke(fr, INK, lw));
 }

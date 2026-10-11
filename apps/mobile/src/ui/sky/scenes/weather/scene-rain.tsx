@@ -1,4 +1,4 @@
-import { Blur, Group, Paint, Path } from '@shopify/react-native-skia';
+import { BlurMask, Group, Path } from '@shopify/react-native-skia';
 import { useMemo } from 'react';
 import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 
@@ -19,9 +19,10 @@ interface LayerProps {
   readonly width: number;
   readonly height: number;
   readonly time: SharedValue<number>;
+  readonly strength: SharedValue<number>;
 }
 
-function RainLayer({ tile, spec, width, height, time }: LayerProps) {
+function RainLayer({ tile, spec, width, height, time, strength }: LayerProps) {
   const d = useMemo(() => rainPath(tile, spec, width, height), [tile, spec, width, height]);
   const [tw, th] = spec.tile;
   // The layer is the screen oversized and tilted about its centre; its tile slides down, looping.
@@ -35,20 +36,30 @@ function RainLayer({ tile, spec, width, height, time }: LayerProps) {
         -height / 2 - RAIN_OVERHANG.y * height + rainOffset(time.value, spec.periodMs, th),
     },
   ]);
-  const scale = [{ scaleX: tw / tile.width }, { scaleY: th / tile.height }];
-  const soften = (
-    <Paint opacity={spec.opacity}>{spec.blur > 0 ? <Blur blur={spec.blur} /> : null}</Paint>
-  );
+  const scaleX = tw / tile.width;
+  const scaleY = th / tile.height;
+  const scale = [{ scaleX }, { scaleY }];
+  // The layer's opacity and the hour's rain strength ride on the strokes' own alpha: one path is one
+  // coverage, so this equals fading a layer, without an offscreen layer per frame.
+  const color = useDerivedValue(() => {
+    const [r, g, b, a] = tile.color;
+    return [r, g, b, a * spec.opacity * strength.value];
+  });
+  // The soft layer's blur is a mask on the strokes. The mask scales with the tile's squeeze, so the
+  // deviation is divided by it to keep spec.blur on screen.
+  const blur = spec.blur / Math.sqrt(scaleX * scaleY);
   return (
-    <Group transform={place} layer={spec.opacity < 1 || spec.blur > 0 ? soften : false}>
+    <Group transform={place}>
       <Group transform={scale}>
         <Path
           path={d}
           style="stroke"
           strokeWidth={tile.strokeWidth}
           strokeCap="round"
-          color={[...tile.color]}
-        />
+          color={color}
+        >
+          {spec.blur > 0 ? <BlurMask blur={blur} style="normal" respectCTM /> : null}
+        </Path>
       </Group>
     </Group>
   );
@@ -67,11 +78,11 @@ interface RainProps {
  */
 export function SceneRain({ atm, width, height, time }: RainProps) {
   const tile = useMemo(() => parseRainTile(atm.rainTile), [atm.rainTile]);
-  const strength = useSceneTween([asNumber(atm.rainOp)]);
-  const opacity = useDerivedValue(() => strength.value[0] ?? 0);
+  const tween = useSceneTween([asNumber(atm.rainOp)]);
+  const strength = useDerivedValue(() => tween.value[0] ?? 0);
   if (!tile) return null;
   return (
-    <Group opacity={opacity}>
+    <>
       {RAIN_LAYERS.map((spec) => (
         <RainLayer
           key={spec.periodMs}
@@ -80,8 +91,9 @@ export function SceneRain({ atm, width, height, time }: RainProps) {
           width={width}
           height={height}
           time={time}
+          strength={strength}
         />
       ))}
-    </Group>
+    </>
   );
 }

@@ -1,6 +1,16 @@
-import { ClipOp, Skia, type SkCanvas, type SkPaint } from '@shopify/react-native-skia';
+import { ClipOp, type SkCanvas, type SkPaint } from '@shopify/react-native-skia';
 
-import { INK, degrees, ellipse, fill, jitter, oval, stroke, type Frame } from './draw-kit';
+import {
+  INK,
+  degrees,
+  ellipse,
+  fill,
+  jitter,
+  oval,
+  pathBuilder,
+  stroke,
+  type Frame,
+} from './draw-kit';
 
 const MOUTH = '#6e2236';
 
@@ -13,6 +23,7 @@ function blinking(fr: Frame): boolean {
 
 function arc(
   canvas: SkCanvas,
+  fr: Frame,
   x: number,
   y: number,
   r: number,
@@ -21,18 +32,16 @@ function arc(
   paint: SkPaint,
 ): void {
   'worklet';
-  const path = Skia.PathBuilder.Make();
-  path.addArc(oval(x, y, r, r), degrees(from), degrees(to - from));
-  canvas.drawPath(path.build(), paint);
+  canvas.drawArc(oval(fr, x, y, r, r), degrees(from), degrees(to - from), false, paint);
 }
 
 function drawCheeks(canvas: SkCanvas, fr: Frame): void {
   'worklet';
   if (fr.plain) return;
   const { s, cx, cy, ry } = fr;
-  const blush = fill('rgba(255,92,120,0.42)');
-  ellipse(canvas, cx - s * 0.175, cy + ry * 0.12, s * 0.045, s * 0.026, 0, blush);
-  ellipse(canvas, cx + s * 0.175, cy + ry * 0.12, s * 0.045, s * 0.026, 0, blush);
+  const blush = fill(fr, 'rgba(255,92,120,0.42)');
+  ellipse(canvas, fr, cx - s * 0.175, cy + ry * 0.12, s * 0.045, s * 0.026, 0, blush);
+  ellipse(canvas, fr, cx + s * 0.175, cy + ry * 0.12, s * 0.045, s * 0.026, 0, blush);
 }
 
 function drawEyes(canvas: SkCanvas, fr: Frame): void {
@@ -42,20 +51,20 @@ function drawEyes(canvas: SkCanvas, fr: Frame): void {
   const closed = mood === 'nod' || mood === 'sleepy' || blinking(fr);
   const lookX = mood === 'think' ? s * 0.012 : 0;
   const lookY = mood === 'think' ? -s * 0.014 : 0;
-  const line = stroke(INK, lw);
-  const ink = fill(INK);
-  const white = fill('#ffffff');
+  const line = stroke(fr, INK, lw);
+  const ink = fill(fr, INK);
+  const white = fill(fr, '#ffffff');
   const sides = [-1, 1];
   for (let n = 0; n < sides.length; n++) {
     const x = cx + (sides[n] ?? 1) * s * 0.1 + jitter(fr, 95 + n, 0.002);
     if (mood === 'happy') {
-      arc(canvas, x, ey + s * 0.022, s * 0.038, Math.PI * 1.12, Math.PI * 1.88, line);
+      arc(canvas, fr, x, ey + s * 0.022, s * 0.038, Math.PI * 1.12, Math.PI * 1.88, line);
     } else if (closed) {
-      arc(canvas, x, ey - s * 0.012, s * 0.034, Math.PI * 0.15, Math.PI * 0.85, line);
+      arc(canvas, fr, x, ey - s * 0.012, s * 0.034, Math.PI * 0.15, Math.PI * 0.85, line);
     } else if (fr.plain) {
       canvas.drawCircle(x, ey, s * 0.026, ink);
     } else {
-      ellipse(canvas, x, ey, s * 0.037, s * 0.047, 0, ink);
+      ellipse(canvas, fr, x, ey, s * 0.037, s * 0.047, 0, ink);
       canvas.drawCircle(x + s * 0.011 + lookX, ey - s * 0.015 + lookY, s * 0.014, white);
       canvas.drawCircle(x - s * 0.01 + lookX, ey + s * 0.016 + lookY, s * 0.006, white);
     }
@@ -66,26 +75,26 @@ function drawMouth(canvas: SkCanvas, fr: Frame): void {
   'worklet';
   const { s, cx, cy, ry, lw, mood } = fr;
   const my = cy + ry * 0.1;
-  const line = stroke(INK, lw);
+  const line = stroke(fr, INK, lw);
   if (mood === 'happy') {
-    const open = Skia.PathBuilder.Make();
+    const open = pathBuilder(fr);
     open.moveTo(cx - s * 0.05, my - s * 0.005);
     open.quadTo(cx, my + s * 0.085, cx + s * 0.05, my - s * 0.005);
     open.close();
     const mouth = open.build();
-    canvas.drawPath(mouth, fill(MOUTH));
+    canvas.drawPath(mouth, fill(fr, MOUTH));
     canvas.drawPath(mouth, line);
     canvas.save();
     canvas.clipPath(mouth, ClipOp.Intersect, true);
-    ellipse(canvas, cx, my + s * 0.055, s * 0.03, s * 0.02, 0, fill('#ff7f96'));
+    ellipse(canvas, fr, cx, my + s * 0.055, s * 0.03, s * 0.02, 0, fill(fr, '#ff7f96'));
     canvas.restore();
   } else if (fr.plain) {
     canvas.drawLine(cx - s * 0.03, my + s * 0.01, cx + s * 0.03, my + s * 0.01, line);
   } else if (mood === 'sleepy' || mood === 'think') {
     const x = cx + (mood === 'think' ? s * 0.02 : 0);
-    ellipse(canvas, x, my + s * 0.012, s * 0.014, s * 0.018, 0, fill(MOUTH));
+    ellipse(canvas, fr, x, my + s * 0.012, s * 0.014, s * 0.018, 0, fill(fr, MOUTH));
   } else {
-    const smile = Skia.PathBuilder.Make();
+    const smile = pathBuilder(fr);
     smile.moveTo(cx - s * 0.035, my);
     smile.quadTo(cx, my + s * 0.04, cx + s * 0.035, my);
     canvas.drawPath(smile.build(), line);

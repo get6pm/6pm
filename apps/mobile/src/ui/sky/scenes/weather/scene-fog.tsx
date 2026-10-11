@@ -1,10 +1,11 @@
-import { Blur, Group, RadialGradient, Rect, vec } from '@shopify/react-native-skia';
+import { Blur, Group, Image, RadialGradient, Rect, vec } from '@shopify/react-native-skia';
 import { useMemo } from 'react';
 import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 
 import { alternating } from '../../css-keyframes';
 import type { Rgba } from '../../css-values';
 import { useSceneTween } from '../use-scene-tween';
+import { bakeFogBank } from './fog-bake';
 import { asNumber, parseFog } from './weather-atm';
 import { fogShift } from './weather-math';
 
@@ -21,12 +22,21 @@ interface BankProps {
   readonly fog: Rgba;
   readonly width: number;
   readonly time: SharedValue<number>;
+  readonly strength: SharedValue<number>;
 }
 
-function FogBank({ bank, fog, width, time }: BankProps) {
+/**
+ * A bank is blurred once into an image and the image drifts; the live gradient with a blur filter
+ * is only the fallback when the image cannot be made.
+ */
+function FogBank({ bank, fog, width, time, strength }: BankProps) {
   const { top, height, centerX, sigma, periodMs, reverse } = bank;
   const boxW = 2 * width;
   const left = -0.5 * width;
+  const baked = useMemo(
+    () => bakeFogBank(fog, boxW, height, centerX, FADE_OUT, sigma),
+    [fog, boxW, height, centerX, sigma],
+  );
   const c = vec(left + centerX * boxW, top + height / 2);
   const rx = boxW / 2;
   const clear: Rgba = [fog[0], fog[1], fog[2], 0];
@@ -35,17 +45,31 @@ function FogBank({ bank, fog, width, time }: BankProps) {
   ]);
   return (
     <Group transform={drift}>
-      <Rect x={left} y={top} width={boxW} height={height}>
-        <RadialGradient
-          c={c}
-          r={rx}
-          colors={[[...fog], [...clear], [...clear]]}
-          positions={[0, FADE_OUT, 1]}
-          origin={c}
-          transform={[{ scaleY: height / 2 / rx }]}
+      {baked ? (
+        <Image
+          image={baked.image}
+          x={left}
+          y={top - baked.padding}
+          width={boxW}
+          height={height + 2 * baked.padding}
+          fit="fill"
+          opacity={strength}
         />
-        <Blur blur={sigma} />
-      </Rect>
+      ) : (
+        <Group opacity={strength}>
+          <Rect x={left} y={top} width={boxW} height={height}>
+            <RadialGradient
+              c={c}
+              r={rx}
+              colors={[[...fog], [...clear], [...clear]]}
+              positions={[0, FADE_OUT, 1]}
+              origin={c}
+              transform={[{ scaleY: height / 2 / rx }]}
+            />
+            <Blur blur={sigma} />
+          </Rect>
+        </Group>
+      )}
     </Group>
   );
 }
@@ -59,14 +83,21 @@ interface FogProps {
 /** Fog: two blurred, slowly drifting banks across the middle of the sky. */
 export function SceneFog({ atm, width, time }: FogProps) {
   const fog = useMemo(() => parseFog(atm.fog), [atm.fog]);
-  const strength = useSceneTween([asNumber(atm.fogOp)]);
-  const opacity = useDerivedValue(() => strength.value[0] ?? 0);
+  const tween = useSceneTween([asNumber(atm.fogOp)]);
+  const strength = useDerivedValue(() => tween.value[0] ?? 0);
   if (!fog) return null;
   return (
-    <Group opacity={opacity}>
+    <>
       {BANKS.map((bank) => (
-        <FogBank key={bank.top} bank={bank} fog={fog} width={width} time={time} />
+        <FogBank
+          key={bank.top}
+          bank={bank}
+          fog={fog}
+          width={width}
+          time={time}
+          strength={strength}
+        />
       ))}
-    </Group>
+    </>
   );
 }

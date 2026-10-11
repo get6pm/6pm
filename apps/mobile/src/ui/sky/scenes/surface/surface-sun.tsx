@@ -14,8 +14,8 @@ import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 
 import { linearGradientLine } from '../../css-geometry';
 import { SUN_PARALLAX } from '../../sky-sun';
-import type { SceneProps } from '../scene-props';
-import { useSceneTween } from '../use-scene-tween';
+import { useSwitchedTween } from '../../use-switched-tween';
+import type { SceneProps, SunFlag } from '../scene-props';
 import { rgbaAt, rgbaOne, shapeKey } from './surface-css';
 import {
   maskedStops,
@@ -28,7 +28,7 @@ import {
 
 export interface SurfaceSunProps extends SceneProps {
   /** The sun belongs to the Today tab only (same flag the shared sky takes). */
-  readonly showSun?: boolean;
+  readonly sun: SunFlag;
 }
 
 interface Place {
@@ -132,15 +132,19 @@ function Ghost({ dx, dy, place }: { dx: number; dy: number; place: Place }) {
 function SunBody({
   shape,
   values,
+  hiddenValues,
+  sun,
   width,
   scrollY,
 }: {
   shape: SunShape;
   values: readonly number[];
+  hiddenValues: readonly number[];
+  sun: SunFlag;
   width: number;
   scrollY: SharedValue<number>;
 }) {
-  const v = useSceneTween(values);
+  const v = useSwitchedTween(values, hiddenValues, sun.flag, sun.initial);
   const lift = useDerivedValue(() => [{ translateY: -SUN_PARALLAX * scrollY.value }]);
   const cx = useDerivedValue(() => (v.value[SUN.x] ?? 0) * width);
   const cy = useDerivedValue(() => v.value[SUN.y] ?? 0);
@@ -180,18 +184,25 @@ function SunBody({
  * - Riso: only the off-register ghost (multiplied), over the shared `SkySun`'s flat ink.
  * Returns null for every other look.
  */
-export function SurfaceSun({ showSun = true, ...scene }: SurfaceSunProps) {
+export function SurfaceSun({ sun, ...scene }: SurfaceSunProps) {
   const { look, config, hour, serious, palette, width, scrollY } = scene;
+  // Shown and hidden differ only in the tweened numbers, never in the shape.
   const frame = useMemo(
-    () => sunFrame({ look, config, hour, serious, showSun }, palette),
-    [look, config, hour, serious, showSun, palette],
+    () => sunFrame({ look, config, hour, serious, showSun: true }, palette),
+    [look, config, hour, serious, palette],
   );
-  if (!frame) return null;
+  const hidden = useMemo(
+    () => sunFrame({ look, config, hour, serious, showSun: false }, palette),
+    [look, config, hour, serious, palette],
+  );
+  if (!frame || !hidden) return null;
   return (
     <SunBody
       key={shapeKey(frame.shape)}
       shape={frame.shape}
       values={frame.values}
+      hiddenValues={hidden.values}
+      sun={sun}
       width={width}
       scrollY={scrollY}
     />

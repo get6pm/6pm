@@ -1,9 +1,10 @@
+import { memo } from 'react';
 import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 import { formatShort, lineUsed, type DailyNumber } from '@6pm/domain';
 
-import { useMoney } from '../../data/money-provider';
+import { useMoneySelector } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
 import { PLAN_SECTIONS } from '../plan/plan-page';
 import { Symbol } from '../../ui/icons/symbol';
@@ -18,23 +19,25 @@ import { TopNav } from './top-nav';
  * What the compact bar shows: on Today, a mini hero (the number, how much is used) with the
  * meter as a 3 pt line; on Plan and Diary, the page title and its context line.
  */
-export function HomeTopNav({
+export const HomeTopNav = memo(function HomeTopNav({
   tab,
   day,
   onPressTop,
+  onQuickAdd,
   planSection,
   onPlanSection,
 }: {
   readonly tab: HomeTab;
   readonly day: DailyNumber;
   readonly onPressTop: () => void;
+  readonly onQuickAdd: () => void;
   readonly planSection: number;
   readonly onPlanSection: (index: number) => void;
 }) {
   const { palette } = useTheme();
   const { t, language } = useI18n();
-  const { now } = useClock();
-  const { cycle } = useMoney();
+  const { dayDate } = useClock();
+  const daysLeft = useMoneySelector((snapshot) => snapshot.cycle.daysLeft);
   const used = day.safe < 0 ? 1 : lineUsed(day);
   const meter = useAnimatedStyle(() => ({ width: `${used * 100}%` }));
   const meterTrack = palette.dark ? 'rgba(255,255,255,.2)' : 'rgba(27,30,46,.12)';
@@ -64,6 +67,7 @@ export function HomeTopNav({
             </View>
           </View>
           <PressScale
+            onPress={onQuickAdd}
             accessibilityRole="button"
             accessibilityLabel={t('home.quickAdd')}
             style={{
@@ -92,11 +96,10 @@ export function HomeTopNav({
     );
   }
 
-  const { daysLeft } = cycle;
   const month = new Intl.DateTimeFormat(language === 'vi' ? 'vi-VN' : 'en-GB', {
     month: 'long',
     year: 'numeric',
-  }).format(now);
+  }).format(dayDate);
   return (
     <TopNav onPressTop={onPressTop}>
       <View style={{ alignItems: 'center', justifyContent: 'center', gap: 1, minHeight: 40 }}>
@@ -133,4 +136,4 @@ export function HomeTopNav({
       ) : null}
     </TopNav>
   );
-}
+});

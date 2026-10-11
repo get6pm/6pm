@@ -1,7 +1,7 @@
 import { BlurView } from 'expo-blur';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import Animated, { useAnimatedProps, useAnimatedStyle } from 'react-native-reanimated';
+import Animated, { runOnJS, useAnimatedReaction, useAnimatedStyle } from 'react-native-reanimated';
 
 import { useDesignInsets } from '../../ui/layout/design-insets';
 import { useTheme } from '../../ui/theme/theme';
@@ -37,9 +37,16 @@ export function TopNav({
     opacity: nav.value,
     transform: [{ translateY: (1 - nav.value) * -10 }],
   }));
-  const touchable = useAnimatedProps(() => ({
-    pointerEvents: nav.value > 0.5 ? ('auto' as const) : ('none' as const),
-  }));
+  // The bar takes touches only once it is more than half there. A plain prop flipped at that
+  // threshold is reliable on Fabric, where an animated `pointerEvents` is not guaranteed to
+  // reach the native view; the bar is invisible, and must not swallow taps, until then.
+  const [touchable, setTouchable] = useState(false);
+  useAnimatedReaction(
+    () => nav.value > 0.5,
+    (on, previous) => {
+      if (on !== previous) runOnJS(setTouchable)(on);
+    },
+  );
 
   return (
     <>
@@ -55,7 +62,7 @@ export function TopNav({
         }}
       />
       <Animated.View
-        animatedProps={touchable}
+        pointerEvents={touchable ? 'auto' : 'none'}
         style={[{ position: 'absolute', left: 0, right: 0, top: 0 }, shown]}
       >
         <BlurView

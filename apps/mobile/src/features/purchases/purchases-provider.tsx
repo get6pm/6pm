@@ -80,6 +80,9 @@ export function PurchasesProvider({
         ?.value,
     ),
   );
+  // The kept text of the customer on screen: a store answer that says the same changes nothing.
+  const keptRef = useRef<string | null>(null);
+  keptRef.current ??= serializeCustomer(customer);
   const [offerings, setOfferings] = useState<Offerings | null>(null);
   const [offeringsStatus, setStatus] = useState<OfferingsStatus>('idle');
   const [busy, setBusy] = useState(false);
@@ -88,10 +91,13 @@ export function PurchasesProvider({
 
   const setCustomer = useCallback(
     (next: CustomerState) => {
+      const text = serializeCustomer(next);
+      if (text === keptRef.current) return;
+      keptRef.current = text;
       setCustomerState(next);
       db.runAsync('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', [
         CUSTOMER_KEY,
-        serializeCustomer(next),
+        text,
       ]).catch((error: unknown) => console.error('Keeping the purchases failed', error));
     },
     [db],
@@ -123,8 +129,8 @@ export function PurchasesProvider({
     const refresh = () => {
       port.customer().then(setCustomer, () => undefined);
     };
+    // Prices are the shop's and the Max sheet's business: they ask when they open.
     refresh();
-    loadOfferings();
     const stop = port.onCustomerChange(setCustomer);
     const app = AppState.addEventListener('change', (state) => {
       if (state === 'active') refresh();
@@ -133,7 +139,7 @@ export function PurchasesProvider({
       stop();
       app.remove();
     };
-  }, [port, setCustomer, loadOfferings]);
+  }, [port, setCustomer]);
 
   const buy = useCallback(
     async (productId: string): Promise<PurchaseOutcome> => {

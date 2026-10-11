@@ -1,12 +1,12 @@
 import { Canvas, Group } from '@shopify/react-native-skia';
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, useWindowDimensions } from 'react-native';
 import {
   Easing,
+  runOnJS,
+  useAnimatedReaction,
   useDerivedValue,
-  useReducedMotion,
   useSharedValue,
-  withTiming,
   type SharedValue,
 } from 'react-native-reanimated';
 
@@ -26,10 +26,11 @@ import { useSkyClock } from './sky-motion';
 import { SLOT } from './sky-slots';
 import { SkySun, SUN_PARALLAX } from './sky-sun';
 import { SkyVignette } from './sky-vignette';
+import { useSwitchedTween } from './use-switched-tween';
 import { LivingBackdrop } from './scenes/living/living-backdrop';
 import { LivingMiddle } from './scenes/living/living-middle';
 import { LivingSun } from './scenes/living/living-sun';
-import type { SceneProps } from './scenes/scene-props';
+import type { SceneProps, SunFlag } from './scenes/scene-props';
 import {
   SurfaceBlooms,
   SurfaceMiddle,
@@ -54,8 +55,13 @@ export interface SkyProps {
   readonly serious: boolean;
   /** The Today list's scroll offset: the sun, flare, halftone and bokeh rise with it. */
   readonly scrollY?: SharedValue<number>;
-  /** The sun belongs to the Today tab only. */
-  readonly showSun?: boolean;
+  /**
+   * The sun belongs to the Today tab only. A shared value switches it on the UI thread without a
+   * render; a plain boolean does the same on the next render.
+   */
+  readonly showSun?: boolean | SunFlag;
+  /** The sky's clock runs only while this is true (a screen under a takeover is not showing it). */
+  readonly active?: SharedValue<boolean>;
 }
 
 /**
@@ -75,6 +81,28 @@ function useShown(visible: boolean): boolean {
   return visible || lingering;
 }
 
+/**
+ * The sun's switch as one shape whatever the caller gave, plus its state as plain state for the
+ * layers that mount only while the sun is showing.
+ */
+function useSunSwitch(showSun: boolean | SunFlag): SunFlag & { readonly on: boolean } {
+  const given = typeof showSun === 'boolean' ? null : showSun;
+  const own = useSharedValue(typeof showSun === 'boolean' ? showSun : true);
+  const flag = given ? given.flag : own;
+  const [mirrored, setMirrored] = useState(given ? given.initial : true);
+  useEffect(() => {
+    if (typeof showSun === 'boolean') own.value = showSun;
+  }, [own, showSun]);
+  useAnimatedReaction(
+    () => flag.value,
+    (next, previous) => {
+      if (previous !== null && next !== previous) runOnJS(setMirrored)(next);
+    },
+  );
+  const initial = given ? given.initial : typeof showSun === 'boolean' ? showSun : true;
+  return { flag, initial, on: given ? mirrored : typeof showSun === 'boolean' ? showSun : true };
+}
+
 function useParallax(scrollY: SharedValue<number>, rate: number) {
   return useDerivedValue(() => [{ translateY: -rate * scrollY.value }]);
 }
@@ -86,29 +114,31 @@ function useParallax(scrollY: SharedValue<number>, rate: number) {
  * UI thread, and drifts, twinkles and grain run on the UI thread too (held still under Reduce
  * Motion).
  */
-export function Sky({ look, config, hour, serious, scrollY, showSun = true }: SkyProps) {
+function SkyView({ look, config, hour, serious, scrollY, showSun = true, active }: SkyProps) {
   const { width, height } = useWindowDimensions();
-  const target = useMemo(
-    () => skyFrame({ look, hour, serious, showSun, ...(config ? { config } : {}) }),
-    [look, config, hour, serious, showSun],
+  const sun = useSunSwitch(showSun);
+  // The sun's two states are both prepared; the flag picks one on the UI thread, so a tab switch
+  // never rebuilds the sky.
+  const base = useMemo(
+    () => ({ look, hour, serious, ...(config ? { config } : {}) }),
+    [look, config, hour, serious],
   );
+  const shownSun = useMemo(() => skyFrame({ ...base, showSun: true }), [base]);
+  const hiddenSun = useMemo(() => skyFrame({ ...base, showSun: false }), [base]);
+  const target = shownSun;
   // The layout only changes with the look; keep it stable so layers don't rebuild every minute.
-  const layoutKey = JSON.stringify(target.layout);
+  const layoutKey = useMemo(() => JSON.stringify(shownSun.layout), [shownSun]);
   const layout = useMemo(() => JSON.parse(layoutKey) as SkyLayout, [layoutKey]);
 
-  const reduceMotion = useReducedMotion();
-  const frame = useSharedValue(target.values);
-  useEffect(() => {
-    frame.value = reduceMotion ? target.values : withTiming(target.values, TRANSITION);
-  }, [frame, target, reduceMotion]);
+  const frame = useSwitchedTween(shownSun.values, hiddenSun.values, sun.flag, sun.initial);
 
-  const time = useSkyClock();
+  const time = useSkyClock(active ?? null);
   const still = useSharedValue(0);
   const scroll = scrollY ?? still;
   const sunLift = useParallax(scroll, SUN_PARALLAX);
   const bokehLift = useParallax(scroll, BOKEH_PARALLAX);
 
-  const v = target.values;
+  const v = (sun.on ? shownSun : hiddenSun).values;
   const at = (slot: number) => (v[slot] ?? 0) > 0;
   const shown = {
     blooms: useShown(at(SLOT.bloomOp)),
@@ -154,9 +184,9 @@ export function Sky({ look, config, hour, serious, scrollY, showSun = true }: Sk
       <Group transform={sunLift}>
         {shown.sun && sharedSun && <SkySun frame={frame} width={width} />}
         {shown.flare && <SkyFlare frame={frame} layout={layout} width={width} />}
-        <LivingSun {...scene} showSun={showSun} />
+        <LivingSun {...scene} sun={sun} />
       </Group>
-      <SurfaceSun {...scene} showSun={showSun} />
+      <SurfaceSun {...scene} sun={sun} />
       {shown.moon && <SkyMoon frame={frame} width={width} />}
       {shown.bokeh && (
         <Group transform={bokehLift}>
@@ -183,3 +213,5 @@ export function Sky({ look, config, hour, serious, scrollY, showSun = true }: Sk
 }
 
 const styles = StyleSheet.create({ passThrough: { pointerEvents: 'none' } });
+
+export const Sky = memo(SkyView);

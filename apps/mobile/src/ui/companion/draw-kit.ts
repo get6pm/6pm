@@ -5,7 +5,9 @@ import {
   StrokeJoin,
   TileMode,
   type SkCanvas,
+  type SkColor,
   type SkPaint,
+  type SkPathBuilder,
   type SkRect,
   type SkShader,
 } from '@shopify/react-native-skia';
@@ -14,6 +16,22 @@ import type { CompanionForm, CompanionMood } from './companion-mood';
 
 /** The companion's outline colour: every stroke and the eyes. */
 export const INK = '#3a1d2a';
+
+/**
+ * What one runtime keeps between frames so a frame allocates nothing: parsed colours, a pool of
+ * paints and path builders handed out in order and taken back at the next frame, the gradients
+ * that never change and one rectangle that is refilled for each oval.
+ */
+interface Kit {
+  readonly colors: Map<string, SkColor>;
+  readonly paints: SkPaint[];
+  readonly shaded: boolean[];
+  readonly builders: SkPathBuilder[];
+  readonly shaders: Map<string, SkShader>;
+  readonly rect: { x: number; y: number; width: number; height: number };
+  paintAt: number;
+  builderAt: number;
+}
 
 /** Everything one frame of the companion is drawn from, in points of a `s`-sized square. */
 export interface Frame {
@@ -41,6 +59,7 @@ export interface Frame {
   readonly seed: number;
   /** The hand-drawn wobble re-rolls six times a second. */
   readonly tick: number;
+  readonly kit: Kit;
 }
 
 export interface FrameInput {
@@ -51,6 +70,24 @@ export interface FrameInput {
   readonly mood: CompanionMood;
   readonly form: CompanionForm;
   readonly seed: number;
+}
+
+/** The kit of the runtime asking, kept on that runtime's global and shared by every companion. */
+function kitOfRuntime(): Kit {
+  'worklet';
+  // A global is the only place a worklet keeps state between calls; the kit never leaves its runtime.
+  const holder = globalThis as unknown as { __companionKit?: Kit };
+  holder.__companionKit ??= {
+    colors: new Map(),
+    paints: [],
+    shaded: [],
+    builders: [],
+    shaders: new Map(),
+    rect: { x: 0, y: 0, width: 0, height: 0 },
+    paintAt: 0,
+    builderAt: 0,
+  };
+  return holder.__companionKit;
 }
 
 /** The body's size, bob, hop and tilt for this moment. */
@@ -66,6 +103,9 @@ export function makeFrame({ s, el, since, sinceF, mood, form, seed }: FrameInput
   if (mood === 'wave') tilt = Math.sin(el * 2) * 0.03;
   const ry = s * 0.28 * (1 + breathe);
   const cy = s * 0.57 + hop - breathe * s * 0.1;
+  const kit = kitOfRuntime();
+  kit.paintAt = 0;
+  kit.builderAt = 0;
   return {
     s,
     el,
@@ -84,6 +124,7 @@ export function makeFrame({ s, el, since, sinceF, mood, form, seed }: FrameInput
     tilt,
     seed,
     tick: Math.floor(el * 6),
+    kit,
   };
 }
 
@@ -99,27 +140,75 @@ export function degrees(radians: number): number {
   return (radians * 180) / Math.PI;
 }
 
-export function fill(color: string, alpha = 1): SkPaint {
+function colorOf(kit: Kit, color: string): SkColor {
   'worklet';
-  const paint = Skia.Paint();
-  paint.setAntiAlias(true);
-  paint.setColor(Skia.Color(color));
-  if (alpha !== 1) paint.setAlphaf(paint.getAlphaf() * alpha);
+  let parsed = kit.colors.get(color);
+  if (!parsed) {
+    parsed = Skia.Color(color);
+    kit.colors.set(color, parsed);
+  }
+  return parsed;
+}
+
+/** The next paint of the pool, reset to a plain filled one: valid until the frame ends. */
+function nextPaint(kit: Kit): SkPaint {
+  'worklet';
+  const at = kit.paintAt++;
+  let paint = kit.paints[at];
+  if (!paint) {
+    paint = Skia.Paint();
+    paint.setAntiAlias(true);
+    paint.setStrokeCap(StrokeCap.Round);
+    paint.setStrokeJoin(StrokeJoin.Round);
+    kit.paints[at] = paint;
+    kit.shaded[at] = false;
+  } else if (kit.shaded[at]) {
+    paint.setShader(null);
+    kit.shaded[at] = false;
+  }
+  paint.setStyle(PaintStyle.Fill);
   return paint;
 }
 
-export function stroke(color: string, width: number, alpha = 1): SkPaint {
+export function fill(fr: Frame, color: string, alpha = 1): SkPaint {
   'worklet';
-  const paint = fill(color, alpha);
+  const paint = nextPaint(fr.kit);
+  const parsed = colorOf(fr.kit, color);
+  paint.setColor(parsed);
+  if (alpha !== 1) paint.setAlphaf((parsed[3] ?? 1) * alpha);
+  return paint;
+}
+
+export function stroke(fr: Frame, color: string, width: number, alpha = 1): SkPaint {
+  'worklet';
+  const paint = fill(fr, color, alpha);
   paint.setStyle(PaintStyle.Stroke);
   paint.setStrokeWidth(width);
-  paint.setStrokeCap(StrokeCap.Round);
-  paint.setStrokeJoin(StrokeJoin.Round);
   return paint;
 }
 
-/** A linear gradient between two points, clamped past its ends like the canvas one. */
+/** A paint that fills with a gradient. */
+export function fillShader(fr: Frame, shader: SkShader): SkPaint {
+  'worklet';
+  const paint = nextPaint(fr.kit);
+  paint.setShader(shader);
+  fr.kit.shaded[fr.kit.paintAt - 1] = true;
+  return paint;
+}
+
+/** A paint that strokes with a gradient. */
+export function strokeShader(fr: Frame, shader: SkShader, width: number): SkPaint {
+  'worklet';
+  const paint = fillShader(fr, shader);
+  paint.setStyle(PaintStyle.Stroke);
+  paint.setStrokeWidth(width);
+  return paint;
+}
+
+/** A linear gradient between two points, clamped past its ends like the canvas one; built once. */
 export function linear(
+  fr: Frame,
+  key: string,
   x0: number,
   y0: number,
   x1: number,
@@ -128,23 +217,70 @@ export function linear(
   stops: readonly number[],
 ): SkShader {
   'worklet';
-  return Skia.Shader.MakeLinearGradient(
-    { x: x0, y: y0 },
-    { x: x1, y: y1 },
-    colors.map((c) => Skia.Color(c)),
-    [...stops],
-    TileMode.Clamp,
-  );
+  const { kit } = fr;
+  let shader = kit.shaders.get(key);
+  if (!shader) {
+    shader = Skia.Shader.MakeLinearGradient(
+      { x: x0, y: y0 },
+      { x: x1, y: y1 },
+      colors.map((c) => colorOf(kit, c)),
+      [...stops],
+      TileMode.Clamp,
+    );
+    kit.shaders.set(key, shader);
+  }
+  return shader;
 }
 
-export function oval(x: number, y: number, rx: number, ry: number): SkRect {
+/** A gradient over the unit interval, built once: draw it under a canvas moved and scaled to fit. */
+export function unitGradient(
+  fr: Frame,
+  key: string,
+  colors: readonly string[],
+  stops: readonly number[],
+): SkShader {
   'worklet';
-  return Skia.XYWHRect(x - rx, y - ry, rx * 2, ry * 2);
+  return linear(fr, key, 0, 0, 0, 1, colors, stops);
+}
+
+/** A new, empty path builder from the pool: valid until the frame ends. */
+export function pathBuilder(fr: Frame): SkPathBuilder {
+  'worklet';
+  const { kit } = fr;
+  const at = kit.builderAt++;
+  const existing = kit.builders[at];
+  if (existing) return existing.reset();
+  const made = Skia.PathBuilder.Make();
+  kit.builders[at] = made;
+  return made;
+}
+
+/** The pooled rectangle, refilled: use it at once. */
+export function oval(fr: Frame, x: number, y: number, rx: number, ry: number): SkRect {
+  'worklet';
+  const { rect } = fr.kit;
+  rect.x = x - rx;
+  rect.y = y - ry;
+  rect.width = rx * 2;
+  rect.height = ry * 2;
+  return rect;
+}
+
+/** The pooled rectangle, refilled: use it at once. */
+export function box(fr: Frame, x: number, y: number, width: number, height: number): SkRect {
+  'worklet';
+  const { rect } = fr.kit;
+  rect.x = x;
+  rect.y = y;
+  rect.width = width;
+  rect.height = height;
+  return rect;
 }
 
 /** An ellipse, optionally turned by `rotation` radians about its centre, with each paint in turn. */
 export function ellipse(
   canvas: SkCanvas,
+  fr: Frame,
   x: number,
   y: number,
   rx: number,
@@ -157,6 +293,6 @@ export function ellipse(
     canvas.save();
     canvas.rotate(degrees(rotation), x, y);
   }
-  for (const paint of paints) canvas.drawOval(oval(x, y, rx, ry), paint);
+  for (const paint of paints) canvas.drawOval(oval(fr, x, y, rx, ry), paint);
   if (rotation !== 0) canvas.restore();
 }

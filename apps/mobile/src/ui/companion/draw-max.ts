@@ -1,8 +1,21 @@
-import { Skia, type SkCanvas } from '@shopify/react-native-skia';
+import { type SkCanvas } from '@shopify/react-native-skia';
 
-import { INK, degrees, fill, linear, oval, stroke, type Frame } from './draw-kit';
+import {
+  INK,
+  degrees,
+  fill,
+  linear,
+  oval,
+  pathBuilder,
+  strokeShader,
+  stroke,
+  type Frame,
+} from './draw-kit';
 
 export const GOLD = '#ffd36e';
+
+const BAND_COLORS = [GOLD, '#ff9fd0', '#9d8bff'];
+const BAND_STOPS = [0, 0.5, 1];
 
 /** How long the ring of light lasts when the companion becomes Max. */
 export const BURST_SECONDS = 1.4;
@@ -18,7 +31,7 @@ export function drawStar(
 ): void {
   'worklet';
   const k = r * 0.32;
-  const builder = Skia.PathBuilder.Make();
+  const builder = pathBuilder(fr);
   builder.moveTo(x, y - r);
   builder.lineTo(x + k, y - k);
   builder.lineTo(x + r, y);
@@ -28,8 +41,8 @@ export function drawStar(
   builder.lineTo(x - r, y);
   builder.lineTo(x - k, y - k);
   const star = builder.close().build();
-  canvas.drawPath(star, fill(color));
-  canvas.drawPath(star, stroke(INK, fr.lw * 0.5));
+  canvas.drawPath(star, fill(fr, color));
+  canvas.drawPath(star, stroke(fr, INK, fr.lw * 0.5));
 }
 
 /**
@@ -45,13 +58,14 @@ export function drawRing(canvas: SkCanvas, fr: Frame, front: boolean): void {
   canvas.translate(cx, cy + ry * 0.05);
   canvas.rotate(degrees(-0.28), 0, 0);
 
-  const band = stroke('#000000', lw * 1.35);
-  band.setShader(linear(-RX, 0, RX, 0, [GOLD, '#ff9fd0', '#9d8bff'], [0, 0.5, 1]));
-  const half = Skia.PathBuilder.Make();
-  half.addArc(oval(0, 0, RX, RY), front ? 0 : 180, 180);
-  canvas.drawPath(half.build(), band);
+  const band = strokeShader(
+    fr,
+    linear(fr, `band-${RX}`, -RX, 0, RX, 0, BAND_COLORS, BAND_STOPS),
+    lw * 1.35,
+  );
+  canvas.drawArc(oval(fr, 0, 0, RX, RY), front ? 0 : 180, 180, false, band);
 
-  const outline = stroke(INK, lw * 0.6);
+  const outline = stroke(fr, INK, lw * 0.6);
   for (let n = 0; n < 2; n++) {
     const a = el * 1.1 + n * Math.PI;
     const sn = Math.sin(a);
@@ -59,7 +73,7 @@ export function drawRing(canvas: SkCanvas, fr: Frame, front: boolean): void {
     const x = Math.cos(a) * RX;
     const y = sn * RY;
     const r = s * (n ? 0.024 : 0.032);
-    canvas.drawCircle(x, y, r, fill(n ? '#c9b8ff' : '#fff1c4'));
+    canvas.drawCircle(x, y, r, fill(fr, n ? '#c9b8ff' : '#fff1c4'));
     canvas.drawCircle(x, y, r, outline);
   }
   canvas.restore();
@@ -76,7 +90,7 @@ export function drawBurst(canvas: SkCanvas, fr: Frame): void {
     s / 2,
     s * 0.57,
     s * (0.16 + p * 0.34),
-    stroke(GOLD, lw * 2.2 * fade + 0.5, fade),
+    stroke(fr, GOLD, lw * 2.2 * fade + 0.5, fade),
   );
-  canvas.drawCircle(s / 2, s * 0.55, s * 0.5, fill('#fff0d2', 0.6 * fade * fade * fade));
+  canvas.drawCircle(s / 2, s * 0.55, s * 0.5, fill(fr, '#fff0d2', 0.6 * fade * fade * fade));
 }

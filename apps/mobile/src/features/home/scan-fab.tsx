@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   Easing,
@@ -21,7 +22,7 @@ const ease = Easing.bezier(...curves.enter);
  * The scan button beside the tab bar. Tap to scan a VietQR; hold for half a second to jump
  * straight to Quick add (with a tap of haptics when it triggers). It shrinks with the tab bar.
  */
-export function ScanFab({
+export const ScanFab = memo(function ScanFab({
   label,
   hint,
   onScan,
@@ -95,4 +96,4 @@ export function ScanFab({
       </Animated.View>
     </GestureDetector>
   );
-}
+});

@@ -22,3 +22,12 @@ export interface SceneProps {
   /** The Today list's scroll offset, for parallax. */
   readonly scrollY: SharedValue<number>;
 }
+
+/**
+ * Whether the sun is showing, as a shared value the UI thread switches (a tab change), with the
+ * state it starts in so the first frame is right without reading the value back.
+ */
+export interface SunFlag {
+  readonly flag: SharedValue<boolean>;
+  readonly initial: boolean;
+}

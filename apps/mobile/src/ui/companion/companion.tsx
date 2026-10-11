@@ -1,13 +1,14 @@
 import { Canvas, Picture, createPicture, matchFont } from '@shopify/react-native-skia';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Platform } from 'react-native';
 import {
   useDerivedValue,
-  useFrameCallback,
   useReducedMotion,
   useSharedValue,
+  type FrameInfo,
 } from 'react-native-reanimated';
 
+import { useGatedFrameCallback, useScreenActivity } from '../sky/screen-activity';
 import { type CompanionForm, type CompanionMood } from './companion-mood';
 import { drawCompanion } from './draw-companion';
 import { type SleepFonts } from './draw-extras';
@@ -42,7 +43,8 @@ function sleepFonts(size: number): SleepFonts {
 /**
  * The 6pm companion: a little sun dipping into the evening sea. Idle motion (breathing, blinks,
  * swaying rays, the sea's wave, the hand-drawn wobble) runs on the UI thread and freezes with
- * Reduce Motion. Becoming Max plays a burst of light.
+ * Reduce Motion, and also while the screen around it is not showing it (a hidden tab, a screen
+ * covered by a takeover). Becoming Max plays a burst of light.
  */
 export function Companion({ size, mood, form = 'base', serious = false }: CompanionProps) {
   const reduceMotion = useReducedMotion();
@@ -54,9 +56,15 @@ export function Companion({ size, mood, form = 'base', serious = false }: Compan
   const moodAt = useSharedValue(0);
   const formAt = useSharedValue(-SETTLED_SECONDS);
 
-  useFrameCallback((frame) => {
-    clock.value = frame.timeSinceFirstFrame / 1000;
-  }, !reduceMotion);
+  const tick = useCallback(
+    (frame: FrameInfo) => {
+      'worklet';
+      // Added up frame by frame so a pause does not send the clock back to zero.
+      clock.value += (frame.timeSincePreviousFrame ?? 0) / 1000;
+    },
+    [clock],
+  );
+  useGatedFrameCallback(tick, !reduceMotion, useScreenActivity());
 
   const lastMood = useRef(shownMood);
   useEffect(() => {

@@ -13,13 +13,13 @@ import { useMemo } from 'react';
 import { useDerivedValue } from 'react-native-reanimated';
 
 import { colorAt } from '../../sky-slots';
-import { useSceneTween } from '../use-scene-tween';
-import type { SceneProps } from '../scene-props';
+import { useSwitchedTween } from '../../use-switched-tween';
+import type { SceneProps, SunFlag } from '../scene-props';
 import { paperSunModel, SUN_VALUE } from './paper-sun-model';
 
 export interface LivingSunProps extends SceneProps {
   /** The sun belongs to the Today tab only, as for the shared sun. */
-  readonly showSun: boolean;
+  readonly sun: SunFlag;
 }
 
 /**
@@ -28,20 +28,17 @@ export interface LivingSunProps extends SceneProps {
  * shaded crescent. Draw it in the sun's parallax group in place of the shared sun, which must not
  * draw for this look; it returns null for every other look.
  */
-export function LivingSun({
-  look,
-  config,
-  hour,
-  serious,
-  palette,
-  showSun,
-  width,
-}: LivingSunProps) {
+export function LivingSun({ look, config, hour, serious, palette, sun, width }: LivingSunProps) {
+  // Everything but the tweened numbers is the same with the sun shown or hidden.
   const model = useMemo(
-    () => paperSunModel({ look, config, hour, serious, palette, showSun }),
-    [look, config, hour, serious, palette, showSun],
+    () => paperSunModel({ look, config, hour, serious, palette, showSun: true }),
+    [look, config, hour, serious, palette],
   );
-  const tween = useSceneTween(model.values);
+  const hidden = useMemo(
+    () => paperSunModel({ look, config, hour, serious, palette, showSun: false }).values,
+    [look, config, hour, serious, palette],
+  );
+  const tween = useSwitchedTween(model.values, hidden, sun.flag, sun.initial);
   const cx = useDerivedValue(() => (tween.value[SUN_VALUE.x] ?? 0) * width);
   const cy = useDerivedValue(() => tween.value[SUN_VALUE.y] ?? 0);
   const size = useDerivedValue(() => tween.value[SUN_VALUE.size] ?? 0);

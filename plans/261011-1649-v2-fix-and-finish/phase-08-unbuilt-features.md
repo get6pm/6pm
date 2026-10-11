@@ -21,7 +21,7 @@ Status: todo (starts when batches 2–7 land) · Founder 11 Oct: every Max featu
 
 ## Native batch
 
-Items 1, 3, 4, 5, 6, 11 add native code: declare them in one native batch (tech-decisions §5: App Group, Keychain sharing incl. the database key's access group so the extension can open the store, Live Activities, Sign in with Apple, microphone + speech, App Intents, widget/Live Activity/controls/share-extension targets), then one TestFlight build. After that, feature work ships over the air.
+Items 1, 3, 4, 5, 6, 11 add native code: declare them in one native batch (tech-decisions §5: App Group, Keychain sharing incl. the database key's access group so the extension can open the store, Live Activities, Sign in with Apple, microphone + speech, App Intents, widget/Live Activity/controls/share-extension targets), then one TestFlight build. After that, feature work ships over the air. Plan: [8a native batch](phase-08a-native-batch.md) (declaration, founder actions) and [8b feature lanes](phase-08b-feature-lanes.md). 8a changes one point above: extensions never open the store, so the database key gets no shared access group (8a D2/D3, founder to accept).
 
 ## Founder gates
 

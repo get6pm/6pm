@@ -147,7 +147,6 @@ export const DEMO = {
   receiptShadow: '0 4px 14px rgba(40,25,20,.08)',
   rule: 'rgba(31,26,40,.1)',
   shareSheet: 'rgba(255,255,255,.85)',
-  appIcon: 'linear-gradient(180deg, #3b3270 0%, #c4607a 62%, #f0975a 100%)',
   tapRing: [246 / 255, 164 / 255, 106 / 255],
   mailBg: '#e9edf3',
   mailGrab: '#2f9e5b',

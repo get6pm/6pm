@@ -7,6 +7,7 @@ import { formatVnd } from '@6pm/domain';
 import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
 import { body, display, mono } from '../../ui/type/fonts';
+import { AppIconImage } from '../../ui/app-icon-image';
 import { box, checker, H, inOut, SAMPLE, stripes, TapRing, W } from './catch-demo-kit';
 import { useLoop } from './onboarding-motion';
 import { DEMO, type OnboardingPalette } from './onboarding-palette';
@@ -111,18 +112,7 @@ export function ShareDemo() {
       >
         <View style={blank} />
         <TapRing size={36} radius={10}>
-          <View
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 10,
-              experimental_backgroundImage: DEMO.appIcon,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Text style={{ ...body(10, 800), color: DEMO.lockInk }}>6pm</Text>
-          </View>
+          <AppIconImage size={36} radius={10} />
         </TapRing>
         <View style={blank} />
         <View style={blank} />

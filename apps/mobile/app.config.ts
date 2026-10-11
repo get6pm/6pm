@@ -109,7 +109,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: variant.scheme,
   version: '2.0.0',
   orientation: 'portrait',
-  // The companion on the Golden Hour sky, rendered from the prototype's own drawing.
+  // The companion as the setting sun, half-sunk on a calm horizon: six o'clock without words.
   icon: './assets/icon/icon.png',
   userInterfaceStyle: 'automatic',
   backgroundColor: LAUNCH_BACKGROUND,
@@ -123,6 +123,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     : { enabled: false, checkAutomatically: 'NEVER' },
   ios: {
     bundleIdentifier: variant.bundleIdentifier,
+    // iOS 18+ home-screen appearances: the same sunset on a night sea, and a grey glyph to tint.
+    icon: {
+      light: './assets/icon/icon.png',
+      dark: './assets/icon/icon-dark.png',
+      tinted: './assets/icon/icon-tinted.png',
+    },
     appleTeamId: APPLE_TEAM_ID,
     deploymentTarget: IOS_DEPLOYMENT_TARGET,
     // v1 shipped on iPad, and an App Store update may not drop a device family it supported.

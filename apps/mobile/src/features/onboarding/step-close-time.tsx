@@ -2,12 +2,12 @@ import { BlurView } from 'expo-blur';
 import { Text, View } from 'react-native';
 
 import { useI18n } from '../../i18n/i18n';
-import { Companion } from '../../ui/companion/companion';
 import { body, display } from '../../ui/type/fonts';
 import { Wheel } from '../../ui/wheel/wheel';
 import { closeReminderText } from './close-reminder';
 import { CLOSE_HOURS, CLOSE_MINUTES } from './onboarding-maths';
-import { DEMO, type OnboardingPalette } from './onboarding-palette';
+import { AppIconImage } from '../../ui/app-icon-image';
+import type { OnboardingPalette } from './onboarding-palette';
 import { StepHeading } from './step-parts';
 
 /** When should your day close: hour and minute wheels, and the reminder it will send. */
@@ -101,21 +101,7 @@ export function StepCloseTime({
             gap: 12,
           }}
         >
-          <View
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 10,
-              experimental_backgroundImage: DEMO.appIcon,
-              overflow: 'hidden',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <View style={{ marginBottom: -3 }}>
-              <Companion size={33} mood="calm" />
-            </View>
-          </View>
+          <AppIconImage size={38} radius={10} />
           <View style={{ flex: 1, gap: 2 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={{ ...body(14, 650), color: pal.ink }}>6pm</Text>

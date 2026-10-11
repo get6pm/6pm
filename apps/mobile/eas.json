@@ -10,15 +10,22 @@
       "channel": "dev",
       "node": "24.21.0",
       "pnpm": "12.6.0",
-      "env": { "APP_VARIANT": "dev" }
+      "env": {
+        "APP_VARIANT": "dev"
+      }
     },
     "e2e-test": {
       "distribution": "internal",
       "withoutCredentials": true,
       "node": "24.21.0",
       "pnpm": "12.6.0",
-      "env": { "APP_VARIANT": "e2e-test" },
-      "ios": { "simulator": true, "image": "latest" }
+      "env": {
+        "APP_VARIANT": "e2e-test"
+      },
+      "ios": {
+        "simulator": true,
+        "image": "latest"
+      }
     },
     "dev": {
       "distribution": "store",
@@ -26,7 +33,9 @@
       "autoIncrement": true,
       "node": "24.21.0",
       "pnpm": "12.6.0",
-      "env": { "APP_VARIANT": "dev" }
+      "env": {
+        "APP_VARIANT": "dev"
+      }
     },
     "prd": {
       "distribution": "store",
@@ -34,11 +43,18 @@
       "autoIncrement": true,
       "node": "24.21.0",
       "pnpm": "12.6.0",
-      "env": { "APP_VARIANT": "prd" }
+      "env": {
+        "APP_VARIANT": "prd",
+        "EXPO_PUBLIC_REVENUECAT_IOS_KEY": "appl_qOKJkasxcPJpkCyLFXlxJiKxTAs"
+      }
     }
   },
   "submit": {
-    "dev": { "ios": {} },
-    "prd": { "ios": {} }
+    "dev": {
+      "ios": {}
+    },
+    "prd": {
+      "ios": {}
+    }
   }
 }

@@ -1,4 +1,5 @@
 import { viScan } from './vi-scan';
+import { viLooks } from './vi-looks';
 import { viOnboarding } from './vi-onboarding';
 import { viDiary } from './vi-diary';
 import { viPlan } from './vi-plan';
@@ -16,5 +17,6 @@ export const vi: Catalogue = {
   ...viToday,
   ...viCategories,
   ...viScan,
+  ...viLooks,
   ...viCompanion,
 };

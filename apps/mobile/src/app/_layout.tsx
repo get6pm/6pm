@@ -9,6 +9,8 @@ import { MoneyProvider, useMoney } from '../data/money-provider';
 import { DATABASE_NAME, prepareDatabase } from '../db/database';
 import { CloseNudge } from '../features/companion/close-nudge';
 import { DevCommands } from '../features/dev/dev-commands';
+import { LookSettingsProvider, useThemeLook } from '../features/looks/look-settings-provider';
+import { PurchasesProvider } from '../features/purchases/purchases-provider';
 import { I18nProvider } from '../i18n/i18n';
 import { sheet, takeover } from '../ui/navigation/presentations';
 import { ClockProvider } from '../ui/theme/clock';
@@ -44,37 +46,53 @@ function Screens() {
         <Stack.Screen name="missed-day" options={sheet} />
         <Stack.Screen name="money-diary" options={sheet} />
         <Stack.Screen name="new-pot" options={sheet} />
+        <Stack.Screen name="looks" options={sheet} />
+        <Stack.Screen name="look/[id]" options={sheet} />
+        <Stack.Screen name="max" options={sheet} />
+        <Stack.Screen name="max-welcome" options={takeover} />
         <Stack.Screen name="(dev)/tools" options={sheet} />
       </Stack>
     </>
   );
 }
 
-/** The theme follows the plan: serious mode set in Settings turns the whole app plain at once. */
+/**
+ * The theme follows the plan and the look: serious mode set in Settings turns the whole app plain
+ * at once, and a look being tried on dresses the whole app, not just its preview.
+ */
 function PlanTheme({ children }: { readonly children: ReactNode }) {
   const { plan } = useMoney();
-  return <ThemeProvider serious={plan?.serious ?? false}>{children}</ThemeProvider>;
+  const themeLook = useThemeLook();
+  return (
+    <ThemeProvider {...themeLook} serious={plan?.serious ?? false}>
+      {children}
+    </ThemeProvider>
+  );
 }
 
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SQLiteProvider databaseName={DATABASE_NAME} onInit={prepareDatabase}>
-        <I18nProvider>
-          <ClockProvider>
-            <MoneyProvider>
-              <PlanTheme>
-                <ToastHost>
-                  <UndoHost>
-                    <Screens />
-                  </UndoHost>
-                  <CloseNudge />
-                  {__DEV__ ? <DevCommands /> : null}
-                </ToastHost>
-              </PlanTheme>
-            </MoneyProvider>
-          </ClockProvider>
-        </I18nProvider>
+        <PurchasesProvider>
+          <LookSettingsProvider>
+            <I18nProvider>
+              <ClockProvider>
+                <MoneyProvider>
+                  <PlanTheme>
+                    <ToastHost>
+                      <UndoHost>
+                        <Screens />
+                      </UndoHost>
+                      <CloseNudge />
+                      {__DEV__ ? <DevCommands /> : null}
+                    </ToastHost>
+                  </PlanTheme>
+                </MoneyProvider>
+              </ClockProvider>
+            </I18nProvider>
+          </LookSettingsProvider>
+        </PurchasesProvider>
       </SQLiteProvider>
     </GestureHandlerRootView>
   );

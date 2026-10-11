@@ -10,7 +10,10 @@ import { useMoney, useMoneyStore } from '../data/money-provider';
 import { DEFAULT_PLAN } from '../data/plan-settings';
 import { settingsActions } from '../data/settings-actions';
 import { cancelCloseReminder, scheduleCloseReminder } from '../features/onboarding/close-reminder';
+import { useLookSettingsStore } from '../features/looks/look-settings-provider';
 import { CompanionCard } from '../features/settings/companion-card';
+import { SettingsLookCard } from '../features/settings/settings-look-card';
+import { SettingsMaxCard } from '../features/settings/settings-max-card';
 import { SettingRow, SettingsSection } from '../features/settings/setting-rows';
 import { useI18n } from '../i18n/i18n';
 import { haptics } from '../ui/haptics';
@@ -32,6 +35,7 @@ export default function Settings() {
   const snap = useMoney();
   const store = useMoneyStore();
   const actions = useMemo(() => settingsActions(store), [store]);
+  const lookStore = useLookSettingsStore();
   const plan = snap.plan ?? DEFAULT_PLAN;
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [armed, setArmed] = useState(false);
@@ -50,17 +54,25 @@ export default function Settings() {
     clearTimeout(disarm.current);
     setLanguage(null);
     void cancelCloseReminder().catch(() => undefined);
-    void actions.deleteAll().then(() => router.dismissTo('/'));
+    void actions
+      .deleteAll()
+      .then(() => lookStore.reload())
+      .then(() => router.dismissTo('/'));
   };
 
   return (
     <SheetScreen title={t('home.settings')} gap={26}>
+      <SettingsMaxCard
+        onPress={() => router.push({ pathname: '/max', params: { from: 'looks' } })}
+      />
       <CompanionCard
         persona={plan.persona}
         serious={plan.serious}
         onPersona={(persona) => void actions.updatePlan({ persona })}
         onSerious={(serious) => void actions.updatePlan({ serious })}
       />
+      {/* Replace, not push: the shop and its try-on stand in for Settings, so the app shows behind. */}
+      <SettingsLookCard onPress={() => router.replace('/looks')} />
 
       <SettingsSection title={t('settings.yourDay')}>
         <SettingRow

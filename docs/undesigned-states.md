@@ -61,3 +61,15 @@ fakes behaviour the app cannot fake. Founder review.
 | Scan | Not a payment code (a link, a Wi-Fi code) | The unreadable card ("Couldn't read that QR") | Undesigned |
 | Scan | Camera off and QR from abroad | The capture guide's edge-state copy on Scan's paper card; abroad offers "Log ฿120 by hand" (opens Quick add) and Try again | The edge states are designed as guide cards, not on Scan |
 | Scan | Category of a scanned payee | The category the user taught for that payee, else the most likely at this hour | Undesigned; the prototype hard-codes Food |
+| Looks shop / Max card / Max sheet | Store has not answered, or purchases unavailable | No price on the card badge, Max line or plan tiles; buy buttons disabled; note "The App Store isn't answering..." | Prices are read from the store, never hard-coded |
+| Look detail | Buy | The real StoreKit sheet replaces the prototype's fake Face ID card; button shows a spinner and "Waiting for the App Store..." | Real behaviour only; no fake 1.3 s timers |
+| Look detail / Max | Purchase fails | Toast "That didn't go through. Nothing was charged." (cancel says nothing) | Undesigned |
+| Shop / Max | Restore finds nothing, or fails | Toast: "Nothing to restore on this Apple ID." / "Couldn't reach the App Store. Try again." (found uses the companion's `restored` line) | Undesigned |
+| Max sheet | Trial not offered to this Apple ID (already used) | Button "Subscribe to Max", terms without a trial | Trial eligibility is the store's answer |
+| Max sheet | Max on | Plan tiles hidden, status line (trial ends / renews / ends, store dates), "Manage subscription" opens Apple's sheet | Prototype turned Max off locally |
+| Max welcome | Gate whose screen is not built (Ask, sharing, widgets, companion) | Single button "Back to my day" | No destination exists yet |
+| Max welcome | Unlocks list says "Backup is on" | Kept as designed | Backup is not built; see open questions |
+| Max sheet | Terms / Privacy links | Terms = Apple's standard EULA; Privacy = `https://6pm.oddeggs.studio/privacy` | No such page exists yet |
+| Look detail | Intensity slider | Own Gesture Handler slider (4 pt track in the accent, 28 pt white thumb) | The render set has no try-on frame; the prototype used a browser range input |
+| Max | Development app (`ai.sixpm.app.dev`) | Purchases unavailable: no price, buy disabled | Products and RevenueCat exist for `ai.sixpm.app` only; purchases are tested on TestFlight builds |
+| Max | Yearly price | 599.000₫ (49.900₫ a month) | App Store has no 598.000₫ price point in Vietnam; the app reads the price from the store |

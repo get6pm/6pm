@@ -1,6 +1,6 @@
 # Phase 10: Looks and 6pm Max
 
-status: in progress
+status: built (sandbox purchase and gates todo)
 
 ## Context
 

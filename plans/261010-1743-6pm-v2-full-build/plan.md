@@ -16,10 +16,10 @@ Inputs: `docs/product-decisions.md`, `docs/tech-decisions.md`, `docs/design-syst
 | 07 | Onboarding v2 (wheels), Settings, close reminder notifications, serious mode, Categories and rules | 03 | built; Settings and Categories simulator-checked, onboarding welcome checked (later steps need taps) |
 | 08 | Capture: VietQR scan-to-pay + pending, share extension OCR, receipt email (API), App Intent, voice | 04 | in progress: Scan to pay built (camera, pay card, bank hand-off, pending); share extension, receipt email, App Intent and voice todo |
 | 09 | System surfaces: widgets, Live Activity, controls, notification actions (native batch) | 08 | todo |
-| 10 | Looks (all 11 + try-on), RevenueCat purchases, Max paywall, welcome and gates | 02 | todo |
+| 10 | [Looks and Max](phase-10-looks-and-max.md): all 11 looks + try-on, RevenueCat purchases, Max paywall, welcome and gates | 02 | built: 9 paid skies within 2/255 of the prototype and seen on the simulator; shop, try-on, Max sheet and welcome built; 11 store products ready and in RevenueCat; sandbox purchase on TestFlight and the feature gates todo |
 | 11 | Ask 6pm, encrypted backup and export, travel/FX | 05, 10 | todo |
 | 12 | Coming Soon site + waitlist; deployed dev/prd on `6pm.oddeggs.studio` | 01 | done |
-| 13 | Release: signed builds on `ai.sixpm.app`, TestFlight, store listing | all | in progress: tag `testflight/*` builds and submits (builds 59 and 60) |
+| 13 | Release: signed builds on `ai.sixpm.app`, TestFlight, store listing | all | in progress: tag `testflight/*` builds and submits (builds 59, 60; 2.0.0-5 adds camera, purchases, look fonts) |
 
 ## Acceptance (launch)
 

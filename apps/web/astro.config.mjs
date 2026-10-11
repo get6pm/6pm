@@ -6,8 +6,9 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://6pm.oddeggs.studio',
   output: 'static',
-  // One page: its CSS goes inline so first paint waits on no stylesheet request.
-  build: { inlineStylesheets: 'always' },
+  // Its CSS goes inline so first paint waits on no stylesheet request.
+  // `file` writes `privacy.html`, so `/privacy` (the link the app opens) is served without a redirect.
+  build: { inlineStylesheets: 'always', format: 'file' },
   // `astro dev` hands `/api` to a local API (`pnpm --filter @6pm/api dev`), as the routes do deployed.
   vite: { server: { proxy: { '/api': 'http://127.0.0.1:8787' } } },
 });

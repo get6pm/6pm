@@ -1,0 +1,416 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+import {
+  CONTACT_EMAIL,
+  OWNER,
+  legalPath,
+  legalStrings,
+  type LegalLang,
+  type LegalSlug,
+} from '../data/legal';
+import PageLayout from './page-layout.astro';
+
+/** A document under `src/legal`, as Astro's markdown import hands it over. */
+interface LegalDoc {
+  frontmatter: Record<string, unknown>;
+  getHeadings: () => MarkdownHeading[];
+}
+
+interface Props {
+  lang: LegalLang;
+  slug: LegalSlug;
+  doc: LegalDoc;
+}
+
+const { lang, slug, doc } = Astro.props;
+const text = legalStrings[lang];
+const other: LegalLang = lang === 'en' ? 'vi' : 'en';
+
+function field(name: string): string {
+  const value = doc.frontmatter[name];
+  if (typeof value !== 'string' || value === '') {
+    throw new Error(`src/legal document for ${slug} (${lang}) needs "${name}" in its front matter`);
+  }
+  return value;
+}
+
+// Front matter dates are YAML dates; a quoted YYYY-MM-DD keeps them plain strings.
+const title = field('title');
+const description = field('description');
+const lede = field('lede');
+const updated = field('updated');
+
+const sections = doc.getHeadings().filter((heading) => heading.depth === 2);
+
+// The documents are plain markdown, so the owner and the contact address come in as tokens.
+const body = (await Astro.slots.render('default'))
+  .replaceAll('{{OWNER}}', OWNER)
+  .replaceAll('{{CONTACT_EMAIL}}', CONTACT_EMAIL);
+---
+
+<PageLayout
+  title={`${title} · 6pm`}
+  description={description}
+  lang={lang}
+  alternates={{ en: legalPath('en', slug), vi: legalPath('vi', slug) }}
+  themeColors={[
+    { color: '#fbf7ef', media: '(prefers-color-scheme: light)' },
+    { color: '#0b0716', media: '(prefers-color-scheme: dark)' },
+  ]}
+>
+  <div class="legal">
+    <div class="glow" aria-hidden="true"></div>
+    <header class="bar">
+      <a class="brand" href="/" aria-label={text.brandLabel}>6pm</a>
+      <a
+        class="switch"
+        href={legalPath(other, slug)}
+        lang={other}
+        hreflang={other}
+        aria-label={text.otherLanguageLabel}>{text.otherLanguage}</a
+      >
+    </header>
+
+    <main class="wrap">
+      <p class="meta">
+        {text.updated}{' '}<time datetime={updated}>{text.formatDate(updated)}</time>
+      </p>
+      <h1>{title}</h1>
+      <p class="lede">{lede}</p>
+
+      <nav class="toc" aria-label={text.contents}>
+        <p class="toc-title">{text.contents}</p>
+        <ol>
+          {
+            sections.map((section) => (
+              <li>
+                <a href={`#${section.slug}`}>{section.text}</a>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+
+      <article set:html={body} />
+    </main>
+
+    <footer class="wrap foot">
+      <nav class="foot-links" aria-label="6pm">
+        <a href={legalPath(lang, 'privacy')} aria-current={slug === 'privacy' ? 'page' : undefined}
+          >{text.privacy}</a
+        >
+        <a href={legalPath(lang, 'terms')} aria-current={slug === 'terms' ? 'page' : undefined}
+          >{text.terms}</a
+        >
+        <span class="year">{text.rights}</span>
+      </nav>
+    </footer>
+  </div>
+</PageLayout>
+
+<style is:global>
+  :root {
+    --lg-bg: #0b0716;
+    --lg-ink: #fbf4ec;
+    --lg-soft: rgba(251, 244, 236, 0.76);
+    --lg-faint: rgba(251, 244, 236, 0.6);
+    --lg-hair: rgba(251, 244, 236, 0.16);
+    --lg-card: rgba(251, 244, 236, 0.05);
+    --lg-link: #f3b27a;
+    --lg-link-hover: #ffd2a8;
+    --lg-accent: #ff8552;
+    --lg-glow: rgba(255, 133, 82, 0.2);
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --lg-bg: #fbf7ef;
+      --lg-ink: #2b2530;
+      --lg-soft: rgba(43, 37, 48, 0.78);
+      --lg-faint: rgba(43, 37, 48, 0.62);
+      --lg-hair: rgba(43, 37, 48, 0.16);
+      --lg-card: rgba(43, 37, 48, 0.04);
+      --lg-link: #a63f1b;
+      --lg-link-hover: #7d2c10;
+      --lg-accent: #c9481e;
+      --lg-glow: rgba(255, 150, 100, 0.22);
+    }
+  }
+  html:root {
+    color-scheme: light dark;
+  }
+  html body:has(.legal) {
+    background: var(--lg-bg);
+  }
+</style>
+
+<style>
+  .legal {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: clip;
+    color: var(--lg-ink);
+    background: var(--lg-bg);
+    font-family: var(--font-text);
+    font-size: 17px;
+    line-height: 1.7;
+    letter-spacing: -0.005em;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  .glow {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 560px;
+    pointer-events: none;
+    background: radial-gradient(65% 100% at 50% 0%, var(--lg-glow), transparent);
+    mask-image: linear-gradient(#000 30%, transparent);
+    -webkit-mask-image: linear-gradient(#000 30%, transparent);
+  }
+  .wrap,
+  .bar {
+    position: relative;
+    box-sizing: border-box;
+    width: min(680px, 100% - 40px);
+    margin-inline: auto;
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: max(20px, env(safe-area-inset-top));
+    height: 72px;
+  }
+  .brand {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 28px;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    color: var(--lg-ink);
+    text-decoration: none;
+  }
+  .brand:hover {
+    color: var(--lg-ink);
+  }
+  .switch {
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 16px;
+    border: 1px solid var(--lg-hair);
+    border-radius: 99px;
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--lg-ink);
+    text-decoration: none;
+  }
+  .switch:hover {
+    color: var(--lg-ink);
+    border-color: var(--lg-faint);
+  }
+  :where(a):focus-visible {
+    outline: 2px solid var(--lg-link);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  main {
+    padding: clamp(36px, 8vw, 72px) 0 72px;
+  }
+  .meta {
+    margin: 0 0 14px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.5;
+    color: var(--lg-faint);
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-variation-settings:
+      'wdth' 78,
+      'opsz' 96;
+    font-size: clamp(44px, 9vw, 68px);
+    line-height: 0.96;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+  }
+  .lede {
+    margin: 22px 0 0;
+    font-size: clamp(18px, 2.4vw, 20px);
+    line-height: 1.55;
+    color: var(--lg-soft);
+    text-wrap: pretty;
+  }
+
+  .toc {
+    margin: 40px 0 8px;
+    padding: 20px 22px 18px;
+    border: 1px solid var(--lg-hair);
+    border-radius: 18px;
+    background: var(--lg-card);
+  }
+  .toc-title {
+    margin: 0 0 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lg-faint);
+  }
+  .toc ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: toc;
+  }
+  .toc li {
+    counter-increment: toc;
+    display: flex;
+    gap: 12px;
+    padding: 4px 0;
+    font-size: 15.5px;
+    line-height: 1.45;
+  }
+  .toc li::before {
+    content: counter(toc, decimal-leading-zero);
+    flex: none;
+    width: 22px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: var(--lg-faint);
+  }
+  .toc a {
+    color: var(--lg-ink);
+    text-decoration: none;
+  }
+  .toc a:hover {
+    color: var(--lg-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  article {
+    counter-reset: section;
+    margin-top: 24px;
+  }
+  article :global(h2) {
+    counter-increment: section;
+    margin: 56px 0 14px;
+    padding-top: 28px;
+    border-top: 1px solid var(--lg-hair);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-variation-settings:
+      'wdth' 82,
+      'opsz' 48;
+    font-size: clamp(28px, 5vw, 34px);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    scroll-margin-top: 20px;
+  }
+  article :global(h2)::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    color: var(--lg-accent);
+  }
+  article :global(h3) {
+    margin: 32px 0 6px;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.005em;
+  }
+  article :global(p),
+  article :global(ul),
+  article :global(ol) {
+    margin: 0 0 1.05em;
+    color: var(--lg-soft);
+    text-wrap: pretty;
+  }
+  article :global(ul),
+  article :global(ol) {
+    padding-left: 1.3em;
+  }
+  article :global(li) {
+    margin-bottom: 0.45em;
+    padding-left: 0.2em;
+  }
+  article :global(li)::marker {
+    color: var(--lg-accent);
+  }
+  article :global(strong) {
+    font-weight: 600;
+    color: var(--lg-ink);
+  }
+  article :global(a) {
+    color: var(--lg-link);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    overflow-wrap: anywhere;
+  }
+  article :global(a:hover) {
+    color: var(--lg-link-hover);
+  }
+  article :global(blockquote) {
+    margin: 0 0 1.2em;
+    padding: 14px 18px;
+    border-left: 3px solid var(--lg-accent);
+    border-radius: 0 12px 12px 0;
+    background: var(--lg-card);
+  }
+  article :global(blockquote p) {
+    margin: 0;
+    color: var(--lg-ink);
+  }
+
+  .foot {
+    padding: 26px 0 max(40px, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--lg-hair);
+  }
+  .foot-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 22px;
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+  .foot-links a {
+    color: var(--lg-soft);
+    text-decoration: none;
+  }
+  .foot-links a:hover,
+  .foot-links a[aria-current='page'] {
+    color: var(--lg-ink);
+  }
+  .foot-links a[aria-current='page'] {
+    text-decoration: underline;
+    text-underline-offset: 5px;
+    text-decoration-color: var(--lg-accent);
+  }
+  .year {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--lg-faint);
+  }
+</style>

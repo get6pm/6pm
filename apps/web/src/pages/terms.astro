@@ -1,0 +1,8 @@
+---
+import LegalLayout from '../layouts/legal-layout.astro';
+import * as doc from '../legal/terms.en.md';
+---
+
+<LegalLayout lang="en" slug="terms" doc={doc}>
+  <doc.Content />
+</LegalLayout>

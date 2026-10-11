@@ -5,20 +5,33 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description: string;
+  /** The page's language; `lang` on the document. */
+  lang?: 'en' | 'vi';
+  /** The same page in each language, as site paths, so search engines pair them. */
+  alternates?: Readonly<Record<'en' | 'vi', string>>;
+  /** Browser chrome colours; the media query picks one when the page has a light and a dark side. */
+  themeColors?: readonly { color: string; media?: string }[];
 }
 
-const { title, description } = Astro.props;
-const pageUrl = new URL(Astro.url.pathname, Astro.site);
+const {
+  title,
+  description,
+  lang = 'en',
+  alternates,
+  themeColors = [{ color: '#0b0716' }],
+} = Astro.props;
+// Pages build to `privacy.html` and `index.html`, but are served (and linked) without the extension.
+const pageUrl = new URL(Astro.url.pathname.replace(/(?:\/index)?\.html$/, ''), Astro.site);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0b0716" />
+    {themeColors.map((t) => <meta name="theme-color" content={t.color} media={t.media} />)}
     <link rel="canonical" href={pageUrl} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link
@@ -35,7 +48,15 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site);
       type="font/woff2"
       crossorigin
     />
+    {
+      alternates &&
+        (['en', 'vi'] as const).map((code) => (
+          <link rel="alternate" hreflang={code} href={new URL(alternates[code], Astro.site)} />
+        ))
+    }
+    {alternates && <link rel="alternate" hreflang="x-default" href={new URL(alternates.en, Astro.site)} />}
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content={lang === 'vi' ? 'vi_VN' : 'en_US'} />
     <meta property="og:site_name" content="6pm" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

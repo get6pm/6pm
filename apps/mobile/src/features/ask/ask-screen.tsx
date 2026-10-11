@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { ScrollView, Text, View, type ScrollViewInstance } from 'react-native';
+import { Keyboard, ScrollView, Text, View, type ScrollViewInstance } from 'react-native';
 
 import { useI18n } from '../../i18n/i18n';
 import { Companion } from '../../ui/companion/companion';
@@ -27,6 +27,13 @@ export function AskScreen({ question }: { readonly question: string | null }) {
   const { top } = useDesignInsets();
   const chat = useAsk();
   const scroll = useRef<ScrollViewInstance>(null);
+  // Once the keyboard is up, the newest bubble moves into view; not on every frame of its rise.
+  useEffect(() => {
+    const sub = Keyboard.addListener('keyboardDidShow', () =>
+      scroll.current?.scrollToEnd({ animated: true }),
+    );
+    return () => sub.remove();
+  }, []);
 
   // Sent once, a moment after the screen opens; closing the screen first cancels it.
   const send = useRef(chat.send);
@@ -71,7 +78,6 @@ export function AskScreen({ question }: { readonly question: string | null }) {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
         onContentSizeChange={() => scroll.current?.scrollToEnd({ animated: true })}
-        onLayout={() => scroll.current?.scrollToEnd({ animated: true })}
       >
         <IntroBubble text={t('ask.intro')} />
         {chat.messages.length === 0 ? (

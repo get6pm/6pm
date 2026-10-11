@@ -10,6 +10,7 @@ import { useSharedValue, type SharedValue } from 'react-native-reanimated';
 const COVERING_ROUTES: ReadonlySet<string> = new Set([
   'scan',
   'close',
+  'ask',
   'max-welcome',
   'onboarding',
 ]);

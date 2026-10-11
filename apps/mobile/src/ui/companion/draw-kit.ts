@@ -167,6 +167,9 @@ function nextPaint(kit: Kit): SkPaint {
     kit.shaded[at] = false;
   }
   paint.setStyle(PaintStyle.Fill);
+  // Gradients never set a colour, and the paint's alpha multiplies them: a slot must not keep the
+  // alpha of whatever drew with it last.
+  paint.setAlphaf(1);
   return paint;
 }
 

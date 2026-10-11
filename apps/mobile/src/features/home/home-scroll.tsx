@@ -9,7 +9,8 @@ import {
 
 import { gestures } from '@6pm/theme';
 
-import { NAV_AFTER, type HomeTab } from './home-tabs';
+import { useHomeNav } from './home-nav';
+import { HOME_TABS, NAV_AFTER, type HomeTab } from './home-tabs';
 
 /** Scroll state the home chrome reacts to, all on the UI thread. */
 export interface HomeScroll {
@@ -47,12 +48,19 @@ const BAR_MS = 350;
  */
 export function useHomePageScroll(tab: HomeTab) {
   const { y, nav, barMin } = useHomeScroll();
+  const { tabIndex } = useHomeNav();
+  const index = HOME_TABS.indexOf(tab);
   const last = useSharedValue(0);
   const condensed = useSharedValue(false);
   const after = NAV_AFTER[tab];
   return useAnimatedScrollHandler({
     onScroll: (event) => {
       const offset = Math.max(0, event.contentOffset.y);
+      // A page left behind can still coast; only the page on screen drives the shared chrome.
+      if (tabIndex.value !== index) {
+        last.value = offset;
+        return;
+      }
       y.value = offset;
       nav.value = Math.max(0, Math.min(1, (offset - after) / 36));
       const delta = offset - last.value;

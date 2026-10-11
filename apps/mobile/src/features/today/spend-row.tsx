@@ -170,9 +170,10 @@ export function SpendRow({
             deleteFill,
           ]}
         />
+        {/* Under the row until a swipe opens it; VoiceOver deletes through the row's own action. */}
         <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={deleteLabel}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
           onPress={deleteFromPanel}
           style={{
             position: 'absolute',
@@ -201,6 +202,10 @@ export function SpendRow({
       </View>
       <GestureDetector gesture={Gesture.Exclusive(pan, tap)}>
         <Animated.View
+          accessibilityActions={[{ name: 'delete', label: deleteLabel }]}
+          onAccessibilityAction={(event) => {
+            if (event.nativeEvent.actionName === 'delete') onDelete(row.id);
+          }}
           style={[
             {
               flexDirection: 'row',

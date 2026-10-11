@@ -46,7 +46,11 @@ export function useSwitchedTween(
   useAnimatedReaction(
     () => (flag.value ? onValues.value : offValues.value),
     (target, previous) => {
-      if (previous === null) return;
+      // On mount, start from the flag as it is now, not as it was when Home first opened.
+      if (previous === null) {
+        shared.value = target;
+        return;
+      }
       shared.value = reduced.value ? target : withTiming(target, TRANSITION);
     },
   );

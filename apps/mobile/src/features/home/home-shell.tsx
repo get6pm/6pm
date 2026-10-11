@@ -137,14 +137,33 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
     ],
   );
 
-  const goToTab = useCallback(
-    (next: HomeTab) => {
-      const index = HOME_TABS.indexOf(next);
-      // A page not built yet is built in the same commit that follows the slide's start.
+  // A tab asked for before its page is built slides in once the page exists, so the slide never
+  // shows the sky alone where the page should be.
+  const pendingSlide = useRef<{ index: number; swiped: boolean } | null>(null);
+  const mountedRef = useRef<Mounted>(mounted);
+  const slideWhenBuilt = useCallback(
+    (index: number, swiped: boolean) => {
+      if (mountedRef.current[index]) {
+        runOnUI(slideTo)(index, swiped);
+        return;
+      }
+      pendingSlide.current = { index, swiped };
       build(index);
-      runOnUI(slideTo)(index, false);
     },
     [build, slideTo],
+  );
+  useEffect(() => {
+    mountedRef.current = mounted;
+    const pending = pendingSlide.current;
+    if (pending && mounted[pending.index]) {
+      pendingSlide.current = null;
+      runOnUI(slideTo)(pending.index, pending.swiped);
+    }
+  }, [mounted, slideTo]);
+
+  const goToTab = useCallback(
+    (next: HomeTab) => slideWhenBuilt(HOME_TABS.indexOf(next), false),
+    [slideWhenBuilt],
   );
   const homeNav = useMemo<HomeNav>(() => ({ tabIndex, goToTab }), [tabIndex, goToTab]);
   const openDiary = useCallback(() => goToTab('diary'), [goToTab]);
@@ -173,13 +192,16 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
           const left = e.translationX < -gestures.tabSwipe || e.velocityX < -FLICK;
           const right = e.translationX > gestures.tabSwipe || e.velocityX > FLICK;
           const j = left ? index + 1 : right ? index - 1 : index;
-          if (j !== index && j >= 0 && j < HOME_TABS.length) {
+          if (j !== index && j >= 0 && j < HOME_TABS.length && built.value[j]) {
             slideTo(j, true);
+          } else if (j !== index && j >= 0 && j < HOME_TABS.length) {
+            drag.value = withTiming(0, { duration: SETTLE_MS, easing: settleEase });
+            runOnJS(slideWhenBuilt)(j, true);
           } else {
             drag.value = withTiming(0, { duration: SETTLE_MS, easing: settleEase });
           }
         }),
-    [tabIndex, drag, slideTo],
+    [tabIndex, drag, built, slideTo, slideWhenBuilt],
   );
 
   const page = useAnimatedStyle(() => ({

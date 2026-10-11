@@ -24,6 +24,7 @@ export type Bindings = Secrets & {
   readonly FILES: R2Bucket;
   readonly IP_RATE_LIMIT: RateLimit;
   readonly DEVICE_RATE_LIMIT: RateLimit;
+  readonly BACKUP_RATE_LIMIT: RateLimit;
   readonly ENVIRONMENT: EnvironmentName;
   readonly COMMIT_SHA: string;
 };
@@ -37,5 +38,9 @@ export type Device = {
 
 export type AppEnv = {
   Bindings: Bindings;
-  Variables: RequestIdVariables & { device: Device };
+  Variables: RequestIdVariables & {
+    device: Device;
+    /** SHA-256 of the backup token, hex, set once a backup request's header has been checked. */
+    backupHash: string;
+  };
 };

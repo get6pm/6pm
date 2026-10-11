@@ -14,3 +14,4 @@ export * from './vietqr';
 export * from './close/close-flow';
 export * from './entry/keypad';
 export * from './diary';
+export * from './contracts/backup';

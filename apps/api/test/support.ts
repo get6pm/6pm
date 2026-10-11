@@ -16,15 +16,21 @@ export function freshIp(): string {
   return `203.0.113.${nextAddress}`;
 }
 
-export type Call = { method?: string; token?: string; ip?: string; body?: unknown };
+export type Call = {
+  method?: string;
+  token?: string;
+  ip?: string;
+  body?: unknown;
+  headers?: Record<string, string>;
+};
 
 /** Sends one request through the shipped routes plus any extra ones a test adds. */
 export async function call(
   path: string,
-  { method = 'GET', token, ip = freshIp(), body }: Call = {},
+  { method = 'GET', token, ip = freshIp(), body, headers: extraHeaders = {} }: Call = {},
   extraRoutes: readonly RouteDefinition[] = [],
 ): Promise<Response> {
-  const headers = new Headers({ 'CF-Connecting-IP': ip });
+  const headers = new Headers({ 'CF-Connecting-IP': ip, ...extraHeaders });
   if (token !== undefined) headers.set('Authorization', `Bearer ${token}`);
   if (body !== undefined) headers.set('Content-Type', 'application/json');
   const app = createApp([...Object.values(routes), ...extraRoutes]);

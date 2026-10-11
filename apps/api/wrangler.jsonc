@@ -24,6 +24,7 @@
           "migrations_dir": "migrations",
         },
       ],
+      // FILES holds the sealed backups under `backups/<token hash>`; nothing in it is readable.
       "r2_buckets": [{ "binding": "FILES", "bucket_name": "sixpm-dev" }],
       // Rate limit namespaces need no resource: the id is any integer unique within the account.
       "ratelimits": [
@@ -36,6 +37,13 @@
           "name": "DEVICE_RATE_LIMIT",
           "namespace_id": "6302",
           "simple": { "limit": 60, "period": 60 },
+        },
+        // A backup is a few megabytes and made about once a day: one token and one address each
+        // get a small allowance (see `limitByBackup`).
+        {
+          "name": "BACKUP_RATE_LIMIT",
+          "namespace_id": "6303",
+          "simple": { "limit": 12, "period": 60 },
         },
       ],
     },
@@ -62,6 +70,13 @@
           "name": "DEVICE_RATE_LIMIT",
           "namespace_id": "6312",
           "simple": { "limit": 60, "period": 60 },
+        },
+        // A backup is a few megabytes and made about once a day: one token and one address each
+        // get a small allowance (see `limitByBackup`).
+        {
+          "name": "BACKUP_RATE_LIMIT",
+          "namespace_id": "6313",
+          "simple": { "limit": 12, "period": 60 },
         },
       ],
     },

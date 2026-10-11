@@ -6,6 +6,7 @@ import { Companion } from '../../ui/companion/companion';
 import { Symbol } from '../../ui/icons/symbol';
 import type { SymbolName } from '../../ui/icons/symbols.generated';
 import { PressScale } from '../../ui/primitives/press-scale';
+import { RestoreFromBackupLink } from '../backup/restore-link';
 import { BalancedText } from '../../ui/type/balanced-text';
 import { body, display } from '../../ui/type/fonts';
 import { ease, popEntering, riseEntering, useLoop } from './onboarding-motion';
@@ -112,6 +113,7 @@ export function StepWelcome({
       >
         <Text style={{ ...body(17, 700), color: pal.btnFg }}>{t('onboarding.welcome.start')}</Text>
       </PressScale>
+      <RestoreFromBackupLink color={pal.ink} />
     </Animated.View>
   );
 }

@@ -1,3 +1,4 @@
+import { enBackup } from './en-backup';
 import { enScan } from './en-scan';
 import { enLooks } from './en-looks';
 import { enOnboarding } from './en-onboarding';
@@ -19,4 +20,5 @@ export const en = {
   ...enScan,
   ...enLooks,
   ...enCompanion,
+  ...enBackup,
 } as const;

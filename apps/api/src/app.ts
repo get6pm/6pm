@@ -1,10 +1,11 @@
 import { Hono } from 'hono';
 import { requestId } from 'hono/request-id';
 
+import { requireBackupToken } from './backup-token';
 import { requireDevice } from './device-auth';
 import type { AppEnv } from './env';
 import { ApiError, toApiError, wireError } from './errors';
-import { limitByDevice, limitByIp, rateLimitWindowSeconds } from './rate-limit';
+import { limitByBackup, limitByDevice, limitByIp, rateLimitWindowSeconds } from './rate-limit';
 import type { RouteDefinition } from './route';
 
 /**
@@ -21,6 +22,8 @@ export function createApp(routes: readonly RouteDefinition[]): Hono<AppEnv> {
   for (const route of routes) {
     if (route.access === 'device') {
       app.on(route.method, route.path, requireDevice, limitByDevice, route.handle);
+    } else if (route.access === 'backup') {
+      app.on(route.method, route.path, requireBackupToken, limitByBackup, route.handle);
     } else {
       app.on(route.method, route.path, route.handle);
     }

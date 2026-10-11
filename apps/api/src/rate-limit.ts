@@ -24,3 +24,18 @@ export const limitByDevice = createMiddleware<AppEnv>(async (c, next) => {
   if (!success) throw tooMany();
   await next();
 });
+
+/**
+ * Runs after `requireBackupToken`. A backup is a few megabytes and is made about once a day, so
+ * its limit is far tighter than the device limit: one token and one address each get the same
+ * small allowance.
+ */
+export const limitByBackup = createMiddleware<AppEnv>(async (c, next) => {
+  const ip = c.req.header('CF-Connecting-IP') ?? 'unknown';
+  const [byToken, byIp] = await Promise.all([
+    c.env.BACKUP_RATE_LIMIT.limit({ key: `token:${c.var.backupHash}` }),
+    c.env.BACKUP_RATE_LIMIT.limit({ key: `ip:${ip}` }),
+  ]);
+  if (!byToken.success || !byIp.success) throw tooMany();
+  await next();
+});

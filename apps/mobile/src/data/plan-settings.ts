@@ -42,8 +42,17 @@ export async function readPlan(db: SqlDatabase): Promise<PlanSettings | null> {
   ]);
   const raw = rows[0]?.value;
   if (raw === undefined) return null;
-  const parsed = planSettingsSchema.safeParse(JSON.parse(raw));
+  const parsed = planSettingsSchema.safeParse(parseJson(raw));
   return parsed.success ? parsed.data : null;
+}
+
+/** A damaged setting reads as no setting rather than throwing on launch. */
+function parseJson(raw: string): unknown {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
 }
 
 export async function writePlan(db: SqlDatabase, plan: PlanSettings): Promise<void> {

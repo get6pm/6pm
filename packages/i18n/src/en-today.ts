@@ -125,4 +125,8 @@ export const enToday = {
   'tabs.today': 'Today',
   'tabs.plan': 'Plan',
   'tabs.diary': 'Diary',
+  'startup.failed': 'Your days didn’t open.',
+  'startup.failedSub':
+    'Nothing is lost. Try again, and if it keeps happening, restart your iPhone.',
+  'startup.retry': 'Try again',
 } as const;

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useSQLiteContext } from 'expo-sqlite';
 import {
@@ -10,6 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 
+import { StartupError } from '../ui/startup-error';
 import { useClock } from '../ui/theme/clock';
 import { moneyActions, type MoneyActions } from './money-actions';
 import { createMoneyStore, dayOf, type MoneySnapshot, type MoneyStore } from './money-store';
@@ -30,16 +32,35 @@ export function MoneyProvider({ children }: { readonly children: ReactNode }) {
   }, [db]);
 
   // No screen renders before the first read: a screen that fixes its data at mount (the close's
-  // queue) must never see an empty store. The splash stays up until then.
-  const [ready, setReady] = useState(false);
+  // queue) must never see an empty store. The splash stays up until then; a read that fails lifts
+  // it on a way to try again rather than leaving the splash up for good.
+  const [state, setState] = useState<'loading' | 'ready' | 'failed'>('loading');
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
-    void value.store.load(today).then(() => {
-      setReady(true);
-      SplashScreen.hide();
-    });
-  }, [value, today]);
+    value.store.load(today).then(
+      () => {
+        setState('ready');
+        SplashScreen.hide();
+      },
+      (error: unknown) => {
+        Sentry.captureException(error);
+        setState((s) => (s === 'ready' ? s : 'failed'));
+        SplashScreen.hide();
+      },
+    );
+  }, [value, today, attempt]);
 
-  return <StoreContext value={value}>{ready ? children : null}</StoreContext>;
+  if (state === 'failed') {
+    return (
+      <StartupError
+        onRetry={() => {
+          setState('loading');
+          setAttempt((n) => n + 1);
+        }}
+      />
+    );
+  }
+  return <StoreContext value={value}>{state === 'ready' ? children : null}</StoreContext>;
 }
 
 function useStore() {

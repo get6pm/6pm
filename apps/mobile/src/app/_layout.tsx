@@ -2,13 +2,12 @@ import * as Sentry from '@sentry/react-native';
 import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { SQLiteProvider } from 'expo-sqlite';
 import { StatusBar } from 'expo-status-bar';
 import type { ReactNode } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { MoneyProvider, useMoney } from '../data/money-provider';
-import { DATABASE_NAME, prepareDatabase } from '../db/database';
+import { DatabaseGate } from '../db/database-gate';
 import { BackupHost } from '../features/backup/backup-host';
 import { CloseNudge } from '../features/companion/close-nudge';
 import { DevCommands } from '../features/dev/dev-commands';
@@ -88,7 +87,7 @@ function PlanTheme({ children }: { readonly children: ReactNode }) {
 function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SQLiteProvider databaseName={DATABASE_NAME} onInit={prepareDatabase}>
+      <DatabaseGate>
         <PurchasesProvider>
           <LookSettingsProvider>
             <I18nProvider>
@@ -109,7 +108,7 @@ function RootLayout() {
             </I18nProvider>
           </LookSettingsProvider>
         </PurchasesProvider>
-      </SQLiteProvider>
+      </DatabaseGate>
     </GestureHandlerRootView>
   );
 }

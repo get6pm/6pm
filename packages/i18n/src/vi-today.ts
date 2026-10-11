@@ -121,4 +121,7 @@ export const viToday: { readonly [Key in keyof typeof enToday]: Entry } = {
   'tabs.today': 'Hôm nay',
   'tabs.plan': 'Kế hoạch',
   'tabs.diary': 'Nhật ký',
+  'startup.failed': 'Chưa mở được các ngày của bạn.',
+  'startup.failedSub': 'Không mất gì đâu. Thử lại nhé, nếu vẫn vậy thì khởi động lại iPhone.',
+  'startup.retry': 'Thử lại',
 };

@@ -32,7 +32,8 @@ describe('onboarding maths', () => {
   });
 
   it('computes the first day with the same engine as Today', () => {
-    // 9 Oct with payday on the 31st: 22 days left, so the money covers 23 days.
+    // 9 Oct with payday on the 31st: 22 days left, so the money covers 23 days. Joining today,
+    // 23 of the cycle's 32 days are still ahead: 11,2tr × 23/32 = 8.050.000₫.
     const day = firstDay(
       {
         income: 17_400_000,
@@ -43,8 +44,8 @@ describe('onboarding maths', () => {
       '2026-10-09',
     );
     expect(day.days).toBe(23);
-    expect(day.free).toBe(11_200_000);
-    expect(day.line).toBe(486_000);
+    expect(day.free).toBe(8_050_000);
+    expect(day.line).toBe(350_000);
   });
 
   it('never reveals a negative number', () => {

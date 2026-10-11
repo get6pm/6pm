@@ -56,3 +56,16 @@ export function payCycleOn(today: LocalDate, payday: Payday): PayCycle {
   if (next <= today) next = addDays(today, 1);
   return { start, payday: next, daysLeft: diffDays(next, today) };
 }
+
+/**
+ * How much of this cycle's free money someone who joined on `joinedOn` still has: the share of
+ * the cycle's days from that day through payday. Joining mid-cycle, part of the pay is already
+ * spent; assuming it went at the cycle's average rate keeps the first number honest without
+ * asking. Any cycle that started on or after the joining day gets all of it.
+ */
+export function joinedShare(cycle: PayCycle, joinedOn: LocalDate | null): number {
+  if (joinedOn === null || joinedOn <= cycle.start) return 1;
+  const total = diffDays(cycle.payday, cycle.start) + 1;
+  const covered = diffDays(cycle.payday, joinedOn) + 1;
+  return Math.min(1, Math.max(0, covered / total));
+}

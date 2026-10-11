@@ -60,6 +60,7 @@ describe('completeOnboarding', () => {
       closeAt: '19:30',
       persona: 'cheeky',
       serious: false,
+      startedOn: '2026-10-10',
     });
     expect(snap.categories.map((c) => [c.id, c.name, c.icon, c.hue])).toEqual([
       ['food', 'Ăn uống', 'restaurant', 45],
@@ -75,9 +76,9 @@ describe('completeOnboarding', () => {
     ]);
     expect(await readWallets(store)).toEqual(['MB', 'MOMO', 'CASH']);
 
-    // 10 Oct with payday the 25th: 15 days left, 16 days covered.
-    // (15.500.000 − 4.000.000 − 1.900.000) ÷ 16 = 600.000.
-    expect(dayOf(snap)?.line).toBe(600_000);
+    // 10 Oct with payday the 25th: 15 days left, 16 days covered, joining 16 days into a 31-day
+    // cycle: (15.500.000 − 4.000.000 − 1.900.000) × 16/31 ÷ 16 = 309.677 → 309.000.
+    expect(dayOf(snap)?.line).toBe(309_000);
   });
 
   it('keeps categories the user already has', async () => {

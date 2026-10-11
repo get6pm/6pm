@@ -1,6 +1,7 @@
 import {
   CLOSE_TIME_OPTIONS,
   dailyNumber,
+  joinedShare,
   payCycleOn,
   type LocalDate,
   type Payday,
@@ -73,7 +74,8 @@ export interface FirstDay {
 
 /** The first day's number from the domain engine, as Home will show it once onboarding ends. */
 export function firstDay(input: FirstDayInput, today: LocalDate): FirstDay {
-  const { daysLeft } = payCycleOn(today, input.payday);
+  const cycle = payCycleOn(today, input.payday);
+  const { daysLeft } = cycle;
   const day = dailyNumber({
     plan: {
       income: input.income,
@@ -86,6 +88,8 @@ export function firstDay(input: FirstDayInput, today: LocalDate): FirstDay {
     today: [],
     notDaily: new Set(),
     daysLeft,
+    // Joining today: only the days left of this pay cycle's money is still to spend.
+    share: joinedShare(cycle, today),
   });
   return { line: Math.max(0, day.line), free: day.startFree, days: daysLeft + 1 };
 }

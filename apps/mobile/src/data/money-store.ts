@@ -1,6 +1,7 @@
 import {
   ceilToFiftyThousand,
   dailyNumber,
+  joinedShare,
   payCycleOn,
   type BillRow,
   type CategoryRow,
@@ -90,6 +91,7 @@ export function dayOf(snapshot: MoneySnapshot): DailyNumber | null {
     today: snapshot.cycleSpends.filter((s) => s.day === today).map(counted),
     notDaily,
     daysLeft: snapshot.cycle.daysLeft,
+    share: joinedShare(snapshot.cycle, plan.startedOn ?? null),
   });
 }
 

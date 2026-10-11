@@ -25,6 +25,11 @@ export interface DailyNumberInput {
   readonly notDaily: ReadonlySet<string>;
   /** Days after today through payday (see `payCycleOn`). */
   readonly daysLeft: number;
+  /**
+   * The part of the cycle's free money not yet spent when 6pm started counting: 1, except in the
+   * cycle the user joined (see `joinedShare`).
+   */
+  readonly share?: number;
 }
 
 export interface DailyNumber {
@@ -49,9 +54,9 @@ export interface DailyNumber {
  * down to whole thousands so the promise is always kept.
  */
 export function dailyNumber(input: DailyNumberInput): DailyNumber {
-  const { plan, daysLeft } = input;
-  const startFree =
-    plan.income - plan.bills - plan.futureYou - plan.occasions - plan.topUps - input.spentBefore;
+  const { plan, daysLeft, share = 1 } = input;
+  const planned = plan.income - plan.bills - plan.futureYou - plan.occasions;
+  const startFree = Math.round(planned * share) - plan.topUps - input.spentBefore;
   const line = floorToThousand(startFree / (daysLeft + 1));
   const spent = sumCounted(input.today, input.notDaily);
   const free = startFree - spent;

@@ -17,6 +17,11 @@ export const planSettingsSchema = z.object({
   closeAt: z.string().regex(/^\d{2}:\d{2}$/),
   persona: z.enum(['soft', 'cheeky', 'roast']),
   serious: z.boolean(),
+  /** The day the user set up 6pm: that pay cycle counts only the days left in it. */
+  startedOn: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
 });
 export type PlanSettings = z.infer<typeof planSettingsSchema>;
 

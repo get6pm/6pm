@@ -62,6 +62,7 @@ export async function completeOnboarding(
       payday: answers.payday,
       futureYou: Math.max(0, Math.round(answers.futureYou)),
       closeAt: answers.closeAt,
+      startedOn: existing?.startedOn ?? today,
     });
 
     const categories = await tables.categories.all();

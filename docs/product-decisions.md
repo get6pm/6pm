@@ -32,6 +32,7 @@ Rules that never bend:
 |---|---|
 | M1 | **Unconfirmed spends count.** Caught and pending items reduce today's number until skipped (the number stays honest). The capture-guide line "Nothing counts until you say so" becomes "Nothing is final until you say so" *(default)* |
 | M2 | **Days divisor.** `daysLeft` = calendar days from tomorrow through payday (prototype: 9 Oct → 31 Oct = 22). Today's line = startFree ÷ (daysLeft + 1); tomorrow = free ÷ daysLeft. Onboarding uses the same engine, not ÷30/÷31 |
+| M2a | **Joining mid-cycle.** In the pay cycle the user set 6pm up in, only the days left of it count: the cycle's free money (income − bills − Future you − occasions) is scaled by days from the set-up day through payday ÷ days in the cycle, as if the rest went at the average rate. Bills and Future you stay whole. Every later cycle is whole. Decided 2026-10-11 |
 | M3 | **Payday.** Same day each month (clamped to month length), last day of month, or "it varies" (user confirms each payday; until then the cycle is calendar month) |
 | M4 | **Occasions (pots).** Each pot has a monthly set-aside = ceil((goal − have) ÷ monthsLeft ÷ 50k) × 50k. OCC = Σ pot set-asides, so a new pot does change the daily number, as the copy promises |
 | M5 | **What-if slider** commits Future you on release and the note shows the real change in the daily number (prototype note bug fixed) |

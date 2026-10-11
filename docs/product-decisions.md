@@ -36,7 +36,8 @@ Rules that never bend:
 | M3 | **Payday.** Same day each month (clamped to month length), last day of month, or "it varies" (user confirms each payday; until then the cycle is calendar month) |
 | M4 | **Occasions (pots).** Each pot has a monthly set-aside = ceil((goal − have) ÷ monthsLeft ÷ 50k) × 50k. OCC = Σ pot set-asides, so a new pot does change the daily number, as the copy promises |
 | M5 | **What-if slider** commits Future you on release and the note shows the real change in the daily number (prototype note bug fixed) |
-| M6 | **Late items** (caught after the close) reduce the next day's start. A close before 04:00 files under the previous day |
+| M6 | **Late items** (caught after the close) reduce the next day's start. **The money day ends at 04:00 everywhere**: before 04:00, Today, the close, the Diary and every capture still belong to the previous day. Decided 2026-10-11 |
+| M1a | **Earlier waiting items** (caught or pending from a day already past) join tonight's close and Today's Inbox count, so nothing that counts is ever out of reach. Decided 2026-10-11 |
 | M7 | **Missed day.** Closing a missed day confirms its items; they were already counted under M1 |
 | M8 | **Merchant rules** apply to every new capture (merchant → category). Categories have no limits; `daily: false` excludes a category from the daily number |
 | M9 | **Duplicates.** Same amount, different sources, within 3 minutes → merged into one item with a source trail ("Seen 2 ways") |
@@ -65,6 +66,7 @@ Rules that never bend:
 | 6pm Max | 78.000₫/month or 598.000₫/year, 7-day trial. Every look, unlimited Ask and pots, Budget together, Travel mode, Year book, encrypted backup and export, widgets in your look, 180 icons, Max companion form |
 | Widgets | Functional widgets and controls are free; widgets drawn in your look are Max *(default)* |
 | Prices | Read from the store at runtime; the design's prices are the App Store tiers to configure |
+| Max promises | Every Max feature on the sheet and welcome is built before launch (Ask, Budget together, Travel, Year book, widgets in your look, export, Max companion form). Decided 2026-10-11 |
 
 ## 6. Ask 6pm, backup, travel, together
 

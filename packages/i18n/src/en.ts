@@ -1,4 +1,5 @@
 import { enBackup } from './en-backup';
+import { enAsk } from './en-ask';
 import { enScan } from './en-scan';
 import { enLooks } from './en-looks';
 import { enOnboarding } from './en-onboarding';
@@ -21,4 +22,5 @@ export const en = {
   ...enLooks,
   ...enCompanion,
   ...enBackup,
+  ...enAsk,
 } as const;

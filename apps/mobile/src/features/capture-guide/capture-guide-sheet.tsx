@@ -1,3 +1,4 @@
+import * as Clipboard from 'expo-clipboard';
 import { useRouter } from 'expo-router';
 import { Linking, ScrollView, Share, Text, View } from 'react-native';
 import Animated, { Easing, Keyframe } from 'react-native-reanimated';
@@ -5,6 +6,7 @@ import Animated, { Easing, Keyframe } from 'react-native-reanimated';
 import { curves } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
+import { useCompanionToast } from '../companion/use-companion-toast';
 import { CategoryTile } from '../../ui/category-tile';
 import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
@@ -13,7 +15,7 @@ import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display } from '../../ui/type/fonts';
 import { captureColours } from './capture-colours';
-import { GuideSample, GuideSection, GuideSteps, GuideTip } from './guide-sections';
+import { GuideSample, GuideSection, GuideSteps, GuideTip, type LiveChip } from './guide-sections';
 import type { CaptureSource } from './source-status';
 import { useCaptureSources } from './use-capture-sources';
 
@@ -32,10 +34,22 @@ export function CaptureGuideSheet({ source }: { readonly source: CaptureSource }
   const { palette } = useTheme();
   const { t } = useI18n();
   const router = useRouter();
-  const { sources } = useCaptureSources();
+  const { sources, emailAddress } = useCaptureSources();
   const colours = captureColours(palette);
   const view = sources.find((s) => s.source === source);
-  const action = useGuideAction(source, view?.on ?? false);
+  const action = useGuideAction(source, view?.on ?? false, emailAddress);
+  // Receipt email's first step shows the address itself; tapping it offers the share sheet.
+  const addressChip: LiveChip | null =
+    source === 'email' && emailAddress !== null
+      ? {
+          text: emailAddress,
+          label: t('receiptEmail.share'),
+          onPress: () => {
+            haptics.tap();
+            void Share.share({ message: emailAddress }).catch(() => undefined);
+          },
+        }
+      : null;
   // Every way is always listed; this only satisfies the type.
   if (!view) return null;
   const { guide } = view;
@@ -128,7 +142,7 @@ export function CaptureGuideSheet({ source }: { readonly source: CaptureSource }
           </View>
 
           <GuideSection title={t('capture.guide.howItWorks')} note={t(guide.time)}>
-            <GuideSteps guide={guide} />
+            <GuideSteps guide={guide} firstChip={addressChip} />
           </GuideSection>
 
           <GuideSection title={t('capture.guide.lands')}>
@@ -184,12 +198,17 @@ interface GuideAction {
 
 /**
  * The button under each guide. Pinning in the share row and the Wallet automation are the user's
- * to set in iOS, so those open the share sheet and the Shortcuts app; Receipt email has no
- * address on this iPhone to copy, so it has no button.
+ * to set in iOS, so those open the share sheet and the Shortcuts app. Receipt email copies the
+ * address, and has no button until the server has given one.
  */
-function useGuideAction(source: CaptureSource, on: boolean): GuideAction | null {
+function useGuideAction(
+  source: CaptureSource,
+  on: boolean,
+  emailAddress: string | null,
+): GuideAction | null {
   const { t } = useI18n();
   const router = useRouter();
+  const say = useCompanionToast();
   switch (source) {
     case 'share':
       return {
@@ -201,7 +220,17 @@ function useGuideAction(source: CaptureSource, on: boolean): GuideAction | null 
         },
       };
     case 'email':
-      return null;
+      if (emailAddress === null) return null;
+      return {
+        label: t('receiptEmail.copy'),
+        accent: false,
+        run: () => {
+          haptics.tap();
+          void Clipboard.setStringAsync(emailAddress)
+            .then(() => say('copied'))
+            .catch(() => undefined);
+        },
+      };
     case 'scan':
       return {
         label: t('capture.scan.action'),

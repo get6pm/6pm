@@ -5,6 +5,7 @@ import { viIntents } from './vi-intents';
 import { viVoice } from './vi-voice';
 import { viSurfaces } from './vi-surfaces';
 import { viTogether } from './vi-together';
+import { viReceiptEmail } from './vi-receipt-email';
 import { viBackup } from './vi-backup';
 import { viAsk } from './vi-ask';
 import { viScan } from './vi-scan';
@@ -37,4 +38,5 @@ export const vi: Catalogue = {
   ...viVoice,
   ...viSurfaces,
   ...viTogether,
+  ...viReceiptEmail,
 };

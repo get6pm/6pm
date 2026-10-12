@@ -11,7 +11,13 @@ export default defineConfig(async () => {
     plugins: [
       cloudflareTest({
         wrangler: { configPath: './wrangler.jsonc', environment: 'dev' },
-        miniflare: { bindings: { TEST_MIGRATIONS: migrations } },
+        miniflare: {
+          bindings: {
+            TEST_MIGRATIONS: migrations,
+            // A stand-in seal key; the deployed one is a Wrangler secret.
+            EMAIL_SEAL_KEY: 'test-seal-key-0123456789abcdef0123456789',
+          },
+        },
       }),
     ],
     test: { setupFiles: ['./test/apply-migrations.ts'] },

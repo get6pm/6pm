@@ -317,6 +317,9 @@ catalogs:
     jest-expo:
       specifier: 58.0.7
       version: 58.0.7
+    postal-mime:
+      specifier: 3.0.1
+      version: 3.0.1
     prettier:
       specifier: 3.9.9
       version: 3.9.9
@@ -417,6 +420,9 @@ importers:
       hono:
         specifier: 'catalog:'
         version: 4.13.13
+      postal-mime:
+        specifier: 'catalog:'
+        version: 3.0.1
       zod:
         specifier: 'catalog:'
         version: 4.6.5
@@ -6026,6 +6032,9 @@ packages:
   pngjs@3.4.0:
     resolution: {integrity: sha512-NCrCHhWmnQklfH4MtJMRjZ2a8c80qXeMlQMv2uVp9ISJMTt562SbGd6n2oq0PaPgKm7Z6pL9E2UlLIhC+SHL3w==}
     engines: {node: '>=4.0.0'}
+
+  postal-mime@3.0.1:
+    resolution: {integrity: sha512-N86EnYOxZjW1uHQIgSXnnRdnJz+wxmtDsnk3C4R/9rQ1utj8A2znauXZ3Q3+stCHxG5ckY4/NrO09WiPU6rcdQ==}
 
   postcss@8.5.29:
     resolution: {integrity: sha512-49cGhUbXj8Qenv0iTMxA1cFBzxXoctpC9Ujd77t1WcbJIr6nF/eI7g/8MgxrYldFRuAXvja7xQRwavoW7kgrxQ==}
@@ -13525,6 +13534,8 @@ snapshots:
       xmlbuilder: 15.1.1
 
   pngjs@3.4.0: {}
+
+  postal-mime@3.0.1: {}
 
   postcss@8.5.29:
     dependencies:

@@ -127,8 +127,12 @@ export function useClose() {
   const keptBefore = queue
     .filter((s) => state.verdicts[s.id] === 'kept' || state.verdicts[s.id] === 'edited')
     .reduce((sum, s) => sum + (findSpend(snap, s.id)?.amount ?? s.amount), 0);
-  // A shared receipt names its bank as the prototype words it; other sources show their detail.
+  // A shared receipt names its bank as the prototype words it, an emailed one the address it
+  // came from; other sources show their detail.
   const cardDetail = (spend: SpendRow) => {
+    if (spend.source === 'email' && spend.detail) {
+      return t('receiptEmail.from', { address: spend.detail });
+    }
     const bank = spend.source === 'shared' ? receiptBankOf(spend.detail) : null;
     return bank ? t('close.card.readFrom', { bank }) : spend.detail;
   };

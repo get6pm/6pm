@@ -7,7 +7,7 @@ import { ApiRequestError } from './api-error';
 import { secureDeviceTokenStore } from './device-token-store';
 
 /** The API of this build's environment: `extra.apiBase` is set per variant in the app config. */
-function apiBase(): string | null {
+export function apiBase(): string | null {
   const baseUrl: unknown = Constants.expoConfig?.extra?.['apiBase'];
   return typeof baseUrl === 'string' && baseUrl !== '' ? baseUrl : null;
 }

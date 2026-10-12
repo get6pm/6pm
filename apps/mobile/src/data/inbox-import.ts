@@ -6,6 +6,7 @@ import {
   likelyCategoriesAt,
   type InboxPaid,
   type InboxSpend,
+  type SpendSource,
 } from '@6pm/domain';
 
 import type { moneyActions } from './money-actions';
@@ -73,9 +74,15 @@ function parseJson(json: string): unknown {
   }
 }
 
-async function alreadyImported(store: MoneyStore, item: InboxSpend): Promise<boolean> {
+/**
+ * Whether a capture was saved before: its id is a spend's, or it was merged into a payment seen
+ * another way and its sighting is the trace it left.
+ */
+export async function alreadyImported(
+  store: MoneyStore,
+  item: { readonly id: string; readonly source: SpendSource; readonly at: string },
+): Promise<boolean> {
   if (await store.tables.spends.get(item.id)) return true;
-  // Merged into a payment seen another way: the sighting is the trace it left.
   const seen = await store.db.getAllAsync<{ n: number }>(
     'SELECT COUNT(*) AS n FROM spend_sightings WHERE source = ? AND seen_at = ?',
     [item.source, new Date(item.at).toISOString()],

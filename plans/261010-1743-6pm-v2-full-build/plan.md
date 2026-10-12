@@ -8,18 +8,18 @@ Inputs: `docs/product-decisions.md`, `docs/tech-decisions.md`, `docs/design-syst
 | # | Phase | Depends on | Status |
 |---|---|---|---|
 | 01 | [Foundation](phase-01-foundation.md): workspace, domain core, theme engine, i18n, fonts/icons, app + API skeletons, CI | — | done |
-| 02 | [Shell and motion](phase-02-shell-and-motion.md): tab pager + scrub/condense bar, FAB, sheets, island toasts, Skia sky (Basic, Golden Hour), companion, odometer | 01 | in progress |
-| 03 | [Today, Inbox, Details, store](phase-03-today-and-store.md) | 02 | in progress |
-| 04 | [Quick add and the 6pm Close](phase-04-quick-add-and-close.md) | 03 | in progress |
+| 02 | [Shell and motion](phase-02-shell-and-motion.md): tab pager + scrub/condense bar, FAB, sheets, island toasts, Skia sky (Basic, Golden Hour), companion, odometer | 01 | built; audited and fixed 11 Oct (fix-and-finish batches 1–7); device check in the TestFlight pass |
+| 03 | [Today, Inbox, Details, store](phase-03-today-and-store.md) | 02 | built; audited and fixed 11 Oct (fix-and-finish batches 2–4); device check in the TestFlight pass |
+| 04 | [Quick add and the 6pm Close](phase-04-quick-add-and-close.md) | 03 | built; audited and fixed 11 Oct (fix-and-finish batches 2–4); device check in the TestFlight pass |
 | 05 | Plan: river, daily bars + what-if, bills, Future you, occasions/pots | 03 | built (simulator-checked) |
 | 06 | Diary: week recap, calendar, day receipt, missed day, money diaries | 04 | built (simulator-checked) |
 | 07 | Onboarding v2 (wheels), Settings, close reminder notifications, serious mode, Categories and rules | 03 | built; Settings and Categories simulator-checked, onboarding welcome checked (later steps need taps) |
-| 08 | Capture: VietQR scan-to-pay + pending, share extension OCR, receipt email (API), App Intent, voice | 04 | in progress: Scan to pay built (camera, pay card, bank hand-off, pending); share extension, receipt email, App Intent and voice todo |
-| 09 | System surfaces: widgets, Live Activity, controls, notification actions (native batch) | 08 | todo |
+| 08 | Capture: VietQR scan-to-pay + pending, share extension OCR, receipt email (API), App Intent, voice | 04 | built 12 Oct: Scan to pay, share extension OCR, App Intent + Wallet automation, voice; receipt email in progress (fix-and-finish batch 8) |
+| 09 | System surfaces: widgets, Live Activity, controls, notification actions (native batch) | 08 | built 12 Oct: widgets, Live Activity, controls (fix-and-finish batch 8); device check in the TestFlight pass |
 | 10 | [Looks and Max](phase-10-looks-and-max.md): all 11 looks + try-on, RevenueCat purchases, Max paywall, welcome and gates | 02 | built: 9 paid skies within 2/255 of the prototype and seen on the simulator; shop, try-on, Max sheet and welcome built; 11 store products ready and in RevenueCat; sandbox purchase on TestFlight and the feature gates todo |
-| 11 | Ask 6pm, encrypted backup and export, travel/FX | 05, 10 | todo |
+| 11 | Ask 6pm, encrypted backup and export, travel/FX | 05, 10 | Ask 6pm built 11 Oct; encrypted backup built; export CSV and travel/FX in progress (fix-and-finish batch 8) |
 | 12 | Coming Soon site + waitlist; deployed dev/prd on `6pm.oddeggs.studio` | 01 | done |
-| 13 | Release: signed builds on `ai.sixpm.app`, TestFlight, store listing | all | in progress: tag `testflight/*` builds and submits (builds 59, 60; 2.0.0-5 adds camera, purchases, look fonts) |
+| 13 | Release: signed builds on `ai.sixpm.app`, TestFlight, store listing | all | in progress: 2.0.0 build 65 (all extensions) on TestFlight 12 Oct; 6pm Dev app created for rehearsal builds; store listing and App Privacy todo |
 
 ## Acceptance (launch)
 

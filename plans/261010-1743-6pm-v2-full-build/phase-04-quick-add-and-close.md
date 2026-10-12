@@ -1,6 +1,6 @@
 # Phase 04: Quick add and the 6pm Close
 
-status: in progress
+status: built (audited and fixed 11 Oct; device check pending)
 
 ## Owns
 

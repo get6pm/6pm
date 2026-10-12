@@ -1,6 +1,6 @@
 # Batch 8b: native feature lanes, then one TestFlight build
 
-Status: lanes built 12 Oct on `integration/native-batch` (D, L1–L5 plus the controls registration); local Xcode 27 build of the app and every extension green, CI simulator build running. Not yet seen on a device: Siri/Shortcuts runs, Wallet automation, Control Center, widget placement, Live Activity Paid tap, real microphone, real bank receipts (fixtures are synthetic until the founder's receipts arrive), the name-merchant route on the deployed Worker. Next: merge to `v2`, signed `dev` rehearsal build, then the `testflight/*` tag.
+Status: merged to `v2` 12 Oct; signed builds green (6pm 2.0.0 build 65 on TestFlight, 6pm Dev build 4). Apple setup done 12 Oct: App Groups, six extension App IDs, capabilities, EAS profiles (EAS cannot patch capabilities through Apple's API: set them in the portal and run `eas credentials` with `EXPO_NO_CAPABILITY_SYNC=1`). Next: the device verification below.
 Was: todo · Target: all lanes merged by 22 Oct, `testflight/*` tag 23 Oct, two weeks of device testing before 6 Nov
 Rules: CLAUDE.md applies (an owns list, real behaviour only, copy from `@6pm/i18n`, colour from `@6pm/theme`, prototype motion). A lane that needs a file it does not own stops with `NEEDS_CONTEXT`. Swift lanes (L2, L3, L5) must merge before the tag. JS-only lanes may follow over the air.
 

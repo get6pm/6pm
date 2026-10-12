@@ -1,6 +1,6 @@
 # Batch 8: unbuilt features
 
-Status: todo (starts when batches 2–7 land) · Founder 11 Oct: every Max feature is built before launch; order below.
+Status: in progress · 1–6 built 12 Oct (native batch, TestFlight 2.0.0 build 65); 7, 8, 9, 10, 12 in progress 12 Oct; 11 deferred · Founder 11 Oct: every Max feature is built before launch; order below.
 
 ## Order and shape
 
@@ -25,5 +25,5 @@ Items 1, 3, 4, 5, 6, 11 add native code: declare them in one native batch (tech-
 
 ## Founder gates
 
-- FX provider for Travel (open item 1).
-- Budget together moves from "after launch" to launch scope — confirm the server account model (Sign in with Apple only for pairing).
+- FX provider for Travel: resolved 12 Oct, follow critterpass (scheduled ingest, newest rate per pair, 48 h staleness); the provider must cover VND.
+- Budget together: deferred 12 Oct by the founder (not in launch scope). Sign in with Apple stays declared, so it can ship over the air later.

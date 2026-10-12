@@ -1,6 +1,6 @@
 # Phase 02: Shell and motion
 
-status: in progress
+status: built (audited and fixed 11 Oct; device check pending)
 
 ## Context
 

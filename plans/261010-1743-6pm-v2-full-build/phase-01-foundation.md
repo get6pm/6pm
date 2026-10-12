@@ -1,6 +1,6 @@
 # Phase 01: Foundation
 
-status: in progress
+status: done
 
 ## Context
 

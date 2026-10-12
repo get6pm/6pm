@@ -1,6 +1,6 @@
 # Phase 03: Today, Inbox, Details and the local store
 
-status: in progress
+status: built (audited and fixed 11 Oct; device check pending)
 
 ## Owns
 

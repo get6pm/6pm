@@ -13,6 +13,7 @@ import { enScan } from './en-scan';
 import { enLooks } from './en-looks';
 import { enOnboarding } from './en-onboarding';
 import { enDiary } from './en-diary';
+import { enYearBook } from './en-year-book';
 import { enPlan } from './en-plan';
 import { enClose } from './en-close';
 import { enCompanion } from './en-companion';
@@ -24,6 +25,7 @@ import { enTravel } from './en-travel';
 export const en = {
   ...enOnboarding,
   ...enDiary,
+  ...enYearBook,
   ...enPlan,
   ...enClose,
   ...enToday,

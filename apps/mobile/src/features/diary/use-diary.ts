@@ -12,6 +12,7 @@ import {
   startOfWeek,
   underCount,
   weekRecap,
+  yearBookShelf,
   type ClosedDayRow,
 } from '@6pm/domain';
 
@@ -214,6 +215,6 @@ export function useDiary() {
     canNext: month < current,
     page,
     shelf: diaryShelf(today, data?.months ?? []),
-    year: today.slice(0, 4),
+    yearBooks: yearBookShelf(today, data?.months ?? []),
   };
 }

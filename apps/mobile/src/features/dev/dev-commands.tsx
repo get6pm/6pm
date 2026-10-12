@@ -8,7 +8,11 @@ import { useMoneyStore } from '../../data/money-provider';
 import { pinClock, useClock } from '../../ui/theme/clock';
 import { useToast } from '../../ui/toast/toast-host';
 import { pinCompanionForm } from './dev-companion-form';
+import { CUSTOMER_KEY, serializeCustomer } from '../purchases/customer-memory';
+import { FREE_CUSTOMER } from '../purchases/purchases-port';
 import { seedDesignFriday } from './design-friday-seed';
+import { useYearBook } from '../year-book/use-year-book';
+import { seedDesignYear } from './design-year-seed';
 
 /**
  * Lets scripts drive a developer build with no taps: write `dev-command.json` into the app's
@@ -18,7 +22,7 @@ import { seedDesignFriday } from './design-friday-seed';
  *   {"seed": "friday", "at": "18:07", "route": "/close", "toast": "Line to show", "companion": "max"}
  */
 const commandSchema = z.object({
-  seed: z.literal('friday').optional(),
+  seed: z.enum(['friday', 'year']).optional(),
   /** Pin the clock to today at HH:MM; "" unpins. */
   at: z
     .string()
@@ -29,13 +33,31 @@ const commandSchema = z.object({
   toast: z.string().min(1).optional(),
   /** Shows the companion in this form as if Max were on or off; "" follows the purchases again. */
   companion: z.enum(['max', 'base', '']).optional(),
+  /** Keeps Max on or off as the last known customer; it takes effect at the next launch. */
+  max: z.boolean().optional(),
+  /** Binds this year's book and opens the share sheet, as a tap on a bound book does. */
+  yearBook: z
+    .string()
+    .regex(/^\d{4}$/)
+    .optional(),
 });
+
+const DEV_MAX = {
+  active: true,
+  plan: 'yearly',
+  inTrial: false,
+  trialEndsAt: null,
+  renewsAt: null,
+  endsAt: null,
+  willRenew: true,
+} as const;
 
 export function DevCommands() {
   const router = useRouter();
   const store = useMoneyStore();
   const { today } = useClock();
   const toast = useToast();
+  const { bind: bindYear } = useYearBook();
 
   useEffect(() => {
     const run = async () => {
@@ -44,8 +66,15 @@ export function DevCommands() {
       const parsed = commandSchema.safeParse(JSON.parse(await file.text()));
       file.delete();
       if (!parsed.success) return;
-      const { seed, at, route, toast: line, companion } = parsed.data;
+      const { seed, at, route, toast: line, companion, max, yearBook } = parsed.data;
       if (companion !== undefined) pinCompanionForm(companion === '' ? null : companion);
+      if (max !== undefined) {
+        const customer = max ? { ...FREE_CUSTOMER, max: DEV_MAX } : FREE_CUSTOMER;
+        await store.db.runAsync('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', [
+          CUSTOMER_KEY,
+          serializeCustomer(customer),
+        ]);
+      }
       if (at !== undefined) {
         const [h = 0, m = 0] = at.split(':').map(Number);
         const pin = new Date();
@@ -53,6 +82,7 @@ export function DevCommands() {
         pinClock(at === '' ? null : pin);
       }
       if (seed === 'friday') await seedDesignFriday(store, today);
+      if (seed === 'year') await seedDesignYear(store, today);
       // Over Home, so sheets present as sheets.
       if (route) {
         router.replace('/');
@@ -60,13 +90,14 @@ export function DevCommands() {
       }
       // Held long enough for a headless screenshot to catch it.
       if (line) setTimeout(() => toast(line, 20_000), 1200);
+      if (yearBook) setTimeout(() => void bindYear(yearBook), 1200);
     };
     void run();
     const subscription = AppState.addEventListener('change', (state) => {
       if (state === 'active') void run();
     });
     return () => subscription.remove();
-  }, [router, store, today, toast]);
+  }, [router, store, today, toast, bindYear]);
 
   return null;
 }

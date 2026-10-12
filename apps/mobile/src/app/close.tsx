@@ -164,7 +164,7 @@ export default function Close() {
                   date: shortDate(closingDate),
                   n: close.queue.length - close.cards.length + 1,
                   total: close.queue.length,
-                  kept: formatShort(close.keptBefore).toUpperCase(),
+                  kept: formatShort(close.keptBefore, language).toUpperCase(),
                 })
               : t('close.kickerStart', {
                   date: shortDate(closingDate),

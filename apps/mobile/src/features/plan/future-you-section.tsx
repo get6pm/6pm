@@ -92,13 +92,13 @@ export function FutureYouCard({
   readonly format: PlanFormat;
 }) {
   const { palette } = useTheme();
-  const { t, weekday } = useI18n();
+  const { t, weekday, language } = useI18n();
   const say = useCompanionToast();
   const actions = usePlanActions();
   const run = useRunAction();
   const router = useRouter();
   const split = shareSplit(goals);
-  const step = formatShort(TOP_UP);
+  const step = formatShort(TOP_UP, language);
   return (
     <View
       style={{
@@ -140,7 +140,7 @@ export function FutureYouCard({
         <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
           <Text style={{ ...body(15, 650), color: palette.ink }}>
             {futureYou
-              ? t('plan.future.autoTitle', { amount: formatShort(futureYou) })
+              ? t('plan.future.autoTitle', { amount: formatShort(futureYou, language) })
               : t('plan.future.pausedTitle')}
           </Text>
           <Text style={{ ...body(13), lineHeight: 17.55, color: palette.inkSoft }}>
@@ -170,7 +170,7 @@ export function FutureYouCard({
                 ? t('plan.future.status.onTrack', { month: by })
                 : status === 'behind'
                   ? t('plan.future.status.behind', { month: by })
-                  : t('plan.future.status.steady', { amount: formatShort(monthly) });
+                  : t('plan.future.status.steady', { amount: formatShort(monthly, language) });
         const ok = status !== 'behind' && status !== 'paused';
         return (
           <View
@@ -198,8 +198,8 @@ export function FutureYouCard({
                 </Text>
                 <Text style={{ ...body(13), ...tabular, color: palette.inkSoft }}>
                   {t('plan.future.progress', {
-                    have: formatShort(g.saved),
-                    goal: formatShort(g.pot.goal),
+                    have: formatShort(g.saved, language),
+                    goal: formatShort(g.pot.goal, language),
                     eta: etaText,
                   })}
                 </Text>
@@ -271,7 +271,10 @@ export function FutureYouCard({
           borderColor: palette.hair,
         }}
       >
-        {t('plan.future.note', { step, amount: formatShort(aboutPerDay(TOP_UP, daysLeft)) })}
+        {t('plan.future.note', {
+          step,
+          amount: formatShort(aboutPerDay(TOP_UP, daysLeft), language),
+        })}
       </Text>
     </View>
   );

@@ -3,6 +3,7 @@ import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 
 import { formatShort, groupDigits } from '@6pm/domain';
 
+import { useI18n } from '../../i18n/i18n';
 import { DashedRule } from '../../ui/dashed-rule';
 import { CashVoice } from '../voice/cash-voice';
 import { glide } from '../voice/glide';
@@ -124,6 +125,7 @@ export function CashStep({
   readonly onDone: () => void;
 }) {
   const { palette } = useTheme();
+  const { language } = useI18n();
   const total = added.reduce((sum, c) => sum + c.amount, 0);
   return (
     <Animated.View entering={FadeInDown.duration(450)} style={{ flex: 1, gap: 20, paddingTop: 22 }}>
@@ -162,7 +164,7 @@ export function CashStep({
           >
             <Text style={{ ...body(15, 600), color: palette.ink }}>{chip.name}</Text>
             <Text style={{ ...body(15, 500), color: palette.ink, opacity: 0.6 }}>
-              {formatShort(chip.amount)}
+              {formatShort(chip.amount, language)}
             </Text>
           </PressScale>
         ))}

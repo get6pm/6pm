@@ -71,7 +71,7 @@ export function DailyCard({
   readonly format: PlanFormat;
 }) {
   const { palette } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const actions = usePlanActions();
   const run = useRunAction();
   const [candidate, setCandidate] = useState(committed);
@@ -94,8 +94,14 @@ export function DailyCard({
     delta === 0
       ? t('plan.whatIf.same')
       : delta > 0
-        ? t('plan.whatIf.less', { amount: formatShort(delta), daily: formatShort(change) })
-        : t('plan.whatIf.more', { amount: formatShort(-delta), daily: formatShort(-change) });
+        ? t('plan.whatIf.less', {
+            amount: formatShort(delta, language),
+            daily: formatShort(change, language),
+          })
+        : t('plan.whatIf.more', {
+            amount: formatShort(-delta, language),
+            daily: formatShort(-change, language),
+          });
 
   return (
     <PlanCard padding={{ top: 18, side: 18, bottom: 18 }} gap={14}>
@@ -103,7 +109,7 @@ export function DailyCard({
         <Text
           style={{ ...display(64, 500, -0.03), lineHeight: 64, ...tabular, color: palette.ink }}
         >
-          {formatShort(daily)}
+          {formatShort(daily, language)}
         </Text>
         <Text style={{ ...body(15), color: palette.inkSoft, flexShrink: 1 }}>
           {t('plan.daily.perDay', { count: daysLeft })}
@@ -138,7 +144,7 @@ export function DailyCard({
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Text style={{ ...body(15, 600), color: palette.ink }}>{t('plan.whatIf.title')}</Text>
         <Text style={{ ...display(22, 500), ...tabular, color: palette.ink }}>
-          {formatShort(candidate)}
+          {formatShort(candidate, language)}
         </Text>
       </View>
       <WhatIfSlider

@@ -45,7 +45,7 @@ function Jar({
   readonly format: PlanFormat;
 }) {
   const { palette } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const router = useRouter();
   const actions = usePlanActions();
   const run = useRunAction();
@@ -126,7 +126,7 @@ function Jar({
             accessibilityLabel={
               full
                 ? t('plan.occasions.full')
-                : t('plan.future.add', { amount: formatShort(TOP_UP), name: pot.name })
+                : t('plan.future.add', { amount: formatShort(TOP_UP, language), name: pot.name })
             }
             onPress={add}
             style={{
@@ -146,17 +146,17 @@ function Jar({
               color={full ? colours.ok : palette.ink}
             />
             <Text style={{ ...body(12.5, 700), color: full ? colours.ok : palette.ink }}>
-              {full ? t('plan.occasions.full') : formatShort(TOP_UP)}
+              {full ? t('plan.occasions.full') : formatShort(TOP_UP, language)}
             </Text>
           </PressScale>
         </View>
         <View style={{ gap: 3 }}>
           <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
             <Text style={{ ...display(30, 500, -0.02), lineHeight: 30, color: palette.ink }}>
-              {formatShort(view.saved)}
+              {formatShort(view.saved, language)}
             </Text>
             <Text style={{ ...body(12.5, 600), color: palette.inkSoft }}>
-              {t('plan.occasions.of', { amount: formatShort(pot.goal) })}
+              {t('plan.occasions.of', { amount: formatShort(pot.goal, language) })}
             </Text>
           </View>
           <Text
@@ -176,7 +176,7 @@ function Jar({
                   : view.paused
                     ? t('plan.occasions.paused')
                     : view.monthly > 0
-                      ? t('plan.occasions.monthly', { amount: formatShort(view.monthly) })
+                      ? t('plan.occasions.monthly', { amount: formatShort(view.monthly, language) })
                       : t('plan.occasions.whenever')
               }
               bg={full ? colours.okBg : palette.chipBg}

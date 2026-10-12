@@ -41,14 +41,14 @@ export function CloseRevealStep({
         plan.serious
           ? null
           : lineFor(`companion.${event}.${plan.persona}`, {
-              t: formatShort(number.tomorrow),
-              b: formatShort(number.line),
+              t: formatShort(number.tomorrow, language),
+              b: formatShort(number.line, language),
               day: new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(on),
             })
       }
       mood={event === 'replan' ? 'nod' : 'happy'}
       sub={t('close.reveal.free', {
-        free: formatShort(number.free),
+        free: formatShort(number.free, language),
         days: payCycleOn(day, plan.payday).daysLeft,
       })}
       month={monthName.toUpperCase()}

@@ -58,13 +58,13 @@ function barsOf(
   env: AskWordsEnv,
   bars: { readonly before: number; readonly after: number },
 ): AskBarsView {
-  const { t } = env;
+  const { t, language } = env;
   const share = bars.before > 0 ? Math.round((Math.max(0, bars.after) / bars.before) * 100) : 0;
   return {
-    nowValue: t('ask.bar.perDay', { amount: formatShort(bars.before) }),
+    nowValue: t('ask.bar.perDay', { amount: formatShort(bars.before, language) }),
     afterValue:
       bars.after > 0
-        ? t('ask.bar.perDay', { amount: formatShort(bars.after) })
+        ? t('ask.bar.perDay', { amount: formatShort(bars.after, language) })
         : t('ask.bar.nothing'),
     afterPercent: Math.min(100, Math.max(MIN_BAR_PERCENT, share)),
   };
@@ -80,7 +80,7 @@ export function describeAnswer(
   reading: AskReading,
   env: AskWordsEnv,
 ): AskCard {
-  const { t } = env;
+  const { t, language } = env;
   const row = rowMaker(env);
   const card = (
     text: string,
@@ -96,19 +96,23 @@ export function describeAnswer(
 
   switch (answer.kind) {
     case 'fitsToday':
-      return card(t('ask.answer.fitsToday', { safe: formatShort(answer.safe) }), 'happy', {
-        bars: barsOf(env, answer.bars),
-        rows: [
-          row('ask.row.safeToday', formatVnd(answer.safe)),
-          row('ask.row.this', `− ${formatVnd(answer.amount)}`),
-          row('ask.row.tomorrow', formatVnd(answer.bars.after)),
-        ],
-      });
+      return card(
+        t('ask.answer.fitsToday', { safe: formatShort(answer.safe, language) }),
+        'happy',
+        {
+          bars: barsOf(env, answer.bars),
+          rows: [
+            row('ask.row.safeToday', formatVnd(answer.safe)),
+            row('ask.row.this', `− ${formatVnd(answer.amount)}`),
+            row('ask.row.tomorrow', formatVnd(answer.bars.after)),
+          ],
+        },
+      );
     case 'fits':
       return card(
         t('ask.answer.fits', {
-          from: formatShort(answer.bars.before),
-          to: formatShort(answer.bars.after),
+          from: formatShort(answer.bars.before, language),
+          to: formatShort(answer.bars.after, language),
         }),
         'happy',
         {
@@ -120,8 +124,8 @@ export function describeAnswer(
       const { fromPots } = answer;
       return card(
         t('ask.answer.tight', {
-          from: formatShort(answer.bars.before),
-          to: formatShort(answer.bars.after),
+          from: formatShort(answer.bars.before, language),
+          to: formatShort(answer.bars.after, language),
         }),
         'nod',
         {
@@ -131,8 +135,8 @@ export function describeAnswer(
             fromPots === null
               ? null
               : t('ask.answer.tight.pots', {
-                  take: formatShort(fromPots.take),
-                  withPots: formatShort(fromPots.withPots),
+                  take: formatShort(fromPots.take, language),
+                  withPots: formatShort(fromPots.withPots, language),
                 }),
         },
       );
@@ -152,7 +156,7 @@ export function describeAnswer(
       if (first === undefined) {
         return card(t('ask.answer.weekend.none', { payday: env.dayLongMonth(ctx.payday) }), 'calm');
       }
-      const total = formatShort(answer.total);
+      const total = formatShort(answer.total, language);
       const text =
         second === undefined
           ? t('ask.answer.weekend.one', { total, first: env.weekday(first.day) })
@@ -166,10 +170,10 @@ export function describeAnswer(
       });
     }
     case 'saveMore': {
-      const amount = formatShort(answer.amount);
+      const amount = formatShort(answer.amount, language);
       const text =
         answer.perDay > 0
-          ? t('ask.answer.saveMore', { amount, perDay: formatShort(answer.perDay) })
+          ? t('ask.answer.saveMore', { amount, perDay: formatShort(answer.perDay, language) })
           : t('ask.answer.saveMore.none', { amount });
       return card(text, 'calm', {
         bars: barsOf(env, answer.bars),
@@ -194,7 +198,7 @@ export function describeAnswer(
       }
       return card(
         t('ask.answer.potFull', {
-          monthly: formatShort(pot.monthly),
+          monthly: formatShort(pot.monthly, language),
           pot: pot.name,
           month: env.monthLong(answer.fullIn),
         }),
@@ -210,10 +214,10 @@ export function describeAnswer(
       return card(
         answer.safe > 0
           ? t('ask.answer.today', {
-              safe: formatShort(answer.safe),
-              tomorrow: formatShort(answer.tomorrow),
+              safe: formatShort(answer.safe, language),
+              tomorrow: formatShort(answer.tomorrow, language),
             })
-          : t('ask.answer.today.used', { tomorrow: formatShort(answer.tomorrow) }),
+          : t('ask.answer.today.used', { tomorrow: formatShort(answer.tomorrow, language) }),
         'calm',
         {
           rows: [

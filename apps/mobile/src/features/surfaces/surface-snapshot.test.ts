@@ -86,8 +86,9 @@ const vi = words('vi');
 const golden = widgetLook({ max: false, look: 'paper', serious: false });
 const writtenAt = new Date('2026-10-09T11:07:00.000Z');
 
-function snapshotOf(m: MoneySnapshot, t = en) {
-  return surfaceSnapshot({ money: m, look: golden, maxLook: null, t, writtenAt });
+function snapshotOf(m: MoneySnapshot, language: Language = 'en') {
+  const t = language === 'vi' ? vi : en;
+  return surfaceSnapshot({ money: m, look: golden, maxLook: null, t, language, writtenAt });
 }
 
 describe('surfaceSnapshot', () => {
@@ -110,13 +111,13 @@ describe('surfaceSnapshot', () => {
     if (day === null) return;
     expect(surfaceSnapshotSchema.parse(snap)).toEqual(snap);
     const [now, next] = snap.entries;
-    expect(now?.safeShort).toBe(formatShort(Math.max(0, day.safe)));
-    expect(now?.safeText).toBe(`${formatShort(day.safe)} left`);
-    expect(now?.tomorrowText).toBe(`Tomorrow ≈ ${formatShort(day.tomorrow)}`);
+    expect(now?.safeShort).toBe(formatShort(Math.max(0, day.safe), 'en'));
+    expect(now?.safeText).toBe(`${formatShort(day.safe, 'en')} left`);
+    expect(now?.tomorrowText).toBe(`Tomorrow ≈ ${formatShort(day.tomorrow, 'en')}`);
     expect(now?.from).toBe(new Date(2026, 9, 9, 4, 0, 0).toISOString());
     expect(next?.from).toBe(new Date(2026, 9, 10, 4, 0, 0).toISOString());
     // Nothing spent yet tomorrow: the whole line is safe.
-    expect(next?.safeShort).toBe(formatShort(day.tomorrow));
+    expect(next?.safeShort).toBe(formatShort(day.tomorrow, 'en'));
     expect(next?.list).toEqual([]);
     expect(next?.ringFraction).toBe(1);
   });
@@ -160,7 +161,7 @@ describe('surfaceSnapshot', () => {
     expect(next.cycleSpends).toEqual([]);
     const fresh = dayOf(next);
     if (fresh === null) throw new Error('no day');
-    expect(snapshotOf(m).entries[1]?.safeShort).toBe(formatShort(fresh.safe));
+    expect(snapshotOf(m).entries[1]?.safeShort).toBe(formatShort(fresh.safe, 'en'));
   });
 
   it('writes no entries before the month is set up, and the words to ask for it', () => {
@@ -170,7 +171,7 @@ describe('surfaceSnapshot', () => {
   });
 
   it('words everything in the app’s language', () => {
-    const snap = snapshotOf(money(today, spends), vi);
+    const snap = snapshotOf(money(today, spends), 'vi');
     expect(snap.entries[0]?.tomorrowText.startsWith('Ngày mai ≈ ')).toBe(true);
     expect(snap.entries[0]?.moreText).toBe('+2 khoản nữa');
     expect(snap.strings['scanQr']).toBe('Quét QR');
@@ -189,6 +190,7 @@ describe('surfaceSnapshot', () => {
       look: paper,
       maxLook: 'paper',
       t: en,
+      language: 'en',
       writtenAt,
     });
     expect(max.maxLook).toBe('paper');
@@ -206,6 +208,7 @@ describe('surfaceSnapshot', () => {
       look,
       maxLook: 'neon',
       t: en,
+      language: 'en',
       writtenAt,
     });
     expect(snap.serious).toBe(true);
@@ -222,6 +225,7 @@ describe('surfaceSnapshot', () => {
       look: golden,
       maxLook: null,
       t: en,
+      language: 'en',
       writtenAt: new Date(writtenAt.getTime() + 60_000),
     });
     expect(snapshotKey(a)).toBe(snapshotKey(b));

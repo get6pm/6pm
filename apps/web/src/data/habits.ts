@@ -103,7 +103,7 @@ export function countLabel(habit: Habit, count: number): string {
 }
 
 export function priceLabel(habit: Habit): string {
-  return `${formatShort(habit.price)} each`;
+  return `${formatShort(habit.price, 'en')} each`;
 }
 
 /** The design's tile and glyph inks for a hue. */

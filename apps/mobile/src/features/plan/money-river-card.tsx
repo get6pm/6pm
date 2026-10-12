@@ -13,6 +13,7 @@ import Animated, {
 import { formatShort, RIVER_SEGMENTS, type RiverSegment, type Vnd } from '@6pm/domain';
 import { curves, durations } from '@6pm/theme';
 
+import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display } from '../../ui/type/fonts';
@@ -176,6 +177,7 @@ export function MoneyRiverCard({
   readonly copy: RiverCopy;
 }) {
   const { palette } = useTheme();
+  const { language } = useI18n();
   const [selected, setSelected] = useState<RiverSegment | null>(null);
   // "Before 6pm" exists only in the cycle the user joined; every other cycle shows the five.
   const segments = RIVER_SEGMENTS.filter((id) => id !== 'before' || river.before > 0);
@@ -185,7 +187,7 @@ export function MoneyRiverCard({
     setSelected((current) => (current === id ? null : id));
   };
   const label = shown ? copy.label[shown] : copy.total;
-  const value = formatShort(shown ? river[shown] : income);
+  const value = formatShort(shown ? river[shown] : income, language);
   const note = shown ? copy.note[shown] : copy.hint;
   return (
     <PlanCard padding={{ top: 18, side: 18, bottom: 18 }} gap={16}>
@@ -227,7 +229,7 @@ export function MoneyRiverCard({
             last={k === segments.length - 1}
             amount={river[id]}
             colour={colours.river[id]}
-            label={`${copy.label[id]} ${formatShort(river[id])}`}
+            label={`${copy.label[id]} ${formatShort(river[id], language)}`}
             state={shown === null ? 'none' : shown === id ? 'on' : 'off'}
             onPress={() => pick(id)}
           />

@@ -56,7 +56,7 @@ export function StepFirstNumber({
   readonly reminded: boolean;
   readonly leaving: boolean;
 }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const reduceMotion = useReducedMotion();
   const [shown, setShown] = useState(0);
   useEffect(() => {
@@ -146,13 +146,16 @@ export function StepFirstNumber({
                 <Text style={{ ...body(12), color: pal.inkSoft }}>{part.label}</Text>
               </View>
               <Text style={{ ...body(15, 700), color: pal.ink }}>
-                {formatShort(Math.max(0, part.value))}
+                {formatShort(Math.max(0, part.value), language)}
               </Text>
             </View>
           ))}
         </View>
         <Text style={{ ...body(12.5), lineHeight: 17.5, color: pal.inkSoft }}>
-          {t('onboarding.reveal.math', { income: formatShort(income), count: first.days })}
+          {t('onboarding.reveal.math', {
+            income: formatShort(income, language),
+            count: first.days,
+          })}
         </Text>
       </Animated.View>
       <View style={{ flex: 1 }} />
@@ -170,7 +173,7 @@ export function LeavingOverlay({
   readonly line: number;
   readonly pal: OnboardingPalette;
 }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const reduceMotion = useReducedMotion();
   const fade = useMountProgress(600, ease.cssIn);
   const style = useAnimatedStyle(() => ({ opacity: fade.value }));
@@ -193,7 +196,9 @@ export function LeavingOverlay({
         {t('onboarding.leave.kicker')}
       </Text>
       <Animated.View entering={riseEntering(500, 100, reduceMotion)}>
-        <Text style={{ ...display(56, 500, -0.03), color: pal.light }}>{formatShort(line)}</Text>
+        <Text style={{ ...display(56, 500, -0.03), color: pal.light }}>
+          {formatShort(line, language)}
+        </Text>
       </Animated.View>
     </Animated.View>
   );

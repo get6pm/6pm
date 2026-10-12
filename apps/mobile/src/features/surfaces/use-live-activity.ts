@@ -23,7 +23,7 @@ const SCAN_ROUTE = '/scan';
  */
 export function useLiveActivity(look: WidgetLook) {
   const money = useMoney();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const hour = Math.floor(useClock().hour);
   const pathname = usePathname();
 
@@ -37,8 +37,8 @@ export function useLiveActivity(look: WidgetLook) {
       }),
     [look, hour],
   );
-  const inputs = useRef({ money, t, palette, look, held: pathname === SCAN_ROUTE });
-  inputs.current = { money, t, palette, look, held: pathname === SCAN_ROUTE };
+  const inputs = useRef({ money, t, language, palette, look, held: pathname === SCAN_ROUTE });
+  inputs.current = { money, t, language, palette, look, held: pathname === SCAN_ROUTE };
   const running = useRef<Promise<unknown>>(Promise.resolve());
 
   useEffect(() => {
@@ -59,6 +59,7 @@ export function useLiveActivity(look: WidgetLook) {
               JSON.stringify(
                 pendingPayState(spend, {
                   t: now.t,
+                  language: now.language,
                   palette: now.palette,
                   serious: now.look.serious,
                 }),
@@ -81,5 +82,5 @@ export function useLiveActivity(look: WidgetLook) {
       if (state === 'active') run();
     });
     return () => sub.remove();
-  }, [money, t, palette, look, pathname]);
+  }, [money, t, language, palette, look, pathname]);
 }

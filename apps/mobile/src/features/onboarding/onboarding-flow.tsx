@@ -147,7 +147,7 @@ export function OnboardingFlow({ startStep = 0 }: { readonly startStep?: number 
             pal={pal}
             date={`${i18n.weekday(new Date())} ${i18n.dayMonth(new Date())}`}
             closeAt={o.closeAt}
-            safe={formatShort(o.first.line)}
+            safe={formatShort(o.first.line, i18n.language)}
           />
         );
       case CLOSE_STEP:

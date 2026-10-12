@@ -148,6 +148,7 @@ describe('pendingPayState', () => {
   it('words the waiting payment and links to its details', () => {
     const state = pendingPayState(newer, {
       t: (key, ...params) => translate('en', key, ...params),
+      language: 'en',
       palette: paletteFor({ look: 'golden', hour: 18, serious: false }),
       serious: false,
     });
@@ -162,10 +163,30 @@ describe('pendingPayState', () => {
     });
     const serious = pendingPayState(newer, {
       t: (key, ...params) => translate('vi', key, ...params),
+      language: 'vi',
       palette: paletteFor({ look: 'golden', hour: 18, serious: true }),
       serious: true,
     });
     expect(serious.companion).toBeNull();
     expect(serious.title).toBe('45.000₫ cho Phở Hòa');
+  });
+
+  it('writes a large waiting payment the short way of the app’s language', () => {
+    const big = { ...newer, amount: 1_250_000 };
+    const palette = paletteFor({ look: 'golden', hour: 18, serious: false });
+    const inEnglish = pendingPayState(big, {
+      t: (key, ...params) => translate('en', key, ...params),
+      language: 'en',
+      palette,
+      serious: false,
+    });
+    const inVietnamese = pendingPayState(big, {
+      t: (key, ...params) => translate('vi', key, ...params),
+      language: 'vi',
+      palette,
+      serious: false,
+    });
+    expect(inEnglish.short).toBe('1.3M');
+    expect(inVietnamese.short).toBe('1,3tr');
   });
 });

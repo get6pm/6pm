@@ -123,11 +123,11 @@ export function StepFutureYou({
               {t('onboarding.future.each')}
             </Text>
             <Text style={{ ...display(44, 600, -0.03), lineHeight: 44, color: pal.ink }}>
-              {formatShort(amount)}
+              {formatShort(amount, language)}
             </Text>
             <Text style={{ ...body(12.5, 600), color: pal.inkSoft }}>
               {amount > 0
-                ? t('onboarding.future.year', { amount: formatShort(amount * 12), month })
+                ? t('onboarding.future.year', { amount: formatShort(amount * 12, language), month })
                 : t('onboarding.future.skip')}
             </Text>
           </View>
@@ -164,7 +164,7 @@ export function StepFutureYou({
       </Card>
       <Text style={{ ...body(13), lineHeight: 18.85, paddingHorizontal: 6, color: pal.inkSoft }}>
         {free > 0
-          ? t('onboarding.future.note', { amount: formatShort(free) })
+          ? t('onboarding.future.note', { amount: formatShort(free, language) })
           : t('onboarding.future.noteNone')}
       </Text>
     </View>

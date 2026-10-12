@@ -59,7 +59,9 @@ function TrayChip({
           {billName(i18n, bill.card, bill.option)}
         </Text>
         <Text style={{ ...body(12.5, 600), color: pal.ink, opacity: 0.55 }}>
-          {bill.amount ? formatShort(bill.amount) : i18n.t('onboarding.bills.amountLater')}
+          {bill.amount
+            ? formatShort(bill.amount, i18n.language)
+            : i18n.t('onboarding.bills.amountLater')}
         </Text>
       </PressScale>
     </Animated.View>
@@ -84,14 +86,14 @@ export function StepBills({
   readonly onAnswers: (next: BillAnswers) => void;
   readonly onGo: (index: number, direction: 1 | -1) => void;
 }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const total = billTotal(bills);
   const count = bills.length;
   const endTitle =
     count === 0
       ? t('onboarding.bills.endNone')
       : total > 0
-        ? t('onboarding.bills.endTotal', { count, amount: formatShort(total) })
+        ? t('onboarding.bills.endTotal', { count, amount: formatShort(total, language) })
         : t('onboarding.bills.endCount', { count });
   return (
     <View style={{ flex: 1, gap: 14 }}>

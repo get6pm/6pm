@@ -53,15 +53,15 @@ export const HomeTopNav = memo(function HomeTopNav({
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
               <Text style={{ ...display(27, 500, -0.02), lineHeight: 27, color: palette.ink }}>
-                {formatShort(Math.max(0, day.safe))}
+                {formatShort(Math.max(0, day.safe), language)}
               </Text>
               <Text
                 numberOfLines={1}
                 style={{ ...body(12.5), ...tabular, color: palette.inkSoft, flexShrink: 1 }}
               >
                 {t('today.meterUsed', {
-                  spent: formatShort(day.spent),
-                  line: formatShort(day.line),
+                  spent: formatShort(day.spent, language),
+                  line: formatShort(day.line, language),
                 })}
               </Text>
             </View>

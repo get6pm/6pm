@@ -37,7 +37,7 @@ const SHARE_STEP = 5;
 export default function EditPot() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { palette } = useTheme();
   const run = useRunAction();
   const offerUndo = useOfferUndo();
@@ -114,14 +114,14 @@ export default function EditPot() {
     : goalKind
       ? futureYou > 0
         ? {
-            title: t('plan.goal.sumMonthly', { amount: formatShort(monthly) }),
+            title: t('plan.goal.sumMonthly', { amount: formatShort(monthly, language) }),
             sub: t('plan.goal.sumSub'),
           }
         : { title: t('plan.goal.sumNone'), sub: t('plan.goal.sumNoneSub') }
       : month
         ? {
-            title: t('plan.pot.sumMonthly', { amount: formatShort(monthly) }),
-            sub: t('plan.pot.sumMonthlySub', { amount: formatShort(perDay) }),
+            title: t('plan.pot.sumMonthly', { amount: formatShort(monthly, language) }),
+            sub: t('plan.pot.sumMonthlySub', { amount: formatShort(perDay, language) }),
           }
         : { title: t('plan.pot.sumNone'), sub: t('plan.pot.sumNoneSub') };
 

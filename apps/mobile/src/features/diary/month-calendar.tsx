@@ -33,6 +33,7 @@ function ClosedCell({
   readonly onPress: () => void;
 }) {
   const { palette } = useTheme();
+  const { language } = useI18n();
   const lift = useAnimatedStyle(() => ({
     transform: [{ translateY: withTiming(selected ? -2 : 0, { duration: SELECT_MS }) }],
   }));
@@ -82,7 +83,7 @@ function ClosedCell({
             }}
           />
           <Text style={{ ...mono(9.5, 500), lineHeight: 9.5, color: paper.ink }}>
-            {formatShort(cell.spent)}
+            {formatShort(cell.spent, language)}
           </Text>
         </View>
       </PressScale>

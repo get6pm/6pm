@@ -67,7 +67,7 @@ const sameInputs = (a: ReturnType<typeof diaryInputs>, b: ReturnType<typeof diar
 export function useDiary() {
   const day = useDay();
   const { today, closedDays, cycleSpends, categories } = useMoneySelector(diaryInputs, sameInputs);
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const dates = useDiaryDates();
   const current = monthOf(today);
   const monday = startOfWeek(today);
@@ -204,7 +204,7 @@ export function useDiary() {
         : t('diary.cal.summary', {
             closed: monthClosed.length,
             under,
-            line: formatShort(monthLine),
+            line: formatShort(monthLine, language),
           }),
     cells: calendarCells({ month, today, closed: monthClosed, since: data?.since ?? null }),
     selected,

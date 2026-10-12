@@ -36,9 +36,9 @@ export function startLeakCalculator(root: HTMLElement): void {
     }
     const month = leakPerMonth(counts);
     setText(section.querySelector('[data-leak-month]'), formatVnd(Math.round(month / 1000) * 1000));
-    setText(section.querySelector('[data-leak-year]'), formatShort(month * 12));
+    setText(section.querySelector('[data-leak-year]'), formatShort(month * 12, 'en'));
     setText(section.querySelector('[data-leak-equivalent]'), leakEquivalent(month));
-    setText(root.querySelector('[data-leak-ticket]'), `${formatShort(month)} / mo`);
-    setText(dockLine, touched ? `Your leak: ${formatShort(month)} a month` : dockDefault);
+    setText(root.querySelector('[data-leak-ticket]'), `${formatShort(month, 'en')} / mo`);
+    setText(dockLine, touched ? `Your leak: ${formatShort(month, 'en')} a month` : dockDefault);
   });
 }

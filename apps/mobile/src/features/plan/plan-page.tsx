@@ -9,6 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { formatShort, type DailyNumber } from '@6pm/domain';
+import type { Language } from '@6pm/i18n';
 
 import { dailyInputOf, dayOf, type MoneySnapshot } from '../../data/money-store';
 import { useMoney } from '../../data/money-provider';
@@ -121,7 +122,7 @@ function PlanContent({
   readonly inkSoft: string;
 }) {
   const { palette } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const router = useRouter();
   const { max } = useEntitlement();
   const format = usePlanFormat(snap.today);
@@ -176,8 +177,8 @@ function PlanContent({
         </View>
         <Text style={{ ...body(15), lineHeight: 21.75, paddingTop: 8, color: inkSoft }}>
           {t(plan.futureYou > 0 ? 'plan.lede' : 'plan.ledeNoFuture', {
-            free: formatShort(day.free),
-            daily: formatShort(day.tomorrow),
+            free: formatShort(day.free, language),
+            daily: formatShort(day.tomorrow, language),
           })}
         </Text>
       </Animated.View>
@@ -187,7 +188,7 @@ function PlanContent({
           income={plan.income}
           river={river}
           colours={colours}
-          copy={riverCopy(snap, topUps?.goal ?? 0, format, t)}
+          copy={riverCopy(snap, topUps?.goal ?? 0, format, t, language)}
         />
       </View>
 
@@ -219,7 +220,10 @@ function PlanContent({
         <SectionHeader
           title={t('plan.future.title')}
           note={t('plan.future.saved', {
-            amount: formatShort(goals.reduce((sum, g) => sum + g.saved, 0)),
+            amount: formatShort(
+              goals.reduce((sum, g) => sum + g.saved, 0),
+              language,
+            ),
           })}
         />
         <FutureYouCard
@@ -235,7 +239,10 @@ function PlanContent({
         <SectionHeader
           title={t('plan.occasions.title')}
           note={t('plan.occasions.setAside', {
-            amount: formatShort(occasions.reduce((sum, o) => sum + o.saved, 0)),
+            amount: formatShort(
+              occasions.reduce((sum, o) => sum + o.saved, 0),
+              language,
+            ),
           })}
         />
         <OccasionsStrip
@@ -254,6 +261,7 @@ function riverCopy(
   goalTopUps: number,
   format: PlanFormat,
   t: ReturnType<typeof useI18n>['t'],
+  language: Language,
 ): RiverCopy {
   const futureYou = snap.plan?.futureYou ?? 0;
   const names = snap.bills.map((b) => b.name.split(' ·')[0] ?? b.name).join(', ');
@@ -273,8 +281,8 @@ function riverCopy(
       futureYou:
         goalTopUps > 0
           ? t('plan.river.futureNoteAdded', {
-              save: formatShort(futureYou),
-              added: formatShort(goalTopUps),
+              save: formatShort(futureYou, language),
+              added: formatShort(goalTopUps, language),
             })
           : t('plan.river.futureNote'),
       occasions: t('plan.river.occasionsNote'),

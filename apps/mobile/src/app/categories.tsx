@@ -37,7 +37,7 @@ const NEW_CATEGORY: CategoryInput = { name: '', icon: 'pets', hue: 200, countsDa
  */
 export default function Categories() {
   const { palette } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const snap = useMoney();
   const actions = useCategoryActions();
   const say = useCompanionToast();
@@ -127,7 +127,7 @@ export default function Categories() {
                     tally
                       ? t('categories.tally', {
                           count: tally.count,
-                          amount: formatShort(tally.total),
+                          amount: formatShort(tally.total, language),
                         })
                       : t('categories.tallyNone')
                   }

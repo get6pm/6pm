@@ -38,7 +38,7 @@ export default function MissedDay() {
   const params = useLocalSearchParams<{ day?: string }>();
   const day = params.day && DAY.test(params.day) ? params.day : null;
   const { palette, serious } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const dates = useDiaryDates();
   const say = useCompanionToast();
   const run = useRunAction();
@@ -180,7 +180,7 @@ export default function MissedDay() {
                 }}
               >
                 <Text style={{ ...body(17, 650), color: palette.btnFg }}>
-                  {t('diary.missed.close', { day: weekday, amount: formatShort(spent) })}
+                  {t('diary.missed.close', { day: weekday, amount: formatShort(spent, language) })}
                 </Text>
               </PressScale>
             ) : null}

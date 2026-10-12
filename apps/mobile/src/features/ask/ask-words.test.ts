@@ -88,7 +88,7 @@ describe('the words for an answer', () => {
     const card = words({ kind: 'afford', amount: 4_000_000 });
     expect(card.text).toBe('You can, but it’s tight: the days after drop from 353k to 171k.');
     expect(card.mood).toBe('nod');
-    expect(card.note).toBe('Taking 1tr from your pots would keep 217k a day.');
+    expect(card.note).toBe('Taking 1M from your pots would keep 217k a day.');
   });
 
   it('says not this month, names payday and shows an empty After bar', () => {
@@ -173,5 +173,6 @@ describe('the words for an answer', () => {
     expect(card.text).toBe('Được. Những ngày sau từ 353k còn 331k đến ngày lương.');
     expect(card.bars?.nowValue).toBe('353k/ngày');
     expect(words({ kind: 'weekend' }, 'vi').text).toContain('Thứ Bảy và Chủ Nhật');
+    expect(words({ kind: 'afford', amount: 4_000_000 }, 'vi').note).toContain('1tr');
   });
 });

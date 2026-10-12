@@ -10,7 +10,7 @@ const month = leakPerMonth(startCounts);
   <span class="card-label">YOUR LEAK · PER MONTH</span>
   <span class="month numeral" data-leak-month>{formatVnd(Math.round(month / 1000) * 1000)}</span>
   <span class="year">
-    That’s <strong data-leak-year>{formatShort(month * 12)}</strong> a year. Roughly <span
+    That’s <strong data-leak-year>{formatShort(month * 12, 'en')}</strong> a year. Roughly <span
       data-leak-equivalent>{leakEquivalent(month)}</span
     >.
   </span>

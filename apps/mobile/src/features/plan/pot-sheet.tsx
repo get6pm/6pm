@@ -60,7 +60,7 @@ export interface PotSheetProps {
 export function PotSheet(props: PotSheetProps) {
   const { fields, onChange, cta } = props;
   const { palette } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [picking, setPicking] = useState(false);
   const named = fields.name.trim().length > 0;
   const tile = categoryTile(fields.hue);
@@ -145,7 +145,7 @@ export function PotSheet(props: PotSheetProps) {
           <StepperRow
             first
             label={t('plan.pot.goal')}
-            value={formatShort(fields.goal)}
+            value={formatShort(fields.goal, language)}
             lessLabel={t('plan.pot.less')}
             moreLabel={t('plan.pot.more')}
             width={64}

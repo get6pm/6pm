@@ -77,7 +77,7 @@ export function TonightCard({
               : t('today.tonight.before', { time: closeAt });
   const sub =
     moment === 'closed'
-      ? t('today.tonight.closedSub', { amount: formatShort(day.tomorrow), time: closeAt })
+      ? t('today.tonight.closedSub', { amount: formatShort(day.tomorrow, language), time: closeAt })
       : resuming
         ? paused === 'cards'
           ? t('today.tonight.pausedCards', { count: toConfirm })

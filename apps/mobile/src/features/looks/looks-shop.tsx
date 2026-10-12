@@ -32,7 +32,7 @@ const GAP = 12;
 export function LooksShop() {
   const router = useRouter();
   const { palette } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { hour } = useClock();
   const toast = useToast();
   const say = useCompanionToast();
@@ -42,7 +42,7 @@ export function LooksShop() {
   const store = useLookSettingsStore();
   const copy = useMemo(() => lookCopy(t), [t]);
   const worn = resolveLook(look, customer);
-  const safe = formatShort(Math.max(0, day?.safe ?? 0));
+  const safe = formatShort(Math.max(0, day?.safe ?? 0), language);
 
   // The offerings load at launch; opening the shop asks again if the store did not answer then.
   useEffect(() => loadOfferings(), [loadOfferings]);

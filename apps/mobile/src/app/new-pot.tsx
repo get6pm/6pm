@@ -41,7 +41,7 @@ export default function NewPot() {
   const router = useRouter();
   const params = useLocalSearchParams<{ kind?: string }>();
   const kind = params.kind === 'goal' ? 'goal' : 'occasion';
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const say = useCompanionToast();
   const run = useRunAction();
   const snap = useMoney();
@@ -89,14 +89,14 @@ export default function NewPot() {
     kind === 'goal'
       ? futureYou > 0
         ? {
-            title: t('plan.goal.sumMonthly', { amount: formatShort(monthly) }),
+            title: t('plan.goal.sumMonthly', { amount: formatShort(monthly, language) }),
             sub: t('plan.goal.sumSub'),
           }
         : { title: t('plan.goal.sumNone'), sub: t('plan.goal.sumNoneSub') }
       : month
         ? {
-            title: t('plan.pot.sumMonthly', { amount: formatShort(monthly) }),
-            sub: t('plan.pot.sumMonthlySub', { amount: formatShort(perDay) }),
+            title: t('plan.pot.sumMonthly', { amount: formatShort(monthly, language) }),
+            sub: t('plan.pot.sumMonthlySub', { amount: formatShort(perDay, language) }),
           }
         : { title: t('plan.pot.sumNone'), sub: t('plan.pot.sumNoneSub') };
 

@@ -20,7 +20,7 @@ function DiaryCover({
   readonly onOpen: () => void;
 }) {
   const { palette } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const dates = useDiaryDates();
   const open = diary.inProgress;
   const fg = open ? palette.ink : zineInk.ink;
@@ -83,8 +83,8 @@ function DiaryCover({
             {open
               ? t('diary.zines.binds', { date: dates.dayMonth(diary.binds) })
               : diary.spare >= 0
-                ? t('diary.zines.spare', { amount: formatShort(diary.spare) })
-                : t('diary.zines.over', { amount: formatShort(-diary.spare) })}
+                ? t('diary.zines.spare', { amount: formatShort(diary.spare, language) })
+                : t('diary.zines.over', { amount: formatShort(-diary.spare, language) })}
           </Text>
         </View>
       </View>

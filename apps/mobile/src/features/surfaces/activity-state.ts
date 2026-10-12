@@ -1,4 +1,5 @@
 import { formatShort, formatVnd, SURFACES_VERSION, type SpendRow } from '@6pm/domain';
+import type { Language } from '@6pm/i18n';
 import { planInk, type Palette } from '@6pm/theme';
 
 import type { I18n } from '../../i18n/i18n';
@@ -47,15 +48,20 @@ export interface TravelState {
 
 export function pendingPayState(
   spend: Pick<SpendRow, 'id' | 'amount' | 'merchant'>,
-  context: { readonly t: I18n['t']; readonly palette: Palette; readonly serious: boolean },
+  context: {
+    readonly t: I18n['t'];
+    readonly language: Language;
+    readonly palette: Palette;
+    readonly serious: boolean;
+  },
 ): PendingPayState {
-  const { t, palette, serious } = context;
+  const { t, language, palette, serious } = context;
   return {
     v: SURFACES_VERSION,
     spendId: spend.id,
     caption: t('surfaces.activity.waiting'),
     title: t('surfaces.activity.to', { amount: formatVnd(spend.amount), merchant: spend.merchant }),
-    short: formatShort(spend.amount),
+    short: formatShort(spend.amount, language),
     paid: t('surfaces.activity.paid'),
     path: `/app/spend/${encodeURIComponent(spend.id)}`,
     companion: serious ? null : 'calm',

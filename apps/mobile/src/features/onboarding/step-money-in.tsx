@@ -28,7 +28,7 @@ export function StepMoneyIn({
   readonly onIncome: (income: number) => void;
   readonly onPayday: (payday: Payday) => void;
 }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   return (
     <View style={{ gap: 14 }}>
       <StepHeading
@@ -39,7 +39,7 @@ export function StepMoneyIn({
       <Card pal={pal} style={{ paddingTop: 12, paddingHorizontal: 16, paddingBottom: 14, gap: 6 }}>
         <IncomeWheels income={income} onIncome={onIncome} colours={pal} />
         <Text style={{ ...body(13), textAlign: 'center', color: pal.inkSoft }}>
-          {t('onboarding.income.daily', { amount: formatShort(dailyHint) })}
+          {t('onboarding.income.daily', { amount: formatShort(dailyHint, language) })}
         </Text>
       </Card>
       <Card pal={pal} style={{ paddingVertical: 14, paddingHorizontal: 16, gap: 10 }}>

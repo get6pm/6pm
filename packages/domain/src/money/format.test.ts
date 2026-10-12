@@ -25,17 +25,48 @@ describe('formatVnd', () => {
 });
 
 describe('formatShort', () => {
-  it('uses tr with a comma decimal for millions', () => {
-    expect(formatShort(17_400_000)).toBe('17,4tr');
-    expect(formatShort(2_000_000)).toBe('2tr');
-    expect(formatShort(7_800_000)).toBe('7,8tr');
+  it('uses tr with a comma decimal for millions in Vietnamese', () => {
+    expect(formatShort(17_400_000, 'vi')).toBe('17,4tr');
+    expect(formatShort(2_000_000, 'vi')).toBe('2tr');
+    expect(formatShort(7_800_000, 'vi')).toBe('7,8tr');
   });
 
-  it('uses k below a million', () => {
-    expect(formatShort(353_000)).toBe('353k');
-    expect(formatShort(302_000)).toBe('302k');
-    expect(formatShort(0)).toBe('0k');
-    expect(formatShort(-6_000)).toBe('−6k');
+  it('uses M with a point decimal for millions in English', () => {
+    expect(formatShort(17_400_000, 'en')).toBe('17.4M');
+    expect(formatShort(2_000_000, 'en')).toBe('2M');
+    expect(formatShort(1_400_000, 'en')).toBe('1.4M');
+  });
+
+  it('uses k below a million in both languages', () => {
+    for (const language of ['en', 'vi'] as const) {
+      expect(formatShort(353_000, language)).toBe('353k');
+      expect(formatShort(302_000, language)).toBe('302k');
+      expect(formatShort(0, language)).toBe('0k');
+      expect(formatShort(-6_000, language)).toBe('−6k');
+    }
+  });
+
+  it('rounds to the nearest hundred thousand once past a million', () => {
+    expect(formatShort(1_000_000, 'en')).toBe('1M');
+    expect(formatShort(1_000_000, 'vi')).toBe('1tr');
+    expect(formatShort(1_050_000, 'en')).toBe('1.1M');
+    expect(formatShort(1_050_000, 'vi')).toBe('1,1tr');
+    expect(formatShort(1_949_999, 'en')).toBe('1.9M');
+    expect(formatShort(1_950_000, 'vi')).toBe('2tr');
+  });
+
+  it('rounds to the nearest thousand below a million', () => {
+    expect(formatShort(999_500, 'en')).toBe('1000k');
+    expect(formatShort(999_499, 'vi')).toBe('999k');
+    expect(formatShort(499, 'en')).toBe('0k');
+    expect(formatShort(500, 'vi')).toBe('1k');
+  });
+
+  it('writes negatives with U+2212 and drops the sign from a rounded zero', () => {
+    expect(formatShort(-1_250_000, 'en')).toBe('−1.3M');
+    expect(formatShort(-1_250_000, 'vi')).toBe('−1,3tr');
+    expect(formatShort(-400, 'en')).toBe('0k');
+    expect(formatShort(-400, 'vi')).toBe('0k');
   });
 });
 

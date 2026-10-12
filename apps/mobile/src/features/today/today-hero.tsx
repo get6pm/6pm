@@ -31,7 +31,7 @@ export function TodayHero({
 }) {
   const { palette } = useTheme();
   const { dayDate } = useClock();
-  const { t, weekday, dayMonth } = useI18n();
+  const { t, weekday, dayMonth, language } = useI18n();
   const { goToTab } = useHomeNav();
   const { top } = useDesignInsets();
 
@@ -45,11 +45,14 @@ export function TodayHero({
   }));
 
   const left = over
-    ? t('today.meterOver', { over: formatShort(-day.safe) })
+    ? t('today.meterOver', { over: formatShort(-day.safe, language) })
     : day.spent
-      ? t('today.meterUsed', { spent: formatShort(day.spent), line: formatShort(day.line) })
+      ? t('today.meterUsed', {
+          spent: formatShort(day.spent, language),
+          line: formatShort(day.line, language),
+        })
       : t('today.meterNothing');
-  const right = t('today.tomorrowAbout', { amount: formatShort(day.tomorrow) });
+  const right = t('today.tomorrowAbout', { amount: formatShort(day.tomorrow, language) });
 
   return (
     <View

@@ -18,14 +18,16 @@ export function formatVnd(amount: Vnd): string {
 }
 
 /**
- * The short form used in labels and companion lines: millions with one decimal and a comma
- * ("17,4tr", "2tr"), everything else in thousands ("353k", "0k").
+ * The short form used in labels and companion lines: millions with one decimal, everything else
+ * in thousands. Vietnamese writes millions as "tr" with a comma decimal ("17,4tr", "2tr"); English
+ * as "M" with a point ("17.4M", "2M"). Thousands read the same in both ("353k", "0k").
  */
-export function formatShort(amount: Vnd): string {
+export function formatShort(amount: Vnd, language: 'en' | 'vi'): string {
   const sign = amount < 0 ? MINUS : '';
   const abs = Math.abs(amount);
   if (abs >= 1_000_000) {
-    return sign + (Math.round(abs / 100_000) / 10).toString().replace('.', ',') + 'tr';
+    const millions = (Math.round(abs / 100_000) / 10).toString();
+    return sign + (language === 'vi' ? millions.replace('.', ',') + 'tr' : millions + 'M');
   }
   const thousands = Math.round(abs / 1000);
   return (thousands === 0 ? '' : sign) + thousands + 'k';

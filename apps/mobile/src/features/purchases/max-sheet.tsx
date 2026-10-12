@@ -37,7 +37,7 @@ export function MaxSheet() {
   const router = useRouter();
   const params = useLocalSearchParams<{ from?: string }>();
   const from = parseMaxFrom(params.from);
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const toast = useToast();
   const say = useCompanionToast();
   const { hour } = useClock();
@@ -55,7 +55,7 @@ export function MaxSheet() {
   const { config } = useLookSettings();
   const lookStore = useLookSettingsStore();
   const on = customer.max.active;
-  const safe = formatShort(Math.max(0, day?.safe ?? 0));
+  const safe = formatShort(Math.max(0, day?.safe ?? 0), language);
   const statusLine = useMaxStatusLine(customer);
 
   const [chosen, setChosen] = useState<MaxPlan | null>(null);

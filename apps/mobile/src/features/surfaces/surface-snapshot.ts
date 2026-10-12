@@ -10,6 +10,7 @@ import {
   type SpendRow,
   type SurfaceSnapshot,
 } from '@6pm/domain';
+import type { Language } from '@6pm/i18n';
 
 import { dayOf, waitingOf, type MoneySnapshot } from '../../data/money-store';
 import type { I18n } from '../../i18n/i18n';
@@ -85,14 +86,15 @@ function entryOf(
   list: { rows: Row[]; total: number },
   pending: number,
   t: I18n['t'],
+  language: Language,
 ): Entry {
-  const safeShort = formatShort(Math.max(0, day.safe));
+  const safeShort = formatShort(Math.max(0, day.safe), language);
   const more = list.total - list.rows.length;
   return {
     from: from.toISOString(),
     safeText: t('surfaces.amountLeft', { amount: safeShort }),
     safeShort,
-    tomorrowText: t('today.tomorrowAbout', { amount: formatShort(day.tomorrow) }),
+    tomorrowText: t('today.tomorrowAbout', { amount: formatShort(day.tomorrow, language) }),
     pendingText: pending > 0 ? t('surfaces.pending', { count: pending }) : '',
     ringFraction: day.safe < 0 ? 0 : 1 - lineUsed(day),
     list: list.rows,
@@ -106,6 +108,7 @@ export interface SnapshotInput {
   /** The look id when the user has Max (widgets in their look), else null. */
   readonly maxLook: string | null;
   readonly t: I18n['t'];
+  readonly language: Language;
   readonly writtenAt: Date;
 }
 
@@ -116,18 +119,18 @@ export interface SnapshotInput {
  * and the widgets ask to open 6pm.
  */
 export function surfaceSnapshot(input: SnapshotInput): SurfaceSnapshot {
-  const { money, look, t } = input;
+  const { money, look, t, language } = input;
   const today = dayOf(money);
   const pending = pendingCount(money);
   const list = rowsOf(money);
   const entries: Entry[] = [];
   if (today !== null) {
-    entries.push(entryOf(today, moneyDayStart(money.today), list, pending, t));
+    entries.push(entryOf(today, moneyDayStart(money.today), list, pending, t, language));
     const next = nextMoneyDay(money);
     const tomorrow = dayOf(next);
     if (tomorrow !== null) {
       entries.push(
-        entryOf(tomorrow, moneyDayStart(next.today), { rows: [], total: 0 }, pending, t),
+        entryOf(tomorrow, moneyDayStart(next.today), { rows: [], total: 0 }, pending, t, language),
       );
     }
   }

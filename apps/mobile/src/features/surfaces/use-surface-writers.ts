@@ -51,9 +51,10 @@ export function useSurfaceWriters() {
         look: widget,
         maxLook: max ? worn : null,
         t,
+        language,
         writtenAt: new Date(),
       }),
-    [money, widget, max, worn, t],
+    [money, widget, max, worn, t, language],
   );
   const key = snapshotKey(snapshot);
 

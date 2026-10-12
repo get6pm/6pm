@@ -21,6 +21,8 @@ describe('parseAmount', () => {
     ['2 triệu rưỡi', 2_500_000],
     ['45 nghìn rưỡi', 45_500],
     ['Can I afford a 2tr dinner Saturday?', 2_000_000],
+    ['Can I afford a 2M dinner Saturday?', 2_000_000],
+    ['1.4M', 1_400_000],
     ['What if I buy a 450k jacket?', 450_000],
     ['1 củ', 1_000_000],
   ])('%s → %d', (text, expected) => {

@@ -54,7 +54,7 @@ export function safeAfterText(
   amount: Vnd | null,
 ): string | null {
   if (!context || !category?.countsDaily || amount === null) return null;
-  const left = formatShort(context.safeToday - amount);
+  const left = formatShort(context.safeToday - amount, context.language);
   const line = context.strings['safeAfter'];
   return line?.includes('{amount}') ? line.replace('{amount}', left) : left;
 }

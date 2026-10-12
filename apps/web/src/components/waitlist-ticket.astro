@@ -32,7 +32,7 @@ const { launchUpper } = Astro.props;
       <div class="row"><span class="key">VERSION</span><span>2.0</span></div>
       <div class="row">
         <span class="key">LEAK</span><span data-leak-ticket
-          >{formatShort(leakPerMonth(startCounts))} / mo</span
+          >{formatShort(leakPerMonth(startCounts), 'en')} / mo</span
         >
       </div>
       <div class="row"><span class="key">ARRIVES</span><span>{launchUpper}</span></div>

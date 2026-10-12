@@ -30,7 +30,7 @@ export function CompanionGreeting({
   readonly onPress: () => void;
 }) {
   const { palette, serious } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { hour } = useClock();
   if (serious) return null;
   const mood = companionMood({
@@ -41,8 +41,8 @@ export function CompanionGreeting({
     closed: event === 'closedIdle',
   });
   const line = t(`companion.${event}.${plan.persona}` as 'companion.replan.cheeky', {
-    t: formatShort(day.tomorrow),
-    b: formatShort(day.line),
+    t: formatShort(day.tomorrow, language),
+    b: formatShort(day.line, language),
   });
   return (
     <View

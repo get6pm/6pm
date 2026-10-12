@@ -30,7 +30,7 @@ import type { ZineDay, ZinePlace, ZineTicket } from './zine-pages';
 // `month` is 'YYYY-MM'.
 export function useMoneyDiary(month: string, showAmounts: boolean) {
   const snap = useMoney();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const dates = useDiaryDates();
   const { plan, closedDays, cycleSpends, potSaved } = snap;
   const payday = useMemo(() => plan?.payday ?? { kind: 'lastDay' as const }, [plan]);
@@ -60,7 +60,10 @@ export function useMoneyDiary(month: string, showAmounts: boolean) {
 
   const headline =
     diary.spare >= 0
-      ? t('diary.zine.headline.spare', { month: monthName, amount: formatShort(diary.spare) })
+      ? t('diary.zine.headline.spare', {
+          month: monthName,
+          amount: formatShort(diary.spare, language),
+        })
       : data.futureYou.added > 0
         ? t('diary.zine.headline.overPaid')
         : t('diary.zine.headline.over');
@@ -68,13 +71,13 @@ export function useMoneyDiary(month: string, showAmounts: boolean) {
   const stats: ZineStat[] = [
     {
       key: t('diary.zine.spent'),
-      value: formatShort(diary.spent),
-      sub: t('diary.zine.spentSub', { plan: formatShort(diary.plan) }),
+      value: formatShort(diary.spent, language),
+      sub: t('diary.zine.spentSub', { plan: formatShort(diary.plan, language) }),
     },
     {
       key: t('diary.zine.futureYou'),
-      value: `+${formatShort(data.futureYou.added)}`,
-      sub: t('diary.zine.futureYouSub', { total: formatShort(data.futureYou.total) }),
+      value: `+${formatShort(data.futureYou.added, language)}`,
+      sub: t('diary.zine.futureYouSub', { total: formatShort(data.futureYou.total, language) }),
     },
     {
       key: t('diary.zine.under'),
@@ -95,7 +98,7 @@ export function useMoneyDiary(month: string, showAmounts: boolean) {
     return {
       name: p.merchant,
       sub: t('diary.places.visits', { count: p.visits }),
-      amount: formatShort(p.amount),
+      amount: formatShort(p.amount, language),
       icon: merchantIcon(p.merchant, icon),
       hue: category?.hue ?? 80,
       pct: Math.round((p.amount / Math.max(1, top)) * 100),
@@ -116,7 +119,7 @@ export function useMoneyDiary(month: string, showAmounts: boolean) {
     key: d.day,
     dow: dates.weekdayShort(d.day),
     day: d.day.slice(8),
-    total: formatShort(d.spent),
+    total: formatShort(d.spent, language),
     dot: dayDot(d.spent, d.line) === 'under' ? dots.paperUnder : dots.paperOver,
   }));
 
@@ -141,8 +144,8 @@ export function useMoneyDiary(month: string, showAmounts: boolean) {
       dots: diary.dots,
       stat: showAmounts
         ? t('diary.zine.shareSpent', {
-            spent: formatShort(diary.spent),
-            plan: formatShort(diary.plan),
+            spent: formatShort(diary.spent, language),
+            plan: formatShort(diary.plan, language),
           })
         : t('diary.zine.shareUnder', {
             pct: diary.closed.length ? Math.round((diary.under / diary.closed.length) * 100) : 0,

@@ -7,5 +7,9 @@
       <key>EXExtensionPointIdentifier</key>
       <string>com.apple.appintents-extension</string>
     </dict>
+    <key>UIAppFonts</key>
+    <array>
+      <string>BricolageGrotesque-Variable.ttf</string>
+    </array>
   </dict>
 </plist>

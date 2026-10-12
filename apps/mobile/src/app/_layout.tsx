@@ -54,6 +54,7 @@ function Screens() {
         <Stack.Screen name="index" />
         <Stack.Screen name="onboarding" options={{ animation: 'fade', gestureEnabled: false }} />
         <Stack.Screen name="settings" options={sheet} />
+        <Stack.Screen name="capture-guide" options={sheet} />
         <Stack.Screen name="categories" options={sheet} />
         <Stack.Screen name="quick-add" options={sheet} />
         <Stack.Screen name="scan" options={takeover} />

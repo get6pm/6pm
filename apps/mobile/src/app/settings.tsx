@@ -15,6 +15,7 @@ import {
   useReminderPermission,
 } from '../features/reminders/reminder-permission';
 import { BackupRow } from '../features/backup/backup-row';
+import { CaptureSettingsSection } from '../features/capture-guide/capture-settings-section';
 import { useDeleteBackup } from '../features/backup/use-backup';
 import { useLookSettingsStore } from '../features/looks/look-settings-provider';
 import { CloseTimePicker } from '../features/settings/close-time-picker';
@@ -103,6 +104,12 @@ export default function Settings() {
         onPersona={(persona) => void actions.updatePlan({ persona })}
         onSerious={(serious) => void actions.updatePlan({ serious })}
       />
+      <CaptureSettingsSection
+        onOpen={(source) => {
+          haptics.tick();
+          router.push({ pathname: '/capture-guide', params: { source } });
+        }}
+      />
       {/* Replace, not push: the shop and its try-on stand in for Settings, so the app shows behind. */}
       <SettingsLookCard onPress={() => router.replace('/looks')} />
 
@@ -149,6 +156,15 @@ export default function Settings() {
             haptics.tick();
             // The reminder's words follow the language on their own.
             setLanguage(language === 'vi' ? 'en' : 'vi');
+          }}
+        />
+        <SettingRow
+          icon="widgets"
+          label={t('capture.settings.widgets')}
+          value={t('capture.settings.widgetsValue')}
+          onPress={() => {
+            haptics.tick();
+            router.push({ pathname: '/capture-guide', params: { source: 'widgets' } });
           }}
         />
       </SettingsSection>

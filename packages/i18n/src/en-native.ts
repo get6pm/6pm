@@ -23,4 +23,14 @@ export const enNative = {
   'native.intents.logSpend.title': 'Log in 6pm',
   'native.intents.logSpend.amount': 'Amount',
   'native.intents.logSpend.merchant': 'Where',
+  'native.intents.logSpend.description':
+    'Log a spend in 6pm: Apple Pay taps from Wallet, or what you say to Siri.',
+  'native.intents.logSpend.short': 'Log a spend',
+  'native.intents.logSpend.askAmount': 'How much was it?',
+  'native.intents.logSpend.logged': 'Logged.',
+  'native.intents.logSpend.failed': '6pm could not log that. Open 6pm and try Quick add.',
+  'native.intents.scan.title': 'Scan QR',
+  'native.intents.scan.description': 'Open Scan to pay in 6pm.',
+  'native.intents.quickAdd.title': 'Quick add',
+  'native.intents.quickAdd.description': 'Open Quick add in 6pm.',
 } as const;

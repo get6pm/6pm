@@ -1,0 +1,233 @@
+import { useRouter } from 'expo-router';
+import { Linking, ScrollView, Share, Text, View } from 'react-native';
+import Animated, { Easing, Keyframe } from 'react-native-reanimated';
+
+import { curves } from '@6pm/theme';
+
+import { useI18n } from '../../i18n/i18n';
+import { CategoryTile } from '../../ui/category-tile';
+import { haptics } from '../../ui/haptics';
+import { Symbol } from '../../ui/icons/symbol';
+import { SheetFrame } from '../../ui/navigation/sheet-frame';
+import { PressScale } from '../../ui/primitives/press-scale';
+import { useTheme } from '../../ui/theme/theme';
+import { body, display } from '../../ui/type/fonts';
+import { captureColours } from './capture-colours';
+import { GuideSample, GuideSection, GuideSteps, GuideTip } from './guide-sections';
+import type { CaptureSource } from './source-status';
+import { useCaptureSources } from './use-capture-sources';
+
+/** The prototype's `screenIn`: up 12 pt from 98.5 %, over 0.35 s on the entrance curve. */
+const screenIn = new Keyframe({
+  0: { opacity: 0, transform: [{ translateY: 12 }, { scale: 0.985 }] },
+  100: {
+    opacity: 1,
+    transform: [{ translateY: 0 }, { scale: 1 }],
+    easing: Easing.bezier(...curves.enter),
+  },
+}).duration(350);
+
+/** One way's guide: its status, three steps, what lands in the Inbox, a tip and its action. */
+export function CaptureGuideSheet({ source }: { readonly source: CaptureSource }) {
+  const { palette } = useTheme();
+  const { t } = useI18n();
+  const router = useRouter();
+  const { sources } = useCaptureSources();
+  const colours = captureColours(palette);
+  const view = sources.find((s) => s.source === source);
+  const action = useGuideAction(source, view?.on ?? false);
+  // Every way is always listed; this only satisfies the type.
+  if (!view) return null;
+  const { guide } = view;
+
+  const header = (
+    <View style={{ paddingTop: 8, paddingHorizontal: 14, paddingBottom: 6, gap: 6 }}>
+      <View
+        style={{
+          alignSelf: 'center',
+          width: 36,
+          height: 5,
+          borderRadius: 9,
+          backgroundColor: palette.inkSoft,
+          opacity: 0.35,
+        }}
+      />
+      <View style={{ minHeight: 44, alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ ...body(17, 650), color: palette.ink }}>{view.name}</Text>
+        <PressScale
+          accessibilityRole="button"
+          onPress={() => router.back()}
+          hitSlop={8}
+          style={{
+            position: 'absolute',
+            left: 0,
+            paddingVertical: 8,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
+          <Symbol name="chevron_left" size={26} color={palette.ink} style={{ marginLeft: -4 }} />
+          <Text style={{ ...body(17, 500), color: palette.ink }}>{t('capture.guide.back')}</Text>
+        </PressScale>
+        <PressScale
+          accessibilityRole="button"
+          onPress={() => router.dismissTo('/')}
+          hitSlop={8}
+          style={{ position: 'absolute', right: 0, paddingVertical: 8, paddingHorizontal: 4 }}
+        >
+          <Text style={{ ...body(17, 650), color: palette.ink }}>{t('common.done')}</Text>
+        </PressScale>
+      </View>
+    </View>
+  );
+
+  return (
+    <SheetFrame header={header}>
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        <Animated.View
+          entering={screenIn}
+          style={{ paddingTop: 6, paddingHorizontal: 16, paddingBottom: 44, gap: 24 }}
+        >
+          <View style={{ gap: 14, paddingTop: 6, paddingHorizontal: 4 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <CategoryTile icon={guide.icon} hue={guide.hue} size={60} radius={20} glyph={32} />
+              <View
+                style={{
+                  height: 28,
+                  paddingLeft: 9,
+                  paddingRight: 11,
+                  borderRadius: 99,
+                  backgroundColor: view.on ? colours.okBg : colours.warnBg,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <View
+                  style={{
+                    width: 7,
+                    height: 7,
+                    borderRadius: 3.5,
+                    backgroundColor: view.on ? colours.ok : colours.warn,
+                  }}
+                />
+                <Text style={{ ...body(12.5, 700), color: view.on ? colours.ok : colours.warn }}>
+                  {view.status}
+                </Text>
+              </View>
+            </View>
+            <Text style={{ ...display(31, 500, -0.015), lineHeight: 33.5, color: palette.ink }}>
+              {t(guide.headline)}
+            </Text>
+          </View>
+
+          <GuideSection title={t('capture.guide.howItWorks')} note={t(guide.time)}>
+            <GuideSteps guide={guide} />
+          </GuideSection>
+
+          <GuideSection title={t('capture.guide.lands')}>
+            <GuideSample guide={guide} />
+            <Text
+              style={{
+                ...body(13),
+                lineHeight: 18.2,
+                color: palette.inkSoft,
+                paddingHorizontal: 6,
+              }}
+            >
+              {t('capture.guide.landsNote')}
+            </Text>
+          </GuideSection>
+
+          <GuideTip text={t(guide.tip)} />
+
+          {action ? (
+            <PressScale
+              accessibilityRole="button"
+              onPress={action.run}
+              style={{
+                height: 56,
+                borderRadius: 99,
+                backgroundColor: action.accent ? palette.accent : palette.btnBg,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  ...body(17, 650),
+                  color: action.accent ? colours.onAccent : palette.btnFg,
+                }}
+              >
+                {action.label}
+              </Text>
+            </PressScale>
+          ) : null}
+        </Animated.View>
+      </ScrollView>
+    </SheetFrame>
+  );
+}
+
+interface GuideAction {
+  readonly label: string;
+  /** The orange button: only while the Wallet automation is still off. */
+  readonly accent: boolean;
+  readonly run: () => void;
+}
+
+/**
+ * The button under each guide. Pinning in the share row and the Wallet automation are the user's
+ * to set in iOS, so those open the share sheet and the Shortcuts app; Receipt email has no
+ * address on this iPhone to copy, so it has no button.
+ */
+function useGuideAction(source: CaptureSource, on: boolean): GuideAction | null {
+  const { t } = useI18n();
+  const router = useRouter();
+  switch (source) {
+    case 'share':
+      return {
+        label: t('capture.share.action'),
+        accent: false,
+        run: () => {
+          haptics.tap();
+          void Share.share({ message: t('capture.share.pinText') }).catch(() => undefined);
+        },
+      };
+    case 'email':
+      return null;
+    case 'scan':
+      return {
+        label: t('capture.scan.action'),
+        accent: false,
+        run: () => {
+          haptics.tap();
+          router.push('/scan');
+        },
+      };
+    case 'wallet':
+      return {
+        label: t(on ? 'capture.wallet.actionOn' : 'capture.wallet.actionOff'),
+        accent: !on,
+        run: () => {
+          haptics.tap();
+          void Linking.openURL('shortcuts://').catch(() => undefined);
+        },
+      };
+    case 'widgets':
+      return {
+        label: t('capture.widgets.action'),
+        accent: false,
+        run: () => {
+          haptics.tap();
+          router.back();
+        },
+      };
+  }
+}

@@ -21,4 +21,14 @@ export const viNative: { readonly [Key in keyof typeof enNative]: Entry } = {
   'native.intents.logSpend.title': 'Ghi vào 6pm',
   'native.intents.logSpend.amount': 'Số tiền',
   'native.intents.logSpend.merchant': 'Ở đâu',
+  'native.intents.logSpend.description':
+    'Ghi một khoản chi vào 6pm: lần chạm Apple Pay từ Ví, hoặc điều bạn nói với Siri.',
+  'native.intents.logSpend.short': 'Ghi khoản chi',
+  'native.intents.logSpend.askAmount': 'Bao nhiêu tiền?',
+  'native.intents.logSpend.logged': 'Đã ghi.',
+  'native.intents.logSpend.failed': '6pm chưa ghi được. Mở 6pm và dùng Thêm nhanh nhé.',
+  'native.intents.scan.title': 'Quét QR',
+  'native.intents.scan.description': 'Mở Quét để trả trong 6pm.',
+  'native.intents.quickAdd.title': 'Thêm nhanh',
+  'native.intents.quickAdd.description': 'Mở Thêm nhanh trong 6pm.',
 };

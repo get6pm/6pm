@@ -4,6 +4,8 @@ import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { formatShort, groupDigits } from '@6pm/domain';
 
 import { DashedRule } from '../../ui/dashed-rule';
+import { CashVoice } from '../voice/cash-voice';
+import { glide } from '../voice/glide';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
@@ -130,7 +132,15 @@ export function CashStep({
           {sub}
         </Text>
       </View>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
+      <CashVoice
+        onSaid={(said) =>
+          onAdd({ key: said.categoryHint ?? 'food', name: said.name, amount: said.amount })
+        }
+      />
+      <Animated.View
+        layout={glide}
+        style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}
+      >
         {chips.map((chip) => (
           <PressScale
             key={chip.key}
@@ -172,8 +182,8 @@ export function CashStep({
           <Symbol name="add" size={20} color={palette.ink} />
           <Text style={{ ...body(15, 600), color: palette.ink }}>{otherLabel}</Text>
         </PressScale>
-      </View>
-      <View style={{ gap: 6 }}>
+      </Animated.View>
+      <Animated.View layout={glide} style={{ gap: 6 }}>
         {added.map((chip, i) => (
           <Animated.View
             key={`${chip.key}-${i}`}
@@ -191,7 +201,7 @@ export function CashStep({
             </Text>
           </Animated.View>
         ))}
-      </View>
+      </Animated.View>
       <View style={{ flex: 1 }} />
       <DashedRule color={palette.inkSoft} />
       <View

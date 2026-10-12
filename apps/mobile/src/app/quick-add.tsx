@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 import {
   emptyKeypad,
@@ -19,6 +20,9 @@ import { QuickTicket } from '../features/quick-add/quick-ticket';
 import { useWalletOptions } from '../features/quick-add/use-wallet-options';
 import { CASH_WALLET } from '../features/quick-add/wallet-options';
 import { WalletRow } from '../features/quick-add/wallet-row';
+import { ModeSwitch, type EntryMode } from '../features/voice/mode-switch';
+import { useVoiceEntry } from '../features/voice/use-voice-entry';
+import { VoicePanel } from '../features/voice/voice-panel';
 import { useI18n } from '../i18n/i18n';
 import { CategoryTile } from '../ui/category-tile';
 import { haptics } from '../ui/haptics';
@@ -65,6 +69,18 @@ export default function QuickAdd() {
   // The hour's likely category is settled when the sheet opens, so it never shifts under the user.
   const [likelyId] = useState(ordered[0]?.id ?? '');
   const [picked, setPicked] = useState<string | null>(null);
+  const [mode, setMode] = useState<EntryMode>('keys');
+  // The keypad is there when the sheet opens; it fades in only when switched back to.
+  const [switched, setSwitched] = useState(false);
+  const voice = useVoiceEntry({
+    language,
+    categories: snap.categories,
+    rules,
+    setKeys,
+    setNote,
+    setPicked,
+  });
+  const voiceOff = voice.dictation.state.phase === 'unavailable';
   const learned = ruleCategoryFor(
     ruleIndex(rules),
     note,
@@ -85,7 +101,7 @@ export default function QuickAdd() {
         amount,
         categoryId: category.id,
         merchant: note.trim() || category.name,
-        source: 'manual',
+        source: mode === 'voice' && !voiceOff ? 'voice' : 'manual',
         status: 'kept',
         wallet,
       }),
@@ -115,7 +131,14 @@ export default function QuickAdd() {
         <PressScale onPress={() => router.back()} style={{ width: 60, paddingVertical: 6 }}>
           <Text style={{ ...body(16), color: palette.inkSoft }}>{t('quick.cancel')}</Text>
         </PressScale>
-        <Text style={{ ...body(17, 650), color: palette.ink }}>{t('home.quickAdd')}</Text>
+        <ModeSwitch
+          value={mode}
+          labels={{ keys: t('voice.mode.keypad'), voice: t('voice.mode.voice') }}
+          onChange={(next) => {
+            setSwitched(true);
+            setMode(next);
+          }}
+        />
         <View style={{ width: 60 }} />
       </View>
     </View>
@@ -181,25 +204,47 @@ export default function QuickAdd() {
           })}
         </ScrollView>
         <WalletRow options={wallets} value={wallet} onChange={setWallet} />
-        <Keypad onPress={(key) => setKeys((k) => pressKey(k, key))} />
-        <PressScale
-          scaleTo={0.97}
-          onPress={() => void save()}
-          disabled={amount <= 0}
-          style={{
-            height: 56,
-            borderRadius: 18,
-            backgroundColor: palette.btnBg,
-            opacity: amount > 0 ? 1 : 0.4,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8,
-          }}
-        >
-          <Symbol name="receipt_long" size={20} color={palette.btnFg} />
-          <Text style={{ ...body(17, 650), color: palette.btnFg }}>{t('quick.keep')}</Text>
-        </PressScale>
+        {mode === 'voice' && !voiceOff ? (
+          <VoicePanel
+            dictation={voice.dictation}
+            chips={voice.chips}
+            canSave={amount > 0}
+            onSave={() => void save()}
+          />
+        ) : (
+          <Animated.View
+            key={mode}
+            {...(switched ? { entering: FadeIn.duration(220) } : {})}
+            style={{ gap: 14 }}
+          >
+            {mode === 'voice' ? (
+              <Text
+                style={{ ...body(15), lineHeight: 21, color: palette.inkSoft, textAlign: 'center' }}
+              >
+                {t('voice.unavailable', { language: t(`voice.language.${language}`) })}
+              </Text>
+            ) : null}
+            <Keypad onPress={(key) => setKeys((k) => pressKey(k, key))} />
+            <PressScale
+              scaleTo={0.97}
+              onPress={() => void save()}
+              disabled={amount <= 0}
+              style={{
+                height: 56,
+                borderRadius: 18,
+                backgroundColor: palette.btnBg,
+                opacity: amount > 0 ? 1 : 0.4,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+              }}
+            >
+              <Symbol name="receipt_long" size={20} color={palette.btnFg} />
+              <Text style={{ ...body(17, 650), color: palette.btnFg }}>{t('quick.keep')}</Text>
+            </PressScale>
+          </Animated.View>
+        )}
       </View>
     </SheetFrame>
   );

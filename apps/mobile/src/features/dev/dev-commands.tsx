@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { useMoneyStore } from '../../data/money-provider';
 import { pinClock, useClock } from '../../ui/theme/clock';
 import { useToast } from '../../ui/toast/toast-host';
+import { pinCompanionForm } from './dev-companion-form';
 import { seedDesignFriday } from './design-friday-seed';
 
 /**
@@ -14,7 +15,7 @@ import { seedDesignFriday } from './design-friday-seed';
  * Documents folder (`xcrun simctl get_app_container <device> ai.sixpm.app.dev data`), then reload
  * or foreground the app. The file is read once and deleted.
  *
- *   {"seed": "friday", "at": "18:07", "route": "/close", "toast": "Line to show"}
+ *   {"seed": "friday", "at": "18:07", "route": "/close", "toast": "Line to show", "companion": "max"}
  */
 const commandSchema = z.object({
   seed: z.literal('friday').optional(),
@@ -26,6 +27,8 @@ const commandSchema = z.object({
   route: z.string().startsWith('/').optional(),
   /** Shows this line in the island toast once the route is open. */
   toast: z.string().min(1).optional(),
+  /** Shows the companion in this form as if Max were on or off; "" follows the purchases again. */
+  companion: z.enum(['max', 'base', '']).optional(),
 });
 
 export function DevCommands() {
@@ -41,7 +44,8 @@ export function DevCommands() {
       const parsed = commandSchema.safeParse(JSON.parse(await file.text()));
       file.delete();
       if (!parsed.success) return;
-      const { seed, at, route, toast: line } = parsed.data;
+      const { seed, at, route, toast: line, companion } = parsed.data;
+      if (companion !== undefined) pinCompanionForm(companion === '' ? null : companion);
       if (at !== undefined) {
         const [h = 0, m = 0] = at.split(':').map(Number);
         const pin = new Date();

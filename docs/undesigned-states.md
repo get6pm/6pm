@@ -153,3 +153,4 @@ fakes behaviour the app cannot fake. Founder review.
 | Share extension | The app never opened (no context file) | No Category row; the app files the spend by its rules or the hour when it imports it, and naming may pick a category then | The domain bundle has no starter category list to offer before the app has written one |
 | Share extension | Serious mode | No companion in the header | Serious mode removes the companion |
 | Share extension | Dismissed (pulled down past 120 pt, flicked, or the dim tapped) | The card slides away and nothing is added | Leaving the share sheet is not an error |
+| Companion (everywhere it draws) | Max ends while it is on screen | The Max form fades out over the base form in 380 ms on the entrance curve; becoming Max keeps the prototype's burst of light | The prototype only animates becoming Max; it switches back to the base form at once |

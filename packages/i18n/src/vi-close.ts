@@ -17,6 +17,7 @@ export const viClose: { readonly [Key in keyof typeof enClose]: Entry } = {
   'close.undo': 'Hoàn tác',
   'close.undoLast': 'Hoàn tác cái vừa rồi',
   'close.card.no': 'Số {n}/{total} · {source}',
+  'close.card.readFrom': 'Đọc từ biên lai {bank} của bạn',
   'close.card.keptSoFar': 'ĐÃ GIỮ',
   'close.card.withThis': 'CỘNG CÁI NÀY',
   'close.stamp.keep': 'GIỮ',

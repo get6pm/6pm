@@ -102,15 +102,7 @@ export async function seedDesignFriday(store: MoneyStore, today: LocalDate): Pro
     }
     spends.push(
       [today, '07:42', 'Bánh mì Cô Ba', 25_000, 'food', 'kept', null],
-      [
-        today,
-        '08:15',
-        'Cà phê sữa đá',
-        29_000,
-        'drinks',
-        'caught',
-        'Read from your MB Bank receipt',
-      ],
+      [today, '08:15', 'Cà phê sữa đá', 29_000, 'drinks', 'caught', 'MB Bank · FT26285XYZ'],
       [today, '12:10', 'Phở Hòa', 45_000, 'food', 'pending', 'You didn’t say if it went through'],
       [
         today,
@@ -122,15 +114,7 @@ export async function seedDesignFriday(store: MoneyStore, today: LocalDate): Pro
         'From name@6pm.oddeggs.studio',
       ],
       [today, '15:05', 'Trà sữa', 45_000, 'drinks', 'kept', null],
-      [
-        today,
-        '16:40',
-        'Circle K',
-        120_000,
-        'shopping',
-        'caught',
-        'Read from your Vietcombank receipt',
-      ],
+      [today, '16:40', 'Circle K', 120_000, 'shopping', 'caught', 'Vietcombank · FT26285ABC'],
     );
     const sourceOf = (merchant: string) =>
       merchant === 'Cà phê sữa đá' || merchant === 'Circle K'

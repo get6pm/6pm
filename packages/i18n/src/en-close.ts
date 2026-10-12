@@ -15,6 +15,7 @@ export const enClose = {
   'close.undo': 'Undo',
   'close.undoLast': 'Undo last',
   'close.card.no': 'Nº {n}/{total} · {source}',
+  'close.card.readFrom': 'Read from your {bank} receipt',
   'close.card.keptSoFar': 'KEPT SO FAR',
   'close.card.withThis': 'WITH THIS ONE',
   'close.stamp.keep': 'KEEP',

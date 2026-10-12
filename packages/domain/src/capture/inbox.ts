@@ -1,5 +1,6 @@
 import type { InboxSpend } from '../contracts/surfaces';
 import type { SpendSource } from '../spend/spend';
+import { BANKS } from '../vietqr/bank-catalogue';
 import { merchantKeyOf } from './merchant-rule';
 
 /** Wallet runs an automation twice for one tap, and again on a decline: one spend, not three. */
@@ -33,6 +34,17 @@ export function receiptDetail(receipt: InboxSpend['receipt']): string | null {
   if (!receipt) return null;
   const parts = [receipt.bank, receipt.code].filter((part): part is string => !!part);
   return parts.length > 0 ? parts.join(' · ') : null;
+}
+
+/**
+ * The bank a shared receipt came from, read back from the detail line `receiptDetail` wrote:
+ * the part before the code, or the whole line when it is a bank the catalogue knows.
+ */
+export function receiptBankOf(detail: string | null): string | null {
+  if (!detail) return null;
+  const [first = '', code] = detail.split(' · ');
+  if (code !== undefined) return first || null;
+  return BANKS.some((bank) => bank.shortName === first) ? first : null;
 }
 
 /**

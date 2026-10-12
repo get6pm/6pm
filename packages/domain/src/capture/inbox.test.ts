@@ -7,6 +7,7 @@ import {
   isRepeatTap,
   isSameReceipt,
   numbersFree,
+  receiptBankOf,
   receiptDetail,
   type CapturedSpend,
   type InboxFiling,
@@ -78,6 +79,19 @@ describe('inboxItemToNewSpend', () => {
     expect(inboxItemToNewSpend(shared, filing).detail).toBe('Vietcombank · FT26285ABC');
     expect(receiptDetail({ namingLines: [] })).toBeNull();
     expect(receiptDetail({ code: 'X1', namingLines: [] })).toBe('X1');
+  });
+});
+
+describe('receiptBankOf', () => {
+  it('reads the bank back from a receipt’s detail line', () => {
+    expect(receiptBankOf('Vietcombank · FT26285ABC')).toBe('Vietcombank');
+    expect(receiptBankOf('MB Bank')).toBe('MB Bank');
+  });
+
+  it('is null for a code alone, nothing, or a line no bank wrote', () => {
+    expect(receiptBankOf('FT26285ABC')).toBeNull();
+    expect(receiptBankOf(null)).toBeNull();
+    expect(receiptBankOf('')).toBeNull();
   });
 });
 

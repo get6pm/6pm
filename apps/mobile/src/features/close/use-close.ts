@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'r
 import {
   closeQueue,
   closeReducer,
+  receiptBankOf,
   remainingCards,
   startClose,
   type CardVerdict,
@@ -126,6 +127,11 @@ export function useClose() {
   const keptBefore = queue
     .filter((s) => state.verdicts[s.id] === 'kept' || state.verdicts[s.id] === 'edited')
     .reduce((sum, s) => sum + (findSpend(snap, s.id)?.amount ?? s.amount), 0);
+  // A shared receipt names its bank as the prototype words it; other sources show their detail.
+  const cardDetail = (spend: SpendRow) => {
+    const bank = spend.source === 'shared' ? receiptBankOf(spend.detail) : null;
+    return bank ? t('close.card.readFrom', { bank }) : spend.detail;
+  };
   const remaining = remainingCards(state);
   const cards: CloseCardContent[] = remaining.map((card) => {
     const spend = queue.find((s) => s.id === card.id);
@@ -146,7 +152,7 @@ export function useClose() {
       category: categories.get(spend.categoryId)?.name ?? '',
       amount: spend.amount,
       keptBefore,
-      detail: spend.detail,
+      detail: cardDetail(spend),
       labels: {
         keptSoFar: t('close.card.keptSoFar'),
         withThis: t('close.card.withThis'),

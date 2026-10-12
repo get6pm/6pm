@@ -78,7 +78,13 @@ export default function Close() {
     ? snap.categories.find((c) => c.id === rules.offer?.categoryId)
     : undefined;
 
-  const addCash = (name: string, amount: number, categoryId: string, key: string) => {
+  const addCash = (
+    name: string,
+    amount: number,
+    categoryId: string,
+    key: string,
+    source: 'cash' | 'voice' = 'cash',
+  ) => {
     haptics.tap();
     close.setCash((c) => [...c, { key, name, amount }]);
     void run(async () => {
@@ -88,7 +94,7 @@ export default function Close() {
         amount,
         categoryId: learned ?? categoryId,
         merchant: name,
-        source: 'cash',
+        source,
         status: 'kept',
         wallet: 'Cash',
         // Cash handed over while closing a day belongs to that day, even past 04:00.
@@ -200,6 +206,9 @@ export default function Close() {
           noneLabel={t('close.cash.none')}
           otherLabel={t('close.cash.other')}
           onAdd={(chip) => addCash(chip.name, chip.amount, categoryFor(chip.key), chip.key)}
+          onSaid={(said) =>
+            addCash(said.name, said.amount, categoryFor(said.key), said.key, 'voice')
+          }
           onOther={() => setTypingCash(true)}
           onDone={() => dispatch({ type: 'cashDone' })}
         />

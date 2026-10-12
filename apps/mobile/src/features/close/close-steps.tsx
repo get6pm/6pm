@@ -104,6 +104,7 @@ export function CashStep({
   noneLabel,
   otherLabel,
   onAdd,
+  onSaid,
   onOther,
   onDone,
 }: {
@@ -116,6 +117,8 @@ export function CashStep({
   readonly noneLabel: string;
   readonly otherLabel: string;
   readonly onAdd: (chip: CashChip) => void;
+  /** A cash spend said out loud; its key is the category the words point to. */
+  readonly onSaid: (chip: CashChip) => void;
   /** Opens the typed amount for cash the chips don't cover. */
   readonly onOther: () => void;
   readonly onDone: () => void;
@@ -134,7 +137,7 @@ export function CashStep({
       </View>
       <CashVoice
         onSaid={(said) =>
-          onAdd({ key: said.categoryHint ?? 'food', name: said.name, amount: said.amount })
+          onSaid({ key: said.categoryHint ?? 'food', name: said.name, amount: said.amount })
         }
       />
       <Animated.View

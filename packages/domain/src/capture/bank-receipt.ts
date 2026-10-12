@@ -1,0 +1,298 @@
+import type { Vnd } from '../money/format';
+import { BANKS } from '../vietqr/bank-catalogue';
+import { foldWords } from './spoken-spend';
+import { parseWalletAmount } from './wallet-amount';
+
+/** Where a line sits, in Vision's normalised coordinates: 0…1, origin at the bottom left. */
+export interface ReceiptBox {
+  readonly x: number;
+  readonly y: number;
+  readonly w: number;
+  readonly h: number;
+}
+
+/** One line of a receipt as the recogniser (or a PDF's text, or a shared text) gave it. */
+export interface ReceiptLine {
+  readonly text: string;
+  /** Absent for text that had no layout (a plain-text share): lines are then rows in order. */
+  readonly box?: ReceiptBox;
+  /** The recogniser's confidence, 0…1, when it gave one. */
+  readonly confidence?: number;
+}
+
+export interface BankReceipt {
+  readonly amount: Vnd | null;
+  /** Who was paid, as printed. Empty when no name was found. */
+  readonly payee: string;
+  /** False when the name is a bare account name (or unread): the card asks to check it. */
+  readonly payeeSure: boolean;
+  /** When the transfer was made (ISO 8601), read as the phone's local time. */
+  readonly at: string | null;
+  /** The bank's transaction code, spaces taken out. */
+  readonly code: string | null;
+  /** The sending bank's short name from the VietQR catalogue: "Vietcombank", "MoMo". */
+  readonly bank: string | null;
+}
+
+type Field =
+  'amount' | 'payee' | 'time' | 'code' | 'toBank' | 'account' | 'note' | 'fee' | 'balance';
+
+/** Receipt labels in Vietnamese and English, folded (no accents, lower case), by field. */
+const LABELS: Readonly<Record<Field, string>> = {
+  amount: 'so tien, so tien giao dich, so tien chuyen, amount, transaction amount, tong tien',
+  payee:
+    'toi, to, den, chuyen den, nguoi nhan, ten nguoi nhan, nguoi huong, ten nguoi huong, ' +
+    'nguoi thu huong, ten nguoi thu huong, don vi thu huong, ten tai khoan nhan, ' +
+    'ten tai khoan thu huong, beneficiary, beneficiary name, recipient, receiver, payee',
+  time:
+    'thoi gian, thoi gian giao dich, ngay giao dich, ngay thuc hien, ngay gio, ngay, ' +
+    'ngay gio giao dich, time, date, transaction date, transaction time, trans date time',
+  code:
+    'ma giao dich, ma gd, so tham chieu, ma tham chieu, so but toan, transaction id, ' +
+    'transaction code, transaction no, reference, reference no, ref no, trace',
+  toBank: 'ngan hang nhan, ngan hang huong, ngan hang thu huong, ngan hang, beneficiary bank, bank',
+  account:
+    'so tai khoan, tai khoan, tai khoan nhan, tai khoan thu huong, tai khoan nguoi huong, ' +
+    'tai khoan nguon, tu tai khoan, so dien thoai, account, account number, from account',
+  note: 'noi dung, loi nhan, message, description, details, remark, dien giai',
+  fee: 'phi, phi giao dich, tong phi, fee, transaction fee',
+  balance: 'so du, so du kha dung, balance, available balance',
+};
+
+const LABEL_INDEX = new Map<string, Field>(
+  (Object.entries(LABELS) as [Field, string][]).flatMap(([field, labels]) =>
+    labels.split(/\s*,\s*/).map((label) => [label, field] as const),
+  ),
+);
+
+/** The field a label names. Bilingual PDF labels ("Số tiền / Amount (VND)") match either part. */
+function labelOf(text: string): Field | null {
+  const parts = text.replace(/\(.*?\)/g, ' ').split('/');
+  for (const part of parts) {
+    const field = LABEL_INDEX.get(foldWords(part).trim());
+    if (field) return field;
+  }
+  return null;
+}
+
+interface Row {
+  readonly cells: string[];
+  readonly confidence: number;
+  readonly height: number;
+}
+
+/** Lines grouped into rows by their vertical centre, top first, each row left to right. */
+function toRows(lines: readonly ReceiptLine[]): Row[] {
+  const usable = lines.filter((line) => line.text.trim() !== '');
+  if (!usable.every((line) => line.box)) {
+    return usable.map((line) => ({
+      cells: splitCells(line.text),
+      confidence: line.confidence ?? 1,
+      height: 0,
+    }));
+  }
+  const centre = (line: ReceiptLine) => (line.box ? line.box.y + line.box.h / 2 : 0);
+  const sorted = [...usable].sort((a, b) => centre(b) - centre(a));
+  const groups: ReceiptLine[][] = [];
+  for (const line of sorted) {
+    const group = groups[groups.length - 1];
+    const first = group?.[0];
+    const tolerance = Math.max(first?.box?.h ?? 0, line.box?.h ?? 0) / 2;
+    if (group && first && Math.abs(centre(first) - centre(line)) <= tolerance) group.push(line);
+    else groups.push([line]);
+  }
+  return groups.map((group) => {
+    const ordered = group.sort((a, b) => (a.box?.x ?? 0) - (b.box?.x ?? 0));
+    return {
+      cells: ordered.flatMap((line) => splitCells(line.text)),
+      confidence: Math.min(...ordered.map((line) => line.confidence ?? 1)),
+      height: Math.max(...ordered.map((line) => line.box?.h ?? 0)),
+    };
+  });
+}
+
+/** "Số tiền: 120.000 VND" or "Số tiền    120.000 VND" (a text share) as label and value. */
+function splitCells(text: string): string[] {
+  const t = text.trim();
+  const colon = /^([^:\d]{2,60}):\s*(.+)$/u.exec(t);
+  if (colon?.[1] && colon[2] && labelOf(colon[1])) return [colon[1].trim(), colon[2].trim()];
+  const gap = t.split(/\t+|\s{3,}/);
+  return gap.length > 1 && labelOf(gap[0] ?? '') ? gap.map((cell) => cell.trim()) : [t];
+}
+
+interface Found {
+  readonly value: string;
+  readonly confidence: number;
+}
+
+/** Each labelled value: on the label's row, or on the row under a label that stands alone. */
+function readFields(rows: readonly Row[]): {
+  fields: Map<Field, Found>;
+  rowFields: (Field | null)[];
+} {
+  const fields = new Map<Field, Found>();
+  const rowFields: (Field | null)[] = rows.map(() => null);
+  rows.forEach((row, i) => {
+    if (rowFields[i] !== null) return;
+    const field = labelOf(row.cells[0] ?? '');
+    if (!field) return;
+    rowFields[i] = field;
+    let found: Found | null = null;
+    if (row.cells.length > 1)
+      found = { value: row.cells.slice(1).join(' '), confidence: row.confidence };
+    else {
+      const below = rows[i + 1];
+      if (below && labelOf(below.cells[0] ?? '') === null) {
+        rowFields[i + 1] = field;
+        found = { value: below.cells.join(' '), confidence: below.confidence };
+      }
+    }
+    if (found && !fields.has(field)) fields.set(field, found);
+  });
+  return { fields, rowFields };
+}
+
+/** An amount in đồng, as a receipt prints it ("-120,000 VND", "120.000 đ", "VND 120,000"). */
+function dongIn(text: string): Vnd | null {
+  const read = parseWalletAmount(text);
+  return read?.currency === 'VND' ? read.amount : null;
+}
+
+const PRINTED_AMOUNT =
+  /(?:vnd|₫)?\s*\d{1,3}(?:[.,]\d{3})+(?:[.,]\d{1,2})?\s*(?:vnd|vnđ|đ|₫|d)?(?!\p{L})|\d+\s*(?:vnd|vnđ|đ|₫)(?!\p{L})/iu;
+
+/** The amount printed largest, for receipts that show it without a label. */
+function heroAmount(rows: readonly Row[], rowFields: readonly (Field | null)[]): Vnd | null {
+  let best: Vnd | null = null;
+  let bestHeight = -1;
+  rows.forEach((row, i) => {
+    if (rowFields[i] !== null && rowFields[i] !== 'amount') return;
+    const printed = PRINTED_AMOUNT.exec(row.cells.join(' '))?.[0];
+    const amount = printed ? dongIn(printed) : null;
+    if (amount !== null && row.height > bestHeight) {
+      best = amount;
+      bestHeight = row.height;
+    }
+  });
+  return best;
+}
+
+/** A name as the bank registered it rather than the shop's own: all capitals, or a company. */
+function looksLikeAccountName(name: string): boolean {
+  const company = /^(?:cong ty|cty|tnhh|chi nhanh|cn|ho kinh doanh|hkd) /;
+  return !/\p{Ll}/u.test(name) || company.test(foldWords(name).trim() + ' ');
+}
+
+function cleanPayee(value: string): string {
+  return value
+    .replace(/[-–|]\s*\d[\d\s.]*$/u, '')
+    .replace(/^\d[\d\s.]*[-–|]\s*/u, '')
+    .replace(/\s+/g, ' ')
+    .replace(/^[\s,.;:-]+|[\s,.;:-]+$/g, '');
+}
+
+/** "Chuyển tiền tới CIRCLE K VN lúc 16:40" in a text share with no labels. */
+const PAYEE_IN_SENTENCE =
+  /(?:^|\s)(?:tới|toi|đến|den|to)\s+(.+?)(?=\s+(?:lúc|luc|at|vào|vao|ngày|ngay|stk|tk|số|so)(?:\s|$)|[.,;]|$)/iu;
+
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
+/**
+ * When a receipt says the transfer happened, as the phone's local time: "16:40 Thứ Sáu 09/10/2026",
+ * "09/10/2026 16:40:12", "2026-10-09 16:40", "9 Oct 2026, 4:40 PM". A date with no time is taken at
+ * noon, so it stays on its money day (which starts at 04:00).
+ */
+export function readReceiptTime(text: string): string | null {
+  const t = text.toLowerCase();
+  let day: number | undefined, month: number | undefined, year: number | undefined;
+  const dmy = /(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})/.exec(t);
+  const ymd = /(\d{4})-(\d{1,2})-(\d{1,2})/.exec(t);
+  const named = /(\d{1,2})\s+([a-z]{3})[a-z]*\.?,?\s+(\d{4})/.exec(t);
+  if (ymd) [year, month, day] = [Number(ymd[1]), Number(ymd[2]), Number(ymd[3])];
+  else if (dmy) [day, month, year] = [Number(dmy[1]), Number(dmy[2]), Number(dmy[3])];
+  else if (named && MONTHS.includes(named[2] ?? '')) {
+    [day, month, year] = [Number(named[1]), MONTHS.indexOf(named[2] ?? '') + 1, Number(named[3])];
+  }
+  if (day === undefined || month === undefined || year === undefined) return null;
+  const clock = /(\d{1,2}):(\d{2})(?::(\d{2}))?(?:\s*(am|pm|sa|ch))?/.exec(t);
+  let hour = clock ? Number(clock[1]) : 12;
+  const minute = clock ? Number(clock[2]) : 0;
+  const second = clock?.[3] ? Number(clock[3]) : 0;
+  const half = clock?.[4];
+  if ((half === 'pm' || half === 'ch') && hour < 12) hour += 12;
+  if ((half === 'am' || half === 'sa') && hour === 12) hour = 0;
+  if (hour > 23 || minute > 59 || second > 59) return null;
+  const at = new Date(year, month - 1, day, hour, minute, second);
+  if (at.getFullYear() !== year || at.getMonth() !== month - 1 || at.getDate() !== day) return null;
+  return at.toISOString();
+}
+
+function readCode(value: string | undefined, allText: string): string | null {
+  const code = value?.replace(/\s+/g, '');
+  if (code && /\d/.test(code) && /^[A-Za-z0-9.\-_/]{6,40}$/.test(code)) return code;
+  return /\bFT\d{5}[A-Z0-9]*\b/.exec(allText)?.[0] ?? null;
+}
+
+const BANK_INDEX = new Map<string, string>(
+  BANKS.flatMap((bank) => {
+    const keys = [foldWords(bank.shortName).replace(/ /g, '')];
+    if (bank.id.length >= 3) keys.push(bank.id.toLowerCase());
+    return keys.map((key) => [key, bank.shortName] as const);
+  }),
+);
+
+/** The sending bank: the first catalogue name in reading order, skipping the payee's bank. */
+function readBank(rows: readonly Row[], rowFields: readonly (Field | null)[]): string | null {
+  for (let i = 0; i < rows.length; i++) {
+    const field = rowFields[i];
+    if (field === 'toBank' || field === 'payee' || field === 'note') continue;
+    const words = foldWords((rows[i] as Row).cells.join(' '))
+      .trim()
+      .split(' ');
+    for (let w = 0; w < words.length; w++) {
+      const pair = (words[w] ?? '') + (words[w + 1] ?? '');
+      const name = BANK_INDEX.get(pair) ?? BANK_INDEX.get(words[w] ?? '');
+      if (name) return name;
+    }
+  }
+  return null;
+}
+
+/** The receipt's text in reading order, one row per line, whatever order the lines came in. */
+export function receiptReadingOrder(lines: readonly ReceiptLine[]): string[] {
+  return toRows(lines).map((row) => row.cells.join(' '));
+}
+
+/**
+ * Reads a transfer receipt from any Vietnamese bank or wallet: lines are grouped into rows by
+ * their boxes, then labels are matched in Vietnamese and English (Số tiền / Amount, Tới / Người
+ * nhận / Beneficiary / Đơn vị thụ hưởng, Thời gian, Mã giao dịch / Số tham chiếu / FT…). Returns
+ * null when nothing on it reads as a receipt.
+ */
+export function parseBankReceipt(lines: readonly ReceiptLine[]): BankReceipt | null {
+  const rows = toRows(lines);
+  const { fields, rowFields } = readFields(rows);
+  const allText = rows.map((row) => row.cells.join(' ')).join('\n');
+  const labelled = fields.get('amount');
+  const amount = (labelled ? dongIn(labelled.value) : null) ?? heroAmount(rows, rowFields);
+  const payeeFound = fields.get('payee');
+  const sentence = payeeFound ? undefined : PAYEE_IN_SENTENCE.exec(allText)?.[1];
+  const payee = cleanPayee(payeeFound?.value ?? sentence ?? '');
+  const named = /\p{L}/u.test(payee) ? payee : '';
+  const confidence = payeeFound?.confidence ?? 1;
+  const at =
+    readReceiptTime(fields.get('time')?.value ?? '') ??
+    rows.map((row) => readReceiptTime(row.cells.join(' '))).find((read) => read !== null) ??
+    null;
+  const code = readCode(fields.get('code')?.value, allText);
+  const bank = readBank(rows, rowFields);
+  if (amount === null && named === '' && code === null && at === null) return null;
+  return {
+    amount: amount !== null && amount > 0 ? amount : null,
+    payee: named,
+    payeeSure: named !== '' && confidence >= 0.5 && !looksLikeAccountName(named),
+    at,
+    code,
+    bank,
+  };
+}

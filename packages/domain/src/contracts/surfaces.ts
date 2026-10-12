@@ -114,6 +114,12 @@ export const shareCardSchema = z.object({
   categoryId: id.nullable(),
   amountText: z.string(),
   safeAfterText: z.string().nullable(),
+  /** The category's name in the app's language, for the Category row. */
+  categoryName: z.string().nullable(),
+  /** The When row: "Today · 16:40", "09/10 · 16:40". */
+  whenText: z.string(),
+  /** The receipt's lines with every number taken out, kept on the inbox item for naming. */
+  namingLines: z.array(z.string()),
 });
 export type ShareCard = z.infer<typeof shareCardSchema>;
 

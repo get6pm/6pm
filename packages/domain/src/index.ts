@@ -1,5 +1,6 @@
 export * from './money/format';
 export * from './money/parse-amount';
+export * from './money/spoken-number';
 export * from './plan/daily-number';
 export * from './plan/pay-cycle';
 export * from './plan/plan-river';
@@ -18,6 +19,9 @@ export * from './close/close-queue';
 export * from './capture/duplicate';
 export * from './capture/merchant-rule';
 export * from './capture/inbox';
+export * from './capture/bank-receipt';
+export * from './capture/spoken-spend';
+export * from './capture/wallet-amount';
 export * from './entry/keypad';
 export * from './diary';
 export * from './contracts/backup';

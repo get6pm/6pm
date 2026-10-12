@@ -65,6 +65,7 @@ const PERMISSION = JSON.parse(readFileSync(join(__dirname, 'locales/en.json'), '
   | 'NSCameraUsageDescription'
   | 'NSMicrophoneUsageDescription'
   | 'NSSpeechRecognitionUsageDescription'
+  | 'NSPhotoLibraryUsageDescription'
   | 'NSPhotoLibraryAddUsageDescription'
   | 'NSLocationWhenInUseUsageDescription',
   string
@@ -199,11 +200,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         speechRecognitionPermission: PERMISSION.NSSpeechRecognitionUsageDescription,
       },
     ],
-    // The close receipt and the money diary are saved to Photos; 6pm never reads the library.
+    // The close receipt and the money diary are saved to Photos; 6pm never reads the library and
+    // never asks to. The library's code still references reading, so App Store Connect rejects a
+    // build without the read prompt's text (ITMS-90683): it says plainly that nothing is read.
     [
       'expo-media-library',
       {
-        photosPermission: false,
+        photosPermission: PERMISSION.NSPhotoLibraryUsageDescription,
         savePhotosPermission: PERMISSION.NSPhotoLibraryAddUsageDescription,
       },
     ],

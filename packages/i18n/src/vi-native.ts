@@ -7,6 +7,8 @@ export const viNative: { readonly [Key in keyof typeof enNative]: Entry } = {
     '6pm nghe khi bạn giữ để nói một khoản chi. Lời bạn nói được hiểu ngay trên iPhone này.',
   'native.permission.speech':
     '6pm chuyển lời bạn nói thành số tiền và tên khoản chi, ngay trên iPhone này. Không gửi đi đâu cả.',
+  'native.permission.photos':
+    '6pm chỉ lưu biên lai cuối ngày và nhật ký tiêu tiền vào Ảnh. 6pm không bao giờ xem thư viện ảnh của bạn.',
   'native.permission.photosAdd':
     '6pm lưu biên lai cuối ngày và nhật ký tiêu tiền vào Ảnh khi bạn yêu cầu.',
   'native.permission.location':

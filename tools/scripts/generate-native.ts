@@ -42,6 +42,7 @@ const PERMISSION_KEYS: Readonly<Record<string, string>> = {
   camera: 'NSCameraUsageDescription',
   microphone: 'NSMicrophoneUsageDescription',
   speech: 'NSSpeechRecognitionUsageDescription',
+  photos: 'NSPhotoLibraryUsageDescription',
   photosAdd: 'NSPhotoLibraryAddUsageDescription',
   location: 'NSLocationWhenInUseUsageDescription',
 };

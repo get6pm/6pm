@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { build } from 'esbuild';
+import { build, type Plugin } from 'esbuild';
 
 import { en } from '../../packages/i18n/src/en';
 import { vi } from '../../packages/i18n/src/vi';
@@ -120,6 +120,22 @@ function themeTokens(): string {
   ].join('\n');
 }
 
+/**
+ * zod re-exports every language's error messages; the extensions only ever show their own copy,
+ * and zod loads English for itself, so the rest stay out of the bundle (about half its size).
+ */
+const withoutZodLocales: Plugin = {
+  name: 'without-zod-locales',
+  setup(context) {
+    context.onResolve({ filter: /locales\/index\.js$/ }, (args) =>
+      args.importer.includes(`${path.sep}zod${path.sep}`)
+        ? { path: 'zod-locales', namespace: 'stub' }
+        : undefined,
+    );
+    context.onLoad({ filter: /.*/, namespace: 'stub' }, () => ({ contents: 'export {};' }));
+  },
+};
+
 async function domainBundle(): Promise<string> {
   const result = await build({
     entryPoints: [path.join(root, 'packages/domain/src/native/entry.ts')],
@@ -131,6 +147,7 @@ async function domainBundle(): Promise<string> {
     minify: true,
     legalComments: 'none',
     write: false,
+    plugins: [withoutZodLocales],
     banner: { js: `// ${header}` },
   });
   const [file] = result.outputFiles;

@@ -9,6 +9,8 @@ export const enNative = {
     '6pm listens while you hold to say a spend. What you say is understood on this iPhone.',
   'native.permission.speech':
     '6pm turns what you say into an amount and a name, on this iPhone. Nothing is sent anywhere.',
+  'native.permission.photos':
+    '6pm only saves your close receipt and money diary to Photos. It never looks through your library.',
   'native.permission.photosAdd':
     '6pm saves your close receipt and money diary to Photos when you ask it to.',
   'native.permission.location':

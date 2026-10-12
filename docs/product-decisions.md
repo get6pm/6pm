@@ -21,7 +21,7 @@ Rules that never bend:
 | v1 users | Fresh start. v1 is retired; no import, no migration code |
 | Code | `get6pm/6pm`, orphan branch `v2`, replaces `main` at launch |
 | Launch | Fri 6 Nov 2026, 18:00 ICT (Coming Soon page countdown) |
-| Domain | No dedicated domain. Everything lives on `6pm.oddeggs.studio`: website at `/`, API at `/api/*`, receipt email `{handle}@6pm.oddeggs.studio`. Dev: `6pm-dev.oddeggs.studio` |
+| Domain | No dedicated domain. Everything lives on `6pm.oddeggs.studio`: website at `/`, API at `/api/*`, receipt email `receipts+{handle}@6pm.oddeggs.studio`. Dev: `6pm-dev.oddeggs.studio` |
 | Platforms | iPhone at launch. Android is built and kept green in CI, not released *(default)* |
 | Languages | English and Vietnamese from the first screen; device language, switchable in Settings |
 | Currency | VND home currency (integers, no decimals). USD entry in Quick add; Travel mode for other currencies |
@@ -50,7 +50,7 @@ Rules that never bend:
 |---|---|
 | Share to 6pm | iOS share extension. Bank receipt image/PDF read **on the phone** (Apple Vision OCR). A small model call (server, numbers-free line ids) only names the merchant and category when the rule table cannot |
 | VietQR | Parsed on the phone (EMVCo TLV, NAPAS 247). Pay hands off to the chosen bank app by its URL scheme, with the amount on the clipboard; on return, "Did it go through?" Pending items show a Live Activity |
-| Receipt email | `{handle}@6pm.oddeggs.studio` via Cloudflare Email Routing → Worker. Parsed server-side, held encrypted until the phone fetches it, then deleted. Disclosed in Privacy |
+| Receipt email | `receipts+{handle}@6pm.oddeggs.studio` via Cloudflare Email Routing (one address rule per host; subdomains have no catch-all, so the handle rides after `+`) → Worker. Parsed server-side, held encrypted until the phone fetches it, then deleted. Disclosed in Privacy |
 | VietQR edge cases | A clearly foreign QR (PromptPay, PayNow, DuitNow, KHQR) reads as "abroad" even with a non-standard format byte; a NAPAS merchant QR (no account a person can type) offers "Pay in your bank app" with the amount copied instead of the wallet picker; a QR with no service code is read as a transfer to an account *(defaults)* |
 | Bank hand-off | Opens the bank app by its published VietQR link (16 banks); none can pre-fill the amount, so the amount is on the clipboard. Sacombank, MSB, MoMo, ZaloPay and ViettelMoney have no published link: 6pm says "open it yourself", amount copied |
 | Apple Pay | App Intent "Log in 6pm" for a Wallet Shortcuts automation |

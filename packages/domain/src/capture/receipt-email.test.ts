@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { handleOfRecipient, hostOfApiBase } from '../contracts/receipt-email';
+import { handleOfRecipient, hostOfApiBase, receiptEmailAddress } from '../contracts/receipt-email';
 import { decodeEntities, htmlToLines, readForwarded, readSender } from './email-body';
 import { parseReceiptEmail, type ReceiptEmail } from './receipt-email';
 
@@ -207,10 +207,19 @@ describe('email bodies', () => {
 });
 
 describe('addresses', () => {
-  it('reads the handle from a recipient, ignoring case and a +tag', () => {
-    expect(handleOfRecipient('K7M2Q9XD4P+grab@6pm.oddeggs.studio')).toBe('k7m2q9xd4p');
+  it('reads the handle after the receipts mailbox, ignoring case', () => {
+    expect(handleOfRecipient('Receipts+K7M2Q9XD4P@6pm.oddeggs.studio')).toBe('k7m2q9xd4p');
+    expect(receiptEmailAddress('k7m2q9xd4p', '6pm.oddeggs.studio')).toBe(
+      'receipts+k7m2q9xd4p@6pm.oddeggs.studio',
+    );
+  });
+
+  it('refuses other mailboxes, a bare handle and a tag that cannot be a handle', () => {
     expect(handleOfRecipient('postmaster@6pm.oddeggs.studio')).toBeNull();
-    expect(handleOfRecipient('k7m2q9xd4l@6pm.oddeggs.studio')).toBeNull();
+    expect(handleOfRecipient('k7m2q9xd4p@6pm.oddeggs.studio')).toBeNull();
+    expect(handleOfRecipient('hello+k7m2q9xd4p@6pm.oddeggs.studio')).toBeNull();
+    expect(handleOfRecipient('receipts@6pm.oddeggs.studio')).toBeNull();
+    expect(handleOfRecipient('receipts+k7m2q9xd4l@6pm.oddeggs.studio')).toBeNull();
   });
 
   it('reads the host of an API base', () => {

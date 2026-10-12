@@ -17,6 +17,7 @@ export const sameInBothLanguages: readonly string[] = [
   'Xôi',
   'Vietcombank',
   'MoMo',
+  'CSV · Sheets',
 ];
 
 function texts(entry: Entry): string[] {

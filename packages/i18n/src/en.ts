@@ -7,6 +7,7 @@ import { enSurfaces } from './en-surfaces';
 import { enTogether } from './en-together';
 import { enReceiptEmail } from './en-receipt-email';
 import { enBackup } from './en-backup';
+import { enExport } from './en-export';
 import { enAsk } from './en-ask';
 import { enScan } from './en-scan';
 import { enLooks } from './en-looks';
@@ -30,6 +31,7 @@ export const en = {
   ...enLooks,
   ...enCompanion,
   ...enBackup,
+  ...enExport,
   ...enAsk,
   ...enNative,
   ...enSharing,

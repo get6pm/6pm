@@ -154,3 +154,6 @@ fakes behaviour the app cannot fake. Founder review.
 | Share extension | Serious mode | No companion in the header | Serious mode removes the companion |
 | Share extension | Dismissed (pulled down past 120 pt, flicked, or the dim tapped) | The card slides away and nothing is added | Leaving the share sheet is not an error |
 | Companion (everywhere it draws) | Max ends while it is on screen | The Max form fades out over the base form in 380 ms on the entrance curve; becoming Max keeps the prototype's burst of light | The prototype only animates becoming Max; it switches back to the base form at once |
+| Settings · Export | Tapped with Max | The iOS share sheet opens with a CSV of every spend (Save to Files, Numbers, Mail, Google Sheets); no companion line after it | The prototype fakes the save and says “CSV saved to Files.”; iOS does not tell the app whether the file was saved or the sheet cancelled |
+| Settings · Export | No spends yet | The toast “Nothing to export yet. Add a spend first.” and no share sheet | A file of only a header row helps no one |
+| Settings · Export | The file could not be made or shared | The toast “Couldn’t make the file. Try again.” | The prototype never fails |

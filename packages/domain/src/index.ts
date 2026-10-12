@@ -29,3 +29,4 @@ export * from './entry/keypad';
 export * from './diary';
 export * from './contracts/backup';
 export * from './ask';
+export * from './export/spends-csv';

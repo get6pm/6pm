@@ -17,6 +17,7 @@ import {
 import { BackupRow } from '../features/backup/backup-row';
 import { CaptureSettingsSection } from '../features/capture-guide/capture-settings-section';
 import { useDeleteBackup } from '../features/backup/use-backup';
+import { ExportRow } from '../features/export/export-row';
 import { useLookSettingsStore } from '../features/looks/look-settings-provider';
 import { CloseTimePicker } from '../features/settings/close-time-picker';
 import { CompanionCard } from '../features/settings/companion-card';
@@ -196,6 +197,7 @@ export default function Settings() {
               {t('settings.privacyBody')}
             </Animated.Text>
           ) : null}
+          <ExportRow />
         </SettingsSection>
         <PressScale
           accessibilityRole="button"

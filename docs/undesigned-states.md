@@ -124,4 +124,4 @@ fakes behaviour the app cannot fake. Founder review.
 | Live Activity | More than one QR payment waiting | Only the newest has an activity; an older one's ends when a newer one starts | One activity at a time |
 | Live Activity | Serious mode | No companion: the minimal island shows the short amount instead | Serious mode removes the companion |
 | Live Activity · Travel | Lock Screen, compact and minimal | Lock Screen: the expanded panel's layout; compact: the flight glyph and "฿560 left"; minimal: the flight glyph | Only the expanded island is drawn |
-| Live Activity | Background colour on the Lock Screen | Black at 55%, white text; the Paid button in the look's accent | The board's banner is a translucent plum over a fixed wallpaper |
+| Live Activity | Background colour on the Lock Screen | The board's dark plum glass as a tint (`activityInk.banner`, no blur: iOS draws the activity), white text; the Paid button in the look's accent | iOS only takes a tint colour for a Live Activity's background |

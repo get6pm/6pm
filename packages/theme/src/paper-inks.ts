@@ -48,3 +48,17 @@ export const planInk = {
   trackFill: { dark: '#3b3b3b', light: '#efefef' },
   trackEdge: { dark: '#858585', light: '#767676' },
 } as const;
+
+/**
+ * The Live Activity and the Lock Screen ring, drawn by iOS over any wallpaper and in the black
+ * Dynamic Island: white ink at the prototype's strengths and the banner's dark glass, the same in
+ * every look (`SS:44-64`, `SS:141-156`).
+ */
+export const activityInk = {
+  banner: 'rgba(20,12,30,.55)',
+  ink: '#ffffff',
+  caption: 'rgba(255,255,255,.55)',
+  soft: 'rgba(255,255,255,.6)',
+  track: 'rgba(255,255,255,.15)',
+  ringTrack: 'rgba(255,255,255,.22)',
+} as const;

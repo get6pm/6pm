@@ -170,10 +170,10 @@ struct SafeRing: View {
     let fraction = entry.state == .day ? (entry.entry?.ringFraction ?? 0) : 0
     ZStack {
       AccessoryWidgetBackground()
-      Circle().stroke(.white.opacity(0.22), lineWidth: 5)
+      Circle().stroke(ThemeTokens.Activity.ringTrack, lineWidth: 5)
       Circle()
         .trim(from: 0, to: fraction)
-        .stroke(.white, style: StrokeStyle(lineWidth: 5, lineCap: .butt))
+        .stroke(ThemeTokens.Activity.ink, style: StrokeStyle(lineWidth: 5, lineCap: .butt))
         .rotationEffect(.degrees(-90))
       VStack(spacing: 1) {
         Text(entry.entry?.safeShort ?? "–")

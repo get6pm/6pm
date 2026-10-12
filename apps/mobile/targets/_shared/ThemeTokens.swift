@@ -29,4 +29,12 @@ enum ThemeTokens {
     static let btnBg = Color(.sRGB, red: 0.9843, green: 0.9569, blue: 0.9255, opacity: 1.0000)
     static let btnFg = Color(.sRGB, red: 0.1490, green: 0.0941, blue: 0.1843, opacity: 1.0000)
   }
+  enum Activity {
+    static let banner = Color(.sRGB, red: 0.0784, green: 0.0471, blue: 0.1176, opacity: 0.5500)
+    static let ink = Color(.sRGB, red: 1.0000, green: 1.0000, blue: 1.0000, opacity: 1.0000)
+    static let caption = Color(.sRGB, red: 1.0000, green: 1.0000, blue: 1.0000, opacity: 0.5500)
+    static let soft = Color(.sRGB, red: 1.0000, green: 1.0000, blue: 1.0000, opacity: 0.6000)
+    static let track = Color(.sRGB, red: 1.0000, green: 1.0000, blue: 1.0000, opacity: 0.1500)
+    static let ringTrack = Color(.sRGB, red: 1.0000, green: 1.0000, blue: 1.0000, opacity: 0.2200)
+  }
 }

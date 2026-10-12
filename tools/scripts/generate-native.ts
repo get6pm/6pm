@@ -6,7 +6,7 @@ import { build, type Plugin } from 'esbuild';
 
 import { en } from '../../packages/i18n/src/en';
 import { vi } from '../../packages/i18n/src/vi';
-import { DEFAULT_LOOK, paletteFor, paperInk } from '../../packages/theme/src/index';
+import { activityInk, DEFAULT_LOOK, paletteFor, paperInk } from '../../packages/theme/src/index';
 
 /**
  * Writes what the iOS side reads from the TypeScript packages, so Swift never holds its own copy
@@ -115,6 +115,7 @@ function themeTokens(): string {
     block('Paper', paperInk),
     block('PlainDay', plain(12)),
     block('PlainNight', plain(22)),
+    block('Activity', activityInk),
     '}',
     '',
   ].join('\n');

@@ -39,8 +39,8 @@ struct SurfaceActivityWidget: Widget {
   var body: some WidgetConfiguration {
     ActivityConfiguration(for: SurfaceAttributes.self) { context in
       LockBanner(attributes: context.attributes, state: context.state)
-        .activityBackgroundTint(.black.opacity(0.55))
-        .activitySystemActionForegroundColor(.white)
+        .activityBackgroundTint(ThemeTokens.Activity.banner)
+        .activitySystemActionForegroundColor(ThemeTokens.Activity.ink)
     } dynamicIsland: { context in
       let attributes = context.attributes
       let state = context.state
@@ -68,7 +68,7 @@ struct SurfaceActivityWidget: Widget {
         } else if let trip {
           Text(trip.left)
             .font(SurfaceFont.body(size: 13, weight: 600))
-            .foregroundStyle(.white.opacity(0.6))
+            .foregroundStyle(ThemeTokens.Activity.soft)
         }
       } minimal: {
         if let pay {
@@ -119,7 +119,7 @@ struct LockBanner: View {
           .widgetURL(appLink(trip.path))
       }
     }
-    .foregroundStyle(.white)
+    .foregroundStyle(ThemeTokens.Activity.ink)
   }
 }
 
@@ -136,11 +136,11 @@ struct PendingPayRow: View {
       VStack(alignment: .leading, spacing: 2) {
         Text(state.caption)
           .font(SurfaceFont.body(size: 12, weight: 600))
-          .foregroundStyle(.white.opacity(0.55))
+          .foregroundStyle(ThemeTokens.Activity.caption)
           .lineLimit(1)
         Text(state.title)
           .font(SurfaceFont.body(size: 15, weight: 650))
-          .foregroundStyle(.white)
+          .foregroundStyle(ThemeTokens.Activity.ink)
           .lineLimit(1)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -170,19 +170,19 @@ struct TravelPanel: View {
         Text(state.left)
       }
       .font(SurfaceFont.body(size: 13, weight: 600))
-      .foregroundStyle(.white.opacity(0.6))
+      .foregroundStyle(ThemeTokens.Activity.soft)
       HStack(alignment: .firstTextBaseline, spacing: 8) {
         Text(state.spent)
           .font(SurfaceFont.display(SurfaceSnapshot.load()?.strings["font.display"], size: 34))
-          .foregroundStyle(.white)
+          .foregroundStyle(ThemeTokens.Activity.ink)
         Text(state.of)
           .font(SurfaceFont.body(size: 14, weight: 400))
-          .foregroundStyle(.white.opacity(0.6))
+          .foregroundStyle(ThemeTokens.Activity.soft)
           .lineLimit(1)
       }
       GeometryReader { proxy in
         ZStack(alignment: .leading) {
-          Capsule().fill(.white.opacity(0.15))
+          Capsule().fill(ThemeTokens.Activity.track)
           Capsule()
             .fill(Color(css: state.accent))
             .frame(width: proxy.size.width * min(1, max(0, state.fraction)))

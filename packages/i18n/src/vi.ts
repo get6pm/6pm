@@ -13,6 +13,7 @@ import { viScan } from './vi-scan';
 import { viLooks } from './vi-looks';
 import { viOnboarding } from './vi-onboarding';
 import { viDiary } from './vi-diary';
+import { viYearBook } from './vi-year-book';
 import { viPlan } from './vi-plan';
 import { viClose } from './vi-close';
 import type { Catalogue } from './catalogue-types';
@@ -24,6 +25,7 @@ import { viTravel } from './vi-travel';
 export const vi: Catalogue = {
   ...viOnboarding,
   ...viDiary,
+  ...viYearBook,
   ...viPlan,
   ...viClose,
   ...viToday,

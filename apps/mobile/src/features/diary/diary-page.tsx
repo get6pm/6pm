@@ -8,6 +8,7 @@ import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
 import { useHomePageScroll, useHomeScroll } from '../home/home-scroll';
 import { useEntitlement } from '../purchases/purchases-provider';
+import { YearBooks } from '../year-book/year-book-card';
 import { AskEntry } from './ask-entry';
 import { DayReceipt } from './day-receipt';
 import { MoneyDiaries } from './money-diaries';
@@ -91,10 +92,8 @@ export function DiaryPage({ scrollRef }: { readonly scrollRef: AnimatedRef<Anima
       <ScrollReveal>
         <MoneyDiaries
           shelf={diary.shelf}
-          year={diary.year}
-          yearLocked={!max}
           onOpen={(month) => router.push(`/money-diary?month=${month}` as Href)}
-          onYearLocked={() => router.push({ pathname: '/max', params: { from: 'diary' } })}
+          yearBooks={<YearBooks books={diary.yearBooks} locked={!max} />}
         />
       </ScrollReveal>
     </Animated.ScrollView>

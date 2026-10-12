@@ -23,7 +23,8 @@ export type CompanionEvent =
   | 'save'
   | 'share'
   | 'walletOn'
-  | 'widgets';
+  | 'widgets'
+  | 'yearBook';
 
 /** Says an event's line in the island, in the chosen persona (plain words in serious mode). */
 export function useCompanionToast() {

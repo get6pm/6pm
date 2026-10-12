@@ -11,10 +11,11 @@ import { CloseCards } from '../features/close/close-cards';
 import { CloseEdit } from '../features/close/close-edit';
 import { CloseReceiptStep } from '../features/close/close-receipt-step';
 import { CloseRevealStep } from '../features/close/close-reveal-step';
-import { CashStep, SortedStep, type CashChip } from '../features/close/close-steps';
+import { CashStep, SortedStep } from '../features/close/close-steps';
 import { WorkQuestionStep } from '../features/close/close-work-question';
 import { CloseTopBar } from '../features/close/close-top-bar';
 import { useClose } from '../features/close/use-close';
+import { useCloseCash } from '../features/close/use-close-cash';
 import { useClosingNumber } from '../features/close/use-closing-number';
 import { useRuleOffer } from '../features/close/use-rule-offer';
 import { useCompanionToast } from '../features/companion/use-companion-toast';
@@ -51,6 +52,7 @@ export default function Close() {
   const [editing, setEditing] = useState<string | null>(null);
   const [typingCash, setTypingCash] = useState(false);
   const rules = useRuleOffer(actions, state.step);
+  const { chips, categoryFor, addCash } = useCloseCash(close);
   const [closedAt] = useState(() => clockOf(now.getHours() + now.getMinutes() / 60));
   const finishing = useRef(false);
 
@@ -66,42 +68,9 @@ export default function Close() {
   const position = stepPosition(state.step);
   const counts = tally(state);
   const editingSpend = editing ? close.queue.find((s) => s.id === editing) : undefined;
-  const chips: CashChip[] = [
-    { key: 'transport', name: t('close.cash.parking'), amount: 5_000 },
-    { key: 'drinks', name: t('close.cash.sugarcane'), amount: 10_000 },
-    { key: 'food', name: t('close.cash.xoi'), amount: 20_000 },
-    { key: 'groceries', name: t('close.cash.market'), amount: 50_000 },
-  ];
-  const categoryFor = (key: string) =>
-    snap.categories.find((c) => c.id === key)?.id ?? snap.categories[0]?.id ?? key;
   const rule = rules.offer
     ? snap.categories.find((c) => c.id === rules.offer?.categoryId)
     : undefined;
-
-  const addCash = (
-    name: string,
-    amount: number,
-    categoryId: string,
-    key: string,
-    source: 'cash' | 'voice' = 'cash',
-  ) => {
-    haptics.tap();
-    close.setCash((c) => [...c, { key, name, amount }]);
-    void run(async () => {
-      // A merchant the user taught 6pm keeps its category, as everywhere else.
-      const learned = await actions.ruleCategory(name);
-      await actions.addSpend({
-        amount,
-        categoryId: learned ?? categoryId,
-        merchant: name,
-        source,
-        status: 'kept',
-        wallet: 'Cash',
-        // Cash handed over while closing a day belongs to that day, even past 04:00.
-        day: close.day,
-      });
-    });
-  };
 
   const finish = async () => {
     if (finishing.current) return;

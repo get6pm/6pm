@@ -1,3 +1,10 @@
+import { viNative } from './vi-native';
+import { viSharing } from './vi-sharing';
+import { viShareExt } from './vi-share-ext';
+import { viIntents } from './vi-intents';
+import { viVoice } from './vi-voice';
+import { viSurfaces } from './vi-surfaces';
+import { viTogether } from './vi-together';
 import { viBackup } from './vi-backup';
 import { viAsk } from './vi-ask';
 import { viScan } from './vi-scan';
@@ -23,4 +30,11 @@ export const vi: Catalogue = {
   ...viCompanion,
   ...viBackup,
   ...viAsk,
+  ...viNative,
+  ...viSharing,
+  ...viShareExt,
+  ...viIntents,
+  ...viVoice,
+  ...viSurfaces,
+  ...viTogether,
 };

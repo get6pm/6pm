@@ -16,5 +16,9 @@ apps/mobile/android/
 # Generated from the prototype or by the font build (formatting follows the generator)
 **/*.generated.*
 
+# Written by tools/scripts/generate-native.ts (formatting follows the generator)
+apps/mobile/targets/_shared/domain-native.js
+apps/mobile/locales/
+
 # Written by Expo on every start
 **/expo-env.d.ts

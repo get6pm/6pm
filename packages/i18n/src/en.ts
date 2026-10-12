@@ -1,3 +1,10 @@
+import { enNative } from './en-native';
+import { enSharing } from './en-sharing';
+import { enShareExt } from './en-share-ext';
+import { enIntents } from './en-intents';
+import { enVoice } from './en-voice';
+import { enSurfaces } from './en-surfaces';
+import { enTogether } from './en-together';
 import { enBackup } from './en-backup';
 import { enAsk } from './en-ask';
 import { enScan } from './en-scan';
@@ -23,4 +30,11 @@ export const en = {
   ...enCompanion,
   ...enBackup,
   ...enAsk,
+  ...enNative,
+  ...enSharing,
+  ...enShareExt,
+  ...enIntents,
+  ...enVoice,
+  ...enSurfaces,
+  ...enTogether,
 } as const;

@@ -1,0 +1,24 @@
+import ActivityKit
+import Foundation
+
+/// The Live Activity's type, the same in the app and the widget extension. What it shows arrives
+/// as JSON the app wrote, already worded in the user's language: Swift only lays it out.
+public struct SurfaceAttributes: ActivityAttributes {
+  public struct ContentState: Codable, Hashable {
+    public var json: String
+
+    public init(json: String) {
+      self.json = json
+    }
+  }
+
+  /// `pendingPay` or `travel`.
+  public var kind: String
+  /// What the activity follows: the waiting spend's id, or the trip's.
+  public var key: String
+
+  public init(kind: String, key: String) {
+    self.kind = kind
+    self.key = key
+  }
+}

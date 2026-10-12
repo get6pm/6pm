@@ -13,6 +13,7 @@ import { CloseNudge } from '../features/companion/close-nudge';
 import { DevCommands } from '../features/dev/dev-commands';
 import { CloseReminderSync } from '../features/reminders/close-reminder-sync';
 import { ReminderTap } from '../features/reminders/reminder-tap';
+import { SurfacesSync } from '../features/surfaces/surfaces-sync';
 import { LookSettingsProvider, useThemeLook } from '../features/looks/look-settings-provider';
 import { PurchasesProvider } from '../features/purchases/purchases-provider';
 import { I18nProvider } from '../i18n/i18n';
@@ -109,6 +110,7 @@ function RootLayout() {
                       <CloseReminderSync />
                       <ReminderTap />
                       <BackupHost />
+                      <SurfacesSync />
                       {__DEV__ ? <DevCommands /> : null}
                     </ToastHost>
                   </PlanTheme>

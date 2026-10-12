@@ -14,6 +14,8 @@ import {
 import { findSpend, type MoneyStore } from './money-store';
 
 export interface NewSpend {
+  /** Set when the capture already has one (an inbox item), so importing it twice finds it. */
+  readonly id?: string;
   readonly amount: number;
   readonly categoryId: string;
   readonly merchant: string;
@@ -141,7 +143,7 @@ export function moneyActions(store: MoneyStore) {
     }
     const now = new Date().toISOString();
     const row: SpendRow = {
-      id: randomUUID(),
+      id: input.id ?? randomUUID(),
       // Captured now, it belongs to the day the screens are showing; a recorded time files itself.
       day: input.day ?? (input.at ? moneyDayOf(input.at) : snap.today),
       at: at.toISOString(),

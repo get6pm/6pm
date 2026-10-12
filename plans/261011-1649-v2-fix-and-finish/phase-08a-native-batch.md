@@ -1,6 +1,7 @@
 # Batch 8a: the one native declaration
 
-Status: todo · Starts once batches 2–4 are merged (the inbox import uses capture rules and duplicate merge) · Effort ~2 d, one owner, one commit
+Status: done 12 Oct (local simulator build: app + three targets compile on Xcode 27, an inbox file is imported on return to the foreground). Founder accepted D3 on 12 Oct. Still open: the CI simulator build on Xcode 26.6 and the founder's Apple actions below, before the first signed build.
+Notes from the build: Swift files that import the module say `internal import Surfaces` (the Expo provider imports it that way). The module's `GroupFiles.swift` is the source of the App Group code, and the generator copies it into `targets/_shared`; group id and host come from the bundle id, so `AppGroup.swift` became part of it. Permission prompts come from i18n `native.permission.*` via generated `locales/en.json` + `vi.json`.
 Goal: every package, plugin, entitlement, target and contract that the batch 8 features need is declared once, so lanes ([8b](phase-08b-feature-lanes.md)) fill in code in parallel and one `testflight/*` build ships them. After that build, everything except Swift ships over the air.
 
 ## Decisions (with why)

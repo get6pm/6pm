@@ -7,8 +7,8 @@ import { moveDatabaseAside, type DatabaseFiles } from './database-aside';
 
 const KEY_NAME = 'sixpm.database-key';
 
-// This device only, readable after first unlock so widgets and the share extension can open the
-// store while the phone is locked.
+// This device only, readable after first unlock so the app can open the store when iOS wakes it
+// in the background. Extensions never open the store; they leave files in the App Group inbox.
 const OPTIONS: SecureStore.SecureStoreOptions = {
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
 };

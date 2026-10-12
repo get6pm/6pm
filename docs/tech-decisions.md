@@ -19,7 +19,8 @@ Decided 10 Oct 2026. Change one only with new evidence, and record the change he
 | Auth | Anonymous device token (Keychain, hash on server). Sign in with Apple only for Budget together | No account for the core app |
 | AI | Server only: DeepSeek (Anthropic-compatible endpoint, forced tool call with zod schema) for merchant/category naming and Ask phrasing; Jev for closed-label category picks. Every call in a cost ledger | Code decides numbers; models name things |
 | Purchases | RevenueCat (StoreKit 2): looks (non-consumable), Max (subscription, 7-day trial) | Entitlements and restore without a receipt server |
-| Native surfaces | `@bacons/apple-targets`: widgets, Live Activity, controls, share extension; local Expo modules for Vision OCR and Live Activity | Declared once in the first native batch |
+| Native surfaces | `@bacons/apple-targets` (`apps/mobile/targets`): widgets with the Live Activity and controls, the share extension, the App Intents extension. One local Expo module, `modules/surfaces`, for the inbox, widget files and the Live Activity. Vision OCR runs in the share extension itself. Extension logic runs `@6pm/domain` in JavaScriptCore (`generate-native.ts` bundles it) | Declared once in the first native batch. Only the share extension reads receipts, so OCR in a module would be dead code in the app; one parser, tested in Vitest |
+| Extensions and the store | Extensions never open the database. Each capture is one JSON file in `<group>/inbox/`, which the app imports through the normal capture and then deletes; the app writes what extensions show to `<group>/surfaces/`. Group files are written whole and renamed into place, readable after first unlock, left out of backups | SQLite in WAL holds a file lock, and iOS kills a suspended extension holding one in a group container (0xdead10cc). SQLCipher lives inside the expo-sqlite pod. One writer keeps the store's write queue true |
 | Website | Astro on Cloudflare for the Coming Soon / waitlist page (launch countdown), waitlist stored in D1 | Same platform as the API |
 | i18n | Typed TS catalogues in `@6pm/i18n` (en, vi) with a completeness test | Scootch pattern; no runtime catalogue loading |
 | Errors | Sentry (DSN optional) | |
@@ -64,7 +65,9 @@ Workspace packages are `@6pm/<dir>`, ESM, export TypeScript source (`"exports": 
 
 ## 5. Native surface, declared once
 
-First native batch declares: App Group, Keychain sharing, iCloud KVS, push + time-sensitive notifications, Live Activities, Sign in with Apple, In-App Purchase, camera, microphone + speech, Face ID, App Intents, and the widget, Live Activity, controls and share-extension targets. After that, feature work is JavaScript and ships over the air.
+First native batch declares: App Group, push + time-sensitive notifications, Live Activities, Sign in with Apple, In-App Purchase, camera, microphone + speech, location while in use, add-only Photos, App Intents, and the widget (with Live Activity and controls), share-extension and App Intents targets. After that, feature work is JavaScript and ships over the air; only Swift needs a new build.
+
+Not declared (changed 12 Oct 2026): Keychain sharing (the database key and the backup key stay in expo-secure-store's default group, because no extension opens the store; adding an access group would also move new items written without one), iCloud KVS (backup uses a synchronizable Keychain item), Face ID, the Siri entitlement (App Intents need none).
 
 ## 6. Verification on this Mac
 

@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
 /** Two environments, dev and prd. `e2e-test` is the dev app as device runs install it. */
@@ -52,6 +55,20 @@ function resolveVariant(): AppVariant {
 
 const appVariant = resolveVariant();
 const variant = VARIANTS[appVariant];
+
+/**
+ * The permission prompts in English, written from `@6pm/i18n` (`native.permission.*`) by
+ * `tools/scripts/generate-native.ts`, which this config cannot import. The plugins below take
+ * them so no plugin writes its own default; each language's file then localises them.
+ */
+const PERMISSION = JSON.parse(readFileSync(join(__dirname, 'locales/en.json'), 'utf8')) as Record<
+  | 'NSCameraUsageDescription'
+  | 'NSMicrophoneUsageDescription'
+  | 'NSSpeechRecognitionUsageDescription'
+  | 'NSPhotoLibraryAddUsageDescription'
+  | 'NSLocationWhenInUseUsageDescription',
+  string
+>;
 
 /** The page colour behind the first frame: the Golden Hour night sheet, so launch never flashes. */
 const LAUNCH_BACKGROUND = '#1a0f1c';
@@ -134,19 +151,26 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // v1 shipped on iPad, and an App Store update may not drop a device family it supported.
     supportsTablet: true,
     associatedDomains: [`applinks:${variant.host}`, `webcredentials:${variant.host}`],
+    usesAppleSignIn: true,
+    // The App Group is how the app and its widgets, share extension and shortcuts reach each
+    // other; the targets in ./targets copy it. Each group is registered by hand on the Apple
+    // developer site, which App Store Connect's API cannot do.
+    entitlements: {
+      'com.apple.security.application-groups': [variant.appGroup],
+      'com.apple.developer.usernotifications.time-sensitive': true,
+    },
     config: { usesNonExemptEncryption: false },
     infoPlist: {
       CFBundleAllowMixedLocalizations: true,
       LSApplicationQueriesSchemes: BANK_SCHEMES,
+      NSSupportsLiveActivities: true,
     },
-    // The App Group (shared with widgets and the share extension) is declared with those targets:
-    // App Store Connect's API cannot register app groups, so they arrive in that native batch.
   },
   android: {
     package: variant.bundleIdentifier,
   },
-  // Permission prompts in Vietnamese; English comes from the plugins below.
-  locales: { vi: './locales/vi.json' },
+  // Permission prompts in each language, generated from `@6pm/i18n`.
+  locales: { en: './locales/en.json', vi: './locales/vi.json' },
   plugins: [
     'expo-router',
     ['expo-sqlite', { useSQLCipher: true }],
@@ -157,15 +181,47 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     ['expo-build-properties', { android: { compileSdkVersion: 37, targetSdkVersion: 36 } }],
     ['expo-localization', { supportedLocales: ['en', 'vi'] }],
-    // Scan reads VietQR codes; it never records, so no microphone.
+    // Scan reads VietQR codes and never records; the microphone is voice's, and both plugins
+    // write the same prompt so neither replaces the other's.
     [
       'expo-camera',
       {
-        cameraPermission: '6pm uses the camera to read VietQR codes when you scan to pay.',
-        microphonePermission: false,
+        cameraPermission: PERMISSION.NSCameraUsageDescription,
+        microphonePermission: PERMISSION.NSMicrophoneUsageDescription,
         recordAudioAndroid: false,
       },
     ],
+    // Saying a spend, understood on the phone.
+    [
+      'expo-speech-recognition',
+      {
+        microphonePermission: PERMISSION.NSMicrophoneUsageDescription,
+        speechRecognitionPermission: PERMISSION.NSSpeechRecognitionUsageDescription,
+      },
+    ],
+    // The close receipt and the money diary are saved to Photos; 6pm never reads the library.
+    [
+      'expo-media-library',
+      {
+        photosPermission: false,
+        savePhotosPermission: PERMISSION.NSPhotoLibraryAddUsageDescription,
+      },
+    ],
+    // Travel mode turns on abroad: the country, while the app is open, never in the background.
+    [
+      'expo-location',
+      {
+        locationWhenInUsePermission: PERMISSION.NSLocationWhenInUseUsageDescription,
+        locationAlwaysAndWhenInUsePermission: false,
+        locationAlwaysPermission: false,
+        isIosBackgroundLocationEnabled: false,
+        isAndroidBackgroundLocationEnabled: false,
+      },
+    ],
+    // Budget together pairs two people with Sign in with Apple.
+    'expo-apple-authentication',
+    // Widgets, the Live Activity, controls, the share extension and the shortcuts: ./targets.
+    ['@bacons/apple-targets', { appleTeamId: APPLE_TEAM_ID }],
     // Crash reports. Source maps and debug symbols upload only when the build has a Sentry token.
     [
       '@sentry/react-native/expo',

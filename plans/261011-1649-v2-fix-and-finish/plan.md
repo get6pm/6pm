@@ -18,7 +18,7 @@ Inputs: four code audits (11 Oct), all passing CI (typecheck, lint, 174 Vitest, 
 | 5 | Plan correctness | pot set-aside moves each cycle, months-left by cycle, what-if and New pot use the joined share (M5/M2a), river pre-join segment, pot maths into domain; edit/delete pots, bills, income, payday; bill due day in onboarding; Future you goals; 1-pot free gate | done |
 | 6 | Settings, reminders, Max | close time 15:00–23:45 picker, notification tap → close, reminder after restore + reschedule on launch, serious mode hides companion everywhere, Max icons for members, Year book gate, Max welcome backup line and href, delete-all errors, Scan stuck on hand-off, honest copy, universal link `/app/*`, Max tiles match what exists | done |
 | 7 | Performance | pause sky/companion when not visible, companion per-frame allocations, store selectors + memoised pages, tab switch work, rain/fog blur, layout props → transforms, minute tick re-render, lazy tab mount + splash on first layout | done |
-| 8 | [Unbuilt features](phase-08-unbuilt-features.md) | receipt + money diary share image, Ask 6pm, voice, share extension OCR, receipt email, App Intent, widgets/Live Activity, export, Year book, Travel | in progress: Ask 6pm built; native batch planned (8a/8b), founder decisions pending |
+| 8 | [Unbuilt features](phase-08-unbuilt-features.md) | receipt + money diary share image, Ask 6pm, voice, share extension OCR, receipt email, App Intent, widgets/Live Activity, export, Year book, Travel | in progress: Ask 6pm built; native batch 8a declared (12 Oct), lanes 8b next; founder Apple actions pending |
 | 9 | Docs | undesigned-states refreshed (stale rows, no phase ids), build plan statuses | done |
 
 ## Acceptance

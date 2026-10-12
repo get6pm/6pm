@@ -27,6 +27,8 @@ jobs:
       - run: pnpm format:check
       # The look engine is copied from the prototype; a stale copy means colours drift from the design.
       - run: pnpm exec tsx tools/design/extract-prototype-logic.ts --check
+      # What the iOS extensions read (the domain bundle, strings, colours) is written from the packages.
+      - run: pnpm exec tsx tools/scripts/generate-native.ts --check
 
   test:
     name: package tests

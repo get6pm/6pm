@@ -50,6 +50,8 @@ export default defineConfig([
     'docs/',
     'plans/',
     '**/*.generated.*',
+    // Written by tools/scripts/generate-native.ts.
+    'apps/mobile/targets/_shared/domain-native.js',
   ]),
 
   js.configs.recommended,

@@ -55,8 +55,9 @@ describe('formatShort', () => {
     expect(formatShort(1_950_000, 'vi')).toBe('2tr');
   });
 
-  it('rounds to the nearest thousand below a million', () => {
-    expect(formatShort(999_500, 'en')).toBe('1000k');
+  it('rounds to the nearest thousand below a million, and up into millions at the edge', () => {
+    expect(formatShort(999_500, 'en')).toBe('1M');
+    expect(formatShort(999_500, 'vi')).toBe('1tr');
     expect(formatShort(999_499, 'vi')).toBe('999k');
     expect(formatShort(499, 'en')).toBe('0k');
     expect(formatShort(500, 'vi')).toBe('1k');

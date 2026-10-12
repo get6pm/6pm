@@ -25,7 +25,8 @@ export function formatVnd(amount: Vnd): string {
 export function formatShort(amount: Vnd, language: 'en' | 'vi'): string {
   const sign = amount < 0 ? MINUS : '';
   const abs = Math.abs(amount);
-  if (abs >= 1_000_000) {
+  // An amount that rounds up to a thousand thousands is a million: "1tr", never "1000k".
+  if (Math.round(abs / 1000) >= 1000) {
     const millions = (Math.round(abs / 100_000) / 10).toString();
     return sign + (language === 'vi' ? millions.replace('.', ',') + 'tr' : millions + 'M');
   }

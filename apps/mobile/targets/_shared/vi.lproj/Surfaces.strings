@@ -3,3 +3,5 @@
 "safeToday.description" = "Số tiền bạn có thể tiêu hôm nay, nhìn là thấy.";
 "safeToday.name" = "Hôm nay tiêu được";
 "setUp" = "Mở 6pm để cài đặt";
+"todayList.description" = "Những khoản đã tiêu hôm nay, mới nhất trước.";
+"todayList.name" = "Hôm nay";

@@ -15,6 +15,7 @@ enum SurfaceFiles {
     guard name.allSatisfy({ $0.isLetter || $0.isNumber || $0 == "-" }),
       let data = Data(base64Encoded: pngBase64)
     else { return }
+    // The widgets pick a new picture up with the next snapshot, which the app writes after it.
     try GroupFiles.write(data, to: GroupFiles.folder("surfaces").appendingPathComponent("\(name).png"))
   }
 

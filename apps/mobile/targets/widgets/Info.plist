@@ -7,5 +7,18 @@
       <key>NSExtensionPointIdentifier</key>
       <string>com.apple.widgetkit-extension</string>
     </dict>
+    <key>UIAppFonts</key>
+    <array>
+      <string>BricolageGrotesque-Variable.ttf</string>
+      <string>MaterialSymbolsRounded-Variable.ttf</string>
+      <string>Baloo2-Variable.ttf</string>
+      <string>Lora-Variable.ttf</string>
+      <string>Unbounded-Variable.ttf</string>
+      <string>PlayfairDisplay-Variable.ttf</string>
+      <string>CormorantGaramond-Variable.ttf</string>
+      <string>BarlowCondensed-Medium.ttf</string>
+      <string>BeVietnamPro-Medium.ttf</string>
+      <string>IBMPlexMono-Medium.ttf</string>
+    </array>
   </dict>
 </plist>

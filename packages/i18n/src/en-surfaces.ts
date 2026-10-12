@@ -1,2 +1,20 @@
-/** Widgets and the Live Activity. */
-export const enSurfaces = {} as const;
+/** Widgets and the Live Activity: the words the app writes for them, in the app's language. */
+export const enSurfaces = {
+  'surfaces.scanQr': 'Scan QR',
+  'surfaces.safeTodayShort': 'safe today',
+  'surfaces.today': 'Today',
+  'surfaces.left': 'left',
+  'surfaces.amountLeft': '{amount} left',
+  'surfaces.brandSafe': '6pm · Safe today',
+  'surfaces.pending': { one: '{count} pending', other: '{count} pending' },
+  'surfaces.more': { one: '+{count} more', other: '+{count} more' },
+  'surfaces.listEmpty': 'Nothing spent yet today',
+  'surfaces.openApp': 'Open 6pm',
+  'surfaces.setUp': 'Open 6pm to set up',
+  'surfaces.activity.waiting': 'Waiting · tap when paid',
+  'surfaces.activity.to': '{amount} to {merchant}',
+  'surfaces.activity.paid': 'Paid',
+  'surfaces.context.today': 'Today',
+  'surfaces.context.yesterday': 'Yesterday',
+  'surfaces.context.safeAfter': 'Safe today is now {amount}',
+} as const;

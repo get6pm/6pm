@@ -17,6 +17,8 @@ export const enNative = {
   'native.surfaces.safeToday.description': 'What you can spend today, at a glance.',
   'native.surfaces.setUp': 'Open 6pm to set up',
   'native.surfaces.markPaid.title': 'Paid',
+  'native.surfaces.todayList.name': 'Today',
+  'native.surfaces.todayList.description': 'What you spent today, newest first.',
   'native.share.title': 'Add to 6pm',
   'native.intents.logSpend.title': 'Log in 6pm',
   'native.intents.logSpend.amount': 'Amount',

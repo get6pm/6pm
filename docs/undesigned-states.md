@@ -115,3 +115,13 @@ fakes behaviour the app cannot fake. Founder review.
 | Ask | Free count not read yet | Meter hidden, input usable; the count is enforced on send | Avoids a flash of "3 of 3" |
 | Ask | Locked | The input is replaced by the dark Max bar; the chips stay | A disabled input under the lock read badly |
 | Ask | Serious mode | No companion in the header | Serious mode removes the companion |
+| Widgets | Month not set up (or nothing written yet) | "Open 6pm to set up" on the card, in the app's language once the app has written once, else the phone's | The prototype only draws a set-up month |
+| Widgets | Snapshot older than its last entry (the app not opened for a day after the next 04:00) | The last number, with "Open 6pm" in place of the tomorrow line, "safe today" and the pending count; the ring empties | The number cannot be worked out without the app, and a guess would be a fake |
+| Widgets | Day over its line | "0k", as the hero shows; the ring is empty | The prototype only shows a day under its line |
+| Widgets · Today (large) | No spend yet today, and the space below the rows | "Nothing spent yet today" as the only row; the rows sit at the top and the rest of the card stays empty | The prototype's card is drawn at the content's height; a real large widget is taller |
+| Widgets | Colours by hour and look | Free: Golden Hour's sky at each hour; Max: the user's look; serious mode: its slate palette and no companion. The light card is the cream bubble once the sky is dark, the look's cell while it is light; Scan QR takes the look's accent | The board draws one fixed 18:07 palette (accent #f6a46a) that no look has |
+| Live Activity | Turned off in Settings | Nothing starts; the spend still waits in the Inbox and the close | The system decides; nothing to show |
+| Live Activity | More than one QR payment waiting | Only the newest has an activity; an older one's ends when a newer one starts | One activity at a time |
+| Live Activity | Serious mode | No companion: the minimal island shows the short amount instead | Serious mode removes the companion |
+| Live Activity · Travel | Lock Screen, compact and minimal | Lock Screen: the expanded panel's layout; compact: the flight glyph and "฿560 left"; minimal: the flight glyph | Only the expanded island is drawn |
+| Live Activity | Background colour on the Lock Screen | Black at 55%, white text; the Paid button in the look's accent | The board's banner is a translucent plum over a fixed wallpaper |

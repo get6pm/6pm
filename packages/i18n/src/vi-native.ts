@@ -15,6 +15,8 @@ export const viNative: { readonly [Key in keyof typeof enNative]: Entry } = {
   'native.surfaces.safeToday.description': 'Số tiền bạn có thể tiêu hôm nay, nhìn là thấy.',
   'native.surfaces.setUp': 'Mở 6pm để cài đặt',
   'native.surfaces.markPaid.title': 'Đã trả',
+  'native.surfaces.todayList.name': 'Hôm nay',
+  'native.surfaces.todayList.description': 'Những khoản đã tiêu hôm nay, mới nhất trước.',
   'native.share.title': 'Thêm vào 6pm',
   'native.intents.logSpend.title': 'Ghi vào 6pm',
   'native.intents.logSpend.amount': 'Số tiền',

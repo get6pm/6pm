@@ -7,6 +7,7 @@ import { viSurfaces } from './vi-surfaces';
 import { viTogether } from './vi-together';
 import { viReceiptEmail } from './vi-receipt-email';
 import { viBackup } from './vi-backup';
+import { viExport } from './vi-export';
 import { viAsk } from './vi-ask';
 import { viScan } from './vi-scan';
 import { viLooks } from './vi-looks';
@@ -30,6 +31,7 @@ export const vi: Catalogue = {
   ...viLooks,
   ...viCompanion,
   ...viBackup,
+  ...viExport,
   ...viAsk,
   ...viNative,
   ...viSharing,

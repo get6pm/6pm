@@ -8,6 +8,7 @@ import { useMoney, useMoneyStore } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
 import { useLookSettings } from '../looks/look-settings-provider';
 import { resolveLook } from '../purchases/entitlement';
+import { useMemberCompanionForm } from '../purchases/member-companion-form';
 import { useEntitlement } from '../purchases/purchases-provider';
 import { renderCompanions } from './companion-images';
 import { contextStrings, hostOf, surfaceContext } from './surface-context';
@@ -109,13 +110,12 @@ export function useSurfaceWriters() {
 }
 
 /**
- * The companion the surfaces show, drawn off screen at each size they use, then the snapshot is
+ * The companion the surfaces show, in the member's form, drawn off screen at each size they use, then the snapshot is
  * written again so the widgets redraw with it. Serious mode has no companion, so nothing is
  * drawn; the widgets leave it out by the snapshot's `serious`.
  */
 function useCompanionImages(serious: boolean, written: () => void) {
-  // The Max companion form is not offered yet; every surface draws the base form.
-  const form = 'base';
+  const form = useMemberCompanionForm();
   useEffect(() => {
     const native = surfaces;
     if (!native || serious) return;

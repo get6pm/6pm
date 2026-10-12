@@ -15,6 +15,7 @@ import { CloseReminderSync } from '../features/reminders/close-reminder-sync';
 import { ReminderTap } from '../features/reminders/reminder-tap';
 import { SurfacesSync } from '../features/surfaces/surfaces-sync';
 import { LookSettingsProvider, useThemeLook } from '../features/looks/look-settings-provider';
+import { MemberCompanionForm } from '../features/purchases/member-companion-form';
 import { PurchasesProvider } from '../features/purchases/purchases-provider';
 import { I18nProvider } from '../i18n/i18n';
 import { sheet, takeover } from '../ui/navigation/presentations';
@@ -98,27 +99,29 @@ function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <DatabaseGate>
         <PurchasesProvider>
-          <LookSettingsProvider>
-            <I18nProvider>
-              <ClockProvider>
-                <MoneyProvider failed={(retry) => <StartupError onRetry={retry} />}>
-                  <PlanTheme>
-                    <ToastHost>
-                      <UndoHost>
-                        <Screens />
-                      </UndoHost>
-                      <CloseNudge />
-                      <CloseReminderSync />
-                      <ReminderTap />
-                      <BackupHost />
-                      <SurfacesSync />
-                      {__DEV__ ? <DevCommands /> : null}
-                    </ToastHost>
-                  </PlanTheme>
-                </MoneyProvider>
-              </ClockProvider>
-            </I18nProvider>
-          </LookSettingsProvider>
+          <MemberCompanionForm>
+            <LookSettingsProvider>
+              <I18nProvider>
+                <ClockProvider>
+                  <MoneyProvider failed={(retry) => <StartupError onRetry={retry} />}>
+                    <PlanTheme>
+                      <ToastHost>
+                        <UndoHost>
+                          <Screens />
+                        </UndoHost>
+                        <CloseNudge />
+                        <CloseReminderSync />
+                        <ReminderTap />
+                        <BackupHost />
+                        <SurfacesSync />
+                        {__DEV__ ? <DevCommands /> : null}
+                      </ToastHost>
+                    </PlanTheme>
+                  </MoneyProvider>
+                </ClockProvider>
+              </I18nProvider>
+            </LookSettingsProvider>
+          </MemberCompanionForm>
         </PurchasesProvider>
       </DatabaseGate>
     </GestureHandlerRootView>

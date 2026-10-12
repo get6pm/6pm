@@ -2,7 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 
 import { LOOK_IDS, lookById } from '@6pm/theme';
 
-import { canUseLook, lookAccess, resolveLook, usableLooks } from './entitlement';
+import { canUseLook, companionForm, lookAccess, resolveLook, usableLooks } from './entitlement';
 import { PAID_LOOKS, SCENE_LOOKS, isPaidLook, lookProductId } from './products';
 import { FREE_CUSTOMER, NO_MAX, type CustomerState } from './purchases-port';
 
@@ -68,5 +68,23 @@ describe('resolveLook', () => {
 
   it('never takes a free look away', () => {
     expect(resolveLook('basic', FREE_CUSTOMER)).toBe('basic');
+  });
+});
+
+describe('the companion form', () => {
+  it('is Max while Max is on, the free trial included', () => {
+    expect(companionForm(maxCustomer)).toBe('max');
+    const trial: CustomerState = {
+      ...FREE_CUSTOMER,
+      max: { ...NO_MAX, active: true, plan: 'monthly', inTrial: true, trialEndsAt: 1 },
+    };
+    expect(companionForm(trial)).toBe('max');
+  });
+
+  it('is the base form without Max, whatever looks were bought, and again once Max ends', () => {
+    expect(companionForm(FREE_CUSTOMER)).toBe('base');
+    expect(companionForm(neonOwner)).toBe('base');
+    const ended: CustomerState = { ...maxCustomer, max: { ...maxCustomer.max, active: false } };
+    expect(companionForm(ended)).toBe('base');
   });
 });

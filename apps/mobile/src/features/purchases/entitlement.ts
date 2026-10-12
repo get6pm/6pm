@@ -1,5 +1,6 @@
 import { DEFAULT_LOOK, LOOK_IDS, type LookId } from '@6pm/theme';
 
+import type { CompanionForm } from '../../ui/companion/companion-mood';
 import { isPaidLook } from './products';
 import type { CustomerState } from './purchases-port';
 
@@ -28,4 +29,9 @@ export function canUseLook(look: LookId, customer: CustomerState): boolean {
  */
 export function resolveLook(chosen: LookId, customer: CustomerState): LookId {
   return canUseLook(chosen, customer) ? chosen : DEFAULT_LOOK;
+}
+
+/** Members wear the Max companion while Max is on, a free trial included; everyone else the base. */
+export function companionForm(customer: CustomerState): CompanionForm {
+  return customer.max.active ? 'max' : 'base';
 }

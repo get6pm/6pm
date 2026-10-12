@@ -1,14 +1,20 @@
-import { Canvas, Picture, createPicture, matchFont } from '@shopify/react-native-skia';
+import { Canvas, Picture, Skia, createPicture, matchFont } from '@shopify/react-native-skia';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Platform } from 'react-native';
 import {
+  Easing,
   useDerivedValue,
   useReducedMotion,
   useSharedValue,
+  withSequence,
+  withTiming,
   type FrameInfo,
 } from 'react-native-reanimated';
 
+import { curves, durations } from '@6pm/theme';
+
 import { useGatedFrameCallback, useScreenActivity } from '../sky/screen-activity';
+import { useCompanionForm } from './companion-form';
 import { type CompanionForm, type CompanionMood } from './companion-mood';
 import { drawCompanion } from './draw-companion';
 import { type SleepFonts } from './draw-extras';
@@ -18,6 +24,7 @@ export interface CompanionProps {
   /** Width and height of the square it is drawn in, in points. */
   readonly size: number;
   readonly mood: CompanionMood;
+  /** Defaults to the form the app gives every companion: Max for members. */
   readonly form?: CompanionForm;
   /** Serious mode: always the plain, greyscale companion, whatever the mood or form. */
   readonly serious?: boolean;
@@ -30,6 +37,7 @@ export interface CompanionProps {
 const STILL_SECONDS = 2.6;
 /** Long past any mood or form change: no hop and no burst. */
 const SETTLED_SECONDS = 99;
+const fadeEase = Easing.bezier(...curves.enter);
 
 /** The sleeping "z"s are italic serif, as the prototype's Georgia fallback draws them. */
 function sleepFonts(size: number): SleepFonts {
@@ -44,9 +52,12 @@ function sleepFonts(size: number): SleepFonts {
  * The 6pm companion: a little sun dipping into the evening sea. Idle motion (breathing, blinks,
  * swaying rays, the sea's wave, the hand-drawn wobble) runs on the UI thread and freezes with
  * Reduce Motion, and also while the screen around it is not showing it (a hidden tab, a screen
- * covered by a takeover). Becoming Max plays a burst of light.
+ * covered by a takeover). Becoming Max plays a burst of light; leaving Max fades the Max form out
+ * over the base one.
  */
-export function Companion({ size, mood, form = 'base', serious = false }: CompanionProps) {
+export function Companion({ size, mood, form: asked, serious = false }: CompanionProps) {
+  const given = useCompanionForm();
+  const form = asked ?? given;
   const reduceMotion = useReducedMotion();
   const shownMood: CompanionMood = serious ? 'plain' : mood;
   const [seed] = useState(() => Math.random() * 1000);
@@ -55,6 +66,8 @@ export function Companion({ size, mood, form = 'base', serious = false }: Compan
   const clock = useSharedValue(0);
   const moodAt = useSharedValue(0);
   const formAt = useSharedValue(-SETTLED_SECONDS);
+  /** How much of the Max form still shows over the base one after Max ends. */
+  const leaving = useSharedValue(0);
 
   const tick = useCallback(
     (frame: FrameInfo) => {
@@ -76,13 +89,20 @@ export function Companion({ size, mood, form = 'base', serious = false }: Compan
   const lastForm = useRef(form);
   useEffect(() => {
     if (lastForm.current === form) return;
+    const wasMax = lastForm.current === 'max';
     lastForm.current = form;
     formAt.value = clock.value;
-  }, [form, clock, formAt]);
+    leaving.value = wasMax
+      ? withSequence(
+          withTiming(1, { duration: 0 }),
+          withTiming(0, { duration: durations.screen, easing: fadeEase }),
+        )
+      : 0;
+  }, [form, clock, formAt, leaving]);
 
   const picture = useDerivedValue(() => {
     const t = clock.value;
-    const frame = makeFrame({
+    const input = {
       s: size,
       el: reduceMotion ? STILL_SECONDS : t,
       since: reduceMotion ? SETTLED_SECONDS : t - moodAt.value,
@@ -90,11 +110,21 @@ export function Companion({ size, mood, form = 'base', serious = false }: Compan
       mood: shownMood,
       form,
       seed,
-    });
-    return createPicture((canvas) => drawCompanion(canvas, frame, fonts), {
-      width: size,
-      height: size,
-    });
+    };
+    const frame = makeFrame(input);
+    const fade = leaving.value;
+    return createPicture(
+      (canvas) => {
+        drawCompanion(canvas, frame, fonts);
+        if (fade <= 0) return;
+        const layer = Skia.Paint();
+        layer.setAlphaf(fade);
+        canvas.saveLayer(layer);
+        drawCompanion(canvas, makeFrame({ ...input, form: 'max', sinceF: SETTLED_SECONDS }), fonts);
+        canvas.restore();
+      },
+      { width: size, height: size },
+    );
   });
 
   return (

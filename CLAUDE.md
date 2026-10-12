@@ -35,7 +35,7 @@ Precedence: product decisions > phase file > prototype > older reports.
 
 ## This Mac
 
-- Disk is small: check `df -h /` before a native build; keep ≥ 10 GB free. Delete `apps/mobile/ios`, `apps/mobile/android` and DerivedData you created when done.
+- Native work is checked on the local iOS simulator (Xcode 27, iOS 27 runtime): the commands are in [docs/tech-decisions.md](docs/tech-decisions.md) §6. CI's `native-build.yml` stays the gate for signed and TestFlight builds. `apps/mobile/ios` is generated and ignored; regenerate it after any native change (`expo prebuild -p ios --clean`).
 - Kill only process ids you started. Never `pkill -f` / `killall`. Never `git stash`.
 - Temp files go in the session scratchpad, never the repo.
 

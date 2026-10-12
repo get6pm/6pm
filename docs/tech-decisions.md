@@ -69,5 +69,14 @@ First native batch declares: App Group, Keychain sharing, iCloud KVS, push + tim
 ## 6. Verification on this Mac
 
 - Unit tests per package (Vitest) and Jest for app logic; run only the file you changed locally.
-- The iOS simulator is allowed for design-beside-device checks; delete `apps/mobile/ios` and DerivedData after, and check `df -h /` first (keep ≥ 10 GB free).
 - `pnpm --filter @6pm/mobile exec expo export --platform ios` proves the bundle builds.
+- Native code (plugins, targets, local modules) is proven by a local simulator build before a CI one. Changed 12 Oct 2026: a new Mac (M5 Pro, 376 GB free, Xcode 27) replaced the one that sent every native build to CI. CI builds with Xcode 26.6, so a signed build is still proven there.
+- The simulator build, from `apps/mobile` (Xcode is selected with `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` until `xcode-select` points at it):
+
+  ```
+  npx expo prebuild -p ios --clean      # after any change to app.config.ts, plugins, targets or modules
+  npx expo run:ios --no-bundler --device "iPhone 18 Pro"
+  EXPO_LOCAL_RUNTIME=1 npx expo start --dev-client
+  ```
+
+  `tools/design/sim-shot.sh` then drives the dev build to a fixture and screenshots it for design-beside-device checks.

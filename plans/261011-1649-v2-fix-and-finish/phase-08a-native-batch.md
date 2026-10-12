@@ -104,8 +104,8 @@ updateActivity(id, stateJson): Promise<void>;  endActivity(id, finalStateJson: s
 ## Verification of 8a
 
 1. `pnpm typecheck`, lint, `generate-native --check`, the new Vitest/Jest files.
-2. Simulator build in CI (compiles the app and all three targets, no Apple credentials): `gh workflow run native-build.yml -f ref=<branch> -f profile=e2e-test`. This is the gate for D1/D9 on Xcode 26.6.
-3. No local prebuild or pod install: `df -h /` shows 7.8 GB free today (below the 10 GB rule), and an ignored `apps/mobile/ios` (1.4 GB) is still on disk.
+2. Simulator build in CI, after the local one (compiles the app and all three targets, no Apple credentials): `gh workflow run native-build.yml -f ref=<branch> -f profile=e2e-test`. This is the gate for D1/D9 on Xcode 26.6.
+3. Local simulator build first (`expo prebuild -p ios --clean`, `expo run:ios`, tech-decisions §6): the app and all three targets compile on Xcode 27 and the app launches. Changed 12 Oct: the new Mac has room for local native builds.
 
 ## Risks
 

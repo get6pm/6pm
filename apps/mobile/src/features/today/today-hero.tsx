@@ -6,6 +6,7 @@ import { curves } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
 import { useHomeNav } from '../home/home-nav';
+import { TravelPill } from '../travel/travel-pill';
 import { Symbol } from '../../ui/icons/symbol';
 import { useDesignInsets } from '../../ui/layout/design-insets';
 import { Odometer } from '../../ui/odometer';
@@ -76,6 +77,7 @@ export function TodayHero({
             {weekday(dayDate)}
           </Text>
           <Text style={{ ...body(22, 700, -0.02), color: palette.ink }}>{dayMonth(dayDate)}</Text>
+          <TravelPill />
         </View>
         <View style={{ flexDirection: 'row', gap: 8 }}>
           <GlassButton icon="tune" label={t('home.settings')} onPress={onSettings} />

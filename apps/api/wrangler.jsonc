@@ -18,6 +18,8 @@
       "routes": [{ "pattern": "6pm-dev.oddeggs.studio/api/*", "zone_name": "oddeggs.studio" }],
       // COMMIT_SHA is overridden at deploy time (`--var COMMIT_SHA:<sha>`).
       "vars": { "ENVIRONMENT": "dev", "COMMIT_SHA": "local" },
+      // Travel mode's exchange rates, fetched four times a day (the ingest is idempotent).
+      "triggers": { "crons": ["20 */6 * * *"] },
       "d1_databases": [
         {
           "binding": "DB",
@@ -59,6 +61,7 @@
       "name": "sixpm-api",
       "routes": [{ "pattern": "6pm.oddeggs.studio/api/*", "zone_name": "oddeggs.studio" }],
       "vars": { "ENVIRONMENT": "prd", "COMMIT_SHA": "local" },
+      "triggers": { "crons": ["20 */6 * * *"] },
       "d1_databases": [
         {
           "binding": "DB",

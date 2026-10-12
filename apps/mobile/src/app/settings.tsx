@@ -25,6 +25,7 @@ import { SettingsLookCard } from '../features/settings/settings-look-card';
 import { SettingsMaxCard } from '../features/settings/settings-max-card';
 import { SettingRow, SettingsSection } from '../features/settings/setting-rows';
 import { useCloseTimeDraft } from '../features/settings/use-close-time-draft';
+import { TravelRow } from '../features/travel/travel-row';
 import { useI18n } from '../i18n/i18n';
 import { haptics } from '../ui/haptics';
 import { SheetScreen } from '../ui/navigation/sheet-screen';
@@ -168,6 +169,7 @@ export default function Settings() {
             router.push({ pathname: '/capture-guide', params: { source: 'widgets' } });
           }}
         />
+        <TravelRow />
       </SettingsSection>
 
       <View style={{ gap: 8 }}>

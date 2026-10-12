@@ -18,6 +18,7 @@ import { enClose } from './en-close';
 import { enCompanion } from './en-companion';
 import { enToday } from './en-today';
 import { enCategories } from './en-categories';
+import { enTravel } from './en-travel';
 
 /** The source catalogue: every key the app uses, in English. */
 export const en = {
@@ -41,4 +42,5 @@ export const en = {
   ...enSurfaces,
   ...enTogether,
   ...enReceiptEmail,
+  ...enTravel,
 } as const;

@@ -4,8 +4,6 @@ import { ScrollView, Text, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 import {
-  emptyKeypad,
-  keypadVnd,
   likelyCategoriesAt,
   pressKey,
   ruleCategoryFor,
@@ -23,6 +21,8 @@ import { WalletRow } from '../features/quick-add/wallet-row';
 import { ModeSwitch, type EntryMode } from '../features/voice/mode-switch';
 import { useVoiceEntry } from '../features/voice/use-voice-entry';
 import { VoicePanel } from '../features/voice/voice-panel';
+import { useTravel } from '../features/travel/travel-provider';
+import { initialKeypad, useTravelEntry } from '../features/travel/use-travel-entry';
 import { useI18n } from '../i18n/i18n';
 import { CategoryTile } from '../ui/category-tile';
 import { haptics } from '../ui/haptics';
@@ -45,7 +45,9 @@ export default function QuickAdd() {
   const store = useMoneyStore();
   const run = useRunAction();
   const say = useCompanionToast();
-  const [keys, setKeys] = useState(emptyKeypad);
+  const { trip } = useTravel();
+  // Abroad the keypad opens in the local currency, settled once as the sheet opens.
+  const [keys, setKeys] = useState(() => initialKeypad(trip));
   const [note, setNote] = useState('');
   const [wallet, setWallet] = useState(CASH_WALLET);
   const wallets = useWalletOptions();
@@ -76,7 +78,8 @@ export default function QuickAdd() {
     language,
     categories: snap.categories,
     rules,
-    setKeys,
+    // Spoken amounts are đồng; the currency key still flips to the trip's currency after.
+    setKeys: (next) => setKeys((k) => (k.foreign ? { ...next, foreign: k.foreign } : next)),
     setNote,
     setPicked,
   });
@@ -88,7 +91,8 @@ export default function QuickAdd() {
   );
   const categoryId = picked ?? learned ?? likelyId;
   const category = snap.categories.find((c) => c.id === categoryId);
-  const amount = keypadVnd(keys, 0);
+  const entry = useTravelEntry(keys);
+  const { amount } = entry;
   const locale = language === 'vi' ? 'vi-VN' : 'en-GB';
   const stamp = `${new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', month: 'short' }).format(now)} · ${new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit', hour12: false }).format(now)}`;
 
@@ -104,6 +108,7 @@ export default function QuickAdd() {
         source: mode === 'voice' && !voiceOff ? 'voice' : 'manual',
         status: 'kept',
         wallet,
+        foreignAmount: entry.foreignAmount,
       }),
     );
     if (!saved) {
@@ -151,7 +156,8 @@ export default function QuickAdd() {
           heading={t('quick.ticket', { no: String(snap.cycleSpends.length + 1).padStart(3, '0') })}
           stamp={stamp}
           amount={amount}
-          hint={amount ? '' : t('quick.hint')}
+          {...(entry.amountText === undefined ? {} : { amountText: entry.amountText })}
+          hint={amount ? (entry.underneath ?? '') : t('quick.hint')}
           note={note}
           placeholder={t('quick.what')}
           onNote={setNote}
@@ -224,7 +230,10 @@ export default function QuickAdd() {
                 {t('voice.unavailable', { language: t(`voice.language.${language}`) })}
               </Text>
             ) : null}
-            <Keypad onPress={(key) => setKeys((k) => pressKey(k, key))} />
+            <Keypad
+              onPress={(key) => setKeys((k) => pressKey(k, key))}
+              {...(entry.currencyKey ? { currency: entry.currencyKey } : {})}
+            />
             <PressScale
               scaleTo={0.97}
               onPress={() => void save()}

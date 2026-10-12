@@ -21,6 +21,7 @@ export function QuickTicket({
   heading,
   stamp,
   amount,
+  amountText,
   hint,
   note,
   placeholder,
@@ -32,6 +33,8 @@ export function QuickTicket({
   readonly heading: string;
   readonly stamp: string;
   readonly amount: number;
+  /** The amount as typed in another currency ("฿640"), with đồng in the hint; đồng when absent. */
+  readonly amountText?: string;
   readonly hint: string;
   readonly note: string;
   readonly placeholder: string;
@@ -75,7 +78,7 @@ export function QuickTicket({
               opacity: amount > 0 ? 1 : 0.35,
             }}
           >
-            {groupDigits(amount)}₫
+            {amountText ?? `${groupDigits(amount)}₫`}
           </Text>
           <Text style={{ ...mono(11.5), minHeight: 16, color: 'rgba(35,26,36,.55)' }}>{hint}</Text>
         </View>

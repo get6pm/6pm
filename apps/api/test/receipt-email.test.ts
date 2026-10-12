@@ -49,7 +49,12 @@ async function phone() {
   const response = await call('/api/v1/email/handle', { token });
   expect(response.status).toBe(200);
   const { handle } = emailHandleResponseSchema.parse(await response.json());
-  return { token, handle, address: `${handle}@${HOST}`, hash: await hashDeviceToken(token) };
+  return {
+    token,
+    handle,
+    address: `receipts+${handle}@${HOST}`,
+    hash: await hashDeviceToken(token),
+  };
 }
 
 const fetchCaptures = async (token: string) => {

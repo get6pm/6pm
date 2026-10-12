@@ -54,16 +54,23 @@ export function hostOfApiBase(apiBase: string): string | null {
   return /^https?:\/\/([^/:?#]+)/i.exec(apiBase)?.[1]?.toLowerCase() ?? null;
 }
 
-/** The address a phone shows: `<handle>@<host>`. */
+/**
+ * The one mailbox each environment's host routes to its Worker. Email Routing has no catch-all on
+ * a subdomain, so every phone shares it and is told apart by its handle after a `+`.
+ */
+export const RECEIPT_MAILBOX = 'receipts';
+
+/** The address a phone shows: `receipts+<handle>@<host>`. */
 export function receiptEmailAddress(handle: string, host: string): string {
-  return `${handle}@${host}`;
+  return `${RECEIPT_MAILBOX}+${handle}@${host}`;
 }
 
 /**
- * The handle a delivery was sent to, from its envelope recipient: the local part, lower case,
- * with any `+tag` dropped. Null when it cannot be a handle.
+ * The handle a delivery was sent to, from its envelope recipient `receipts+<handle>@<host>`, lower
+ * case. Null for any other mailbox, or when the tag cannot be a handle.
  */
 export function handleOfRecipient(recipient: string): string | null {
-  const local = recipient.trim().toLowerCase().split('@')[0]?.split('+')[0] ?? '';
-  return emailHandlePattern.test(local) ? local : null;
+  const local = recipient.trim().toLowerCase().split('@')[0] ?? '';
+  const [mailbox, tag = ''] = local.split('+');
+  return mailbox === RECEIPT_MAILBOX && emailHandlePattern.test(tag) ? tag : null;
 }

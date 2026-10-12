@@ -1,6 +1,7 @@
 # Batch 8b: native feature lanes, then one TestFlight build
 
-Status: todo · Starts when [8a](phase-08a-native-batch.md) and batches 2–7 are merged (L1 edits close files from batch 3, L3 edits Settings from batch 6) · Lanes run in parallel in worktrees, one commit each · Target: all lanes merged by 22 Oct, `testflight/*` tag 23 Oct, two weeks of device testing before 6 Nov
+Status: lanes built 12 Oct on `integration/native-batch` (D, L1–L5 plus the controls registration); local Xcode 27 build of the app and every extension green, CI simulator build running. Not yet seen on a device: Siri/Shortcuts runs, Wallet automation, Control Center, widget placement, Live Activity Paid tap, real microphone, real bank receipts (fixtures are synthetic until the founder's receipts arrive), the name-merchant route on the deployed Worker. Next: merge to `v2`, signed `dev` rehearsal build, then the `testflight/*` tag.
+Was: todo · Target: all lanes merged by 22 Oct, `testflight/*` tag 23 Oct, two weeks of device testing before 6 Nov
 Rules: CLAUDE.md applies (an owns list, real behaviour only, copy from `@6pm/i18n`, colour from `@6pm/theme`, prototype motion). A lane that needs a file it does not own stops with `NEEDS_CONTEXT`. Swift lanes (L2, L3, L5) must merge before the tag. JS-only lanes may follow over the air.
 
 ## Lanes and ownership (no file appears in two lanes)

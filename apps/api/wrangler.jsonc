@@ -10,6 +10,8 @@
   "compatibility_date": "2026-08-01",
   // Secrets are set per environment with `wrangler secret put <NAME> --env <dev|prd>`; their names
   // are listed in `src/env.ts`.
+  // Email Routing delivers `*@<host>` to this Worker's `email` handler (receipt email); that rule
+  // lives in the zone's Email Routing settings, not here.
   "env": {
     "dev": {
       "name": "sixpm-api-dev",
@@ -45,6 +47,12 @@
           "namespace_id": "6303",
           "simple": { "limit": 12, "period": 60 },
         },
+        // Mail to one receipt address: a person forwards a handful a day, a filter a few at once.
+        {
+          "name": "EMAIL_RATE_LIMIT",
+          "namespace_id": "6304",
+          "simple": { "limit": 20, "period": 60 },
+        },
       ],
     },
     "prd": {
@@ -77,6 +85,12 @@
           "name": "BACKUP_RATE_LIMIT",
           "namespace_id": "6313",
           "simple": { "limit": 12, "period": 60 },
+        },
+        // Mail to one receipt address: a person forwards a handful a day, a filter a few at once.
+        {
+          "name": "EMAIL_RATE_LIMIT",
+          "namespace_id": "6314",
+          "simple": { "limit": 20, "period": 60 },
         },
       ],
     },

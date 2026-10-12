@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useReceiptAddress } from '../receipt-email/receipt-address';
 import { useSpendLabels } from '../today/use-spend-rows';
 import { GUIDES, type GuideContent } from './guide-content';
 import { onCount, sourceStatuses, type CaptureSource, type SourceStatus } from './source-status';
@@ -20,8 +21,11 @@ export function useCaptureSources(): {
   readonly sources: readonly CaptureSourceView[];
   readonly summary: string;
   readonly walletOn: boolean;
+  /** This phone's receipt email address, once the server has given one. */
+  readonly emailAddress: string | null;
 } {
   const { cycleSpends, waitingBefore } = useMoney();
+  const emailAddress = useReceiptAddress();
   const { t } = useI18n();
   const labels = useSpendLabels();
   return useMemo(() => {
@@ -36,7 +40,7 @@ export function useCaptureSources(): {
         ...status,
         guide,
         name: t(guide.name),
-        sub: subOf(status.source, status.on, last, t(guide.sub), t),
+        sub: subOf(status.source, status.on, last, t(guide.sub), emailAddress, t),
         status: statusOf(status.source, status.on, last, onOff, t),
       };
     });
@@ -45,8 +49,8 @@ export function useCaptureSources(): {
       total: statuses.length,
     });
     const walletOn = statuses.some((s) => s.source === 'wallet' && s.on);
-    return { sources, summary, walletOn };
-  }, [cycleSpends, waitingBefore, t, labels]);
+    return { sources, summary, walletOn, emailAddress };
+  }, [cycleSpends, waitingBefore, t, labels, emailAddress]);
 }
 
 type T = ReturnType<typeof useI18n>['t'];
@@ -56,9 +60,12 @@ function subOf(
   on: boolean,
   last: string | null,
   fallback: string,
+  emailAddress: string | null,
   t: T,
 ): string {
   if (source === 'wallet') return t(on ? 'capture.wallet.subOn' : 'capture.wallet.subOff');
+  // Receipt email shows the address to forward to until a receipt has come through it.
+  if (source === 'email') return last ?? emailAddress ?? t('receiptEmail.offline');
   return last ?? fallback;
 }
 

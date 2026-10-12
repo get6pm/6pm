@@ -8,6 +8,7 @@ import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
 import { CategoryTile } from '../../ui/category-tile';
 import { isSymbolName, Symbol } from '../../ui/icons/symbol';
+import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, tabular } from '../../ui/type/fonts';
 import { merchantIcon } from '../today/merchant-icon';
@@ -48,8 +49,21 @@ export function GuideSection({
   );
 }
 
-/** The three numbered steps, each with the chip it points at. */
-export function GuideSteps({ guide }: { readonly guide: GuideContent }) {
+/** A chip that shows something of the user's own (their address) and does something when tapped. */
+export interface LiveChip {
+  readonly text: string;
+  readonly label: string;
+  readonly onPress: () => void;
+}
+
+/** The three numbered steps, each with the chip it points at; the first chip may be live. */
+export function GuideSteps({
+  guide,
+  firstChip = null,
+}: {
+  readonly guide: GuideContent;
+  readonly firstChip?: LiveChip | null;
+}) {
   const { palette } = useTheme();
   const { t } = useI18n();
   return (
@@ -89,7 +103,12 @@ export function GuideSteps({ guide }: { readonly guide: GuideContent }) {
             <Text style={{ ...body(15.5), lineHeight: 20.9, color: palette.ink }}>
               {t(step.text)}
             </Text>
-            <View
+            <PressScale
+              disabled={k !== 0 || firstChip === null}
+              accessibilityRole={k === 0 && firstChip ? 'button' : 'text'}
+              {...(k === 0 && firstChip
+                ? { accessibilityLabel: firstChip.label, onPress: firstChip.onPress }
+                : {})}
               style={{
                 alignSelf: 'flex-start',
                 maxWidth: '100%',
@@ -110,9 +129,13 @@ export function GuideSteps({ guide }: { readonly guide: GuideContent }) {
                 numberOfLines={1}
                 style={{ ...body(13, 600), color: palette.ink, flexShrink: 1 }}
               >
-                {typeof step.chip === 'string' ? t(step.chip) : step.chip.names.join(' · ')}
+                {k === 0 && firstChip
+                  ? firstChip.text
+                  : typeof step.chip === 'string'
+                    ? t(step.chip)
+                    : step.chip.names.join(' · ')}
               </Text>
-            </View>
+            </PressScale>
           </View>
         </View>
       ))}

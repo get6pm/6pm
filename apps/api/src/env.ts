@@ -10,6 +10,8 @@ export const secretNames = [
   'TYPESAFE_API_KEY',
   'REVENUECAT_API_V2_KEY',
   'REVENUECAT_WEBHOOK_AUTH',
+  /** Seals receipts read from email while they wait for their phone: 32 characters or more. */
+  'EMAIL_SEAL_KEY',
 ] as const;
 export type SecretName = (typeof secretNames)[number];
 
@@ -25,6 +27,7 @@ export type Bindings = Secrets & {
   readonly IP_RATE_LIMIT: RateLimit;
   readonly DEVICE_RATE_LIMIT: RateLimit;
   readonly BACKUP_RATE_LIMIT: RateLimit;
+  readonly EMAIL_RATE_LIMIT: RateLimit;
   readonly ENVIRONMENT: EnvironmentName;
   readonly COMMIT_SHA: string;
 };

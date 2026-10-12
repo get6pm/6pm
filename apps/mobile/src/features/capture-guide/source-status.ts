@@ -26,8 +26,8 @@ export interface SourceStatus {
  * - Share, Scan and the widgets ship with the app, so they are on.
  * - The Wallet automation lives in the Shortcuts app and iOS has no API to read automations, so
  *   it counts as on once a spend from Apple Pay has arrived.
- * - Receipt email needs a forwarding address this iPhone does not have; it shows on only if an
- *   emailed receipt has arrived anyway.
+ * - Receipt email works once the user forwards mail to the address, which the phone cannot see,
+ *   so it counts as on once an emailed receipt has arrived.
  */
 export function sourceStatuses(spends: readonly SpendRow[]): readonly SourceStatus[] {
   const newest = new Map<SpendSource, SpendRow>();

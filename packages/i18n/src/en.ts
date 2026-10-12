@@ -5,6 +5,7 @@ import { enIntents } from './en-intents';
 import { enVoice } from './en-voice';
 import { enSurfaces } from './en-surfaces';
 import { enTogether } from './en-together';
+import { enReceiptEmail } from './en-receipt-email';
 import { enBackup } from './en-backup';
 import { enAsk } from './en-ask';
 import { enScan } from './en-scan';
@@ -37,4 +38,5 @@ export const en = {
   ...enVoice,
   ...enSurfaces,
   ...enTogether,
+  ...enReceiptEmail,
 } as const;

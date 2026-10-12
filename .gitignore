@@ -15,6 +15,7 @@ coverage/
 /apps/mobile/ios
 /apps/mobile/android
 .claude/agent-memory/
+.claude/worktrees/
 # Reference renders are regenerated from the prototype (tools/design); only comparison sheets are kept.
 /design/renders/*
 !/design/renders/compare/

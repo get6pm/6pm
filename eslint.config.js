@@ -49,6 +49,7 @@ export default defineConfig([
     'design/',
     'docs/',
     'plans/',
+    '.claude/',
     '**/*.generated.*',
     // Written by tools/scripts/generate-native.ts.
     'apps/mobile/targets/_shared/domain-native.js',

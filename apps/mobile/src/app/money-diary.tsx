@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRef, useState, type ComponentRef } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
@@ -10,8 +10,12 @@ import { coverTint, zineInk } from '../features/diary/diary-colours';
 import { ZineCover } from '../features/diary/zine/zine-cover';
 import { ZineGrain } from '../features/diary/zine/zine-grain';
 import { ZineDays, ZineNote, ZinePlaces, ZineTickets } from '../features/diary/zine/zine-pages';
-import { ZineShare } from '../features/diary/zine/zine-share';
+import { ZineShare, zineCardTilt } from '../features/diary/zine/zine-share';
 import { useMoneyDiary } from '../features/diary/zine/use-money-diary';
+import { captureView } from '../features/sharing/capture-view';
+import { cardOnPaper } from '../features/sharing/card-on-paper';
+import { shareFileName } from '../features/sharing/share-file';
+import { useShareImage } from '../features/sharing/use-share-image';
 import { useI18n } from '../i18n/i18n';
 import { haptics } from '../ui/haptics';
 import { SheetFrame } from '../ui/navigation/sheet-frame';
@@ -20,6 +24,8 @@ import { useTheme } from '../ui/theme/theme';
 import { body, mono } from '../ui/type/fonts';
 
 const MONTH = /^\d{4}-\d{2}$/;
+/** Page around the shared card: room for the tilt, and for its shadow below. */
+const CARD_MARGIN = { side: 36, top: 36, bottom: 64 };
 
 /**
  * A month's Money diary, bound on the 1st: the headline, four stats, where it went, the quietest
@@ -37,6 +43,12 @@ export default function MoneyDiary() {
   const [showAmounts, setShowAmounts] = useState(false);
   const zine = useMoneyDiary(month, showAmounts);
   const tint = coverTint(month);
+  const card = useRef<ComponentRef<typeof View>>(null);
+  const { share, save, photosOff } = useShareImage();
+  // The card exactly as shown, amounts only if the switch is on, laid on its grainy page.
+  const cardImage = async () =>
+    cardOnPaper(await captureView(card), { ...zineCardTilt, paper: tint, margin: CARD_MARGIN });
+  const fileName = shareFileName('money-diary', month);
 
   const header = (
     <View
@@ -124,6 +136,11 @@ export default function MoneyDiary() {
                   haptics.tick();
                   setShowAmounts((on) => !on);
                 }}
+                cardRef={card}
+                saveLabel={t(photosOff ? 'sharing.openSettings' : 'sharing.saveImage')}
+                shareLabel={t('sharing.share')}
+                onSave={() => void save(fileName, cardImage)}
+                onShare={() => void share(fileName, cardImage)}
               />
             </ScrollView>
           </Animated.View>

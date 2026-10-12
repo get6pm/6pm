@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, type ComponentRef, type Ref } from 'react';
 import { Text, View } from 'react-native';
 import Animated, {
   Easing,
@@ -27,6 +27,9 @@ const RULE = 'rgba(43,37,48,.35)';
 const STAMP = '#c0392b';
 const print = Easing.bezier(0.45, 0.05, 0.4, 1);
 const stampEase = Easing.bezier(0.3, 1.5, 0.5, 1);
+const STAMP_MS = { delay: 1600, land: 300, rest: 200 };
+/** From mount until the CLOSED stamp has landed and settled: the paper is final from here on. */
+export const RECEIPT_SETTLE_MS = STAMP_MS.delay + STAMP_MS.land + STAMP_MS.rest;
 
 export interface ReceiptLine {
   readonly time: string;
@@ -53,6 +56,8 @@ export function CloseReceipt(props: {
   >;
   readonly onShare: () => void;
   readonly onNext: () => void;
+  /** The printed paper alone (no slot, no buttons), for sharing it as an image. */
+  readonly paperRef: Ref<ComponentRef<typeof View>>;
 }) {
   const { palette } = useTheme();
   const feed = useSharedValue(0);
@@ -60,10 +65,12 @@ export function CloseReceipt(props: {
   useEffect(() => {
     feed.value = withTiming(1, { duration: 1500, easing: print });
     stamp.value = withDelay(
-      1600,
+      STAMP_MS.delay,
       withSequence(
-        withTiming(0.6, { duration: 300, easing: stampEase }, () => runOnJS(haptics.tap)()),
-        withTiming(1, { duration: 200 }),
+        withTiming(0.6, { duration: STAMP_MS.land, easing: stampEase }, () =>
+          runOnJS(haptics.tap)(),
+        ),
+        withTiming(1, { duration: STAMP_MS.rest }),
       ),
     );
   }, [feed, stamp]);
@@ -103,6 +110,7 @@ export function CloseReceipt(props: {
         }}
       >
         <Animated.View
+          ref={props.paperRef}
           style={[
             { width: 306, paddingBottom: 40, boxShadow: '0 18px 24px rgba(15,5,25,.35)' },
             paper,

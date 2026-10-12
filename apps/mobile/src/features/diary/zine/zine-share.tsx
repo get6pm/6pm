@@ -1,6 +1,8 @@
+import type { ComponentRef, Ref } from 'react';
 import { Text, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
+import { Symbol } from '../../../ui/icons/symbol';
 import { PressScale } from '../../../ui/primitives/press-scale';
 import { body, display, mono } from '../../../ui/type/fonts';
 import { zineInk } from '../diary-colours';
@@ -8,6 +10,13 @@ import { zineInk } from '../diary-colours';
 const knobEase = Easing.bezier(0.3, 1.4, 0.5, 1);
 const SWITCH_MS = 250;
 const MISSED_DOT = 'rgba(251,244,236,.18)';
+
+/** How the share card sits on the page; the shared image lays the card down the same way. */
+export const zineCardTilt = {
+  rotate: -2,
+  shadow: { y: 24, blur: 44, color: 'rgba(40,10,30,.35)' },
+} as const;
+const { shadow } = zineCardTilt;
 
 /** The design's switch: a white knob that springs across a green track. */
 function AmountsSwitch({ on, onToggle }: { readonly on: boolean; readonly onToggle: () => void }) {
@@ -57,6 +66,12 @@ export function ZineShare(props: {
   readonly showSub: string;
   readonly showAmounts: boolean;
   readonly onToggle: () => void;
+  /** The card alone, untilted, for drawing it as an image. */
+  readonly cardRef: Ref<ComponentRef<typeof View>>;
+  readonly saveLabel: string;
+  readonly shareLabel: string;
+  readonly onSave: () => void;
+  readonly onShare: () => void;
 }) {
   return (
     <View style={{ gap: 16, paddingTop: 6 }}>
@@ -69,58 +84,67 @@ export function ZineShare(props: {
           width: 200,
           height: 356,
           borderRadius: 22,
-          backgroundColor: zineInk.ink,
-          paddingTop: 18,
-          paddingHorizontal: 16,
-          paddingBottom: 16,
-          gap: 8,
-          transform: [{ rotate: '-2deg' }],
-          boxShadow: '0 24px 44px rgba(40,10,30,.35)',
+          transform: [{ rotate: `${zineCardTilt.rotate}deg` }],
+          boxShadow: `0 ${shadow.y}px ${shadow.blur}px ${shadow.color}`,
         }}
       >
-        <Text style={{ ...mono(9, 400, 0.16), color: zineInk.light, opacity: 0.6 }}>
-          {props.brand}
-        </Text>
-        <Text style={{ ...display(52, 500, -0.04), lineHeight: 47.8, color: props.tint }}>
-          {props.month}
-        </Text>
-        <View style={{ flex: 1 }} />
-        <Text style={{ ...display(54, 500, -0.03), lineHeight: 54, color: zineInk.light }}>
-          {props.closed}
-        </Text>
-        <Text style={{ ...body(12.5), marginTop: -2, color: zineInk.light, opacity: 0.7 }}>
-          {props.daysLabel}
-        </Text>
         <View
+          ref={props.cardRef}
+          collapsable={false}
           style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            width: 10 * 7 + 9 * 4,
-            gap: 4,
-            paddingTop: 6,
-            paddingBottom: 4,
+            flex: 1,
+            borderRadius: 22,
+            backgroundColor: zineInk.ink,
+            paddingTop: 18,
+            paddingHorizontal: 16,
+            paddingBottom: 16,
+            gap: 8,
           }}
         >
-          {props.dots.map((closed, i) => (
-            <View
-              key={i}
-              style={{
-                width: 7,
-                height: 7,
-                borderRadius: 3.5,
-                backgroundColor: closed ? props.tint : MISSED_DOT,
-              }}
-            />
-          ))}
+          <Text style={{ ...mono(9, 400, 0.16), color: zineInk.light, opacity: 0.6 }}>
+            {props.brand}
+          </Text>
+          <Text style={{ ...display(52, 500, -0.04), lineHeight: 47.8, color: props.tint }}>
+            {props.month}
+          </Text>
+          <View style={{ flex: 1 }} />
+          <Text style={{ ...display(54, 500, -0.03), lineHeight: 54, color: zineInk.light }}>
+            {props.closed}
+          </Text>
+          <Text style={{ ...body(12.5), marginTop: -2, color: zineInk.light, opacity: 0.7 }}>
+            {props.daysLabel}
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              width: 10 * 7 + 9 * 4,
+              gap: 4,
+              paddingTop: 6,
+              paddingBottom: 4,
+            }}
+          >
+            {props.dots.map((closed, i) => (
+              <View
+                key={i}
+                style={{
+                  width: 7,
+                  height: 7,
+                  borderRadius: 3.5,
+                  backgroundColor: closed ? props.tint : MISSED_DOT,
+                }}
+              />
+            ))}
+          </View>
+          <Text style={{ ...body(13.5, 650), lineHeight: 17.5, color: zineInk.light }}>
+            {props.stat}
+          </Text>
+          <Text
+            style={{ ...mono(8.5, 400, 0.16), paddingTop: 4, color: zineInk.light, opacity: 0.45 }}
+          >
+            {props.footer}
+          </Text>
         </View>
-        <Text style={{ ...body(13.5, 650), lineHeight: 17.5, color: zineInk.light }}>
-          {props.stat}
-        </Text>
-        <Text
-          style={{ ...mono(8.5, 400, 0.16), paddingTop: 4, color: zineInk.light, opacity: 0.45 }}
-        >
-          {props.footer}
-        </Text>
       </View>
       <View
         style={{
@@ -139,6 +163,41 @@ export function ZineShare(props: {
           <Text style={{ ...body(12.5), color: zineInk.ink, opacity: 0.65 }}>{props.showSub}</Text>
         </View>
         <AmountsSwitch on={props.showAmounts} onToggle={props.onToggle} />
+      </View>
+      <View style={{ flexDirection: 'row', gap: 8 }}>
+        <PressScale
+          accessibilityRole="button"
+          onPress={props.onSave}
+          style={{
+            flex: 1,
+            height: 52,
+            borderRadius: 99,
+            borderWidth: 1.5,
+            // The ink at 25%, as the design's rgba(42,20,36,.25).
+            borderColor: `${zineInk.ink}40`,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text style={{ ...body(16, 650), color: zineInk.ink }}>{props.saveLabel}</Text>
+        </PressScale>
+        <PressScale
+          accessibilityRole="button"
+          onPress={props.onShare}
+          style={{
+            flex: 1.4,
+            height: 52,
+            borderRadius: 99,
+            backgroundColor: zineInk.ink,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
+          }}
+        >
+          <Symbol name="ios_share" size={20} color={zineInk.light} />
+          <Text style={{ ...body(16, 650), color: zineInk.light }}>{props.shareLabel}</Text>
+        </PressScale>
       </View>
     </View>
   );

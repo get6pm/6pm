@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { emptyKeypad, keypadVnd, pressKey, type KeypadKey, type KeypadState } from './keypad';
+import {
+  emptyKeypad,
+  foreignKeypad,
+  keypadVnd,
+  pressKey,
+  type KeypadKey,
+  type KeypadState,
+} from './keypad';
 
 const type = (keys: KeypadKey[], start: KeypadState = emptyKeypad) => keys.reduce(pressKey, start);
 
@@ -36,5 +43,22 @@ describe('quick add keypad', () => {
 
   it('replaces a leading zero', () => {
     expect(type(['0', '7']).digits).toBe('7');
+  });
+});
+
+describe('the keypad abroad', () => {
+  const baht = foreignKeypad({ code: 'THB', decimals: 2 });
+  const yen = foreignKeypad({ code: 'JPY', decimals: 0 });
+
+  it('starts in the local currency and flips to đồng and back', () => {
+    expect(baht.currency).toBe('THB');
+    const dong = type(['1', 'currency'], baht);
+    expect(dong).toMatchObject({ digits: '', currency: 'VND' });
+    expect(type(['currency'], dong).currency).toBe('THB');
+  });
+
+  it('takes the decimals the currency is written with', () => {
+    expect(type(['1', '2', '.', '5', '0', '1'], baht).digits).toBe('12.50');
+    expect(type(['1', '2', '.', '5'], yen).digits).toBe('125');
   });
 });

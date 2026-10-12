@@ -74,7 +74,7 @@ Rules that never bend:
 |---|---|
 | Ask 6pm | Code decides, words come from a model. The phone computes every number (domain `ask` engine, as in the prototype); the server model only reads the question into an intent + amount and words the answer. Offline: rules-only answers *(default)* |
 | Backup | End-to-end encrypted snapshot: key in iCloud Keychain, ciphertext on our server under an anonymous token (Scootch pattern). Max |
-| Travel | FX rates from a free daily source cached on the server (must include VND; ECB/Frankfurter does not) *(provider **open**)* |
+| Travel | FX rates from a free daily source cached on the server (must include VND). Frankfurter v2 (multi-source, quotes VND; the ECB-only v1 does not), fetched by a Worker cron *(decided 2026-10-12, see tech-decisions)* |
 | Budget together | Sign in with Apple, one shared ledger per pair on the server. Built after launch scope is green *(default)* |
 | Serious mode | User switch. Offered (once a week at most) when free money goes negative or 3 of the last 7 days overspent *(default)*. Debt-advice link target **open** |
 | Year book | Digital (PDF/image) first; print vendor **open** |
@@ -82,7 +82,6 @@ Rules that never bend:
 
 ## Open (founder)
 
-1. FX provider for Travel (needs VND).
-2. Debt-advice partner/link for serious mode.
-3. Year book print vendor.
-4. Apple team and RevenueCat project that own `ai.sixpm.app` (needed before the first signed build).
+1. Debt-advice partner/link for serious mode.
+2. Year book print vendor.
+3. Apple team and RevenueCat project that own `ai.sixpm.app` (needed before the first signed build).

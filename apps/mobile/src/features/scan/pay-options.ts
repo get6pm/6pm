@@ -27,7 +27,7 @@ export function payOptions(qr: VietQR, walletIds: readonly string[]): PayOptions
 }
 
 /** "NGUYEN VAN AN" → "Nguyen Van An": bank QRs carry names in capitals. */
-function titleCase(name: string): string {
+export function titleCase(name: string): string {
   if (name !== name.toUpperCase()) return name;
   return name
     .toLowerCase()

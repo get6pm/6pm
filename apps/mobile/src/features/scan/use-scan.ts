@@ -2,9 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 
 import {
+  foreignToVnd,
   likelyCategoriesAt,
   parseVietQR,
+  rateNumber,
   type BankInfo,
+  type FxRate,
   type VietQR,
   type VietQRFailure,
 } from '@6pm/domain';
@@ -15,7 +18,7 @@ import { readWallets } from '../../data/onboarding';
 import { haptics } from '../../ui/haptics';
 import { useClock } from '../../ui/theme/clock';
 import { handOff, type HandoffResult } from './bank-handoff';
-import { payeeName, payOptions } from './pay-options';
+import { payeeName, payOptions, titleCase } from './pay-options';
 
 /** A payment on its way out: saved as pending the moment the bank app is asked to open. */
 export interface Payment {
@@ -158,6 +161,31 @@ export function useScan() {
       } finally {
         paying.current = false;
       }
+    },
+    /**
+     * Abroad, a foreign QR paid in the bank app: kept at once in đồng, with the QR's amount in its
+     * own currency and the rate beside it. Rejects when the amount cannot be priced or saved.
+     */
+    keepForeign: async (failure: VietQRFailure, rate: FxRate, fallbackPayee: string) => {
+      const vnd = failure.amount === undefined ? null : foreignToVnd(failure.amount, rate.rate);
+      if (vnd === null || vnd <= 0 || failure.amount === undefined) {
+        throw new Error('The QR has no amount that can be priced');
+      }
+      const named = failure.merchantName?.trim();
+      const payee = named ? titleCase(named) : fallbackPayee;
+      await actions.addSpend({
+        amount: vnd,
+        categoryId: await categoryFor(payee),
+        merchant: payee,
+        source: 'qr',
+        status: 'kept',
+        wallet: null,
+        foreignAmount: {
+          currency: rate.currency,
+          amount: Number(failure.amount),
+          rate: rateNumber(rate.rate),
+        },
+      });
     },
     /** For when the bank app never took over: the user says they are back. */
     back: () =>

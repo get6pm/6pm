@@ -30,3 +30,5 @@ export * from './diary';
 export * from './contracts/backup';
 export * from './ask';
 export * from './export/spends-csv';
+export * from './travel';
+export * from './contracts/fx';

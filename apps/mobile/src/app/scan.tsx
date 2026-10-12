@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 import { Linking, StyleSheet, View } from 'react-native';
 
 import { useCompanionToast } from '../features/companion/use-companion-toast';
-import { foreignAmountLabel } from '../features/scan/pay-options';
+import { ForeignAlert } from '../features/scan/foreign-alert';
 import { ScanAlert } from '../features/scan/scan-card';
 import { scanColours } from '../features/scan/scan-colours';
 import { ScanHandoff, ScanReturn } from '../features/scan/scan-handoff';
@@ -13,6 +13,7 @@ import { ScanPreview } from '../features/scan/scan-preview';
 import { ScanViewfinder } from '../features/scan/scan-viewfinder';
 import { useScan, type ScanPhase } from '../features/scan/use-scan';
 import { useI18n } from '../i18n/i18n';
+import { haptics } from '../ui/haptics';
 import { useToast } from '../ui/toast/toast-host';
 
 const HINTS: Record<ScanPhase['kind'], 'camera' | 'blurry' | 'got' | null> = {
@@ -93,7 +94,26 @@ export default function Scan() {
         />
       ) : null}
       {phase.kind === 'foreign' ? (
-        <ForeignAlert phase={phase} onLog={typeIt} onRetry={scan.retry} />
+        <ForeignAlert
+          phase={phase}
+          onLog={typeIt}
+          onRetry={scan.retry}
+          onKeep={(rate, payee) => {
+            if (answering.current) return;
+            answering.current = true;
+            scan
+              .keepForeign(phase.failure, rate, payee)
+              .then(() => {
+                haptics.success();
+                say('capture');
+                router.back();
+              })
+              .catch(() => {
+                answering.current = false;
+                toast(t('scan.error.pay'));
+              });
+          }}
+        />
       ) : null}
       {phase.kind === 'preview' && scan.options ? (
         <ScanPreview
@@ -131,33 +151,5 @@ export default function Scan() {
         />
       ) : null}
     </View>
-  );
-}
-
-/** A QR from another country's scheme: named, not payable here, and loggable by hand. */
-function ForeignAlert({
-  phase,
-  onLog,
-  onRetry,
-}: {
-  readonly phase: Extract<ScanPhase, { kind: 'foreign' }>;
-  readonly onLog: () => void;
-  readonly onRetry: () => void;
-}) {
-  const { t } = useI18n();
-  const amount = foreignAmountLabel(phase.failure);
-  return (
-    <ScanAlert
-      icon="public"
-      title={t('scan.abroad.title', {
-        scheme: t(`scan.scheme.${phase.failure.scheme ?? 'other'}`),
-      })}
-      body={t('scan.abroad.body')}
-      secondary={{ label: t('scan.tryAgain'), onPress: onRetry }}
-      primary={{
-        label: amount ? t('scan.abroad.log', { amount }) : t('scan.abroad.logPlain'),
-        onPress: onLog,
-      }}
-    />
   );
 }

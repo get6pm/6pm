@@ -1,8 +1,18 @@
-import { formatShort, formatVnd, SURFACES_VERSION, type SpendRow } from '@6pm/domain';
+import {
+  formatForeignWhole,
+  formatShort,
+  formatVnd,
+  SURFACES_VERSION,
+  tripDay,
+  type DailyNumber,
+  type SpendRow,
+} from '@6pm/domain';
 import type { Language } from '@6pm/i18n';
 import { planInk, type Palette } from '@6pm/theme';
 
 import type { I18n } from '../../i18n/i18n';
+import type { Trip } from '../travel/trip';
+import { glyphOf } from './surface-snapshot';
 
 /**
  * What a Live Activity shows, as the JSON in its content state. Every word and number is worded by
@@ -67,5 +77,34 @@ export function pendingPayState(
     companion: serious ? null : 'calm',
     accent: palette.accent,
     onAccent: planInk.onAccent,
+  };
+}
+
+/**
+ * The trip's activity: the place and what is left of today in its currency, the day's spend
+ * against its line, and the spend in đồng. Null until the trip has a rate.
+ */
+export function travelState(
+  trip: Trip,
+  day: Pick<DailyNumber, 'line' | 'spent'>,
+  context: { readonly t: I18n['t']; readonly palette: Palette },
+): TravelState | null {
+  const { t, palette } = context;
+  const today = trip.rate === null ? null : tripDay(day, trip.rate.rate);
+  if (today === null) return null;
+  const money = (whole: number) => formatForeignWhole(whole, trip.currency);
+  return {
+    v: SURFACES_VERSION,
+    icon: glyphOf('flight'),
+    place: t('travel.activity.place', { place: trip.place.name }),
+    left:
+      today.left >= 0
+        ? t('travel.activity.left', { amount: money(today.left) })
+        : t('travel.activity.over', { amount: money(-today.left) }),
+    spent: money(today.spent),
+    of: t('travel.activity.of', { line: money(today.line), vnd: formatVnd(today.spentVnd) }),
+    fraction: today.fraction,
+    path: '/',
+    accent: palette.accent,
   };
 }

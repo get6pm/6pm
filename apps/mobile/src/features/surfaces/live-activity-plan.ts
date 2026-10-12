@@ -1,6 +1,6 @@
 import type { SpendRow } from '@6pm/domain';
 
-import type { RunningActivity } from '../../../modules/surfaces';
+import type { ActivityKind, RunningActivity } from '../../../modules/surfaces';
 import type { MoneySnapshot } from '../../data/money-store';
 
 export interface ActivityPlanInput {
@@ -22,7 +22,7 @@ export interface ActivityPlanInput {
 
 export interface ActivityPlan {
   readonly start: {
-    readonly kind: 'pendingPay';
+    readonly kind: ActivityKind;
     readonly key: string;
     readonly stateJson: string;
   } | null;

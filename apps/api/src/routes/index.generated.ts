@@ -9,6 +9,7 @@ export * from './email-captures-ack';
 export * from './email-captures-get';
 export * from './email-handle-get';
 export * from './email-handle-rotate';
+export * from './fx';
 export * from './health';
 export * from './name-merchant';
 export * from './waitlist';

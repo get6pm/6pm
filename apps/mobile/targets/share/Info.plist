@@ -14,5 +14,11 @@
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).ShareViewController</string>
 	</dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>BricolageGrotesque-Variable.ttf</string>
+		<string>MaterialSymbolsRounded-Variable.ttf</string>
+		<string>IBMPlexMono-Regular.ttf</string>
+	</array>
 </dict>
 </plist>

@@ -131,8 +131,26 @@ describe('shareItem', () => {
         bank: 'MB Bank',
         code: 'FT26282917400',
         namingLines: expect.any(Array) as string[],
+        payeeSure: false,
       },
     });
+  });
+
+  it('counts a name the user typed as sure, so the app does not rename it', () => {
+    const shown = shareCard(JSON.stringify(mbbank), contextJson, now);
+    const { item } = JSON.parse(shareItem(shown, JSON.stringify({ payee: 'Circle K' }))) as {
+      item: unknown;
+    };
+    expect(inboxSpendSchema.parse(item).receipt?.payeeSure).toBe(true);
+  });
+
+  it('still reads an inbox file written before the payee was marked sure or not', () => {
+    const shown = shareCard(JSON.stringify(mbbank), contextJson, now);
+    const { item } = JSON.parse(shareItem(shown, '{}')) as {
+      item: { receipt: Record<string, unknown> };
+    };
+    delete item.receipt['payeeSure'];
+    expect(inboxSpendSchema.safeParse(item).success).toBe(true);
   });
 
   it('applies the edits, reading the amount as typed', () => {

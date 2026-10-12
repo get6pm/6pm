@@ -92,6 +92,7 @@ export function buildShareItem(card: ShareCard, edits: ShareEdits, id: string): 
       ...(card.bank ? { bank: card.bank } : {}),
       ...(card.code ? { code: card.code } : {}),
       namingLines: card.namingLines,
+      payeeSure: card.payeeSure || edits.payee !== undefined,
     },
   };
 }

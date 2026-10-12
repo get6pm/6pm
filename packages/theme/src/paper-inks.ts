@@ -62,3 +62,26 @@ export const activityInk = {
   track: 'rgba(255,255,255,.15)',
   ringTrack: 'rgba(255,255,255,.22)',
 } as const;
+
+/**
+ * The share extension's card (`SS:188-215`): a light sheet over whatever app shared the receipt,
+ * the same at every hour and in every look.
+ */
+export const shareCardInk = {
+  sheet: 'rgba(251,248,243,.96)',
+  ink: '#1f1a28',
+  soft: 'rgba(31,26,40,.6)',
+  hair: 'rgba(31,26,40,.08)',
+  grabber: 'rgba(31,26,40,.25)',
+  editBg: 'rgba(31,26,40,.07)',
+  rows: '#ffffff',
+  confirmFg: '#fbf3ea',
+  /** The "not sure" chip around the payee: dashed edge, warm fill, help glyph. */
+  unsureEdge: '#d88a3c',
+  unsureFill: oklchSrgbHex(0.95, 0.04, 70),
+  unsureGlyph: '#b8622a',
+  unsureText: '#9a4f1c',
+  /** The sheet's shadow and the dim over the sharing app. */
+  shadow: 'rgba(10,5,20,.25)',
+  scrim: 'rgba(10,6,18,.28)',
+} as const;

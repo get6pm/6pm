@@ -37,4 +37,20 @@ enum ThemeTokens {
     static let track = Color(.sRGB, red: 1.0000, green: 1.0000, blue: 1.0000, opacity: 0.1500)
     static let ringTrack = Color(.sRGB, red: 1.0000, green: 1.0000, blue: 1.0000, opacity: 0.2200)
   }
+  enum ShareCard {
+    static let sheet = Color(.sRGB, red: 0.9843, green: 0.9725, blue: 0.9529, opacity: 0.9600)
+    static let ink = Color(.sRGB, red: 0.1216, green: 0.1020, blue: 0.1569, opacity: 1.0000)
+    static let soft = Color(.sRGB, red: 0.1216, green: 0.1020, blue: 0.1569, opacity: 0.6000)
+    static let hair = Color(.sRGB, red: 0.1216, green: 0.1020, blue: 0.1569, opacity: 0.0800)
+    static let grabber = Color(.sRGB, red: 0.1216, green: 0.1020, blue: 0.1569, opacity: 0.2500)
+    static let editBg = Color(.sRGB, red: 0.1216, green: 0.1020, blue: 0.1569, opacity: 0.0700)
+    static let rows = Color(.sRGB, red: 1.0000, green: 1.0000, blue: 1.0000, opacity: 1.0000)
+    static let confirmFg = Color(.sRGB, red: 0.9843, green: 0.9529, blue: 0.9176, opacity: 1.0000)
+    static let unsureEdge = Color(.sRGB, red: 0.8471, green: 0.5412, blue: 0.2353, opacity: 1.0000)
+    static let unsureFill = Color(.sRGB, red: 1.0000, green: 0.9216, blue: 0.8235, opacity: 1.0000)
+    static let unsureGlyph = Color(.sRGB, red: 0.7216, green: 0.3843, blue: 0.1647, opacity: 1.0000)
+    static let unsureText = Color(.sRGB, red: 0.6039, green: 0.3098, blue: 0.1098, opacity: 1.0000)
+    static let shadow = Color(.sRGB, red: 0.0392, green: 0.0196, blue: 0.0784, opacity: 0.2500)
+    static let scrim = Color(.sRGB, red: 0.0392, green: 0.0235, blue: 0.0706, opacity: 0.2800)
+  }
 }

@@ -5,7 +5,8 @@ import { AppState } from 'react-native';
 import { surfaces } from '../../../modules/surfaces';
 import { importInbox } from '../../data/inbox-import';
 import { useMoneyActions, useMoneyStore } from '../../data/money-provider';
-import { enrichShared } from '../capture/enrich-shared';
+import { useApi } from '../api/native-api';
+import { createEnrichShared } from '../capture/enrich-shared';
 
 /**
  * Brings in what the share extension, the shortcuts and the Live Activity left in the App Group:
@@ -15,11 +16,17 @@ import { enrichShared } from '../capture/enrich-shared';
 export function useInboxImport() {
   const store = useMoneyStore();
   const actions = useMoneyActions();
+  const api = useApi();
   const running = useRef<Promise<unknown>>(Promise.resolve());
 
   useEffect(() => {
     const native = surfaces;
     if (!native) return;
+    const enrich = createEnrichShared({
+      request: (request) => api.request(request),
+      ruleCategory: (merchant) => actions.ruleCategory(merchant),
+      categories: () => store.getSnapshot().categories,
+    });
     const run = () => {
       running.current = running.current
         .then(() =>
@@ -27,7 +34,7 @@ export function useInboxImport() {
             store,
             actions,
             inbox: native,
-            enrich: enrichShared,
+            enrich,
             report: (message) => Sentry.captureMessage(message),
           }),
         )
@@ -38,5 +45,5 @@ export function useInboxImport() {
       if (state === 'active') run();
     });
     return () => sub.remove();
-  }, [store, actions]);
+  }, [store, actions, api]);
 }

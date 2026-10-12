@@ -19,6 +19,8 @@ export const inboxReceiptSchema = z.object({
   bank: z.string().min(1).optional(),
   code: z.string().min(1).optional(),
   namingLines: z.array(z.string()),
+  /** False when the payee's name was a guess the user did not check; absent on older files. */
+  payeeSure: z.boolean().optional(),
 });
 
 export const inboxSpendSchema = z.object({

@@ -6,4 +6,5 @@ export * from './backup-meta';
 export * from './backup-put';
 export * from './devices';
 export * from './health';
+export * from './name-merchant';
 export * from './waitlist';

@@ -143,3 +143,10 @@ fakes behaviour the app cannot fake. Founder review.
 | Live Activity | Serious mode | No companion: the minimal island shows the short amount instead | Serious mode removes the companion |
 | Live Activity · Travel | Lock Screen, compact and minimal | Lock Screen: the expanded panel's layout; compact: the flight glyph and "฿560 left"; minimal: the flight glyph | Only the expanded island is drawn |
 | Live Activity | Background colour on the Lock Screen | The board's dark plum glass as a tint (`activityInk.banner`, no blur: iOS draws the activity), white text; the Paid button in the look's accent | iOS only takes a tint colour for a Live Activity's background |
+| Share extension | Reading the receipt | The dim over the sharing app fades in at once; the card rises with the house curve when the receipt has been read | The board only draws a read card; a half-built card would jump |
+| Share extension | Edit | The amount turns into a 64 pt field, To into a text field and Category into a menu of the user's categories, in place; Edit reads Done. Tapping the dashed name opens it on the name | The board draws Edit as a button only |
+| Share extension | Nothing readable | The card opens in Edit on the amount, the subtitle reads "Couldn’t read this receipt. Type the amount." and Confirm stays faded until an amount reads | The app's OCR FAILED card (`SS:320`) is a full-screen state; the extension keeps its own card |
+| Share extension | A PDF of more than one page | Page 1 only, as text when it has text, else read as a picture at 2× | A receipt is one page |
+| Share extension | The app never opened (no context file) | No Category row; the app files the spend by its rules or the hour when it imports it, and naming may pick a category then | The domain bundle has no starter category list to offer before the app has written one |
+| Share extension | Serious mode | No companion in the header | Serious mode removes the companion |
+| Share extension | Dismissed (pulled down past 120 pt, flicked, or the dim tapped) | The card slides away and nothing is added | Leaving the share sheet is not an error |

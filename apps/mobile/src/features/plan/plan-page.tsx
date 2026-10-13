@@ -77,6 +77,7 @@ export function PlanPage({
       ref={scrollRef}
       onScroll={onScroll}
       scrollEventThrottle={16}
+      scrollsToTop={active}
       onLayout={sections.onViewportLayout}
       onContentSizeChange={sections.onContentSizeChange}
       contentInsetAdjustmentBehavior="never"

@@ -7,6 +7,7 @@ import { formatShort, lineUsed, type DailyNumber } from '@6pm/domain';
 import { useMoneySelector } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
 import { PLAN_SECTIONS } from '../plan/plan-page';
+import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
@@ -70,6 +71,7 @@ export const HomeTopNav = memo(function HomeTopNav({
             onPress={onQuickAdd}
             accessibilityRole="button"
             accessibilityLabel={t('home.quickAdd')}
+            hitSlop={4}
             style={{
               width: 36,
               height: 36,
@@ -111,13 +113,22 @@ export const HomeTopNav = memo(function HomeTopNav({
         </Text>
       </View>
       {tab === 'plan' ? (
-        <View style={{ flexDirection: 'row', gap: 6, justifyContent: 'center' }}>
+        <View
+          accessibilityRole="tablist"
+          style={{ flexDirection: 'row', gap: 6, justifyContent: 'center' }}
+        >
           {PLAN_SECTIONS.map((section, k) => {
             const on = k === planSection;
             return (
               <PressScale
                 key={section}
-                onPress={() => onPlanSection(k)}
+                accessibilityRole="tab"
+                accessibilityState={{ selected: on }}
+                hitSlop={{ top: 7, bottom: 7 }}
+                onPress={() => {
+                  if (!on) haptics.tick();
+                  onPlanSection(k);
+                }}
                 style={{
                   height: 30,
                   paddingHorizontal: 12,

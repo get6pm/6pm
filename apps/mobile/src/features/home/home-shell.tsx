@@ -1,21 +1,12 @@
 import { useRouter } from 'expo-router';
 import { memo, startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, {
-  Easing,
-  runOnJS,
-  runOnUI,
-  scrollTo,
-  useAnimatedRef,
-  useAnimatedStyle,
-  useDerivedValue,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { GestureDetector } from 'react-native-gesture-handler';
+import type Animated from 'react-native-reanimated';
+import { scrollTo, useAnimatedRef, useDerivedValue } from 'react-native-reanimated';
+import { scheduleOnUI } from 'react-native-worklets';
 
 import type { DailyNumber } from '@6pm/domain';
-import { curves, gestures } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
@@ -34,12 +25,8 @@ import { HomeTopNav } from './home-top-nav';
 import { useHomeVisible } from './home-visible';
 import { ScanFab } from './scan-fab';
 import { TabBar, TabBarRow } from './tab-bar';
+import { useHomePager } from './use-home-pager';
 
-const enterEase = Easing.bezier(...curves.enter);
-const settleEase = Easing.bezier(0.2, 0.9, 0.25, 1.1);
-const ENTER_MS = 420;
-const SETTLE_MS = 450;
-const FLICK = 600;
 /** Plan and Diary are built after Today has been on screen for a while, one after the other. */
 const PREMOUNT_PLAN_MS = 600;
 const PREMOUNT_DIARY_MS = 1400;
@@ -56,33 +43,24 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
   const { hour } = useClock();
   const { t } = useI18n();
   const { bottom } = useDesignInsets();
-  const { y, nav, barMin } = useHomeScroll();
+  const { width } = useWindowDimensions();
+  const { y } = useHomeScroll();
   const [tab, setTab] = useState<HomeTab>(initialTab);
   const startIndex = HOME_TABS.indexOf(initialTab);
   const [mounted, setMounted] = useState<Mounted>(() => [true, startIndex === 1, startIndex === 2]);
   const todayRef = useAnimatedRef<Animated.ScrollView>();
   const planRef = useAnimatedRef<Animated.ScrollView>();
   const diaryRef = useAnimatedRef<Animated.ScrollView>();
+  const refs = useMemo(() => [todayRef, planRef, diaryRef] as const, [todayRef, planRef, diaryRef]);
   const planSections = useRef<PlanSectionsHandle>(null);
   const [planSection, setPlanSection] = useState(0);
   const homeVisible = useHomeVisible();
-
-  // The UI thread owns which tab is showing; React follows a frame later.
-  const tabIndex = useSharedValue(startIndex);
-  const built = useSharedValue<boolean[]>([...mounted]);
-  const drag = useSharedValue(0);
-  const enterX = useSharedValue(0);
-  const enterOpacity = useSharedValue(1);
-  const sunShown = useDerivedValue(() => tabIndex.value === 0);
 
   const build = useCallback((index: number) => {
     setMounted((current) =>
       current[index] ? current : (current.map((on, i) => on || i === index) as unknown as Mounted),
     );
   }, []);
-  useEffect(() => {
-    built.value = [...mounted];
-  }, [built, mounted]);
 
   const commitTab = useCallback(
     (index: number, swiped: boolean) => {
@@ -96,75 +74,17 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
     [build],
   );
 
-  /**
-   * Every new tab starts at its top with the bars reset, sliding in from the side it lies on. All
-   * of it starts on the UI thread in the frame it is asked for, inside the gesture that asked.
-   */
-  const slideTo = useCallback(
-    (to: number, swiped: boolean) => {
-      'worklet';
-      const from = tabIndex.value;
-      if (to === from || to < 0 || to >= HOME_TABS.length) return;
-      tabIndex.value = to;
-      drag.value = 0;
-      y.value = 0;
-      nav.value = 0;
-      barMin.value = withTiming(0, { duration: 250 });
-      enterX.value = Math.sign(to - from) * 44;
-      enterOpacity.value = 0;
-      enterX.value = withTiming(0, { duration: ENTER_MS, easing: enterEase });
-      enterOpacity.value = withTiming(1, { duration: ENTER_MS, easing: enterEase });
-      // Every tab opens at its top, as the prototype's resetScroll does. A page still to be built
-      // starts there anyway.
-      if (built.value[to]) {
-        scrollTo(to === 0 ? todayRef : to === 1 ? planRef : diaryRef, 0, 0, false);
-      }
-      runOnJS(commitTab)(to, swiped);
-    },
-    [
-      tabIndex,
-      built,
-      drag,
-      y,
-      nav,
-      barMin,
-      enterX,
-      enterOpacity,
-      todayRef,
-      planRef,
-      diaryRef,
-      commitTab,
-    ],
-  );
+  const { tabIndex, position, pan, goTo } = useHomePager({
+    startIndex,
+    refs,
+    mounted,
+    width,
+    build,
+    onCommit: commitTab,
+  });
+  const sunShown = useDerivedValue(() => tabIndex.get() === 0);
 
-  // A tab asked for before its page is built slides in once the page exists, so the slide never
-  // shows the sky alone where the page should be.
-  const pendingSlide = useRef<{ index: number; swiped: boolean } | null>(null);
-  const mountedRef = useRef<Mounted>(mounted);
-  const slideWhenBuilt = useCallback(
-    (index: number, swiped: boolean) => {
-      if (mountedRef.current[index]) {
-        runOnUI(slideTo)(index, swiped);
-        return;
-      }
-      pendingSlide.current = { index, swiped };
-      build(index);
-    },
-    [build, slideTo],
-  );
-  useEffect(() => {
-    mountedRef.current = mounted;
-    const pending = pendingSlide.current;
-    if (pending && mounted[pending.index]) {
-      pendingSlide.current = null;
-      runOnUI(slideTo)(pending.index, pending.swiped);
-    }
-  }, [mounted, slideTo]);
-
-  const goToTab = useCallback(
-    (next: HomeTab) => slideWhenBuilt(HOME_TABS.indexOf(next), false),
-    [slideWhenBuilt],
-  );
+  const goToTab = useCallback((next: HomeTab) => goTo(HOME_TABS.indexOf(next)), [goTo]);
   const homeNav = useMemo<HomeNav>(() => ({ tabIndex, goToTab }), [tabIndex, goToTab]);
   const openDiary = useCallback(() => goToTab('diary'), [goToTab]);
 
@@ -177,44 +97,12 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
     return () => timers.forEach(clearTimeout);
   }, [build]);
 
-  const pan = useMemo(
-    () =>
-      Gesture.Pan()
-        .activeOffsetX([-14, 14])
-        .failOffsetY([-10, 10])
-        .onUpdate((e) => {
-          const index = tabIndex.value;
-          const atEdge = (e.translationX > 0 && index === 0) || (e.translationX < 0 && index === 2);
-          drag.value = e.translationX * (atEdge ? 0.16 : 0.45);
-        })
-        .onEnd((e) => {
-          const index = tabIndex.value;
-          const left = e.translationX < -gestures.tabSwipe || e.velocityX < -FLICK;
-          const right = e.translationX > gestures.tabSwipe || e.velocityX > FLICK;
-          const j = left ? index + 1 : right ? index - 1 : index;
-          if (j !== index && j >= 0 && j < HOME_TABS.length && built.value[j]) {
-            slideTo(j, true);
-          } else if (j !== index && j >= 0 && j < HOME_TABS.length) {
-            drag.value = withTiming(0, { duration: SETTLE_MS, easing: settleEase });
-            runOnJS(slideWhenBuilt)(j, true);
-          } else {
-            drag.value = withTiming(0, { duration: SETTLE_MS, easing: settleEase });
-          }
-        }),
-    [tabIndex, drag, built, slideTo, slideWhenBuilt],
-  );
-
-  const page = useAnimatedStyle(() => ({
-    opacity: enterOpacity.value * (1 - Math.min(Math.abs(drag.value) / 420, 0.3)),
-    transform: [{ translateX: enterX.value + drag.value }],
-  }));
-
   const scrollTop = useCallback(() => {
-    runOnUI(() => {
+    scheduleOnUI(() => {
       'worklet';
-      const i = tabIndex.value;
+      const i = tabIndex.get();
       scrollTo(i === 0 ? todayRef : i === 1 ? planRef : diaryRef, 0, 0, true);
-    })();
+    });
   }, [tabIndex, todayRef, planRef, diaryRef]);
 
   const openSettings = useCallback(() => router.push('/settings'), [router]);
@@ -238,10 +126,12 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
           active={homeVisible}
         />
         <GestureDetector gesture={pan}>
-          <Animated.View style={[StyleSheet.absoluteFill, page]}>
+          <View style={StyleSheet.absoluteFill}>
             <HomePage
               index={0}
               tabIndex={tabIndex}
+              position={position}
+              width={width}
               homeVisible={homeVisible}
               shown={tab === 'today'}
             >
@@ -256,6 +146,8 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
             <HomePage
               index={1}
               tabIndex={tabIndex}
+              position={position}
+              width={width}
               homeVisible={homeVisible}
               shown={tab === 'plan'}
             >
@@ -271,12 +163,14 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
             <HomePage
               index={2}
               tabIndex={tabIndex}
+              position={position}
+              width={width}
               homeVisible={homeVisible}
               shown={tab === 'diary'}
             >
               {mounted[2] ? <Diary scrollRef={diaryRef} /> : null}
             </HomePage>
-          </Animated.View>
+          </View>
         </GestureDetector>
         <HomeTopNav
           tab={tab}

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Text, View } from 'react-native';
-import Animated, { LinearTransition } from 'react-native-reanimated';
+import Animated, { FadeOut, LinearTransition } from 'react-native-reanimated';
 
 import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
+import { easeInOut } from '../../ui/motion/curves';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, tabular } from '../../ui/type/fonts';
@@ -11,6 +12,9 @@ import { SpendRow, type SpendRowView } from './spend-row';
 
 const SHOWN = 4;
 const layout = LinearTransition.springify().damping(22).stiffness(240);
+/** The rows below a deleted one close the gap it leaves; the list is short, so it is not virtualised. */
+const rowLayout = LinearTransition.duration(200).easing(easeInOut);
+const rowExit = FadeOut.duration(150);
 
 /** "Today": the Inbox row when something waits, then the day's spends, newest first. */
 export function TodayList({
@@ -62,6 +66,7 @@ export function TodayList({
         {waiting > 0 ? (
           <PressScale
             scaleTo={0.98}
+            inScroll
             onPress={onOpenInbox}
             style={{
               flexDirection: 'row',
@@ -102,19 +107,21 @@ export function TodayList({
           </Text>
         ) : null}
         {shown.map((row) => (
-          <SpendRow
-            key={row.id}
-            row={row}
-            confirmLabel={t('today.row.confirm')}
-            deleteLabel={t('today.row.delete')}
-            onConfirm={onConfirm}
-            onDelete={onDelete}
-            onOpen={onOpenSpend}
-          />
+          <Animated.View key={row.id} layout={rowLayout} exiting={rowExit}>
+            <SpendRow
+              row={row}
+              confirmLabel={t('today.row.confirm')}
+              deleteLabel={t('today.row.delete')}
+              editLabel={t('details.edit')}
+              onConfirm={onConfirm}
+              onDelete={onDelete}
+              onOpen={onOpenSpend}
+            />
+          </Animated.View>
         ))}
         {rows.length > SHOWN ? (
           <PressScale
-            scaleTo={1}
+            highlight
             onPress={() => setAll((v) => !v)}
             style={{
               height: 48,

@@ -1,30 +1,39 @@
+import { useCallback, useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
-  Easing,
   FadeInDown,
-  runOnJS,
+  ReduceMotion,
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
   withTiming,
   type SharedValue,
 } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 
 import type { CardVerdict } from '@6pm/domain';
 
 import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
+import { easeOut } from '../../ui/motion/curves';
+import { release, rubberband } from '../../ui/motion/physics';
+import { unband } from '../../ui/motion/use-drag-dismiss';
 import type { SymbolName } from '../../ui/icons/symbols.generated';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { BalancedText } from '../../ui/type/balanced-text';
 import { body, display, mono } from '../../ui/type/fonts';
+import { cardFling } from './card-fling';
 import { CloseCard, type CloseCardContent } from './close-card';
 
-const springBack = Easing.bezier(0.2, 0.9, 0.25, 1.12);
-const FLING = 90;
-const FLICK = 800;
+/** Off the screen to the right (kept) and below (not mine). */
+const AWAY_X = 560;
+const AWAY_Y = 820;
+/** The card's height: how far above home it can be pulled before it stops giving. */
+const STACK = 390;
 const COMMIT_MS = 300;
+const reduceMotion = ReduceMotion.System;
 
 /** A card behind the top one: it rises and grows as the top card is dragged away. */
 function BackCard({
@@ -39,7 +48,7 @@ function BackCard({
   readonly dy: SharedValue<number>;
 }) {
   const lift = useAnimatedStyle(() => {
-    const prog = Math.min(1, Math.hypot(dx.value, dy.value) / 140);
+    const prog = Math.min(1, Math.hypot(dx.get(), dy.get()) / 140);
     const k = index - prog;
     return { transform: [{ translateY: k * 14 }, { scale: 1 - k * 0.045 }] };
   });
@@ -81,47 +90,94 @@ function CardStack({
   const dx = useSharedValue(0);
   const dy = useSharedValue(0);
 
-  const settle = () => {
-    dx.value = withTiming(0, { duration: 450, easing: springBack });
-    dy.value = withTiming(0, { duration: 450, easing: springBack });
-  };
-  const fling = (verdict: 'kept' | 'notMine' | 'edit') => {
+  const startX = useSharedValue(0);
+  const startY = useSharedValue(0);
+  const id = top?.row.id;
+
+  const decide = useCallback(
+    (verdict: 'kept' | 'notMine') => {
+      if (id) onDecide(id, verdict);
+    },
+    [id, onDecide],
+  );
+  const edit = useCallback(() => {
+    if (id) onEdit(id);
+  }, [id, onEdit]);
+
+  /** Home again, carrying whatever speed the finger let go with. */
+  const settle = useCallback(
+    (vx: number, vy: number) => {
+      'worklet';
+      dx.set(withSpring(0, { ...release.home, velocity: vx, reduceMotion }));
+      dy.set(withSpring(0, { ...release.home, velocity: vy, reduceMotion }));
+    },
+    [dx, dy],
+  );
+
+  const pan = useMemo(
+    () =>
+      Gesture.Pan()
+        .onStart((e) => {
+          // A card caught mid-flight is picked up where it is.
+          const y = dy.get();
+          startX.set(dx.get() - e.translationX);
+          startY.set((y < 0 ? unband(y, STACK) : y) - e.translationY);
+        })
+        .onUpdate((e) => {
+          const y = startY.get() + e.translationY;
+          dx.set(startX.get() + e.translationX);
+          dy.set(y >= 0 ? y : rubberband(y, STACK));
+        })
+        .onEnd((e) => {
+          const verdict = cardFling(dx.get(), dy.get(), e.velocityX, e.velocityY);
+          if (verdict === null) {
+            settle(e.velocityX, e.velocityY);
+            return;
+          }
+          // The tap lands as the finger lets go, not when the card is gone.
+          scheduleOnRN(haptics.tap);
+          if (verdict === 'edit') {
+            settle(e.velocityX, e.velocityY);
+            scheduleOnRN(edit);
+            return;
+          }
+          const done = (finished?: boolean) => {
+            'worklet';
+            if (finished) scheduleOnRN(decide, verdict);
+          };
+          const away = { ...release.away, reduceMotion };
+          if (verdict === 'kept') {
+            dx.set(withSpring(AWAY_X, { ...away, velocity: e.velocityX }, done));
+          } else {
+            dy.set(withSpring(AWAY_Y, { ...away, velocity: e.velocityY }, done));
+          }
+        }),
+    [dx, dy, startX, startY, settle, edit, decide],
+  );
+
+  // The buttons have no finger speed to carry, so the card leaves on the house ease-out.
+  const press = (verdict: 'kept' | 'notMine' | 'edit') => {
     if (!top) return;
     haptics.tap();
     if (verdict === 'edit') {
-      settle();
-      onEdit(top.row.id);
+      settle(0, 0);
+      edit();
       return;
     }
-    const id = top.row.id;
     const done = (finished?: boolean) => {
       'worklet';
-      if (finished) runOnJS(onDecide)(id, verdict);
+      if (finished) scheduleOnRN(decide, verdict);
     };
-    if (verdict === 'kept') dx.value = withTiming(560, { duration: COMMIT_MS }, done);
-    else dy.value = withTiming(820, { duration: COMMIT_MS }, done);
+    const leave = { duration: COMMIT_MS, easing: easeOut, reduceMotion };
+    if (verdict === 'kept') dx.set(withTiming(AWAY_X, leave, done));
+    else dy.set(withTiming(AWAY_Y, leave, done));
   };
-
-  const pan = Gesture.Pan()
-    .onUpdate((e) => {
-      dx.value = e.translationX;
-      dy.value = Math.max(-40, e.translationY);
-    })
-    .onEnd((e) => {
-      if (dx.value > FLING || e.velocityX > FLICK) runOnJS(fling)('kept');
-      else if (dx.value < -FLING || e.velocityX < -FLICK) runOnJS(fling)('edit');
-      else if (dy.value > FLING || e.velocityY > FLICK) runOnJS(fling)('notMine');
-      else {
-        dx.value = withTiming(0, { duration: 450, easing: springBack });
-        dy.value = withTiming(0, { duration: 450, easing: springBack });
-      }
-    });
 
   const topStyle = useAnimatedStyle(() => ({
     transform: [
-      { translateX: dx.value },
-      { translateY: dy.value },
-      { rotate: `${dx.value / 18}deg` },
+      { translateX: dx.get() },
+      { translateY: dy.get() },
+      { rotate: `${dx.get() / 18}deg` },
     ],
   }));
 
@@ -153,7 +209,7 @@ function CardStack({
 
   return (
     <>
-      <View style={{ height: 390 }}>
+      <View style={{ height: STACK }}>
         {cards
           .slice(1, 3)
           .map((card, i) => (
@@ -172,9 +228,9 @@ function CardStack({
       </View>
 
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 30 }}>
-        {button('edit', buttons.edit, false, () => fling('edit'))}
-        {button('south', buttons.notMine, false, () => fling('notMine'))}
-        {button('check', buttons.keep, true, () => fling('kept'))}
+        {button('edit', buttons.edit, false, () => press('edit'))}
+        {button('south', buttons.notMine, false, () => press('notMine'))}
+        {button('check', buttons.keep, true, () => press('kept'))}
       </View>
     </>
   );
@@ -182,7 +238,7 @@ function CardStack({
 
 /**
  * The cards step: drag the top card right to keep, left to edit, down if it isn't yours, or use
- * the three buttons. Flung cards leave the screen and are decided 300 ms later, as designed.
+ * the three buttons. A flung card leaves at the finger's speed and is decided once it is gone.
  */
 export function CloseCards(props: CloseCardsProps) {
   const { palette } = useTheme();

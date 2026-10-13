@@ -1,8 +1,10 @@
 import { Canvas, Picture, Skia, createPicture, matchFont } from '@shopify/react-native-skia';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Platform } from 'react-native';
-import {
+import { Platform, useWindowDimensions } from 'react-native';
+import Animated, {
   Easing,
+  measure,
+  useAnimatedRef,
   useDerivedValue,
   useReducedMotion,
   useSharedValue,
@@ -69,13 +71,28 @@ export function Companion({ size, mood, form: asked, serious = false }: Companio
   /** How much of the Max form still shows over the base one after Max ends. */
   const leaving = useSharedValue(0);
 
+  const box = useAnimatedRef<Animated.View>();
+  const window = useWindowDimensions();
   const tick = useCallback(
     (frame: FrameInfo) => {
       'worklet';
+      // Scrolled out of sight (a long sheet, the Today list), it holds still: drawing a canvas
+      // nobody sees costs every frame, and one taken off screen can stall the UI thread waiting
+      // for a surface to draw into.
+      const at = measure(box);
+      if (
+        at !== null &&
+        (at.pageY >= window.height ||
+          at.pageY + at.height <= 0 ||
+          at.pageX >= window.width ||
+          at.pageX + at.width <= 0)
+      ) {
+        return;
+      }
       // Added up frame by frame so a pause does not send the clock back to zero.
       clock.value += (frame.timeSincePreviousFrame ?? 0) / 1000;
     },
-    [clock],
+    [clock, box, window.width, window.height],
   );
   useGatedFrameCallback(tick, !reduceMotion, useScreenActivity());
 
@@ -128,8 +145,10 @@ export function Companion({ size, mood, form: asked, serious = false }: Companio
   });
 
   return (
-    <Canvas style={{ width: size, height: size }} pointerEvents="none">
-      <Picture picture={picture} />
-    </Canvas>
+    <Animated.View ref={box} style={{ width: size, height: size }} pointerEvents="none">
+      <Canvas style={{ width: size, height: size }} pointerEvents="none">
+        <Picture picture={picture} />
+      </Canvas>
+    </Animated.View>
   );
 }

@@ -111,6 +111,7 @@ export default function BillSheet() {
     >
       <ScrollView
         keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: 14,

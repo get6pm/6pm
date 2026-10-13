@@ -8,6 +8,7 @@ Decided 10 Oct 2026. Change one only with new evidence, and record the change he
 |---|---|---|
 | App | Expo 58, React Native 0.88 (New Architecture, Hermes), Expo Router native stack | Same pins as Scootch; most fixes ship over the air |
 | Motion | Reanimated 4 (worklets on the UI thread), Gesture Handler 3, native-stack transitions, expo-haptics | The native feel is the product. No JS-thread animation, no `Animated` from RN |
+| Sheets | Expo Router `presentation: 'formSheet'` (the real UISheetPresentationController): one detent at the tallest iOS allows, 40 pt corners, the prototype's grabber drawn in the sheet, content on `palette.sheetSolid`. The missed-day card and the look detail, which iOS cannot draw (it floats lower detents inset from the edges), draw themselves over a transparent modal with Reanimated springs. Changed 12 Oct 2026 from every sheet drawing itself over a transparent modal | The native sheet drags from anywhere, pulls down from the top of a scroll, carries the finger's velocity, is interruptible, honours Reduce Motion, and slides away on `router.back()`; the hand-drawn one did none of that well. Its top edge sits 4 pt below the prototype's |
 | Sky and atmosphere | `@shopify/react-native-skia`: gradients, blurred blooms, grain/halftone/rain as runtime shaders | 60/120 fps full-screen effects; CSS layer stacks do not port to views |
 | Colour | All colour comes from `@6pm/theme` (port of the prototype's `palette()`/`themes()`, oklch converted to sRGB hex in code). Hex in components is a lint smell | One engine, colour-exact to the prototype |
 | Wide colour | The design's oklch tints render as sRGB hex (identical to the browser renders). Display P3 output (`oklch()` in `@6pm/theme`) waits on React Native parsing `color(display-p3 …)` in JS; native iOS already accepts it | Ship what matches the renders; upgrade without touching screens |
@@ -60,7 +61,7 @@ Workspace packages are `@6pm/<dir>`, ESM, export TypeScript source (`"exports": 
 ## 4. Motion contract
 
 - Curves from the prototype, as Reanimated springs/beziers in `@6pm/theme/motion`: house overshoot `cubic-bezier(.2,.9,.25,1.12)`, entrance `(.2,.9,.2,1)`, wheel snap `(.2,.9,.25,1)` 380 ms.
-- Gestures drive shared values directly; release uses velocity-aware springs. Thresholds from the prototype (card fling 90 px, row confirm 90, delete reveal −48 / commit −150, sheet dismiss 120 or flick).
+- Gestures drive shared values directly; release uses velocity-aware springs. Thresholds from the prototype (card fling 90 px, row confirm 90, delete reveal −48 / commit −150, sheet dismiss 120 or flick). Native sheets bring their own physics; a drawn sheet decides by where the flick was heading (position plus projected velocity), springs home `{300 ms, damping ratio 0.8}` or out `{300 ms, ratio 1, clamped}` with the finger's velocity, and continues from where it is when grabbed mid-flight.
 - Haptics: selection for ticks/thresholds, light impact for actions, success notification for close, reveal and purchases.
 - Reduce Motion: springs become 200 ms fades; atmosphere freezes; nothing loops.
 

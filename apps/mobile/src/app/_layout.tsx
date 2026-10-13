@@ -19,7 +19,7 @@ import { MemberCompanionForm } from '../features/purchases/member-companion-form
 import { PurchasesProvider } from '../features/purchases/purchases-provider';
 import { TravelProvider } from '../features/travel/travel-provider';
 import { I18nProvider } from '../i18n/i18n';
-import { sheet, takeover } from '../ui/navigation/presentations';
+import { drawnSheet, sheet, takeover } from '../ui/navigation/presentations';
 import { ClockProvider } from '../ui/theme/clock';
 import { ThemeProvider, useTheme } from '../ui/theme/theme';
 import { StartupError } from '../ui/startup-error';
@@ -64,14 +64,14 @@ function Screens() {
         <Stack.Screen name="inbox" options={sheet} />
         <Stack.Screen name="close" options={takeover} />
         <Stack.Screen name="spend/[id]" options={sheet} />
-        <Stack.Screen name="missed-day" options={sheet} />
+        <Stack.Screen name="missed-day" options={drawnSheet} />
         <Stack.Screen name="money-diary" options={sheet} />
         <Stack.Screen name="new-pot" options={sheet} />
         <Stack.Screen name="pot/[id]" options={sheet} />
         <Stack.Screen name="bill/[id]" options={sheet} />
         <Stack.Screen name="month" options={sheet} />
         <Stack.Screen name="looks" options={sheet} />
-        <Stack.Screen name="look/[id]" options={sheet} />
+        <Stack.Screen name="look/[id]" options={drawnSheet} />
         <Stack.Screen name="max" options={sheet} />
         <Stack.Screen name="max-welcome" options={takeover} />
         <Stack.Screen name="backup" options={sheet} />

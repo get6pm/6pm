@@ -2,15 +2,15 @@
 title: Chính sách quyền riêng tư
 description: Những gì 6pm giữ trên điện thoại của bạn, phần rất nhỏ rời khỏi máy, và ai xử lý chúng.
 lede: 6pm giữ tiền của bạn ngay trên điện thoại. Trang này nói rõ chúng tôi làm gì với phần rất nhỏ rời khỏi máy.
-updated: '2026-10-12'
+updated: '2026-10-13'
 ---
 
 ## Tóm tắt
 
 - Chi tiêu, kế hoạch và nhật ký của bạn nằm trên iPhone, trong một cơ sở dữ liệu được mã hoá. Chúng tôi không đọc được.
-- Không có tài khoản, không cần đăng nhập. Chúng tôi không hỏi tên, số điện thoại hay thông tin đăng nhập ngân hàng của bạn.
+- 6pm không cần tài khoản. Chỉ khi dùng Cùng chia ngân sách bạn mới đăng nhập, bằng Apple. Chúng tôi không hỏi số điện thoại, email hay thông tin đăng nhập ngân hàng của bạn.
 - Chúng tôi không chạy quảng cáo, không bán dữ liệu, không dùng công cụ phân tích hay theo dõi, cả trong ứng dụng lẫn trên trang web này.
-- Có một vài thứ nhỏ rời khỏi điện thoại: mã thiết bị ẩn danh, trạng thái mua hàng, bản cập nhật ứng dụng, báo cáo lỗi, câu hỏi bạn hỏi 6pm, email ngân hàng bạn chuyển tới địa chỉ nhận biên lai và, chỉ khi bạn bật, bản sao lưu đã mã hoá. Từng thứ được giải thích bên dưới.
+- Có một vài thứ nhỏ rời khỏi điện thoại: mã thiết bị ẩn danh, trạng thái mua hàng, bản cập nhật ứng dụng, báo cáo lỗi, câu hỏi bạn hỏi 6pm, email ngân hàng bạn chuyển tới địa chỉ nhận biên lai, các hũ chung bạn góp cùng ai đó trong Cùng chia ngân sách và, chỉ khi bạn bật, bản sao lưu đã mã hoá. Từng thứ được giải thích bên dưới.
 
 ## Chúng tôi là ai
 
@@ -78,6 +78,18 @@ Sao lưu là tính năng của 6pm Max và luôn tắt cho đến khi bạn bậ
 
 Apple đồng bộ khoá giữa các thiết bị của bạn qua Chuỗi khoá iCloud, theo Apple ID của bạn và điều khoản của Apple. Nếu bạn mất cả khoá lẫn điện thoại, không ai, kể cả chúng tôi, có thể mở bản sao lưu.
 
+### Cùng chia ngân sách (6pm Max)
+
+Cùng chia ngân sách cho hai người cùng góp vào các hũ chung. Đây là phần duy nhất của 6pm có đăng nhập, và không có gì xảy ra nếu bạn không bắt đầu hoặc mở một link mời.
+
+- **Đăng nhập bằng Apple.** Khi bắt đầu hoặc tham gia, bạn đăng nhập bằng Apple. Apple cho chúng tôi một mã cố định chỉ dùng được với 6pm và, ở lần đầu, tên của bạn nếu bạn chọn chia sẻ. Chúng tôi không bao giờ hỏi email. Máy chủ gắn mã đó với mã thiết bị ẩn danh của bạn. Khi bạn xoá tài khoản, máy chủ cũng đề nghị Apple chấm dứt quyền truy cập của 6pm, nên 6pm rời khỏi danh sách "Đăng nhập bằng Apple" trong cài đặt Apple ID của bạn.
+- **Những gì được chia sẻ.** Máy chủ giữ tên của bạn, tên, biểu tượng, màu, mục tiêu và tháng của từng hũ chung, cùng từng khoản mỗi người nói đã góp, ai góp và lúc nào. Người cùng góp thấy tất cả những điều này, và bạn thấy phần của họ. Không có gì khác từ điện thoại được chia sẻ: không chi tiêu, không kế hoạch, không con số mỗi ngày, không hũ riêng của bạn.
+- **Link mời.** Mỗi link mời dùng được một lần, trong 7 ngày. Máy chủ chỉ lưu dạng đã xáo trộn của nó.
+- **Rời đi.** Ai trong hai người cũng có thể rời đi bất cứ lúc nào. Rời đi sẽ kết thúc cho cả hai và xoá các hũ chung cùng mọi thứ trong đó khỏi máy chủ. Mỗi điện thoại giữ lại, như lịch sử, những khoản chính người dùng nó đã góp.
+- **Xoá tài khoản.** "Xoá tài khoản Cùng chia ngân sách" trong ứng dụng xoá đăng nhập, tên của bạn và mọi thứ bạn chia sẻ khỏi máy chủ, và kết thúc cho cả người cùng góp. Ngừng cho 6pm dùng Apple ID trong cài đặt Apple ID cũng có tác dụng như vậy.
+
+6pm không bao giờ chuyển tiền. Các khoản trong hũ chung là số mỗi người nói đã để riêng; chúng chỉ để đếm.
+
 ### Danh sách chờ ra mắt (trang web)
 
 Nếu bạn đăng ký vào danh sách chờ trên trang web này, chúng tôi lưu địa chỉ email, ngôn ngữ của trang, thời điểm đăng ký và số thứ tự của bạn. Nếu trước đó bạn đã dùng công cụ tính khoản tiền rò rỉ (leak calculator) của trang, chúng tôi cũng lưu con số hàng tháng nó đưa ra. Bản thân công cụ chạy ngay trong trình duyệt của bạn, và sẽ không gửi gì nếu bạn không đăng ký.
@@ -112,7 +124,7 @@ Nếu bạn chọn chia sẻ dữ liệu phân tích với nhà phát triển tr
 
 Các công ty này vận hành những phần của dịch vụ đã nêu ở trên. Họ có thể xử lý dữ liệu của bạn ở nước khác, kể cả Hoa Kỳ và Trung Quốc.
 
-- **Apple** xử lý thanh toán và Chuỗi khoá iCloud. [Chính sách quyền riêng tư của Apple](https://www.apple.com/legal/privacy/).
+- **Apple** xử lý thanh toán, Chuỗi khoá iCloud và Đăng nhập bằng Apple. [Chính sách quyền riêng tư của Apple](https://www.apple.com/legal/privacy/).
 - **RevenueCat** ghi lại trạng thái mua hàng. [Chính sách quyền riêng tư của RevenueCat](https://www.revenuecat.com/privacy).
 - **Cloudflare** lưu trữ trang web và máy chủ của chúng tôi. [Chính sách quyền riêng tư của Cloudflare](https://www.cloudflare.com/privacypolicy/).
 - **Sentry** nhận báo cáo lỗi. [Chính sách quyền riêng tư của Sentry](https://sentry.io/privacy/).
@@ -129,6 +141,7 @@ Chúng tôi chỉ dùng họ cho những mục đích này.
 - **Biên lai qua email.** Cho đến khi điện thoại lấy biên lai về, và không bao giờ quá 30 ngày. Địa chỉ nhận biên lai tồn tại chừng nào mã thiết bị còn.
 - **Câu hỏi và dòng biên lai.** Chúng tôi không giữ. DeepSeek giữ yêu cầu theo chính sách của họ.
 - **Sao lưu.** Cho đến khi bạn xoá. Khi bạn xoá, chúng tôi xoá dữ liệu mã hoá khỏi máy chủ.
+- **Cùng chia ngân sách.** Hũ chung cho đến khi một trong hai người rời đi; đăng nhập và tên của bạn cho đến khi bạn xoá tài khoản Cùng chia ngân sách. Cả hai việc đều xoá dữ liệu khỏi máy chủ ngay lập tức.
 - **Danh sách chờ.** Cho đến khi bạn yêu cầu xoá email của mình.
 - **Hồ sơ mua hàng.** Apple và RevenueCat lưu theo chính sách của họ và theo quy định pháp luật.
 

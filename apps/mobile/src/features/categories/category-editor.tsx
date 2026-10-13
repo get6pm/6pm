@@ -1,21 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, useWindowDimensions, View } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, {
-  Easing,
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import { GestureDetector } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
 
-import { gestures, oklchSrgbHex } from '@6pm/theme';
+import { oklchSrgbHex } from '@6pm/theme';
 
 import type { CategoryInput } from '../../data/category-actions';
 import { useI18n } from '../../i18n/i18n';
 import { CategoryTile } from '../../ui/category-tile';
 import { isSymbolName } from '../../ui/icons/symbol';
 import { useDesignInsets } from '../../ui/layout/design-insets';
+import { useDragDismiss } from '../../ui/motion/use-drag-dismiss';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { Switch } from '../../ui/primitives/switch';
 import { useTheme } from '../../ui/theme/theme';
@@ -24,17 +19,11 @@ import { HuePicker } from './hue-picker';
 import { FREE_ICON_COUNT, MAX_ICON_COUNT } from './icon-packs';
 import { IconPicker } from './icon-picker';
 
-const OPEN_MS = 450;
-const CLOSE_MS = 260;
-const open = Easing.bezier(0.2, 0.9, 0.2, 1);
-const settle = Easing.bezier(0.2, 0.9, 0.25, 1.12);
-const leave = Easing.bezier(0.4, 0, 1, 1);
-const FLICK = 900;
 const DELETE_RED = oklchSrgbHex(0.66, 0.19, 25);
 
 /**
  * The floating card that makes or edits a category, over the Categories sheet: name, icon, colour
- * and whether it counts toward the day. It rises over 0.45 s; Cancel, a tap outside or a drag down
+ * and whether it counts toward the day. It rises from below; Cancel, a tap outside or a drag down
  * on its grabber puts it away. `onClose` runs once it has left the screen.
  */
 export function CategoryEditor({
@@ -59,41 +48,24 @@ export function CategoryEditor({
   const { height } = useWindowDimensions();
   const [draft, setDraft] = useState(initial);
   const area = height - top(58);
-  const y = useSharedValue(area);
-  const dim = useSharedValue(0);
+  const {
+    drag,
+    panel,
+    backdrop,
+    onLayout,
+    dismiss: leave,
+  } = useDragDismiss({
+    area,
+    onDismissed: onClose,
+  });
   // Set once the card starts to leave, so a second tap cannot save or delete twice.
   const leaving = useRef(false);
-
-  useEffect(() => {
-    y.value = withTiming(0, { duration: OPEN_MS, easing: open });
-    dim.value = withTiming(1, { duration: 300 });
-  }, [y, dim]);
-
   const dismiss = useCallback(() => {
     if (leaving.current) return;
     leaving.current = true;
-    y.value = withTiming(area, { duration: CLOSE_MS, easing: leave }, (finished) => {
-      if (finished) runOnJS(onClose)();
-    });
-    dim.value = withTiming(0, { duration: CLOSE_MS });
-  }, [area, dim, onClose, y]);
+    leave();
+  }, [leave]);
 
-  const drag = Gesture.Pan()
-    .onUpdate((e) => {
-      y.value = e.translationY < 0 ? e.translationY * 0.15 : e.translationY;
-      dim.value = Math.max(0.15, 1 - y.value / 480);
-    })
-    .onEnd((e) => {
-      if (y.value > gestures.sheetDismiss || e.velocityY > FLICK) {
-        runOnJS(dismiss)();
-      } else {
-        y.value = withTiming(0, { duration: OPEN_MS, easing: settle });
-        dim.value = withTiming(1, { duration: 300 });
-      }
-    });
-
-  const card = useAnimatedStyle(() => ({ transform: [{ translateY: y.value }] }));
-  const backdrop = useAnimatedStyle(() => ({ opacity: dim.value }));
   const pickIcon = useCallback((icon: string) => setDraft((d) => ({ ...d, icon })), []);
   const pickHue = useCallback((hue: number) => setDraft((d) => ({ ...d, hue })), []);
   const named = draft.name.trim() !== '';
@@ -139,8 +111,9 @@ export function CategoryEditor({
             boxShadow: '0 30px 80px rgba(10,5,20,.45)',
             overflow: 'hidden',
           },
-          card,
+          panel,
         ]}
+        onLayout={onLayout}
       >
         <GestureDetector gesture={drag}>
           <View style={{ paddingTop: 8, paddingHorizontal: 18, gap: 18 }}>

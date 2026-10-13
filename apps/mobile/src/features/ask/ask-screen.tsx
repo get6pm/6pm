@@ -1,6 +1,11 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { Keyboard, ScrollView, Text, View, type ScrollViewInstance } from 'react-native';
+import { Text, View } from 'react-native';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import {
+  KeyboardChatScrollView,
+  type KeyboardChatScrollViewRef,
+} from 'react-native-keyboard-controller';
 
 import { useI18n } from '../../i18n/i18n';
 import { Companion } from '../../ui/companion/companion';
@@ -9,7 +14,7 @@ import { GlassButton } from '../../ui/primitives/glass-button';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
 import { AnswerBubble, IntroBubble, MeBubble, TypingBubble } from './ask-bubbles';
-import { AskComposer } from './ask-composer';
+import { AskComposer, useComposerLift } from './ask-composer';
 import { AskSuggestionList } from './ask-suggestion-list';
 import { useAsk } from './use-ask';
 
@@ -26,14 +31,12 @@ export function AskScreen({ question }: { readonly question: string | null }) {
   const { t } = useI18n();
   const { top } = useDesignInsets();
   const chat = useAsk();
-  const scroll = useRef<ScrollViewInstance>(null);
-  // Once the keyboard is up, the newest bubble moves into view; not on every frame of its rise.
-  useEffect(() => {
-    const sub = Keyboard.addListener('keyboardDidShow', () =>
-      scroll.current?.scrollToEnd({ animated: true }),
-    );
-    return () => sub.remove();
-  }, []);
+  const scroll = useRef<KeyboardChatScrollViewRef>(null);
+  const { keyboardOffset, lift } = useComposerLift();
+  // The conversation's window ends at the composer's top without a layout pass: the clip moves up
+  // with the composer and its contents move back down by as much, so only the bottom edge rises.
+  const clip = useAnimatedStyle(() => ({ transform: [{ translateY: lift.get() }] }));
+  const unclip = useAnimatedStyle(() => ({ transform: [{ translateY: -lift.get() }] }));
 
   // Sent once, a moment after the screen opens; closing the screen first cancels it.
   const send = useRef(chat.send);
@@ -65,33 +68,40 @@ export function AskScreen({ question }: { readonly question: string | null }) {
           </View>
         </View>
       </View>
-      <ScrollView
-        ref={scroll}
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          gap: 12,
-          paddingTop: 10,
-          paddingHorizontal: 16,
-          paddingBottom: 16,
-        }}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="interactive"
-        onContentSizeChange={() => scroll.current?.scrollToEnd({ animated: true })}
-      >
-        <IntroBubble text={t('ask.intro')} />
-        {chat.messages.length === 0 ? (
-          <AskSuggestionList suggestions={chat.suggestions} onPick={(q) => void chat.send(q)} />
-        ) : null}
-        {chat.messages.map((message) =>
-          message.kind === 'me' ? (
-            <MeBubble key={message.id} text={message.text} />
-          ) : (
-            <AnswerBubble key={message.id} card={message.card} />
-          ),
-        )}
-        {chat.typing ? <TypingBubble /> : null}
-      </ScrollView>
+      <Animated.View pointerEvents="box-none" style={[{ flex: 1, overflow: 'hidden' }, clip]}>
+        <Animated.View pointerEvents="box-none" style={[{ flex: 1 }, unclip]}>
+          {/* The conversation rises with the keyboard, frame by frame and by as much as the composer
+              does, so the newest bubble stays just above it while the keyboard moves. */}
+          <KeyboardChatScrollView
+            ref={scroll}
+            offset={keyboardOffset}
+            style={{ flex: 1 }}
+            contentContainerStyle={{
+              gap: 12,
+              paddingTop: 10,
+              paddingHorizontal: 16,
+              paddingBottom: 16,
+            }}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="interactive"
+            onContentSizeChange={() => scroll.current?.scrollToEnd({ animated: true })}
+          >
+            <IntroBubble text={t('ask.intro')} />
+            {chat.messages.length === 0 ? (
+              <AskSuggestionList suggestions={chat.suggestions} onPick={(q) => void chat.send(q)} />
+            ) : null}
+            {chat.messages.map((message) =>
+              message.kind === 'me' ? (
+                <MeBubble key={message.id} text={message.text} />
+              ) : (
+                <AnswerBubble key={message.id} card={message.card} />
+              ),
+            )}
+            {chat.typing ? <TypingBubble /> : null}
+          </KeyboardChatScrollView>
+        </Animated.View>
+      </Animated.View>
       <AskComposer chat={chat} />
     </View>
   );

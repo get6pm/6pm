@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { ScrollView, Text, TextInput, View } from 'react-native';
+import { useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
 import Animated, {
   FadeIn,
-  useAnimatedKeyboard,
   useAnimatedStyle,
+  useDerivedValue,
   withTiming,
 } from 'react-native-reanimated';
 
@@ -18,6 +19,25 @@ import type { AskChat } from './use-ask';
 
 /** The longest question the server reads (the request schema's limit). */
 const MAX_QUESTION = 300;
+
+/** The gap between the input and the top of the keyboard while it is up. */
+const KEYBOARD_GAP = 8;
+
+/**
+ * Where the composer sits with the keyboard down (its bottom padding), how much of the keyboard's
+ * height it does not have to rise by, and how far it is lifted right now: 0 down to minus that
+ * rise, read from the keyboard's own position on the UI thread, frame by frame, also while the
+ * keyboard is dragged down. The conversation above shrinks and lifts by the same amount.
+ */
+export function useComposerLift() {
+  const { bottom } = useDesignInsets();
+  const rest = bottom(30);
+  const keyboardOffset = rest - KEYBOARD_GAP;
+  // `height` runs from 0 down to minus the keyboard's height; the first part of it is the rest.
+  const { height } = useReanimatedKeyboardAnimation();
+  const lift = useDerivedValue(() => Math.min(0, height.get() + keyboardOffset));
+  return { rest, keyboardOffset, lift };
+}
 
 /** "Unlimited with [lock MAX]": the free meter's way to Max. */
 function UnlimitedWithMax({ onPress }: { readonly onPress: () => void }) {
@@ -196,20 +216,18 @@ function Input({
 
 /**
  * Everything under the conversation: the free-question meter or the lock, the suggestion chips
- * and the input. It rides up on the keyboard on the UI thread.
+ * and the input. It rides on the keyboard, never lagging or leading it.
  */
 export function AskComposer({ chat }: { readonly chat: AskChat }) {
   const { palette } = useTheme();
   const { t } = useI18n();
-  const { bottom } = useDesignInsets();
-  const keyboard = useAnimatedKeyboard();
-  const rest = bottom(30);
-  const lift = useAnimatedStyle(() => ({
-    paddingBottom: Math.max(rest, keyboard.height.value + 8),
-  }));
+  const { rest, lift: keyboardLift } = useComposerLift();
+  const lift = useAnimatedStyle(() => ({ transform: [{ translateY: keyboardLift.get() }] }));
   const { freeLeft, locked } = chat;
   return (
-    <Animated.View style={[{ paddingTop: 8, paddingHorizontal: 12, gap: 10 }, lift]}>
+    <Animated.View
+      style={[{ paddingTop: 8, paddingHorizontal: 12, paddingBottom: rest, gap: 10 }, lift]}
+    >
       {freeLeft !== null && freeLeft > 0 ? (
         <Animated.View
           entering={FadeIn}

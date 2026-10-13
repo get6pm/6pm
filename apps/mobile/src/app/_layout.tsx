@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import type { ReactNode } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 import { MoneyProvider, useMoney } from '../data/money-provider';
 import { DatabaseGate } from '../db/database-gate';
@@ -98,35 +99,38 @@ function PlanTheme({ children }: { readonly children: ReactNode }) {
 function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <DatabaseGate>
-        <PurchasesProvider>
-          <MemberCompanionForm>
-            <LookSettingsProvider>
-              <I18nProvider>
-                <ClockProvider>
-                  <MoneyProvider failed={(retry) => <StartupError onRetry={retry} />}>
-                    <TravelProvider>
-                      <PlanTheme>
-                        <ToastHost>
-                          <UndoHost>
-                            <Screens />
-                          </UndoHost>
-                          <CloseNudge />
-                          <CloseReminderSync />
-                          <ReminderTap />
-                          <BackupHost />
-                          <SurfacesSync />
-                          {__DEV__ ? <DevCommands /> : null}
-                        </ToastHost>
-                      </PlanTheme>
-                    </TravelProvider>
-                  </MoneyProvider>
-                </ClockProvider>
-              </I18nProvider>
-            </LookSettingsProvider>
-          </MemberCompanionForm>
-        </PurchasesProvider>
-      </DatabaseGate>
+      {/* Keyboard-following UI reads the keyboard's real position on the UI thread from here. */}
+      <KeyboardProvider>
+        <DatabaseGate>
+          <PurchasesProvider>
+            <MemberCompanionForm>
+              <LookSettingsProvider>
+                <I18nProvider>
+                  <ClockProvider>
+                    <MoneyProvider failed={(retry) => <StartupError onRetry={retry} />}>
+                      <TravelProvider>
+                        <PlanTheme>
+                          <ToastHost>
+                            <UndoHost>
+                              <Screens />
+                            </UndoHost>
+                            <CloseNudge />
+                            <CloseReminderSync />
+                            <ReminderTap />
+                            <BackupHost />
+                            <SurfacesSync />
+                            {__DEV__ ? <DevCommands /> : null}
+                          </ToastHost>
+                        </PlanTheme>
+                      </TravelProvider>
+                    </MoneyProvider>
+                  </ClockProvider>
+                </I18nProvider>
+              </LookSettingsProvider>
+            </MemberCompanionForm>
+          </PurchasesProvider>
+        </DatabaseGate>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   );
 }

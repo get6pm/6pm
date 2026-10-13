@@ -9,6 +9,8 @@ export const haptics = {
   tick: () => void Haptics.selectionAsync(),
   /** Keep / edit / not mine, FAB long-press, sheet dismissed, undo. */
   tap: () => void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light),
+  /** Something let go of for good: a row flung away to delete. */
+  commit: () => void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
   /** The close done, the reveal settling, a purchase made. */
   success: () => void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success),
 };

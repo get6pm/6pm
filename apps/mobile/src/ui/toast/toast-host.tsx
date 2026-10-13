@@ -12,12 +12,13 @@ import Animated, {
   Easing,
   FadeIn,
   FadeOut,
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FullWindowOverlay } from 'react-native-screens';
+import { scheduleOnRN } from 'react-native-worklets';
 
 import { Companion } from '../companion/companion';
 import { useTheme } from '../theme/theme';
@@ -26,7 +27,22 @@ import { body } from '../type/fonts';
 /** The resting Dynamic Island the toast grows out of, and the toast it becomes (design points). */
 const ISLAND = { top: 11, width: 126, height: 37, radius: 24 };
 const TOAST = { inset: 14, height: 80, radius: 40 };
+/** Phones with a Dynamic Island have a top safe area of at least this; notched and older ones less. */
+const ISLAND_SAFE_TOP = 59;
+/** Without an island the pill starts this far below the status bar instead. */
+const BELOW_STATUS_BAR = 6;
 const SHOW_MS = 3000;
+/** The line arrives once the pill is mostly open, and leaves before it closes. */
+const lineIn = FadeIn.duration(200).delay(100);
+const lineOut = FadeOut.duration(150);
+
+/**
+ * Where the pill's top edge sits: on the hardware island where there is one, so the toast grows out
+ * of it; elsewhere just under the status bar or notch.
+ */
+export function islandTop(safeTop: number): number {
+  return safeTop >= ISLAND_SAFE_TOP ? ISLAND.top : safeTop + BELOW_STATUS_BAR;
+}
 /** The prototype's island spring: `all .55s cubic-bezier(.2,.95,.25,1.1)`. */
 const morph = { duration: 550, easing: Easing.bezier(0.2, 0.95, 0.25, 1.1) };
 
@@ -64,6 +80,7 @@ function Island({
 }) {
   const { serious } = useTheme();
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const open = useSharedValue(0);
   // The last line stays drawn while the island shrinks back, then the pill is removed.
   const [shown, setShown] = useState<string | null>(null);
@@ -71,17 +88,20 @@ function Island({
   useEffect(() => {
     if (text !== null) {
       setShown(text);
-      open.value = withTiming(1, morph);
+      open.set(withTiming(1, morph));
     } else {
-      open.value = withTiming(0, morph, (done) => {
-        if (done) runOnJS(setShown)(null);
-      });
+      open.set(
+        withTiming(0, morph, (done) => {
+          if (done) scheduleOnRN(setShown, null);
+        }),
+      );
     }
   }, [open, text]);
 
+  const top = islandTop(insets.top);
   const full = width - TOAST.inset * 2;
   const pill = useAnimatedStyle(() => {
-    const t = open.value;
+    const t = open.get();
     return {
       width: ISLAND.width + (full - ISLAND.width) * t,
       height: ISLAND.height + (TOAST.height - ISLAND.height) * t,
@@ -89,7 +109,7 @@ function Island({
     };
   });
   // The shadow lives on its own view and only fades: it should not ring the hardware island at rest.
-  const shadow = useAnimatedStyle(() => ({ opacity: Math.min(1, open.value) }));
+  const shadow = useAnimatedStyle(() => ({ opacity: Math.min(1, open.get()) }));
 
   if (shown === null) return null;
   // Mounted only while a line shows: its own window sits above every sheet.
@@ -97,7 +117,7 @@ function Island({
     <FullWindowOverlay>
       <View
         pointerEvents="box-none"
-        style={{ position: 'absolute', top: ISLAND.top, left: 0, right: 0, alignItems: 'center' }}
+        style={{ position: 'absolute', top, left: 0, right: 0, alignItems: 'center' }}
       >
         <Animated.View
           style={[
@@ -115,8 +135,8 @@ function Island({
             {text !== null ? (
               <Animated.View
                 key={shown}
-                entering={FadeIn.duration(400).delay(150)}
-                exiting={FadeOut.duration(150)}
+                entering={lineIn}
+                exiting={lineOut}
                 style={{
                   width: full,
                   height: TOAST.height,

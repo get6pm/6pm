@@ -53,7 +53,7 @@ export function TravelRow() {
 
   return (
     <PressScale
-      scaleTo={1}
+      highlight
       disabled={!locationOff}
       onPress={() => {
         haptics.tick();

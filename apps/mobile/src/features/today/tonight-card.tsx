@@ -134,6 +134,7 @@ export function TonightCard({
       {moment !== 'closed' ? (
         <PressScale
           scaleTo={0.97}
+          inScroll
           accessibilityRole="button"
           onPress={onClose}
           style={{
@@ -157,6 +158,7 @@ export function TonightCard({
       ) : (
         <PressScale
           scaleTo={0.98}
+          inScroll
           accessibilityRole="button"
           onPress={onOpenReceipt}
           style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}

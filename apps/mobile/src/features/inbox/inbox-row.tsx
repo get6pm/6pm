@@ -50,6 +50,7 @@ export function InboxRow({
         <PressScale
           accessibilityRole="button"
           accessibilityLabel={`${keepLabel} ${row.name}`}
+          hitSlop={2}
           onPress={() => onKeep(row.id)}
           style={{
             width: 40,

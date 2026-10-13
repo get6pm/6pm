@@ -63,6 +63,7 @@ export function CompanionGreeting({
       </PressScale>
       <Animated.View entering={FadeInDown.delay(150).duration(500).springify().damping(18)}>
         <PressScale
+          inScroll
           onPress={onPress}
           style={{
             marginBottom: 24,

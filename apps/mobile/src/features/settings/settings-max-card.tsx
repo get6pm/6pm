@@ -80,6 +80,7 @@ export function SettingsMaxCard({ onPress }: { readonly onPress: () => void }) {
       <PressScale
         accessibilityRole="button"
         scaleTo={0.98}
+        inScroll
         onPress={onPress}
         style={{
           borderRadius: 26,
@@ -140,6 +141,7 @@ export function SettingsMaxCard({ onPress }: { readonly onPress: () => void }) {
     <PressScale
       accessibilityRole="button"
       scaleTo={0.98}
+      inScroll
       onPress={onPress}
       style={{
         borderRadius: 22,

@@ -35,6 +35,7 @@ export function SettingsLookCard({ onPress }: { readonly onPress: () => void }) 
 
   return (
     <PressScale
+      inScroll
       accessibilityRole="button"
       accessibilityLabel={`${t('settings.look')}: ${name}`}
       scaleTo={0.98}

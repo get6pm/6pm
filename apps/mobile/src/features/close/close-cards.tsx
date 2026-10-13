@@ -252,6 +252,7 @@ export function CloseCards(props: CloseCardsProps) {
         {props.undoText ? (
           <Animated.View entering={FadeInDown.duration(250)} style={{ alignSelf: 'flex-start' }}>
             <PressScale
+              hitSlop={6}
               onPress={props.onUndo}
               style={{
                 height: 32,

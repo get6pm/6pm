@@ -31,7 +31,7 @@ export function ExportRow({ first = false }: { readonly first?: boolean }) {
 
   return (
     <PressScale
-      scaleTo={1}
+      highlight
       onPress={open}
       accessibilityRole="button"
       accessibilityState={{ busy }}

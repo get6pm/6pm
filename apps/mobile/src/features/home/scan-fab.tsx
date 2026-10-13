@@ -1,26 +1,35 @@
-import { memo } from 'react';
+import { memo, useMemo, useRef } from 'react';
+import { View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
-  Easing,
-  interpolate,
-  runOnJS,
+  ReduceMotion,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 
-import { curves, gestures } from '@6pm/theme';
+import { gestures } from '@6pm/theme';
 
 import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
+import { easeOut } from '../../ui/motion/curves';
 import { useTheme } from '../../ui/theme/theme';
 import { useHomeScroll } from './home-scroll';
 
-const ease = Easing.bezier(...curves.enter);
+const PRESS_IN = { duration: 100, easing: easeOut, reduceMotion: ReduceMotion.System } as const;
+const PRESS_OUT = { duration: 150, easing: easeOut, reduceMotion: ReduceMotion.System } as const;
+const FULL = 64;
+/** How much the button loses when the tab bar condenses: 64 → 52 pt, anchored bottom right. */
+const SHRINK = 12;
 
 /**
  * The scan button beside the tab bar. Tap to scan a VietQR; hold for half a second to jump
  * straight to Quick add (with a tap of haptics when it triggers). It shrinks with the tab bar.
+ *
+ * It keeps a fixed 64 pt slot. When it shrinks, only the coloured disc (a childless layer out of
+ * the flow) changes size, so its shadow and hairline stay exactly as drawn; the glyph moves with
+ * the disc's centre by transform and keeps its size.
  */
 export const ScanFab = memo(function ScanFab({
   label,
@@ -37,63 +46,84 @@ export const ScanFab = memo(function ScanFab({
   const { barMin } = useHomeScroll();
   const pressed = useSharedValue(0);
 
-  const longPressed = () => {
-    haptics.tap();
-    onQuickAdd();
-  };
+  // Read through a ref so the gestures are built once.
+  const actions = useRef({ onScan, onQuickAdd });
+  actions.current = { onScan, onQuickAdd };
 
-  const tap = Gesture.Tap()
-    .maxDuration(gestures.fabLongPressMs)
-    .onEnd((_e, success) => {
-      if (success) runOnJS(onScan)();
-    });
-  const hold = Gesture.LongPress()
-    .minDuration(gestures.fabLongPressMs)
-    .onStart(() => {
-      runOnJS(longPressed)();
-    });
-  const press = Gesture.Manual()
-    .onTouchesDown(() => {
-      pressed.value = withTiming(1, { duration: 60, easing: ease });
-    })
-    .onTouchesUp(() => {
-      pressed.value = withTiming(0, { duration: 240, easing: ease });
-    })
-    .onTouchesCancelled(() => {
-      pressed.value = withTiming(0, { duration: 240, easing: ease });
-    });
-
-  const size = useAnimatedStyle(() => {
-    const d = interpolate(barMin.value, [0, 1], [64, 52]);
-    return {
-      width: d,
-      height: d,
-      borderRadius: d / 2,
-      transform: [{ scale: 1 - 0.05 * pressed.value }],
+  const gesture = useMemo(() => {
+    const scan = () => actions.current.onScan();
+    const longPressed = () => {
+      haptics.tap();
+      actions.current.onQuickAdd();
     };
+    const tap = Gesture.Tap()
+      .maxDuration(gestures.fabLongPressMs)
+      .onEnd((_e, success) => {
+        if (success) scheduleOnRN(scan);
+      });
+    const hold = Gesture.LongPress()
+      .minDuration(gestures.fabLongPressMs)
+      .onStart(() => {
+        scheduleOnRN(longPressed);
+      });
+    const press = Gesture.Manual()
+      .onTouchesDown(() => {
+        pressed.set(withTiming(1, PRESS_IN));
+      })
+      .onTouchesUp(() => {
+        pressed.set(withTiming(0, PRESS_OUT));
+      })
+      .onTouchesCancelled(() => {
+        pressed.set(withTiming(0, PRESS_OUT));
+      });
+    return Gesture.Simultaneous(press, Gesture.Exclusive(hold, tap));
+  }, [pressed]);
+
+  // The disc and glyph share a frame centred on the disc; the press sinks both about that centre.
+  const frame = useAnimatedStyle(() => {
+    const half = (SHRINK / 2) * barMin.get();
+    return {
+      transform: [{ translateX: half }, { translateY: half }, { scale: 1 - 0.05 * pressed.get() }],
+    };
+  });
+  const disc = useAnimatedStyle(() => {
+    const inset = (SHRINK / 2) * barMin.get();
+    const d = FULL - 2 * inset;
+    return { left: inset, top: inset, width: d, height: d, borderRadius: d / 2 };
   });
 
   return (
-    <GestureDetector gesture={Gesture.Simultaneous(press, Gesture.Exclusive(hold, tap))}>
-      <Animated.View
+    <GestureDetector gesture={gesture}>
+      <View
         accessible
         accessibilityRole="button"
         accessibilityLabel={label}
         accessibilityHint={hint}
-        style={[
-          {
-            backgroundColor: palette.accent,
-            borderWidth: 0.5,
-            borderColor: 'rgba(255,255,255,.45)',
-            boxShadow: '0 10px 28px rgba(255,120,70,.38), inset 0 1px 0 rgba(255,255,255,.5)',
-            alignItems: 'center',
-            justifyContent: 'center',
-          },
-          size,
-        ]}
+        style={{ width: FULL, height: FULL }}
       >
-        <Symbol name="qr_code_scanner" size={30} color="#2a1424" />
-      </Animated.View>
+        <Animated.View
+          style={[{ position: 'absolute', left: 0, top: 0, width: FULL, height: FULL }, frame]}
+        >
+          <Animated.View
+            style={[
+              {
+                position: 'absolute',
+                backgroundColor: palette.accent,
+                borderWidth: 0.5,
+                borderColor: 'rgba(255,255,255,.45)',
+                boxShadow: '0 10px 28px rgba(255,120,70,.38), inset 0 1px 0 rgba(255,255,255,.5)',
+              },
+              disc,
+            ]}
+          />
+          <View
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+            pointerEvents="none"
+          >
+            <Symbol name="qr_code_scanner" size={30} color="#2a1424" />
+          </View>
+        </Animated.View>
+      </View>
     </GestureDetector>
   );
 });

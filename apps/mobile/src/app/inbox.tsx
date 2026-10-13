@@ -18,6 +18,9 @@ import { useTheme } from '../ui/theme/theme';
 import { body, display } from '../ui/type/fonts';
 import { Companion } from '../ui/companion/companion';
 
+/** The card closing up as a row leaves it. */
+const reflow = LinearTransition.springify().damping(22).stiffness(240);
+
 export default function Inbox() {
   const { palette, serious } = useTheme();
   const { t, weekday } = useI18n();
@@ -60,7 +63,7 @@ export default function Inbox() {
           {label}
         </Text>
         <Animated.View
-          layout={LinearTransition.springify().damping(22).stiffness(240)}
+          layout={reflow}
           style={{
             borderRadius: 26,
             backgroundColor: palette.cell,

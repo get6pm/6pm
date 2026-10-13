@@ -1,5 +1,5 @@
 import { Text } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 
 import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
@@ -25,6 +25,7 @@ export function RulePrompt({
   return (
     <Animated.View
       entering={FadeInDown.duration(300)}
+      exiting={FadeOut.duration(150)}
       style={{
         alignSelf: 'stretch',
         marginTop: 12,

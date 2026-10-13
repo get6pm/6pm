@@ -186,7 +186,8 @@ export default function SpendDetails() {
           {fields.map((f, i) => (
             <PressScale
               key={f.key}
-              scaleTo={1}
+              highlight
+              highlightBleed={16}
               disabled={!f.onPress}
               onPress={() => {
                 haptics.tick();

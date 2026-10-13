@@ -35,7 +35,7 @@ export function CategoryListRow({
       layout={rowLayout}
     >
       <PressScale
-        scaleTo={1}
+        highlight
         onPress={onPress}
         accessibilityRole="button"
         accessibilityLabel={`${category.name}, ${sub}`}

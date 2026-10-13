@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 import { formatShort, lineUsed, type DailyNumber } from '@6pm/domain';
@@ -11,6 +11,7 @@ import { Symbol } from '../../ui/icons/symbol';
 import { useDesignInsets } from '../../ui/layout/design-insets';
 import { Odometer } from '../../ui/odometer';
 import { GlassButton } from '../../ui/primitives/glass-button';
+import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
 import { body, tabular } from '../../ui/type/fonts';
@@ -86,7 +87,9 @@ export function TodayHero({
       </View>
 
       {/* The number opens the plan behind it, as in the prototype (`toPlan`). */}
-      <Pressable
+      <PressScale
+        scaleTo={0.98}
+        inScroll
         onPress={() => goToTab('plan')}
         accessibilityRole="button"
         accessibilityHint={t('home.openPlan')}
@@ -117,7 +120,7 @@ export function TodayHero({
             <Text style={{ ...body(13.5, 500), ...tabular, color: palette.inkSoft }}>{right}</Text>
           </View>
         </View>
-      </Pressable>
+      </PressScale>
     </View>
   );
 }

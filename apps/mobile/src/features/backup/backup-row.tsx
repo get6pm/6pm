@@ -61,7 +61,7 @@ export function BackupRow({ first = false }: { readonly first?: boolean }) {
 
   return (
     <PressScale
-      scaleTo={1}
+      highlight
       onPress={open}
       accessibilityRole="button"
       style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14 }}

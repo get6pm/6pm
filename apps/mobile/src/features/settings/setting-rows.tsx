@@ -73,7 +73,7 @@ export function SettingRow({
   const { palette } = useTheme();
   return (
     <PressScale
-      scaleTo={1}
+      highlight
       disabled={!onPress}
       onPress={onPress}
       accessibilityRole={onPress ? 'button' : undefined}

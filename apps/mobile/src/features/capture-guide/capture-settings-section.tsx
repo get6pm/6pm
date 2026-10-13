@@ -131,7 +131,7 @@ function SourceRow({
   const colours = captureColours(palette);
   return (
     <PressScale
-      scaleTo={1}
+      highlight
       accessibilityRole="button"
       onPress={onPress}
       style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14 }}

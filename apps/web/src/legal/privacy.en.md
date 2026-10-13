@@ -2,7 +2,7 @@
 title: Privacy Policy
 description: What 6pm keeps on your phone, the little that leaves it, and who handles it.
 lede: 6pm keeps your money on your phone. This page says exactly what we do with the little that leaves it.
-updated: '2026-10-11'
+updated: '2026-10-12'
 ---
 
 ## The short version
@@ -10,7 +10,7 @@ updated: '2026-10-11'
 - Your spending, plan and diary live on your iPhone, in an encrypted database. We cannot read them.
 - There is no account and no sign-in. We never ask for your name, phone number or bank login.
 - We do not run ads, sell data, or use analytics or tracking tools, in the app or on this website.
-- A few small things do leave your phone: an anonymous device ID, your purchase status, app updates, crash reports and, only if you turn it on, your encrypted backup. Each one is explained below.
+- A few small things do leave your phone: an anonymous device ID, your purchase status, app updates, crash reports, questions you ask 6pm, bank emails you forward to your receipt address and, only if you turn it on, your encrypted backup. Each one is explained below.
 
 ## Who we are
 
@@ -52,6 +52,26 @@ We send some fixes to the app over the air, using Expo's update service. Your ph
 
 When the app crashes or hits an error, it sends a report to Sentry so we can fix it: what went wrong in the code, the screen it happened on, the app version, the iPhone model and iOS version, and a random installation ID. Reports never include your spends, amounts, notes, plan or names, and we do not attach your IP address.
 
+### Ask 6pm and naming a payee
+
+When you ask 6pm a question, such as "Can I afford 2tr on Saturday?", the app sends the question's words to our server. Our server asks DeepSeek, an AI service, what kind of question it is and which amount it mentions. The answer itself is worked out on your phone, from data that never leaves it. The question goes without your spends, plan or balance.
+
+When you share a receipt screenshot to 6pm, the text on it is read on your phone. If the app cannot tell who you paid, and none of your own rules knows the name, it sends the receipt's lines to our server, and on to DeepSeek, to name the payee. Every number is taken out first, so amounts, account numbers and reference codes are never sent. If anything with a digit in it arrives, the server turns it away unread.
+
+We do not store your questions or receipt lines. For each request our server keeps only how much of the AI service it used, against your anonymous device ID. DeepSeek handles requests under its own policy and may keep them for a time.
+
+### Receipt email
+
+6pm gives your phone its own address, like receipts+abc123@6pm.oddeggs.studio. If you have your bank email you, or forward its emails, to that address, the payments land in your Inbox.
+
+Our server reads each email as it arrives. If the email holds a payment, the server keeps only what it read: the amount, the merchant, the time, and the sender's address. It locks this with encryption until your phone collects it, then deletes it. The email itself is never stored, forwarded or logged, and anything that is not a receipt is dropped. A receipt your phone has not collected after 30 days is deleted unread.
+
+The address is linked to your anonymous device ID, not to your name. Mail to it from anyone is read the same way, so share it only with your bank.
+
+### Exchange rates (Travel)
+
+In Travel mode the app fetches the day's exchange rates from our server. Our server gets them from Frankfurter, a free service that publishes central bank rates. The request carries nothing about you or your money.
+
 ### Encrypted backup (6pm Max)
 
 Backup is a 6pm Max feature, and it is off until you turn it on. It is end-to-end encrypted: the key stays in your iCloud Keychain, and our server only stores ciphertext under an anonymous token. Ciphertext is scrambled data that we cannot read.
@@ -71,6 +91,10 @@ This website sets no cookies and uses no analytics. Its fonts are served from th
 ## What the app uses on your phone
 
 - **Camera.** Scan uses the camera to read QR codes, such as VietQR. The picture is never saved or sent. Only the payment details in the code are used, on your phone. If you say no to the camera, everything else still works.
+- **Microphone and speech.** When you say a spend out loud, the words are turned into text on your phone, by Apple's on-device speech recognition. The recording is never saved or sent.
+- **Photos.** 6pm saves pictures you choose to share, such as your day's card, to your photo library. It never reads your library. Receipt screenshots you share to 6pm are read on your phone, then let go.
+- **Location.** Only after you turn on Travel mode, and only while the app is open, 6pm checks which country you are in, so it can switch currency. Your phone's own system turns the position into a country and city name. 6pm keeps the country and city name on your phone, and sends nothing about where you are to us.
+- **Widgets, Live Activities and Siri.** Your widgets, Live Activities, shortcuts and controls read and write through a shared folder on your phone. Nothing in them goes through our server.
 - **Clipboard.** When you hand a payment to your bank app, 6pm copies the amount so you can paste it. 6pm writes to the clipboard. It never reads what is on it.
 - **Bank apps.** The app checks on your phone whether certain bank apps are installed, and opens the one you choose, or its App Store page. We send nothing to the bank. Your bank's own policy applies once you are in its app.
 - **Notifications.** The daily reminder at your close time is set on your phone. There is no remote push, and no notification token is sent to us.
@@ -86,12 +110,13 @@ If you choose to share analytics with app developers in iOS Settings, Apple may 
 
 ## Who handles data for us
 
-These companies run the parts of the service described above. They may handle your data in other countries, including the United States.
+These companies run the parts of the service described above. They may handle your data in other countries, including the United States and China.
 
 - **Apple** processes payments and iCloud Keychain. [Apple's privacy policy](https://www.apple.com/legal/privacy/).
 - **RevenueCat** records purchase status. [RevenueCat's privacy policy](https://www.revenuecat.com/privacy).
 - **Cloudflare** hosts our website and server. [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/).
 - **Sentry** receives crash reports. [Sentry's privacy policy](https://sentry.io/privacy/).
+- **DeepSeek** reads the questions you ask and names payees from number-free receipt lines. [DeepSeek's privacy policy](https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html).
 - **Expo** delivers over-the-air app updates. [Expo's privacy policy](https://expo.dev/privacy).
 
 We use them only for these purposes.
@@ -101,6 +126,8 @@ We use them only for these purposes.
 - **On your phone.** Until you delete it. "Delete all data" in Settings erases your spends, plan and diary from the phone and turns off the reminder. Deleting the app removes the data too.
 - **Device ID.** For as long as the app is used on that device.
 - **Crash reports.** Up to 90 days, then deleted.
+- **Receipt email.** Until your phone collects the receipt, and never more than 30 days. Your receipt address lasts as long as your device ID.
+- **Questions and receipt lines.** We do not keep them. DeepSeek keeps requests under its own policy.
 - **Backup.** Until you delete it. When you do, we delete the encrypted data from our server.
 - **Launch list.** Until you ask us to remove your email.
 - **Purchase records.** Apple and RevenueCat keep these under their own policies and the law.
@@ -119,7 +146,7 @@ You can also complain to the data protection authority where you live.
 
 ## Security
 
-Your data is encrypted on your phone. Traffic to our server uses HTTPS. Backups are encrypted before they leave your phone. Our server stores device tokens only in hashed form. No system is perfectly safe, so if you find a problem, please tell us.
+Your data is encrypted on your phone. Traffic to our server uses HTTPS. Backups are encrypted before they leave your phone, and receipts from your email are kept encrypted until your phone collects them. Our server stores device tokens only in hashed form. No system is perfectly safe, so if you find a problem, please tell us.
 
 ## Changes to this policy
 

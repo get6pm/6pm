@@ -1,9 +1,10 @@
 import { createContext, use, useMemo, type ReactNode } from 'react';
 import {
+  Easing,
+  ReduceMotion,
   useAnimatedScrollHandler,
   useSharedValue,
   withTiming,
-  Easing,
   type SharedValue,
 } from 'react-native-reanimated';
 
@@ -20,6 +21,16 @@ export interface HomeScroll {
   readonly nav: SharedValue<number>;
   /** 1 while the tab bar is condensed (scrolling down past 80 pt), animated. */
   readonly barMin: SharedValue<number>;
+  /** Each page's own scroll offset, by index into `HOME_TABS`, kept while it is off screen too. */
+  readonly pageY: readonly [SharedValue<number>, SharedValue<number>, SharedValue<number>];
+}
+
+const NAV_AFTER_BY_INDEX = HOME_TABS.map((tab) => NAV_AFTER[tab]);
+
+/** How far the compact top bar is in (0 → 1) for page `index` scrolled to `offset`. */
+export function navFor(offset: number, index: number): number {
+  'worklet';
+  return Math.max(0, Math.min(1, (offset - (NAV_AFTER_BY_INDEX[index] ?? 40)) / 36));
 }
 
 const HomeScrollContext = createContext<HomeScroll | null>(null);
@@ -28,7 +39,13 @@ export function HomeScrollProvider({ children }: { readonly children: ReactNode 
   const y = useSharedValue(0);
   const nav = useSharedValue(0);
   const barMin = useSharedValue(0);
-  const value = useMemo(() => ({ y, nav, barMin }), [y, nav, barMin]);
+  const today = useSharedValue(0);
+  const plan = useSharedValue(0);
+  const diary = useSharedValue(0);
+  const value = useMemo(
+    () => ({ y, nav, barMin, pageY: [today, plan, diary] as const }),
+    [y, nav, barMin, today, plan, diary],
+  );
   return <HomeScrollContext value={value}>{children}</HomeScrollContext>;
 }
 
@@ -47,24 +64,23 @@ const BAR_MS = 350;
  * `onScroll` does (6 pt of travel decides the direction; above 80 pt the bar is always full).
  */
 export function useHomePageScroll(tab: HomeTab) {
-  const { y, nav, barMin } = useHomeScroll();
+  const { y, nav, barMin, pageY } = useHomeScroll();
   const { tabIndex } = useHomeNav();
   const index = HOME_TABS.indexOf(tab);
-  const last = useSharedValue(0);
+  const last = pageY[index] ?? pageY[0];
   const condensed = useSharedValue(false);
-  const after = NAV_AFTER[tab];
   return useAnimatedScrollHandler({
     onScroll: (event) => {
       const offset = Math.max(0, event.contentOffset.y);
       // A page left behind can still coast; only the page on screen drives the shared chrome.
-      if (tabIndex.value !== index) {
-        last.value = offset;
+      if (tabIndex.get() !== index) {
+        last.set(offset);
         return;
       }
-      y.value = offset;
-      nav.value = Math.max(0, Math.min(1, (offset - after) / 36));
-      const delta = offset - last.value;
-      last.value = offset;
+      y.set(offset);
+      nav.set(navFor(offset, index));
+      const delta = offset - last.get();
+      last.set(offset);
       const next =
         offset < gestures.barCondenseAfter
           ? false
@@ -72,10 +88,16 @@ export function useHomePageScroll(tab: HomeTab) {
             ? true
             : delta < -6
               ? false
-              : condensed.value;
-      if (next !== condensed.value) {
-        condensed.value = next;
-        barMin.value = withTiming(next ? 1 : 0, { duration: BAR_MS, easing: barEase });
+              : condensed.get();
+      if (next !== condensed.get()) {
+        condensed.set(next);
+        barMin.set(
+          withTiming(next ? 1 : 0, {
+            duration: BAR_MS,
+            easing: barEase,
+            reduceMotion: ReduceMotion.System,
+          }),
+        );
       }
     },
   });

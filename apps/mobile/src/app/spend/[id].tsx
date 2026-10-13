@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
+import Animated, { LinearTransition } from 'react-native-reanimated';
 
 import { groupDigits, type SpendRow } from '@6pm/domain';
 import { oklchSrgbHex } from '@6pm/theme';
@@ -18,6 +19,7 @@ import { SheetScreen } from '../../ui/navigation/sheet-screen';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, tabular } from '../../ui/type/fonts';
+import { CategoryChips } from '../../features/details/category-chips';
 import { RulePrompt } from '../../features/details/rule-prompt';
 import { SourceTrail } from '../../features/details/source-trail';
 import { useOfferUndo } from '../../ui/undo/undo-host';
@@ -25,8 +27,11 @@ import { useCompanionToast } from '../../features/companion/use-companion-toast'
 import { useRunAction } from '../../features/companion/use-run-action';
 import { useAutosavedNote } from '../../features/details/use-autosaved-note';
 import { useWalletOptions } from '../../features/quick-add/use-wallet-options';
+import { easeInOut } from '../../ui/motion/curves';
 
 const DELETE_RED = oklchSrgbHex(0.64, 0.19, 25);
+/** Everything under the rule prompt moves as it comes and goes, instead of jumping. */
+const reflow = LinearTransition.duration(200).easing(easeInOut);
 
 /** One spend: what it was, how much, its category, where it came from, and delete with undo. */
 export default function SpendDetails() {
@@ -143,52 +148,14 @@ export default function SpendDetails() {
           {groupDigits(spend.amount)}
           <Text style={{ ...display(29, 500), opacity: 0.55 }}>{' ₫'}</Text>
         </Text>
-        <View
-          style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            gap: 6,
-            paddingTop: 12,
+        <CategoryChips
+          categories={snap.categories}
+          selected={spend.categoryId}
+          onPick={(categoryId) => {
+            update({ categoryId });
+            setAskRule(true);
           }}
-        >
-          {snap.categories.map((c) => {
-            const on = c.id === spend.categoryId;
-            return (
-              <PressScale
-                key={c.id}
-                onPress={() => {
-                  if (on) return;
-                  haptics.tick();
-                  update({ categoryId: c.id });
-                  setAskRule(true);
-                }}
-                style={{
-                  height: 34,
-                  paddingLeft: 9,
-                  paddingRight: 12,
-                  borderRadius: 99,
-                  backgroundColor: on ? palette.btnBg : palette.chipBg,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 5,
-                }}
-              >
-                {isSymbolName(c.icon) ? (
-                  <Symbol
-                    name={c.icon}
-                    size={17}
-                    fill={1}
-                    color={on ? palette.btnFg : palette.ink}
-                  />
-                ) : null}
-                <Text style={{ ...body(13, 600), color: on ? palette.btnFg : palette.ink }}>
-                  {c.name}
-                </Text>
-              </PressScale>
-            );
-          })}
-        </View>
+        />
         {askRule && category ? (
           <RulePrompt
             text={t('rule.ask', { merchant: spend.merchant, category: category.name })}
@@ -207,96 +174,98 @@ export default function SpendDetails() {
         ) : null}
       </View>
 
-      <View
-        style={{
-          borderRadius: 26,
-          backgroundColor: palette.cell,
-          boxShadow: palette.cardShadow,
-          overflow: 'hidden',
-        }}
-      >
-        {fields.map((f, i) => (
-          <PressScale
-            key={f.key}
-            scaleTo={1}
-            disabled={!f.onPress}
-            onPress={() => {
-              haptics.tick();
-              f.onPress?.();
-            }}
+      <Animated.View layout={reflow} style={{ gap: 22 }}>
+        <View
+          style={{
+            borderRadius: 26,
+            backgroundColor: palette.cell,
+            boxShadow: palette.cardShadow,
+            overflow: 'hidden',
+          }}
+        >
+          {fields.map((f, i) => (
+            <PressScale
+              key={f.key}
+              scaleTo={1}
+              disabled={!f.onPress}
+              onPress={() => {
+                haptics.tick();
+                f.onPress?.();
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 8,
+                marginHorizontal: 16,
+                paddingVertical: 13,
+                borderTopWidth: 0.5,
+                borderTopColor: i === 0 ? 'transparent' : palette.hair,
+              }}
+            >
+              <Text style={{ ...body(16), color: palette.inkSoft, flex: 1 }}>{f.label}</Text>
+              <Text style={{ ...body(16, 550), color: palette.ink }}>{f.value}</Text>
+              {f.onPress ? <Symbol name="unfold_more" size={18} color={palette.inkSoft} /> : null}
+            </PressScale>
+          ))}
+          <View
             style={{
               flexDirection: 'row',
-              alignItems: 'center',
-              gap: 8,
+              justifyContent: 'space-between',
+              gap: 12,
               marginHorizontal: 16,
               paddingVertical: 13,
               borderTopWidth: 0.5,
-              borderTopColor: i === 0 ? 'transparent' : palette.hair,
+              borderTopColor: palette.hair,
             }}
           >
-            <Text style={{ ...body(16), color: palette.inkSoft, flex: 1 }}>{f.label}</Text>
-            <Text style={{ ...body(16, 550), color: palette.ink }}>{f.value}</Text>
-            {f.onPress ? <Symbol name="unfold_more" size={18} color={palette.inkSoft} /> : null}
-          </PressScale>
-        ))}
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            gap: 12,
-            marginHorizontal: 16,
-            paddingVertical: 13,
-            borderTopWidth: 0.5,
-            borderTopColor: palette.hair,
-          }}
-        >
-          <Text style={{ ...body(16), color: palette.inkSoft }}>{t('details.note')}</Text>
-          <TextInput
-            value={note}
-            onChangeText={(text) => {
-              setNote(text);
-              autosave.change(text);
-            }}
-            onEndEditing={autosave.flush}
-            placeholder={t('details.notePlaceholder')}
-            placeholderTextColor={palette.inkSoft}
-            style={{ flex: 1, textAlign: 'right', fontSize: 16, color: palette.ink, padding: 0 }}
-          />
+            <Text style={{ ...body(16), color: palette.inkSoft }}>{t('details.note')}</Text>
+            <TextInput
+              value={note}
+              onChangeText={(text) => {
+                setNote(text);
+                autosave.change(text);
+              }}
+              onEndEditing={autosave.flush}
+              placeholder={t('details.notePlaceholder')}
+              placeholderTextColor={palette.inkSoft}
+              style={{ flex: 1, textAlign: 'right', fontSize: 16, color: palette.ink, padding: 0 }}
+            />
+          </View>
         </View>
-      </View>
 
-      <SourceTrail title={t('details.sourceTrail')} lines={trail} />
+        <SourceTrail title={t('details.sourceTrail')} lines={trail} />
 
-      <View style={{ gap: 8, alignItems: 'center' }}>
-        <PressScale
-          scaleTo={0.97}
-          onPress={() => {
-            haptics.tap();
-            void run(() => actions.setStatus(spend.id, 'deleted')).then((saved) => {
-              if (!saved) return;
-              offerUndo(
-                t('undo.deleted', { name: spend.merchant }),
-                t('undo.action'),
-                () => void run(() => actions.undo(spend.id)),
-              );
-              router.back();
-            });
-          }}
-          style={{
-            alignSelf: 'stretch',
-            height: 52,
-            borderRadius: 18,
-            borderWidth: 0.5,
-            borderColor: palette.hair,
-            backgroundColor: palette.cell,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text style={{ ...body(16, 600), color: DELETE_RED }}>{t('details.delete')}</Text>
-        </PressScale>
-        <Text style={{ ...body(13), color: palette.inkSoft }}>{t('details.undoHint')}</Text>
-      </View>
+        <View style={{ gap: 8, alignItems: 'center' }}>
+          <PressScale
+            scaleTo={0.97}
+            onPress={() => {
+              haptics.tap();
+              void run(() => actions.setStatus(spend.id, 'deleted')).then((saved) => {
+                if (!saved) return;
+                offerUndo(
+                  t('undo.deleted', { name: spend.merchant }),
+                  t('undo.action'),
+                  () => void run(() => actions.undo(spend.id)),
+                );
+                router.back();
+              });
+            }}
+            style={{
+              alignSelf: 'stretch',
+              height: 52,
+              borderRadius: 18,
+              borderWidth: 0.5,
+              borderColor: palette.hair,
+              backgroundColor: palette.cell,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ ...body(16, 600), color: DELETE_RED }}>{t('details.delete')}</Text>
+          </PressScale>
+          <Text style={{ ...body(13), color: palette.inkSoft }}>{t('details.undoHint')}</Text>
+        </View>
+      </Animated.View>
     </SheetScreen>
   );
 }

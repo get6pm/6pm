@@ -9,6 +9,10 @@ export type ApiFailure =
   | 'rate_limited'
   /** The server or its model had a problem; trying again can help. */
   | 'unavailable'
+  /** Signed in as no one, or as someone this is not for (Budget together). */
+  | 'forbidden'
+  /** The request clashes with what is there already (an invite already taken). */
+  | 'conflict'
   /** The server refused the request as sent. */
   | 'bad_request'
   /** The server answered with something this app does not understand. */
@@ -22,11 +26,14 @@ export class ApiRequestError extends Error {
   readonly failure: ApiFailure;
   /** Whether asking again could work. */
   readonly retryable: boolean;
+  /** The server's `detail.reason`, when it gave one (a word like `expired`, never user data). */
+  readonly reason: string | undefined;
 
-  constructor(failure: ApiFailure, message: string, retryable: boolean) {
+  constructor(failure: ApiFailure, message: string, retryable: boolean, reason?: string) {
     super(message);
     this.name = 'ApiRequestError';
     this.failure = failure;
     this.retryable = retryable;
+    this.reason = reason;
   }
 }

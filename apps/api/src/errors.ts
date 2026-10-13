@@ -7,7 +7,9 @@ type ErrorDetail = Record<string, unknown>;
 const statusByCode = {
   bad_request: 400,
   unauthorized: 401,
+  forbidden: 403,
   not_found: 404,
+  conflict: 409,
   rate_limited: 429,
   internal: 500,
   model_unavailable: 503,
@@ -18,7 +20,9 @@ const statusByCode = {
 const retryableByCode: Record<WireErrorCode, boolean> = {
   bad_request: false,
   unauthorized: false,
+  forbidden: false,
   not_found: false,
+  conflict: false,
   rate_limited: true,
   internal: false,
   model_unavailable: true,
@@ -42,7 +46,9 @@ export class ApiError extends Error {
 }
 
 function clientErrorCode(status: number): WireErrorCode {
-  if (status === 401 || status === 403) return 'unauthorized';
+  if (status === 401) return 'unauthorized';
+  if (status === 403) return 'forbidden';
+  if (status === 409) return 'conflict';
   if (status === 404) return 'not_found';
   if (status === 429) return 'rate_limited';
   return 'bad_request';

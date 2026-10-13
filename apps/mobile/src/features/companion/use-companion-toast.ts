@@ -22,6 +22,7 @@ export type CompanionEvent =
   | 'ruleSaved'
   | 'save'
   | 'share'
+  | 'shareInvite'
   | 'walletOn'
   | 'widgets'
   | 'yearBook';

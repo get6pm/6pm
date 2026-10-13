@@ -23,6 +23,7 @@ import { openMoneyTables, type MoneyTables } from './money-tables';
 import { readPlan, type PlanSettings } from './plan-settings';
 import { readPotMoves, recordDueSetAsides } from './pot-moves';
 import type { SqlDatabase } from './table';
+import { togetherTopUps } from './together-moves';
 
 /** Everything the screens read, as one immutable snapshot of the phone's money database. */
 export interface MoneySnapshot {
@@ -45,6 +46,7 @@ export interface MoneySnapshot {
   readonly pots: readonly PotRow[];
   /** Saved per pot, from its moves. */
   readonly potSaved: Readonly<Record<string, number>>;
+  /** Top-ups this cycle: the person's own pots, and what they put into shared pots. */
   readonly topUpsThisCycle: number;
   /** What each pot sets aside this pay cycle, recorded when the cycle began. */
   readonly setAsideThisCycle: Readonly<Record<string, number>>;
@@ -157,7 +159,7 @@ export function createMoneyStore(db: SqlDatabase, today: LocalDate): MoneyStore 
   const loadNow = async (day: LocalDate) => {
     const plan = await readPlan(db);
     const cycle = payCycleOn(day, plan?.payday ?? { kind: 'lastDay' });
-    const [categories, cycleSpends, waitingBefore, bills, pots, recorded, closedDays] =
+    const [categories, cycleSpends, waitingBefore, bills, pots, recorded, closedDays, together] =
       await Promise.all([
         tables.categories.select('WHERE archived_at IS NULL ORDER BY sort', []),
         tables.spends.select(
@@ -171,6 +173,7 @@ export function createMoneyStore(db: SqlDatabase, today: LocalDate): MoneyStore 
         tables.pots.select('WHERE archived_at IS NULL ORDER BY created_at', []),
         readPotMoves(db),
         tables.closedDays.select('WHERE day >= ? ORDER BY day', [closedSince(day, cycle.start)]),
+        togetherTopUps(db, cycle.start),
       ]);
     // Each pay cycle puts the month's set-aside into every pot, once; a launch after missed
     // days or cycles catches up here before anything is counted.
@@ -198,7 +201,7 @@ export function createMoneyStore(db: SqlDatabase, today: LocalDate): MoneyStore 
       bills,
       pots,
       potSaved,
-      topUpsThisCycle: topUps,
+      topUpsThisCycle: topUps + together,
       setAsideThisCycle: setAside,
       closedDays,
     });

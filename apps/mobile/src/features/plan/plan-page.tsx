@@ -22,6 +22,7 @@ import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
 import { useHomePageScroll } from '../home/home-scroll';
 import { useEntitlement } from '../purchases/purchases-provider';
+import { TogetherSection } from '../together/together-card';
 import { BillsCard } from './bills-section';
 import { DailyCard } from './daily-card';
 import { FutureYouCard } from './future-you-section';
@@ -253,6 +254,7 @@ function PlanContent({
           format={format}
         />
       </Reveal>
+      <TogetherSection cycle={cycle} colours={colours} />
     </>
   );
 }

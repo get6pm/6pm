@@ -6,6 +6,7 @@ import { inTurn } from './store-queue';
 const EVERY_TABLE = [
   'spend_sightings',
   'pot_moves',
+  'together_moves',
   'spends',
   'merchant_rules',
   'bills',

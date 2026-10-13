@@ -43,7 +43,9 @@ export const DEFAULT_API_TIMEOUT_MS = 15_000;
 const failureOfCode: Record<WireErrorCode, ApiFailure> = {
   bad_request: 'bad_request',
   unauthorized: 'unauthorized',
+  forbidden: 'forbidden',
   not_found: 'bad_request',
+  conflict: 'conflict',
   rate_limited: 'rate_limited',
   internal: 'unavailable',
   model_unavailable: 'unavailable',
@@ -104,12 +106,12 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
     const wire = wireErrorSchema.safeParse(answer.json);
     const where = `${method} ${path} answered ${answer.status}`;
     if (wire.success) {
-      const { code, retryable } = wire.data.error;
-      return new ApiRequestError(failureOfCode[code], where, retryable);
+      const { code, retryable, detail } = wire.data.error;
+      const reason = typeof detail?.['reason'] === 'string' ? detail['reason'] : undefined;
+      return new ApiRequestError(failureOfCode[code], where, retryable, reason);
     }
-    if (answer.status === 401 || answer.status === 403) {
-      return new ApiRequestError('unauthorized', where, false);
-    }
+    if (answer.status === 401) return new ApiRequestError('unauthorized', where, false);
+    if (answer.status === 403) return new ApiRequestError('forbidden', where, false);
     if (answer.status === 429) return new ApiRequestError('rate_limited', where, true);
     if (answer.status >= 500) return new ApiRequestError('unavailable', where, true);
     return new ApiRequestError('bad_request', where, false);

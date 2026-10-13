@@ -12,6 +12,9 @@ export const secretNames = [
   'REVENUECAT_WEBHOOK_AUTH',
   /** Seals receipts read from email while they wait for their phone: 32 characters or more. */
   'EMAIL_SEAL_KEY',
+  /** Budget together: the Sign in with Apple key (`.p8` text) and its key id, for revoking. */
+  'APPLE_SIGN_IN_KEY',
+  'APPLE_SIGN_IN_KEY_ID',
 ] as const;
 export type SecretName = (typeof secretNames)[number];
 

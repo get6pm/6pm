@@ -2,15 +2,15 @@
 title: Privacy Policy
 description: What 6pm keeps on your phone, the little that leaves it, and who handles it.
 lede: 6pm keeps your money on your phone. This page says exactly what we do with the little that leaves it.
-updated: '2026-10-12'
+updated: '2026-10-13'
 ---
 
 ## The short version
 
 - Your spending, plan and diary live on your iPhone, in an encrypted database. We cannot read them.
-- There is no account and no sign-in. We never ask for your name, phone number or bank login.
+- 6pm needs no account. Only if you use Budget together do you sign in, with Apple. We never ask for your phone number, your email or your bank login.
 - We do not run ads, sell data, or use analytics or tracking tools, in the app or on this website.
-- A few small things do leave your phone: an anonymous device ID, your purchase status, app updates, crash reports, questions you ask 6pm, bank emails you forward to your receipt address and, only if you turn it on, your encrypted backup. Each one is explained below.
+- A few small things do leave your phone: an anonymous device ID, your purchase status, app updates, crash reports, questions you ask 6pm, bank emails you forward to your receipt address, the shared pots you keep with someone in Budget together and, only if you turn it on, your encrypted backup. Each one is explained below.
 
 ## Who we are
 
@@ -78,6 +78,18 @@ Backup is a 6pm Max feature, and it is off until you turn it on. It is end-to-en
 
 Apple syncs the key between your devices through iCloud Keychain, under your Apple ID and Apple's terms. If you lose both the key and your phone, nobody, including us, can unlock the backup.
 
+### Budget together (6pm Max)
+
+Budget together lets two people keep shared pots they both add to. It is the only part of 6pm with a sign-in, and nothing about it happens unless you start it or open an invite.
+
+- **Sign in with Apple.** When you start or join, you sign in with Apple. Apple gives us a stable ID for you that only works with 6pm and, the first time, your first name if you choose to share it. We never ask for your email. Our server links that ID to your anonymous device ID. When you delete your account, our server also asks Apple to end 6pm's access, so 6pm leaves the "Sign in with Apple" list in your Apple ID settings.
+- **What is shared.** Our server keeps your first name, each shared pot's name, icon, colour, goal and month, and each amount either of you says you put in, with who added it and when. Your partner sees all of this, and you see theirs. Nothing else from your phone is shared: not your spends, your plan, your daily number or your own pots.
+- **Invites.** An invite link works once and for 7 days. Our server stores only a scrambled form of it.
+- **Leaving.** Either of you can leave at any time. Leaving ends Budget together for both of you and deletes the shared pots and everything in them from our server. Each phone keeps, as history, the amounts its own person put in.
+- **Deleting your account.** "Delete Budget together account" in the app deletes your sign-in, your name and everything you share from our server, and ends it for your partner too. Stopping 6pm's use of your Apple ID in your Apple ID settings does the same.
+
+6pm never moves money. The amounts in shared pots are what you each say you put aside; they only count.
+
 ### The launch list (website)
 
 If you join the launch list on this website, we store your email address, the language of the page, the time you joined and your place in line. If you used the leak calculator before joining, we also store the monthly figure it showed. The calculator itself runs in your browser, and nothing is sent unless you join.
@@ -112,7 +124,7 @@ If you choose to share analytics with app developers in iOS Settings, Apple may 
 
 These companies run the parts of the service described above. They may handle your data in other countries, including the United States and China.
 
-- **Apple** processes payments and iCloud Keychain. [Apple's privacy policy](https://www.apple.com/legal/privacy/).
+- **Apple** processes payments, iCloud Keychain and Sign in with Apple. [Apple's privacy policy](https://www.apple.com/legal/privacy/).
 - **RevenueCat** records purchase status. [RevenueCat's privacy policy](https://www.revenuecat.com/privacy).
 - **Cloudflare** hosts our website and server. [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/).
 - **Sentry** receives crash reports. [Sentry's privacy policy](https://sentry.io/privacy/).
@@ -129,6 +141,7 @@ We use them only for these purposes.
 - **Receipt email.** Until your phone collects the receipt, and never more than 30 days. Your receipt address lasts as long as your device ID.
 - **Questions and receipt lines.** We do not keep them. DeepSeek keeps requests under its own policy.
 - **Backup.** Until you delete it. When you do, we delete the encrypted data from our server.
+- **Budget together.** Shared pots until either of you leaves; your sign-in and name until you delete your Budget together account. Either one deletes the data from our server at once.
 - **Launch list.** Until you ask us to remove your email.
 - **Purchase records.** Apple and RevenueCat keep these under their own policies and the law.
 

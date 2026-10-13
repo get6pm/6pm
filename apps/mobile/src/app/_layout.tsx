@@ -18,6 +18,7 @@ import { SurfacesSync } from '../features/surfaces/surfaces-sync';
 import { LookSettingsProvider, useThemeLook } from '../features/looks/look-settings-provider';
 import { MemberCompanionForm } from '../features/purchases/member-companion-form';
 import { PurchasesProvider } from '../features/purchases/purchases-provider';
+import { TogetherProvider } from '../features/together/together-provider';
 import { TravelProvider } from '../features/travel/travel-provider';
 import { I18nProvider } from '../i18n/i18n';
 import { drawnSheet, sheet, takeover } from '../ui/navigation/presentations';
@@ -76,6 +77,10 @@ function Screens() {
         <Stack.Screen name="max" options={sheet} />
         <Stack.Screen name="max-welcome" options={takeover} />
         <Stack.Screen name="backup" options={sheet} />
+        <Stack.Screen name="together/index" options={sheet} />
+        <Stack.Screen name="together/[code]" options={sheet} />
+        <Stack.Screen name="shared-pot/[id]" options={sheet} />
+        <Stack.Screen name="new-shared-pot" options={sheet} />
         <Stack.Screen name="(dev)/tools" options={sheet} />
       </Stack>
     </>
@@ -111,9 +116,11 @@ function RootLayout() {
                       <TravelProvider>
                         <PlanTheme>
                           <ToastHost>
-                            <UndoHost>
-                              <Screens />
-                            </UndoHost>
+                            <TogetherProvider>
+                              <UndoHost>
+                                <Screens />
+                              </UndoHost>
+                            </TogetherProvider>
                             <CloseNudge />
                             <CloseReminderSync />
                             <ReminderTap />

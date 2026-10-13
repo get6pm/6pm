@@ -61,12 +61,19 @@ export function tileRows(order: readonly MaxFrom[]): MaxFrom[][] {
 }
 
 export type WelcomeRoute =
-  '/looks' | '/new-pot' | '/categories' | '/settings' | '/backup' | '/money-diary' | '/ask';
+  | '/looks'
+  | '/new-pot'
+  | '/categories'
+  | '/settings'
+  | '/backup'
+  | '/money-diary'
+  | '/ask'
+  | '/together';
 
 /** The welcome's button: which label key it takes, and the screen it opens (none: back to the day). */
 export interface WelcomeAction {
   readonly label:
-    'looks' | 'pots' | 'travel' | 'backup' | 'diary' | 'icons' | 'look' | 'ask' | null;
+    'looks' | 'pots' | 'shared' | 'travel' | 'backup' | 'diary' | 'icons' | 'look' | 'ask' | null;
   readonly href: WelcomeRoute | null;
 }
 
@@ -74,6 +81,7 @@ const ROUTES: Readonly<Partial<Record<MaxFrom, WelcomeAction>>> = {
   looks: { label: 'looks', href: '/looks' },
   ask: { label: 'ask', href: '/ask' },
   pots: { label: 'pots', href: '/new-pot' },
+  shared: { label: 'shared', href: '/together' },
   travel: { label: 'travel', href: '/settings' },
   backup: { label: 'backup', href: '/backup' },
   diary: { label: 'diary', href: '/money-diary' },
@@ -82,8 +90,8 @@ const ROUTES: Readonly<Partial<Record<MaxFrom, WelcomeAction>>> = {
 
 /**
  * Where the welcome's button leads. A look that was being tried on is already worn, so the
- * button is "See it on my day". Gates whose screen is not built (sharing, widgets, the
- * companion) have nothing to open: the label is null and the only way on is back to the day.
+ * button is "See it on my day". Gates with no screen of their own (widgets, the companion) have
+ * nothing to open: the label is null and the only way on is back to the day.
  */
 export function welcomeAction(from: MaxFrom, triedLook: boolean): WelcomeAction {
   if (triedLook) return { label: 'look', href: null };

@@ -4,7 +4,11 @@ import { z } from 'zod';
 export const wireErrorCodeSchema = z.enum([
   'bad_request',
   'unauthorized',
+  /** Signed in as someone this request is not for, or not signed in where it must be. */
+  'forbidden',
   'not_found',
+  /** The request clashes with what is already there (an invite already taken). */
+  'conflict',
   'rate_limited',
   'internal',
   'model_unavailable',

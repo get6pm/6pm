@@ -4,31 +4,31 @@ import { AppState } from 'react-native';
 import { useSharedValue, type SharedValue } from 'react-native-reanimated';
 
 /**
- * The routes that take over the whole display (the `takeover` screens of the root layout, and
- * onboarding). Sheets are not here: Home stays visible, and alive, behind them.
+ * Home is the root route. Anything pushed over it hides it: a full-screen takeover owns the whole
+ * display, and a sheet leaves only a dimmed strip of it at the top, so nothing there needs to move
+ * while the person reads or scrolls the sheet.
  */
-const COVERING_ROUTES: ReadonlySet<string> = new Set([
-  'scan',
-  'close',
-  'ask',
-  'max-welcome',
-  'onboarding',
-]);
+export function coversHome(segments: readonly string[]): boolean {
+  const first = segments[0];
+  return first !== undefined && first !== 'index';
+}
 
-/** A takeover fades in over Home; keep it moving until the fade is certainly done. */
-const COVER_FADE_MS = 600;
+/**
+ * A takeover fades in and a sheet slides up over Home; keep Home moving until either has
+ * certainly arrived, so it is never seen stopping.
+ */
+const COVER_ARRIVE_MS = 600;
 
 /**
  * Whether Home is on screen right now, as a shared value for the UI thread: the app is in the
- * foreground and no full-screen takeover covers it. The sky and the companions run only while
- * this is true. It turns true at once when a takeover starts to leave, and false a moment after
- * one has finished arriving.
+ * foreground and no other route is over it. The sky and the companions run only while this is
+ * true; while it is false they hold their last frame, so nothing blanks or jumps. It turns true
+ * at once when the route over Home leaves, and false a moment after one has finished arriving.
  */
 export function useHomeVisible(): SharedValue<boolean> {
   const visible = useSharedValue(true);
   const segments: readonly string[] = useSegments();
-  const first = segments[0];
-  const covered = first !== undefined && COVERING_ROUTES.has(first);
+  const covered = coversHome(segments);
   const [foreground, setForeground] = useState(AppState.currentState !== 'background');
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export function useHomeVisible(): SharedValue<boolean> {
       () => {
         visible.value = false;
       },
-      foreground ? COVER_FADE_MS : 0,
+      foreground ? COVER_ARRIVE_MS : 0,
     );
     return () => clearTimeout(timer);
   }, [visible, foreground, covered]);

@@ -1,7 +1,13 @@
 import { BlurView } from 'expo-blur';
 import { useState, type ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import Animated, { runOnJS, useAnimatedReaction, useAnimatedStyle } from 'react-native-reanimated';
+import Animated, {
+  Extrapolation,
+  interpolate,
+  runOnJS,
+  useAnimatedReaction,
+  useAnimatedStyle,
+} from 'react-native-reanimated';
 
 import { useDesignInsets } from '../../ui/layout/design-insets';
 import { useTheme } from '../../ui/theme/theme';
@@ -17,10 +23,14 @@ function withAlpha(hex: string, alpha: number): string {
     : hex;
 }
 
+/** Scroll travel over which the status-bar fade comes in: none at rest, so the header reads clean. */
+const FADE_AFTER = 24;
+
 /**
  * The compact bar that fades in once the page scrolls past its header: frosted sheet colour at
  * 84 %, a hairline underneath, sliding down 10 pt as it appears. Tapping it scrolls to the top.
- * Above it, a soft fade of the sky's top colour keeps the status bar readable over content.
+ * Above it, a soft fade of the sky's top colour keeps the status bar readable once content scrolls
+ * under it; at rest it is not drawn, so it never veils the page's own header.
  */
 export function TopNav({
   onPressTop,
@@ -31,8 +41,11 @@ export function TopNav({
 }) {
   const { palette } = useTheme();
   const { top } = useDesignInsets();
-  const { nav } = useHomeScroll();
+  const { y, nav } = useHomeScroll();
 
+  const fade = useAnimatedStyle(() => ({
+    opacity: interpolate(y.value, [0, FADE_AFTER], [0, 1], Extrapolation.CLAMP),
+  }));
   const shown = useAnimatedStyle(() => ({
     opacity: nav.value,
     transform: [{ translateY: (1 - nav.value) * -10 }],
@@ -50,16 +63,19 @@ export function TopNav({
 
   return (
     <>
-      <View
+      <Animated.View
         pointerEvents="none"
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: 0,
-          height: top(96),
-          experimental_backgroundImage: `linear-gradient(180deg, ${palette.st[0]} 0%, ${palette.st[0]}00 100%)`,
-        }}
+        style={[
+          {
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            height: top(96),
+            experimental_backgroundImage: `linear-gradient(180deg, ${palette.st[0]} 0%, ${palette.st[0]}00 100%)`,
+          },
+          fade,
+        ]}
       />
       <Animated.View
         pointerEvents={touchable ? 'auto' : 'none'}

@@ -3,10 +3,12 @@ import { appleSignInRequestSchema } from '@6pm/domain';
 import { readBody, type RouteDefinition } from '../route';
 import { verifyIdentityToken } from '../together/apple-identity';
 import { exchangeAppleCode } from '../together/apple-tokens';
+import { consumeNonce } from '../together/nonces';
 import { answerState, type TogetherUser } from '../together/store';
 
 /**
- * Signs this phone in to Budget together with an Apple identity token. The person is found by
+ * Signs this phone in to Budget together with an Apple identity token, made for a nonce this
+ * server handed to this phone (`POST /v1/together/nonce`). The person is found by
  * Apple's id for them, or made the first time, and the device is linked to them (a device is
  * signed in as one person at a time). Only the given name is kept, and only if Apple sent it.
  */
@@ -16,8 +18,10 @@ export const togetherSignInRoute: RouteDefinition = {
   access: 'device',
   handle: async (c) => {
     const body = await readBody(c, appleSignInRequestSchema, { maxBytes: 8192 });
-    const identity = await verifyIdentityToken(body.identityToken);
+    const identity = await verifyIdentityToken(body.identityToken, body.nonce);
     const db = c.env.DB;
+    // The nonce is used up only once the token checks out against it.
+    await consumeNonce(db, c.var.device.hash, body.nonce);
     const now = new Date().toISOString();
 
     const refreshToken =

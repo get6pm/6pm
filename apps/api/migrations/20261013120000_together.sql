@@ -79,3 +79,23 @@ CREATE TABLE together_contributions (
 );
 
 CREATE INDEX together_contributions_pot ON together_contributions (pot_id, added_at);
+
+-- Nonces for Sign in with Apple: the phone asks for one, puts its SHA-256 in Apple's request,
+-- and sends it back with the identity token. Each works once, for ten minutes, from the device
+-- it was handed to. Stored as the SHA-256 the token carries.
+CREATE TABLE together_nonces (
+  nonce_hash TEXT PRIMARY KEY,
+  device_hash TEXT NOT NULL REFERENCES devices (token_hash) ON DELETE CASCADE,
+  expires_at TEXT NOT NULL
+);
+
+CREATE INDEX together_nonces_expires ON together_nonces (expires_at);
+
+-- Apple's server-to-server notifications already acted on, by their `jti`, so one cannot be
+-- replayed. Kept a little longer than a notification is accepted, then pruned.
+CREATE TABLE together_apple_events (
+  jti TEXT PRIMARY KEY,
+  received_at TEXT NOT NULL
+);
+
+CREATE INDEX together_apple_events_received ON together_apple_events (received_at);

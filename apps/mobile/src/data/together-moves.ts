@@ -40,8 +40,34 @@ export async function keepTogetherMoves(
   return fresh.length;
 }
 
-export async function forgetTogetherMove(db: SqlDatabase, id: string): Promise<void> {
-  await db.runAsync('DELETE FROM together_moves WHERE id = ?', [id]);
+/**
+ * Lines the record up with the server's copy. The person's contributions not yet kept are
+ * written; a kept one whose pot is still shared but that the server no longer lists was taken
+ * back (here with a lost answer, or on another device) and is dropped. A pot that is gone keeps
+ * its history, and so does everything after leaving, when no pot is live. Resolves to how many
+ * rows changed, so the caller knows to recount.
+ */
+export async function reconcileTogetherMoves(
+  db: SqlDatabase,
+  own: readonly TogetherMove[],
+  livePotIds: readonly string[],
+  payday: Payday,
+): Promise<number> {
+  const added = await keepTogetherMoves(db, own, payday);
+  if (livePotIds.length === 0) return added;
+  const kept = new Set(own.map((m) => m.id));
+  const live = livePotIds.map(() => '?').join(', ');
+  const stale = (
+    await db.getAllAsync<{ id: string }>(
+      `SELECT id FROM together_moves WHERE pot_id IN (${live})`,
+      [...livePotIds],
+    )
+  ).filter((r) => !kept.has(r.id));
+  if (stale.length === 0) return added;
+  await db.withTransactionAsync(async () => {
+    for (const { id } of stale) await db.runAsync('DELETE FROM together_moves WHERE id = ?', [id]);
+  });
+  return added + stale.length;
 }
 
 /** What the person put into shared pots in one pay cycle: it counts like a pot top-up. */

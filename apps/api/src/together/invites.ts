@@ -2,7 +2,7 @@ import { INVITE_TTL_MS, inviteCodePattern, type InviteRefusal } from '@6pm/domai
 
 import { hashDeviceToken } from '../device-auth';
 import { ApiError } from '../errors';
-import { dissolvePair, pairOf } from './store';
+import { dissolvePair, isUniqueViolation, pairOf } from './store';
 
 /** 16 random bytes, URL-safe: an invite cannot be guessed. Only its hash is stored. */
 export function newInviteCode(): string {
@@ -93,21 +93,28 @@ export async function acceptInvite(
   // Taken and joined in one transaction: the invite is marked only while it is still free, and
   // the person joins only through the mark they made.
   const at = new Date(now).toISOString();
-  const [, joined] = await db.batch([
-    db
-      .prepare(
-        `UPDATE together_invites SET used_at = ?1, used_by = ?2
+  let joined: D1Result | undefined;
+  try {
+    [, joined] = await db.batch([
+      db
+        .prepare(
+          `UPDATE together_invites SET used_at = ?1, used_by = ?2
          WHERE code_hash = ?3 AND used_at IS NULL AND expires_at > ?1
            AND (SELECT COUNT(*) FROM together_members m WHERE m.pair_id = together_invites.pair_id) < 2`,
-      )
-      .bind(at, userId, hash),
-    db
-      .prepare(
-        `INSERT INTO together_members (pair_id, user_id, joined_at)
+        )
+        .bind(at, userId, hash),
+      db
+        .prepare(
+          `INSERT INTO together_members (pair_id, user_id, joined_at)
          SELECT pair_id, ?2, ?1 FROM together_invites
          WHERE code_hash = ?3 AND used_by = ?2 AND used_at = ?1`,
-      )
-      .bind(at, userId, hash),
-  ]);
+        )
+        .bind(at, userId, hash),
+    ]);
+  } catch (error) {
+    // The person joined or started a pair in a request that ran alongside this one.
+    if (isUniqueViolation(error)) throw refuse('paired', 'Leave Budget together first');
+    throw error;
+  }
   if ((joined?.meta.changes ?? 0) !== 1) throw refuse('used', 'This invite has been used');
 }

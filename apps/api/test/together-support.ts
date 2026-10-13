@@ -1,7 +1,14 @@
 import { env } from 'cloudflare:workers';
 import { expect } from 'vitest';
 
-import { createInviteResponseSchema, togetherStateSchema, type TogetherState } from '@6pm/domain';
+import {
+  createInviteResponseSchema,
+  signInNonceResponseSchema,
+  togetherStateSchema,
+  type TogetherState,
+} from '@6pm/domain';
+
+import { sha256Hex } from '../src/together/apple-identity';
 
 import { appleJwt } from './apple-stand-in';
 import { call, registerDevice, type Call } from './support';
@@ -13,6 +20,21 @@ export interface Person {
   readonly sub: string;
 }
 
+/** A nonce the server hands this device for its next sign-in. */
+export async function nonceFor(token: string): Promise<string> {
+  const response = await call('/api/v1/together/nonce', { method: 'POST', token });
+  expect(response.status).toBe(200);
+  return signInNonceResponseSchema.parse(await response.json()).nonce;
+}
+
+/** An identity token for `sub` made for `nonce`, as Apple would sign it, and the sign-in body. */
+export async function signInBody(sub: string, nonce: string, claims: Record<string, unknown> = {}) {
+  return {
+    identityToken: await appleJwt({ sub, nonce: await sha256Hex(nonce), ...claims }),
+    nonce,
+  };
+}
+
 /** A registered phone signed in with Apple as a new person. */
 export async function signedIn(name?: string): Promise<Person> {
   nextPerson += 1;
@@ -21,7 +43,10 @@ export async function signedIn(name?: string): Promise<Person> {
   const response = await call('/api/v1/together/sign-in', {
     method: 'POST',
     token,
-    body: { identityToken: await appleJwt({ sub }), ...(name === undefined ? {} : { name }) },
+    body: {
+      ...(await signInBody(sub, await nonceFor(token))),
+      ...(name === undefined ? {} : { name }),
+    },
   });
   expect(response.status).toBe(200);
   return { token, sub };

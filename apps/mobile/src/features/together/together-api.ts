@@ -2,6 +2,7 @@ import {
   createInviteResponseSchema,
   deleteTogetherAccountResponseSchema,
   leaveResponseSchema,
+  signInNonceResponseSchema,
   togetherStateSchema,
   type TogetherState,
 } from '@6pm/domain';
@@ -18,7 +19,10 @@ export interface AppleCredential {
 /** Budget together's routes, each answering with the whole shared copy where it can. */
 export interface TogetherApi {
   fetchState(): Promise<TogetherState>;
-  signIn(credential: AppleCredential): Promise<TogetherState>;
+  /** A single-use nonce for the next sign-in. */
+  createNonce(): Promise<string>;
+  /** Signs in with Apple's credential, made for `nonce`. */
+  signIn(credential: AppleCredential, nonce: string): Promise<TogetherState>;
   createInvite(): Promise<{ code: string; expiresAt: string }>;
   acceptInvite(code: string): Promise<TogetherState>;
   send(op: TogetherOp): Promise<TogetherState>;
@@ -31,13 +35,22 @@ const state = togetherStateSchema;
 export function createTogetherApi(api: ApiClient): TogetherApi {
   return {
     fetchState: () => api.request({ path: '/v1/together', schema: state }),
-    signIn: (credential) =>
+    createNonce: async () =>
+      (
+        await api.request({
+          method: 'POST',
+          path: '/v1/together/nonce',
+          schema: signInNonceResponseSchema,
+        })
+      ).nonce,
+    signIn: (credential, nonce) =>
       api.request({
         method: 'POST',
         path: '/v1/together/sign-in',
         schema: state,
         body: {
           identityToken: credential.identityToken,
+          nonce,
           ...(credential.authorizationCode === null
             ? {}
             : { authorizationCode: credential.authorizationCode }),

@@ -75,6 +75,16 @@ describe('invites', () => {
     expect((await wireErrorOf(more)).detail).toEqual({ reason: 'full' });
   });
 
+  it('lets one of two invites taken at once through, and refuses the other without a server error', async () => {
+    const joiner = await signedIn();
+    const codes = await Promise.all([invite(await signedIn()), invite(await signedIn())]);
+    const answers = await Promise.all(codes.map((code) => accept(joiner, code)));
+    expect(answers.map((r) => r.status).sort()).toEqual([200, 409]);
+    const refused = answers.find((r) => r.status === 409);
+    if (refused) expect((await wireErrorOf(refused)).detail).toEqual({ reason: 'paired' });
+    expect((await stateOf(joiner)).pair?.members).toHaveLength(2);
+  });
+
   it('replaces an untaken invite with the next one', async () => {
     const a = await signedIn();
     const first = await invite(a);

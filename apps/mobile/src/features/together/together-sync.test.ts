@@ -69,6 +69,7 @@ function server(initial: TogetherState) {
           },
         });
       }),
+    createNonce: () => Promise.reject(new Error('unused')),
     signIn: () => Promise.reject(new Error('unused')),
     createInvite: () => Promise.reject(new Error('unused')),
     acceptInvite: () => Promise.reject(new Error('unused')),
@@ -94,13 +95,14 @@ function setup(initial: TogetherState | null, remote: TogetherState = initial ??
         persisted.push(state);
         return Promise.resolve();
       },
+      // The same rule as the phone's table: add what is missing, drop what a live pot lost.
       history: {
-        keep: (entries) => {
+        reconcile: (entries, livePotIds) => {
           for (const e of entries) if (!kept.has(e.id)) kept.set(e.id, e);
-          return Promise.resolve();
-        },
-        forget: (id) => {
-          kept.delete(id);
+          const own = new Set(entries.map((e) => e.id));
+          for (const [id, e] of kept) {
+            if (livePotIds.includes(e.potId) && !own.has(id)) kept.delete(id);
+          }
           return Promise.resolve();
         },
       },
@@ -208,6 +210,33 @@ describe('reading', () => {
     await flush();
     expect(onEnded).toHaveBeenCalledTimes(1);
     expect(endedByPartner({ me: AN, pair: null }, { me: AN, pair: null })).toBe(false);
+  });
+
+  it('says nothing about the partner when this phone itself left', () => {
+    const { sync, onEnded } = setup(paired());
+    // What the provider does after its own leave answers.
+    sync.adopt({ me: AN, pair: null });
+    expect(onEnded).not.toHaveBeenCalled();
+  });
+});
+
+describe('the history this phone keeps', () => {
+  it('drops a contribution taken back elsewhere, or whose answer was lost', async () => {
+    const { sync, s, kept } = setup(paired([{ id: 'c1', memberId: 'an', amount: 200_000 }]));
+    await sync.refresh();
+    expect(kept.has('c1')).toBe(true);
+    // The DELETE went through but its answer never came; the next fetch no longer lists it.
+    s.set(paired());
+    await sync.refresh();
+    expect(kept.has('c1')).toBe(false);
+  });
+
+  it('keeps everything after leaving', async () => {
+    const { sync, s, kept } = setup(paired([{ id: 'c1', memberId: 'an', amount: 200_000 }]));
+    await sync.refresh();
+    s.set({ me: AN, pair: null });
+    await sync.refresh();
+    expect(kept.has('c1')).toBe(true);
   });
 });
 

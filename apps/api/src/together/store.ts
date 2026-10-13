@@ -59,13 +59,29 @@ export async function ensurePair(db: D1Database, userId: string): Promise<string
   if (existing !== null) return existing;
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
-  await db.batch([
-    db.prepare('INSERT INTO together_pairs (id, created_at) VALUES (?, ?)').bind(id, now),
-    db
-      .prepare('INSERT INTO together_members (pair_id, user_id, joined_at) VALUES (?, ?, ?)')
-      .bind(id, userId, now),
-  ]);
+  try {
+    await db.batch([
+      db.prepare('INSERT INTO together_pairs (id, created_at) VALUES (?, ?)').bind(id, now),
+      db
+        .prepare('INSERT INTO together_members (pair_id, user_id, joined_at) VALUES (?, ?, ?)')
+        .bind(id, userId, now),
+    ]);
+  } catch (error) {
+    // Two requests made the person's pair at once: the other one won, and this batch rolled back.
+    if (!isUniqueViolation(error)) throw error;
+    const won = await pairOf(db, userId);
+    if (won === null) throw error;
+    return won;
+  }
   return id;
+}
+
+/** Whether D1 refused a write for a UNIQUE or PRIMARY KEY clash. */
+export function isUniqueViolation(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  const cause = error.cause instanceof Error ? error.cause.message : '';
+  const text = `${error.message} ${cause}`;
+  return /UNIQUE constraint failed|PRIMARY KEY/i.test(text);
 }
 
 interface PotRow {

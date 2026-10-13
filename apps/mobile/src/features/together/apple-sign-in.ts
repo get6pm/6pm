@@ -1,4 +1,5 @@
 import * as AppleAuthentication from 'expo-apple-authentication';
+import { CryptoDigestAlgorithm, CryptoEncoding, digestStringAsync } from 'expo-crypto';
 
 import type { AppleCredential } from './together-api';
 
@@ -14,15 +15,22 @@ export function appleSignInAvailable(): Promise<boolean> {
   return AppleAuthentication.isAvailableAsync().catch(() => false);
 }
 
+/** SHA-256 of a text, lowercase hex: what Apple is given in place of the raw nonce. */
+export function sha256Hex(text: string): Promise<string> {
+  return digestStringAsync(CryptoDigestAlgorithm.SHA256, text, { encoding: CryptoEncoding.HEX });
+}
+
 /**
  * Apple's sign-in sheet. Only the name is asked for, never the email: Budget together shows it
- * to the partner and needs nothing else. Apple gives the name the first time only.
+ * to the partner and needs nothing else. Apple gives the name the first time only. `nonceHash`
+ * is the SHA-256 of the server's nonce, which Apple signs into the token.
  */
-export async function signInWithApple(): Promise<AppleCredential> {
+export async function signInWithApple(nonceHash: string): Promise<AppleCredential> {
   let credential: AppleAuthentication.AppleAuthenticationCredential;
   try {
     credential = await AppleAuthentication.signInAsync({
       requestedScopes: [AppleAuthentication.AppleAuthenticationScope.FULL_NAME],
+      nonce: nonceHash,
     });
   } catch (error) {
     if ((error as { code?: unknown } | null)?.code === 'ERR_REQUEST_CANCELED') {

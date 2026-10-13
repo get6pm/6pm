@@ -1,9 +1,11 @@
 import { ApiError } from '../errors';
 
 /**
- * Sign in with Apple, checked on the server: an identity token is a JWT that Apple signs with one
- * of the keys it publishes. It is taken only when the signature holds, Apple issued it, it was
- * made for one of the 6pm apps and it has not expired.
+ * Sign in with Apple, checked on the server. Apple signs two kinds of JWT with the keys it
+ * publishes: the identity token the phone gets at sign-in, and the server-to-server notifications.
+ * Both must be signed by Apple, issued by Apple and made for one of the 6pm apps. An identity
+ * token must also be unexpired and carry the hash of a nonce this server handed out; a
+ * notification has no `exp`, so it must be recent instead, and each one is taken once.
  */
 
 export const APPLE_ISSUER = 'https://appleid.apple.com';
@@ -16,13 +18,19 @@ export const APPLE_TEAM_ID = 'YFND2EEW8S';
 const KEYS_TTL_MS = 60 * 60 * 1000;
 /** Clocks differ a little: a token is still taken this long after its `exp`. */
 const SKEW_S = 60;
+/** A notification older than this is refused: Apple sends them as events happen. */
+export const NOTIFICATION_MAX_AGE_S = 60 * 60;
+/** A token naming a key not in the set fetches the set again at most this often. */
+const REFETCH_COOLDOWN_MS = 60 * 1000;
 
 type AppleJwk = JsonWebKey & { kid: string };
 let cached: { keys: AppleJwk[]; at: number } | null = null;
+let lastRefetch = Number.NEGATIVE_INFINITY;
 
 /** Forgets Apple's keys, so the next check fetches them again. */
 export function forgetAppleKeys(): void {
   cached = null;
+  lastRefetch = Number.NEGATIVE_INFINITY;
 }
 
 async function appleKeys(fresh: boolean, now: number): Promise<AppleJwk[]> {
@@ -89,12 +97,11 @@ async function signedBy(jwk: AppleJwk, signed: string, signature: string): Promi
   }
 }
 
-/** The claims of a JWT Apple signed for one of `audiences`, or a `forbidden` error. */
-export async function verifyAppleJwt(
-  token: string,
-  audiences: readonly string[] = APPLE_AUDIENCES,
-  now = Date.now(),
-): Promise<Record<string, unknown>> {
+/**
+ * The claims of a JWT that Apple signed and issued for one of the 6pm apps, or a `forbidden`
+ * error. Time is left to the callers: identity tokens and notifications check it differently.
+ */
+async function verifyAppleSigned(token: string, now: number): Promise<Record<string, unknown>> {
   const parts = token.split('.');
   if (parts.length !== 3) throw refused();
   const [head = '', body = '', signature = ''] = parts;
@@ -105,18 +112,27 @@ export async function verifyAppleJwt(
   const kid = header['kid'];
 
   let jwk = (await appleKeys(false, now)).find((k) => k.kid === kid);
-  // A key Apple has only just published: fetch the set again once.
-  jwk ??= (await appleKeys(true, now)).find((k) => k.kid === kid);
+  // A key Apple has only just published: fetch the set again, but not for every unknown key.
+  if (jwk === undefined && now - lastRefetch >= REFETCH_COOLDOWN_MS) {
+    lastRefetch = now;
+    jwk = (await appleKeys(true, now)).find((k) => k.kid === kid);
+  }
   if (jwk === undefined) throw refused();
 
   if (!(await signedBy(jwk, `${head}.${body}`, signature))) throw refused();
 
-  const exp = claims['exp'];
   const aud = claims['aud'];
   if (claims['iss'] !== APPLE_ISSUER) throw refused();
-  if (typeof aud !== 'string' || !audiences.includes(aud)) throw refused();
-  if (typeof exp !== 'number' || exp + SKEW_S < now / 1000) throw refused();
+  if (typeof aud !== 'string' || !(APPLE_AUDIENCES as readonly string[]).includes(aud)) {
+    throw refused();
+  }
   return claims;
+}
+
+/** SHA-256 of a text, lowercase hex: how the phone hands the nonce to Apple. */
+export async function sha256Hex(text: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
 export interface AppleIdentity {
@@ -126,10 +142,46 @@ export interface AppleIdentity {
   readonly audience: string;
 }
 
-/** Checks an identity token from the phone and says who it is for. */
-export async function verifyIdentityToken(token: string, now = Date.now()): Promise<AppleIdentity> {
-  const claims = await verifyAppleJwt(token, APPLE_AUDIENCES, now);
+/**
+ * Checks an identity token from the phone and says who it is for. The token must carry the
+ * SHA-256 of `nonce`, the raw nonce the phone was given by this server for this sign-in.
+ */
+export async function verifyIdentityToken(
+  token: string,
+  nonce: string,
+  now = Date.now(),
+): Promise<AppleIdentity> {
+  const claims = await verifyAppleSigned(token, now);
+  const exp = claims['exp'];
+  if (typeof exp !== 'number' || exp + SKEW_S < now / 1000) throw refused();
+  if (claims['nonce'] !== (await sha256Hex(nonce))) throw refused();
   const sub = claims['sub'];
   if (typeof sub !== 'string' || sub.length === 0 || sub.length > 255) throw refused();
   return { sub, audience: claims['aud'] as string };
+}
+
+export interface AppleNotification {
+  /** Apple's id for this notification: taken once. */
+  readonly jti: string;
+  /** The `events` claim, still to be read. */
+  readonly events: unknown;
+}
+
+/**
+ * Checks a server-to-server notification. Apple's carry `iss`, `aud`, `iat`, `jti` and `events`
+ * and no `exp`: one is taken only while it is recent (`iat` within the hour, not ahead of us).
+ */
+export async function verifyAppleNotification(
+  payload: string,
+  now = Date.now(),
+): Promise<AppleNotification> {
+  const claims = await verifyAppleSigned(payload, now);
+  const iat = claims['iat'];
+  const jti = claims['jti'];
+  const seconds = now / 1000;
+  if (typeof iat !== 'number' || iat > seconds + SKEW_S || iat < seconds - NOTIFICATION_MAX_AGE_S) {
+    throw refused();
+  }
+  if (typeof jti !== 'string' || jti.length === 0 || jti.length > 255) throw refused();
+  return { jti, events: claims['events'] };
 }

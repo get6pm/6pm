@@ -43,9 +43,18 @@ export const addContributionRequestSchema = z.strictObject({
   amount: sharedAmountSchema,
 });
 
+/** A sign-in nonce the server hands out: 32 URL-safe characters or more. */
+export const signInNoncePattern = /^[A-Za-z0-9_-]{32,128}$/;
+
+export const signInNonceResponseSchema = z.object({
+  nonce: z.string().regex(signInNoncePattern),
+});
+
 export const appleSignInRequestSchema = z.strictObject({
   /** The identity token (a JWT signed by Apple). */
   identityToken: z.string().min(20).max(4096),
+  /** The raw nonce from `POST /v1/together/nonce`; the token carries its SHA-256. */
+  nonce: z.string().regex(signInNoncePattern),
   /** The one-time code Apple gives with it, exchanged on the server so access can be revoked. */
   authorizationCode: z.string().min(1).max(512).optional(),
   /** Apple sends the name only the first time someone signs in to the app. */

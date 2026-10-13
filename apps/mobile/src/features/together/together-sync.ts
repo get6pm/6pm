@@ -13,10 +13,16 @@ export type OwnContribution = ReturnType<typeof ownContributions>[number];
 
 /** The phone's own record of what its person put in: it outlives the shared copy. */
 export interface TogetherHistory {
-  /** Writes the contributions not yet kept; one already kept is left as it is. */
-  keep(entries: readonly OwnContribution[]): Promise<void>;
-  /** Forgets one the person took back. */
-  forget(id: string): Promise<void>;
+  /**
+   * Brings the record in line with the server's copy: the person's contributions not yet kept are
+   * written, and a kept one in a pot that still exists but that the server no longer lists (taken
+   * back here with a lost answer, or on another device) is dropped. Pots that are gone, and
+   * everything after leaving (`livePotIds` empty), keep their history.
+   */
+  readonly reconcile: (
+    entries: readonly OwnContribution[],
+    livePotIds: readonly string[],
+  ) => Promise<void>;
 }
 
 export interface TogetherSyncDeps {
@@ -24,7 +30,7 @@ export interface TogetherSyncDeps {
   /** Keeps the last answer for the next launch and for offline use. */
   readonly persist: (state: TogetherState) => Promise<void>;
   readonly history: TogetherHistory;
-  /** The partner ended Budget together since the last answer. */
+  /** A fetch found the partner ended Budget together since the last answer. */
   readonly onEnded: () => void;
   /** Something kept on the phone could not be written; never stops the sync. */
   readonly onLocalError: (error: unknown) => void;
@@ -90,14 +96,17 @@ export function createTogetherSync(
     for (const listener of listeners) listener();
   }
 
-  function adopt(next: TogetherState) {
+  function adopt(next: TogetherState, fetched = false) {
     const before = base;
     base = next;
     known = true;
     offline = false;
-    if (endedByPartner(before, next)) deps.onEnded();
+    // Only a fetch can bring news from the other side; this phone's own leave is not news.
+    if (fetched && endedByPartner(before, next)) deps.onEnded();
     deps.persist(next).catch(deps.onLocalError);
-    deps.history.keep(ownContributions(next)).catch(deps.onLocalError);
+    deps.history
+      .reconcile(ownContributions(next), next.pair?.pots.map((p) => p.id) ?? [])
+      .catch(deps.onLocalError);
     publish();
   }
 
@@ -106,7 +115,7 @@ export function createTogetherSync(
     fetching ??= deps.api.fetchState().then(
       (next) => {
         fetching = null;
-        if (written === since) adopt(next);
+        if (written === since) adopt(next, true);
         else publish();
       },
       () => {
@@ -128,9 +137,6 @@ export function createTogetherSync(
       pending = pending.filter((p) => p.seq !== entry.seq);
       written += 1;
       adopt(next);
-      if (op.kind === 'removeContribution') {
-        await deps.history.forget(op.id).catch(deps.onLocalError);
-      }
       return { ok: true };
     } catch (error) {
       pending = pending.filter((p) => p.seq !== entry.seq);

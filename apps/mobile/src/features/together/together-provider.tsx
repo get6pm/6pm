@@ -15,11 +15,11 @@ import { AppState } from 'react-native';
 import type { TogetherState } from '@6pm/domain';
 
 import { useMoneyStore } from '../../data/money-provider';
-import { forgetTogetherMove, keepTogetherMoves } from '../../data/together-moves';
+import { reconcileTogetherMoves } from '../../data/together-moves';
 import { useI18n } from '../../i18n/i18n';
 import { useToast } from '../../ui/toast/toast-host';
 import { useApi } from '../api/native-api';
-import { signInWithApple } from './apple-sign-in';
+import { sha256Hex, signInWithApple } from './apple-sign-in';
 import { createTogetherApi, type TogetherApi } from './together-api';
 import {
   parseTogetherCache,
@@ -80,19 +80,15 @@ export function TogetherProvider({ children }: { readonly children: ReactNode })
           ]);
         },
         history: {
-          keep: (entries) =>
+          reconcile: (entries, livePotIds) =>
             recount(() =>
-              keepTogetherMoves(
+              reconcileTogetherMoves(
                 store.db,
                 entries,
+                livePotIds,
                 store.getSnapshot().plan?.payday ?? { kind: 'lastDay' },
               ),
             ),
-          forget: (id) =>
-            recount(async () => {
-              await forgetTogetherMove(store.db, id);
-              return true;
-            }),
         },
         onEnded: () => say.current.toast(say.current.t('together.ended')),
         onLocalError: (error) => Sentry.captureException(error),
@@ -104,7 +100,10 @@ export function TogetherProvider({ children }: { readonly children: ReactNode })
       sync,
       api,
       signIn: async () => {
-        const next = await api.signIn(await signInWithApple());
+        // A single-use nonce from the server: Apple signs its hash into the token.
+        const nonce = await api.createNonce();
+        const credential = await signInWithApple(await sha256Hex(nonce));
+        const next = await api.signIn(credential, nonce);
         sync.adopt(next);
         return next;
       },

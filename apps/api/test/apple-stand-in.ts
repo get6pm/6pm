@@ -22,12 +22,17 @@ const publicJwk = await crypto.subtle.exportKey('jwk', pair.publicKey);
 
 const realFetch = globalThis.fetch;
 
+/** How many times the key set has been fetched since `serveAppleKeys`. */
+export const keyFetches = { count: 0 };
+
 /** Serves the stand-in key set at Apple's address; everything else goes out as usual. */
 export function serveAppleKeys(): void {
   forgetAppleKeys();
+  keyFetches.count = 0;
   vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) => {
     const url = input instanceof Request ? input.url : String(input);
     if (url === APPLE_KEYS_URL) {
+      keyFetches.count += 1;
       return Promise.resolve(Response.json({ keys: [{ ...publicJwk, kid: KID, use: 'sig' }] }));
     }
     return realFetch(input, init);
@@ -42,17 +47,25 @@ function base64Url(bytes: Uint8Array): string {
 
 const part = (value: unknown) => base64Url(new TextEncoder().encode(JSON.stringify(value)));
 
-/** A JWT signed with the stand-in key, with Apple's usual claims unless `claims` overrides them. */
+/**
+ * A JWT signed with the stand-in key, with Apple's usual claims unless `claims` overrides them.
+ * Identity tokens expire ten minutes on; `expires: false` leaves `exp` out, as Apple's
+ * server-to-server notifications do.
+ */
 export async function appleJwt(
   claims: Record<string, unknown>,
-  { kid = KID, key = pair.privateKey }: { kid?: string; key?: CryptoKey } = {},
+  {
+    kid = KID,
+    key = pair.privateKey,
+    expires = true,
+  }: { kid?: string; key?: CryptoKey; expires?: boolean } = {},
 ): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const unsigned = `${part({ alg: 'RS256', kid })}.${part({
     iss: 'https://appleid.apple.com',
     aud: 'ai.sixpm.app.dev',
     iat: now,
-    exp: now + 600,
+    ...(expires ? { exp: now + 600 } : {}),
     ...claims,
   })}`;
   const signature = await crypto.subtle.sign(
@@ -76,4 +89,23 @@ export async function strangerKey(): Promise<CryptoKey> {
     ['sign', 'verify'],
   );
   return other.privateKey;
+}
+
+/**
+ * A notification exactly as Apple documents it: `iss`, `aud`, `iat`, `jti` and `events` (a JSON
+ * string), and no `exp`.
+ */
+export async function appleNotification(
+  event: { type: string; sub: string; event_time?: number },
+  over: { jti?: string; iat?: number; key?: CryptoKey } = {},
+): Promise<string> {
+  return appleJwt(
+    {
+      aud: 'ai.sixpm.app',
+      jti: over.jti ?? crypto.randomUUID(),
+      ...(over.iat === undefined ? {} : { iat: over.iat }),
+      events: JSON.stringify({ event_time: Date.now(), ...event }),
+    },
+    { expires: false, ...(over.key === undefined ? {} : { key: over.key }) },
+  );
 }

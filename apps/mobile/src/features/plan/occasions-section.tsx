@@ -212,6 +212,7 @@ export function OccasionsStrip({
   return (
     <ScrollView
       horizontal
+      scrollsToTop={false}
       showsHorizontalScrollIndicator={false}
       snapToInterval={CARD_W + GAP}
       decelerationRate="fast"

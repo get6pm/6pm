@@ -6,6 +6,7 @@ import { useI18n } from '../../i18n/i18n';
 import { useDesignInsets } from '../../ui/layout/design-insets';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
+import { useHomePageShown } from '../home/home-page';
 import { useHomePageScroll, useHomeScroll } from '../home/home-scroll';
 import { useEntitlement } from '../purchases/purchases-provider';
 import { YearBooks } from '../year-book/year-book-card';
@@ -27,6 +28,7 @@ export function DiaryPage({ scrollRef }: { readonly scrollRef: AnimatedRef<Anima
   const { t } = useI18n();
   const { top, bottom } = useDesignInsets();
   const onScroll = useHomePageScroll('diary');
+  const shown = useHomePageShown();
   const { y } = useHomeScroll();
   const diary = useDiary();
   const { max } = useEntitlement();
@@ -40,6 +42,7 @@ export function DiaryPage({ scrollRef }: { readonly scrollRef: AnimatedRef<Anima
       ref={scrollRef}
       onScroll={onScroll}
       scrollEventThrottle={16}
+      scrollsToTop={shown}
       contentInsetAdjustmentBehavior="never"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{

@@ -11,6 +11,7 @@ import { useOfferUndo } from '../../ui/undo/undo-host';
 import { useTheme } from '../../ui/theme/theme';
 import { useRunAction } from '../companion/use-run-action';
 import { useParkedClose } from '../close/close-session';
+import { useHomePageShown } from '../home/home-page';
 import { useHomePageScroll, useHomeScroll } from '../home/home-scroll';
 import { CompanionGreeting } from './companion-greeting';
 import { requestDiaryDay } from './diary-request';
@@ -49,6 +50,7 @@ export function TodayPage({
   const { t, language } = useI18n();
   const parked = useParkedClose(snap.today);
   const onScroll = useHomePageScroll('today');
+  const shown = useHomePageShown();
   const view = todayView(snap, closeHour, day.spent, useSpendLabels());
   const monthName = new Intl.DateTimeFormat(language === 'vi' ? 'vi-VN' : 'en-GB', {
     month: 'long',
@@ -74,6 +76,7 @@ export function TodayPage({
       ref={scrollRef}
       onScroll={onScroll}
       scrollEventThrottle={16}
+      scrollsToTop={shown}
       contentInsetAdjustmentBehavior="never"
       showsVerticalScrollIndicator={false}
     >

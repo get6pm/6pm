@@ -121,6 +121,7 @@ export const enLooks = {
   'max.welcome.win.more': 'Pots, travel, shared budgets, widgets',
   'max.welcome.go.looks': 'Pick your look',
   'max.welcome.go.pots': 'Make a pot',
+  'max.welcome.go.shared': 'Invite someone',
   'max.welcome.go.travel': 'Turn on Travel mode',
   'max.welcome.go.backup': 'See your backup',
   'max.welcome.go.diary': 'Open the year book',

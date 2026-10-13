@@ -2,6 +2,7 @@ import { describe, expect, it, jest } from '@jest/globals';
 
 import { sql as createSettings } from '../db/migrations/0001-create-settings';
 import { sql as createMoneyTables } from '../db/migrations/0002-create-money-tables';
+import { sql as createTogetherMoves } from '../db/migrations/0003-create-together-moves';
 import { categoryActions, tallyByCategory } from './category-actions';
 import { moneyActions } from './money-actions';
 import { createMoneyStore } from './money-store';
@@ -16,6 +17,7 @@ async function openStore() {
   const sqlite = new DatabaseSync(':memory:');
   sqlite.exec(createSettings);
   sqlite.exec(createMoneyTables);
+  sqlite.exec(createTogetherMoves);
   const db: SqlDatabase = {
     getAllAsync: <T>(source: string, params: SqlValue[]) =>
       Promise.resolve(sqlite.prepare(source).all(...params) as T[]),

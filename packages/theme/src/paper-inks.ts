@@ -50,6 +50,18 @@ export const planInk = {
 } as const;
 
 /**
+ * Budget together's round avatars (Plan card, `App:376`): the person's own in the prototype's
+ * peach, the partner's in the same lightness at a cool hue, both with the prototype's dark ink.
+ */
+export const togetherInk = {
+  /** oklch(0.8 0.1 30) */
+  me: '#f7a597',
+  /** oklch(0.8 0.1 220) */
+  partner: '#6ccdea',
+  ink: '#2a1408',
+} as const;
+
+/**
  * The Live Activity and the Lock Screen ring, drawn by iOS over any wallpaper and in the black
  * Dynamic Island: white ink at the prototype's strengths and the banner's dark glass, the same in
  * every look (`SS:44-64`, `SS:141-156`).

@@ -49,6 +49,7 @@ describe('the welcome button', () => {
     expect(welcomeAction('pots', false)).toEqual({ label: 'pots', href: '/new-pot' });
     expect(welcomeAction('icons', false).href).toBe('/categories');
     expect(welcomeAction('backup', false).href).toBe('/backup');
+    expect(welcomeAction('shared', false)).toEqual({ label: 'shared', href: '/together' });
   });
   it('has nothing to open for a screen that is not built', () => {
     expect(welcomeAction('ask', false)).toEqual({ label: 'ask', href: '/ask' });

@@ -71,6 +71,19 @@ export function sharedPotMonthly(
   return potMonthlyNeed(goal, saved, monthsBetween(cycleMonth(cycle), neededBy));
 }
 
+/** The smallest amount the add stepper offers. */
+export const MIN_STEP_AMOUNT: Vnd = 50_000;
+
+/**
+ * The add stepper's next amount: 50.000₫ steps below 1tr, 100.000₫ below 5tr, 500.000₫ above;
+ * never below 50.000₫ nor past the cap.
+ */
+export function stepContribution(amount: Vnd, by: 1 | -1): Vnd {
+  const from = by > 0 ? amount : amount - 1;
+  const step = from >= 5_000_000 ? 500_000 : from >= 1_000_000 ? 100_000 : 50_000;
+  return Math.min(MAX_SHARED_AMOUNT, Math.max(MIN_STEP_AMOUNT, amount + by * step));
+}
+
 /** Whether a contribution can go in: whole đồng, more than nothing, within the cap. */
 export function isSharedAmount(amount: number): boolean {
   return Number.isSafeInteger(amount) && amount > 0 && amount <= MAX_SHARED_AMOUNT;

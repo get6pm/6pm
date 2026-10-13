@@ -93,5 +93,6 @@ export async function moveCycleRecords(
 ): Promise<void> {
   if (from === to) return;
   await db.runAsync('UPDATE pot_moves SET cycle = ? WHERE cycle = ?', [to, from]);
+  await db.runAsync('UPDATE together_moves SET cycle = ? WHERE cycle = ?', [to, from]);
   await db.runAsync('UPDATE bills SET paid_cycle = ? WHERE paid_cycle = ?', [to, from]);
 }

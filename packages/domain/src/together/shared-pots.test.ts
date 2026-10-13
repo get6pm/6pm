@@ -8,6 +8,7 @@ import {
   sharedPotMonthly,
   sharedPotProgress,
   sharedTopUp,
+  stepContribution,
 } from './shared-pots';
 
 describe('sharedPotProgress', () => {
@@ -50,6 +51,21 @@ describe('sharedTopUp', () => {
     expect(sharedTopUp(1_000_000, 950_000, 100_000)).toBe(50_000);
     expect(sharedTopUp(1_000_000, 1_000_000, 100_000)).toBe(0);
     expect(sharedTopUp(1_000_000, 1_300_000, 100_000)).toBe(0);
+  });
+});
+
+describe('stepContribution', () => {
+  it('steps finer for small amounts and coarser for large ones', () => {
+    expect(stepContribution(100_000, 1)).toBe(150_000);
+    expect(stepContribution(1_000_000, 1)).toBe(1_100_000);
+    expect(stepContribution(1_000_000, -1)).toBe(950_000);
+    expect(stepContribution(5_000_000, 1)).toBe(5_500_000);
+    expect(stepContribution(5_000_000, -1)).toBe(4_900_000);
+  });
+
+  it('never goes below 50k or past the cap', () => {
+    expect(stepContribution(50_000, -1)).toBe(50_000);
+    expect(stepContribution(MAX_SHARED_AMOUNT, 1)).toBe(MAX_SHARED_AMOUNT);
   });
 });
 

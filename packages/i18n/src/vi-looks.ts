@@ -117,6 +117,7 @@ export const viLooks: { readonly [Key in keyof typeof enLooks]: Entry } = {
   'max.welcome.win.more': 'Hũ, du lịch, ngân sách chung, widget',
   'max.welcome.go.looks': 'Chọn giao diện',
   'max.welcome.go.pots': 'Tạo một hũ',
+  'max.welcome.go.shared': 'Mời ai đó',
   'max.welcome.go.travel': 'Bật chế độ du lịch',
   'max.welcome.go.backup': 'Xem bản sao lưu',
   'max.welcome.go.diary': 'Mở sách năm',

@@ -1,13 +1,18 @@
-import { createContext, use, useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Text } from 'react-native';
-import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
+import {
+  createContext,
+  use,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
+import { AccessibilityInfo } from 'react-native';
 
 import { haptics } from '../haptics';
-import { Symbol } from '../icons/symbol';
 import { useDesignInsets } from '../layout/design-insets';
-import { PressScale } from '../primitives/press-scale';
-import { useTheme } from '../theme/theme';
-import { body } from '../type/fonts';
+import { UndoBar } from './undo-bar';
 
 interface UndoOffer {
   readonly key: number;
@@ -17,27 +22,61 @@ interface UndoOffer {
 }
 
 const UNDO_MS = 5000;
+/** Let go after holding it, the bar stays at least this long so the undo is still in reach. */
+const AFTER_HOLD_MS = 1500;
 const UndoContext = createContext<
   ((text: string, actionLabel: string, undo: () => void) => void) | null
 >(null);
 
 /**
  * The undo pill: "Deleted Phở Hòa · Undo", above the tab bar for five seconds. One at a time; a new
- * offer replaces the last (the last one's change stays).
+ * offer replaces the last (the last one's change stays). VoiceOver reads it as it appears; a finger
+ * on it stops the clock, and a pull down puts it away.
  */
 export function UndoHost({ children }: { readonly children: ReactNode }) {
-  const { palette } = useTheme();
   const { bottom } = useDesignInsets();
   const [offer, setOffer] = useState<UndoOffer | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const deadline = useRef(0);
+  const remaining = useRef(UNDO_MS);
   const counter = useRef(0);
+  // Whether a bar is up: a finger lifting off a bar that is already gone must not restart a clock.
+  const showing = useRef(false);
 
-  const show = useCallback((text: string, actionLabel: string, undo: () => void) => {
+  const arm = useCallback((ms: number) => {
     clearTimeout(timer.current);
-    counter.current += 1;
-    setOffer({ key: counter.current, text, actionLabel, undo });
-    timer.current = setTimeout(() => setOffer(null), UNDO_MS);
+    deadline.current = Date.now() + ms;
+    timer.current = setTimeout(() => {
+      showing.current = false;
+      setOffer(null);
+    }, ms);
   }, []);
+
+  const show = useCallback(
+    (text: string, actionLabel: string, undo: () => void) => {
+      counter.current += 1;
+      showing.current = true;
+      setOffer({ key: counter.current, text, actionLabel, undo });
+      AccessibilityInfo.announceForAccessibility(text);
+      arm(UNDO_MS);
+    },
+    [arm],
+  );
+
+  const hold = useCallback(() => {
+    clearTimeout(timer.current);
+    remaining.current = Math.max(0, deadline.current - Date.now());
+  }, []);
+  const letGo = useCallback(() => {
+    if (showing.current) arm(Math.max(remaining.current, AFTER_HOLD_MS));
+  }, [arm]);
+  const dismiss = useCallback(() => {
+    clearTimeout(timer.current);
+    showing.current = false;
+    setOffer(null);
+  }, []);
+
+  useEffect(() => () => clearTimeout(timer.current), []);
 
   const value = useMemo(() => show, [show]);
 
@@ -45,47 +84,20 @@ export function UndoHost({ children }: { readonly children: ReactNode }) {
     <UndoContext value={value}>
       {children}
       {offer ? (
-        <Animated.View
+        <UndoBar
           key={offer.key}
-          entering={FadeInDown.duration(300)}
-          exiting={FadeOutDown.duration(200)}
-          style={{
-            position: 'absolute',
-            left: 16,
-            right: 16,
-            bottom: bottom(102),
-            height: 52,
-            borderRadius: 18,
-            backgroundColor: palette.btnBg,
-            boxShadow: '0 12px 30px rgba(10,5,20,.3)',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 10,
-            paddingLeft: 16,
-            paddingRight: 6,
+          text={offer.text}
+          actionLabel={offer.actionLabel}
+          bottom={bottom(102)}
+          onUndo={() => {
+            haptics.tap();
+            offer.undo();
+            dismiss();
           }}
-        >
-          <Symbol name="delete" size={20} color={palette.btnFg} />
-          <Text numberOfLines={1} style={{ ...body(15, 500), color: palette.btnFg, flex: 1 }}>
-            {offer.text}
-          </Text>
-          <PressScale
-            accessibilityRole="button"
-            onPress={() => {
-              clearTimeout(timer.current);
-              haptics.tap();
-              offer.undo();
-              setOffer(null);
-            }}
-            style={{ height: 40, paddingHorizontal: 14, justifyContent: 'center' }}
-          >
-            <Text
-              style={{ ...body(15, 700), color: palette.btnFg, textDecorationLine: 'underline' }}
-            >
-              {offer.actionLabel}
-            </Text>
-          </PressScale>
-        </Animated.View>
+          onDismiss={dismiss}
+          onHold={hold}
+          onRelease={letGo}
+        />
       ) : null}
     </UndoContext>
   );

@@ -1,33 +1,37 @@
 import { useRouter } from 'expo-router';
-import { useEffect, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, type ReactNode } from 'react';
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   Easing,
-  runOnJS,
+  Extrapolation,
+  interpolate,
+  ReduceMotion,
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 
-import { gestures } from '@6pm/theme';
+import { curves, gestures } from '@6pm/theme';
 
 import { haptics } from '../../ui/haptics';
 import { useDesignInsets } from '../../ui/layout/design-insets';
+import { project, release, rubberband } from '../../ui/motion/physics';
 import { useTheme } from '../../ui/theme/theme';
 
 const OPEN_MS = 450;
-const CLOSE_MS = 260;
-const open = Easing.bezier(0.2, 0.9, 0.2, 1);
-const settle = Easing.bezier(0.2, 0.9, 0.25, 1.12);
-const leave = Easing.bezier(0.4, 0, 1, 1);
-const FLICK = 900;
+const enter = Easing.bezier(...curves.enter);
+const reduceMotion = ReduceMotion.System;
 
 /**
  * The prototype's floating card sheet (the missed-day catch-up): 8 pt from the sides and bottom,
- * 44 pt corners, as tall as its content, over a dimmed page. Same physics as `SheetFrame`: it
- * slides up over 0.45 s and the grabber drags it down past 120 pt (or a flick) to dismiss.
- * The content gets the animated dismiss, so its own buttons leave the same way.
+ * 44 pt corners, as tall as its content, over a dimmed page. The native sheet cannot float like
+ * this, so it draws itself: it slides up over 0.45 s, and the grabber drags it. Released, it goes
+ * where the flick was heading: past 120 pt it leaves with the finger's speed, otherwise it springs
+ * home. A grab mid-flight continues from where it is. The content gets the animated dismiss, so
+ * its own buttons leave the same way.
  */
 export function CardSheet({ children }: { readonly children: (dismiss: () => void) => ReactNode }) {
   const router = useRouter();
@@ -35,46 +39,59 @@ export function CardSheet({ children }: { readonly children: (dismiss: () => voi
   const { bottom } = useDesignInsets();
   const { height } = useWindowDimensions();
   const y = useSharedValue(height);
-  const dim = useSharedValue(0);
+  const start = useSharedValue(0);
 
-  const close = () => router.back();
-  const dismiss = () => {
-    'worklet';
-    y.value = withTiming(height, { duration: CLOSE_MS, easing: leave }, (done) => {
-      if (done) runOnJS(close)();
-    });
-    dim.value = withTiming(0, { duration: CLOSE_MS });
-  };
+  const close = useCallback(() => router.back(), [router]);
+  const leave = useCallback(
+    (velocity: number) => {
+      'worklet';
+      y.set(
+        withSpring(height, { ...release.away, velocity, reduceMotion }, (done) => {
+          if (done) scheduleOnRN(close);
+        }),
+      );
+    },
+    [y, height, close],
+  );
 
   useEffect(() => {
-    y.value = withTiming(0, { duration: OPEN_MS, easing: open });
-    dim.value = withTiming(1, { duration: 300 });
-  }, [y, dim]);
+    y.set(withTiming(0, { duration: OPEN_MS, easing: enter, reduceMotion }));
+  }, [y]);
 
-  const drag = Gesture.Pan()
-    .onUpdate((e) => {
-      y.value = e.translationY < 0 ? e.translationY * 0.15 : e.translationY;
-      dim.value = Math.max(0.15, 1 - y.value / 480);
-    })
-    .onEnd((e) => {
-      if (y.value > gestures.sheetDismiss || e.velocityY > FLICK) {
-        runOnJS(haptics.tap)();
-        dismiss();
-      } else {
-        y.value = withTiming(0, { duration: OPEN_MS, easing: settle });
-        dim.value = withTiming(1, { duration: 300 });
-      }
-    });
+  const drag = useMemo(
+    () =>
+      Gesture.Pan()
+        .onStart(() => {
+          start.set(y.get());
+        })
+        .onUpdate((e) => {
+          const next = start.get() + e.translationY;
+          y.set(next >= 0 ? next : rubberband(next, height));
+        })
+        .onEnd((e) => {
+          // One light tap either way: it left, or it caught home.
+          scheduleOnRN(haptics.tap);
+          if (y.get() + project(e.velocityY) > gestures.sheetDismiss) leave(e.velocityY);
+          else {
+            y.set(withSpring(0, { ...release.sheet, velocity: e.velocityY, reduceMotion }));
+          }
+        }),
+    [y, start, height, leave],
+  );
 
-  const panel = useAnimatedStyle(() => ({ transform: [{ translateY: y.value }] }));
-  const backdrop = useAnimatedStyle(() => ({ opacity: dim.value }));
+  const panel = useAnimatedStyle(() => ({ transform: [{ translateY: y.get() }] }));
+  // The dim follows the card: full when it is home, gone as it leaves.
+  const backdrop = useAnimatedStyle(() => ({
+    opacity: interpolate(y.get(), [0, height], [1, 0], Extrapolation.CLAMP),
+  }));
+  const dismiss = () => leave(0);
 
   return (
     <View style={StyleSheet.absoluteFill}>
       <Animated.View style={[StyleSheet.absoluteFill, backdrop]}>
         <Pressable
           accessibilityRole="button"
-          onPress={() => dismiss()}
+          onPress={dismiss}
           style={{ flex: 1, backgroundColor: 'rgba(10,6,18,.36)' }}
         />
       </Animated.View>
@@ -118,7 +135,7 @@ export function CardSheet({ children }: { readonly children: (dismiss: () => voi
             />
           </View>
         </GestureDetector>
-        {children(() => dismiss())}
+        {children(dismiss)}
       </Animated.View>
     </View>
   );

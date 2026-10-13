@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
@@ -43,6 +43,12 @@ export function LooksShop() {
   const copy = useMemo(() => lookCopy(t), [t]);
   const worn = resolveLook(look, customer);
   const safe = formatShort(Math.max(0, day?.safe ?? 0), language);
+
+  // While a look is tried on, the page behind wears it: the shop's sheet stops dimming it.
+  const navigation = useNavigation();
+  useEffect(() => {
+    navigation.setOptions({ sheetLargestUndimmedDetentIndex: tryOn ? 'last' : 'none' });
+  }, [navigation, tryOn]);
 
   // The offerings load at launch; opening the shop asks again if the store did not answer then.
   useEffect(() => loadOfferings(), [loadOfferings]);

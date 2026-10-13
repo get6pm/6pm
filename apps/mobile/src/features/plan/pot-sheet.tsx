@@ -73,6 +73,7 @@ export function PotSheet(props: PotSheetProps) {
     <SheetFrame header={<SheetHeader title={props.title} />}>
       <ScrollView
         keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: 14,

@@ -10,7 +10,9 @@ import { SheetFrame } from './sheet-frame';
 
 /**
  * The prototype's sheet: a grabber, a centred title with Done on the right, and a scrolling body
- * on the solid sheet colour. The native sheet underneath gives the drag-to-dismiss and dimming.
+ * on the solid sheet colour, with an optional footer pinned under it. The native iOS sheet it is
+ * presented in gives the drag anywhere, the pull down from the top of the scroll, the dimming, and
+ * the slide away when Done calls `router.back()`.
  */
 export function SheetScreen({
   title,
@@ -57,6 +59,10 @@ export function SheetScreen({
     <SheetFrame header={header}>
       <ScrollView
         style={{ flex: 1 }}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode="interactive"
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingTop: 6, paddingHorizontal: 16, paddingBottom: 44, gap }}
         showsVerticalScrollIndicator={false}
       >

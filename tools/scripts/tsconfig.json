@@ -1,5 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "types": ["node"] },
+  "compilerOptions": {
+    "types": ["node"],
+    "paths": {
+      "@shopify/react-native-skia": ["../../apps/mobile/node_modules/@shopify/react-native-skia"]
+    }
+  },
   "include": ["*.ts"]
 }

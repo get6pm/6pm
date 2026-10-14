@@ -9,8 +9,7 @@ import {
 
 import { useI18n } from '../../i18n/i18n';
 import { Companion } from '../../ui/companion/companion';
-import { useDesignInsets } from '../../ui/layout/design-insets';
-import { GlassButton } from '../../ui/primitives/glass-button';
+import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
 import { AnswerBubble, IntroBubble, MeBubble, TypingBubble } from './ask-bubbles';
@@ -29,7 +28,6 @@ export function AskScreen({ question }: { readonly question: string | null }) {
   const router = useRouter();
   const { palette, serious } = useTheme();
   const { t } = useI18n();
-  const { top } = useDesignInsets();
   const chat = useAsk();
   const scroll = useRef<KeyboardChatScrollViewRef>(null);
   const { keyboardOffset, lift } = useComposerLift();
@@ -49,23 +47,33 @@ export function AskScreen({ question }: { readonly question: string | null }) {
 
   return (
     <View style={{ flex: 1, experimental_backgroundImage: palette.skyDeep }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 12,
-          paddingTop: top(58),
-          paddingHorizontal: 16,
-          paddingBottom: 10,
-        }}
-      >
-        <GlassButton icon="arrow_back" label={t('ask.back')} onPress={() => router.back()} />
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+      {/* A native sheet like the others: the grabber on top, Done on the right, and a drag down
+          anywhere or from the top of the conversation puts it away. */}
+      <View style={{ paddingTop: 8, paddingHorizontal: 16, paddingBottom: 10, gap: 6 }}>
+        <View
+          style={{
+            alignSelf: 'center',
+            width: 36,
+            height: 5,
+            borderRadius: 9,
+            backgroundColor: palette.inkSoft,
+            opacity: 0.35,
+          }}
+        />
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
           {serious ? null : <Companion size={44} mood={chat.mood} />}
           <View style={{ flex: 1, gap: 1 }}>
             <Text style={{ ...body(17, 700), color: palette.ink }}>{t('ask.title')}</Text>
             <Text style={{ ...body(12.5), color: palette.inkSoft }}>{t('ask.sub')}</Text>
           </View>
+          <PressScale
+            accessibilityRole="button"
+            onPress={() => router.back()}
+            hitSlop={8}
+            style={{ paddingVertical: 8, paddingHorizontal: 2 }}
+          >
+            <Text style={{ ...body(17, 650), color: palette.ink }}>{t('common.done')}</Text>
+          </PressScale>
         </View>
       </View>
       <Animated.View pointerEvents="box-none" style={[{ flex: 1, overflow: 'hidden' }, clip]}>

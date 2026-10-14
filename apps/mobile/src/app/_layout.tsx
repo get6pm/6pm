@@ -64,10 +64,10 @@ function Screens() {
         <Stack.Screen name="settings" options={sheet} />
         <Stack.Screen name="capture-guide" options={sheet} />
         <Stack.Screen name="categories" options={sheet} />
-        <Stack.Screen name="category/[id]" options={drawnSheet} />
+        <Stack.Screen name="category/[id]" options={sheet} />
         <Stack.Screen name="quick-add" options={sheet} />
         <Stack.Screen name="scan" options={takeover} />
-        <Stack.Screen name="ask" options={takeover} />
+        <Stack.Screen name="ask" options={sheet} />
         <Stack.Screen name="inbox" options={sheet} />
         <Stack.Screen name="close" options={takeover} />
         <Stack.Screen name="spend/[id]" options={sheet} />

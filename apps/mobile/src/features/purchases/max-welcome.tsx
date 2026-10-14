@@ -170,13 +170,13 @@ export function MaxWelcome() {
   ];
   const done = () => {
     haptics.tap();
-    router.dismissAll();
+    router.dismissTo('/');
   };
   const go = () => {
     if (!action.href) return done();
     haptics.tap();
     const { href } = action;
-    router.dismissAll();
+    router.dismissTo('/');
     router.push(href);
   };
 

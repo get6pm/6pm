@@ -36,7 +36,7 @@ export const drawnSheet: ScreenOptions = {
   contentStyle: { backgroundColor: 'transparent' },
 };
 
-/** Full-screen moments that own the whole display: the 6pm Close, Scan, Ask, Max welcome. */
+/** Full-screen moments that own the whole display: the 6pm Close, Scan, Max welcome. */
 export const takeover: ScreenOptions = {
   presentation: 'fullScreenModal',
   animation: 'fade_from_bottom',

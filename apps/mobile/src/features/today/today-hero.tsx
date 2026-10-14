@@ -9,6 +9,7 @@ import { useHomeNav } from '../home/home-nav';
 import { TravelPill } from '../travel/travel-pill';
 import { Symbol } from '../../ui/icons/symbol';
 import { useDesignInsets } from '../../ui/layout/design-insets';
+import { FitWidth } from '../../ui/layout/fit-width';
 import { Odometer } from '../../ui/odometer';
 import { GlassButton } from '../../ui/primitives/glass-button';
 import { PressScale } from '../../ui/primitives/press-scale';
@@ -22,6 +23,8 @@ const meterEase = Easing.bezier(...curves.enter);
  * The top of Today: the date, the two glass buttons, and the one number with its meter. Measures
  * follow the prototype (`App:125-158`): a 400 pt band, 60/22/40 padding, a 92 pt display number.
  */
+
+const HERO_SIZE = 92;
 export function TodayHero({
   day,
   onSettings,
@@ -99,13 +102,16 @@ export function TodayHero({
           <Text style={{ ...body(15, 500), color: palette.inkSoft }}>{t('today.safeToSpend')}</Text>
           <Symbol name="info" size={18} color={palette.inkSoft} style={{ opacity: 0.6 }} />
         </View>
+        {/* A long amount scales down to the width it has instead of running off the edge. */}
         <View style={{ marginLeft: -3 }}>
-          <Odometer
-            value={Math.max(0, day.safe)}
-            size={92}
-            letterSpacingEm={-0.02}
-            color={palette.ink}
-          />
+          <FitWidth height={Math.round(HERO_SIZE * 1.04)}>
+            <Odometer
+              value={Math.max(0, day.safe)}
+              size={HERO_SIZE}
+              letterSpacingEm={-0.02}
+              color={palette.ink}
+            />
+          </FitWidth>
         </View>
         <View style={{ gap: 8, paddingTop: 10, maxWidth: 262 }}>
           <View

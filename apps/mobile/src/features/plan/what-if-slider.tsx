@@ -18,8 +18,10 @@ import { WHAT_IF_STEP } from './plan-view';
 
 const settle = Easing.bezier(...curves.house);
 const SETTLE_MS = 260;
-const THUMB = 16;
-const TRACK = 8;
+// The iOS slider the prototype's range input draws: a 4 pt track and a 28 pt white thumb that stays
+// inside the track's ends, as the look's intensity slider does.
+const THUMB = 28;
+const TRACK = 4;
 const HIT = 32;
 
 /**
@@ -61,8 +63,9 @@ export function WhatIfSlider({
 
   const follow = (x: number) => {
     'worklet';
-    if (width.value <= 0) return;
-    pos.value = Math.min(1, Math.max(0, x / width.value));
+    const room = width.value - THUMB;
+    if (room <= 0) return;
+    pos.value = Math.min(1, Math.max(0, (x - THUMB / 2) / room));
     const next = Math.round(pos.value * steps);
     if (next !== step.value) {
       step.value = next;
@@ -93,9 +96,11 @@ export function WhatIfSlider({
     land();
   });
 
-  const fill = useAnimatedStyle(() => ({ width: pos.value * width.value }));
+  const fill = useAnimatedStyle(() => ({
+    width: pos.value * Math.max(0, width.value - THUMB) + THUMB / 2,
+  }));
   const thumb = useAnimatedStyle(() => ({
-    transform: [{ translateX: pos.value * width.value - THUMB / 2 }],
+    transform: [{ translateX: pos.value * Math.max(0, width.value - THUMB) }],
   }));
 
   return (
@@ -118,15 +123,13 @@ export function WhatIfSlider({
           width.value = e.nativeEvent.layout.width;
           pos.value = max > 0 ? value / max : 0;
         }}
-        style={{ height: HIT, marginVertical: (TRACK + 8 - HIT) / 2, justifyContent: 'center' }}
+        style={{ height: HIT, marginVertical: (TRACK + 12 - HIT) / 2, justifyContent: 'center' }}
       >
         <View
           style={{
             height: TRACK,
             borderRadius: TRACK / 2,
             backgroundColor: colours.trackFill,
-            borderWidth: 1,
-            borderColor: colours.trackEdge,
             overflow: 'hidden',
           }}
         >
@@ -145,7 +148,8 @@ export function WhatIfSlider({
               width: THUMB,
               height: THUMB,
               borderRadius: THUMB / 2,
-              backgroundColor: palette.accent,
+              backgroundColor: '#ffffff',
+              boxShadow: '0 2px 6px rgba(0,0,0,.25)',
             },
             thumb,
           ]}

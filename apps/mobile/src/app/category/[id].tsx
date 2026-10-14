@@ -11,9 +11,8 @@ import { haptics } from '../../ui/haptics';
 const NEW_CATEGORY: CategoryInput = { name: '', icon: 'pets', hue: 200, countsDaily: true };
 
 /**
- * The card that makes (`new`) or edits a category, floating over the Categories sheet on its own
- * transparent modal so it dims the whole screen rather than being drawn inside the sheet. An id
- * that is no longer a category opens the card for a new one.
+ * The sheet that makes (`new`) or edits a category, over the Categories sheet. An id that is no
+ * longer a category opens it for a new one.
  */
 export default function CategoryRoute() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,7 +21,7 @@ export default function CategoryRoute() {
   const { categories } = useMoney();
   const actions = useCategoryActions();
   const say = useCompanionToast();
-  // Read once: a deleted category leaves the snapshot while the card is still on its way out.
+  // Read once: a deleted category leaves the snapshot while the sheet is still on its way out.
   const [shown] = useState(() => {
     const category = categories.find((c) => c.id === id);
     const fallback = category ? fallbackFor(categories, category.id) : undefined;

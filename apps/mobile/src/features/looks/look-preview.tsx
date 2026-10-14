@@ -139,7 +139,11 @@ export function LookPreview({
           <Text
             style={{
               ...display(metrics.numberSize, 500, metrics.numberSpacing, font),
-              lineHeight: metrics.numberSize * 1.05,
+              // The prototype's line is 1.05 em, but iOS clips a glyph at its line box and some
+              // look faces rise above that. Draw on a taller line and take the extra back out of
+              // the layout, so the cell keeps its size and no face loses its top.
+              lineHeight: metrics.numberSize * 1.35,
+              marginVertical: -metrics.numberSize * 0.15,
               color: palette.ink,
             }}
           >

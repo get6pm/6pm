@@ -58,6 +58,7 @@ export function MaxSheet() {
   const statusLine = useMaxStatusLine(customer);
 
   const [chosen, setChosen] = useState<MaxPlan | null>(null);
+  const [footerHeight, setFooterHeight] = useState(0);
   useEffect(() => loadOfferings(), [loadOfferings]);
   // The yearly plan is the one the sheet opens on, if the store sells it.
   const plan: MaxPlan =
@@ -141,7 +142,14 @@ export function MaxSheet() {
   return (
     <MaxSheetFrame>
       <View style={{ flex: 1 }}>
-        <ScrollView style={{ flex: 1 }} bounces={false} showsVerticalScrollIndicator={false}>
+        {/* The footer is pinned over the scroll, and the scroll ends a footer's height lower, so
+            its last row can always be scrolled clear of the plan and the button. */}
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingBottom: footerHeight }}
+          bounces={false}
+          showsVerticalScrollIndicator={false}
+        >
           <MaxHero hour={hour} configs={config} safe={safe} onClose={close} />
           <View style={{ paddingTop: 10, paddingHorizontal: 18, paddingBottom: 20, gap: 20 }}>
             <View style={{ alignItems: 'center', gap: 6 }}>
@@ -211,22 +219,27 @@ export function MaxSheet() {
           </View>
         </ScrollView>
 
-        <MaxFooter
-          on={on}
-          plan={plan}
-          offerings={offerings}
-          saving={saving}
-          cta={cta}
-          ctaOff={ctaOff}
-          busy={busy}
-          terms={terms}
-          onPlan={setChosen}
-          onStart={() => void start()}
-          onManage={() => {
-            haptics.tap();
-            manageSubscription().catch(() => toast(t('looks.restore.failed')));
-          }}
-        />
+        <View
+          onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+          style={{ position: 'absolute', left: 0, right: 0, bottom: 0 }}
+        >
+          <MaxFooter
+            on={on}
+            plan={plan}
+            offerings={offerings}
+            saving={saving}
+            cta={cta}
+            ctaOff={ctaOff}
+            busy={busy}
+            terms={terms}
+            onPlan={setChosen}
+            onStart={() => void start()}
+            onManage={() => {
+              haptics.tap();
+              manageSubscription().catch(() => toast(t('looks.restore.failed')));
+            }}
+          />
+        </View>
       </View>
     </MaxSheetFrame>
   );

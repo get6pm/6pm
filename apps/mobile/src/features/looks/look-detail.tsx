@@ -42,7 +42,7 @@ export function LookDetail({ look }: { readonly look: LookId }) {
   const { t } = useI18n();
   const toast = useToast();
   const say = useCompanionToast();
-  const { top } = useDesignInsets();
+  const { top, bottom } = useDesignInsets();
   const { height } = useWindowDimensions();
   const { customer, offerings, offeringsStatus, loadOfferings, busy, buy } = usePurchases();
   const { look: chosen, config } = useLookSettings();
@@ -77,7 +77,7 @@ export function LookDetail({ look }: { readonly look: LookId }) {
     if (!store.setLook(look, (id) => canUseLook(id, customer))) return;
     haptics.tap();
     say('lookSet');
-    router.dismissAll();
+    router.dismissTo('/');
   };
 
   const purchase = async () => {
@@ -88,7 +88,7 @@ export function LookDetail({ look }: { readonly look: LookId }) {
       store.setLook(look, (id) => canUseLook(id, outcome.customer));
       haptics.success();
       say('lookNew');
-      router.dismissAll();
+      router.dismissTo('/');
     } else if (outcome.kind === 'failed') {
       toast(t('look.buyFailed'));
     }
@@ -144,7 +144,8 @@ export function LookDetail({ look }: { readonly look: LookId }) {
           position={positionOf(look)}
           onBack={() => {
             haptics.tap();
-            router.back();
+            // The try-on replaced the shop, so "‹ Looks" brings the shop back in its place.
+            router.replace('/looks');
           }}
           onStep={go}
         />
@@ -230,63 +231,70 @@ export function LookDetail({ look }: { readonly look: LookId }) {
             copy={copy}
             onToggle={(key, on) => store.setConfig(look, { [key]: on })}
           />
-
-          <View style={{ gap: 6 }}>
+        </ScrollView>
+        {/* Pinned under the scroll so the button stays on screen whatever the phone's height. */}
+        <View
+          style={{
+            gap: 6,
+            paddingTop: 12,
+            paddingHorizontal: 18,
+            paddingBottom: bottom(40),
+          }}
+        >
+          <PressScale
+            accessibilityRole="button"
+            scaleTo={0.97}
+            disabled={ctaDisabled}
+            onPress={() => void (owned ? wear() : purchase())}
+            style={{
+              height: 54,
+              borderRadius: 18,
+              backgroundColor: palette.btnBg,
+              opacity: ctaDisabled && !busy ? 0.5 : 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'row',
+              gap: 10,
+            }}
+          >
+            {busy ? <ActivityIndicator color={palette.btnFg} /> : null}
+            <Text style={{ ...body(17, 650), color: palette.btnFg }}>
+              {busy ? t('look.buying') : ctaLabel}
+            </Text>
+          </PressScale>
+          {!owned && !customer.max.active ? (
             <PressScale
               accessibilityRole="button"
               scaleTo={0.97}
-              disabled={ctaDisabled}
-              onPress={() => void (owned ? wear() : purchase())}
-              style={{
-                height: 54,
-                borderRadius: 18,
-                backgroundColor: palette.btnBg,
-                opacity: ctaDisabled && !busy ? 0.5 : 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'row',
-                gap: 10,
+              onPress={() => {
+                haptics.tick();
+                router.push({ pathname: '/max', params: { from: 'looks' } });
               }}
+              style={{ height: 44, alignItems: 'center', justifyContent: 'center' }}
             >
-              {busy ? <ActivityIndicator color={palette.btnFg} /> : null}
-              <Text style={{ ...body(17, 650), color: palette.btnFg }}>
-                {busy ? t('look.buying') : ctaLabel}
+              <Text
+                style={{
+                  ...body(14.5, 600),
+                  color: palette.ink,
+                  textDecorationLine: 'underline',
+                }}
+              >
+                {t('look.viaMax')}
               </Text>
             </PressScale>
-            {!owned && !customer.max.active ? (
-              <PressScale
-                accessibilityRole="button"
-                scaleTo={0.97}
-                onPress={() => {
-                  haptics.tick();
-                  router.push({ pathname: '/max', params: { from: 'looks' } });
-                }}
-                style={{ height: 44, alignItems: 'center', justifyContent: 'center' }}
-              >
-                <Text
-                  style={{
-                    ...body(14.5, 600),
-                    color: palette.ink,
-                    textDecorationLine: 'underline',
-                  }}
-                >
-                  {t('look.viaMax')}
-                </Text>
-              </PressScale>
-            ) : null}
-            <Text
-              style={{
-                ...body(12.5),
-                lineHeight: 17.5,
-                textAlign: 'center',
-                color: palette.inkSoft,
-                paddingHorizontal: 12,
-              }}
-            >
-              {note}
-            </Text>
-          </View>
-        </ScrollView>
+          ) : null}
+          <Text
+            style={{
+              ...body(12.5),
+              lineHeight: 17.5,
+              textAlign: 'center',
+              color: palette.inkSoft,
+              paddingHorizontal: 12,
+            }}
+          >
+            {note}
+          </Text>
+        </View>
       </Animated.View>
     </View>
   );

@@ -55,9 +55,10 @@ export function LooksShop() {
 
   const open = (id: LookId) => {
     haptics.tick();
-    // Wear it before the sheet opens so its first frame is already in the look.
+    // Wear it before the sheet opens so its first frame is already in the look. The try-on takes
+    // the shop's place: a native sheet left underneath would paint over the page wearing the look.
     store.setTryOn(id);
-    router.push({ pathname: '/look/[id]', params: { id } });
+    router.replace({ pathname: '/look/[id]', params: { id } });
   };
 
   const doRestore = async () => {

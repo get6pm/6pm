@@ -1,7 +1,20 @@
 export const companionMoods = ['calm', 'happy', 'wave', 'nod', 'think', 'sleepy', 'plain'] as const;
 export type CompanionMood = (typeof companionMoods)[number];
 
-export type CompanionForm = 'base' | 'max';
+/**
+ * Who the companion is: the setting sun (everyone's to start), its Max form, and four more to
+ * choose from. The Max form and the paper crane come with Max.
+ */
+export const COMPANION_FORMS = ['sun', 'max', 'nhang', 'banhbao', 'giot', 'hac'] as const;
+export type CompanionForm = (typeof COMPANION_FORMS)[number];
+
+/** The forms only a Max member can wear. */
+export const MAX_FORMS: readonly CompanionForm[] = ['max', 'hac'];
+
+/** Whether a form comes with Max rather than with the app. */
+export function isMaxForm(form: CompanionForm): boolean {
+  return MAX_FORMS.includes(form);
+}
 
 export interface CompanionMoodInput {
   /** Decimal hour on the phone's clock (18:07 → 18.1166). */

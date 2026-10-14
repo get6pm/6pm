@@ -14,6 +14,12 @@ import {
 
 const MOUTH = '#6e2236';
 
+/** The cheeky drop winks its left eye every 6.5 seconds while calm. */
+function winking(fr: Frame, n: number): boolean {
+  'worklet';
+  return fr.form === 'giot' && n === 0 && fr.mood === 'calm' && fr.el % 6.5 > 6.05;
+}
+
 /** Calm, thinking and waving faces blink for a beat every 4.1 seconds. */
 function blinking(fr: Frame): boolean {
   'worklet';
@@ -39,7 +45,8 @@ function drawCheeks(canvas: SkCanvas, fr: Frame): void {
   'worklet';
   if (fr.plain) return;
   const { s, cx, cy, ry } = fr;
-  const blush = fill(fr, 'rgba(255,92,120,0.42)');
+  // On the crane's red paper the usual pink would vanish; it blushes paler.
+  const blush = fill(fr, fr.form === 'hac' ? 'rgba(255,214,190,0.55)' : 'rgba(255,92,120,0.42)');
   ellipse(canvas, fr, cx - s * 0.175, cy + ry * 0.12, s * 0.045, s * 0.026, 0, blush);
   ellipse(canvas, fr, cx + s * 0.175, cy + ry * 0.12, s * 0.045, s * 0.026, 0, blush);
 }
@@ -59,7 +66,7 @@ function drawEyes(canvas: SkCanvas, fr: Frame): void {
     const x = cx + (sides[n] ?? 1) * s * 0.1 + jitter(fr, 95 + n, 0.002);
     if (mood === 'happy') {
       arc(canvas, fr, x, ey + s * 0.022, s * 0.038, Math.PI * 1.12, Math.PI * 1.88, line);
-    } else if (closed) {
+    } else if (closed || winking(fr, n)) {
       arc(canvas, fr, x, ey - s * 0.012, s * 0.034, Math.PI * 0.15, Math.PI * 0.85, line);
     } else if (fr.plain) {
       canvas.drawCircle(x, ey, s * 0.026, ink);

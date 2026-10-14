@@ -20,7 +20,7 @@ import { useCompanionForm } from './companion-form';
 import { type CompanionForm, type CompanionMood } from './companion-mood';
 import { drawCompanion } from './draw-companion';
 import { type SleepFonts } from './draw-extras';
-import { makeFrame } from './draw-kit';
+import { makeFrame } from './make-frame';
 
 export interface CompanionProps {
   /** Width and height of the square it is drawn in, in points. */
@@ -30,6 +30,8 @@ export interface CompanionProps {
   readonly form?: CompanionForm;
   /** Serious mode: always the plain, greyscale companion, whatever the mood or form. */
   readonly serious?: boolean;
+  /** Each new value plays the form's arrival again, as when it was just chosen. */
+  readonly cue?: number;
 }
 
 /**
@@ -51,13 +53,13 @@ function sleepFonts(size: number): SleepFonts {
 }
 
 /**
- * The 6pm companion: a little sun dipping into the evening sea. Idle motion (breathing, blinks,
- * swaying rays, the sea's wave, the hand-drawn wobble) runs on the UI thread and freezes with
- * Reduce Motion, and also while the screen around it is not showing it (a hidden tab, a screen
- * covered by a takeover). Becoming Max plays a burst of light; leaving Max fades the Max form out
- * over the base one.
+ * The 6pm companion: the little sun dipping into the evening sea, or whichever form the person
+ * chose. Idle motion (breathing, blinks, hair, the hand-drawn wobble) runs on the UI thread and
+ * freezes with Reduce Motion, and also while the screen around it is not showing it (a hidden tab,
+ * a screen covered by a takeover). Arriving in a form plays that form's entrance (Max's burst of
+ * light, the crane unfolding, …) while the form it leaves fades out over it.
  */
-export function Companion({ size, mood, form: asked, serious = false }: CompanionProps) {
+export function Companion({ size, mood, form: asked, serious = false, cue = 0 }: CompanionProps) {
   const given = useCompanionForm();
   const form = asked ?? given;
   const reduceMotion = useReducedMotion();
@@ -68,7 +70,8 @@ export function Companion({ size, mood, form: asked, serious = false }: Companio
   const clock = useSharedValue(0);
   const moodAt = useSharedValue(0);
   const formAt = useSharedValue(-SETTLED_SECONDS);
-  /** How much of the Max form still shows over the base one after Max ends. */
+  /** The form being left, and how much of it still shows over the new one. */
+  const leftForm = useSharedValue<CompanionForm>(form);
   const leaving = useSharedValue(0);
 
   const box = useAnimatedRef<Animated.View>();
@@ -106,16 +109,21 @@ export function Companion({ size, mood, form: asked, serious = false }: Companio
   const lastForm = useRef(form);
   useEffect(() => {
     if (lastForm.current === form) return;
-    const wasMax = lastForm.current === 'max';
+    leftForm.value = lastForm.current;
     lastForm.current = form;
     formAt.value = clock.value;
-    leaving.value = wasMax
-      ? withSequence(
-          withTiming(1, { duration: 0 }),
-          withTiming(0, { duration: durations.screen, easing: fadeEase }),
-        )
-      : 0;
-  }, [form, clock, formAt, leaving]);
+    leaving.value = withSequence(
+      withTiming(1, { duration: 0 }),
+      withTiming(0, { duration: durations.screen, easing: fadeEase }),
+    );
+  }, [form, clock, formAt, leaving, leftForm]);
+
+  const lastCue = useRef(cue);
+  useEffect(() => {
+    if (lastCue.current === cue) return;
+    lastCue.current = cue;
+    formAt.value = clock.value;
+  }, [cue, clock, formAt]);
 
   const picture = useDerivedValue(() => {
     const t = clock.value;
@@ -137,7 +145,8 @@ export function Companion({ size, mood, form: asked, serious = false }: Companio
         const layer = Skia.Paint();
         layer.setAlphaf(fade);
         canvas.saveLayer(layer);
-        drawCompanion(canvas, makeFrame({ ...input, form: 'max', sinceF: SETTLED_SECONDS }), fonts);
+        const left = { ...input, form: leftForm.value, sinceF: SETTLED_SECONDS };
+        drawCompanion(canvas, makeFrame(left), fonts);
         canvas.restore();
       },
       { width: size, height: size },

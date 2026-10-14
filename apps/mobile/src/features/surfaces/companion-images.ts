@@ -2,7 +2,7 @@ import { ImageFormat, Skia, matchFont } from '@shopify/react-native-skia';
 
 import type { CompanionForm } from '../../ui/companion/companion-mood';
 import { drawCompanion } from '../../ui/companion/draw-companion';
-import { makeFrame } from '../../ui/companion/draw-kit';
+import { makeFrame } from '../../ui/companion/make-frame';
 
 /** The moods the widgets and the Live Activity show, and the sizes (points) they show them at. */
 export const SURFACE_MOODS = ['calm', 'happy'] as const;

@@ -236,8 +236,9 @@ export function TileArt({
       );
     case 'buddy':
       return (
-        <View style={{ height: 40, justifyContent: 'center' }}>
+        <View style={{ height: 40, flexDirection: 'row', alignItems: 'center' }}>
           <Companion size={48} mood="calm" form="max" />
+          <Companion size={48} mood="calm" form="hac" />
         </View>
       );
   }

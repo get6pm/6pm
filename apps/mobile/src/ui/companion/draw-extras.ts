@@ -79,6 +79,8 @@ function drawThoughts(canvas: SkCanvas, fr: Frame): void {
 export function drawExtras(canvas: SkCanvas, fr: Frame, fonts: SleepFonts): void {
   'worklet';
   if (fr.mood === 'happy' || fr.mx) drawSparkles(canvas, fr);
+  // Nhang sleeps and thinks in its own smoke.
+  if (fr.form === 'nhang') return;
   if (fr.mood === 'sleepy') drawSleep(canvas, fr, fonts);
   if (fr.mood === 'think') drawThoughts(canvas, fr);
 }

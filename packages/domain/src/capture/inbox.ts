@@ -1,5 +1,6 @@
 import type { InboxSpend } from '../contracts/surfaces';
 import type { SpendSource } from '../spend/spend';
+import { rateNumber } from '../travel/fx';
 import { BANKS } from '../vietqr/bank-catalogue';
 import { merchantKeyOf } from './merchant-rule';
 
@@ -18,6 +19,8 @@ export interface InboxSpendDraft {
   readonly note: string | null;
   readonly detail: string | null;
   readonly at: Date;
+  /** A spend in another currency priced at a rate: what Travel mode records beside the đồng. */
+  readonly foreignAmount: { currency: string; amount: number; rate: number } | null;
 }
 
 export interface InboxFiling {
@@ -47,6 +50,17 @@ export function receiptBankOf(detail: string | null): string | null {
   return BANKS.some((bank) => bank.shortName === first) ? first : null;
 }
 
+/** The foreign amount a priced capture keeps beside its đồng; null for đồng or unpriced. */
+function foreignAmountOf(item: InboxSpend): InboxSpendDraft['foreignAmount'] {
+  const foreign = item.foreign;
+  if (!foreign?.rate || item.amount === null) return null;
+  return {
+    currency: foreign.currency,
+    amount: Number(foreign.amount),
+    rate: rateNumber(foreign.rate),
+  };
+}
+
 /**
  * The spend an inbox item becomes. The category is the extension's when it still exists, else
  * the merchant's rule, else the fallback. An amount the source could not read is saved as 0 and
@@ -65,6 +79,7 @@ export function inboxItemToNewSpend(item: InboxSpend, filing: InboxFiling): Inbo
     note: item.note ?? null,
     detail: receiptDetail(item.receipt),
     at: new Date(item.at),
+    foreignAmount: foreignAmountOf(item),
   };
 }
 

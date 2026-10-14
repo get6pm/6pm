@@ -24,7 +24,8 @@ export function contextStrings(t: I18n['t']): SurfaceContext['strings'] {
 
 /**
  * What the share extension and the shortcuts file a spend with, without the database: the
- * categories and their tiles, the merchant rules the user taught, and today's number.
+ * categories and their tiles, the merchant rules the user taught, today's number, and the trip
+ * and rates a foreign receipt is read and priced with.
  */
 export function surfaceContext(input: {
   readonly money: MoneySnapshot;
@@ -32,6 +33,10 @@ export function surfaceContext(input: {
   readonly language: SurfaceContext['language'];
   readonly host: string;
   readonly strings?: SurfaceContext['strings'];
+  /** The trip's currency in Travel mode: the guess for a shared receipt that prints none. */
+  readonly tripCurrency?: string | null;
+  /** The last rates the app has, so a shared foreign receipt is priced as Travel prices it. */
+  readonly rates?: readonly { readonly currency: string; readonly rate: string }[];
 }): SurfaceContext {
   const { money } = input;
   return {
@@ -52,5 +57,7 @@ export function surfaceContext(input: {
     rules: input.rules.map((r) => ({ key: r.merchantKey, categoryId: r.categoryId })),
     safeToday: dayOf(money)?.safe ?? 0,
     strings: input.strings ?? {},
+    travel: input.tripCurrency ? { currency: input.tripCurrency } : null,
+    rates: (input.rates ?? []).map(({ currency, rate }) => ({ currency, rate })),
   };
 }

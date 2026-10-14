@@ -123,6 +123,19 @@ describe('importInbox', () => {
     expect(await actions.sightings(qr.id)).toHaveLength(2);
   });
 
+  it('saves a shared foreign receipt in đồng with its own amount and rate', async () => {
+    const item = tap({
+      source: 'shared',
+      amount: 1_341_634,
+      foreign: { currency: 'SGD', amount: '68.80', rate: '19500.5' },
+    });
+    await run(memoryInbox([item]));
+    expect(await store.tables.spends.get(item.id)).toMatchObject({
+      amount: 1_341_634,
+      foreignAmount: { currency: 'SGD', amount: 68.8, rate: 19_500.5 },
+    });
+  });
+
   it('files under the rule for the merchant when the extension named no category', async () => {
     await actions.rememberMerchant('Phở Hòa', 'shopping');
     const item = tap();

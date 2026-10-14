@@ -1,7 +1,7 @@
 import * as Clipboard from 'expo-clipboard';
 import { Linking } from 'react-native';
 
-import { appStoreUrl, type BankInfo } from '@6pm/domain';
+import { appStoreUrl, handoffUrl, type BankInfo, type VietQR } from '@6pm/domain';
 
 /**
  * What happened when 6pm tried to open the bank: it opened, it is not on this iPhone (the App
@@ -10,20 +10,26 @@ import { appStoreUrl, type BankInfo } from '@6pm/domain';
 export type HandoffResult = 'opened' | 'store' | 'manual';
 
 /**
- * Hands a payment to a bank app. No Vietnamese bank takes an amount through its link, so the
- * amount goes on the clipboard first (digits only, as a bank's amount field wants it).
+ * Hands a payment to a bank app. A bank seen to take 6pm's transfer link opens with the payment
+ * filled in; any other opens at its home. The amount goes on the clipboard either way (digits
+ * only, as a bank's amount field wants it), for when the bank asks for it again.
+ *
+ * The app is opened without asking iOS first whether it is there: that check is deprecated and
+ * capped at 25 apps, and opening fails just as clearly when the app is missing.
  */
 export async function handOff(
   bank: BankInfo | null,
-  amount: number | null,
+  qr: VietQR,
+  amount: number,
 ): Promise<HandoffResult> {
-  if (amount !== null) await Clipboard.setStringAsync(String(amount));
+  await Clipboard.setStringAsync(String(amount));
   const app = bank?.ios;
   if (!app) return 'manual';
-  if (await Linking.canOpenURL(app.scheme).catch(() => false)) {
-    await Linking.openURL(app.scheme);
-    return 'opened';
-  }
+  const opened = await Linking.openURL(handoffUrl(app, qr, amount)).then(
+    () => true,
+    () => false,
+  );
+  if (opened) return 'opened';
   await Linking.openURL(appStoreUrl(app));
   return 'store';
 }

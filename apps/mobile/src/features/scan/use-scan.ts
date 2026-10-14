@@ -156,7 +156,7 @@ export function useScan() {
           capture,
         };
         setPhase({ kind: 'handoff', payment, result: null });
-        const result = await handOff(bank, amount).catch((): HandoffResult => 'manual');
+        const result = await handOff(bank, qr, amount).catch((): HandoffResult => 'manual');
         setPhase((p) => (p.kind === 'handoff' ? { ...p, result } : p));
       } finally {
         paying.current = false;

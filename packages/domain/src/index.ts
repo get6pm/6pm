@@ -21,6 +21,7 @@ export * from './capture/merchant-rule';
 export * from './capture/inbox';
 export * from './capture/bank-receipt';
 export * from './capture/email-body';
+export * from './capture/forwarding-confirmation';
 export * from './capture/receipt-email';
 export * from './contracts/receipt-email';
 export * from './capture/spoken-spend';

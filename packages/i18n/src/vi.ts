@@ -1,3 +1,4 @@
+import { viCaptureWalk } from './vi-capture-walk';
 import { viNative } from './vi-native';
 import { viSharing } from './vi-sharing';
 import { viShareExt } from './vi-share-ext';
@@ -41,6 +42,7 @@ export const vi: Catalogue = {
   ...viSharing,
   ...viShareExt,
   ...viIntents,
+  ...viCaptureWalk,
   ...viVoice,
   ...viSurfaces,
   ...viTogether,

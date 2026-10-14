@@ -18,6 +18,10 @@ export const sameInBothLanguages: readonly string[] = [
   'Vietcombank',
   'MoMo',
   'CSV · Sheets',
+  // Mail services and iOS apps keep their names.
+  'Outlook.com',
+  'iCloud Mail',
+  'Mail',
   // The companions keep their Vietnamese names in English.
   'Nhang',
   'Bánh Bao',

@@ -1,3 +1,4 @@
+import { enCaptureWalk } from './en-capture-walk';
 import { enNative } from './en-native';
 import { enSharing } from './en-sharing';
 import { enShareExt } from './en-share-ext';
@@ -41,6 +42,7 @@ export const en = {
   ...enSharing,
   ...enShareExt,
   ...enIntents,
+  ...enCaptureWalk,
   ...enVoice,
   ...enSurfaces,
   ...enTogether,

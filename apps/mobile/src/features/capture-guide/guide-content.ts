@@ -7,7 +7,7 @@ import type { CaptureSource } from './source-status';
 /** The guide's own words: none of them takes a parameter. */
 export type GuideKey = Exclude<
   Extract<StringKey, `capture.${string}`>,
-  'capture.last' | 'capture.settings.summary'
+  'capture.last' | 'capture.settings.summary' | 'capture.walk.stepOf'
 >;
 
 export interface GuideStep {

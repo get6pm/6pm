@@ -2,7 +2,6 @@ import { Text, View } from 'react-native';
 
 import { togetherInk } from '@6pm/theme';
 
-import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
@@ -69,32 +68,6 @@ export function TogetherAvatars({
           <Face letter={partner} fill={togetherInk.partner} ring={ring} />
         )}
       </View>
-    </View>
-  );
-}
-
-/** The MAX lock badge, as the prototype draws it beside a Max feature. */
-export function MaxLock() {
-  const { palette } = useTheme();
-  const { t } = useI18n();
-  return (
-    <View
-      style={{
-        height: 20,
-        paddingLeft: 5,
-        paddingRight: 7,
-        borderRadius: 6,
-        backgroundColor: palette.ink,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 3,
-        flexShrink: 0,
-      }}
-    >
-      <Symbol name="lock" size={12} fill={1} color={palette.sheetSolid} />
-      <Text style={{ ...body(10, 800, 0.1), color: palette.sheetSolid }}>
-        {t('plan.occasions.max')}
-      </Text>
     </View>
   );
 }

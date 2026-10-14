@@ -8,6 +8,7 @@ import { monthsOfYear, type YearKey } from '@6pm/domain';
 import { notDailyOf, readMonthDiary } from '../../data/diary-queries';
 import { useMoney, useMoneyStore } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useCompanionForm } from '../../ui/companion/companion-form';
 import { haptics } from '../../ui/haptics';
 import { useTheme } from '../../ui/theme/theme';
 import { useToast } from '../../ui/toast/toast-host';
@@ -53,6 +54,7 @@ export function useYearBook() {
   const { t, language } = useI18n();
   const dates = useDiaryDates();
   const { palette, serious } = useTheme();
+  const form = useCompanionForm();
   const toast = useToast();
   const busy = useRef(false);
   const [binding, setBinding] = useState<YearKey | null>(null);
@@ -97,7 +99,7 @@ export function useYearBook() {
             dates,
             display: displayStack(palette.dispFont),
             fonts: await fontFaces(palette.dispFont),
-            companion: serious ? null : renderCompanion('happy', 40, 'base'),
+            companion: serious ? null : renderCompanion('happy', 40, form),
           }),
         );
         const { uri } = await printToFileAsync({
@@ -125,7 +127,7 @@ export function useYearBook() {
         setBinding(null);
       }
     },
-    [store, snap, t, language, dates, palette.dispFont, serious, toast],
+    [store, snap, t, language, dates, palette.dispFont, serious, form, toast],
   );
 
   return { bind, binding };

@@ -15,6 +15,7 @@ import { isLookId } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
 import { Companion } from '../../ui/companion/companion';
+import { useCompanionForm } from '../../ui/companion/companion-form';
 import { Symbol } from '../../ui/icons/symbol';
 import { haptics } from '../../ui/haptics';
 import { useDesignInsets } from '../../ui/layout/design-insets';
@@ -27,6 +28,7 @@ import { useLookSettings } from '../looks/look-settings-provider';
 import { confettiPieces, type ConfettiPiece } from './confetti';
 import { parseMaxFrom, welcomeAction } from './max-context';
 import { MaxGlow } from './max-glow';
+import { useCompanionBeforeMax } from './member-companion-form';
 import { PAID_LOOKS, SCENE_LOOKS } from './products';
 import { MAX_CREAM, MAX_FONT, MAX_INK, MAX_PAGE } from './max-colours';
 
@@ -146,6 +148,8 @@ export function MaxWelcome() {
   const reduce = useReducedMotion();
   const { config } = useLookSettings();
   const [evolved, setEvolved] = useState(false);
+  const before = useCompanionBeforeMax();
+  const after = useCompanionForm();
   const pieces = useMemo(() => confettiPieces(), []);
   // Backup is only "on" once the user has turned it on; buying Max does not do it for them.
   const backup = useBackupStatus();
@@ -208,7 +212,7 @@ export function MaxWelcome() {
           paddingHorizontal: 28,
         }}
       >
-        <Companion size={100} mood="happy" form={evolved ? 'max' : 'base'} />
+        <Companion size={100} mood="happy" form={evolved ? after : before} />
         <MaxStamp />
         <Rise delay={0.45} seconds={0.5}>
           <View style={{ alignItems: 'center', gap: 6 }}>

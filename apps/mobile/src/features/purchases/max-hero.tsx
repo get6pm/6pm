@@ -14,6 +14,7 @@ import type { LookConfig, LookId } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
 import { Companion } from '../../ui/companion/companion';
+import type { CompanionForm } from '../../ui/companion/companion-mood';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { body, display } from '../../ui/type/fonts';
@@ -59,7 +60,7 @@ function Floating({
 
 /**
  * The top of the Max sheet (prototype `App:983-1009`): the paid skies blurred into a glow, three
- * living scenes floating over it, the Max companion, and the wordmark. `children` draw over it
+ * living scenes floating over it, the companion, and the wordmark. `children` draw over it
  * (the grabber and close button belong to the sheet).
  */
 export function MaxHero({
@@ -67,7 +68,10 @@ export function MaxHero({
   configs,
   safe,
   onClose,
+  companion,
 }: {
+  /** The Max companion the sheet was opened for; otherwise the one worn. */
+  readonly companion?: CompanionForm | undefined;
   readonly hour: number;
   readonly configs: Readonly<Partial<Record<LookId, Partial<LookConfig>>>>;
   readonly safe: string;
@@ -176,7 +180,7 @@ export function MaxHero({
         pointerEvents="none"
         style={{ position: 'absolute', left: '50%', bottom: 46, marginLeft: -44, zIndex: 3 }}
       >
-        <Companion size={88} mood="happy" form="max" />
+        <Companion size={88} mood="happy" {...(companion ? { form: companion } : {})} />
       </View>
       <View
         pointerEvents="none"

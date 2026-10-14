@@ -18,9 +18,11 @@ import { BackupRow } from '../features/backup/backup-row';
 import { CaptureSettingsSection } from '../features/capture-guide/capture-settings-section';
 import { useDeleteBackup } from '../features/backup/use-backup';
 import { ExportRow } from '../features/export/export-row';
+import { useCompanionSettingsStore } from '../features/companion/companion-settings-provider';
 import { useLookSettingsStore } from '../features/looks/look-settings-provider';
 import { CloseTimePicker } from '../features/settings/close-time-picker';
 import { CompanionCard } from '../features/settings/companion-card';
+import { SettingsCompanionRow } from '../features/settings/settings-companion-row';
 import { SettingsLookCard } from '../features/settings/settings-look-card';
 import { SettingsMaxCard } from '../features/settings/settings-max-card';
 import { SettingRow, SettingsSection } from '../features/settings/setting-rows';
@@ -47,6 +49,7 @@ export default function Settings() {
   const store = useMoneyStore();
   const actions = useMemo(() => settingsActions(store), [store]);
   const lookStore = useLookSettingsStore();
+  const companionStore = useCompanionSettingsStore();
   const deleteBackup = useDeleteBackup();
   const plan = snap.plan ?? DEFAULT_PLAN;
   const [privacyOpen, setPrivacyOpen] = useState(false);
@@ -78,7 +81,7 @@ export default function Settings() {
         // The data is gone: what follows must not turn a finished delete into an error.
         setLanguage(null);
         void cancelCloseReminder().catch(() => undefined);
-        return lookStore.reload().catch(() => undefined);
+        return Promise.all([lookStore.reload(), companionStore.reload()]).catch(() => undefined);
       })
       .then(() => router.dismissTo('/'))
       .catch(() => toast(t('settings.deleteFailed')))
@@ -112,6 +115,15 @@ export default function Settings() {
           router.push({ pathname: '/capture-guide', params: { source } });
         }}
       />
+      {/* Serious mode has no companion to pick. */}
+      {plan.serious ? null : (
+        <SettingsCompanionRow
+          onPress={() => {
+            haptics.tick();
+            router.push('/companions');
+          }}
+        />
+      )}
       {/* Replace, not push: the shop and its try-on stand in for Settings, so the app shows behind. */}
       <SettingsLookCard onPress={() => router.replace('/looks')} />
 

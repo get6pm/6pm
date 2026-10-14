@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@6pm/domain": "workspace:*",
+    "@anthropic-ai/sdk": "catalog:",
     "hono": "catalog:",
     "postal-mime": "catalog:",
     "zod": "catalog:"

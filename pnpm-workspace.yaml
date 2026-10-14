@@ -8,6 +8,7 @@ saveExact: true
 # One pinned version per shared dependency; workspace packages reference them as `catalog:`.
 # Pins follow Scootch (same Expo / React Native release) so native fixes carry across.
 catalog:
+  '@anthropic-ai/sdk': 0.131.0
   '@astrojs/check': 0.9.10
   '@astrojs/cloudflare': 14.3.3
   '@babel/core': 7.29.7

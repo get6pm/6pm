@@ -1,3 +1,4 @@
+import type { Context } from 'hono';
 import { createMiddleware } from 'hono/factory';
 
 import type { AppEnv } from './env';
@@ -39,3 +40,16 @@ export const limitByBackup = createMiddleware<AppEnv>(async (c, next) => {
   if (!byToken.success || !byIp.success) throw tooMany();
   await next();
 });
+
+/**
+ * Called by the receipt read route once its device is known, before the body is read. A photo
+ * costs a vision model call, so one device and one address each get a small allowance.
+ */
+export async function limitReceiptReads(c: Context<AppEnv>): Promise<void> {
+  const ip = c.req.header('CF-Connecting-IP') ?? 'unknown';
+  const [byDevice, byIp] = await Promise.all([
+    c.env.RECEIPT_READ_RATE_LIMIT.limit({ key: `device:${c.var.device.hash}` }),
+    c.env.RECEIPT_READ_RATE_LIMIT.limit({ key: `ip:${ip}` }),
+  ]);
+  if (!byDevice.success || !byIp.success) throw tooMany();
+}

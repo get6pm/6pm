@@ -12,6 +12,7 @@ export * from './email-handle-rotate';
 export * from './fx';
 export * from './health';
 export * from './name-merchant';
+export * from './receipts-read';
 export * from './together-account-delete';
 export * from './together-apple-events';
 export * from './together-contribution-add';

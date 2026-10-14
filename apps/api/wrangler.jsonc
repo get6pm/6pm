@@ -55,6 +55,13 @@
           "namespace_id": "6304",
           "simple": { "limit": 20, "period": 60 },
         },
+        // A receipt photo the phone could not read goes to the vision model: a person shares a few
+        // a day, so one device and one address each get a small allowance (see `limitReceiptReads`).
+        {
+          "name": "RECEIPT_READ_RATE_LIMIT",
+          "namespace_id": "6305",
+          "simple": { "limit": 10, "period": 60 },
+        },
       ],
     },
     "prd": {
@@ -94,6 +101,13 @@
           "name": "EMAIL_RATE_LIMIT",
           "namespace_id": "6314",
           "simple": { "limit": 20, "period": 60 },
+        },
+        // A receipt photo the phone could not read goes to the vision model: a person shares a few
+        // a day, so one device and one address each get a small allowance (see `limitReceiptReads`).
+        {
+          "name": "RECEIPT_READ_RATE_LIMIT",
+          "namespace_id": "6315",
+          "simple": { "limit": 10, "period": 60 },
         },
       ],
     },

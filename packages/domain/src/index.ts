@@ -23,6 +23,7 @@ export * from './capture/bank-receipt';
 export * from './capture/email-body';
 export * from './capture/receipt-email';
 export * from './contracts/receipt-email';
+export * from './contracts/receipt-read';
 export * from './capture/spoken-spend';
 export * from './capture/wallet-amount';
 export * from './entry/keypad';

@@ -35,35 +35,6 @@ function Donut({ fraction, color }: { readonly fraction: number; readonly color:
   );
 }
 
-function Avatar({
-  letter,
-  bg,
-  fg,
-  overlap,
-}: {
-  letter: string;
-  bg: string;
-  fg: string;
-  overlap: boolean;
-}) {
-  return (
-    <View
-      style={{
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        marginLeft: overlap ? -9 : 0,
-        backgroundColor: bg,
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: `0 0 0 2px ${MAX_WELL}`,
-      }}
-    >
-      <Text style={{ ...body(14, 700), color: fg }}>{letter}</Text>
-    </View>
-  );
-}
-
 /** The paid looks as overlapping discs, each in its own sky. */
 function LookSwatches({
   hour,
@@ -145,13 +116,6 @@ export function TileArt({
           <Donut fraction={0.72} color={oklchSrgbHex(0.8, 0.13, 150)} />
           <Donut fraction={0.4} color={oklchSrgbHex(0.8, 0.12, 60)} />
           <Donut fraction={0.88} color={oklchSrgbHex(0.8, 0.12, 300)} />
-        </View>
-      );
-    case 'shared':
-      return (
-        <View style={{ flexDirection: 'row' }}>
-          <Avatar letter="L" bg={oklchSrgbHex(0.8, 0.1, 30)} fg="#2a1408" overlap={false} />
-          <Avatar letter="M" bg={oklchSrgbHex(0.8, 0.1, 220)} fg="#08182a" overlap />
         </View>
       );
     case 'travel':

@@ -61,12 +61,12 @@ Rules that never bend:
 
 | Decision | Value |
 |---|---|
-| Free | Basic and Golden Hour looks, the close, all capture, Today/Plan/Diary, 3 Ask questions a week, 1 own pot, 36 icons, functional widgets and controls |
+| Free | Basic and Golden Hour looks, the close, all capture, Today/Plan/Diary, Budget together (shared pots; free since 2026-10-14), 3 Ask questions a week, 1 own pot, 36 icons, functional widgets and controls |
 | Looks | 6 classic looks 49.000₫ each; 3 living scenes 99.000₫ each; one-time, via StoreKit (RevenueCat). The "all looks" bundle is dropped (Max replaces it) |
-| 6pm Max | 78.000₫/month or 598.000₫/year, 7-day trial. Every look, unlimited Ask and pots, Budget together, Travel mode, Year book, encrypted backup and export, widgets in your look, 180 icons, Max companion form |
+| 6pm Max | 78.000₫/month or 598.000₫/year, 7-day trial. Every look, unlimited Ask and pots, Travel mode, Year book, encrypted backup and export, widgets in your look, 180 icons, Max companion form |
 | Widgets | Functional widgets and controls are free; widgets drawn in your look are Max *(default)* |
 | Prices | Read from the store at runtime; the design's prices are the App Store tiers to configure |
-| Max promises | Every Max feature on the sheet and welcome is built before launch (Ask, Budget together, Travel, Year book, widgets in your look, export, Max companion form). Decided 2026-10-11 |
+| Max promises | Every Max feature on the sheet and welcome is built before launch (Ask, Travel, Year book, widgets in your look, export, Max companion form). Decided 2026-10-11 |
 
 ## 6. Ask 6pm, backup, travel, together
 
@@ -75,7 +75,7 @@ Rules that never bend:
 | Ask 6pm | Code decides, words come from a model. The phone computes every number (domain `ask` engine, as in the prototype); the server model only reads the question into an intent + amount and words the answer. Offline: rules-only answers *(default)* |
 | Backup | End-to-end encrypted snapshot: key in iCloud Keychain, ciphertext on our server under an anonymous token (Scootch pattern). Max |
 | Travel | FX rates from a free daily source cached on the server (must include VND). Frankfurter v2 (multi-source, quotes VND; the ECB-only v1 does not), fetched by a Worker cron *(decided 2026-10-12, see tech-decisions)* |
-| Budget together | **Shared pots** at launch: Sign in with Apple, invite one partner by link, one or more pots both partners add to, synced through the API. Either partner can leave; leaving deletes the shared copy from the server, and each keeps the money they themselves put in as history on their own phone. Sharing the whole month and closing the day as two come later, over the air. A Max feature (§5). The core app stays account-free: sign-in is asked only when someone starts or joins Budget together. Decided 2026-10-13. Defaults: joining from an invite needs no Max of one's own; an invite link works once, for 7 days; a pair is two people, a person is in one pair; either partner can edit or delete any shared pot and take back only their own money; what a person puts in counts like a top-up to their own pots in the daily number; only the first name is asked for, never the email *(default)* |
+| Budget together | **Shared pots** at launch: Sign in with Apple, invite one partner by link, one or more pots both partners add to, synced through the API. Either partner can leave; leaving deletes the shared copy from the server, and each keeps the money they themselves put in as history on their own phone. Sharing the whole month and closing the day as two come later, over the air. Free for everyone (founder, 2026-10-14; it was a Max feature at first). The core app stays account-free: sign-in is asked only when someone starts or joins Budget together. Decided 2026-10-13. Defaults: joining from an invite needs no Max of one's own; an invite link works once, for 7 days; a pair is two people, a person is in one pair; either partner can edit or delete any shared pot and take back only their own money; what a person puts in counts like a top-up to their own pots in the daily number; only the first name is asked for, never the email *(default)* |
 | Serious mode | User switch. Offered (once a week at most) when free money goes negative or 3 of the last 7 days overspent *(default)*. Debt-advice link target **open** |
 | Year book | Digital (PDF/image) first; print vendor **open** |
 | Close time | 15:00–23:45 in 15-minute steps everywhere (onboarding wheel and Settings) |

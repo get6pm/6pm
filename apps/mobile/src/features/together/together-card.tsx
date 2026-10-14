@@ -11,9 +11,8 @@ import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
 import type { PlanColours } from '../plan/plan-colours';
-import { useEntitlement } from '../purchases/purchases-provider';
 import { SharedJar, JAR_H, JAR_W } from './shared-jar';
-import { MaxLock, TogetherAvatars } from './together-avatars';
+import { TogetherAvatars } from './together-avatars';
 import { useTogether } from './together-provider';
 import { initialOf, partnerOf } from './together-state';
 
@@ -38,16 +37,12 @@ export function TogetherSection({
   const { palette } = useTheme();
   const { t } = useI18n();
   const router = useRouter();
-  const { max } = useEntitlement();
   const { state } = useTogether();
   const { me, pair } = state;
   const partner = partnerOf(state);
   const pots = pair?.pots ?? [];
-  // Someone who joined from an invite, or started before Max lapsed, keeps their way in.
-  const locked = !max && me === null;
-  const sub = locked
-    ? t('together.card.subOff')
-    : partner !== null
+  const sub =
+    partner !== null
       ? t('together.card.subPaired', {
           count: pots.length,
           name: partner.name ?? t('together.partner'),
@@ -56,8 +51,7 @@ export function TogetherSection({
 
   const open = () => {
     haptics.tap();
-    if (locked) router.push({ pathname: '/max', params: { from: 'shared' } });
-    else router.push(togetherRoutes.manage);
+    router.push(togetherRoutes.manage);
   };
 
   return (
@@ -90,11 +84,7 @@ export function TogetherSection({
           <Text style={{ ...body(16, 650), color: palette.ink }}>{t('together.title')}</Text>
           <Text style={{ ...body(12.5), lineHeight: 16.9, color: palette.inkSoft }}>{sub}</Text>
         </View>
-        {locked ? (
-          <MaxLock />
-        ) : (
-          <Symbol name="chevron_right" size={20} color={palette.ink} style={{ opacity: 0.35 }} />
-        )}
+        <Symbol name="chevron_right" size={20} color={palette.ink} style={{ opacity: 0.35 }} />
       </PressScale>
 
       {me !== null && pots.length > 0 ? (

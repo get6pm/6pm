@@ -78,7 +78,7 @@ Backup is a 6pm Max feature, and it is off until you turn it on. It is end-to-en
 
 Apple syncs the key between your devices through iCloud Keychain, under your Apple ID and Apple's terms. If you lose both the key and your phone, nobody, including us, can unlock the backup.
 
-### Budget together (6pm Max)
+### Budget together
 
 Budget together lets two people keep shared pots they both add to. It is the only part of 6pm with a sign-in, and nothing about it happens unless you start it or open an invite.
 

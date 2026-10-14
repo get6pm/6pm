@@ -1,7 +1,6 @@
 /** Budget together. */
 export const enTogether = {
   'together.title': 'Budget together',
-  'together.card.subOff': 'Share a pot with someone.',
   'together.card.subOn': 'Invite someone to share a pot.',
   'together.card.subPaired': {
     one: 'With {name} · 1 shared pot',

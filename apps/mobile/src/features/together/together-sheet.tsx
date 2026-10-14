@@ -10,7 +10,6 @@ import { haptics } from '../../ui/haptics';
 import { SheetScreen } from '../../ui/navigation/sheet-screen';
 import { useToast } from '../../ui/toast/toast-host';
 import { BackupButton, BackupCard, BackupNote } from '../backup/backup-parts';
-import { useEntitlement } from '../purchases/purchases-provider';
 import { SignInCancelled } from './apple-sign-in';
 import { sharedPotRoute } from './shared-jar';
 import { togetherRoutes } from './together-card';
@@ -48,7 +47,6 @@ export function TogetherSheet() {
   const { t, language } = useI18n();
   const router = useRouter();
   const toast = useToast();
-  const { max } = useEntitlement();
   const { state, offline } = useTogether();
   const actions = useTogetherActions();
   const { invite, busy: inviting } = useInvite();
@@ -59,12 +57,6 @@ export function TogetherSheet() {
   const { me, pair } = state;
   const partner = partnerOf(state);
   const pots = pair?.pots ?? [];
-
-  // Reached without Max and not yet in (a link straight here): offer Max instead.
-  const locked = !max && me === null;
-  useEffect(() => {
-    if (locked) router.replace({ pathname: '/max', params: { from: 'shared' } });
-  }, [locked, router]);
 
   const act = async (task: () => Promise<unknown>, done?: string) => {
     setBusy(true);
@@ -88,7 +80,7 @@ export function TogetherSheet() {
     return (
       <SheetScreen title={t('together.title')} gap={12}>
         <BackupCard icon="group" title={t('together.intro.title')} sub={t('together.intro.sub')} />
-        <AppleButton disabled={busy || locked} onPress={() => void act(actions.signIn)} />
+        <AppleButton disabled={busy} onPress={() => void act(actions.signIn)} />
         {error === null ? null : <BackupNote error>{error}</BackupNote>}
         <BackupNote>{t('together.intro.note')}</BackupNote>
       </SheetScreen>

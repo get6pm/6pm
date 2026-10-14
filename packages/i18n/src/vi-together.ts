@@ -3,7 +3,6 @@ import type { enTogether } from './en-together';
 
 export const viTogether: { readonly [Key in keyof typeof enTogether]: Entry } = {
   'together.title': 'Cùng chia ngân sách',
-  'together.card.subOff': 'Cùng góp một hũ với ai đó.',
   'together.card.subOn': 'Mời ai đó cùng góp một hũ.',
   'together.card.subPaired': { other: 'Cùng {name} · {count} hũ chung' },
   'together.card.open': 'Mở Cùng chia ngân sách',

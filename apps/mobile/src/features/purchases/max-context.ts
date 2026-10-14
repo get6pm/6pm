@@ -5,7 +5,6 @@ export const MAX_FROM = [
   'looks',
   'ask',
   'pots',
-  'shared',
   'travel',
   'backup',
   'diary',
@@ -28,7 +27,6 @@ export const MAX_TILES = [
   'looks',
   'ask',
   'pots',
-  'shared',
   'travel',
   'diary',
   'backup',
@@ -61,19 +59,12 @@ export function tileRows(order: readonly MaxFrom[]): MaxFrom[][] {
 }
 
 export type WelcomeRoute =
-  | '/looks'
-  | '/new-pot'
-  | '/categories'
-  | '/settings'
-  | '/backup'
-  | '/money-diary'
-  | '/ask'
-  | '/together';
+  '/looks' | '/new-pot' | '/categories' | '/settings' | '/backup' | '/money-diary' | '/ask';
 
 /** The welcome's button: which label key it takes, and the screen it opens (none: back to the day). */
 export interface WelcomeAction {
   readonly label:
-    'looks' | 'pots' | 'shared' | 'travel' | 'backup' | 'diary' | 'icons' | 'look' | 'ask' | null;
+    'looks' | 'pots' | 'travel' | 'backup' | 'diary' | 'icons' | 'look' | 'ask' | null;
   readonly href: WelcomeRoute | null;
 }
 
@@ -81,7 +72,6 @@ const ROUTES: Readonly<Partial<Record<MaxFrom, WelcomeAction>>> = {
   looks: { label: 'looks', href: '/looks' },
   ask: { label: 'ask', href: '/ask' },
   pots: { label: 'pots', href: '/new-pot' },
-  shared: { label: 'shared', href: '/together' },
   travel: { label: 'travel', href: '/settings' },
   backup: { label: 'backup', href: '/backup' },
   diary: { label: 'diary', href: '/money-diary' },

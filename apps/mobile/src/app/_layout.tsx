@@ -44,6 +44,10 @@ if (sentryDsn) {
 }
 SplashScreen.setOptions({ duration: 280, fade: true });
 
+// Home sits under every route, so a screen opened cold by a link (a widget's Scan or Quick add, a
+// control, a notification) can be closed or swiped down to Home instead of being the only screen.
+export const unstable_settings = { initialRouteName: 'index' };
+
 function Screens() {
   const { palette } = useTheme();
   return (
@@ -60,6 +64,7 @@ function Screens() {
         <Stack.Screen name="settings" options={sheet} />
         <Stack.Screen name="capture-guide" options={sheet} />
         <Stack.Screen name="categories" options={sheet} />
+        <Stack.Screen name="category/[id]" options={drawnSheet} />
         <Stack.Screen name="quick-add" options={sheet} />
         <Stack.Screen name="scan" options={takeover} />
         <Stack.Screen name="ask" options={takeover} />

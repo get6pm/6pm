@@ -13,11 +13,12 @@ import { useClock } from '../../ui/theme/clock';
 import { useToast } from '../../ui/toast/toast-host';
 import { BalancedText } from '../../ui/type/balanced-text';
 import { body, display } from '../../ui/type/fonts';
+import { useCompanionSettingsStore } from '../companion/companion-settings-provider';
 import { useCompanionToast } from '../companion/use-companion-toast';
 import { useLookSettings, useLookSettingsStore } from '../looks/look-settings-provider';
-import { canUseLook } from './entitlement';
+import { canUseCompanion, canUseLook } from './entitlement';
 import { MaxHero } from './max-hero';
-import { parseMaxFrom } from './max-context';
+import { parseMaxCompanion, parseMaxFrom } from './max-context';
 import { MaxFooter } from './max-footer';
 import { MaxTiles } from './max-tiles';
 import { trialDaysFor, yearlySavingPercent } from './max-pricing';
@@ -34,8 +35,11 @@ import { MAX_CREAM, MAX_FONT, MAX_GOLD, MAX_SOFT } from './max-colours';
  */
 export function MaxSheet() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ from?: string }>();
+  const params = useLocalSearchParams<{ from?: string; companion?: string }>();
   const from = parseMaxFrom(params.from);
+  /** A Max companion tapped in the picker: the hero shows it, and buying Max puts it on. */
+  const wanted = parseMaxCompanion(params.companion);
+  const companionStore = useCompanionSettingsStore();
   const { t, language } = useI18n();
   const toast = useToast();
   const say = useCompanionToast();
@@ -87,6 +91,7 @@ export function MaxSheet() {
     const tried = lookStore.getSnapshot().tryOn;
     const worn =
       tried !== null && lookStore.setLook(tried, (id) => canUseLook(id, outcome.customer));
+    if (wanted) companionStore.choose(wanted, (form) => canUseCompanion(form, outcome.customer));
     router.replace({
       pathname: '/max-welcome',
       params: { from, ...(worn && tried ? { look: tried } : {}) },
@@ -150,7 +155,7 @@ export function MaxSheet() {
           bounces={false}
           showsVerticalScrollIndicator={false}
         >
-          <MaxHero hour={hour} configs={config} safe={safe} onClose={close} />
+          <MaxHero companion={wanted} hour={hour} configs={config} safe={safe} onClose={close} />
           <View style={{ paddingTop: 10, paddingHorizontal: 18, paddingBottom: 20, gap: 20 }}>
             <View style={{ alignItems: 'center', gap: 6 }}>
               <BalancedText

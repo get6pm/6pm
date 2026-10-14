@@ -18,6 +18,11 @@ export const sameInBothLanguages: readonly string[] = [
   'Vietcombank',
   'MoMo',
   'CSV · Sheets',
+  // The companions keep their Vietnamese names in English.
+  'Nhang',
+  'Bánh Bao',
+  'Giọt',
+  'Hạc Giấy',
 ];
 
 function texts(entry: Entry): string[] {

@@ -35,7 +35,13 @@ export function drawGroundShadow(canvas: SkCanvas, fr: Frame): void {
 export function drawFeet(canvas: SkCanvas, fr: Frame): void {
   'worklet';
   const { s, cx, cy, ry, lw } = fr;
-  const color = fr.plain ? '#8d848a' : fr.mx ? '#5a46c0' : '#9b3f5f';
+  const color = fr.plain
+    ? '#8d848a'
+    : fr.mx
+      ? '#5a46c0'
+      : fr.form === 'nhang'
+        ? '#e9b949'
+        : '#9b3f5f';
   const sides = [-1, 1];
   for (let n = 0; n < sides.length; n++) {
     const k = sides[n] ?? 1;
@@ -54,6 +60,15 @@ export function drawFeet(canvas: SkCanvas, fr: Frame): void {
   }
 }
 
+/** Each form's arms, in its own body colour. */
+const ARMS: Readonly<Record<string, string>> = {
+  sun: '#ffb27c',
+  max: '#ffc1d8',
+  nhang: '#a9dcc6',
+  banhbao: '#f9e9d2',
+  giot: '#9fd8f7',
+};
+
 /** One arm: resting at the side, raised, or raised and waving. */
 export function drawArm(canvas: SkCanvas, fr: Frame, side: number, up: boolean, wave = false) {
   'worklet';
@@ -61,7 +76,7 @@ export function drawArm(canvas: SkCanvas, fr: Frame, side: number, up: boolean, 
   const ax = cx + side * rx * (up ? 0.92 : 1.02);
   const ay = up ? cy - ry * 0.32 : cy + ry * 0.18;
   const rot = wave ? side * (-1.1 + Math.sin(fr.el * 9) * 0.45) : side * (up ? -0.9 : 0.35);
-  const color = fr.plain ? '#d6cec9' : fr.mx ? '#ffc1d8' : '#ffb27c';
+  const color = fr.plain ? '#d6cec9' : (ARMS[fr.form] ?? '#ffb27c');
   canvas.save();
   canvas.translate(ax, ay);
   canvas.rotate(degrees(rot), 0, 0);
@@ -77,6 +92,26 @@ export function drawArm(canvas: SkCanvas, fr: Frame, side: number, up: boolean, 
     stroke(fr, INK, lw * 0.85),
   );
   canvas.restore();
+}
+
+/** The arms that hang behind the body: both, unless they are raised or waving. */
+export function drawArmsBehind(canvas: SkCanvas, fr: Frame): void {
+  'worklet';
+  if (fr.mood === 'happy' || fr.mood === 'wave') return;
+  drawArm(canvas, fr, -1, false);
+  drawArm(canvas, fr, 1, false);
+}
+
+/** The arms over the body: both raised when happy, one waving and one resting for a wave. */
+export function drawArmsInFront(canvas: SkCanvas, fr: Frame): void {
+  'worklet';
+  if (fr.mood === 'happy') {
+    drawArm(canvas, fr, -1, true);
+    drawArm(canvas, fr, 1, true);
+  } else if (fr.mood === 'wave') {
+    drawArm(canvas, fr, -1, false);
+    drawArm(canvas, fr, 1, true, true);
+  }
 }
 
 /** The round body, a little wider at the bottom, wobbling through quadratic midpoints. */
@@ -149,7 +184,7 @@ function variantOf(fr: Frame): 'plain' | 'max' | 'base' {
  * Fills the square with a top-to-bottom gradient from `top` to `bottom`, through the one unit
  * gradient of its variant stretched to fit.
  */
-function fillGradient(
+export function fillGradient(
   canvas: SkCanvas,
   fr: Frame,
   key: string,

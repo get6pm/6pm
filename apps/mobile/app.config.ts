@@ -71,6 +71,24 @@ const PERMISSION = JSON.parse(readFileSync(join(__dirname, 'locales/en.json'), '
   string
 >;
 
+/**
+ * The companions' Home Screen icons, which the picker can switch to; the sun is the app's own
+ * icon. The names match `APP_ICON_NAMES` in `src/features/app-icon/app-icon.ts`, which this config
+ * cannot import. Rendered by `tools/scripts/render-app-icons.ts`.
+ */
+const COMPANION_ICONS = [
+  ['CompanionMax', 'max'],
+  ['CompanionNhang', 'nhang'],
+  ['CompanionBanhBao', 'banhbao'],
+  ['CompanionGiot', 'giot'],
+  ['CompanionHac', 'hac'],
+].map(([name, id]) => ({
+  name: name ?? '',
+  light: `./assets/icon/${id}/light.png`,
+  dark: `./assets/icon/${id}/dark.png`,
+  tinted: `./assets/icon/${id}/tinted.png`,
+}));
+
 /** The page colour behind the first frame: the Golden Hour night sheet, so launch never flashes. */
 const LAUNCH_BACKGROUND = '#1a0f1c';
 
@@ -235,6 +253,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         disableAutoUpload: !process.env['SENTRY_AUTH_TOKEN'],
       },
     ],
+    // The companion picker's app icons.
+    ['./plugins/with-alternate-icons', { icons: COMPANION_ICONS }],
     // Local reminders only (the close at six); no remote push yet.
     ['expo-notifications', { enableBackgroundRemoteNotifications: false }],
   ],

@@ -61,9 +61,9 @@ Rules that never bend:
 
 | Decision | Value |
 |---|---|
-| Free | Basic and Golden Hour looks, the close, all capture, Today/Plan/Diary, Budget together (shared pots; free since 2026-10-14), 3 Ask questions a week, 1 own pot, 36 icons, functional widgets and controls |
+| Free | Basic and Golden Hour looks, the close, all capture, Today/Plan/Diary, Budget together (shared pots; free since 2026-10-14), 3 Ask questions a week, 1 own pot, 36 icons, functional widgets and controls, the sun companion and three more to pick from (Nhang, Bánh Bao, Giọt) *(decided 2026-10-14)* |
 | Looks | 6 classic looks 49.000₫ each; 3 living scenes 99.000₫ each; one-time, via StoreKit (RevenueCat). The "all looks" bundle is dropped (Max replaces it) |
-| 6pm Max | 78.000₫/month or 598.000₫/year, 7-day trial. Every look, unlimited Ask and pots, Travel mode, Year book, encrypted backup and export, widgets in your look, 180 icons, Max companion form |
+| 6pm Max | 78.000₫/month or 598.000₫/year, 7-day trial. Every look, unlimited Ask and pots, Travel mode, Year book, encrypted backup and export, widgets in your look, 180 icons, Max companion form and the Hạc Giấy companion *(decided 2026-10-14)* |
 | Widgets | Functional widgets and controls are free; widgets drawn in your look are Max *(default)* |
 | Prices | Read from the store at runtime; the design's prices are the App Store tiers to configure |
 | Max promises | Every Max feature on the sheet and welcome is built before launch (Ask, Travel, Year book, widgets in your look, export, Max companion form). Decided 2026-10-11 |
@@ -79,6 +79,7 @@ Rules that never bend:
 | Serious mode | User switch. Offered (once a week at most) when free money goes negative or 3 of the last 7 days overspent *(default)*. Debt-advice link target **open** |
 | Year book | Digital (PDF/image) first; print vendor **open** |
 | Close time | 15:00–23:45 in 15-minute steps everywhere (onboarding wheel and Settings) |
+| Companions | Six to pick from in Settings → Companion: the sun (default), the Max form, and four more, each with its own look, personality and moves. Free: Nhang (incense sticks for hair, whose smoke curls into hearts, question marks and Zs: the friend's "incense sticks" reading of the three hair lines), Bánh Bao (a steamed bun that squashes, jiggles and steams) and Giọt (a raindrop that wobbles, ripples, splits in two when happy and melts into a puddle asleep). Max: Hạc Giấy (a red paper crane that folds between moods and unfolds from a square when chosen). A pick overrides the automatic form (members wear the Max form until they pick); a non-member cannot wear a Max-only one, and when Max ends a Max-only pick falls back to the last free pick, as looks fall back to Golden Hour. Every companion is also a Home Screen icon, switched on by "App icon follows my companion"; a Max-only icon goes back to the app's own when Max ends. Serious mode still hides the companion. Founder request 2026-10-14 |
 
 ## Open (founder)
 

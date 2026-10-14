@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import type { CompanionForm } from '../../ui/companion/companion-mood';
+
 /** Where Max was offered from: each gate in the app opens the sheet with its own reason. */
 export const MAX_FROM = [
   'looks',
@@ -15,11 +17,18 @@ export const MAX_FROM = [
 export type MaxFrom = (typeof MAX_FROM)[number];
 
 const fromSchema = z.enum(MAX_FROM);
+const maxCompanionSchema = z.enum(['max', 'hac'] as const satisfies readonly CompanionForm[]);
 
 /** Reads the `from` route parameter; anything else opens the sheet for the looks. */
 export function parseMaxFrom(raw: unknown): MaxFrom {
   const parsed = fromSchema.safeParse(Array.isArray(raw) ? raw[0] : raw);
   return parsed.success ? parsed.data : 'looks';
+}
+
+/** Reads the `companion` route parameter: a Max-only companion tapped in the picker, if any. */
+export function parseMaxCompanion(raw: unknown): CompanionForm | undefined {
+  const parsed = maxCompanionSchema.safeParse(Array.isArray(raw) ? raw[0] : raw);
+  return parsed.success ? parsed.data : undefined;
 }
 
 /** The feature tiles in the order the design lists them. */

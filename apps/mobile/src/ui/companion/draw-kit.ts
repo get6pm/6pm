@@ -22,7 +22,7 @@ export const INK = '#3a1d2a';
  * paints and path builders handed out in order and taken back at the next frame, the gradients
  * that never change and one rectangle that is refilled for each oval.
  */
-interface Kit {
+export interface Kit {
   readonly colors: Map<string, SkColor>;
   readonly paints: SkPaint[];
   readonly shaded: boolean[];
@@ -44,6 +44,8 @@ export interface Frame {
   readonly sinceF: number;
   readonly mood: CompanionMood;
   readonly plain: boolean;
+  /** The form drawn: the sun whenever it is plain. */
+  readonly form: CompanionForm;
   /** The Max form: ring, moons, star rays and sparkles. */
   readonly mx: boolean;
   /** Base stroke width. */
@@ -62,18 +64,8 @@ export interface Frame {
   readonly kit: Kit;
 }
 
-export interface FrameInput {
-  readonly s: number;
-  readonly el: number;
-  readonly since: number;
-  readonly sinceF: number;
-  readonly mood: CompanionMood;
-  readonly form: CompanionForm;
-  readonly seed: number;
-}
-
 /** The kit of the runtime asking, kept on that runtime's global and shared by every companion. */
-function kitOfRuntime(): Kit {
+export function kitOfRuntime(): Kit {
   'worklet';
   // A global is the only place a worklet keeps state between calls; the kit never leaves its runtime.
   const holder = globalThis as unknown as { __companionKit?: Kit };
@@ -88,44 +80,6 @@ function kitOfRuntime(): Kit {
     builderAt: 0,
   };
   return holder.__companionKit;
-}
-
-/** The body's size, bob, hop and tilt for this moment. */
-export function makeFrame({ s, el, since, sinceF, mood, form, seed }: FrameInput): Frame {
-  'worklet';
-  const plain = mood === 'plain';
-  const breathe = mood === 'sleepy' ? Math.sin(el * 1.4) * 0.035 : Math.sin(el * 2.2) * 0.02;
-  let hop = 0;
-  let tilt = 0;
-  if (mood === 'happy') hop = -Math.abs(Math.sin(el * 5.2)) * s * (since < 1.2 ? 0.08 : 0.025);
-  if (mood === 'nod') tilt = Math.sin(el * 2.6) * 0.08;
-  if (mood === 'think') tilt = -0.07;
-  if (mood === 'wave') tilt = Math.sin(el * 2) * 0.03;
-  const ry = s * 0.28 * (1 + breathe);
-  const cy = s * 0.57 + hop - breathe * s * 0.1;
-  const kit = kitOfRuntime();
-  kit.paintAt = 0;
-  kit.builderAt = 0;
-  return {
-    s,
-    el,
-    since,
-    sinceF,
-    mood,
-    plain,
-    mx: form === 'max' && !plain,
-    lw: Math.max(1.3, s * 0.034),
-    cx: s / 2,
-    cy,
-    rx: s * 0.3,
-    ry,
-    hz: cy + ry * 0.3,
-    hop,
-    tilt,
-    seed,
-    tick: Math.floor(el * 6),
-    kit,
-  };
 }
 
 /** A small hand-drawn wobble, stable for one tick, of up to `amount` × size. */

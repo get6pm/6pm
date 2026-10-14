@@ -21,6 +21,7 @@ import { viCompanion } from './vi-companion';
 import { viToday } from './vi-today';
 import { viCategories } from './vi-categories';
 import { viTravel } from './vi-travel';
+import { viCompanions } from './vi-companions';
 
 export const vi: Catalogue = {
   ...viOnboarding,
@@ -45,4 +46,5 @@ export const vi: Catalogue = {
   ...viTogether,
   ...viReceiptEmail,
   ...viTravel,
+  ...viCompanions,
 };

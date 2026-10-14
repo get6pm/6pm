@@ -1,46 +1,62 @@
 import { type SkCanvas } from '@shopify/react-native-skia';
 
-import { drawArm, drawBody, drawFeet, drawGroundShadow } from './draw-body';
+import { drawArmsBehind, drawArmsInFront, drawBody, drawFeet, drawGroundShadow } from './draw-body';
 import { drawExtras, type SleepFonts } from './draw-extras';
 import { drawFace } from './draw-face';
 import { degrees, type Frame } from './draw-kit';
+import { drawBanhBao, drawSteamBurst } from './draw-banhbao';
+import { drawGiot, drawRipples, drawSplash } from './draw-giot';
+import { drawHac } from './draw-hac';
 import { drawBurst, drawRing } from './draw-max';
+import { drawNhang, drawSmokeRing } from './draw-nhang';
 import { drawRays } from './draw-rays';
 
-/**
- * One frame of the companion, back to front: shadow; then, tilted about the feet, the back of the
- * Max ring, feet, rays, resting arms, body, raised arms, face and the front of the ring; then
- * whatever floats around it and the Max burst.
- */
-export function drawCompanion(canvas: SkCanvas, fr: Frame, fonts: SleepFonts): void {
+/** The sun and its Max form: the back of the ring, feet, rays, arms, body, face, ring's front. */
+function drawSun(canvas: SkCanvas, fr: Frame): void {
   'worklet';
-  const armsUp = fr.mood === 'happy';
-  const waving = fr.mood === 'wave';
-
-  drawGroundShadow(canvas, fr);
-
-  canvas.save();
-  canvas.rotate(degrees(fr.tilt), fr.cx, fr.cy + fr.ry);
   if (fr.mx) drawRing(canvas, fr, false);
   drawFeet(canvas, fr);
   drawRays(canvas, fr);
-  if (!armsUp && !waving) {
-    drawArm(canvas, fr, -1, false);
-    drawArm(canvas, fr, 1, false);
-  }
+  drawArmsBehind(canvas, fr);
   drawBody(canvas, fr);
-  if (armsUp) {
-    drawArm(canvas, fr, -1, true);
-    drawArm(canvas, fr, 1, true);
-  }
-  if (waving) {
-    drawArm(canvas, fr, -1, false);
-    drawArm(canvas, fr, 1, true, true);
-  }
+  drawArmsInFront(canvas, fr);
   drawFace(canvas, fr);
   if (fr.mx) drawRing(canvas, fr, true);
+}
+
+/**
+ * One frame of the companion, back to front: shadow; then, tilted about the feet, the form's own
+ * body, hair and face; then whatever floats around it and the moment it became this form.
+ */
+export function drawCompanion(canvas: SkCanvas, fr: Frame, fonts: SleepFonts): void {
+  'worklet';
+  drawGroundShadow(canvas, fr);
+  if (fr.form === 'giot') drawRipples(canvas, fr);
+
+  canvas.save();
+  canvas.rotate(degrees(fr.tilt), fr.cx, fr.cy + fr.ry);
+  switch (fr.form) {
+    case 'nhang':
+      drawNhang(canvas, fr);
+      break;
+    case 'banhbao':
+      drawBanhBao(canvas, fr);
+      break;
+    case 'giot':
+      drawGiot(canvas, fr);
+      break;
+    case 'hac':
+      drawHac(canvas, fr);
+      break;
+    case 'sun':
+    case 'max':
+      drawSun(canvas, fr);
+  }
   canvas.restore();
 
   drawExtras(canvas, fr, fonts);
+  if (fr.form === 'nhang') drawSmokeRing(canvas, fr);
+  if (fr.form === 'banhbao') drawSteamBurst(canvas, fr);
+  if (fr.form === 'giot') drawSplash(canvas, fr);
   drawBurst(canvas, fr);
 }

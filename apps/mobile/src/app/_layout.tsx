@@ -17,6 +17,7 @@ import { ReminderTap } from '../features/reminders/reminder-tap';
 import { SurfacesSync } from '../features/surfaces/surfaces-sync';
 import { LookSettingsProvider, useThemeLook } from '../features/looks/look-settings-provider';
 import { MemberCompanionForm } from '../features/purchases/member-companion-form';
+import { AppIconSync } from '../features/app-icon/app-icon-sync';
 import { PurchasesProvider } from '../features/purchases/purchases-provider';
 import { TogetherProvider } from '../features/together/together-provider';
 import { TravelProvider } from '../features/travel/travel-provider';
@@ -78,6 +79,7 @@ function Screens() {
         <Stack.Screen name="bill/[id]" options={sheet} />
         <Stack.Screen name="month" options={sheet} />
         <Stack.Screen name="looks" options={sheet} />
+        <Stack.Screen name="companions" options={sheet} />
         <Stack.Screen name="look/[id]" options={drawnSheet} />
         <Stack.Screen name="max" options={sheet} />
         <Stack.Screen name="max-welcome" options={takeover} />
@@ -131,6 +133,7 @@ function RootLayout() {
                             <ReminderTap />
                             <BackupHost />
                             <SurfacesSync />
+                            <AppIconSync />
                             {__DEV__ ? <DevCommands /> : null}
                           </ToastHost>
                         </PlanTheme>

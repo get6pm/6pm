@@ -6,27 +6,31 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DEFAULT_LOOK, paletteFor } from '@6pm/theme';
 
 import { Companion } from '../../ui/companion/companion';
-import { companionMoods, type CompanionForm } from '../../ui/companion/companion-mood';
+import {
+  COMPANION_FORMS,
+  companionMoods,
+  type CompanionForm,
+} from '../../ui/companion/companion-mood';
 import { body } from '../../ui/type/fonts';
 
 // A developer gallery of every mood, size and form on a dark and a light ground, for checking the
 // companion against the prototype on a simulator. Its labels are identifiers, not interface copy.
 
-const SIZES = [62, 120] as const;
-const FORMS: readonly CompanionForm[] = ['base', 'max'];
+const SIZES = [96] as const;
+const FORMS = COMPANION_FORMS;
 const evening = paletteFor({ look: DEFAULT_LOOK, hour: 18, serious: false });
 const GROUNDS = [
   { name: 'dark', background: evening.sheetSolid, ink: evening.ink },
   { name: 'light', background: evening.bubbleBg, ink: evening.bubbleFg },
 ] as const;
 
-/** Tap to switch form: becoming Max plays the burst. */
+/** Tap to step through the forms: each arrival plays its entrance. */
 function FormSwitch() {
-  const [form, setForm] = useState<CompanionForm>('base');
+  const [form, setForm] = useState<CompanionForm>('sun');
   const ground = GROUNDS[0];
   return (
     <Pressable
-      onPress={() => setForm((f) => (f === 'max' ? 'base' : 'max'))}
+      onPress={() => setForm((f) => FORMS[(FORMS.indexOf(f) + 1) % FORMS.length] ?? 'sun')}
       style={{ backgroundColor: ground.background, padding: 16, gap: 8 }}
     >
       <Text style={[body(13, 600), { color: ground.ink }]}>{`tap · ${form}`}</Text>

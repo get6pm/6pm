@@ -4,9 +4,13 @@ import { useEffect } from 'react';
 import { AppState } from 'react-native';
 import { z } from 'zod';
 
+import { LOOK_IDS } from '@6pm/theme';
+
 import { useMoneyStore } from '../../data/money-provider';
+import { useLookSettingsStore } from '../looks/look-settings-provider';
 import { pinClock, useClock } from '../../ui/theme/clock';
 import { useToast } from '../../ui/toast/toast-host';
+import { COMPANION_FORMS } from '../../ui/companion/companion-mood';
 import { pinCompanionForm } from './dev-companion-form';
 import { CUSTOMER_KEY, serializeCustomer } from '../purchases/customer-memory';
 import { FREE_CUSTOMER } from '../purchases/purchases-port';
@@ -31,8 +35,10 @@ const commandSchema = z.object({
   route: z.string().startsWith('/').optional(),
   /** Shows this line in the island toast once the route is open. */
   toast: z.string().min(1).optional(),
-  /** Shows the companion in this form as if Max were on or off; "" follows the purchases again. */
-  companion: z.enum(['max', 'base', '']).optional(),
+  /** Shows the companion in this form whatever was picked or bought; "" follows them again. */
+  companion: z.union([z.enum(COMPANION_FORMS), z.literal('')]).optional(),
+  /** Wears this look, whether or not it was bought. */
+  look: z.enum(LOOK_IDS).optional(),
   /** Keeps Max on or off as the last known customer; it takes effect at the next launch. */
   max: z.boolean().optional(),
   /** Binds this year's book and opens the share sheet, as a tap on a bound book does. */
@@ -58,6 +64,7 @@ export function DevCommands() {
   const { today } = useClock();
   const toast = useToast();
   const { bind: bindYear } = useYearBook();
+  const lookStore = useLookSettingsStore();
 
   useEffect(() => {
     const run = async () => {
@@ -66,7 +73,8 @@ export function DevCommands() {
       const parsed = commandSchema.safeParse(JSON.parse(await file.text()));
       file.delete();
       if (!parsed.success) return;
-      const { seed, at, route, toast: line, companion, max, yearBook } = parsed.data;
+      const { seed, at, route, toast: line, companion, look, max, yearBook } = parsed.data;
+      if (look !== undefined) lookStore.setLook(look, () => true);
       if (companion !== undefined) pinCompanionForm(companion === '' ? null : companion);
       if (max !== undefined) {
         const customer = max ? { ...FREE_CUSTOMER, max: DEV_MAX } : FREE_CUSTOMER;
@@ -97,7 +105,7 @@ export function DevCommands() {
       if (state === 'active') void run();
     });
     return () => subscription.remove();
-  }, [router, store, today, toast, bindYear]);
+  }, [router, store, today, toast, bindYear, lookStore]);
 
   return null;
 }

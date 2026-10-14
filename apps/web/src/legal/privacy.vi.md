@@ -78,7 +78,7 @@ Sao lưu là tính năng của 6pm Max và luôn tắt cho đến khi bạn bậ
 
 Apple đồng bộ khoá giữa các thiết bị của bạn qua Chuỗi khoá iCloud, theo Apple ID của bạn và điều khoản của Apple. Nếu bạn mất cả khoá lẫn điện thoại, không ai, kể cả chúng tôi, có thể mở bản sao lưu.
 
-### Cùng chia ngân sách (6pm Max)
+### Cùng chia ngân sách
 
 Cùng chia ngân sách cho hai người cùng góp vào các hũ chung. Đây là phần duy nhất của 6pm có đăng nhập, và không có gì xảy ra nếu bạn không bắt đầu hoặc mở một link mời.
 

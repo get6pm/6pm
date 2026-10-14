@@ -1,0 +1,342 @@
+[
+  {
+    "text": "Store-Vivo City",
+    "box": {
+      "x": 0.4285,
+      "y": 0.7922,
+      "w": 0.1242,
+      "h": 0.0185
+    },
+    "confidence": 1
+  },
+  {
+    "text": "#01-28a,",
+    "box": {
+      "x": 0.3539,
+      "y": 0.779,
+      "w": 0.065,
+      "h": 0.0139
+    },
+    "confidence": 1
+  },
+  {
+    "text": "Ground Floor, SC Vivo City",
+    "box": {
+      "x": 0.4224,
+      "y": 0.7757,
+      "w": 0.2116,
+      "h": 0.0236
+    },
+    "confidence": 1
+  },
+  {
+    "text": "1058 Nguyen Van Linh, District 7, HCMC",
+    "box": {
+      "x": 0.3454,
+      "y": 0.7614,
+      "w": 0.3053,
+      "h": 0.0255
+    },
+    "confidence": 1
+  },
+  {
+    "text": "(84) 28 0000 0000",
+    "box": {
+      "x": 0.4305,
+      "y": 0.7521,
+      "w": 0.1389,
+      "h": 0.0188
+    },
+    "confidence": 1
+  },
+  {
+    "text": "Member Name",
+    "box": {
+      "x": 0.3206,
+      "y": 0.71,
+      "w": 0.0921,
+      "h": 0.0119
+    },
+    "confidence": 1
+  },
+  {
+    "text": "Member",
+    "box": {
+      "x": 0.4329,
+      "y": 0.7118,
+      "w": 0.1153,
+      "h": 0.0148
+    },
+    "confidence": 1
+  },
+  {
+    "text": "Card No",
+    "box": {
+      "x": 0.3187,
+      "y": 0.6938,
+      "w": 0.0625,
+      "h": 0.0141
+    },
+    "confidence": 1
+  },
+  {
+    "text": "XXXXXXXXXXXX0000",
+    "box": {
+      "x": 0.4287,
+      "y": 0.6957,
+      "w": 0.1364,
+      "h": 0.0173
+    },
+    "confidence": 0.5
+  },
+  {
+    "text": "Leve l",
+    "box": {
+      "x": 0.3184,
+      "y": 0.6798,
+      "w": 0.0466,
+      "h": 0.0134
+    },
+    "confidence": 1
+  },
+  {
+    "text": "Green",
+    "box": {
+      "x": 0.4312,
+      "y": 0.6828,
+      "w": 0.0458,
+      "h": 0.0125
+    },
+    "confidence": 1
+  },
+  {
+    "text": "Star Balance: 22",
+    "box": {
+      "x": 0.3184,
+      "y": 0.6652,
+      "w": 0.1341,
+      "h": 0.0172
+    },
+    "confidence": 1
+  },
+  {
+    "text": "00000000 Barista",
+    "box": {
+      "x": 0.3204,
+      "y": 0.651,
+      "w": 0.1822,
+      "h": 0.018
+    },
+    "confidence": 1
+  },
+  {
+    "text": "Order number 0000000000 Sep 01, 2024 3:37PM",
+    "box": {
+      "x": 0.3202,
+      "y": 0.6184,
+      "w": 0.3639,
+      "h": 0.0267
+    },
+    "confidence": 1
+  },
+  {
+    "text": "1 Mon Nuoc V COD Cold Brew",
+    "box": {
+      "x": 0.3226,
+      "y": 0.5792,
+      "w": 0.2236,
+      "h": 0.0174
+    },
+    "confidence": 1
+  },
+  {
+    "text": "89,000",
+    "box": {
+      "x": 0.6312,
+      "y": 0.5828,
+      "w": 0.0563,
+      "h": 0.0172
+    },
+    "confidence": 1
+  },
+  {
+    "text": "Sub Total",
+    "box": {
+      "x": 0.3208,
+      "y": 0.5344,
+      "w": 0.0771,
+      "h": 0.0141
+    },
+    "confidence": 1
+  },
+  {
+    "text": "Tax",
+    "box": {
+      "x": 0.3229,
+      "y": 0.5203,
+      "w": 0.0271,
+      "h": 0.0109
+    },
+    "confidence": 0.5
+  },
+  {
+    "text": "Total",
+    "box": {
+      "x": 0.3208,
+      "y": 0.5047,
+      "w": 0.0438,
+      "h": 0.0125
+    },
+    "confidence": 1
+  },
+  {
+    "text": "82,407",
+    "box": {
+      "x": 0.634,
+      "y": 0.537,
+      "w": 0.0575,
+      "h": 0.0215
+    },
+    "confidence": 1
+  },
+  {
+    "text": "6,593",
+    "box": {
+      "x": 0.6437,
+      "y": 0.525,
+      "w": 0.0479,
+      "h": 0.0156
+    },
+    "confidence": 1
+  },
+  {
+    "text": "89,000",
+    "box": {
+      "x": 0.6374,
+      "y": 0.5092,
+      "w": 0.0564,
+      "h": 0.016
+    },
+    "confidence": 1
+  },
+  {
+    "text": "89,000",
+    "box": {
+      "x": 0.6395,
+      "y": 0.4624,
+      "w": 0.0585,
+      "h": 0.0175
+    },
+    "confidence": 1
+  },
+  {
+    "text": "Credit Card",
+    "box": {
+      "x": 0.3167,
+      "y": 0.4594,
+      "w": 0.0958,
+      "h": 0.0141
+    },
+    "confidence": 1
+  },
+  {
+    "text": "000000******0000",
+    "box": {
+      "x": 0.3142,
+      "y": 0.4429,
+      "w": 0.1404,
+      "h": 0.0172
+    },
+    "confidence": 1
+  },
+  {
+    "text": "Change Due",
+    "box": {
+      "x": 0.3163,
+      "y": 0.4292,
+      "w": 0.086,
+      "h": 0.0129
+    },
+    "confidence": 1
+  },
+  {
+    "text": "De truy cap hoa don GTGT/",
+    "box": {
+      "x": 0.308,
+      "y": 0.3784,
+      "w": 0.2235,
+      "h": 0.0187
+    },
+    "confidence": 1
+  },
+  {
+    "text": "To retrieve your VAT invoice:",
+    "box": {
+      "x": 0.3063,
+      "y": 0.3625,
+      "w": 0.2625,
+      "h": 0.0172
+    },
+    "confidence": 1
+  },
+  {
+    "text": "-Kiem tra email da nhap/check your email",
+    "box": {
+      "x": 0.3063,
+      "y": 0.3469,
+      "w": 0.3646,
+      "h": 0.0172
+    },
+    "confidence": 1
+  },
+  {
+    "text": "-Hoac quet QR code/Or scan QR code",
+    "box": {
+      "x": 0.3062,
+      "y": 0.3281,
+      "w": 0.3104,
+      "h": 0.0172
+    },
+    "confidence": 1
+  },
+  {
+    "text": "-Hoac tra cuu tai/Or access link :",
+    "box": {
+      "x": 0.3062,
+      "y": 0.3109,
+      "w": 0.3125,
+      "h": 0.0156
+    },
+    "confidence": 1
+  },
+  {
+    "text": "http://einvoice.vifb.vn",
+    "box": {
+      "x": 0.3125,
+      "y": 0.2922,
+      "w": 0.2125,
+      "h": 0.0172
+    },
+    "confidence": 1
+  },
+  {
+    "text": "Ma tra cuu/Access code : XXXXXXXXXX/",
+    "box": {
+      "x": 0.3122,
+      "y": 0.2705,
+      "w": 0.336,
+      "h": 0.0237
+    },
+    "confidence": 1
+  },
+  {
+    "text": "Ma CQT : M1-24-XXXXX-00000000000",
+    "box": {
+      "x": 0.3125,
+      "y": 0.2563,
+      "w": 0.2979,
+      "h": 0.0172
+    },
+    "confidence": 1
+  }
+]

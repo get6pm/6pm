@@ -20,6 +20,7 @@ export * from './capture/duplicate';
 export * from './capture/merchant-rule';
 export * from './capture/inbox';
 export * from './capture/bank-receipt';
+export * from './capture/read-receipt';
 export * from './capture/email-body';
 export * from './capture/receipt-email';
 export * from './contracts/receipt-email';

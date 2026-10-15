@@ -7,6 +7,7 @@ import { createApp } from '../src/app';
 import { hashDeviceToken } from '../src/device-auth';
 import * as routes from '../src/routes/index.generated';
 
+import { anthropicAnswer, sentBody } from './anthropic-stand-in';
 import { call, freshIp, registerDevice, wireErrorOf } from './support';
 
 const receipt = {
@@ -15,16 +16,12 @@ const receipt = {
   categories: ['Food', 'Shopping', 'Transport'],
 };
 
-/** A recorded DeepSeek answer that calls the naming tool with `input`. */
-function modelReplying(input: unknown): Response {
-  return Response.json({
-    model: 'deepseek-flash',
-    content: [{ type: 'tool_use', name: 'name_merchant', input }],
-    usage: { input_tokens: 210, output_tokens: 14 },
-  });
+/** A recorded Claude answer naming the merchant and category in `output`. */
+function modelReplying(output: unknown): Response {
+  return anthropicAnswer(output);
 }
 
-/** Sends a request with a DeepSeek key set, so the route reaches the (recorded) model. */
+/** Sends a request with an Anthropic key set, so the route reaches the (recorded) model. */
 async function callWithKey(token: string, body: unknown): Promise<Response> {
   const app = createApp(Object.values(routes));
   const ctx = createExecutionContext();
@@ -38,7 +35,7 @@ async function callWithKey(token: string, body: unknown): Promise<Response> {
       },
       body: JSON.stringify(body),
     }),
-    { ...env, DEEPSEEK_API_KEY: 'test' },
+    { ...env, ANTHROPIC_API_KEY: 'test' },
     ctx,
   );
   await waitOnExecutionContext(ctx);
@@ -86,7 +83,7 @@ describe('POST /v1/name-merchant', () => {
       .bind(await hashDeviceToken(token))
       .all();
     expect(results).toEqual([
-      expect.objectContaining({ model: 'deepseek-flash', input_tokens: 210, output_tokens: 14 }),
+      expect.objectContaining({ model: 'claude-haiku-5-5', input_tokens: 210, output_tokens: 14 }),
     ]);
   });
 
@@ -102,19 +99,20 @@ describe('POST /v1/name-merchant', () => {
 });
 
 describe('the naming contract', () => {
-  it('forces the tool with only the sent categories as choices', async () => {
+  it('asks for output with only the sent categories as choices, and sends no digit', async () => {
     const send = vi.fn<typeof fetch>(() =>
       Promise.resolve(modelReplying({ merchant: 'Circle K', category: 'Food' })),
     );
     await nameMerchant({ apiKey: 'test', fetch: send }, nameMerchantRequestSchema.parse(receipt));
-    const sent = send.mock.calls[0]?.[1]?.body;
-    const body = JSON.parse(typeof sent === 'string' ? sent : 'null') as {
-      tool_choice: unknown;
-      tools: { input_schema: { properties: { category: { enum: string[] } } } }[];
+    const body = sentBody(send.mock.calls[0]?.[1]) as {
+      model: string;
+      output_config: { format: { schema: { properties: { category: unknown } } } };
       messages: { content: string }[];
     };
-    expect(body.tool_choice).toEqual({ type: 'tool', name: 'name_merchant' });
-    expect(body.tools[0]?.input_schema.properties.category.enum).toEqual(receipt.categories);
+    expect(body.model).toBe('claude-haiku-5-5');
+    // The SDK carries the choices in the schema (as a description); zod holds the answer to them.
+    const category = JSON.stringify(body.output_config.format.schema.properties.category);
+    for (const name of receipt.categories) expect(category).toContain(name);
     expect(body.messages[0]?.content).not.toMatch(/\d/);
   });
 

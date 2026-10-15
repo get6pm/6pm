@@ -2,7 +2,7 @@
 title: Privacy Policy
 description: What 6pm keeps on your phone, the little that leaves it, and who handles it.
 lede: 6pm keeps your money on your phone. This page says exactly what we do with the little that leaves it.
-updated: '2026-10-14'
+updated: '2026-10-15'
 ---
 
 ## The short version
@@ -54,13 +54,13 @@ When the app crashes or hits an error, it sends a report to Sentry so we can fix
 
 ### Ask 6pm, naming a payee and reading a receipt photo
 
-When you ask 6pm a question, such as "Can I afford 2tr on Saturday?", the app sends the question's words to our server. Our server asks DeepSeek, an AI service, what kind of question it is and which amount it mentions. The answer itself is worked out on your phone, from data that never leaves it. The question goes without your spends, plan or balance.
+When you ask 6pm a question, such as "Can I afford 2tr on Saturday?", the app sends the question's words to our server. Our server asks Anthropic, an AI service, what kind of question it is and which amount it mentions. The answer itself is worked out on your phone, from data that never leaves it. The question goes without your spends, plan or balance.
 
-When you share a receipt screenshot to 6pm, the text on it is read on your phone. If the app cannot tell who you paid, and none of your own rules knows the name, it sends the receipt's lines to our server, and on to DeepSeek, to name the payee. Every number is taken out first, so amounts, account numbers and reference codes are never sent. If anything with a digit in it arrives, the server turns it away unread.
+When you share a receipt screenshot to 6pm, the text on it is read on your phone. If the app cannot tell who you paid, and none of your own rules knows the name, it sends the receipt's lines to our server, and on to Anthropic, to name the payee. Every number is taken out first, so amounts, account numbers and reference codes are never sent. If anything with a digit in it arrives, the server turns it away unread.
 
 If your phone cannot be sure of a shared receipt's total or currency, it sends that one receipt photo to our server, and on to Anthropic, an AI service, to read the total, the currency, the shop and the time. Our server does not store or log the photo, and it is sent to no one else. Anthropic does not use it to train its models, and deletes it within 30 days (longer only if it is flagged for breaking Anthropic's usage policy, or the law requires it). Without a connection, the app keeps what your phone read.
 
-We do not store your questions, receipt lines or receipt photos. For each request our server keeps only how much of the AI service it used, against your anonymous device ID. DeepSeek handles requests under its own policy and may keep them for a time.
+We do not store your questions, receipt lines or receipt photos. For each request our server keeps only how much of the AI service it used, against your anonymous device ID. Anthropic does not use requests to train its models, and deletes them within 30 days (longer only if one is flagged for breaking Anthropic's usage policy, or the law requires it).
 
 ### Receipt email
 
@@ -130,8 +130,7 @@ These companies run the parts of the service described above. They may handle yo
 - **RevenueCat** records purchase status. [RevenueCat's privacy policy](https://www.revenuecat.com/privacy).
 - **Cloudflare** hosts our website and server. [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/).
 - **Sentry** receives crash reports. [Sentry's privacy policy](https://sentry.io/privacy/).
-- **DeepSeek** reads the questions you ask and names payees from number-free receipt lines. [DeepSeek's privacy policy](https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html).
-- **Anthropic** reads a receipt photo your phone cannot read. [Anthropic's privacy policy](https://www.anthropic.com/legal/privacy).
+- **Anthropic** reads the questions you ask, names payees from number-free receipt lines, and reads a receipt photo your phone cannot read. [Anthropic's privacy policy](https://www.anthropic.com/legal/privacy).
 - **Expo** delivers over-the-air app updates. [Expo's privacy policy](https://expo.dev/privacy).
 
 We use them only for these purposes.
@@ -142,7 +141,7 @@ We use them only for these purposes.
 - **Device ID.** For as long as the app is used on that device.
 - **Crash reports.** Up to 90 days, then deleted.
 - **Receipt email.** Until your phone collects the receipt, and never more than 30 days. Your receipt address lasts as long as your device ID.
-- **Questions and receipt lines.** We do not keep them. DeepSeek keeps requests under its own policy.
+- **Questions and receipt lines.** We do not keep them. Anthropic deletes them within 30 days, as described above.
 - **Receipt photos.** We do not keep them. Anthropic deletes them within 30 days, as described above.
 - **Backup.** Until you delete it. When you do, we delete the encrypted data from our server.
 - **Budget together.** Shared pots until either of you leaves; your sign-in and name until you delete your Budget together account. Either one deletes the data from our server at once.

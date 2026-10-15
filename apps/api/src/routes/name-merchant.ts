@@ -13,7 +13,7 @@ export const nameMerchantRoute: RouteDefinition = {
   access: 'device',
   handle: async (c) => {
     const request = await readBody(c, nameMerchantRequestSchema, { maxBytes: 12_000 });
-    const generated = await nameMerchant({ apiKey: c.env.DEEPSEEK_API_KEY }, request);
+    const generated = await nameMerchant({ apiKey: c.env.ANTHROPIC_API_KEY }, request);
     c.executionCtx.waitUntil(
       recordAiUsage(c.env.DB, {
         route: 'name-merchant',

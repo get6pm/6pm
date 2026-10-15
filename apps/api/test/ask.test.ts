@@ -2,28 +2,29 @@ import { describe, expect, it } from 'vitest';
 
 import { askResponseSchema } from '@6pm/domain';
 
-import { generate } from '../src/ai/deepseek';
+import { generate } from '../src/ai/anthropic';
 
+import { anthropicAnswer } from './anthropic-stand-in';
 import { call, registerDevice, wireErrorOf } from './support';
 
-/** A recorded DeepSeek answer that calls the tool with `input`. */
-function modelReplying(input: unknown): typeof fetch {
+/** A recorded Claude answer whose output is `output`. */
+function modelReplying(output: unknown, stopReason?: string): typeof fetch {
   return () =>
     Promise.resolve(
-      Response.json({
-        model: 'deepseek-flash',
-        content: [{ type: 'tool_use', name: 'read_question', input }],
-        usage: { input_tokens: 120, output_tokens: 18 },
+      anthropicAnswer(output, {
+        inputTokens: 120,
+        outputTokens: 18,
+        ...(stopReason ? { stopReason } : {}),
       }),
     );
 }
 
 const request = {
-  tier: 'fast',
   system: 'Read the question.',
   prompt: 'Can I afford 2tr on Saturday?',
-  tool: { name: 'read_question', description: 'What the question is about.' },
   schema: askResponseSchema,
+  maxTokens: 1_024,
+  timeoutMs: 3_000,
 } as const;
 
 describe('POST /v1/ask', () => {
@@ -69,6 +70,12 @@ describe('reading a question with the model', () => {
         { apiKey: 'test', fetch: modelReplying({ intent: { kind: 'afford', amount: -5 } }) },
         request,
       ),
+    ).rejects.toMatchObject({ code: 'model_unavailable' });
+  });
+
+  it('treats a decline as the model being unavailable, so the phone reads it itself', async () => {
+    await expect(
+      generate({ apiKey: 'test', fetch: modelReplying(null, 'refusal') }, request),
     ).rejects.toMatchObject({ code: 'model_unavailable' });
   });
 });

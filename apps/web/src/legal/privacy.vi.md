@@ -2,7 +2,7 @@
 title: Chính sách quyền riêng tư
 description: Những gì 6pm giữ trên điện thoại của bạn, phần rất nhỏ rời khỏi máy, và ai xử lý chúng.
 lede: 6pm giữ tiền của bạn ngay trên điện thoại. Trang này nói rõ chúng tôi làm gì với phần rất nhỏ rời khỏi máy.
-updated: '2026-10-14'
+updated: '2026-10-15'
 ---
 
 ## Tóm tắt
@@ -54,13 +54,13 @@ Khi ứng dụng bị treo hoặc gặp lỗi, nó gửi một báo cáo tới S
 
 ### Hỏi 6pm, gọi tên nơi nhận tiền và đọc ảnh biên lai
 
-Khi bạn hỏi 6pm một câu, ví dụ "Thứ Bảy tiêu 2tr được không?", ứng dụng gửi nội dung câu hỏi tới máy chủ của chúng tôi. Máy chủ hỏi DeepSeek, một dịch vụ AI, xem đó là loại câu hỏi gì và nhắc tới số tiền nào. Câu trả lời được tính ngay trên điện thoại, từ dữ liệu không bao giờ rời khỏi máy. Câu hỏi được gửi đi mà không kèm khoản chi, kế hoạch hay số dư của bạn.
+Khi bạn hỏi 6pm một câu, ví dụ "Thứ Bảy tiêu 2tr được không?", ứng dụng gửi nội dung câu hỏi tới máy chủ của chúng tôi. Máy chủ hỏi Anthropic, một dịch vụ AI, xem đó là loại câu hỏi gì và nhắc tới số tiền nào. Câu trả lời được tính ngay trên điện thoại, từ dữ liệu không bao giờ rời khỏi máy. Câu hỏi được gửi đi mà không kèm khoản chi, kế hoạch hay số dư của bạn.
 
-Khi bạn chia sẻ ảnh chụp biên lai cho 6pm, chữ trên ảnh được đọc ngay trên điện thoại. Nếu ứng dụng không chắc bạn đã trả tiền cho ai, và không quy tắc nào của bạn biết tên đó, nó gửi các dòng chữ của biên lai tới máy chủ, rồi tới DeepSeek, để gọi tên nơi nhận tiền. Mọi con số đều được bỏ đi trước, nên số tiền, số tài khoản và mã giao dịch không bao giờ được gửi. Nếu có gì chứa chữ số được gửi tới, máy chủ từ chối mà không đọc.
+Khi bạn chia sẻ ảnh chụp biên lai cho 6pm, chữ trên ảnh được đọc ngay trên điện thoại. Nếu ứng dụng không chắc bạn đã trả tiền cho ai, và không quy tắc nào của bạn biết tên đó, nó gửi các dòng chữ của biên lai tới máy chủ, rồi tới Anthropic, để gọi tên nơi nhận tiền. Mọi con số đều được bỏ đi trước, nên số tiền, số tài khoản và mã giao dịch không bao giờ được gửi. Nếu có gì chứa chữ số được gửi tới, máy chủ từ chối mà không đọc.
 
 Nếu điện thoại không chắc về tổng tiền hay loại tiền trên một biên lai bạn chia sẻ, nó gửi đúng ảnh biên lai đó tới máy chủ của chúng tôi, rồi tới Anthropic, một dịch vụ AI, để đọc tổng tiền, loại tiền, tên cửa hàng và thời gian. Máy chủ không lưu và không ghi nhật ký ảnh, và không gửi ảnh cho ai khác. Anthropic không dùng ảnh để huấn luyện mô hình, và xoá ảnh trong vòng 30 ngày (lâu hơn chỉ khi yêu cầu bị đánh dấu vi phạm chính sách sử dụng của Anthropic, hoặc khi luật đòi hỏi). Khi không có mạng, ứng dụng giữ kết quả điện thoại đã đọc.
 
-Chúng tôi không lưu câu hỏi, các dòng biên lai hay ảnh biên lai của bạn. Với mỗi yêu cầu, máy chủ chỉ ghi lại lượng dịch vụ AI đã dùng, gắn với mã thiết bị ẩn danh của bạn. DeepSeek xử lý yêu cầu theo chính sách của họ và có thể giữ lại một thời gian.
+Chúng tôi không lưu câu hỏi, các dòng biên lai hay ảnh biên lai của bạn. Với mỗi yêu cầu, máy chủ chỉ ghi lại lượng dịch vụ AI đã dùng, gắn với mã thiết bị ẩn danh của bạn. Anthropic không dùng các yêu cầu để huấn luyện mô hình, và xoá chúng trong vòng 30 ngày (lâu hơn chỉ khi một yêu cầu bị đánh dấu vi phạm chính sách sử dụng của Anthropic, hoặc khi luật đòi hỏi).
 
 ### Biên lai qua email
 
@@ -130,8 +130,7 @@ Các công ty này vận hành những phần của dịch vụ đã nêu ở tr
 - **RevenueCat** ghi lại trạng thái mua hàng. [Chính sách quyền riêng tư của RevenueCat](https://www.revenuecat.com/privacy).
 - **Cloudflare** lưu trữ trang web và máy chủ của chúng tôi. [Chính sách quyền riêng tư của Cloudflare](https://www.cloudflare.com/privacypolicy/).
 - **Sentry** nhận báo cáo lỗi. [Chính sách quyền riêng tư của Sentry](https://sentry.io/privacy/).
-- **DeepSeek** đọc câu hỏi bạn hỏi và gọi tên nơi nhận tiền từ các dòng biên lai đã bỏ số. [Chính sách quyền riêng tư của DeepSeek](https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html).
-- **Anthropic** đọc ảnh biên lai mà điện thoại không đọc được. [Chính sách quyền riêng tư của Anthropic](https://www.anthropic.com/legal/privacy).
+- **Anthropic** đọc câu hỏi bạn hỏi, gọi tên nơi nhận tiền từ các dòng biên lai đã bỏ số, và đọc ảnh biên lai mà điện thoại không đọc được. [Chính sách quyền riêng tư của Anthropic](https://www.anthropic.com/legal/privacy).
 - **Expo** gửi các bản cập nhật ứng dụng qua mạng. [Chính sách quyền riêng tư của Expo](https://expo.dev/privacy).
 
 Chúng tôi chỉ dùng họ cho những mục đích này.
@@ -142,7 +141,7 @@ Chúng tôi chỉ dùng họ cho những mục đích này.
 - **Mã thiết bị.** Chừng nào ứng dụng còn được dùng trên thiết bị đó.
 - **Báo cáo lỗi.** Tối đa 90 ngày, sau đó bị xoá.
 - **Biên lai qua email.** Cho đến khi điện thoại lấy biên lai về, và không bao giờ quá 30 ngày. Địa chỉ nhận biên lai tồn tại chừng nào mã thiết bị còn.
-- **Câu hỏi và dòng biên lai.** Chúng tôi không giữ. DeepSeek giữ yêu cầu theo chính sách của họ.
+- **Câu hỏi và dòng biên lai.** Chúng tôi không giữ. Anthropic xoá trong vòng 30 ngày, như mô tả ở trên.
 - **Ảnh biên lai.** Chúng tôi không giữ. Anthropic xoá trong vòng 30 ngày, như mô tả ở trên.
 - **Sao lưu.** Cho đến khi bạn xoá. Khi bạn xoá, chúng tôi xoá dữ liệu mã hoá khỏi máy chủ.
 - **Cùng chia ngân sách.** Hũ chung cho đến khi một trong hai người rời đi; đăng nhập và tên của bạn cho đến khi bạn xoá tài khoản Cùng chia ngân sách. Cả hai việc đều xoá dữ liệu khỏi máy chủ ngay lập tức.

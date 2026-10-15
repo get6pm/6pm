@@ -5,7 +5,7 @@ import type { ChoiceQuestion } from './jev';
 
 /**
  * Below this, the answer is a guess spread over many icons: the phone keeps the icon it has.
- * The fallback's confidence is its top probability, so this also holds when DeepSeek answered.
+ * The fallback's confidence is its top probability, so this also holds when Claude answered.
  */
 export const ICON_PICK_MIN_CONFIDENCE = 0.3;
 

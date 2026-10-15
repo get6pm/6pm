@@ -127,3 +127,13 @@ export async function readWallets(store: MoneyStore): Promise<string[]> {
   const parsed: unknown = JSON.parse(raw);
   return Array.isArray(parsed) ? parsed.filter((v): v is string => typeof v === 'string') : [];
 }
+
+/** Replaces the chosen banks and wallets, as Settings changes them later. */
+export async function writeWallets(store: MoneyStore, wallets: readonly string[]): Promise<void> {
+  await store.exclusive(() =>
+    store.db.runAsync('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', [
+      WALLETS_KEY,
+      JSON.stringify([...new Set(wallets)]),
+    ]),
+  );
+}

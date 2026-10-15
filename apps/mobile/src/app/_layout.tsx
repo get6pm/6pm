@@ -65,6 +65,7 @@ function Screens() {
         <Stack.Screen name="settings" options={sheet} />
         <Stack.Screen name="capture-guide" options={sheet} />
         <Stack.Screen name="categories" options={sheet} />
+        <Stack.Screen name="banks" options={sheet} />
         <Stack.Screen name="category/[id]" options={sheet} />
         <Stack.Screen name="quick-add" options={sheet} />
         <Stack.Screen name="scan" options={takeover} />

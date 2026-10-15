@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/react-native';
-import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -18,6 +17,9 @@ import { SurfacesSync } from '../features/surfaces/surfaces-sync';
 import { LookSettingsProvider, useThemeLook } from '../features/looks/look-settings-provider';
 import { MemberCompanionForm } from '../features/purchases/member-companion-form';
 import { AppIconSync } from '../features/app-icon/app-icon-sync';
+import { readSharedAiMode } from '../features/privacy/ai-mode-share';
+import { applyAiModeToCrashReports } from '../features/privacy/crash-reports';
+import { AiModeSync } from '../features/privacy/use-ai-mode';
 import { PurchasesProvider } from '../features/purchases/purchases-provider';
 import { TogetherProvider } from '../features/together/together-provider';
 import { TravelProvider } from '../features/travel/travel-provider';
@@ -33,16 +35,9 @@ import { UndoHost } from '../ui/undo/undo-host';
 // without its data, so there is never a blank or half-drawn first frame.
 void SplashScreen.preventAutoHideAsync();
 
-// Crash reports start only when a DSN is set; no money, names or notes are attached to them.
-const sentryDsn = process.env['EXPO_PUBLIC_SENTRY_DSN'];
-if (sentryDsn) {
-  Sentry.init({
-    dsn: sentryDsn,
-    environment: String(Constants.expoConfig?.extra?.['appVariant'] ?? 'dev'),
-    sendDefaultPii: false,
-    enabled: !__DEV__,
-  });
-}
+// Crash reports follow the AI mode, read from the App Group before the database has opened: never
+// started in on-device mode. `AiModeSync` applies the database's own mode once it is open.
+applyAiModeToCrashReports(readSharedAiMode() ?? 'server');
 SplashScreen.setOptions({ duration: 280, fade: true });
 
 // Home sits under every route, so a screen opened cold by a link (a widget's Scan or Quick add, a
@@ -115,6 +110,7 @@ function RootLayout() {
       {/* Keyboard-following UI reads the keyboard's real position on the UI thread from here. */}
       <KeyboardProvider>
         <DatabaseGate>
+          <AiModeSync />
           <PurchasesProvider>
             <MemberCompanionForm>
               <LookSettingsProvider>

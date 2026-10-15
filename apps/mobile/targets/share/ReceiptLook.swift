@@ -3,7 +3,8 @@ import Security
 
 /// The server's closer look at a receipt photo the phone could not settle (`POST /v1/receipts/
 /// read`), asked as this device, exactly as the app's own device routes are. Any failure, a
-/// slow answer or no credential leaves the phone's reading as it was.
+/// slow answer or no credential leaves the phone's reading as it was. In on-device mode the photo
+/// never leaves the phone.
 enum ReceiptLook {
   /// How long the card waits before keeping what the phone read.
   static let timeout: TimeInterval = 20
@@ -18,11 +19,21 @@ enum ReceiptLook {
     let homeCurrency: String?
   }
 
+  /// Whether the server may be asked: not in on-device mode, which the app writes to the App
+  /// Group (`surfaces/ai.json`, `{"mode":"device"}`) whenever the mode is chosen and at launch.
+  static var allowed: Bool {
+    guard let data = GroupFiles.readSurface("ai"),
+      let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+    else { return true }
+    return json["mode"] as? String != "device"
+  }
+
   /// The answer as JSON (`{receipt: …}`), or nil when there is none to use.
   static func ask(
     photo: Data, language: String, currencyHint: String?, homeCurrency: String?, host: String
   ) async -> String? {
     guard
+      allowed,
       let token = DeviceCredential.token(),
       let url = URL(string: "https://\(host)/api/v1/receipts/read"),
       let body = try? JSONEncoder().encode(

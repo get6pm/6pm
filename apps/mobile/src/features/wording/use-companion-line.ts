@@ -159,7 +159,11 @@ export function useCompanionLine(
     const giveUp = setTimeout(() => {
       if (live) setArrived({ key, line: null });
     }, now.waitMs);
-    wordWithModel(request, { request: (r) => api.request(r), choice: readModelChoice(db) })
+    wordWithModel(request, {
+      request: (r) => api.request(r),
+      choice: readModelChoice(db),
+      settings: db,
+    })
       .then((line) => {
         if (line === null) return;
         writeVoice(db, withLine(readVoice(db), key, line, today));

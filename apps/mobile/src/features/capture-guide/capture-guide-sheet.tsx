@@ -36,7 +36,9 @@ export function CaptureGuideSheet({ source }: { readonly source: CaptureSource }
   const { palette } = useTheme();
   const { t } = useI18n();
   const router = useRouter();
-  const { sources, emailAddress } = useCaptureSources();
+  const { sources, emailAddress, emailAvailable } = useCaptureSources();
+  // In on-device mode receipt email does not exist: the guide says why instead of how.
+  const emailOff = source === 'email' && !emailAvailable;
   const colours = captureColours(palette);
   const view = sources.find((s) => s.source === source);
   const actions = useGuideActions(source, view?.on ?? false, emailAddress);
@@ -143,28 +145,32 @@ export function CaptureGuideSheet({ source }: { readonly source: CaptureSource }
             </Text>
           </View>
 
-          <HowItWorks
-            source={source}
-            guide={guide}
-            addressChip={addressChip}
-            emailAddress={emailAddress}
-          />
+          {emailOff ? null : (
+            <HowItWorks
+              source={source}
+              guide={guide}
+              addressChip={addressChip}
+              emailAddress={emailAddress}
+            />
+          )}
 
-          <GuideSection title={t('capture.guide.lands')}>
-            <GuideSample guide={guide} />
-            <Text
-              style={{
-                ...body(13),
-                lineHeight: 18.2,
-                color: palette.inkSoft,
-                paddingHorizontal: 6,
-              }}
-            >
-              {t('capture.guide.landsNote')}
-            </Text>
-          </GuideSection>
+          {emailOff ? null : (
+            <GuideSection title={t('capture.guide.lands')}>
+              <GuideSample guide={guide} />
+              <Text
+                style={{
+                  ...body(13),
+                  lineHeight: 18.2,
+                  color: palette.inkSoft,
+                  paddingHorizontal: 6,
+                }}
+              >
+                {t('capture.guide.landsNote')}
+              </Text>
+            </GuideSection>
+          )}
 
-          <GuideTip text={t(guide.tip)} />
+          <GuideTip text={emailOff ? t('receiptEmail.deviceMode.body') : t(guide.tip)} />
 
           {actions.length > 0 ? (
             <View style={{ gap: 10 }}>

@@ -8,13 +8,17 @@ import {
 } from '@6pm/domain';
 
 import type { ApiClient } from '../api/api-client';
+import { readAiMode, requireServerAi, type AiModeSettings } from '../privacy/ai-mode';
 
 /** How long the server gets to read a question before the phone reads it with rules. */
 export const ASK_SERVER_TIMEOUT_MS = 4_000;
 
 export interface QueryReading {
   readonly query: AskQuery;
-  /** The server did not read it (offline, too slow, refused): the phone's rules did. */
+  /**
+   * The server did not read it (offline, too slow, refused): the phone's rules did. Never set in
+   * on-device mode, where the rules reading it is the chosen way, not a fallback.
+   */
   readonly offline: boolean;
 }
 
@@ -61,17 +65,20 @@ function deadline<T>(work: Promise<T>, ms: number): Promise<T> {
 }
 
 /**
- * Reads a question into a query. The server's model goes first, for accuracy: it sees the
- * question and the user's category and pot names, nothing of their money. When it cannot answer
- * in time, or at all, the phone's own rules read the question instead, so Ask still works
- * offline. A server that only knows the original intents still answers with one.
+ * Reads a question into a query. In server mode the server's model goes first, for accuracy: it
+ * sees the question and the user's category and pot names, nothing of their money. When it cannot
+ * answer in time, or at all, the phone's own rules read the question instead, so Ask still works
+ * offline. A server that only knows the original intents still answers with one. In on-device
+ * mode nothing is sent: the phone's rules read every question.
  */
 export async function readQuestion(
   api: Pick<ApiClient, 'request'>,
+  settings: AiModeSettings,
   question: string,
   help: ReadingHelp,
   timeoutMs: number = ASK_SERVER_TIMEOUT_MS,
 ): Promise<QueryReading> {
+  if (readAiMode(settings) === 'device') return { query: readHere(question, help), offline: false };
   const request = askRequestSchema.safeParse({
     question,
     today: help.today,
@@ -92,6 +99,7 @@ export async function readQuestion(
   });
   if (request.success) {
     try {
+      requireServerAi(settings, 'ask');
       const answer = await deadline(
         api.request({
           method: 'POST',

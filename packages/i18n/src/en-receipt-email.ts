@@ -7,6 +7,9 @@ export const enReceiptEmail = {
   'receiptEmail.share': 'Share your 6pm address',
   'receiptEmail.offline': 'Your address shows once you’re online',
   'receiptEmail.from': 'From {address}',
+  'receiptEmail.deviceMode': 'Off while AI stays on this iPhone',
+  'receiptEmail.deviceMode.body':
+    'Receipt email needs our server to read your mail, so it’s off while 6pm keeps AI on this iPhone. Share a receipt or scan it instead.',
   'receiptEmail.check.title': '{provider} is asking to confirm forwarding from {address}',
   'receiptEmail.check.titleNoAddress': '{provider} is asking to confirm forwarding to 6pm',
   'receiptEmail.check.code': 'Confirmation code',

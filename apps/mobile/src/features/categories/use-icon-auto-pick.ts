@@ -1,3 +1,4 @@
+import { useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useMemo, useRef } from 'react';
 
 import { suggestCategoryIcon, type CategoryIcon } from '@6pm/domain';
@@ -8,7 +9,7 @@ import { askCategoryIcon, ICON_ASK_PAUSE_MS, usableIcons } from './icon-suggesti
 
 /**
  * Chooses the icon while a category is being named. The phone's own word match answers at once,
- * offline too; when it finds nothing, the server is asked once the typing rests. Only icons the
+ * offline too; when it finds nothing, the server is asked once the typing rests (in server mode). Only icons the
  * person may use are chosen. An answer for a name that has since changed is dropped.
  */
 export function useIconAutoPick({
@@ -22,6 +23,7 @@ export function useIconAutoPick({
   readonly onPick: (icon: CategoryIcon) => void;
 }) {
   const api = useApi();
+  const db = useSQLiteContext();
   const { max } = useEntitlement();
   const icons = useMemo(() => usableIcons(max), [max]);
   const pick = useRef(onPick);
@@ -38,7 +40,7 @@ export function useIconAutoPick({
     if (trimmed.length < 2) return;
     let current = true;
     const timer = setTimeout(() => {
-      void askCategoryIcon((request) => api.request(request), trimmed, icons).then((icon) => {
+      void askCategoryIcon((request) => api.request(request), db, trimmed, icons).then((icon) => {
         if (current && icon) pick.current(icon);
       });
     }, ICON_ASK_PAUSE_MS);
@@ -46,5 +48,5 @@ export function useIconAutoPick({
       current = false;
       clearTimeout(timer);
     };
-  }, [api, enabled, icons, name]);
+  }, [api, db, enabled, icons, name]);
 }

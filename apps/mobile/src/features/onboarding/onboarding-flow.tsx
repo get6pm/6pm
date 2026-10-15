@@ -6,6 +6,8 @@ import { useI18n, type I18n } from '../../i18n/i18n';
 import { useMoneyFormat } from '../../money/use-money-format';
 import type { CompanionMood } from '../../ui/companion/companion-mood';
 import { useDesignInsets } from '../../ui/layout/design-insets';
+import type { AiMode } from '../privacy/ai-mode';
+import { useAiMode } from '../privacy/use-ai-mode';
 import { catchWaysFor, readyWays } from './catch-ways';
 import { CompanionLine, OnboardingCta, OnboardingHeader } from './onboarding-chrome';
 import { stepEntering } from './onboarding-motion';
@@ -29,7 +31,7 @@ import {
 } from './use-onboarding';
 
 /** The companion's line for the step, from what has been answered so far. */
-function stepLine(o: Onboarding, i18n: I18n): string | null {
+function stepLine(o: Onboarding, i18n: I18n, mode: AiMode): string | null {
   const { t } = i18n;
   switch (o.step) {
     case 1:
@@ -55,7 +57,7 @@ function stepLine(o: Onboarding, i18n: I18n): string | null {
         ? t('onboarding.line.walletsNone')
         : t('onboarding.line.wallets', { count: o.wallets.length });
     case 5: {
-      const ways = catchWaysFor(o.currency);
+      const ways = catchWaysFor(o.currency, mode);
       return t('onboarding.line.catch', { count: readyWays(ways), total: ways.length });
     }
     case CLOSE_STEP:
@@ -98,7 +100,8 @@ export function OnboardingFlow({ startStep = 0 }: { readonly startStep?: number 
   const reduceMotion = useReducedMotion();
   const { top, bottom, insets } = useDesignInsets();
   const pal = onboardingPalette(o.step);
-  const line = stepLine(o, i18n);
+  const aiMode = useAiMode();
+  const line = stepLine(o, i18n, aiMode);
   const cta = ctaFor(o, i18n);
 
   const body = (() => {

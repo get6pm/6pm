@@ -11,6 +11,7 @@ import { useMoneyStore } from '../../data/money-provider';
 import type { SqlDatabase } from '../../data/table';
 import type { ApiClient } from '../api/api-client';
 import { apiBase, useApi } from '../api/native-api';
+import { useAiMode } from '../privacy/use-ai-mode';
 
 /**
  * This phone's receipt email handle, kept in the settings table once the server has given it, so
@@ -76,16 +77,18 @@ const snapshot = () => current;
 /**
  * This phone's forwarding address (`<handle>@<host>`, the host of this build's API), or null
  * until the server has given a handle. Showing it is what asks for one: a phone that never opens
- * Settings never registers an address.
+ * Settings never registers an address. In on-device mode there is no address and nothing is asked.
  */
 export function useReceiptAddress(): string | null {
   const store = useMoneyStore();
   const api = useApi();
+  const mode = useAiMode();
   const handle = useSyncExternalStore(subscribe, snapshot);
   useEffect(() => {
-    void ensureHandle(store.db, api);
-  }, [store, api]);
+    if (mode === 'server') void ensureHandle(store.db, api);
+  }, [store, api, mode]);
   const base = apiBase();
   const host = base === null ? null : hostOfApiBase(base);
+  if (mode === 'device') return null;
   return handle !== null && host !== null ? receiptEmailAddress(handle, host) : null;
 }

@@ -4,6 +4,8 @@ import type { InboxSpend } from '@6pm/domain';
 
 import type { ApiRequest } from '../api/api-client';
 import { ApiRequestError } from '../api/api-error';
+import type { AiMode } from '../privacy/ai-mode';
+import { aiModeSettings } from '../privacy/ai-mode-stand-in';
 import { createEnrichShared, NAME_MERCHANT_TIMEOUT_MS } from './enrich-shared';
 
 const shared = (receipt: Partial<NonNullable<InboxSpend['receipt']>> = {}): InboxSpend => ({
@@ -31,13 +33,18 @@ const categories = [
   { id: 'tet', name: 'Tết 2027' },
 ];
 
-function setup(answer: () => Promise<unknown>, ruled: string | null = null) {
+function setup(
+  answer: () => Promise<unknown>,
+  ruled: string | null = null,
+  mode: AiMode = 'server',
+) {
   const request = jest.fn((call: ApiRequest<unknown>) => {
     void call;
     return answer();
   });
   const enrich = createEnrichShared({
     request: request as never,
+    settings: aiModeSettings(mode),
     ruleCategory: () => Promise.resolve(ruled),
     categories: () => categories,
   });
@@ -101,6 +108,17 @@ describe('naming a shared receipt', () => {
     expect(await enrich(shared({ namingLines: ['STK 0071'] }))).toEqual(
       shared({ namingLines: ['STK 0071'] }),
     );
+    expect(request).not.toHaveBeenCalled();
+  });
+
+  it('sends nothing in on-device mode: the receipt keeps the name the phone read', async () => {
+    const { enrich, request } = setup(
+      () => Promise.resolve({ merchant: 'Circle K', category: 'Shopping' }),
+      null,
+      'device',
+    );
+    const item = shared();
+    expect(await enrich(item)).toEqual(item);
     expect(request).not.toHaveBeenCalled();
   });
 });

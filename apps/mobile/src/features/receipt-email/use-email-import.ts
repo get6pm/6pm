@@ -12,6 +12,7 @@ import { importEmailCaptures, type EmailCaptureSource } from '../../data/email-i
 import { useMoneyActions, useMoneyStore } from '../../data/money-provider';
 import { ApiRequestError } from '../api/api-error';
 import { useApi } from '../api/native-api';
+import { useAiMode } from '../privacy/use-ai-mode';
 import { refreshForwardingCheck } from './forwarding-check';
 import { storedHandle } from './receipt-address';
 
@@ -23,15 +24,18 @@ const MAX_PAGES = 4;
  * the app comes back to the foreground, but only on a phone that has an address. Offline nothing
  * happens and nothing is reported. One import runs at a time. The forwarding check waiting for
  * the address (a mail service's code to confirm forwarding) is fetched alongside, on its own, so
- * neither stops the other.
+ * neither stops the other. In on-device mode receipt email does not exist: nothing is fetched,
+ * now or on a return to the app.
  */
 export function useEmailImport() {
   const store = useMoneyStore();
   const actions = useMoneyActions();
   const api = useApi();
   const running = useRef<Promise<unknown>>(Promise.resolve());
+  const mode = useAiMode();
 
   useEffect(() => {
+    if (mode === 'device') return undefined;
     const source: EmailCaptureSource = {
       fetch: async () =>
         (await api.request({ path: '/v1/email/captures', schema: emailCapturesResponseSchema }))
@@ -66,5 +70,5 @@ export function useEmailImport() {
       if (state === 'active') run();
     });
     return () => sub.remove();
-  }, [store, actions, api]);
+  }, [store, actions, api, mode]);
 }

@@ -14,6 +14,7 @@ import type { useMoneyFormat } from '../../money/use-money-format';
 import type { usePlanFormat } from '../plan/plan-format';
 import { newPotLocked } from '../plan/plan-view';
 import type { SlotWords, Voice } from '../wording/fact-words';
+import type { AiModeSettings } from '../privacy/ai-mode';
 import type { ModelChoice } from '../wording/model-choice';
 import { wordWithModel } from '../wording/word-chain';
 import { describeAction, type PendingAction } from './ask-action-words';
@@ -59,6 +60,8 @@ export interface AskCardDeps {
   readonly store: MoneyStore;
   readonly api: Pick<ApiClient, 'request'>;
   readonly modelChoice: ModelChoice;
+  /** Where 6pm's AI runs: the reading and the wording stay on the phone in on-device mode. */
+  readonly settings: AiModeSettings;
   readonly max: boolean;
   /** A rule the user taught 6pm for a spend's name, if any. */
   readonly learnedCategory: (name: string) => Promise<string | null>;
@@ -151,6 +154,7 @@ export async function cardOf(
   const line = await wordWithModel(request, {
     request: (r) => deps.api.request(r),
     choice: deps.modelChoice,
+    settings: deps.settings,
   }).catch(() => null);
   const card =
     line === null

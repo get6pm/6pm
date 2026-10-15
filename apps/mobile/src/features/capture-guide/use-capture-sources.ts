@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
 import { useHomeCurrency } from '../../money/use-money-format';
+import { useAiMode } from '../privacy/use-ai-mode';
 import { useReceiptAddress } from '../receipt-email/receipt-address';
 import { useSpendLabels } from '../today/use-spend-rows';
 import { GUIDES, type GuideContent } from './guide-content';
@@ -24,9 +25,12 @@ export function useCaptureSources(): {
   readonly walletOn: boolean;
   /** This phone's receipt email address, once the server has given one. */
   readonly emailAddress: string | null;
+  /** Receipt email exists only in server mode: in on-device mode it is shown as off. */
+  readonly emailAvailable: boolean;
 } {
   const { cycleSpends, waitingBefore } = useMoney();
   const emailAddress = useReceiptAddress();
+  const emailAvailable = useAiMode() === 'server';
   const { t } = useI18n();
   const labels = useSpendLabels();
   const home = useHomeCurrency();
@@ -38,6 +42,10 @@ export function useCaptureSources(): {
         ? t('capture.last', { name: status.last.merchant, time: labels.time(status.last.at) })
         : null;
       const onOff = t(status.on ? 'capture.status.on' : 'capture.status.off');
+      if (status.source === 'email' && !emailAvailable) {
+        const off = t('receiptEmail.deviceMode');
+        return { ...status, on: false, guide, name: t(guide.name), sub: off, status: off };
+      }
       return {
         ...status,
         guide,
@@ -51,8 +59,8 @@ export function useCaptureSources(): {
       total: statuses.length,
     });
     const walletOn = statuses.some((s) => s.source === 'wallet' && s.on);
-    return { sources, summary, walletOn, emailAddress };
-  }, [cycleSpends, waitingBefore, t, labels, emailAddress, home]);
+    return { sources, summary, walletOn, emailAddress, emailAvailable };
+  }, [cycleSpends, waitingBefore, t, labels, emailAddress, emailAvailable, home]);
 }
 
 type T = ReturnType<typeof useI18n>['t'];

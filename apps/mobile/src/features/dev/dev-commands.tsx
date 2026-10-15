@@ -1,5 +1,6 @@
 import { File, Paths } from 'expo-file-system';
 import { useRouter, type Href } from 'expo-router';
+import { useSQLiteContext } from 'expo-sqlite';
 import { useEffect } from 'react';
 import { AppState } from 'react-native';
 import { z } from 'zod';
@@ -8,6 +9,7 @@ import { LOOK_IDS } from '@6pm/theme';
 
 import { useMoneyStore } from '../../data/money-provider';
 import { useLookSettingsStore } from '../looks/look-settings-provider';
+import { setAiMode } from '../privacy/use-ai-mode';
 import { pinClock, useClock } from '../../ui/theme/clock';
 import { useToast } from '../../ui/toast/toast-host';
 import { COMPANION_FORMS } from '../../ui/companion/companion-mood';
@@ -44,6 +46,8 @@ const commandSchema = z.object({
   companion: z.union([z.enum(COMPANION_FORMS), z.literal('')]).optional(),
   /** Wears this look, whether or not it was bought. */
   look: z.enum(LOOK_IDS).optional(),
+  /** Where the AI runs, as the Settings choice sets it. */
+  aiMode: z.enum(['server', 'device']).optional(),
   /** Keeps Max on or off as the last known customer; it takes effect at the next launch. */
   max: z.boolean().optional(),
   /** Binds this year's book and opens the share sheet, as a tap on a bound book does. */
@@ -70,6 +74,7 @@ export function DevCommands() {
   const toast = useToast();
   const { bind: bindYear } = useYearBook();
   const lookStore = useLookSettingsStore();
+  const db = useSQLiteContext();
 
   useEffect(() => {
     const run = async () => {
@@ -88,7 +93,9 @@ export function DevCommands() {
         look,
         max,
         yearBook,
+        aiMode,
       } = parsed.data;
+      if (aiMode !== undefined) setAiMode(db, aiMode);
       if (look !== undefined) lookStore.setLook(look, () => true);
       if (companion !== undefined) pinCompanionForm(companion === '' ? null : companion);
       if (max !== undefined) {
@@ -120,7 +127,7 @@ export function DevCommands() {
       if (state === 'active') void run();
     });
     return () => subscription.remove();
-  }, [router, store, today, toast, bindYear, lookStore]);
+  }, [router, store, today, toast, bindYear, lookStore, db]);
 
   return null;
 }

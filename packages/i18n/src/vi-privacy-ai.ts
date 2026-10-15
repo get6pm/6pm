@@ -11,7 +11,7 @@ export const viPrivacyAi: { readonly [Key in keyof typeof enPrivacyAi]: Entry } 
   'privacy.ai.server.tag': 'Nên dùng',
   'privacy.ai.device.title': 'Chỉ trên iPhone này',
   'privacy.ai.device.text':
-    'Không gì liên quan AI rời khỏi máy. Tải mô hình về một lần, qua Wi-Fi.',
+    'Không gì liên quan AI rời khỏi máy. Tải mô hình về một lần, qua Wi‑Fi.',
   'privacy.ai.device.unavailable': 'iPhone này không đủ bộ nhớ để chạy mô hình riêng.',
   'privacy.ai.models': 'Mô hình',
   'privacy.model.fast': 'Nhanh và nhẹ nhất',

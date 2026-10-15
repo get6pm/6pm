@@ -8,7 +8,7 @@ export const enPrivacyAi = {
     'The sharpest answers, and voice that gets Vietnamese right. Only a question or a few facts leave your phone, never your list of spends.',
   'privacy.ai.server.tag': 'Recommended',
   'privacy.ai.device.title': 'Only on this iPhone',
-  'privacy.ai.device.text': 'Nothing AI leaves your phone. A model is downloaded once, over Wi-Fi.',
+  'privacy.ai.device.text': 'Nothing AI leaves your phone. A model is downloaded once, over Wi‑Fi.',
   'privacy.ai.device.unavailable': 'This iPhone doesn’t have the memory for a model of its own.',
   'privacy.ai.models': 'Model',
   'privacy.model.fast': 'Fastest and lightest',

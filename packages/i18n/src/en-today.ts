@@ -131,7 +131,7 @@ export const enToday = {
   'settings.yourData': 'Your data',
   'settings.privacy': 'Privacy',
   'settings.privacyBody':
-    'Your money stays on this iPhone, encrypted. To read your Ask questions and write your companion’s lines, 6pm sends Anthropic, an AI service, the question or a few facts about your day: amounts, places and category names, never your list of spends. A receipt photo your phone can’t read goes there too. Anthropic doesn’t train on them and deletes them within 30 days. Backup leaves only if you turn it on, end-to-end encrypted. Crash reports go to Sentry without amounts, names or notes, and RevenueCat handles purchases.',
+    'Your money stays on this iPhone, encrypted. To read your Ask questions and write your companion’s lines, 6pm sends Anthropic, an AI service, the question or a few facts about your day: amounts, places and category names, never your list of spends. A receipt photo your phone can’t read goes there too. Anthropic doesn’t train on them and deletes them within 30 days. When you say a spend, your voice goes to Deepgram to become text. Under AI, above, you can keep all of this on your iPhone. Backup leaves only if you turn it on, end-to-end encrypted. Crash reports go to Sentry without amounts, names or notes, and RevenueCat handles purchases.',
   'settings.deleteAll': 'Delete all data',
   'settings.deleteAllConfirm': 'Tap again to delete everything',
   'settings.deleting': 'Deleting…',

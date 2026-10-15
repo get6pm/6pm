@@ -47,6 +47,15 @@ export function useSampleMoney() {
 }
 
 /**
+ * CSS `ease-in-out` on 0–1. Defined before `step`: a worklet captures what it calls when it is
+ * created, so a helper declared after it would be undefined on the UI thread.
+ */
+export function inOut(x: number): number {
+  'worklet';
+  return x < 0.5 ? 2 * x * x : 1 - 2 * (1 - x) * (1 - x);
+}
+
+/**
  * A step of a looping demo: 0 before `from`, 1 after `to`, eased between. For a beat that
  * comes in and later goes, multiply one rising step by one falling (`1 - step(…)`).
  */
@@ -58,12 +67,6 @@ export function step(p: number, from: number, to: number): number {
 }
 
 export const box = { height: H, borderRadius: 20, overflow: 'hidden' } as const;
-
-/** CSS `ease-in-out` on 0–1. */
-export function inOut(x: number): number {
-  'worklet';
-  return x < 0.5 ? 2 * x * x : 1 - 2 * (1 - x) * (1 - x);
-}
 
 /** `tapRing`: a warm halo swells 9 pt out and fades, then gathers back, every 1.8 s. */
 export function TapRing({

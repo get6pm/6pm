@@ -194,6 +194,35 @@ describe('set-asides recorded under the old cycle label', () => {
   });
 });
 
+describe('pots years away', () => {
+  const sum = (due: { amount: number }[]) => due.reduce((a, d) => a + d.amount, 0);
+
+  it('spreads a house over two years and has it full by its month', () => {
+    const house = occasion({ id: 'house', goal: 2_000_000_000, neededBy: '2028-10' });
+    const due = run([house], [], '2028-11-15');
+    // ceil(2 tỷ ÷ 24 ÷ 50k) × 50k
+    expect(due[0]).toEqual({ potId: 'house', cycle: '2026-09-30', amount: 83_350_000 });
+    expect(sum(due)).toBe(2_000_000_000);
+    const last = due.filter((d) => d.amount > 0).at(-1);
+    expect(last?.cycle).toBe('2028-08-31');
+    expect(due.every((d) => d.amount <= 83_350_000)).toBe(true);
+  });
+
+  it('counts months across a new year from the cycle, not the calendar year', () => {
+    const cycle = payCycleOn('2027-12-10', lastDay);
+    const pot = occasion({ goal: 10_000_000, neededBy: '2028-02' });
+    expect(potSetAside({ pot, savedBefore: 0, futureYou: 0, cycle })).toBe(5_000_000);
+  });
+
+  it('catches up ten years in one go and fills exactly', () => {
+    const flat = occasion({ id: 'flat', goal: 3_000_000_000, neededBy: '2036-10' });
+    const due = run([flat], [], '2036-11-05');
+    expect(due).toHaveLength(122);
+    expect(due[0]?.amount).toBe(25_000_000);
+    expect(sum(due)).toBe(3_000_000_000);
+  });
+});
+
 describe('potTotals', () => {
   const moves: PotMove[] = [
     { potId: 'japan', kind: 'setAside', cycle: '2026-09-30', amount: 1_000_000 },

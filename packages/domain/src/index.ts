@@ -2,6 +2,8 @@ export * from './money/format';
 export * from './money/parse-amount';
 export * from './money/spoken-number';
 export * from './plan/daily-number';
+export * from './plan/goal-entry';
+export * from './plan/needed-by';
 export * from './plan/pay-cycle';
 export * from './plan/plan-river';
 export * from './plan/pots';

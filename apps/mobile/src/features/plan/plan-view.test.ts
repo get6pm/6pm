@@ -13,7 +13,6 @@ import {
   riverOf,
   shareSplit,
   sliderMax,
-  stepPotMonth,
   potMonthAt,
 } from './plan-view';
 
@@ -167,13 +166,8 @@ describe('plan view', () => {
     expect(sliderMax(5_100_000)).toBe(5_250_000);
   });
 
-  it('steps "Needed by" through the designed months and "No date"', () => {
-    expect(stepPotMonth(3, 1)).toBe(4);
-    expect(stepPotMonth(5, 1)).toBe(8);
-    expect(stepPotMonth(8, 1)).toBe(8);
-    expect(stepPotMonth(8, -1)).toBe(5);
-    expect(stepPotMonth(1, -1)).toBe(0);
-    expect(stepPotMonth(0, -1)).toBe(0);
+  it('puts a template month the given months after the cycle, or no date', () => {
+    expect(potMonthAt('2026-10', 24)).toBe('2028-10');
     expect(potMonthAt('2026-10', 3)).toBe('2027-01');
     expect(potMonthAt('2026-10', 0)).toBeNull();
   });

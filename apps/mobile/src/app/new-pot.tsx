@@ -15,27 +15,21 @@ import { useMoney } from '../data/money-provider';
 import { usePlanActions } from '../data/plan-actions';
 import { useCompanionToast } from '../features/companion/use-companion-toast';
 import { useRunAction } from '../features/companion/use-run-action';
-import type { PotDraft } from '../features/plan/new-pot-picker';
-import { usePlanFormat } from '../features/plan/plan-format';
-import {
-  newPotLocked,
-  potMonthAt,
-  stepPotMonth,
-  POT_MONTHS_AHEAD,
-} from '../features/plan/plan-view';
+import { newPotLocked, potMonthAt } from '../features/plan/plan-view';
 import { StepperRow } from '../features/plan/pot-rows';
-import { PotSheet } from '../features/plan/pot-sheet';
+import { PotSheet, type PotFields } from '../features/plan/pot-sheet';
+import { usePotWarn } from '../features/plan/use-pot-warn';
 import { useEntitlement } from '../features/purchases/purchases-provider';
 import { useI18n } from '../i18n/i18n';
 import { haptics } from '../ui/haptics';
 
-const LAST_AHEAD = POT_MONTHS_AHEAD[POT_MONTHS_AHEAD.length - 1] ?? 8;
 const SHARE_STEP = 5;
 
 /**
  * New pot, or New goal (`?kind=goal`) for Future you: name it (or start from a template), pick
- * its icon and colour, set a goal and the month it is needed by. The monthly set-aside it will
- * take, and what that does to a day, update live. A second occasion pot is part of Max.
+ * its icon and colour, type a goal and pick the month it is needed by (up to ten years out). The
+ * monthly set-aside it will take, and what that does to a day, update live; one more than the
+ * month has free says so and offers the soonest month that fits. A second occasion pot is Max.
  */
 export default function NewPot() {
   const router = useRouter();
@@ -46,15 +40,17 @@ export default function NewPot() {
   const run = useRunAction();
   const snap = useMoney();
   const actions = usePlanActions();
-  const format = usePlanFormat(snap.today);
   const { max } = useEntitlement();
-  const [draft, setDraft] = useState<PotDraft>({
+  const from = cycleMonth(snap.cycle);
+  const [draft, setDraft] = useState<PotFields>({
     name: '',
     icon: kind === 'goal' ? 'savings' : 'celebration',
     hue: kind === 'goal' ? 150 : 85,
     goal: kind === 'goal' ? 10_000_000 : 2_000_000,
-    ahead: kind === 'goal' ? 0 : 3,
   });
+  const [month, setMonth] = useState<string | null>(() =>
+    potMonthAt(from, kind === 'goal' ? 0 : 3),
+  );
   const others = snap.pots.filter((p) => p.kind === 'goal').length;
   const [percent, setPercent] = useState(
     others === 0 ? 100 : Math.round(100 / (others + 1) / SHARE_STEP) * SHARE_STEP,
@@ -71,8 +67,7 @@ export default function NewPot() {
     }
   }, [locked, router]);
 
-  const change = (patch: Partial<PotDraft>) => setDraft((d) => ({ ...d, ...patch }));
-  const month = potMonthAt(cycleMonth(snap.cycle), draft.ahead);
+  const change = (patch: Partial<PotFields>) => setDraft((d) => ({ ...d, ...patch }));
   const futureYou = snap.plan?.futureYou ?? 0;
   const share = percent / 100;
   const monthly =
@@ -85,6 +80,14 @@ export default function NewPot() {
     joinedShare(snap.cycle, snap.plan?.startedOn ?? null),
   );
 
+  const warn = usePotWarn({
+    potId: null,
+    goal: draft.goal,
+    saved: 0,
+    monthly: kind === 'goal' ? 0 : monthly,
+    from,
+    onMonth: setMonth,
+  });
   const summary =
     kind === 'goal'
       ? futureYou > 0
@@ -97,6 +100,7 @@ export default function NewPot() {
         ? {
             title: t('plan.pot.sumMonthly', { amount: formatShort(monthly, language) }),
             sub: t('plan.pot.sumMonthlySub', { amount: formatShort(perDay, language) }),
+            warn,
           }
         : { title: t('plan.pot.sumNone'), sub: t('plan.pot.sumNoneSub') };
 
@@ -132,12 +136,17 @@ export default function NewPot() {
       placeholder={kind === 'goal' ? t('plan.goal.placeholder') : t('plan.pot.placeholder')}
       fields={draft}
       onChange={change}
-      onTemplate={kind === 'occasion' ? setDraft : undefined}
+      onTemplate={
+        kind === 'occasion'
+          ? ({ ahead, ...fields }) => {
+              setDraft(fields);
+              setMonth(potMonthAt(from, ahead));
+            }
+          : undefined
+      }
       month={month}
-      monthLabel={month ? format.monthLong(month) : t('plan.pot.noDate')}
-      canEarlier={draft.ahead !== 0}
-      canLater={draft.ahead < LAST_AHEAD}
-      onStepMonth={(by) => change({ ahead: stepPotMonth(draft.ahead, by) })}
+      onMonth={setMonth}
+      from={from}
       rows={
         kind === 'goal' && others > 0 ? (
           <StepperRow

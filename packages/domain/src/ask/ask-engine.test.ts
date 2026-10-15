@@ -127,12 +127,10 @@ describe('answerAsk', () => {
 });
 
 describe('freeAsksLeft', () => {
-  it('counts three a week from Monday', () => {
-    expect(freeAsksLeft([], '2026-10-09')).toBe(3);
-    expect(freeAsksLeft(['2026-10-05', '2026-10-08'], '2026-10-09')).toBe(1);
-    expect(freeAsksLeft(['2026-10-01', '2026-10-02', '2026-10-04'], '2026-10-09')).toBe(3);
-    expect(
-      freeAsksLeft(['2026-10-05', '2026-10-06', '2026-10-07', '2026-10-08'], '2026-10-09'),
-    ).toBe(0);
+  it('counts today’s questions only, ten a day', () => {
+    expect(freeAsksLeft([], '2026-10-09')).toBe(10);
+    expect(freeAsksLeft(['2026-10-09', '2026-10-09', '2026-10-08'], '2026-10-09')).toBe(8);
+    expect(freeAsksLeft(Array<string>(12).fill('2026-10-09'), '2026-10-09')).toBe(0);
+    expect(freeAsksLeft(Array<string>(10).fill('2026-10-09'), '2026-10-10')).toBe(10);
   });
 });

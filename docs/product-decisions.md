@@ -63,7 +63,7 @@ Rules that never bend:
 
 | Decision | Value |
 |---|---|
-| Free | Basic and Golden Hour looks, the close, all capture, Today/Plan/Diary, Budget together (shared pots; free since 2026-10-14), 3 Ask questions a week, 1 own pot, 36 icons, functional widgets and controls, the sun companion and three more to pick from (Nhang, Bánh Bao, Giọt) *(decided 2026-10-14)* |
+| Free | Basic and Golden Hour looks, the close, all capture, Today/Plan/Diary, Budget together (shared pots; free since 2026-10-14), 10 Ask questions a day read by the server and unlimited in on-device mode, 10 cloud voice transcriptions a day *(decided 2026-10-15)*, 1 own pot, 36 icons, functional widgets and controls, the sun companion and three more to pick from (Nhang, Bánh Bao, Giọt) *(decided 2026-10-14)* |
 | Looks | 6 classic looks 49.000₫ each; 3 living scenes 99.000₫ each; one-time, via StoreKit (RevenueCat). The "all looks" bundle is dropped (Max replaces it) |
 | 6pm Max | 78.000₫/month or 598.000₫/year, 7-day trial. Every look, unlimited Ask and pots, Travel mode, Year book, encrypted backup and export, widgets in your look, 180 icons, Max companion form and the Hạc Giấy companion *(decided 2026-10-14)* |
 | Widgets | Functional widgets and controls are free; widgets drawn in your look are Max *(default)* |

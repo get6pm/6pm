@@ -225,7 +225,7 @@ export function GoalAmountEditor({
               gap: 5,
             }}
           >
-            <Symbol name="today" size={15} color={colours.fitInk} />
+            <Symbol name="calendar_month" size={15} color={colours.fitInk} />
             <Text numberOfLines={1} style={{ ...body(12.5, 650), color: colours.fitInk }}>
               {hint}
             </Text>

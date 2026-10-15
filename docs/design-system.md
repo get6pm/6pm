@@ -13,8 +13,8 @@ The prototype is the spec: `design/prototype/6pm App.dc.html` (+ onboarding v2, 
 
 | Role | Font | Notes |
 |---|---|---|
-| Body / UI | SF Pro (system) | Be Vietnam Pro on Android |
-| Display (hero number, headings) | Per look; Bricolage Grotesque for Golden Hour and serious mode | Tight tracking as in the prototype |
+| Display (hero number, headings) | Per look (`dispFont`): Bricolage Grotesque for Golden Hour and serious mode, SF Pro for Basic | Tight tracking as in the prototype |
+| Interface (labels, rows, buttons) | Per look (`uiFont`): SF Pro (system) for Basic, Golden Hour and serious mode; the look's own text face for the rest | Be Vietnam Pro on Android where a look keeps the system face |
 | Labels, kickers, receipts, stamps | IBM Plex Mono | Uppercase, letter-spaced |
 | Diary handwriting | Patrick Hand | |
 

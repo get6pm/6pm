@@ -1491,7 +1491,7 @@ a:hover{color:#ffd2a8}
           <div style="padding:8px 12px 30px; display:flex; flex-direction:column; gap:10px;">
             <sc-if value="{{ chatEmpty }}" hint-placeholder-val="{{ true }}"><span></span></sc-if>
             <sc-if value="{{ askMeterOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 8px; font-size:12.5px; color: {{ inkSoft }};"><span>{{ askMeter }}</span><button onClick="{{ askUnlock }}" style="border:none; background:transparent; padding:6px 0; color: {{ ink }}; font-family:inherit; font-size:12.5px; font-weight:650; cursor:pointer; display:flex; align-items:center; gap:4px;">Unlimited with <span style="height:20px; padding:0 7px 0 5px; border-radius:6px; background: {{ ink }}; color: {{ sheetSolid }}; text-shadow:none; font-size:10px; font-weight:800; letter-spacing:.1em; display:flex; align-items:center; gap:3px; flex-shrink:0;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; font-style:normal; line-height:1; letter-spacing:normal; text-transform:none; white-space:nowrap; direction:ltr; -webkit-font-smoothing:antialiased; font-size:12px; font-variation-settings:'FILL' 1;">lock</span>MAX</span></button></div></sc-if>
-            <sc-if value="{{ askLocked }}" hint-placeholder-val="{{ false }}"><button style-active="transform:scale(.98);" onClick="{{ askUnlock }}" style="height:56px; border:none; border-radius:99px; background:#16131c; color:#f6efe6; text-shadow:none; padding:0 8px 0 20px; font-family:inherit; cursor:pointer; display:flex; align-items:center; gap:10px; text-align:left;"><span style="flex:1; display:flex; flex-direction:column; gap:1px;"><span style="font-size:14.5px; font-weight:650;">That’s this week’s 3 questions</span><span style="font-size:12px; opacity:.65;">More on Monday, or unlimited with Max</span></span><span style="height:40px; padding:0 14px; border-radius:99px; background:#f6efe6; color:#16131c; font-size:13.5px; font-weight:700; display:flex; align-items:center; gap:4px;">Get Max</span></button></sc-if>
+            <sc-if value="{{ askLocked }}" hint-placeholder-val="{{ false }}"><button style-active="transform:scale(.98);" onClick="{{ askUnlock }}" style="height:56px; border:none; border-radius:99px; background:#16131c; color:#f6efe6; text-shadow:none; padding:0 8px 0 20px; font-family:inherit; cursor:pointer; display:flex; align-items:center; gap:10px; text-align:left;"><span style="flex:1; display:flex; flex-direction:column; gap:1px;"><span style="font-size:14.5px; font-weight:650;">That’s today’s 10 questions</span><span style="font-size:12px; opacity:.65;">More tomorrow, or unlimited with Max</span></span><span style="height:40px; padding:0 14px; border-radius:99px; background:#f6efe6; color:#16131c; font-size:13.5px; font-weight:700; display:flex; align-items:center; gap:4px;">Get Max</span></button></sc-if>
             <div style="display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; margin:0 -12px; padding:0 12px;">
               <sc-for list="{{ askSuggest }}" as="c" hint-placeholder-count="5">
                 <button style-active="transform:scale(.95); filter:brightness(.94);" onClick="{{ c.pick }}" style="flex-shrink:0; height:34px; padding:0 13px; border-radius:99px; border:none; background: {{ chipBg }}; color: {{ ink }}; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer;">{{ c.label }}</button>
@@ -1981,6 +1981,1066 @@ a:hover{color:#ffd2a8}
     </div>
     <div style="font-size:13px; line-height:1.55; color:rgba(246,239,230,.6); text-wrap:pretty;">Personality, scenario and serious mode live in Tweaks. Drag with your cursor to try the gestures; scroll any tab to see the bars condense.</div>
   </div>
+  <div data-screen-label="Built in the app" style="flex-basis:100%; width:100%; max-width:1500px; color:#f6efe6; background:rgba(18,14,26,.72); border-radius:40px; padding:56px 48px 72px; box-sizing:border-box; display:flex; flex-direction:column; gap:88px; letter-spacing:-.01em; -webkit-font-smoothing:antialiased;">
+  <div style="display:flex; flex-direction:column; gap:6px;"><div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:40px; font-weight:600; letter-spacing:-.03em;">Built in the app</div><div style="font-size:15px; color:rgba(246,239,230,.6);">Screens shipped without a design, now designed · synced from get6pm/6pm, 15 Oct</div></div>
+  <!-- 5. COMPANION -->
+  <section data-screen-label="Companion picker" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">05</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Companion · Settings card and picker</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Settings · Companion card" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.36);"></div>
+          <div style="position:absolute; left:0; right:0; top:62px; bottom:0; border-radius:40px 40px 0 0; background:#f6f0e7; display:flex; flex-direction:column; overflow:hidden;">
+            <div style="padding:8px 18px 6px; display:flex; flex-direction:column; gap:6px;">
+              <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+              <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; min-height:44px;"><span></span><div style="font-size:17px; font-weight:650;">Settings</div><span style="justify-self:end; font-weight:650; font-size:17px;">Done</span></div>
+            </div>
+            <div style="flex:1; padding:6px 16px 44px; display:flex; flex-direction:column; gap:20px;">
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <div style="padding:0 6px; font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:rgba(27,30,46,.62);">How spending gets caught</div>
+                <div style="border-radius:26px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); padding:0 14px;">
+                  <div style="display:flex; align-items:center; gap:12px; padding:11px 0;"><span style="width:32px; height:32px; border-radius:10px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:19px; line-height:1;">ios_share</span><div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px;">Share to 6pm</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">Last: Circle K · 16:40</span></div><span style="font-size:13px; font-weight:650; color:oklch(0.55 0.13 150);">On</span></div>
+                  <div style="display:flex; align-items:center; gap:12px; padding:11px 0; border-top:0.5px solid rgba(27,30,46,.08);"><span style="width:32px; height:32px; border-radius:10px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:19px; line-height:1;">qr_code_scanner</span><div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px;">Scan to pay</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">Last: Phở Hòa · 12:11</span></div><span style="font-size:13px; font-weight:650; color:oklch(0.55 0.13 150);">On</span></div>
+                </div>
+              </div>
+              <div style="border-radius:26px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); padding:14px 14px 14px 12px; display:flex; align-items:center; gap:14px; outline:2px solid #ff8552; outline-offset:4px;">
+                <div style="width:72px; height:72px; border-radius:20px; flex-shrink:0; background:linear-gradient(180deg,#3b3270 0%,#c4607a 62%,#f0975a 100%); display:flex; align-items:flex-end; justify-content:center; overflow:hidden;"><div style="margin-bottom:-6px;"><dusk-buddy size="64" mood="happy"></dusk-buddy></div></div>
+                <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:3px;">
+                  <div style="font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:rgba(27,30,46,.62);">Companion</div>
+                  <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:23px; font-weight:500; line-height:1.1;">Sunset</div>
+                  <div style="font-size:13px; line-height:1.35; color:rgba(27,30,46,.62); text-wrap:pretty;">Warm and steady. Sets with you at six.</div>
+                </div>
+                <span style="font-family:'Material Symbols Rounded'; font-size:20px; line-height:1; opacity:.35;">chevron_right</span>
+              </div>
+              <div style="border-radius:26px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); overflow:hidden;">
+                <div style="height:108px; background:linear-gradient(180deg,#3b3270 0%,#c4607a 62%,#f0975a 100%); position:relative;"><div style="position:absolute; left:64%; top:26px; width:44px; height:44px; border-radius:50%; background:radial-gradient(circle at 50% 40%, #ffe2b0, #ffb26e 70%);"></div><span style="position:absolute; left:14px; top:12px; height:22px; padding:0 9px; border-radius:99px; background:#fff; color:#16131c; font-size:11px; font-weight:700; display:flex; align-items:center;">In use</span></div>
+                <div style="padding:13px 16px 14px; display:flex; flex-direction:column; gap:3px;"><div style="font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:rgba(27,30,46,.62);">Look</div><div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:23px; font-weight:500;">Golden Hour</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Companion picker" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.36);"></div>
+          <div style="position:absolute; left:0; right:0; top:62px; bottom:0; border-radius:40px 40px 0 0; background:#f6f0e7; display:flex; flex-direction:column; overflow:hidden;">
+            <div style="padding:8px 18px 6px; display:flex; flex-direction:column; gap:6px;">
+              <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+              <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; min-height:44px;"><span style="display:flex; align-items:center; font-size:17px;"><span style="font-family:'Material Symbols Rounded'; font-size:26px; line-height:1; margin-left:-4px;">chevron_left</span>Settings</span><div style="font-size:17px; font-weight:650;">Companion</div><span style="justify-self:end; font-weight:650; font-size:17px;">Done</span></div>
+            </div>
+            <div style="flex:1; padding:4px 16px 30px; display:flex; flex-direction:column; gap:14px;">
+              <div style="padding:0 6px; font-size:14.5px; line-height:1.45; color:rgba(27,30,46,.62); text-wrap:pretty;">Pick who keeps you company each evening. They all keep the same promise.</div>
+              <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px;">
+                <sc-for list="{{ companions }}" as="c" hint-placeholder-count="6">
+                  <div style="position:relative; border-radius:22px; background:#fffdf9; box-shadow: {{ c.shadow }}; padding:8px 8px 11px; display:flex; flex-direction:column; gap:7px;">
+                    <div style="position:relative; height:112px; border-radius:16px; overflow:hidden; background-image:url('{{ c.img }}'); background-size:cover; background-position:center 60%;">
+                      <sc-if value="{{ c.worn }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; left:8px; top:8px; height:22px; padding:0 9px; border-radius:99px; background:#fff; color:#16131c; font-size:11px; font-weight:700; display:flex; align-items:center; gap:4px;"><span style="width:6px; height:6px; border-radius:50%; background:#ff8552;"></span>With you</span></sc-if>
+                      <sc-if value="{{ c.max }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; right:8px; top:8px; height:20px; padding:0 7px 0 5px; border-radius:6px; background:#1b1e2e; color:#f6f0e7; font-size:10px; font-weight:800; letter-spacing:.1em; display:flex; align-items:center; gap:3px;"><span style="font-family:'Material Symbols Rounded'; font-size:12px; line-height:1; font-variation-settings:'FILL' 1;">lock</span>MAX</span></sc-if>
+                    </div>
+                    <div style="padding:0 4px; display:flex; flex-direction:column; gap:2px;">
+                      <div style="display:flex; align-items:baseline; gap:6px;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:17px; font-weight:500;">{{ c.name }}</span><span style="font-size:11.5px; color:rgba(27,30,46,.62);">{{ c.gloss }}</span></div>
+                      <div style="font-size:12px; line-height:1.35; color:rgba(27,30,46,.62); text-wrap:pretty;">{{ c.line }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="border-radius:22px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); padding:12px 14px; display:flex; align-items:center; gap:12px;">
+                <div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px;">App icon follows my companion</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">Your Home Screen shows who you picked.</span></div>
+                <span style="width:51px; height:31px; flex-shrink:0; border-radius:99px; padding:2px; box-sizing:border-box; background:oklch(0.72 0.17 150); display:flex; justify-content:flex-end;"><span style="width:27px; height:27px; border-radius:50%; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.22);"></span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+
+      <div style="width:340px; display:flex; flex-direction:column; gap:14px; font-size:14px; line-height:1.5; color:rgba(246,239,230,.75);">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55);">BEHAVIOUR</div>
+        <div>Picking one wears it everywhere at once: it plays its arrival (the crane unfolds from a square, smoke rings rise, the bun puffs steam, the drop splashes) and stays happy for 2.4 s, with a success haptic.</div>
+        <div>A locked tile opens Max from the companion, with that companion in the hero. Buying Max puts it on.</div>
+        <div>The icon switch is hidden when the device has no alternate icons. Serious mode hides the card.</div>
+        <div style="display:flex; gap:10px; padding-top:6px;">
+          <img src="apps/mobile/assets/icon/icon.png" style="width:56px; height:56px; border-radius:14px;"></img>
+          <img src="apps/mobile/assets/icon/v2/nhang.png" style="width:56px; height:56px; border-radius:14px;"></img>
+          <img src="apps/mobile/assets/icon/v2/banhbao.png" style="width:56px; height:56px; border-radius:14px;"></img>
+          <img src="apps/mobile/assets/icon/v2/giot.png" style="width:56px; height:56px; border-radius:14px;"></img>
+          <img src="apps/mobile/assets/icon/v2/hac.png" style="width:56px; height:56px; border-radius:14px;"></img>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 6. TOGETHER -->
+  <section data-screen-label="Budget together" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">06</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Budget together · shared pots</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Together · signed out" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.36);"></div>
+          <div style="position:absolute; left:0; right:0; top:62px; bottom:0; border-radius:40px 40px 0 0; background:#f6f0e7; display:flex; flex-direction:column; overflow:hidden;">
+            <div style="padding:8px 18px 6px; display:flex; flex-direction:column; gap:6px;">
+              <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+              <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; min-height:44px;"><span></span><div style="font-size:17px; font-weight:650;">Budget together</div><span style="justify-self:end; font-weight:650; font-size:17px;">Done</span></div>
+            </div>
+            <div style="flex:1; padding:10px 16px 34px; display:flex; flex-direction:column; gap:16px;">
+              <div style="border-radius:26px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); padding:22px 20px 20px; display:flex; flex-direction:column; gap:14px;">
+                <div style="display:flex; align-items:center;">
+                  <span style="width:52px; height:52px; border-radius:50%; background:oklch(0.86 0.08 50); color:oklch(0.36 0.09 50); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:20px; box-shadow:0 0 0 3px #fffdf9;">Y</span>
+                  <span style="width:52px; height:52px; margin-left:-12px; border-radius:50%; border:1.5px dashed rgba(27,30,46,.3); box-sizing:border-box; display:flex; align-items:center; justify-content:center; background:#fffdf9;"><span style="font-family:'Material Symbols Rounded'; font-size:22px; line-height:1; color:rgba(27,30,46,.5);">add</span></span>
+                </div>
+                <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:31px; line-height:1.06; letter-spacing:-.01em;">Save for it together.</div>
+                <div style="font-size:14.5px; line-height:1.45; color:rgba(27,30,46,.62); text-wrap:pretty;">Share a pot with the person you save with. You both add to it, and each of you sees who put in what. Your own days stay on your phone.</div>
+              </div>
+              <div style="flex:1;"></div>
+              <div style="height:50px; border-radius:18px; background:#000; color:#fff; display:flex; align-items:center; justify-content:center; gap:6px; font-size:17px; font-weight:600;"><span style="font-family:-apple-system, system-ui; font-size:20px;"></span>Sign in with Apple</div>
+              <div style="font-size:13px; line-height:1.45; color:rgba(27,30,46,.62); text-align:center; padding:0 12px; text-wrap:pretty;">Sign in with Apple is only for Budget together. 6pm asks for your first name, never your email.</div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Together · paired" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.36);"></div>
+          <div style="position:absolute; left:0; right:0; top:62px; bottom:0; border-radius:40px 40px 0 0; background:#f6f0e7; display:flex; flex-direction:column; overflow:hidden;">
+            <div style="padding:8px 18px 6px; display:flex; flex-direction:column; gap:6px;">
+              <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+              <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; min-height:44px;"><span></span><div style="font-size:17px; font-weight:650;">Budget together</div><span style="justify-self:end; font-weight:650; font-size:17px;">Done</span></div>
+            </div>
+            <div style="flex:1; padding:6px 16px 30px; display:flex; flex-direction:column; gap:18px;">
+              <div style="display:flex; align-items:center; gap:14px; padding:4px 6px 0;">
+                <div style="display:flex;"><span style="width:44px; height:44px; border-radius:50%; background:oklch(0.86 0.08 50); color:oklch(0.36 0.09 50); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:17px; box-shadow:0 0 0 3px #f6f0e7;">M</span><span style="width:44px; height:44px; margin-left:-10px; border-radius:50%; background:oklch(0.86 0.08 230); color:oklch(0.36 0.09 230); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:17px; box-shadow:0 0 0 3px #f6f0e7;">L</span></div>
+                <div style="display:flex; flex-direction:column; gap:1px;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:26px; line-height:1.05;">You and Linh</span><span style="font-size:13px; color:rgba(27,30,46,.62);">2 shared pots</span></div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <div style="padding:0 6px; font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:rgba(27,30,46,.62);">Shared pots</div>
+                <div style="border-radius:26px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); padding:0 14px;">
+                  <div style="display:flex; align-items:center; gap:12px; padding:12px 0;"><span style="width:36px; height:36px; border-radius:11px; background:linear-gradient(155deg, oklch(0.9 0.07 200), oklch(0.78 0.12 200)); color:oklch(0.34 0.09 200); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:20px; line-height:1; font-variation-settings:'FILL' 1;">beach_access</span><div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px;">Đà Nẵng trip</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">You 300k · Linh 200k</span></div><span style="font-size:15px; font-weight:600;">500k / 6tr</span></div>
+                  <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-top:0.5px solid rgba(27,30,46,.08);"><span style="width:36px; height:36px; border-radius:11px; background:linear-gradient(155deg, oklch(0.9 0.07 320), oklch(0.78 0.12 320)); color:oklch(0.34 0.09 320); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:20px; line-height:1; font-variation-settings:'FILL' 1;">chair</span><div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px;">New sofa</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">You 1tr · Linh 200k</span></div><span style="font-size:15px; font-weight:600;">1,2tr / 3tr</span></div>
+                  <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-top:0.5px solid rgba(27,30,46,.08);"><span style="width:36px; height:36px; border-radius:11px; border:1.5px dashed rgba(27,30,46,.28); box-sizing:border-box; display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:20px; line-height:1; color:rgba(27,30,46,.5);">add</span><div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px;">New shared pot</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">You both add to it.</span></div></div>
+                </div>
+              </div>
+              <div style="border-radius:22px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); padding:14px 16px; display:flex; flex-direction:column; gap:3px;"><span style="font-size:15px; font-weight:650;">Kept on this iPhone</span><span style="font-size:13px; line-height:1.4; color:rgba(27,30,46,.62);">What you put into shared pots: 1,3tr. It stays here when a pot is gone.</span></div>
+              <div style="flex:1;"></div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <div style="height:50px; border-radius:18px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:600;">Leave Budget together</div>
+                <div style="height:50px; border-radius:18px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:600; color:oklch(0.66 0.19 25);">Delete Budget together account</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Shared pot sheet" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.4);"></div>
+          <div style="position:absolute; left:8px; right:8px; bottom:8px; padding:8px 18px 20px; border-radius:44px; background:#f6f0e7; display:flex; flex-direction:column; gap:16px;">
+            <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+            <div style="display:flex; align-items:center; gap:14px;">
+              <span style="width:56px; height:56px; border-radius:17px; background:linear-gradient(155deg, oklch(0.9 0.07 320), oklch(0.78 0.12 320)); color:oklch(0.34 0.09 320); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:30px; line-height:1; font-variation-settings:'FILL' 1;">chair</span>
+              <div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:rgba(27,30,46,.62);">Shared · with Linh</span><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:26px; line-height:1.05;">New sofa</span></div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; align-items:baseline; gap:6px;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:44px; line-height:1; letter-spacing:-.02em;">1,2tr</span><span style="font-size:17px; color:rgba(27,30,46,.62);">/ 3tr</span></div>
+              <div style="height:8px; border-radius:8px; background:rgba(70,45,30,.08); display:flex; overflow:hidden;"><div style="width:33%; background:oklch(0.78 0.12 50);"></div><div style="width:7%; background:oklch(0.72 0.1 230);"></div></div>
+            </div>
+            <div style="border-radius:22px; background:#fffdf9; padding:10px 10px 10px 16px; display:flex; align-items:center; gap:10px;">
+              <span style="font-size:15px; color:rgba(27,30,46,.62);">Add</span><span style="flex:1;"></span>
+              <span style="width:38px; height:38px; border-radius:50%; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:20px; line-height:1;">remove</span>
+              <span style="min-width:72px; text-align:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:22px;">200k</span>
+              <span style="width:38px; height:38px; border-radius:50%; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:20px; line-height:1;">add</span>
+            </div>
+            <div style="height:54px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Add 200k</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="padding:0 6px; font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:rgba(27,30,46,.62);">Who put in what</div>
+              <div style="border-radius:22px; background:#fffdf9; padding:0 14px;">
+                <div style="display:flex; align-items:center; gap:10px; padding:11px 0;"><span style="width:26px; height:26px; border-radius:50%; background:oklch(0.86 0.08 50); color:oklch(0.36 0.09 50); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px;">M</span><span style="flex:1; font-size:15px;">You · Today</span><span style="font-weight:600; font-size:15px;">500k</span><span style="height:28px; padding:0 10px; border-radius:99px; background:rgba(70,45,30,.06); font-size:12.5px; font-weight:650; display:flex; align-items:center;">Take back</span></div>
+                <div style="display:flex; align-items:center; gap:10px; padding:11px 0; border-top:0.5px solid rgba(27,30,46,.08);"><span style="width:26px; height:26px; border-radius:50%; background:oklch(0.86 0.08 230); color:oklch(0.36 0.09 230); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px;">L</span><span style="flex:1; font-size:15px;">Linh · Mon</span><span style="font-weight:600; font-size:15px;">200k</span></div>
+                <div style="display:flex; align-items:center; gap:10px; padding:11px 0; border-top:0.5px solid rgba(27,30,46,.08);"><span style="width:26px; height:26px; border-radius:50%; background:oklch(0.86 0.08 50); color:oklch(0.36 0.09 50); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px;">M</span><span style="flex:1; font-size:15px;">You · 2 Oct</span><span style="font-weight:600; font-size:15px;">500k</span><span style="height:28px; padding:0 10px; border-radius:99px; background:rgba(70,45,30,.06); font-size:12.5px; font-weight:650; display:flex; align-items:center;">Take back</span></div>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <div style="flex:1; height:46px; border-radius:16px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:600;">Edit shared pot</div>
+              <div style="flex:1; height:46px; border-radius:16px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:600; color:oklch(0.6 0.19 25);">Delete shared pot</div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+
+      <div style="width:380px; display:flex; flex-direction:column; gap:16px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55);">PLAN · OCCASIONS CARD + JARS</div>
+        <div style="border-radius:26px; background:#fffdf9; color:#1b1e2e; padding:14px 16px; display:flex; align-items:center; gap:12px;">
+          <div style="display:flex;"><span style="width:34px; height:34px; border-radius:50%; background:oklch(0.86 0.08 50); color:oklch(0.36 0.09 50); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; box-shadow:0 0 0 2.5px #fffdf9;">M</span><span style="width:34px; height:34px; margin-left:-8px; border-radius:50%; background:oklch(0.86 0.08 230); color:oklch(0.36 0.09 230); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; box-shadow:0 0 0 2.5px #fffdf9;">L</span></div>
+          <div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px; font-weight:650;">Budget together</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">With Linh · 2 shared pots</span></div>
+          <span style="font-family:'Material Symbols Rounded'; font-size:20px; line-height:1; opacity:.35;">chevron_right</span>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <div style="width:128px; border-radius:22px; background:#fffdf9; color:#1b1e2e; padding:12px; display:flex; flex-direction:column; gap:8px;">
+            <div style="height:72px; border-radius:14px; background:rgba(70,45,30,.05); position:relative; overflow:hidden;"><div style="position:absolute; left:0; right:0; bottom:0; height:40%; background:linear-gradient(155deg, oklch(0.9 0.07 320), oklch(0.78 0.12 320));"></div></div>
+            <span style="font-size:14px; font-weight:650;">New sofa</span><span style="font-size:11.5px; color:rgba(27,30,46,.62); margin-top:-6px;">You 1tr · Linh 200k</span>
+            <span style="height:28px; border-radius:99px; background:rgba(70,45,30,.06); font-size:12.5px; font-weight:650; display:flex; align-items:center; justify-content:center;">+100k</span>
+          </div>
+          <div style="width:128px; border-radius:22px; border:1.5px dashed rgba(246,239,230,.35); box-sizing:border-box; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:rgba(246,239,230,.8); font-size:13px; font-weight:600;"><span style="font-family:'Material Symbols Rounded'; font-size:24px; line-height:1;">add</span>New shared pot</div>
+        </div>
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55); padding-top:8px;">JOIN SHEET · FROM AN INVITE LINK</div>
+        <div style="border-radius:32px; background:#f6f0e7; color:#1b1e2e; padding:20px; display:flex; flex-direction:column; gap:12px;">
+          <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:26px; line-height:1.05;">Join Budget together</div>
+          <div style="font-size:14px; line-height:1.45; color:rgba(27,30,46,.62); text-wrap:pretty;">Someone invited you to share pots on 6pm. Sign in with Apple to join them. Your own days stay on your phone.</div>
+          <div style="height:50px; border-radius:18px; background:#000; color:#fff; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:600;"> Continue with Apple</div>
+          <div style="font-size:13px; line-height:1.4; color:oklch(0.58 0.19 25); text-wrap:pretty;">This invite has expired. Ask for a new link.</div>
+        </div>
+        <div style="font-size:13px; line-height:1.5; color:rgba(246,239,230,.6); text-wrap:pretty;">No partner yet: “Just you so far.” + Invite someone (copies the link, opens share). Offline: “Offline. This is what you saw last.” Partner left: island “Budget together has ended. What you put in stays on this phone.”</div>
+      </div>
+    </div>
+  </section>
+  <!-- 7. BACKUP -->
+  <section data-screen-label="Backup" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">07</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Backup sheet and restore</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Backup · on" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.36);"></div>
+          <div style="position:absolute; left:0; right:0; top:62px; bottom:0; border-radius:40px 40px 0 0; background:#f6f0e7; display:flex; flex-direction:column; overflow:hidden;">
+            <div style="padding:8px 18px 6px; display:flex; flex-direction:column; gap:6px;">
+              <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+              <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; min-height:44px;"><span style="display:flex; align-items:center; font-size:17px;"><span style="font-family:'Material Symbols Rounded'; font-size:26px; line-height:1; margin-left:-4px;">chevron_left</span>Settings</span><div style="font-size:17px; font-weight:650;">Backup</div><span style="justify-self:end; font-weight:650; font-size:17px;">Done</span></div>
+            </div>
+            <div style="flex:1; padding:10px 16px 34px; display:flex; flex-direction:column; gap:14px;">
+              <div style="border-radius:30px; background:#221c33; color:#fbf4ec; padding:22px; display:flex; flex-direction:column; gap:12px;">
+                <div style="display:flex; align-items:center; justify-content:space-between;"><span style="width:48px; height:48px; border-radius:15px; background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:26px; line-height:1; color:#f6a46a;">cloud_done</span><dusk-buddy size="44" mood="calm"></dusk-buddy></div>
+                <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:30px; line-height:1.08;">Backed up 2 minutes ago.</div>
+                <div style="font-size:15px; line-height:1.45; opacity:.75;">iCloud · 284 items · encrypted. 6pm still works without it.</div>
+              </div>
+              <div style="height:54px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Back up now</div>
+              <div style="height:50px; border-radius:18px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:600; color:oklch(0.66 0.19 25);">Delete backup</div>
+              <div style="font-size:13px; line-height:1.45; color:rgba(27,30,46,.62); padding:0 8px; text-wrap:pretty;">Backs up once a day, after you close. To restore on a new iPhone, turn on iCloud Keychain in iOS Settings.</div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Backup · found one" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.36);"></div>
+          <div style="position:absolute; left:0; right:0; top:62px; bottom:0; border-radius:40px 40px 0 0; background:#f6f0e7; display:flex; flex-direction:column; overflow:hidden;">
+            <div style="padding:8px 18px 6px; display:flex; flex-direction:column; gap:6px;">
+              <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+              <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; min-height:44px;"><span style="display:flex; align-items:center; font-size:17px;"><span style="font-family:'Material Symbols Rounded'; font-size:26px; line-height:1; margin-left:-4px;">chevron_left</span>Settings</span><div style="font-size:17px; font-weight:650;">Backup</div><span style="justify-self:end; font-weight:650; font-size:17px;">Done</span></div>
+            </div>
+            <div style="flex:1; padding:10px 16px 34px; display:flex; flex-direction:column; gap:14px;">
+              <div style="border-radius:30px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); padding:22px; display:flex; flex-direction:column; gap:12px;">
+                <span style="width:48px; height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:26px; line-height:1;">cloud_sync</span>
+                <div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:30px; line-height:1.08; text-wrap:pretty;">There’s already a backup in your iCloud.</div>
+                <div style="font-size:15px; line-height:1.45; color:rgba(27,30,46,.62); text-wrap:pretty;">It came from another iPhone or an earlier install. Backing up from here would replace it.</div>
+              </div>
+              <div style="height:54px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Restore it here</div>
+              <div style="height:50px; border-radius:18px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:600;">Replace it with this iPhone</div>
+              <div style="height:44px; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:600; color:oklch(0.62 0.19 25);">Delete backup</div>
+              <div style="flex:1;"></div>
+              <div style="align-self:center; height:40px; padding:0 16px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; font-size:14px; font-weight:600;">Tap again to replace this iPhone’s days</div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+
+      <div style="width:380px; display:flex; flex-direction:column; gap:14px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55);">OTHER STATES · SAME CARD</div>
+        <div style="border-radius:26px; background:#fffdf9; color:#1b1e2e; padding:18px; display:flex; flex-direction:column; gap:8px;">
+          <span style="font-size:11px; font-family:'IBM Plex Mono', ui-monospace, monospace; letter-spacing:.14em; opacity:.55;">NEVER BACKED UP · MAX</span>
+          <span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px; line-height:1.08;">Keep every day, forever.</span>
+          <span style="font-size:14px; line-height:1.45; color:rgba(27,30,46,.62);">Sealed on this iPhone before it leaves. The key stays in your iCloud Keychain, so we can’t read a thing.</span>
+          <span style="align-self:flex-start; margin-top:4px; height:42px; padding:0 18px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; font-weight:650; font-size:15px;">Turn on backup</span>
+        </div>
+        <div style="border-radius:26px; background:#fffdf9; color:#1b1e2e; padding:18px; display:flex; flex-direction:column; gap:8px;">
+          <span style="font-size:11px; font-family:'IBM Plex Mono', ui-monospace, monospace; letter-spacing:.14em; opacity:.55;">MAX ENDED</span>
+          <span style="font-size:15px; line-height:1.45;">Backup is paused without Max. Your last backup is still safe in iCloud.</span>
+          <span style="font-size:14px; font-weight:600; color:oklch(0.62 0.19 25);">Delete backup</span>
+        </div>
+        <div style="border-radius:26px; background:#fffdf9; color:#1b1e2e; padding:18px; display:flex; flex-direction:column; gap:8px;">
+          <span style="font-size:11px; font-family:'IBM Plex Mono', ui-monospace, monospace; letter-spacing:.14em; opacity:.55;">ERROR · UNDER THE BUTTONS</span>
+          <span style="font-size:14px; line-height:1.45; color:oklch(0.55 0.19 25);">iCloud Keychain wouldn’t keep the key, so nothing was backed up. Check it is on in iOS Settings.</span>
+        </div>
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55); padding-top:8px;">ONBOARDING · WELCOME</div>
+        <div style="border-radius:32px; background:linear-gradient(180deg,#3b3270 0%,#c4607a 62%,#f0975a 100%); padding:22px 20px; display:flex; flex-direction:column; gap:12px; align-items:stretch;">
+          <div style="height:54px; border-radius:99px; background:#fbf4ec; color:#26182f; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Get started</div>
+          <div style="align-self:center; font-size:15px; font-weight:600; color:#fbf4ec; text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(251,244,236,.4);">Restore from backup</div>
+        </div>
+        <div style="border-radius:26px; background:#f6f0e7; color:#1b1e2e; padding:18px; display:flex; flex-direction:column; gap:8px;">
+          <span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">Found your backup from 9 October.</span>
+          <span style="font-size:14px; color:rgba(27,30,46,.62);">284 items · encrypted in iCloud.</span>
+          <span style="height:48px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:16px; margin-top:4px;">Restore my days</span>
+          <span style="align-self:center; font-size:14px; font-weight:600; padding-top:4px;">Start fresh instead</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 8. POT SHEET -->
+  <section id="pot-08" data-screen-label="Pot sheet" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">08</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Pot sheet · big goals and dates</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Pot · goal keypad" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.4);"></div>
+          <div style="position:absolute; left:8px; right:8px; bottom:8px; padding:8px 18px 20px; border-radius:44px; background:#f6f0e7; display:flex; flex-direction:column; gap:14px;">
+            <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="width:48px; height:48px; border-radius:15px; background:linear-gradient(155deg, oklch(0.9 0.07 140), oklch(0.78 0.12 140)); color:oklch(0.34 0.09 140); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:26px; line-height:1; font-variation-settings:'FILL' 1;">home</span>
+              <span style="flex:1; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">Our first home</span>
+            </div>
+            <div style="border-radius:22px; background:#fffdf9; padding:14px 16px 12px; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; font-size:15px;"><span style="color:rgba(27,30,46,.62);">Goal</span><span style="font-size:13px; color:rgba(27,30,46,.62);">up to 100 tỷ</span></div>
+              <div style="display:flex; align-items:baseline; gap:8px;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:52px; line-height:1; letter-spacing:-.02em;">2,5</span><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px; color:rgba(27,30,46,.55);">tỷ</span><span style="width:2px; height:40px; background:#ff8552; align-self:center; margin-left:2px;"></span></div>
+              <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12.5px; color:rgba(27,30,46,.55);">2.500.000.000₫</div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <span style="height:30px; padding:0 11px; border-radius:99px; background:rgba(70,45,30,.06); font-size:13px; font-weight:600; display:flex; align-items:center;">500tr</span>
+                <span style="height:30px; padding:0 11px; border-radius:99px; background:rgba(70,45,30,.06); font-size:13px; font-weight:600; display:flex; align-items:center;">1 tỷ</span>
+                <span style="height:30px; padding:0 11px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; font-size:13px; font-weight:600; display:flex; align-items:center;">2 tỷ</span>
+                <span style="height:30px; padding:0 11px; border-radius:99px; background:rgba(70,45,30,.06); font-size:13px; font-weight:600; display:flex; align-items:center;">3 tỷ</span>
+                <span style="height:30px; padding:0 11px; border-radius:99px; background:rgba(70,45,30,.06); font-size:13px; font-weight:600; display:flex; align-items:center;">5 tỷ</span>
+              </div>
+            </div>
+            <div style="display:flex; padding:3px; border-radius:13px; background:rgba(70,45,30,.06);">
+              <span style="flex:1; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600;">đồng</span>
+              <span style="flex:1; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600;">nghìn</span>
+              <span style="flex:1; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600;">triệu</span>
+              <span style="flex:1; height:34px; border-radius:10px; background:#fffdf9; box-shadow:0 1px 3px rgba(70,45,30,.15); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600;">tỷ</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px;">
+              <sc-for list="{{ keypad }}" as="k" hint-placeholder-count="12"><span style="height:52px; border-radius:16px; background:#fffdf9; display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">{{ k }}</span></sc-for>
+            </div>
+            <div style="height:54px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Set goal · 2,5 tỷ</div>
+          </div>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Pot · needed by" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.4);"></div>
+          <div style="position:absolute; left:8px; right:8px; bottom:8px; padding:8px 18px 20px; border-radius:44px; background:#f6f0e7; display:flex; flex-direction:column; gap:14px;">
+            <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+            <div style="border-radius:22px; background:#fffdf9; padding:0 16px;">
+              <div style="display:flex; justify-content:space-between; padding:13px 0; font-size:15px;"><span style="color:rgba(27,30,46,.62);">Goal</span><span style="font-weight:600;">2,5 tỷ</span></div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-top:0.5px solid rgba(27,30,46,.08); font-size:15px;"><span style="color:rgba(27,30,46,.62);">Needed by</span><span style="display:flex; flex-direction:column; align-items:flex-end;"><span style="font-weight:600;">October 2028</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">in 2 years</span></span></div>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <span style="height:32px; padding:0 12px; border-radius:99px; background:rgba(70,45,30,.06); font-size:13px; font-weight:600; display:flex; align-items:center;">3 months</span>
+              <span style="height:32px; padding:0 12px; border-radius:99px; background:rgba(70,45,30,.06); font-size:13px; font-weight:600; display:flex; align-items:center;">6 months</span>
+              <span style="height:32px; padding:0 12px; border-radius:99px; background:rgba(70,45,30,.06); font-size:13px; font-weight:600; display:flex; align-items:center;">1 year</span>
+              <span style="height:32px; padding:0 12px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; font-size:13px; font-weight:600; display:flex; align-items:center;">2 years</span>
+              <span style="height:32px; padding:0 12px; border-radius:99px; background:rgba(70,45,30,.06); font-size:13px; font-weight:600; display:flex; align-items:center;">5 years</span>
+              <span style="height:32px; padding:0 12px; border-radius:99px; background:rgba(70,45,30,.06); font-size:13px; font-weight:600; display:flex; align-items:center;">No date</span>
+            </div>
+            <div style="position:relative; height:180px; border-radius:22px; background:#fffdf9; display:grid; grid-template-columns:1.4fr 1fr; overflow:hidden;">
+              <div style="position:absolute; left:10px; right:10px; top:68px; height:44px; border-radius:12px; background:rgba(70,45,30,.06);"></div>
+              <div style="position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; font-size:19px;"><span style="opacity:.25;">August</span><span style="opacity:.5;">September</span><span style="font-weight:650; font-size:22px;">October</span><span style="opacity:.5;">November</span><span style="opacity:.25;">December</span></div>
+              <div style="position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; font-size:19px;"><span style="opacity:.25;">2026</span><span style="opacity:.5;">2027</span><span style="font-weight:650; font-size:22px;">2028</span><span style="opacity:.5;">2029</span><span style="opacity:.25;">2030</span></div>
+            </div>
+            <div style="border-radius:22px; background:oklch(0.95 0.04 60); padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
+              <div style="font-size:15px; font-weight:650;">About 104tr a month</div>
+              <div style="font-size:13.5px; line-height:1.45; color:#7a3d14; text-wrap:pretty;">That’s more than your month has free (12tr). March 2029 or later fits.</div>
+              <span style="align-self:flex-start; height:34px; padding:0 14px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; font-size:13px; font-weight:650; display:flex; align-items:center;">Make it March 2029</span>
+            </div>
+            <div style="height:54px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Save</div>
+          </div>
+        </div>
+      </x-import>
+
+      <div style="width:380px; display:flex; flex-direction:column; gap:14px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55);">NEW POT · TEMPLATES</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <sc-for list="{{ potTpl }}" as="t" hint-placeholder-count="7">
+            <div style="width:116px; border-radius:20px; background:#fffdf9; color:#1b1e2e; padding:12px; display:flex; flex-direction:column; gap:8px; box-sizing:border-box;">
+              <span style="width:36px; height:36px; border-radius:11px; background:linear-gradient(155deg, oklch(0.9 0.07 {{ t.h }}), oklch(0.78 0.12 {{ t.h }})); color:oklch(0.34 0.09 {{ t.h }}); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:20px; line-height:1; font-variation-settings:'FILL' 1;">{{ t.icon }}</span>
+              <span style="font-size:14px; font-weight:650;">{{ t.name }}</span>
+              <span style="font-size:12px; color:rgba(27,30,46,.62); margin-top:-6px;">{{ t.sub }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55); padding-top:8px;">JAR TOP-UP SCALES WITH THE GOAL</div>
+        <div style="display:flex; gap:10px;">
+          <div style="width:128px; border-radius:22px; background:#fffdf9; color:#1b1e2e; padding:12px; display:flex; flex-direction:column; gap:8px;">
+            <div style="height:72px; border-radius:14px; background:rgba(70,45,30,.05); position:relative; overflow:hidden;"><div style="position:absolute; left:0; right:0; bottom:0; height:18%; background:linear-gradient(155deg, oklch(0.9 0.07 140), oklch(0.78 0.12 140));"></div></div>
+            <span style="font-size:14px; font-weight:650;">Our first home</span>
+            <span style="font-size:11.5px; color:rgba(27,30,46,.62); margin-top:-6px;">450tr of 2,5 tỷ</span>
+            <div style="height:3px; border-radius:3px; background:rgba(70,45,30,.08); margin-top:-2px;"><div style="width:18%; height:100%; border-radius:3px; background:oklch(0.7 0.13 140);"></div></div>
+            <span style="height:28px; border-radius:99px; background:rgba(70,45,30,.06); font-size:12.5px; font-weight:650; display:flex; align-items:center; justify-content:center;">+100tr</span>
+          </div>
+          <div style="width:128px; border-radius:22px; background:#fffdf9; color:#1b1e2e; padding:12px; display:flex; flex-direction:column; gap:8px; opacity:.75;">
+            <div style="height:72px; border-radius:14px; background:rgba(70,45,30,.05); position:relative; overflow:hidden;"><div style="position:absolute; left:0; right:0; bottom:0; height:52%; background:linear-gradient(155deg, oklch(0.9 0.07 25), oklch(0.78 0.12 25)); filter:grayscale(.6);"></div></div>
+            <span style="font-size:14px; font-weight:650;">Tết gifts</span>
+            <span style="align-self:flex-start; height:22px; padding:0 8px; border-radius:99px; background:rgba(70,45,30,.08); font-size:11px; font-weight:700; display:flex; align-items:center; margin-top:-4px;">Paused</span>
+          </div>
+          <div style="width:128px; border-radius:22px; border:1.5px dashed rgba(246,239,230,.35); box-sizing:border-box; padding:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:rgba(246,239,230,.85); text-align:center;">
+            <span style="height:20px; padding:0 7px 0 5px; border-radius:6px; background:#fbf4ec; color:#1b1e2e; font-size:10px; font-weight:800; letter-spacing:.1em; display:flex; align-items:center; gap:3px;"><span style="font-family:'Material Symbols Rounded'; font-size:12px; line-height:1; font-variation-settings:'FILL' 1;">lock</span>MAX</span>
+            <span style="font-size:13px; font-weight:650;">New pot</span>
+            <span style="font-size:11.5px; line-height:1.35; opacity:.7;">More pots come with Max.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 8B. POT SHEET REVAMP -->
+  <section id="pot-08b" data-screen-label="Pot sheet revamp" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">08B</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Edit pot · revamp: one keypad, one timeline</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Edit pot · at a glance" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.4);"></div>
+          <div style="position:absolute; left:8px; right:8px; bottom:8px; padding:8px 18px 18px; border-radius:44px; background:#f6f0e7; display:flex; flex-direction:column; gap:18px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="width:70px; font-size:16px; color:rgba(27,30,46,.62);">Cancel</span><span style="font-size:17px; font-weight:650;">Edit pot</span><span style="width:70px;"></span></div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+              <span style="width:68px; height:68px; border-radius:23px; background:linear-gradient(155deg, oklch(0.9 0.07 140), oklch(0.78 0.12 140)); color:oklch(0.34 0.09 140); box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 8px 20px rgba(30,10,40,.18); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:36px; line-height:1; font-variation-settings:'FILL' 1;">home</span>
+              <span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:28px; letter-spacing:-.015em;">Our first home</span>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:7px;">
+                <span style="font-size:13.5px; font-weight:600; color:rgba(27,30,46,.62);">450tr saved of 2,5 tỷ</span>
+                <div style="width:168px; height:6px; border-radius:3px; background:rgba(70,45,30,.08); overflow:hidden;"><div style="width:18%; height:100%; border-radius:3px; background:oklch(0.7 0.13 140);"></div></div>
+              </div>
+            </div>
+            <div style="border-radius:22px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.08); overflow:hidden;">
+              <div style="display:flex; align-items:center; gap:12px; padding:0 16px; min-height:58px;">
+                <span style="flex:1; font-size:16px;">Goal</span>
+                <span style="font-size:17px; font-weight:650; font-variant-numeric:tabular-nums;">2,5 tỷ</span>
+                <span style="font-family:'Material Symbols Rounded'; font-size:22px; line-height:1; color:rgba(27,30,46,.45);">expand_more</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px; padding:0 16px; min-height:58px; border-top:0.5px solid rgba(27,30,46,.08);">
+                <span style="flex:1; font-size:16px;">Needed by</span>
+                <span style="display:flex; flex-direction:column; align-items:flex-end; padding:10px 0;"><span style="font-size:17px; font-weight:650;">Oct 2034</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">in 8 years</span></span>
+                <span style="font-family:'Material Symbols Rounded'; font-size:22px; line-height:1; color:rgba(27,30,46,.45);">expand_more</span>
+              </div>
+              <div style="padding:14px 16px 16px; background:oklch(0.96 0.03 140); display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px;">
+                  <span style="font-size:15.5px; font-weight:650;">21,4tr a month</span>
+                  <span style="font-size:13px; color:rgba(27,30,46,.62);">about 713k a day</span>
+                </div>
+                <div style="height:8px; border-radius:4px; background:rgba(70,45,30,.08); overflow:hidden;"><div style="width:97%; height:100%; border-radius:4px; background:oklch(0.7 0.13 140);"></div></div>
+                <span style="font-size:12.5px; color:oklch(0.38 0.08 140);">Fits. Leaves 600k of the 22tr your month has free.</span>
+              </div>
+            </div>
+            <div style="border-radius:22px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.08); display:flex; align-items:center; gap:12px; padding:8px 16px; min-height:58px; box-sizing:border-box;">
+              <span style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px;">Pause this pot</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">Sets nothing aside until you turn it back on.</span></span>
+              <span style="width:51px; height:31px; border-radius:99px; background:rgba(70,45,30,.14); position:relative;"><span style="position:absolute; left:2px; top:2px; width:27px; height:27px; border-radius:50%; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,.15);"></span></span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <div style="height:56px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Save</div>
+              <span style="height:44px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:600; color:rgba(27,30,46,.62);">Delete pot</span>
+            </div>
+          </div>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Edit pot · goal keypad" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.4);"></div>
+          <div style="position:absolute; left:8px; right:8px; bottom:8px; padding:8px 18px 18px; border-radius:44px; background:#f6f0e7; display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="width:70px; font-size:16px; color:rgba(27,30,46,.62);">Cancel</span><span style="font-size:17px; font-weight:650;">Edit pot</span><span style="width:70px;"></span></div>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="width:44px; height:44px; border-radius:15px; background:linear-gradient(155deg, oklch(0.9 0.07 140), oklch(0.78 0.12 140)); color:oklch(0.34 0.09 140); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:24px; line-height:1; font-variation-settings:'FILL' 1;">home</span>
+              <span style="flex:1; display:flex; flex-direction:column; gap:1px;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:20px;">Our first home</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">450tr saved</span></span>
+            </div>
+            <div style="border-radius:22px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.08); overflow:hidden;">
+              <div style="display:flex; align-items:center; gap:12px; padding:0 16px; min-height:52px;">
+                <span style="flex:1; font-size:16px;">Goal</span>
+                <span style="font-family:'Material Symbols Rounded'; font-size:22px; line-height:1; color:rgba(27,30,46,.45);">expand_less</span>
+              </div>
+              <div style="padding:0 14px 14px; display:flex; flex-direction:column; gap:12px;">
+                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; padding:2px 0 4px;">
+                  <div style="display:flex; align-items:baseline; gap:8px;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:58px; line-height:1; letter-spacing:-.025em; font-variant-numeric:tabular-nums;">2,5</span><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:26px; color:rgba(27,30,46,.55);">tỷ</span></div>
+                  <span style="font-size:13px; color:rgba(27,30,46,.55); font-variant-numeric:tabular-nums;">2.500.000.000₫</span>
+                  <span style="margin-top:6px; height:28px; padding:0 12px; border-radius:99px; background:oklch(0.96 0.03 140); color:oklch(0.38 0.08 140); font-size:12.5px; font-weight:650; display:flex; align-items:center; gap:5px;"><span style="font-family:'Material Symbols Rounded'; font-size:15px; line-height:1;">calendar_month</span>21,4tr a month to make Oct 2034</span>
+                </div>
+                <div style="display:flex; gap:6px;">
+                  <span style="flex:1; height:32px; border-radius:99px; background:rgba(70,45,30,.06); font-size:13px; font-weight:650; display:flex; align-items:center; justify-content:center;">1 tỷ</span>
+                  <span style="flex:1; height:32px; border-radius:99px; background:rgba(70,45,30,.06); font-size:13px; font-weight:650; display:flex; align-items:center; justify-content:center;">2 tỷ</span>
+                  <span style="flex:1; height:32px; border-radius:99px; background:rgba(70,45,30,.06); font-size:13px; font-weight:650; display:flex; align-items:center; justify-content:center;">3 tỷ</span>
+                  <span style="flex:1; height:32px; border-radius:99px; background:rgba(70,45,30,.06); font-size:13px; font-weight:650; display:flex; align-items:center; justify-content:center;">5 tỷ</span>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)) minmax(0,.9fr); gap:6px;">
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">1</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">2</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">3</span>
+                  <span style="height:48px; border-radius:15px; background:transparent; box-shadow:inset 0 0 0 1px rgba(27,30,46,.12); display:flex; align-items:center; justify-content:center; font-size:14.5px; font-weight:650;">nghìn</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">4</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">5</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">6</span>
+                  <span style="height:48px; border-radius:15px; background:transparent; box-shadow:inset 0 0 0 1px rgba(27,30,46,.12); display:flex; align-items:center; justify-content:center; font-size:14.5px; font-weight:650;">triệu</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">7</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">8</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">9</span>
+                  <span style="height:48px; border-radius:15px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-size:14.5px; font-weight:650;">tỷ</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">,</span>
+                  <span style="grid-column:span 2; height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">0</span>
+                  <span style="height:48px; border-radius:15px; background:transparent; display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:22px; line-height:1;">backspace</span>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px; padding:0 16px; min-height:58px; border-top:0.5px solid rgba(27,30,46,.08);">
+                <span style="flex:1; font-size:16px;">Needed by</span>
+                <span style="font-size:17px; font-weight:650;">Oct 2034</span>
+                <span style="font-family:'Material Symbols Rounded'; font-size:22px; line-height:1; color:rgba(27,30,46,.45);">expand_more</span>
+              </div>
+            </div>
+            <div style="height:56px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Save</div>
+          </div>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Edit pot · timeline" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.4);"></div>
+          <div style="position:absolute; left:8px; right:8px; bottom:8px; padding:8px 18px 18px; border-radius:44px; background:#f6f0e7; display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="width:70px; font-size:16px; color:rgba(27,30,46,.62);">Cancel</span><span style="font-size:17px; font-weight:650;">Edit pot</span><span style="width:70px;"></span></div>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="width:44px; height:44px; border-radius:15px; background:linear-gradient(155deg, oklch(0.9 0.07 140), oklch(0.78 0.12 140)); color:oklch(0.34 0.09 140); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:24px; line-height:1; font-variation-settings:'FILL' 1;">home</span>
+              <span style="flex:1; display:flex; flex-direction:column; gap:1px;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:20px;">Our first home</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">450tr saved</span></span>
+            </div>
+            <div style="border-radius:22px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.08); overflow:hidden;">
+              <div style="display:flex; align-items:center; gap:12px; padding:0 16px; min-height:58px;">
+                <span style="flex:1; font-size:16px;">Goal</span>
+                <span style="font-size:17px; font-weight:650; font-variant-numeric:tabular-nums;">2,5 tỷ</span>
+                <span style="font-family:'Material Symbols Rounded'; font-size:22px; line-height:1; color:rgba(27,30,46,.45);">expand_more</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px; padding:0 16px; min-height:52px; border-top:0.5px solid rgba(27,30,46,.08);">
+                <span style="flex:1; font-size:16px;">Needed by</span>
+                <span style="font-family:'Material Symbols Rounded'; font-size:22px; line-height:1; color:rgba(27,30,46,.45);">expand_less</span>
+              </div>
+              <div style="padding:0 14px 16px; display:flex; flex-direction:column; gap:16px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="width:40px; height:40px; border-radius:50%; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:22px; line-height:1;">chevron_left</span>
+                  <span style="flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:32px; line-height:1.05; letter-spacing:-.02em;">October 2028</span><span style="font-size:13px; color:rgba(27,30,46,.62);">in 2 years</span></span>
+                  <span style="width:40px; height:40px; border-radius:50%; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:22px; line-height:1;">chevron_right</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                  <div style="position:relative; height:44px;">
+                    <div style="position:absolute; left:0; right:0; top:16px; height:12px; border-radius:6px; overflow:hidden; display:flex;">
+                      <div style="width:78%; background:repeating-linear-gradient(135deg, oklch(0.88 0.06 55) 0 4px, oklch(0.94 0.035 60) 4px 8px);"></div>
+                      <div style="flex:1; background:oklch(0.82 0.1 140);"></div>
+                    </div>
+                    <div style="position:absolute; left:78%; top:8px; width:2px; height:28px; margin-left:-1px; border-radius:1px; background:oklch(0.5 0.11 140);"></div>
+                    <div style="position:absolute; left:20%; top:6px; width:32px; height:32px; margin-left:-16px; border-radius:50%; background:#1b1e2e; box-shadow:0 0 0 4px #fffdf9, 0 3px 8px rgba(27,30,46,.25);"></div>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; color:rgba(27,30,46,.5);"><span>2026</span><span>2028</span><span>2030</span><span>2032</span><span>2034</span><span>2036</span></div>
+                </div>
+                <div style="display:flex; padding:3px; gap:3px; border-radius:13px; background:rgba(70,45,30,.06);">
+                  <span style="flex:1; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:550;">1 yr</span>
+                  <span style="flex:1; height:32px; border-radius:10px; background:#fffdf9; box-shadow:0 1px 3px rgba(70,45,30,.15); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:650;">2 yrs</span>
+                  <span style="flex:1; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:550;">5 yrs</span>
+                  <span style="flex:1; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:550;">10 yrs</span>
+                  <span style="flex:1.2; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:550;">No date</span>
+                </div>
+              </div>
+              <div style="padding:14px 16px 16px; background:oklch(0.95 0.04 60); display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px;">
+                  <span style="font-size:15.5px; font-weight:650;">85tr a month</span>
+                  <span style="font-size:13px; color:#7a3d14;">your month has 22tr free</span>
+                </div>
+                <span style="font-size:13px; line-height:1.45; color:#7a3d14; text-wrap:pretty;">Too fast for this month’s plan. From August 2034 it fits, the green part of the line.</span>
+                <span style="align-self:flex-start; height:34px; padding:0 14px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; font-size:13px; font-weight:650; display:flex; align-items:center;">Make it Aug 2034</span>
+              </div>
+            </div>
+            <div style="height:56px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Save</div>
+          </div>
+        </div>
+      </x-import>
+
+      <div style="width:320px; display:flex; flex-direction:column; gap:16px; padding-top:8px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55);">WHAT CHANGED FROM <a href="#pot-08" style="color:#f6a46a;">08</a></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><span style="font-size:16px; font-weight:650;">The cost sits on the card</span><span style="font-size:14px; line-height:1.5; color:rgba(246,239,230,.7); text-wrap:pretty;">The monthly set-aside, a day’s share and a fit bar now sit right under Goal and Needed by. Before, they were cut off below the editors.</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><span style="font-size:16px; font-weight:650;">One keypad, units as keys</span><span style="font-size:14px; line-height:1.5; color:rgba(246,239,230,.7); text-wrap:pretty;">Type 2,5, then tap tỷ. The separate unit switch is gone, and there are 4 quick picks instead of 5. The keypad also says what the amount costs a month.</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><span style="font-size:16px; font-weight:650;">A 10-year timeline instead of wheels</span><span style="font-size:14px; line-height:1.5; color:rgba(246,239,230,.7); text-wrap:pretty;">Drag along 2026–2036. The line turns green where the plan fits. Use ‹ › to move one month, or pick 1, 2, 5 or 10 years.</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><span style="font-size:16px; font-weight:650;">Compact header while editing</span><span style="font-size:14px; line-height:1.5; color:rgba(246,239,230,.7); text-wrap:pretty;">With an editor open, the big tile shrinks to a row so the keypad fits without scrolling.</span></div>
+      </div>
+    </div>
+  </section>
+  <!-- 9. PLAN EDITING -->
+  <section id="plan-09" data-screen-label="Plan editing" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">09</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Plan · editing income, bills and goals</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Money in sheet" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.4);"></div>
+          <div style="position:absolute; left:8px; right:8px; bottom:8px; padding:8px 18px 20px; border-radius:44px; background:#f6f0e7; display:flex; flex-direction:column; gap:16px;">
+            <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+            <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; min-height:36px;"><span style="font-size:17px;">Cancel</span><span style="font-size:17px; font-weight:650;">Money in</span><span style="justify-self:end; font-size:17px; font-weight:650;">Save</span></div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <span style="padding:0 6px; font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:rgba(27,30,46,.62);">Income each month</span>
+              <div style="position:relative; height:170px; border-radius:22px; background:#fffdf9; display:grid; grid-template-columns:1fr 1fr 1fr; overflow:hidden;">
+                <div style="position:absolute; left:10px; right:10px; top:63px; height:44px; border-radius:12px; background:rgba(70,45,30,.06);"></div>
+                <div style="position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:22px;"><span style="opacity:.25;">16</span><span style="opacity:.5;">17</span><span style="font-weight:600; font-size:28px;">18</span><span style="opacity:.5;">19</span><span style="opacity:.25;">20</span></div>
+                <div style="position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:22px;"><span style="opacity:.25;">,0</span><span style="opacity:.5;">,2</span><span style="font-weight:600; font-size:28px;">,5</span><span style="opacity:.5;">,8</span><span style="opacity:.25;">,9</span></div>
+                <div style="position:relative; display:flex; align-items:center; justify-content:center; font-size:18px; color:rgba(27,30,46,.62);">triệu</div>
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <span style="padding:0 6px; font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:rgba(27,30,46,.62);">Payday</span>
+              <div style="display:flex; padding:3px; border-radius:13px; background:rgba(70,45,30,.06);">
+                <span style="flex:1; height:36px; border-radius:10px; background:#fffdf9; box-shadow:0 1px 3px rgba(70,45,30,.15); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600;">Same day</span>
+                <span style="flex:1; height:36px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600;">Last day</span>
+                <span style="flex:1; height:36px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600;">It varies</span>
+              </div>
+              <div style="border-radius:22px; background:#fffdf9; padding:13px 16px; display:flex; justify-content:space-between; font-size:15px;"><span style="color:rgba(27,30,46,.62);">Every month on the</span><span style="font-weight:650;">1st</span></div>
+            </div>
+            <div style="font-size:13px; line-height:1.45; color:rgba(27,30,46,.62); padding:0 6px; text-wrap:pretty;">Your daily number moves from 245k to 262k from tomorrow.</div>
+          </div>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Bill sheet" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.4);"></div>
+          <div style="position:absolute; left:8px; right:8px; bottom:8px; padding:8px 18px 20px; border-radius:44px; background:#f6f0e7; display:flex; flex-direction:column; gap:16px;">
+            <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+            <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; min-height:36px;"><span style="font-size:17px;">Cancel</span><span style="font-size:17px; font-weight:650;">Bill</span><span style="justify-self:end; font-size:17px; font-weight:650;">Save</span></div>
+            <div style="border-radius:22px; background:#fffdf9; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+              <span style="width:36px; height:36px; border-radius:11px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:20px; line-height:1;">receipt_long</span>
+              <span style="flex:1; font-size:17px; font-weight:600;">Rent</span>
+            </div>
+            <div style="position:relative; height:170px; border-radius:22px; background:#fffdf9; display:grid; grid-template-columns:1fr 1fr 0.8fr 1fr; overflow:hidden;">
+              <div style="position:absolute; left:10px; right:10px; top:63px; height:44px; border-radius:12px; background:rgba(70,45,30,.06);"></div>
+              <div style="position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:22px;"><span style="opacity:.25;">4</span><span style="opacity:.5;">5</span><span style="font-weight:600; font-size:28px;">6</span><span style="opacity:.5;">7</span><span style="opacity:.25;">8</span></div>
+              <div style="position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:22px;"><span style="opacity:.25;">,0</span><span style="opacity:.5;">,2</span><span style="font-weight:600; font-size:28px;">,5</span><span style="opacity:.5;">,8</span><span style="opacity:.25;">,9</span></div>
+              <div style="position:relative; display:flex; align-items:center; justify-content:center; font-size:16px; color:rgba(27,30,46,.62);">tr</div>
+              <div style="position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; font-size:19px; border-left:0.5px solid rgba(27,30,46,.08);"><span style="opacity:.25;">3</span><span style="opacity:.5;">4</span><span style="font-weight:650; font-size:22px;">5</span><span style="opacity:.5;">6</span><span style="opacity:.25;">7</span></div>
+            </div>
+            <div style="display:flex; justify-content:flex-end; margin-top:-10px; padding-right:14px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; color:rgba(27,30,46,.5);">DUE DAY</div>
+            <div style="height:50px; border-radius:18px; background:#fffdf9; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:600; color:oklch(0.66 0.19 25);">Delete bill</div>
+          </div>
+        </div>
+      </x-import>
+
+      <div style="width:380px; display:flex; flex-direction:column; gap:14px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55);">PLAN HEADER · EDIT</div>
+        <div style="display:flex; align-items:center; gap:10px; padding:0 4px;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:34px;">Plan</span><span style="width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.14); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:18px; line-height:1;">edit</span></div>
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55); padding-top:6px;">BILLS · DUE STATES</div>
+        <div style="border-radius:26px; background:#fffdf9; color:#1b1e2e; padding:0 14px;">
+          <div style="display:flex; align-items:center; gap:12px; padding:12px 0;"><span style="width:32px; height:32px; border-radius:10px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:19px; line-height:1;">wifi</span><div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px;">Internet</span><span style="font-size:12.5px; font-weight:600; color:#b8622a;">Was due 1 Oct</span></div><span style="font-weight:600;">250k</span></div>
+          <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-top:0.5px solid rgba(27,30,46,.08);"><span style="width:32px; height:32px; border-radius:10px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:19px; line-height:1;">bolt</span><div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px;">Electricity</span><span style="font-size:12.5px; font-weight:600; color:#b8622a;">Due today</span></div><span style="font-weight:600;">350k</span></div>
+          <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-top:0.5px solid rgba(27,30,46,.08); color:rgba(27,30,46,.62);"><span style="width:32px; height:32px; border-radius:10px; border:1.5px dashed rgba(27,30,46,.25); box-sizing:border-box; display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:19px; line-height:1;">add</span><span style="font-size:16px;">New bill</span></div>
+        </div>
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55); padding-top:6px;">FUTURE YOU · GOALS</div>
+        <div style="border-radius:26px; background:#fffdf9; color:#1b1e2e; padding:0 14px;">
+          <div style="display:flex; align-items:center; gap:12px; padding:12px 0;"><span style="width:32px; height:32px; border-radius:10px; background:linear-gradient(155deg, oklch(0.9 0.07 80), oklch(0.78 0.12 80)); color:oklch(0.34 0.09 80); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:19px; line-height:1; font-variation-settings:'FILL' 1;">savings</span><div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px;">Emergency fund</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">Share 60%</span></div><span style="font-weight:600;">1,2tr</span></div>
+          <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-top:0.5px solid rgba(27,30,46,.08); color:rgba(27,30,46,.62);"><span style="width:32px; height:32px; border-radius:10px; border:1.5px dashed rgba(27,30,46,.25); box-sizing:border-box; display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:19px; line-height:1;">add</span><span style="font-size:16px;">New goal</span></div>
+        </div>
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55); padding-top:6px;">MONEY RIVER · JOINED MID-CYCLE</div>
+        <div style="display:flex; height:14px; border-radius:8px; overflow:hidden;"><div style="width:22%; background:repeating-linear-gradient(135deg, rgba(255,255,255,.25) 0 4px, rgba(255,255,255,.1) 4px 8px);"></div><div style="width:30%; background:#f6a46a;"></div><div style="width:18%; background:#c4607a;"></div><div style="flex:1; background:rgba(255,255,255,.18);"></div></div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;"><span style="height:26px; padding:0 10px; border-radius:99px; background:rgba(255,255,255,.12); font-size:12px; font-weight:600; display:flex; align-items:center;">Before 6pm · 3,1tr</span><span style="height:26px; padding:0 10px; border-radius:99px; background:rgba(255,255,255,.12); font-size:12px; font-weight:600; display:flex; align-items:center;">Spent · 4,2tr</span></div>
+      </div>
+    </div>
+  </section>
+  <!-- 9B. PLAN EDITING REVAMP -->
+  <section id="plan-09b" data-screen-label="Plan editing revamp" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">09B</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Plan editing · revamp: money in and bills</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Money in · income keypad" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.4);"></div>
+          <div style="position:absolute; left:8px; right:8px; bottom:8px; padding:8px 18px 18px; border-radius:44px; background:#f6f0e7; display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="width:70px; font-size:16px; color:rgba(27,30,46,.62);">Cancel</span><span style="font-size:17px; font-weight:650;">Money in</span><span style="width:70px;"></span></div>
+            </div>
+            <div style="border-radius:22px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.08); overflow:hidden;">
+              <div style="display:flex; align-items:center; gap:12px; padding:0 16px; min-height:52px; ">
+                <span style="flex:1; font-size:16px;">Income each month</span>
+                <span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:22px; color:rgba(27,30,46,.45);">expand_less</span>
+              </div>
+              <div style="padding:0 14px 14px; display:flex; flex-direction:column; gap:12px;">
+                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; padding:2px 0 4px;">
+                  <div style="display:flex; align-items:baseline; gap:8px;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:58px; line-height:1; letter-spacing:-.025em; font-variant-numeric:tabular-nums;">18,5</span><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:26px; color:rgba(27,30,46,.55);">triệu</span></div>
+                  <span style="font-size:13px; color:rgba(27,30,46,.55); font-variant-numeric:tabular-nums;">18.500.000₫ · was 18tr</span>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)) minmax(0,.9fr); gap:6px;">
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">1</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">2</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">3</span>
+                  <span style="height:48px; border-radius:15px; box-shadow:inset 0 0 0 1px rgba(27,30,46,.12); display:flex; align-items:center; justify-content:center; font-size:14.5px; font-weight:650;">nghìn</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">4</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">5</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">6</span>
+                  <span style="height:48px; border-radius:15px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-size:14.5px; font-weight:650;">triệu</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">7</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">8</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">9</span>
+                  <span style="height:48px; border-radius:15px; box-shadow:inset 0 0 0 1px rgba(27,30,46,.12); display:flex; align-items:center; justify-content:center; font-size:14.5px; font-weight:650;">tỷ</span>
+                  <span style="height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">,</span>
+                  <span style="grid-column:span 2; height:48px; border-radius:15px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:24px;">0</span>
+                  <span style="height:48px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; line-height:1; font-size:22px;">backspace</span>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px; padding:0 16px; min-height:58px; border-top:0.5px solid rgba(27,30,46,.08);">
+                <span style="flex:1; font-size:16px;">Payday</span>
+                <span style="display:flex; flex-direction:column; align-items:flex-end; padding:10px 0;"><span style="font-size:17px; font-weight:650; font-variant-numeric:tabular-nums;">Last day</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">of each month</span></span>
+                <span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:22px; color:rgba(27,30,46,.45);">expand_more</span>
+              </div>
+              <div style="padding:14px 16px 16px; background:oklch(0.96 0.03 140); display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px;"><span style="font-size:15.5px; font-weight:650;">262k a day</span><span style="font-size:13px; color:rgba(27,30,46,.62);">was 245k</span></div>
+                <span style="font-size:12.5px; line-height:1.45; color:oklch(0.38 0.08 140); text-wrap:pretty;">From tomorrow. 500k more a month spreads over the 30 days left.</span>
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <div style="height:56px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Save</div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Money in · payday" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.4);"></div>
+          <div style="position:absolute; left:8px; right:8px; bottom:8px; padding:8px 18px 18px; border-radius:44px; background:#f6f0e7; display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="width:70px; font-size:16px; color:rgba(27,30,46,.62);">Cancel</span><span style="font-size:17px; font-weight:650;">Money in</span><span style="width:70px;"></span></div>
+            </div>
+            <div style="border-radius:22px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.08); overflow:hidden;">
+              <div style="display:flex; align-items:center; gap:12px; padding:0 16px; min-height:58px; ">
+                <span style="flex:1; font-size:16px;">Income each month</span>
+                <span style="display:flex; flex-direction:column; align-items:flex-end; padding:10px 0;"><span style="font-size:17px; font-weight:650; font-variant-numeric:tabular-nums;">18,5tr</span></span>
+                <span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:22px; color:rgba(27,30,46,.45);">expand_more</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px; padding:0 16px; min-height:52px; border-top:0.5px solid rgba(27,30,46,.08);">
+                <span style="flex:1; font-size:16px;">Payday</span>
+                <span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:22px; color:rgba(27,30,46,.45);">expand_less</span>
+              </div>
+              <div style="padding:0 8px 12px; display:flex; flex-direction:column; gap:2px;">
+                <div style="display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:16px; background:rgba(70,45,30,.06);">
+                  <span style="width:22px; height:22px; border-radius:50%; box-sizing:border-box; border:7px solid #1b1e2e;"></span>
+                  <span style="flex:1; display:flex; flex-direction:column; gap:1px;"><span style="font-size:15.5px; font-weight:650;">Same day each month</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">Salary lands on a fixed date</span></span>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:4px; padding:6px 8px 10px;"><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">1</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">2</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">3</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">4</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">5</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">6</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">7</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">8</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">9</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">10</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">11</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">12</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">13</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">14</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">15</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">16</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">17</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">18</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">19</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">20</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">21</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">22</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">23</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">24</span><span style="height:36px; border-radius:11px; background:#1b1e2e; color:#fbf4ec; font-weight:650; display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">25</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">26</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">27</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">28</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">29</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">30</span><span style="height:36px; border-radius:11px;  display:flex; align-items:center; justify-content:center; font-size:15px; font-variant-numeric:tabular-nums;">31</span></div>
+                <div style="display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:16px; ">
+                  <span style="width:22px; height:22px; border-radius:50%; box-sizing:border-box; border:1.5px solid rgba(27,30,46,.3);"></span>
+                  <span style="flex:1; display:flex; flex-direction:column; gap:1px;"><span style="font-size:15.5px; font-weight:500;">Last day of the month</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">Moves with short months</span></span>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:16px; ">
+                  <span style="width:22px; height:22px; border-radius:50%; box-sizing:border-box; border:1.5px solid rgba(27,30,46,.3);"></span>
+                  <span style="flex:1; display:flex; flex-direction:column; gap:1px;"><span style="font-size:15.5px; font-weight:500;">It varies</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">6pm asks you each time pay lands</span></span>
+                </div>
+              </div>
+              <div style="padding:14px 16px 16px; background:oklch(0.96 0.03 250); display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px;"><span style="font-size:15.5px; font-weight:650;">Next cycle starts 25 Oct</span><span style="font-size:13px; color:rgba(27,30,46,.62);">10 days away</span></div>
+                <span style="font-size:12.5px; line-height:1.45; color:oklch(0.38 0.08 250); text-wrap:pretty;">Days until then use what is left of this cycle. Your daily number stays at 262k.</span>
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <div style="height:56px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Save</div>
+            </div>
+          </div>
+        </div>
+      </x-import>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:07" hint-size="402px,874px">
+        <div data-screen-label="Bill · edit" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.4);"></div>
+          <div style="position:absolute; left:8px; right:8px; bottom:8px; padding:8px 18px 18px; border-radius:44px; background:#f6f0e7; display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.62); opacity:.35;"></div>
+              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="width:70px; font-size:16px; color:rgba(27,30,46,.62);">Cancel</span><span style="font-size:17px; font-weight:650;">Edit bill</span><span style="width:70px;"></span></div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+              <span style="position:relative; width:64px; height:64px; border-radius:22px; background:linear-gradient(155deg, oklch(0.9 0.07 250), oklch(0.78 0.12 250)); color:oklch(0.34 0.09 250); box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 8px 20px rgba(30,10,40,.18); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; line-height:1; font-size:34px; font-variation-settings:'FILL' 1;">home_work</span>
+              <span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:28px; letter-spacing:-.015em;">Rent</span>
+            </div>
+            <div style="border-radius:22px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.08); overflow:hidden;">
+              <div style="display:flex; align-items:center; gap:12px; padding:0 16px; min-height:58px; ">
+                <span style="flex:1; font-size:16px;">Each month</span>
+                <span style="display:flex; flex-direction:column; align-items:flex-end; padding:10px 0;"><span style="font-size:17px; font-weight:650; font-variant-numeric:tabular-nums;">6,5tr</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">was 6tr</span></span>
+                <span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:22px; color:rgba(27,30,46,.45);">expand_more</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px; padding:0 16px; min-height:58px; border-top:0.5px solid rgba(27,30,46,.08);">
+                <span style="flex:1; font-size:16px;">Due</span>
+                <span style="display:flex; flex-direction:column; align-items:flex-end; padding:10px 0;"><span style="font-size:17px; font-weight:650; font-variant-numeric:tabular-nums;">5th</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">next: Wed 5 Nov</span></span>
+                <span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:22px; color:rgba(27,30,46,.45);">expand_more</span>
+              </div>
+              <div style="padding:14px 16px 16px; background:oklch(0.96 0.03 60); display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px;"><span style="font-size:15.5px; font-weight:650;">245k a day</span><span style="font-size:13px; color:rgba(27,30,46,.62);">was 262k</span></div>
+                <span style="font-size:12.5px; line-height:1.45; color:#7a3d14; text-wrap:pretty;">The extra 500k comes out before your daily number. Already paid this cycle, so it starts in November.</span>
+              </div>
+            </div>
+            <div style="flex:1;"></div>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <div style="height:56px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Save</div>
+              <span style="height:44px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:600; color:rgba(27,30,46,.62);">Delete bill</span>
+            </div>
+          </div>
+        </div>
+      </x-import>
+      <div style="width:320px; display:flex; flex-direction:column; gap:16px; padding-top:8px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55);">WHAT CHANGED FROM <a href="#plan-09" style="color:#f6a46a;">09</a></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><span style="font-size:16px; font-weight:650;">Same sheet as pots</span><span style="font-size:14px; line-height:1.5; color:rgba(246,239,230,.7); text-wrap:pretty;">Money in and bills use the card from <a href="#pot-08b" style="color:#f6a46a;">08B</a>: rows that open in place, the same keypad, Save at the bottom. The Save in the header is gone.</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><span style="font-size:16px; font-weight:650;">Keypad instead of decimal wheels</span><span style="font-size:14px; line-height:1.5; color:rgba(246,239,230,.7); text-wrap:pretty;">18 + ,5 + triệu across three wheels was hard to read. Now you type 18,5 and tap triệu.</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><span style="font-size:16px; font-weight:650;">Payday as choices</span><span style="font-size:14px; line-height:1.5; color:rgba(246,239,230,.7); text-wrap:pretty;">Three options, each with a line explaining it. Same day opens a 1–31 grid, which replaces the wheel and the extra row.</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><span style="font-size:16px; font-weight:650;">Every change shows its effect on the daily number</span><span style="font-size:14px; line-height:1.5; color:rgba(246,239,230,.7); text-wrap:pretty;">Green when it goes up, amber when it goes down, with a line on when it starts.</span></div>
+      </div>
+    </div>
+  </section>
+  <!-- 11. CAPTURE GUIDE -->
+  <section data-screen-label="Capture guide" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">11</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Capture guide · walkthroughs and the Gmail check</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="14:22" hint-size="402px,874px">
+        <div data-screen-label="Guide · Apple Pay step 2" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:#2a2236;">
+          <div style="position:absolute; left:0; right:0; top:62px; bottom:0; border-radius:40px 40px 0 0; background:#f6f0e7; display:flex; flex-direction:column; padding:8px 18px 30px; box-sizing:border-box; gap:14px;">
+            <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.2);"></div>
+            <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; min-height:44px;"><span style="font-size:17px; color:rgba(27,30,46,.62);">Back</span><div style="font-size:17px; font-weight:650;">Apple Pay taps</div><div style="justify-self:end; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; color:rgba(27,30,46,.55);">2 / 4</div></div>
+            <div style="display:flex; gap:4px;"><span style="flex:1; height:4px; border-radius:4px; background:#1b1e2e;"></span><span style="flex:1; height:4px; border-radius:4px; background:#1b1e2e;"></span><span style="flex:1; height:4px; border-radius:4px; background:rgba(27,30,46,.14);"></span><span style="flex:1; height:4px; border-radius:4px; background:rgba(27,30,46,.14);"></span></div>
+            <div style="height:330px; border-radius:26px; background:#1a1622; padding:18px; box-sizing:border-box; display:flex; flex-direction:column; gap:10px; color:#f3eef8;">
+              <div style="font-size:12px; font-weight:600; letter-spacing:.05em; color:rgba(243,238,248,.55);">SHORTCUTS · AUTOMATION</div>
+              <div style="border-radius:16px; background:#2b2535; padding:12px 14px; display:flex; align-items:center; gap:12px;"><span style="width:34px; height:34px; border-radius:9px; background:#111; display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:20px; line-height:1;">wallet</span><div style="flex:1; display:flex; flex-direction:column;"><span style="font-size:15px; font-weight:600;">Wallet</span><span style="font-size:12px; color:rgba(243,238,248,.6);">When I tap any card</span></div></div>
+              <div style="align-self:center; font-family:'Material Symbols Rounded'; font-size:22px; line-height:1; color:rgba(243,238,248,.4);">arrow_downward</div>
+              <div style="border-radius:16px; background:#2b2535; padding:12px 14px; display:flex; align-items:center; gap:12px; box-shadow:0 0 0 2px #ff8552;"><span style="width:34px; height:34px; border-radius:9px; background:linear-gradient(180deg,#3b3270 0%,#c4607a 62%,#f0975a 100%);"></span><div style="flex:1; display:flex; flex-direction:column;"><span style="font-size:15px; font-weight:600;">Log to 6pm</span><span style="font-size:12px; color:rgba(243,238,248,.6);">Amount · Merchant · Card</span></div></div>
+              <div style="margin-top:auto; font-size:12.5px; color:rgba(243,238,248,.6);">Run Immediately: on. Notify When Run: off.</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px; padding:0 4px;"><div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:26px; letter-spacing:-.02em; line-height:1.05;">Add “Log to 6pm” as the action</div><div style="font-size:15px; line-height:1.45; color:rgba(27,30,46,.62); text-wrap:pretty;">Search 6pm in the actions list. Turn on Run Immediately so it never asks.</div></div>
+            <div style="flex:1;"></div>
+            <div style="display:flex; gap:10px;"><span style="height:56px; padding:0 22px; border-radius:99px; background:rgba(70,45,30,.08); display:flex; align-items:center; font-weight:650; font-size:16px;">Open Shortcuts</span><span style="flex:1; height:56px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Next</span></div>
+          </div>
+        </div>
+      </x-import>
+      <div style="width:360px; display:flex; flex-direction:column; gap:14px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55);">GMAIL · CONFIRM THE FIRST CATCH</div>
+        <div style="border-radius:26px; background:#fffdf9; color:#1b1e2e; padding:16px; display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; align-items:center; gap:10px;"><span style="width:32px; height:32px; border-radius:10px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:19px; line-height:1;">mail</span><div style="flex:1; display:flex; flex-direction:column;"><span style="font-size:15px; font-weight:650;">Is this right?</span><span style="font-size:12px; color:rgba(27,30,46,.55);">From a VCB receipt · 09:14</span></div></div>
+          <div style="border-radius:18px; background:#f6f0e7; padding:12px 14px; display:flex; justify-content:space-between; align-items:baseline;"><span style="font-size:15px;">Grab · Ride</span><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:22px; font-weight:600; font-variant-numeric:tabular-nums;">48.000₫</span></div>
+          <div style="font-size:13px; line-height:1.45; color:rgba(27,30,46,.62); text-wrap:pretty;">Say yes once and receipts like this go straight to the Inbox.</div>
+          <div style="display:flex; gap:8px;"><span style="flex:1; height:44px; border-radius:99px; background:rgba(70,45,30,.08); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:650;">Not right</span><span style="flex:1; height:44px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:650;">Yes, that’s it</span></div>
+        </div>
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55); padding-top:6px;">OTHER MAIL · FORWARD ADDRESS</div>
+        <div style="border-radius:26px; background:#fffdf9; color:#1b1e2e; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <div style="font-size:14px; line-height:1.45; color:rgba(27,30,46,.62);">Outlook, iCloud or work mail: forward receipts to</div>
+          <div style="height:46px; border-radius:14px; background:#f6f0e7; display:flex; align-items:center; justify-content:space-between; padding:0 14px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:14px;">minh.k7@in.6pm.app<span style="font-family:'Material Symbols Rounded'; font-size:19px; line-height:1;">content_copy</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 12. WIDGETS GUIDE -->
+  <section data-screen-label="Widgets guide" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">12</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Widgets and controls guide</span></div>
+    <div style="max-width:880px; border-radius:32px; background:#f6f0e7; color:#1b1e2e; padding:22px; display:grid; grid-template-columns:repeat(auto-fill, minmax(190px,1fr)); gap:12px;">
+      <div style="grid-column:1 / -1; display:flex; flex-direction:column; gap:4px; padding:0 4px 6px;"><div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:28px; letter-spacing:-.02em;">Put 6pm one tap away</div><div style="font-size:14.5px; color:rgba(27,30,46,.62);">Each tile shows what it looks like, then how to add it.</div></div>
+      <div style="border-radius:22px; background:#fffdf9; padding:12px; display:flex; flex-direction:column; gap:10px;"><div style="height:110px; border-radius:16px; background:linear-gradient(180deg,#3b3270,#c4607a 62%,#f0975a); display:flex; align-items:flex-end; padding:10px; box-sizing:border-box; color:#fff;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:24px; font-weight:600;">412k</span></div><span style="font-size:15px; font-weight:650;">Home Screen</span><span style="font-size:12.5px; color:rgba(27,30,46,.6);">Hold the Home Screen, tap +</span></div>
+      <div style="border-radius:22px; background:#fffdf9; padding:12px; display:flex; flex-direction:column; gap:10px;"><div style="height:110px; border-radius:16px; background:#1a1622; display:flex; align-items:center; justify-content:center; gap:8px;"><span style="width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.14); display:flex; align-items:center; justify-content:center; color:#fff; font-family:'Material Symbols Rounded'; font-size:22px; line-height:1;">add</span><span style="width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.14); display:flex; align-items:center; justify-content:center; color:#fff; font-family:'Material Symbols Rounded'; font-size:22px; line-height:1;">qr_code_scanner</span></div><span style="font-size:15px; font-weight:650;">Lock Screen</span><span style="font-size:12.5px; color:rgba(27,30,46,.6);">Hold the Lock Screen, Customize</span></div>
+      <div style="border-radius:22px; background:#fffdf9; padding:12px; display:flex; flex-direction:column; gap:10px;"><div style="height:110px; border-radius:16px; background:#3a3550; display:grid; grid-template-columns:repeat(2,52px); gap:8px; place-content:center;"><span style="height:52px; border-radius:16px; background:#ff8552;"></span><span style="height:52px; border-radius:16px; background:rgba(255,255,255,.2);"></span></div><span style="font-size:15px; font-weight:650;">Control Center</span><span style="font-size:12.5px; color:rgba(27,30,46,.6);">Swipe down, tap +, find 6pm</span></div>
+      <div style="border-radius:22px; background:#fffdf9; padding:12px; display:flex; flex-direction:column; gap:10px;"><div style="height:110px; border-radius:16px; background:#2b2a30; display:flex; align-items:center; justify-content:flex-end; padding-right:18px;"><span style="width:12px; height:46px; border-radius:6px; background:#ff8552;"></span></div><span style="font-size:15px; font-weight:650;">Action button</span><span style="font-size:12.5px; color:rgba(27,30,46,.6);">Settings › Action Button › Controls</span></div>
+    </div>
+  </section>
+  <!-- 13. SHARE CARD -->
+  <section data-screen-label="Share card" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">13</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Share card · several photos, foreign money</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start;">
+      <div style="width:360px; border-radius:30px; background:#fbf8f3; color:#1f1a28; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px; box-shadow:0 20px 50px rgba(0,0,0,.35);">
+        <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:15px; font-weight:650;">3 receipts</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; color:rgba(31,26,40,.55);">READING 2 OF 3</span></div>
+        <div style="display:flex; gap:8px;"><span style="flex:1; height:74px; border-radius:14px; background:#e7ded3; box-shadow:0 0 0 2px oklch(0.55 0.13 150);"></span><span style="flex:1; height:74px; border-radius:14px; background:#e7ded3; box-shadow:0 0 0 2px #ff8552;"></span><span style="flex:1; height:74px; border-radius:14px; background:#efe9e2; opacity:.6;"></span></div>
+        <div style="border-radius:18px; background:#fff; padding:0 14px;">
+          <div style="display:flex; justify-content:space-between; padding:12px 0;"><span style="font-size:15px;">Circle K</span><span style="font-weight:650; font-variant-numeric:tabular-nums;">32.000₫</span></div>
+          <div style="display:flex; justify-content:space-between; padding:12px 0; border-top:0.5px solid rgba(31,26,40,.08); color:rgba(31,26,40,.5);"><span style="font-size:15px;">Reading closer…</span><span style="width:60px; height:12px; border-radius:6px; background:rgba(31,26,40,.08); align-self:center;"></span></div>
+        </div>
+        <div style="height:50px; border-radius:99px; background:#1f1a28; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650;">Add 1 now · rest when ready</div>
+      </div>
+      <div style="width:360px; border-radius:30px; background:#fbf8f3; color:#1f1a28; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px; box-shadow:0 20px 50px rgba(0,0,0,.35);">
+        <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:15px; font-weight:650;">Ichiran · Shibuya</span><span style="height:24px; padding:0 9px; border-radius:99px; background:rgba(31,26,40,.07); font-size:12px; font-weight:650; display:flex; align-items:center;">JPY</span></div>
+        <div style="display:flex; flex-direction:column; gap:2px; align-items:center; padding:10px 0;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:44px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums;">¥1,280</span><span style="font-size:14px; color:rgba(31,26,40,.6); font-variant-numeric:tabular-nums;">≈ 221.000₫ · today’s rate</span></div>
+        <div style="font-size:12.5px; line-height:1.4; color:rgba(31,26,40,.6); text-align:center; text-wrap:pretty;">Counts in đồng. The yen stays on the entry.</div>
+        <div style="height:50px; border-radius:99px; background:#1f1a28; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650;">Add to Inbox</div>
+      </div>
+      <div data-screen-label="Share card · no rate yet" style="width:360px; border-radius:30px; background:#fbf8f3; color:#1f1a28; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px; box-shadow:0 20px 50px rgba(0,0,0,.35);">
+        <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:15px; font-weight:650;">Toast Box · Changi T3</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; color:rgba(31,26,40,.55);">NO RATE YET</span></div>
+        <div style="display:flex; flex-direction:column; gap:4px; align-items:center; padding:10px 0;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:44px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums;">S$68,80</span><span style="font-size:13.5px; line-height:1.4; color:rgba(31,26,40,.6); text-align:center; text-wrap:pretty; max-width:280px;">No rate yet. 6pm prices it at that day’s rate once it has one.</span></div>
+        <div style="border-radius:18px; background:#fff; padding:0 14px;">
+          <div style="display:flex; justify-content:space-between; padding:12px 0;"><span style="font-size:15px; color:rgba(31,26,40,.6);">Currency</span><span style="font-size:15px; font-weight:650;">SGD · printed</span></div>
+          <div style="display:flex; justify-content:space-between; padding:12px 0; border-top:0.5px solid rgba(31,26,40,.08);"><span style="font-size:15px; color:rgba(31,26,40,.6);">Category</span><span style="font-size:15px; font-weight:650;">Food</span></div>
+        </div>
+        <div style="height:50px; border-radius:99px; background:#1f1a28; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650;">Add to Inbox</div>
+      </div>
+      <div data-screen-label="Share card · currency not printed" style="width:360px; border-radius:30px; background:#fbf8f3; color:#1f1a28; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px; box-shadow:0 20px 50px rgba(0,0,0,.35);">
+        <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:15px; font-weight:650;">Warung Made</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; color:#c2532d;">GUESSED</span></div>
+        <div style="display:flex; flex-direction:column; gap:2px; align-items:center; padding:10px 0;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:44px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums;">Rp496.650</span><span style="font-size:14px; color:rgba(31,26,40,.6); font-variant-numeric:tabular-nums;">≈ 780.000₫</span></div>
+        <div style="position:relative; border-radius:18px; background:#fff; padding:0 14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 0;"><span style="font-size:15px; color:rgba(31,26,40,.6);">Currency</span><span style="height:30px; padding:0 8px 0 12px; border-radius:99px; border:1px dashed rgba(31,26,40,.35); font-size:14px; font-weight:650; display:flex; align-items:center; gap:2px;">IDR<span style="font-family:'Material Symbols Rounded'; font-size:18px; line-height:1;">unfold_more</span></span></div>
+          <div style="display:flex; justify-content:space-between; padding:12px 0; border-top:0.5px solid rgba(31,26,40,.08);"><span style="font-size:15px; color:rgba(31,26,40,.6);">Category</span><span style="font-size:15px; font-weight:650;">Food</span></div>
+        </div>
+        <div style="font-size:12.5px; line-height:1.4; color:rgba(31,26,40,.6); text-align:center; text-wrap:pretty;">The receipt doesn’t print its currency. Tap it to check.</div>
+        <div style="border-radius:18px; background:#fff; box-shadow:0 10px 30px rgba(31,26,40,.14); padding:6px 0; display:flex; flex-direction:column;">
+          <div style="display:flex; justify-content:space-between; padding:9px 14px; font-size:15px; font-weight:650;"><span>IDR · the guess</span><span style="font-family:'Material Symbols Rounded'; font-size:18px; line-height:1;">check</span></div>
+          <div style="padding:9px 14px; font-size:15px; border-top:0.5px solid rgba(31,26,40,.08);">VND · đồng</div>
+          <div style="padding:9px 14px; font-size:15px; border-top:0.5px solid rgba(31,26,40,.08);">THB · this trip</div>
+          <div style="padding:9px 14px; font-size:13px; color:rgba(31,26,40,.55); border-top:0.5px solid rgba(31,26,40,.08);">SGD · MYR · USD · EUR · JPY · KRW · CNY</div>
+        </div>
+        <div style="font-size:12px; line-height:1.4; color:rgba(31,26,40,.5); text-align:center; text-wrap:pretty;">Picking one, even the guess, re-prices the card and clears the guess mark.</div>
+      </div>
+    </div>
+  </section>
+  <!-- 14. SCAN + TRAVEL -->
+  <section data-screen-label="Scan and travel" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">14</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Scan and Travel mode</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start;">
+      <div style="width:360px; border-radius:30px; background:#fbf8f3; color:#1f1a28; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; color:rgba(31,26,40,.55);">QR WITHOUT AN AMOUNT</div>
+        <div style="display:flex; align-items:center; gap:10px;"><img src="apps/mobile/assets/banks/vcb.png" style="width:34px; height:34px; border-radius:10px; object-fit:contain; background:#fff;"></img><div style="display:flex; flex-direction:column;"><span style="font-size:15px; font-weight:650;">Bánh Mì Cô Ba</span><span style="font-size:12px; color:rgba(31,26,40,.55);">NAPAS shop QR · VCB</span></div></div>
+        <div style="text-align:center; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:44px; font-weight:600; font-variant-numeric:tabular-nums; padding:6px 0;">25<span style="color:rgba(31,26,40,.3);">.000₫</span></div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px;"><span style="height:44px; border-radius:12px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:20px;">1</span><span style="height:44px; border-radius:12px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:20px;">2</span><span style="height:44px; border-radius:12px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:20px;">3</span><span style="height:44px; border-radius:12px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:650;">000</span><span style="height:44px; border-radius:12px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:20px;">0</span><span style="height:44px; border-radius:12px; background:#fff; display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:20px; line-height:1;">backspace</span></div>
+        <div style="height:50px; border-radius:99px; background:#1f1a28; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650;">Log and open MB Bank</div>
+      </div>
+      <div style="width:360px; display:flex; flex-direction:column; gap:12px;">
+        <div style="border-radius:26px; background:#fbf8f3; color:#1f1a28; padding:16px; display:flex; flex-direction:column; gap:10px;">
+          <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; color:rgba(31,26,40,.55);">BANK HAND-OFF · RETURNED</div>
+          <div style="font-size:15px; line-height:1.4;">Back from MB Bank. Did 25.000₫ go through?</div>
+          <div style="display:flex; gap:8px;"><span style="flex:1; height:42px; border-radius:99px; background:rgba(31,26,40,.07); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:650;">Didn’t pay</span><span style="flex:1; height:42px; border-radius:99px; background:#1f1a28; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:650;">Paid</span></div>
+        </div>
+        <div style="border-radius:26px; background:#fbf8f3; color:#1f1a28; padding:0 14px;">
+          <div style="display:flex; align-items:center; gap:12px; padding:13px 0;"><span style="width:32px; height:32px; border-radius:10px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:19px; line-height:1;">flight</span><span style="flex:1; font-size:16px;">Travel mode</span><span style="font-size:15px; color:rgba(31,26,40,.6);">Japan · JPY</span></div>
+        </div>
+        <div style="border-radius:26px; background:#1f1a28; color:#f3eef8; padding:14px 16px; display:flex; align-items:center; gap:12px;"><span style="width:36px; height:36px; border-radius:10px; background:linear-gradient(180deg,#3b3270 0%,#c4607a 62%,#f0975a 100%);"></span><div style="flex:1; display:flex; flex-direction:column;"><span style="font-size:13px; color:rgba(243,238,248,.6);">Live Activity · Tokyo day 3</span><span style="font-size:17px; font-weight:650; font-variant-numeric:tabular-nums;">¥8,400 today · 1.45tr₫</span></div></div>
+        <div style="font-size:13px; line-height:1.5; color:rgba(246,239,230,.7);">Quick add gets a currency key while travel mode is on; foreign QR codes open the same keypad in the local currency.</div>
+      </div>
+    </div>
+  </section>
+  <!-- 15. ASK 6PM -->
+  <section data-screen-label="Ask 6pm sheet" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">15</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Ask 6pm · as a sheet, and its answers</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="19:40" hint-size="402px,874px">
+        <div data-screen-label="Ask sheet" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%);">
+          <div style="position:absolute; inset:0; background:rgba(10,6,18,.36);"></div>
+          <div style="position:absolute; left:0; right:0; top:300px; bottom:0; border-radius:40px 40px 0 0; background:#f6f0e7; display:flex; flex-direction:column; padding:8px 16px 30px; box-sizing:border-box; gap:12px;">
+            <div style="align-self:center; width:36px; height:5px; border-radius:9px; background:rgba(27,30,46,.2);"></div>
+            <div style="align-self:flex-end; max-width:260px; border-radius:20px 20px 6px 20px; background:#1b1e2e; color:#fbf4ec; padding:10px 14px; font-size:15px;">How much on coffee this month?</div>
+            <div style="border-radius:22px; background:#fffdf9; padding:14px; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; align-items:baseline; justify-content:space-between;"><span style="font-size:14px; color:rgba(27,30,46,.62);">Coffee · October</span><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:28px; font-weight:600; font-variant-numeric:tabular-nums;">640k</span></div>
+              <div style="display:flex; gap:3px; align-items:flex-end; height:44px;"><span style="flex:1; height:40%; border-radius:3px; background:rgba(27,30,46,.14);"></span><span style="flex:1; height:70%; border-radius:3px; background:rgba(27,30,46,.14);"></span><span style="flex:1; height:30%; border-radius:3px; background:rgba(27,30,46,.14);"></span><span style="flex:1; height:90%; border-radius:3px; background:#ff8552;"></span><span style="flex:1; height:55%; border-radius:3px; background:rgba(27,30,46,.14);"></span></div>
+              <div style="font-size:14px; line-height:1.45; text-wrap:pretty;">14 cups, mostly Highlands. That’s 120k more than September.</div>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;"><span style="height:34px; padding:0 12px; border-radius:99px; background:rgba(70,45,30,.07); font-size:13px; font-weight:600; display:flex; align-items:center;">Compare to last month</span><span style="height:34px; padding:0 12px; border-radius:99px; background:rgba(70,45,30,.07); font-size:13px; font-weight:600; display:flex; align-items:center;">Show the cups</span></div>
+            <div style="flex:1;"></div>
+            <div style="height:50px; border-radius:99px; background:#fffdf9; display:flex; align-items:center; padding:0 6px 0 16px; gap:8px;"><span style="flex:1; font-size:16px; color:rgba(27,30,46,.45);">Ask about your money</span><span style="width:38px; height:38px; border-radius:50%; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:20px; line-height:1;">mic</span></div>
+          </div>
+        </div>
+      </x-import>
+      <div style="width:360px; display:flex; flex-direction:column; gap:12px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55);">ANSWER STATES</div>
+        <div style="border-radius:22px; background:#fffdf9; color:#1b1e2e; padding:14px; display:flex; align-items:center; gap:10px;"><span style="width:22px; height:22px; border-radius:50%; border:2.5px solid rgba(27,30,46,.15); border-top-color:#ff8552; box-sizing:border-box;"></span><span style="font-size:14.5px; color:rgba(27,30,46,.62);">Looking through October…</span></div>
+        <div style="border-radius:22px; background:#fffdf9; color:#1b1e2e; padding:14px; font-size:14.5px; line-height:1.45;">Nothing on coffee yet this month. Want me to watch for it?</div>
+        <div style="border-radius:22px; background:#fffdf9; color:#1b1e2e; padding:14px; display:flex; flex-direction:column; gap:10px;"><span style="font-size:14.5px; line-height:1.45;">Move 200k from Eating out to Coffee?</span><div style="display:flex; gap:8px;"><span style="flex:1; height:40px; border-radius:99px; background:rgba(70,45,30,.08); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:650;">Not now</span><span style="flex:1; height:40px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:650;">Move it</span></div></div>
+        <div style="border-radius:22px; background:#fffdf9; color:#1b1e2e; padding:14px; font-size:14.5px; line-height:1.45; color:rgba(27,30,46,.7);">Can’t reach 6pm right now. Your question is saved; try again in a moment.</div>
+      </div>
+    </div>
+  </section>
+  <!-- 16. DIARY + SETTINGS -->
+  <section data-screen-label="Diary and settings" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">16</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Diary year books, empty and missed days · Settings</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start;">
+      <div style="width:360px; border-radius:30px; background:#f6f0e7; color:#1b1e2e; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; color:rgba(27,30,46,.55);">YEAR BOOKS</div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
+          <div style="display:flex; flex-direction:column; gap:6px; align-items:center;"><div style="width:100%; height:120px; border-radius:6px 14px 14px 6px; background:linear-gradient(180deg,#3b3270,#c4607a 62%,#f0975a); box-shadow:inset 6px 0 0 rgba(0,0,0,.18);"></div><span style="font-size:13px; font-weight:650;">2025</span></div>
+          <div style="display:flex; flex-direction:column; gap:6px; align-items:center;"><div style="position:relative; width:100%; height:120px; border-radius:6px 14px 14px 6px; background:repeating-linear-gradient(90deg, rgba(27,30,46,.08) 0 8px, rgba(27,30,46,.04) 8px 16px);"><span style="position:absolute; left:8px; right:8px; bottom:10px; height:4px; border-radius:4px; background:rgba(27,30,46,.1);"><span style="display:block; width:80%; height:100%; border-radius:4px; background:#ff8552;"></span></span></div><span style="font-size:13px; font-weight:650;">2026</span><span style="font-size:11px; color:rgba(27,30,46,.55);">Binding · 292 of 365</span></div>
+          <div style="display:flex; flex-direction:column; gap:6px; align-items:center;"><div style="width:100%; height:120px; border-radius:6px 14px 14px 6px; background:rgba(27,30,46,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:24px; line-height:1; color:rgba(27,30,46,.35);">lock</div><span style="font-size:13px; font-weight:650; color:rgba(27,30,46,.5);">2027</span></div>
+        </div>
+      </div>
+      <div style="width:360px; display:flex; flex-direction:column; gap:12px;">
+        <div style="border-radius:26px; background:#fffdf9; color:#1b1e2e; padding:22px 18px; display:flex; flex-direction:column; gap:8px; align-items:center; text-align:center;"><dusk-buddy size="64" mood="sleepy"></dusk-buddy><span style="font-size:16px; font-weight:650;">No pages yet</span><span style="font-size:13.5px; line-height:1.45; color:rgba(27,30,46,.62); text-wrap:pretty;">Your first page writes itself after tonight’s close at 18:00.</span></div>
+        <div style="border-radius:26px; background:#fffdf9; color:#1b1e2e; padding:16px; display:flex; flex-direction:column; gap:10px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; color:rgba(27,30,46,.55);">MISSED · TUE 13 OCT</span><span style="font-size:15px; line-height:1.4;">You skipped Tuesday’s close. 3 things are still waiting.</span><div style="display:flex; gap:8px;"><span style="flex:1; height:42px; border-radius:99px; background:rgba(70,45,30,.08); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:650;">Leave it blank</span><span style="flex:1; height:42px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:650;">Close it now</span></div></div>
+      </div>
+      <div style="width:360px; border-radius:26px; background:#fffdf9; color:#1b1e2e; padding:0 14px; box-sizing:border-box;">
+        <div style="display:flex; align-items:center; gap:12px; padding:13px 0;"><span style="width:32px; height:32px; border-radius:10px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:19px; line-height:1;">schedule</span><span style="flex:1; font-size:16px;">Close time</span><span style="font-size:15px; color:rgba(27,30,46,.6); font-variant-numeric:tabular-nums;">18:00</span></div>
+        <div style="display:flex; align-items:center; gap:12px; padding:13px 0; border-top:0.5px solid rgba(27,30,46,.08);"><span style="width:32px; height:32px; border-radius:10px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:19px; line-height:1;">notifications_off</span><div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px;">Notifications</span><span style="font-size:12.5px; color:#c2532d;">Off in iOS Settings · no 18:00 nudge</span></div><span style="font-size:14px; font-weight:650;">Turn on</span></div>
+        <div style="display:flex; align-items:center; gap:12px; padding:13px 0; border-top:0.5px solid rgba(27,30,46,.08);"><span style="width:32px; height:32px; border-radius:10px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:19px; line-height:1;">ios_share</span><div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16px;">Export</span><span style="font-size:12.5px; color:rgba(27,30,46,.6);">CSV of every entry, or the diary as PDF</span></div><span style="font-family:'Material Symbols Rounded'; font-size:20px; line-height:1; opacity:.35;">chevron_right</span></div>
+      </div>
+    </div>
+  </section>
+  <!-- 17. INBOX + DETAILS FIXES -->
+  <section data-screen-label="Inbox and Details fixes" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">17</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Inbox: needs a look, older days, skip · Details: fix amount, shop, when</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start;">
+      <div data-screen-label="Inbox · needs a look" style="width:360px; border-radius:30px; background:#f6f0e7; color:#1b1e2e; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:18px;">
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:#c2532d; padding:0 6px;">Needs a look</div>
+          <div style="border-radius:26px; background:#fffdf9; padding:0 12px 0 14px;">
+            <div style="display:flex; align-items:center; gap:12px; padding:12px 0;"><span style="width:38px; height:38px; border-radius:13px; flex-shrink:0; background:oklch(0.9 0.06 60); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:21px; line-height:1; font-variation-settings:'FILL' 1;">local_mall</span><div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:3px;"><span style="font-size:16px; font-weight:550;">Shopee</span><span style="font-size:13px; color:rgba(27,30,46,.6);">From email · tap to fix</span></div><span style="font-size:15px; font-weight:600; color:#c2532d;">No amount</span></div>
+            <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-top:0.5px solid rgba(27,30,46,.08);"><span style="width:38px; height:38px; border-radius:13px; flex-shrink:0; background:oklch(0.9 0.06 150); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:21px; line-height:1; font-variation-settings:'FILL' 1;">restaurant</span><div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:3px;"><span style="font-size:16px; font-weight:550;">Warung Made</span><span style="font-size:13px; color:rgba(27,30,46,.6);">Mon · shared receipt</span></div><div style="display:flex; flex-direction:column; align-items:flex-end; gap:2px;"><span style="font-size:16px; font-weight:600; font-variant-numeric:tabular-nums;">Rp496.650</span><span style="font-size:12px; color:rgba(27,30,46,.55);">rate pending</span></div></div>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:rgba(27,30,46,.6); padding:0 6px;">Today</div>
+          <div style="border-radius:26px; background:#fffdf9; padding:0 12px 0 14px;">
+            <div style="display:flex; align-items:center; gap:12px; padding:12px 0;"><span style="width:38px; height:38px; border-radius:13px; flex-shrink:0; background:oklch(0.9 0.06 250); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:21px; line-height:1; font-variation-settings:'FILL' 1;">restaurant</span><div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:3px;"><span style="font-size:16px; font-weight:550;">Bali Bowl</span><span style="font-size:13px; color:rgba(27,30,46,.6);">Apple Pay · 12:40</span></div><div style="display:flex; flex-direction:column; align-items:flex-end; gap:2px;"><span style="font-size:16px; font-weight:600; font-variant-numeric:tabular-nums;">Rp185.000</span><span style="font-size:12px; color:rgba(27,30,46,.55); font-variant-numeric:tabular-nums;">≈ 291.000₫</span></div><span style="width:36px; height:36px; border-radius:50%; flex-shrink:0; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:20px; line-height:1;">check</span></div>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:rgba(27,30,46,.6); padding:0 6px;">Mon · after you closed</div>
+          <div style="border-radius:26px; background:#fffdf9; padding:0 12px 0 14px;"><div style="display:flex; align-items:center; gap:12px; padding:12px 0;"><span style="width:38px; height:38px; border-radius:13px; flex-shrink:0; background:oklch(0.9 0.06 20); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:21px; line-height:1; font-variation-settings:'FILL' 1;">local_cafe</span><div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:3px;"><span style="font-size:16px; font-weight:550;">Highlands Coffee</span><span style="font-size:13px; color:rgba(27,30,46,.6);">Email · 21:40</span></div><span style="font-size:16px; font-weight:600; font-variant-numeric:tabular-nums;">59k</span><span style="width:36px; height:36px; border-radius:50%; flex-shrink:0; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:20px; line-height:1;">check</span></div></div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:rgba(27,30,46,.6); padding:0 6px;">Wed 2 Sept · not confirmed yet</div>
+          <div style="border-radius:26px; background:#fffdf9; padding:0 12px 0 14px;"><div style="display:flex; align-items:center; gap:12px; padding:12px 0;"><span style="width:38px; height:38px; border-radius:13px; flex-shrink:0; background:oklch(0.9 0.06 300); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:21px; line-height:1; font-variation-settings:'FILL' 1;">two_wheeler</span><div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:3px;"><span style="font-size:16px; font-weight:550;">Grab</span><span style="font-size:13px; color:rgba(27,30,46,.6);">QR · 08:05</span></div><span style="font-size:16px; font-weight:600; font-variant-numeric:tabular-nums;">38k</span><span style="width:36px; height:36px; border-radius:50%; flex-shrink:0; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:20px; line-height:1;">check</span></div></div>
+        </div>
+        <div style="font-size:12px; line-height:1.4; color:rgba(27,30,46,.55); text-wrap:pretty; padding:0 6px;">Fixed, a row fades over to its day. “Confirm all” still confirms these too.</div>
+      </div>
+      <div data-screen-label="Inbox · swipe, hold, undo" style="width:360px; border-radius:30px; background:#f6f0e7; color:#1b1e2e; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:16px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; color:rgba(27,30,46,.55);">SWIPE LEFT · SKIP</div>
+        <div style="position:relative; border-radius:26px; background:oklch(0.62 0.19 25); overflow:hidden;">
+          <div style="position:absolute; right:0; top:0; bottom:0; width:96px; color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;"><span style="font-family:'Material Symbols Rounded'; font-size:24px; line-height:1;">close</span><span style="font-size:13px; font-weight:650;">Skip</span></div>
+          <div style="position:relative; transform:translateX(-96px); background:#fffdf9; border-radius:26px 0 0 26px; padding:12px 12px 12px 14px; display:flex; align-items:center; gap:12px;"><span style="width:38px; height:38px; border-radius:13px; flex-shrink:0; background:oklch(0.9 0.06 300); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:21px; line-height:1; font-variation-settings:'FILL' 1;">two_wheeler</span><div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:3px;"><span style="font-size:16px; font-weight:550;">Grab ride home</span><span style="font-size:13px; color:rgba(27,30,46,.6);">Email · 13:30</span></div><span style="font-size:16px; font-weight:600;">38k</span></div>
+        </div>
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; color:rgba(27,30,46,.55); padding-top:4px;">HOLD · MENU</div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="border-radius:22px; background:#fffdf9; box-shadow:0 14px 36px rgba(27,30,46,.16); padding:12px 14px; display:flex; align-items:center; gap:12px;"><span style="width:38px; height:38px; border-radius:13px; flex-shrink:0; background:oklch(0.9 0.06 60); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:21px; line-height:1; font-variation-settings:'FILL' 1;">local_mall</span><span style="flex:1; font-size:16px; font-weight:550;">Circle K</span><span style="font-size:16px; font-weight:600;">120k</span></div>
+          <div style="width:220px; border-radius:16px; background:#fffdf9; box-shadow:0 14px 36px rgba(27,30,46,.16); display:flex; flex-direction:column;">
+            <div style="display:flex; justify-content:space-between; padding:11px 14px; font-size:16px;"><span>Confirm</span><span style="font-family:'Material Symbols Rounded'; font-size:20px; line-height:1;">check</span></div>
+            <div style="display:flex; justify-content:space-between; padding:11px 14px; font-size:16px; border-top:0.5px solid rgba(27,30,46,.08);"><span>Edit</span><span style="font-family:'Material Symbols Rounded'; font-size:20px; line-height:1;">edit</span></div>
+            <div style="display:flex; justify-content:space-between; padding:11px 14px; font-size:16px; color:oklch(0.58 0.19 25); border-top:0.5px solid rgba(27,30,46,.08);"><span>Skip</span><span style="font-family:'Material Symbols Rounded'; font-size:20px; line-height:1;">close</span></div>
+          </div>
+        </div>
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; color:rgba(27,30,46,.55); padding-top:4px;">INBOX’S OWN UNDO BAR</div>
+        <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+          <div style="width:100%; height:48px; box-sizing:border-box; border-radius:99px; background:#1b1e2e; color:#fbf4ec; padding:0 8px 0 18px; display:flex; align-items:center; justify-content:space-between;"><span style="font-size:15px;">Skipped Grab ride home</span><span style="height:34px; padding:0 14px; border-radius:99px; background:rgba(251,244,236,.14); display:flex; align-items:center; font-size:14px; font-weight:650;">Undo</span></div>
+          <span style="width:134px; height:5px; border-radius:9px; background:#1b1e2e;"></span>
+        </div>
+      </div>
+      <div data-screen-label="Details · fix the amount" style="width:360px; border-radius:30px; background:#f6f0e7; color:#1b1e2e; padding:18px 16px 16px; box-sizing:border-box; display:flex; flex-direction:column; gap:14px;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; text-align:center;">
+          <span style="font-size:18px; font-weight:650;">Warung Made</span>
+          <span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:52px; font-weight:500; letter-spacing:-.02em; line-height:1.05; font-variant-numeric:tabular-nums;">Rp496.65<span style="display:inline-block; width:2px; height:.8em; margin-left:2px; background:#ff8552; vertical-align:-.05em;"></span></span>
+          <span style="font-size:13px; color:rgba(27,30,46,.6); font-variant-numeric:tabular-nums;">≈ 780.000₫ · at the rate it was priced</span>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
+          <span style="height:50px; border-radius:16px; background:#fffdf9; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:550;">1</span><span style="height:50px; border-radius:16px; background:#fffdf9; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:550;">2</span><span style="height:50px; border-radius:16px; background:#fffdf9; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:550;">3</span>
+          <span style="height:50px; border-radius:16px; background:#fffdf9; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:550;">4</span><span style="height:50px; border-radius:16px; background:#fffdf9; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:550;">5</span><span style="height:50px; border-radius:16px; background:#fffdf9; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:550;">6</span>
+          <span style="height:50px; border-radius:16px; background:#fffdf9; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:550;">7</span><span style="height:50px; border-radius:16px; background:#fffdf9; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:550;">8</span><span style="height:50px; border-radius:16px; background:#fffdf9; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:550;">9</span>
+          <span style="height:50px; border-radius:16px; background:rgba(70,45,30,.08); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:650;">Rp → ₫</span><span style="height:50px; border-radius:16px; background:#fffdf9; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:550;">0</span><span style="height:50px; border-radius:16px; background:rgba(70,45,30,.08); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:22px; line-height:1;">backspace</span>
+        </div>
+        <div style="display:flex; gap:8px;"><span style="flex:1; height:48px; border-radius:99px; background:rgba(70,45,30,.08); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:650;">Cancel</span><span style="flex:1; height:48px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:650;">Done</span></div>
+        <div style="font-size:12px; line-height:1.4; color:rgba(27,30,46,.55); text-align:center; text-wrap:pretty;">The first key types over the amount. Switching to đồng drops the rupiah.</div>
+      </div>
+      <div data-screen-label="Details · shop and when" style="width:360px; border-radius:30px; background:#f6f0e7; color:#1b1e2e; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px;">
+        <div style="border-radius:26px; background:#fffdf9; overflow:hidden;">
+          <div style="display:flex; justify-content:space-between; gap:12px; margin:0 16px; padding:13px 0; font-size:16px;"><span style="color:rgba(27,30,46,.6);">Category</span><span style="font-weight:550;">Drinks</span></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin:0 16px; padding:13px 0; border-top:0.5px solid rgba(27,30,46,.08); font-size:16px;"><span style="color:rgba(27,30,46,.6);">Shop</span><span style="font-weight:550;">Cà phê Mộc<span style="display:inline-block; width:2px; height:1em; margin-left:2px; background:#ff8552; vertical-align:-.15em;"></span></span></div>
+          <div style="display:flex; justify-content:space-between; gap:12px; margin:0 16px; padding:13px 0; border-top:0.5px solid rgba(27,30,46,.08); font-size:16px;"><span style="color:rgba(27,30,46,.6);">When</span><span style="font-weight:550; color:#c2532d; font-variant-numeric:tabular-nums;">Wed 14 Oct · 08:15</span></div>
+          <div style="position:relative; margin:0 12px 12px; height:150px; display:grid; grid-template-columns:1.6fr 1fr 1fr; align-items:center; font-variant-numeric:tabular-nums;">
+            <span style="position:absolute; left:0; right:0; top:57px; height:36px; border-radius:10px; background:rgba(70,45,30,.07);"></span>
+            <div style="position:relative; display:flex; flex-direction:column; align-items:center; gap:12px; font-size:17px;"><span style="opacity:.3;">Mon 12 Oct</span><span style="opacity:.55;">Tue 13 Oct</span><span style="font-weight:650;">Wed 14 Oct</span><span style="opacity:.55;">Today</span><span style="opacity:0;">·</span></div>
+            <div style="position:relative; display:flex; flex-direction:column; align-items:center; gap:12px; font-size:17px;"><span style="opacity:.3;">06</span><span style="opacity:.55;">07</span><span style="font-weight:650;">08</span><span style="opacity:.55;">09</span><span style="opacity:.3;">10</span></div>
+            <div style="position:relative; display:flex; flex-direction:column; align-items:center; gap:12px; font-size:17px;"><span style="opacity:.3;">05</span><span style="opacity:.55;">10</span><span style="font-weight:650;">15</span><span style="opacity:.55;">20</span><span style="opacity:.3;">25</span></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; gap:12px; margin:0 16px; padding:13px 0; border-top:0.5px solid rgba(27,30,46,.08); font-size:16px;"><span style="color:rgba(27,30,46,.6);">Note</span><span style="color:rgba(27,30,46,.4);">Add a note</span></div>
+        </div>
+        <div style="font-size:12px; line-height:1.4; color:rgba(27,30,46,.55); text-wrap:pretty; padding:0 6px;">Days stay in the spend’s pay cycle and never pass today. Hours run 04 to 03, like the money day. Clear the shop and it keeps its name.</div>
+      </div>
+    </div>
+  </section>
+  </div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;personality&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Soft&quot;,&quot;Cheeky&quot;,&quot;Roast&quot;],&quot;default&quot;:&quot;Cheeky&quot;,&quot;tsType&quot;:&quot;'Soft'|'Cheeky'|'Roast'&quot;,&quot;section&quot;:&quot;Companion&quot;},&quot;serious&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Companion&quot;},&quot;scenario&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Normal&quot;,&quot;Overspend day&quot;,&quot;Zero-spend day&quot;],&quot;default&quot;:&quot;Normal&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Day&quot;},&quot;startHour&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:6,&quot;max&quot;:23.95,&quot;step&quot;:0.05,&quot;default&quot;:18.12,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Day&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Basic&quot;,&quot;Golden Hour&quot;,&quot;Long Exposure&quot;,&quot;Paper Diorama&quot;,&quot;Lantern River&quot;,&quot;Neon Noir&quot;,&quot;Riso Club&quot;,&quot;Sơn Mài&quot;,&quot;Monsoon&quot;,&quot;Holo Foil&quot;,&quot;Arcade&quot;],&quot;default&quot;:&quot;Golden Hour&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Looks&quot;},&quot;unlockAll&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Looks&quot;}}">
@@ -2115,6 +3175,15 @@ class Component extends DCLogic {
           { name: 'Hội An', accent: '#ffa94d', K: [[6, '#d9c2b8', '#f2d6b8', '#ffe9c2', '#ffb36b', '#f2d48a'], [12, '#f0c98a', '#f7e2bd', '#fff3dc', '#ffd27a', '#ffb38a'], [16.5, '#c9775a', '#f0a868', '#ffd08a', '#ffb347', '#ff8a5b'], [18.2, '#4a1f2e', '#a8382f', '#f08a2c', '#ffc53d', '#ff5a36'], [20, '#1e0d14', '#3b1520', '#6a2a1e', '#ffb347', '#ff5a36'], [24, '#0c0608', '#1a0b0e', '#2c130f', '#e09a3a', '#b8432a']] },
           { name: 'Đà Lạt', accent: '#e7a6d8', K: [[6, '#c7d3d6', '#e3e6e0', '#f2ecdf', '#cfe3d0', '#e6c9e8'], [12, '#9fc2bf', '#d9e6dc', '#f1efe4', '#bfe0c0', '#d4c4f0'], [16.5, '#6f8fa0', '#c9b8d4', '#f2c9b8', '#e6b0d8', '#a8d8c0'], [18.2, '#232a4a', '#6a4a7a', '#d47a8a', '#f0a0c8', '#7fd0c0'], [20, '#0e1424', '#1c2438', '#2a3a40', '#9a7ad0', '#4fb8a0'], [24, '#060a12', '#0c1420', '#142226', '#6a5ab0', '#2f8a78']] }
         ] },
+      v1: { name: 'Original', tag: 'Where 6pm started. Black, white and the numbers. Nothing else.', price: 0, dark: 0, font: "-apple-system, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif", kName: 'Contrast',
+        ctl: [{ key: 'dots', label: 'Dot grid', sub: 'The 1.0 dotted texture behind everything', def: true }, { key: 'sun', label: 'Clock dot', sub: 'A small white sun keeps the hour', def: true }],
+        variants: [
+          { name: 'Black', accent: '#f4f4f5', K: [[6, '#0c0c0d', '#0e0e0f', '#111113', '#3a3a3e', '#2a2a2e'], [24, '#0a0a0b', '#0c0c0d', '#0f0f10', '#34343a', '#26262a']], sw: ['#0b0b0c', '#1c1c1f', '#f4f4f5'] },
+          { name: 'Graphite', accent: '#f4f4f5', K: [[6, '#161618', '#19191b', '#1d1d20', '#44444a', '#36363c'], [24, '#131315', '#161618', '#1a1a1d', '#3e3e44', '#303036']], sw: ['#18181b', '#2a2a2e', '#f4f4f5'] },
+          { name: 'Receipt', dark: 99, accent: '#111113', K: [[6, '#efeeea', '#f2f1ed', '#f5f4f0', '#d4d3ce', '#dcdbd6'], [24, '#eceae6', '#efeeea', '#f3f2ee', '#d0cfca', '#d8d7d2']], sw: ['#f4f3ef', '#d4d3ce', '#111113'] }
+        ],
+        over: (p, st, V, dark) => dark ? ({ sky: `linear-gradient(180deg, ${st[0]} 0%, ${st[1]} 52%, ${st[2]} 100%)`, ink: '#f4f4f5', inkSoft: 'rgba(244,244,245,.6)', cell: m(st[1], '#ffffff', .055), sheet: st[1], sheetSolid: st[1], glass: m(st[1], '#ffffff', .09), cardShadow: 'inset 0 0 0 0.5px rgba(255,255,255,.09)', glassShadow: 'inset 0 0 0 0.5px rgba(255,255,255,.12)', btnBg: '#f4f4f5', btnFg: '#0b0b0c', bubbleBg: '#f4f4f5', bubbleFg: '#0b0b0c', hair: 'rgba(255,255,255,.09)', chipBg: 'rgba(255,255,255,.07)', tabActive: 'rgba(255,255,255,.12)', textGlow: 'none', accent: V.accent })
+          : ({ sky: `linear-gradient(180deg, ${st[0]} 0%, ${st[1]} 52%, ${st[2]} 100%)`, ink: '#111113', inkSoft: 'rgba(17,17,19,.6)', cell: '#ffffff', sheet: '#f4f3ef', sheetSolid: '#f4f3ef', glass: '#ffffff', cardShadow: 'inset 0 0 0 0.5px rgba(17,17,19,.1)', glassShadow: 'inset 0 0 0 0.5px rgba(17,17,19,.14)', btnBg: '#111113', btnFg: '#f4f3ef', bubbleBg: '#111113', bubbleFg: '#f4f3ef', hair: 'rgba(17,17,19,.1)', chipBg: 'rgba(17,17,19,.06)', tabActive: 'rgba(17,17,19,.1)', textGlow: 'none', accent: V.accent }) },
       expo: { name: 'Long Exposure', tier: 'premium', tag: 'Thirty seconds of Saigon. Star trails above, motorbike light below.', price: 99000, dark: 0, font: COND, kName: 'Exposure', feats: ['Rotating star trails', 'Traffic light trails', 'Night-photo cards'],
         ctl: [{ key: 'stars', label: 'Star trails', sub: 'The sky turns around the pole star', def: true }, { key: 'traffic', label: 'Traffic trails', sub: 'Headlights and tail-lights streak past', def: true }],
         variants: [
@@ -2232,6 +3301,7 @@ class Component extends DCLogic {
     else if (T.id === 'expo') sun.opacity = 0;
     else if (T.id === 'paper') Object.assign(sun, { color: `radial-gradient(circle at 40% 35%, ${this.mix(st[3], '#ffffff', .35)}, ${st[3]} 70%)`, glow: 'inset -5px -7px 0 rgba(0,0,0,.08), 0 10px 16px rgba(60,30,10,.22)', thread: 'rgba(40,30,20,.45)', threadOp: sun.opacity });
     else if (T.id === 'lantern') Object.assign(sun, { color: `radial-gradient(circle, #fff1d0 0%, ${st[3]} 60%, ${st[3]}00 72%)`, glow: `0 0 80px 30px ${st[3]}44` });
+    else if (T.id === 'v1') { const lt = V.dark === 99; Object.assign(sun, { color: lt ? '#111113' : '#f4f4f5', glow: 'none', mask: 'radial-gradient(circle, #000 0 12%, transparent 13%, transparent 30%, #000 30.5% 32%, transparent 32.5%)', opacity: cfg.sun ? Math.min(1, sun.opacity * 1.2) : 0 }); }
     else if (T.id === 'basic') Object.assign(sun, { color: 'radial-gradient(circle, #fffaf0, #fff1d6 70%)', glow: '0 0 60px 20px rgba(255,248,230,.35)', opacity: cfg.sun ? sun.opacity * 0.9 : 0 });
   }
   sig(T, V, st, hour) {
@@ -2244,6 +3314,7 @@ class Component extends DCLogic {
       case 'holo': return [['conic-gradient(from 40deg at 70% 30%, #ff9ad577, #ffd59a77, #b6ff9a77, #9af2ff77, #b29aff77, #ff9ad577)'].concat([[20, 24], [82, 40], [40, 70], [66, 82]].map(([x, y]) => `radial-gradient(circle at ${x}% ${y}%, #ffffff 0 1.5px, #ffffff00 4px)`)).join(', '), 'auto', 'conic-gradient(from 210deg, #ffc6e8, #fff1b8, #c4ffd6, #bfefff, #d9c8ff, #ffc6e8)', `0 0 0 5px #ffffff55, 0 0 30px 8px ${st[4]}88`];
       case 'arcade': return ['repeating-linear-gradient(180deg, rgba(0,0,0,.45) 0 1px, transparent 1px 3px)', 'auto', `linear-gradient(180deg, ${st[3]}, ${st[4]})`, `0 0 26px 4px ${st[3]}66`];
       case 'basic': return ['none', 'auto', 'radial-gradient(circle, #fffaf0, #fff3dc 70%)', '0 0 24px 6px rgba(255,255,255,.4)'];
+      case 'v1': { const lt = V.dark === 99, c = lt ? 'rgba(17,17,19,.22)' : 'rgba(255,255,255,.16)'; return [`radial-gradient(${c} 0.8px, transparent 1.3px)`, '7px 7px', lt ? '#111113' : '#f4f4f5', 'none']; }
       case 'expo': return [['repeating-radial-gradient(circle at 82% 8%, transparent 0 7px, rgba(255,255,255,.2) 7px 8px)', `linear-gradient(173deg, transparent 0 74%, ${st[3]}cc 74.4% 75%, transparent 75.4% 77%, ${st[3]}88 77.3% 77.8%, transparent 78.2% 80.5%, ${st[4]}cc 80.8% 81.4%, transparent 81.8% 83.5%, ${st[4]}88 83.8% 84.3%, transparent 84.7%)`, `radial-gradient(80% 30% at 50% 80%, ${st[3]}40, transparent 70%)`].join(', '), 'auto', 'transparent', 'none'];
       case 'paper': { const pc = this.paperCols(V, st, hour), L = []; for (let i = 4; i >= 0; i--) { const ft = 44 + i * 10, c = pc[i]; L.push(`radial-gradient(${34 + (i % 2) * 8}% 22% at ${18 + (i % 2) * 30}% ${ft + 20}%, ${c} 0 98%, transparent 100%)`, `radial-gradient(${40 - (i % 2) * 6}% 24% at ${70 - (i % 2) * 26}% ${ft + 22}%, ${c} 0 98%, transparent 100%)`, `linear-gradient(180deg, transparent 0 ${ft + 14}%, ${c} ${ft + 14}%)`); } return [L.join(', '), 'auto', `radial-gradient(circle at 40% 35%, ${this.mix(st[3], '#ffffff', .35)}, ${st[3]} 70%)`, '0 6px 10px rgba(60,30,10,.25)']; }
       case 'lantern': { const pts = [[14, 32], [34, 37], [54, 38], [74, 36], [92, 30]], lc = V.lc; return [pts.map(([x, y], q) => `radial-gradient(4.5% 7% at ${x}% ${y}%, ${lc[q % lc.length]} 0 92%, transparent 100%)`).concat(pts.map(([x, y], q) => `radial-gradient(13% 17% at ${x}% ${y}%, ${lc[q % lc.length]}66 0%, transparent 70%)`)).concat(['radial-gradient(70% 40% at 50% -10%, transparent 0 98.5%, rgba(255,230,180,.6) 98.5% 99.3%, transparent 99.6%)']).join(', '), 'auto', 'transparent', 'none']; }
@@ -2299,6 +3370,7 @@ class Component extends DCLogic {
       Object.assign(A, { bloomOp: 0.5 * k1, blend: 'screen', dotOp: 0.12 * k, dot: st[3], dotSize: '3px 3px', dotBlend: 'screen', vignette: `radial-gradient(115% 90% at 50% 45%, transparent 58%, rgba(0,0,0,${(0.75 * k1).toFixed(2)}) 100%)`, grainOp: 0.22, crtOn: !!cfg.scan, crtOp: 0.55 * k1 });
     }
     if (id === 'basic') A.grainOp = 0.04;
+    if (id === 'v1') Object.assign(A, { grainOp: 0, dotOp: cfg.dots ? 0.9 * k1 : 0, dot: V.dark === 99 ? 'rgba(17,17,19,.2)' : 'rgba(255,255,255,.14)', dotSize: '7px 7px', dotBlend: 'normal' });
     if (T.tier === 'premium') this.premiumAtm(A, T, V, cfg, pal, hour, k, k1, d);
     return A;
   }
@@ -2393,7 +3465,7 @@ class Component extends DCLogic {
   openMax(from) { this.buzz(); this.setState(st => ({ sheet: 'max', maxBack: st.sheet === 'max' ? st.maxBack : st.sheet, maxFrom: from || 'looks' })); }
   maxVals(s, hour, pal, allL, allPaid) {
     const TH = this.themes(), from = s.maxFrom || 'looks', plan = s.maxPlan || 'year', on = !!s.max, R = this.rng(5);
-    const H = { looks: ['Every sky. Every scene.', 'All ' + allPaid.length + ' looks and the living scenes, plus each new one.'], ask: ['Ask as much as you like.', 'Free gets 3 questions a week. Max has no limit.'], pots: ['As many pots as plans.', 'Free has one pot of your own. Max has no limit, plus auto-rules.'], shared: ['Budget together.', 'Share a pot or the whole month, and close the day as two.'], travel: ['Travel mode, anywhere.', 'Live rates in every currency. It turns on by itself.'], backup: ['Keep every day, forever.', 'Encrypted iCloud backup, full history, CSV and Sheets.'], diary: ['Your year, bound.', 'Twelve diaries in one year book you can print.'], widgets: ['6pm on your Home Screen.', 'Home and Lock Screen widgets, in your look.'], icons: ['180 icons for every category.', 'Free has 36. Max unlocks all eight packs.'], buddy: ['Meet your Max companion.', 'A midnight-sun form with its own ring, moons and sparkle.'] };
+    const H = { looks: ['Every sky. Every scene.', 'All ' + allPaid.length + ' looks and the living scenes, plus each new one.'], ask: ['Ask as much as you like.', 'Free gets 10 questions a day. Max has no limit.'], pots: ['As many pots as plans.', 'Free has one pot of your own. Max has no limit, plus auto-rules.'], shared: ['Budget together.', 'Share a pot or the whole month, and close the day as two.'], travel: ['Travel mode, anywhere.', 'Live rates in every currency. It turns on by itself.'], backup: ['Keep every day, forever.', 'Encrypted iCloud backup, full history, CSV and Sheets.'], diary: ['Your year, bound.', 'Twelve diaries in one year book you can print.'], widgets: ['6pm on your Home Screen.', 'Home and Lock Screen widgets, in your look.'], icons: ['180 icons for every category.', 'Free has 36. Max unlocks all eight packs.'], buddy: ['Meet your Max companion.', 'A midnight-sun form with its own ring, moons and sparkle.'] };
     const h = on ? ['You’re on Max.', 'Everything below is unlocked.'] : (H[from] || H.looks);
     const TL = [['looks', 'Every look', allPaid.length + ' looks · 3 living scenes'], ['ask', 'Unlimited Ask 6pm'], ['pots', 'Unlimited pots'], ['shared', 'Budget together'], ['travel', 'Every currency'], ['diary', 'Year book'], ['backup', 'Backup & export'], ['widgets', 'Widgets'], ['icons', '180 icons'], ['buddy', 'Max companion']];
     const ord = TL.filter(x => x[0] === from).concat(TL.filter(x => x[0] !== from));
@@ -2416,7 +3488,7 @@ class Component extends DCLogic {
       maxWelcomeSub: s.maxApplied && TH[s.maxApplied] ? TH[s.maxApplied].name + ' is on, and everything else is unlocked.' : 'Everything’s unlocked, and your companion levelled up.',
       maxWins: [allPaid.length + ' looks and 3 living scenes', 'Unlimited Ask 6pm', 'Backup is on', '180 category icons', 'Your companion’s Max form', 'Pots, travel, shared budgets, widgets'].map((t, i) => ({ t, delay: (0.6 + i * 0.12).toFixed(2) + 's' })),
       maxConfetti: s.maxWelcome ? Array.from({ length: 42 }, () => ({ l: (R() * 100).toFixed(1) + '%', w: Math.round(5 + R() * 5) + 'px', h: Math.round(9 + R() * 8) + 'px', c: ['#ffd27a', '#ff8552', '#7af0ff', '#ff9fc0', '#b6ff9a', '#f6efe6'][Math.floor(R() * 6)], d: (2.4 + R() * 1.8).toFixed(2) + 's', delay: (R() * 0.9).toFixed(2) + 's' })) : [],
-      askMeterOn: !on && askUsed < 3, askMeter: (3 - askUsed) + ' of 3 free questions left this week', askLocked: !on && askUsed >= 3, askOpen: on || askUsed < 3, askUnlock: () => this.openMax('ask'),
+      askMeterOn: !on && askUsed < 10, askMeter: (10 - askUsed) + ' of 10 free questions left today', askLocked: !on && askUsed >= 10, askOpen: on || askUsed < 10, askUnlock: () => this.openMax('ask'),
       potLocked: !on && (s.extraPots || []).length >= 1, potIcon: (!on && (s.extraPots || []).length >= 1) ? 'lock' : 'add', potSub: (!on && (s.extraPots || []).length >= 1) ? 'Your free pot is in use. Max keeps as many as you like.' : 'Pick a goal and a date. I’ll work out the monthly.',
       travelLocked: !on && !s.travel,
       sharedSub: on ? 'Invite someone to share a pot or the whole month.' : 'Share a pot or the whole month with someone.', sharedGo: () => { if (on) { this.buzz(); this.toast('shareInvite'); } else this.openMax('shared'); },

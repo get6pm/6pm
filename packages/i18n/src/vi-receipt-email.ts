@@ -6,6 +6,9 @@ export const viReceiptEmail: { readonly [Key in keyof typeof enReceiptEmail]: En
   'receiptEmail.share': 'Chia sẻ địa chỉ 6pm của bạn',
   'receiptEmail.offline': 'Địa chỉ của bạn hiện ra khi có mạng',
   'receiptEmail.from': 'Từ {address}',
+  'receiptEmail.deviceMode': 'Tắt khi AI chạy ngay trên iPhone',
+  'receiptEmail.deviceMode.body':
+    'Biên lai qua email cần máy chủ của chúng tôi đọc thư, nên tính năng này tắt khi 6pm giữ AI ngay trên iPhone. Bạn có thể chia sẻ hoặc quét biên lai thay thế.',
   'receiptEmail.check.title': '{provider} đang hỏi xác nhận chuyển tiếp thư từ {address}',
   'receiptEmail.check.titleNoAddress': '{provider} đang hỏi xác nhận chuyển tiếp thư tới 6pm',
   'receiptEmail.check.code': 'Mã xác nhận',

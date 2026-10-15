@@ -11,8 +11,8 @@ import { ApiError } from '../errors';
  *
  * Receipt photos: Haiku read every total of the real receipts Opus did and one more, at a fortieth
  * of the price; the shop names it makes up are dropped on the phone unless the photo's own text
- * shows them. Text routes (reading Ask questions, wording lines, naming merchants, the fallback
- * after Jev) start on Haiku too; each route names its model, so one can move up alone.
+ * shows them. Text routes (reading Ask questions, wording lines, naming merchants, choosing
+ * category icons) start on Haiku too; each route names its model, so one can move up alone.
  */
 export const anthropicModel: AnthropicModel = 'claude-haiku-5-5';
 

@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/react-native';
+import { useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useRef } from 'react';
 import { AppState } from 'react-native';
 
@@ -23,6 +24,7 @@ export function useInboxImport() {
   const store = useMoneyStore();
   const actions = useMoneyActions();
   const api = useApi();
+  const db = useSQLiteContext();
   const home = useHomeCurrency();
   const running = useRef<Promise<unknown>>(Promise.resolve());
 
@@ -31,6 +33,7 @@ export function useInboxImport() {
     if (!native) return;
     const enrich = createEnrichShared({
       request: (request) => api.request(request),
+      settings: db,
       ruleCategory: (merchant) => actions.ruleCategory(merchant),
       categories: () => store.getSnapshot().categories,
     });
@@ -70,5 +73,5 @@ export function useInboxImport() {
       if (state === 'active') run();
     });
     return () => sub.remove();
-  }, [store, actions, api, home]);
+  }, [store, actions, api, db, home]);
 }

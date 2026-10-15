@@ -1,4 +1,7 @@
+import { getCalendars } from 'expo-localization';
 import * as Location from 'expo-location';
+
+import { countryOfTimeZone } from '@6pm/domain';
 
 import type { Place } from './trip';
 
@@ -41,4 +44,30 @@ export async function currentPlace(now: Date): Promise<Place | null> {
   const city = address?.city && address.city !== address.subregion ? address.city : null;
   const name = city ?? address?.region ?? address?.city ?? address?.country ?? country;
   return { country, name, at: now.toISOString() };
+}
+
+/** A country's name in a language, where the runtime knows it. */
+function countryName(country: string, language: string): string | null {
+  try {
+    if (typeof Intl.DisplayNames !== 'function') return null;
+    return new Intl.DisplayNames([language], { type: 'region' }).of(country) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Where the phone is by its clock alone, for on-device mode, where no position is taken and
+ * nothing is sent to Apple's geocoder: the time zone the phone set for where it is names the
+ * country (`Asia/Bangkok`), and the place is called by the country's name. Null for a zone 6pm
+ * cannot place.
+ */
+export function placeByClock(
+  now: Date,
+  language: string,
+  zone: string | null = getCalendars()[0]?.timeZone ?? null,
+): Place | null {
+  const country = countryOfTimeZone(zone);
+  if (country === null) return null;
+  return { country, name: countryName(country, language) ?? country, at: now.toISOString() };
 }

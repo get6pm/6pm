@@ -199,7 +199,7 @@ export function useAsk(): AskChat {
         }
         const snapshot = store.getSnapshot();
         const before = history.current;
-        const reading = await readQuestion(api, question, {
+        const reading = await readQuestion(api, db, question, {
           today: snapshot.today,
           categories: snapshot.categories.map((c) => c.name),
           pots: snapshot.pots.map((pot) => pot.name),
@@ -224,6 +224,7 @@ export function useAsk(): AskChat {
           store,
           api,
           modelChoice: readModelChoice(db),
+          settings: db,
           max,
           learnedCategory: (name) => actions.ruleCategory(name),
         });

@@ -147,10 +147,11 @@ final class ShareModel: ObservableObject {
 
   // MARK: A closer look
 
-  /// Asks the server about a photo the phone was unsure of, two at a time.
+  /// Asks the server about a photo the phone was unsure of, two at a time. Never in on-device
+  /// mode: the card keeps what the phone read, with no wait for a look that will not come.
   private func look(_ at: Int) {
     guard let receipt = receipts[at], receipt.card?.needsCheck == true, receipt.photo != nil,
-      context != nil, DeviceCredential.token() != nil
+      context != nil, ReceiptLook.allowed, DeviceCredential.token() != nil
     else { return }
     receipts[at]?.looking = true
     waiting.append(at)

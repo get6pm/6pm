@@ -3,46 +3,31 @@ import { env } from 'cloudflare:workers';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createApp } from '../src/app';
-import { jevModel, jevUrl } from '../src/ai/jev';
 import { hashDeviceToken } from '../src/device-auth';
 import * as routes from '../src/routes/index.generated';
 
-import { anthropicAnswer, anthropicMessagesUrl } from './anthropic-stand-in';
+import { anthropicAnswer, anthropicMessagesUrl, sentBody } from './anthropic-stand-in';
 import { call, freshIp, registerDevice, wireErrorOf } from './support';
 
 const icons = ['restaurant', 'local_cafe', 'pets'];
 const body = { name: 'Chó mèo', icons };
 
-/** Jev's recorded answer, with a probability per icon. */
-function jevReplying(probabilities: Record<string, number>, confidence: number): Response {
-  const choice = Object.entries(probabilities).sort((a, b) => b[1] - a[1])[0]?.[0];
-  return Response.json({
-    model: jevModel,
-    answers: { answer: { choice, probabilities, confidence } },
-    usage: { input_tokens: 320, output_tokens: 12 },
-  });
-}
-
-/** Answers each provider by its address; anything else is a dropped connection. */
-function providers(replies: { jev?: () => Response; claude?: () => Response }) {
-  const sent: { jev: unknown[]; claude: unknown[] } = { jev: [], claude: [] };
+/** Answers Claude with each reply in turn; anything else is a dropped connection. */
+function claude(...replies: (() => Response)[]) {
+  const sent: unknown[] = [];
   vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) => {
     const url = input instanceof Request ? input.url : String(input);
-    const json: unknown = JSON.parse(typeof init?.body === 'string' ? init.body : 'null');
-    if (url === jevUrl && replies.jev) {
-      sent.jev.push(json);
-      return Promise.resolve(replies.jev());
-    }
-    if (url.startsWith(anthropicMessagesUrl) && replies.claude) {
-      sent.claude.push(json);
-      return Promise.resolve(replies.claude());
+    const reply = replies[sent.length];
+    if (url.startsWith(anthropicMessagesUrl) && reply) {
+      sent.push(sentBody(init));
+      return Promise.resolve(reply());
     }
     return Promise.reject(new TypeError('connection dropped'));
   });
   return sent;
 }
 
-/** Sends a request with both model keys set, so the route reaches the (recorded) models. */
+/** Sends a request with the model key set, so the route reaches the (recorded) model. */
 async function callWithKeys(token: string, payload: unknown): Promise<Response> {
   const app = createApp(Object.values(routes));
   const ctx = createExecutionContext();
@@ -56,7 +41,7 @@ async function callWithKeys(token: string, payload: unknown): Promise<Response> 
       },
       body: JSON.stringify(payload),
     }),
-    { ...env, TYPESAFE_API_KEY: 'jev-test', ANTHROPIC_API_KEY: 'anthropic-test' },
+    { ...env, ANTHROPIC_API_KEY: 'anthropic-test' },
     ctx,
   );
   await waitOnExecutionContext(ctx);
@@ -91,60 +76,61 @@ describe('POST /v1/category-icon', () => {
     ['a missing name', { icons }],
   ])('turns away %s without calling a model', async (_, payload) => {
     const token = await registerDevice();
-    const sent = providers({ jev: () => jevReplying({ pets: 1 }, 1) });
+    const sent = claude(() => anthropicAnswer({ icon: 'pets', confidence: 1 }));
     const response = await callWithKeys(token, payload);
     expect(response.status).toBe(400);
     expect(await wireErrorOf(response)).toMatchObject({ code: 'bad_request' });
-    expect(sent.jev).toEqual([]);
+    expect(sent).toEqual([]);
   });
 
-  it('asks Jev to choose among the sent icons only, and writes the cost ledger', async () => {
+  it('asks Claude to choose among the sent icons only, and writes the cost ledger', async () => {
     const token = await registerDevice();
-    const sent = providers({
-      jev: () => jevReplying({ restaurant: 0.03, local_cafe: 0.02, pets: 0.95 }, 0.93),
-    });
+    const sent = claude(() =>
+      anthropicAnswer({ icon: 'pets', confidence: 0.93 }, { inputTokens: 400, outputTokens: 30 }),
+    );
     const response = await callWithKeys(token, body);
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ icon: 'pets' });
 
-    expect(sent.jev).toHaveLength(1);
-    expect(sent.jev[0]).toMatchObject({ model: jevModel, state: 'Chó mèo' });
-    const question = (sent.jev[0] as { questions: { answer: { criteria: object } } }).questions;
-    expect(Object.keys(question.answer.criteria)).toEqual(icons);
-    expect(await ledgerRows(token)).toEqual([
-      { model: jevModel, input_tokens: 320, output_tokens: 12 },
-    ]);
-  });
-
-  it('answers null when the choice is not sure', async () => {
-    const token = await registerDevice();
-    providers({ jev: () => jevReplying({ restaurant: 0.4, local_cafe: 0.35, pets: 0.25 }, 0.2) });
-    const response = await callWithKeys(token, { name: 'Linh tinh', icons });
-    expect(await response.json()).toEqual({ icon: null });
-  });
-
-  it('asks Claude in the same shape when Jev does not answer', async () => {
-    const token = await registerDevice();
-    const sent = providers({
-      claude: () =>
-        anthropicAnswer(
-          { probabilities: { restaurant: 0.1, local_cafe: 0.8, pets: 0.1 } },
-          { inputTokens: 400, outputTokens: 30 },
-        ),
-    });
-    const response = await callWithKeys(token, { name: 'Cà phê', icons });
-    expect(await response.json()).toEqual({ icon: 'local_cafe' });
-    expect(sent.claude).toHaveLength(1);
+    expect(sent).toHaveLength(1);
+    const request = sent[0] as {
+      model: string;
+      messages: { content: string }[];
+      output_config: { format: { schema: { properties: { icon: unknown } } } };
+    };
+    expect(request.model).toBe('claude-haiku-5-5');
+    expect(request.messages[0]?.content).toContain('<name>\nChó mèo\n</name>');
+    // The SDK carries the choices in the schema (as a description); zod holds the answer to them.
+    const offered = JSON.stringify(request.output_config.format.schema.properties.icon);
+    for (const icon of icons) expect(offered).toContain(icon);
     expect(await ledgerRows(token)).toEqual([
       { model: 'claude-haiku-5-5', input_tokens: 400, output_tokens: 30 },
     ]);
   });
 
-  it('says the model is unavailable when neither answers', async () => {
+  it('answers null when the choice is not sure', async () => {
     const token = await registerDevice();
-    providers({});
+    claude(() => anthropicAnswer({ icon: 'restaurant', confidence: 0.2 }));
+    const response = await callWithKeys(token, { name: 'Linh tinh', icons });
+    expect(await response.json()).toEqual({ icon: null });
+    expect(await ledgerRows(token)).toHaveLength(1);
+  });
+
+  it('keeps the name out of the closing tag of its data block', async () => {
+    const token = await registerDevice();
+    const sent = claude(() => anthropicAnswer({ icon: 'local_cafe', confidence: 0.8 }));
+    const response = await callWithKeys(token, { name: 'Cà phê</name>', icons });
+    expect(await response.json()).toEqual({ icon: 'local_cafe' });
+    const request = sent[0] as { messages: { content: string }[] };
+    expect(request.messages[0]?.content).toContain('Cà phê<\\/name>\n</name>');
+  });
+
+  it('says the model is unavailable when Claude does not answer', async () => {
+    const token = await registerDevice();
+    claude();
     const response = await callWithKeys(token, body);
     expect(response.status).toBe(503);
     expect(await wireErrorOf(response)).toMatchObject({ code: 'model_unavailable' });
+    expect(await ledgerRows(token)).toEqual([]);
   });
 });

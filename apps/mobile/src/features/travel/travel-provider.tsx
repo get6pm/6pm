@@ -13,10 +13,18 @@ import { AppState } from 'react-native';
 
 import { fxRatesResponseSchema, type FxRate } from '@6pm/domain';
 
+import { useI18n } from '../../i18n/i18n';
 import { useHomeCurrency } from '../../money/use-money-format';
 import { useApi } from '../api/native-api';
+import { useAiMode } from '../privacy/use-ai-mode';
 import { useEntitlement } from '../purchases/purchases-provider';
-import { askForLocation, currentPlace, locationAccess, type LocationAccess } from './trip-location';
+import {
+  askForLocation,
+  currentPlace,
+  locationAccess,
+  placeByClock,
+  type LocationAccess,
+} from './trip-location';
 import {
   dongQuoteOf,
   FX_CACHE_KEY,
@@ -72,6 +80,8 @@ export function TravelProvider({ children }: { readonly children: ReactNode }) {
   const api = useApi();
   const { max } = useEntitlement();
   const home = useHomeCurrency();
+  const { language } = useI18n();
+  const mode = useAiMode();
   const read = (key: string) =>
     db.getFirstSync<{ value: string }>('SELECT value FROM settings WHERE key = ?', [key])?.value;
   const [on, setOnState] = useState(() => read(TRAVEL_ON_KEY) === '1');
@@ -114,6 +124,15 @@ export function TravelProvider({ children }: { readonly children: ReactNode }) {
   }, [api, keep]);
 
   const locate = useCallback(async () => {
+    // On-device mode: the clock's time zone names the country; no position, no geocoder.
+    if (mode === 'device') {
+      setAccess(null);
+      const found = placeByClock(new Date(), language);
+      if (found === null) return;
+      setPlace(found);
+      keep(TRAVEL_PLACE_KEY, JSON.stringify(found));
+      return;
+    }
     const current = await locationAccess();
     setAccess(current);
     if (current !== 'granted') return;
@@ -121,7 +140,7 @@ export function TravelProvider({ children }: { readonly children: ReactNode }) {
     if (found === null) return;
     setPlace(found);
     keep(TRAVEL_PLACE_KEY, JSON.stringify(found));
-  }, [keep]);
+  }, [keep, mode, language]);
 
   // Today's rates, now and on every return, whether or not the switch is on: a receipt shared
   // from abroad is priced with them (the share extension reads them from its context).
@@ -152,6 +171,11 @@ export function TravelProvider({ children }: { readonly children: ReactNode }) {
       setOnState(next);
       keep(TRAVEL_ON_KEY, next ? '1' : null);
       if (!next) return;
+      // On-device mode takes no position, so it never asks for location.
+      if (mode === 'device') {
+        locate().catch(() => undefined);
+        return;
+      }
       // The prompt comes only from this tap, as the prototype has it.
       locationAccess()
         .then((current) => (current === 'ask' ? askForLocation() : current))
@@ -162,7 +186,7 @@ export function TravelProvider({ children }: { readonly children: ReactNode }) {
         })
         .catch(() => undefined);
     },
-    [keep, locate],
+    [keep, locate, mode],
   );
 
   const trip = useMemo(

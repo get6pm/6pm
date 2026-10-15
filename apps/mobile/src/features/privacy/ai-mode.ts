@@ -56,6 +56,8 @@ const MODE_KEY = 'ai.mode';
 const MODEL_KEY = 'ai.localModel';
 
 type Reader = Pick<SQLiteDatabase, 'getFirstSync'>;
+/** What reads the AI mode: the app's database, or anything with its synchronous read. */
+export type AiModeSettings = Reader;
 type Writer = Pick<SQLiteDatabase, 'runSync'>;
 
 function read(db: Reader, key: string): string | null {

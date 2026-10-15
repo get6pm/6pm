@@ -1,6 +1,7 @@
 import type { Currency } from '@6pm/domain';
 
 import type { SymbolName } from '../../ui/icons/symbols.generated';
+import type { AiMode } from '../privacy/ai-mode';
 
 /** The ways onboarding shows spending being caught, in the order of its cards. */
 export const CATCH_WAYS = ['scan', 'share', 'wallet', 'email', 'add', 'lock'] as const;
@@ -21,11 +22,14 @@ export function walkedWay(way: CatchWay): WalkedWay | null {
 }
 
 /**
- * The ways shown for a home currency. Scan to pay reads VietQR, which only Vietnamese banks
- * print, so it is left out when home is not đồng.
+ * The ways shown for a home currency and an AI mode. Scan to pay reads VietQR, which only
+ * Vietnamese banks print, so it is left out when home is not đồng. Receipt email exists only in
+ * server mode, so it is left out in on-device mode.
  */
-export function catchWaysFor(home: Currency): readonly CatchWay[] {
-  return home.code === 'VND' ? CATCH_WAYS : CATCH_WAYS.filter((way) => way !== 'scan');
+export function catchWaysFor(home: Currency, mode: AiMode = 'server'): readonly CatchWay[] {
+  return CATCH_WAYS.filter(
+    (way) => !(way === 'scan' && home.code !== 'VND') && !(way === 'email' && mode === 'device'),
+  );
 }
 
 /** How many work the moment onboarding ends, with nothing to set up. */

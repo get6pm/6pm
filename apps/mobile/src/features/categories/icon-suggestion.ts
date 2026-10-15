@@ -1,6 +1,7 @@
 import { categoryIconResponseSchema, suggestCategoryIcon, type CategoryIcon } from '@6pm/domain';
 
 import type { ApiClient } from '../api/api-client';
+import { requireServerAi, type AiModeSettings } from '../privacy/ai-mode';
 import { ICON_PACKS, isPackLocked } from './icon-packs';
 
 /** How long the typing has to rest before the server is asked. */
@@ -24,14 +25,17 @@ export function mayAutoPick(initial: { readonly name: string; readonly icon: str
 
 /**
  * Asks the server for the icon a name points to, among the icons given. Null when the server is
- * unsure, unreachable, slow or refuses: the editor keeps the icon it has.
+ * unsure, unreachable, slow or refuses, and in on-device mode, where the name is never sent: the
+ * editor keeps the icon it has (the phone's own word match has already had its say).
  */
 export async function askCategoryIcon(
   request: ApiClient['request'],
+  settings: AiModeSettings,
   name: string,
   icons: readonly string[],
 ): Promise<CategoryIcon | null> {
   try {
+    requireServerAi(settings, 'category-icon');
     const answer = await request({
       method: 'POST',
       path: '/v1/category-icon',

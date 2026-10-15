@@ -7,7 +7,10 @@ import type { ApiClient } from '../api/api-client';
 import { ApiRequestError } from '../api/api-error';
 import { DEFAULT_CATEGORIES } from '../../data/onboarding';
 import { ICON_PACKS } from './icon-packs';
+import { aiModeSettings } from '../privacy/ai-mode-stand-in';
 import { askCategoryIcon, mayAutoPick, usableIcons } from './icon-suggestion';
+
+const serverMode = aiModeSettings('server');
 
 describe('the icons a name can choose from', () => {
   it('are exactly the icons the packs draw, so the server knows every one', () => {
@@ -53,7 +56,7 @@ describe('asking the server for an icon', () => {
 
   it('sends the trimmed name and the usable icons, and takes the answer', async () => {
     const request = answering(Promise.resolve({ icon: 'pets' }));
-    await expect(askCategoryIcon(request, '  Chó mèo ', icons)).resolves.toBe('pets');
+    await expect(askCategoryIcon(request, serverMode, '  Chó mèo ', icons)).resolves.toBe('pets');
     expect(request).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'POST',
@@ -65,17 +68,26 @@ describe('asking the server for an icon', () => {
 
   it('keeps the icon it has when the server is unsure, answers outside the list, or fails', async () => {
     await expect(
-      askCategoryIcon(answering(Promise.resolve({ icon: null })), 'x', icons),
+      askCategoryIcon(answering(Promise.resolve({ icon: null })), serverMode, 'x', icons),
     ).resolves.toBeNull();
     await expect(
-      askCategoryIcon(answering(Promise.resolve({ icon: 'movie' })), 'x', icons),
+      askCategoryIcon(answering(Promise.resolve({ icon: 'movie' })), serverMode, 'x', icons),
     ).resolves.toBeNull();
     await expect(
       askCategoryIcon(
         answering(Promise.reject(new ApiRequestError('network', 'offline', true))),
+        serverMode,
         'x',
         icons,
       ),
     ).resolves.toBeNull();
+  });
+
+  it('sends nothing in on-device mode and keeps the icon it has', async () => {
+    const request = answering(Promise.resolve({ icon: 'pets' }));
+    await expect(
+      askCategoryIcon(request, aiModeSettings('device'), 'Chó mèo', icons),
+    ).resolves.toBeNull();
+    expect(request).not.toHaveBeenCalled();
   });
 });

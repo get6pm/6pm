@@ -23,6 +23,7 @@ export interface GuideSample {
   readonly name: GuideKey | { readonly merchant: string };
   /** A starter category: its tint and glyph come from the user's category of that id. */
   readonly categoryId: string;
+  /** In đồng, as the design has it; shown at its worth in the home currency. */
   readonly amount: number;
   readonly time: string;
   readonly source: SpendSource;

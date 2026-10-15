@@ -2,14 +2,13 @@ import type { ReactNode } from 'react';
 import { Text, View } from 'react-native';
 import type { SharedValue } from 'react-native-reanimated';
 
-import { formatVnd } from '@6pm/domain';
 import { shareCardInk } from '@6pm/theme';
 
 import { useI18n } from '../../../i18n/i18n';
 import { Symbol } from '../../../ui/icons/symbol';
 import type { SymbolName } from '../../../ui/icons/symbols.generated';
 import { body } from '../../../ui/type/fonts';
-import { AMOUNT, BankReceipt } from './bank-receipt';
+import { BankReceipt, useReceiptAmount } from './bank-receipt';
 import { Phone } from './device';
 import { bankInk, iosInk } from './frame-ink';
 import { GlyphTile } from './ios-parts';
@@ -157,6 +156,7 @@ export function ShareSheetFrame({ t, scale }: FrameProps) {
 /** 6pm's card reads the receipt; the finger taps Confirm and it is in the Inbox. */
 export function ShareCardFrame({ t, scale }: FrameProps) {
   const { t: tr } = useI18n();
+  const amount = useReceiptAmount();
   const ink = shareCardInk;
   return (
     <Phone t={t} scale={scale} dark>
@@ -188,7 +188,7 @@ export function ShareCardFrame({ t, scale }: FrameProps) {
             }}
           />
           <Text style={{ ...body(17, 650), color: ink.ink }}>{tr('native.share.title')}</Text>
-          <Text style={{ ...body(52, 650), color: ink.ink }}>{formatVnd(AMOUNT)}</Text>
+          <Text style={{ ...body(52, 650), color: ink.ink }}>{amount}</Text>
           <View style={{ borderRadius: 20, backgroundColor: ink.rows, paddingHorizontal: 16 }}>
             {[
               [tr('native.share.to'), 'Circle K'],

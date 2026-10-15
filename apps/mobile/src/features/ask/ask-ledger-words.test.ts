@@ -1,5 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
+import { currencyOf, moneyFormat, moneyLocale, vndLocale, type MoneyFormat } from '@6pm/domain';
 import { t, type Language } from '@6pm/i18n';
 
 import { describeLedgerAnswer, type LedgerWordsEnv } from './ask-ledger-words';
@@ -10,25 +11,49 @@ const lookUp = t as unknown as (
   params?: Readonly<Record<string, string | number>>,
 ) => string;
 
-function env(language: Language): LedgerWordsEnv {
+function env(
+  language: Language,
+  money: MoneyFormat = moneyFormat(vndLocale(language)),
+): LedgerWordsEnv {
   const categoryName = (id: string) => ({ drinks: 'Cà phê', food: 'Ăn uống' })[id] ?? id;
   const say = (key: string, params?: Readonly<Record<string, string | number>>) =>
     lookUp(language, key, params);
   return {
     t: say,
     language,
+    money,
     monthLong: (m) => m,
     dayLongMonth: (d) => d.slice(5),
     weekday: (d) => d,
     categoryName,
     voice: 'plain',
-    slotWords: { language, say, categoryName, dayMonth: (d) => String(d.getDate()) },
+    slotWords: { language, money, say, categoryName, dayMonth: (d) => String(d.getDate()) },
   };
 }
 
 const week = { from: '2026-10-05', to: '2026-10-09', preset: 'thisWeek' } as const;
 
 describe('describeLedgerAnswer', () => {
+  it('says amounts and the goal price example in the home currency', () => {
+    const dollars = env('en', moneyFormat(moneyLocale(currencyOf('USD'), 'en')));
+    const spent = describeLedgerAnswer(
+      {
+        kind: 'spent',
+        spent: { range: week, total: 1250, count: 1 },
+        categoryId: null,
+        merchant: null,
+        places: [{ merchant: 'Blue Bottle', amount: 1250, visits: 1 }],
+        partial: false,
+      },
+      dollars,
+    );
+    expect(spent.card.rows).toEqual([{ key: 'Blue Bottle', value: '$12.50' }]);
+    const goal = describeLedgerAnswer({ kind: 'goalAmount', what: 'a car' }, dollars);
+    expect(goal.card.text).toContain('“$100k”');
+    const dong = describeLedgerAnswer({ kind: 'goalAmount', what: 'a car' }, env('en'));
+    expect(dong.card.text).toContain('“3 tỷ”');
+  });
+
   it('says what a category cost over a span, with a model’s values to word it from', () => {
     const { card, wording } = describeLedgerAnswer(
       {

@@ -1,4 +1,7 @@
+import { currencyOf, designAmount, toMajor, VND, type Currency } from '../money/currency';
+import { moneyFormat, moneyLocale } from '../money/money-format';
 import type { AskRequest } from './ask-query';
+import { queryInMajor } from './ask-units';
 
 export const readQuestionSystem = `You read one question a person asks their daily money app, 6pm, in English or Vietnamese, and say what it asks as a query. You never answer it and never work out money: the phone does that from the person's own records, which you never see.
 
@@ -31,6 +34,50 @@ category: one of their category names exactly as listed, when the question means
 
 Amounts: "k"/"nghìn"/"ngàn" ×1.000; "tr"/"triệu"/"củ"/"m" ×1.000.000; "tỷ"/"tỉ"/"bn" ×1.000.000.000; "1tr5" = 1.500.000; "rưỡi" adds half the unit; a bare number under 1000 means thousands; "$" amounts are not đồng: use unknown.`;
 
+/**
+ * The reading rules for a home currency other than đồng: the same kinds and spans, with amounts
+ * read in that currency's major units, decimals as said, and the design's examples at its value.
+ */
+function systemIn(currency: Currency): string {
+  const { code } = currency;
+  const money = moneyFormat(moneyLocale(currency, 'en'));
+  const example = (dong: number) => money.short(designAmount(dong, currency));
+  const major = (dong: number) => toMajor(designAmount(dong, currency), currency);
+  const decimals =
+    currency.minorDigits > 0
+      ? `as a number of ${code} with any decimals as said ("12.50" and "12,50" are both 12.5)`
+      : `as a whole number of ${code}`;
+  return readQuestionSystem
+    .replace(
+      '("Can I afford 2tr on Saturday?", "mua giày 1tr5 được không"). amount in whole đồng.',
+      `("Can I afford ${example(2_000_000)} on Saturday?", "mua giày ${example(1_500_000)} được không"). amount in ${code}.`,
+    )
+    .replace(
+      '(amount in đồng; 500000 if none is said)',
+      `(amount in ${code}; ${major(500_000)} if none is said)`,
+    )
+    .replace('amount in đồng only if', `amount in ${code} only if`)
+    .replace(
+      'minAmount in đồng when they say "over 500k"',
+      `minAmount in ${code} when they say "over ${example(500_000)}"`,
+    )
+    .replace('("3 tỷ")', `("${example(3_000_000_000)}")`)
+    .replace(
+      /\nAmounts: .*$/su,
+      `\nAmounts are in ${code} (${currency.symbol}), ${decimals}: "k"/"nghìn"/"ngàn" ×1,000; "m"/"million"/"tr"/"triệu" ×1,000,000; "bn"/"billion"/"tỷ" ×1,000,000,000; amounts in another currency are not ${code}: use unknown.`,
+    );
+}
+
+/** The reading rules for the home currency (đồng when the phone sent none). */
+export function readQuestionSystemFor(currency: Currency = VND): string {
+  return currency.code === 'VND' ? readQuestionSystem : systemIn(currency);
+}
+
+/** The home currency a request reads amounts in. */
+export function askCurrencyOf(request: Pick<AskRequest, 'currency'>): Currency {
+  return request.currency === undefined ? VND : currencyOf(request.currency);
+}
+
 /** The user turn: the question, then what the phone sent to help read it. */
 export function readQuestionPrompt(request: AskRequest): string {
   const lines = [`Question: ${request.question}`];
@@ -42,7 +89,8 @@ export function readQuestionPrompt(request: AskRequest): string {
     lines.push(`Their pots: ${request.pots.join(' | ')}`);
   }
   if (request.previous !== undefined) {
-    lines.push(`Previous query: ${JSON.stringify(request.previous)}`);
+    const previous = queryInMajor(request.previous, askCurrencyOf(request));
+    lines.push(`Previous query: ${JSON.stringify(previous)}`);
   }
   return lines.join('\n');
 }

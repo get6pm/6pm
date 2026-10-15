@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react';
 import { Text, View } from 'react-native';
 
-import { formatVnd } from '@6pm/domain';
+import { designAmount } from '@6pm/domain';
 
 import { DEFAULT_CATEGORIES } from '../../data/onboarding';
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { CategoryTile } from '../../ui/category-tile';
 import { isSymbolName, Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
@@ -147,6 +148,7 @@ export function GuideSteps({
 export function GuideSample({ guide }: { readonly guide: GuideContent }) {
   const { palette } = useTheme();
   const { t } = useI18n();
+  const money = useMoneyFormat();
   const { categories } = useMoney();
   const colours = captureColours(palette);
   const { sample } = guide;
@@ -187,7 +189,7 @@ export function GuideSample({ guide }: { readonly guide: GuideContent }) {
       </View>
       <View style={{ alignItems: 'flex-end', gap: 3 }}>
         <Text style={{ ...body(16, 600), ...tabular, color: palette.ink }}>
-          {formatVnd(sample.amount)}
+          {money.full(designAmount(sample.amount, money.currency))}
         </Text>
         <Text
           style={{ ...body(11, 600, 0.04), textTransform: 'uppercase', color: colours.warnText }}

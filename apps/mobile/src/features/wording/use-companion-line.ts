@@ -14,6 +14,7 @@ import {
 
 import { useDay, useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { useCompanionForm } from '../../ui/companion/companion-form';
 import type { CompanionMood } from '../../ui/companion/companion-mood';
 import { useTheme } from '../../ui/theme/theme';
@@ -61,6 +62,7 @@ export function useCompanionLine(
   const snap = useMoney();
   const day = useDay();
   const { language, t, dayMonth } = useI18n();
+  const money = useMoneyFormat();
   const { serious } = useTheme();
   const form = useCompanionForm();
   const voiceName: Voice = serious ? 'plain' : (snap.plan?.persona ?? 'cheeky');
@@ -104,11 +106,12 @@ export function useCompanionLine(
   const words: SlotWords = useMemo(
     () => ({
       language,
+      money,
       say,
       dayMonth,
       categoryName: (id) => snap.categories.find((c) => c.id === id)?.name ?? '',
     }),
-    [language, say, dayMonth, snap.categories],
+    [language, money, say, dayMonth, snap.categories],
   );
   const values = useMemo(() => (fact === null ? {} : slotValues(fact, words)), [fact, words]);
   const key = fact === null ? null : lineKey(fact, voiceName, language, surface);

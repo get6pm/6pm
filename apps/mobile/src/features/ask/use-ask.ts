@@ -19,6 +19,7 @@ import {
 
 import { useMoneySelector, useMoneyStore } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import type { CompanionMood } from '../../ui/companion/companion-mood';
 import { haptics } from '../../ui/haptics';
 import { useClock } from '../../ui/theme/clock';
@@ -103,7 +104,8 @@ export function useAsk(): AskChat {
   const api = useApi();
   const { max } = useEntitlement();
   const format = usePlanFormat(today);
-  const firstPotName = useMoneySelector((snap) => snap.pots[0]?.name ?? null);
+  const money = useMoneyFormat();
+  const potName = useMoneySelector((snap) => snap.pots[0]?.name ?? null);
   const db = useSQLiteContext();
   const { serious } = useTheme();
   const form = useCompanionForm();
@@ -137,8 +139,8 @@ export function useAsk(): AskChat {
   }, [router]);
 
   // The latest words and clock, so a question asked a moment ago is answered in today's terms.
-  const words = useRef({ t, language, weekday, format, today, serious, persona, form });
-  words.current = { t, language, weekday, format, today, serious, persona, form };
+  const words = useRef({ t, language, weekday, format, money, today, serious, persona, form });
+  words.current = { t, language, weekday, format, money, today, serious, persona, form };
 
   const push = useCallback((message: NewMessage) => {
     nextId.current += 1;
@@ -158,6 +160,7 @@ export function useAsk(): AskChat {
       const env = {
         t: now.t,
         language: now.language,
+        money: now.money,
         monthLong: now.format.monthLong,
         dayLongMonth: now.format.dayLongMonth,
         weekday: (d: string) => now.weekday(new Date(`${d}T12:00:00`)),
@@ -175,7 +178,7 @@ export function useAsk(): AskChat {
         categoryName,
         voice,
         slotWords: {
-          language: now.language,
+          ...env,
           say,
           categoryName,
           dayMonth: (date) => env.dayLongMonth(localDateOf(date)),
@@ -242,6 +245,7 @@ export function useAsk(): AskChat {
           categories: snapshot.categories.map((c) => c.name),
           pots: snapshot.pots.map((pot) => pot.name),
           previous: previous.current,
+          currency: words.current.money.currency,
           merchants: [...new Set(snapshot.cycleSpends.map((spend) => spend.merchant))],
         });
         previous.current = reading.query;
@@ -280,7 +284,7 @@ export function useAsk(): AskChat {
 
   const freeLeft = max || askedOn === null ? null : freeAsksLeft(askedOn, today);
   const mood: CompanionMood = typing ? 'think' : lastMood(messages);
-  const suggestions = useMemo(() => askSuggestions(t, firstPotName), [t, firstPotName]);
+  const suggestions = useMemo(() => askSuggestions(t, potName, money), [t, potName, money]);
 
   return {
     messages,

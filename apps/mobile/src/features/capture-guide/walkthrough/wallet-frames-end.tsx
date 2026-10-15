@@ -1,8 +1,9 @@
 import { Text, View } from 'react-native';
 
-import { formatVnd } from '@6pm/domain';
+import { designAmount } from '@6pm/domain';
 
 import { useI18n } from '../../../i18n/i18n';
+import { useMoneyFormat } from '../../../money/use-money-format';
 import { Symbol } from '../../../ui/icons/symbol';
 import { body } from '../../../ui/type/fonts';
 import { WALLET_SHORTCUT_NAME } from '../wallet-shortcut';
@@ -77,11 +78,13 @@ export function FinishFrame({ t, scale }: FrameProps) {
   );
 }
 
-const PAID = 59000;
+/** The test payment the pictured row shows: 59.000₫ in the design. */
+const PAID_DONG = 59_000;
 
 /** Apple Pay at a till, then 6pm with the tap waiting in the Inbox. */
 export function TestFrame({ t, scale }: FrameProps) {
   const { t: tr } = useI18n();
+  const money = useMoneyFormat();
   return (
     <Phone t={t} scale={scale} background={iosInk.bezel} dark>
       <Reveal
@@ -164,7 +167,9 @@ export function TestFrame({ t, scale }: FrameProps) {
               {tr('capture.walk.test.row')}
             </Text>
           </View>
-          <Text style={{ ...body(18, 600), color: iosInk.label }}>{formatVnd(PAID)}</Text>
+          <Text style={{ ...body(18, 600), color: iosInk.label }}>
+            {money.full(designAmount(PAID_DONG, money.currency))}
+          </Text>
           <TapFlash t={t} at={0.7} radius={26} />
         </View>
       </Reveal>

@@ -3,6 +3,7 @@ import {
   askResponseSchema,
   readQuery,
   type AskQuery,
+  type Currency,
   type LocalDate,
 } from '@6pm/domain';
 
@@ -24,6 +25,8 @@ export interface ReadingHelp {
   readonly pots: readonly string[];
   /** The query before this one, for a follow-up ("what about last month?"). */
   readonly previous: AskQuery | null;
+  /** The home currency: its code goes to the server, so amounts are read in it. */
+  readonly currency: Currency;
   /** The user's own places, for the rules alone: they never leave the phone. */
   readonly merchants?: readonly string[];
 }
@@ -34,6 +37,7 @@ function readHere(question: string, help: ReadingHelp): AskQuery {
     question,
     { pots: help.pots, categories: help.categories, merchants: help.merchants ?? [] },
     help.previous,
+    help.currency,
   );
 }
 
@@ -78,6 +82,8 @@ export async function readQuestion(
       .slice(0, 30)
       .map((n) => n.slice(0, 40)),
     ...(help.previous === null ? {} : { previous: help.previous }),
+    // Đồng is what a server that predates the field reads anyway.
+    ...(help.currency.code === 'VND' ? {} : { currency: help.currency.code }),
   });
   if (request.success) {
     try {

@@ -1,13 +1,11 @@
 import {
   dayDot,
-  formatShort,
-  formatVnd,
   monthDiary,
   nextMonthStart,
   type ClosedDayRow,
   type ClosedDayTotal,
+  type MoneyFormat,
 } from '@6pm/domain';
-import type { Language } from '@6pm/i18n';
 
 import { toDiarySpend, type readMonthDiary } from '../../../data/diary-queries';
 import type { MoneySnapshot } from '../../../data/money-store';
@@ -32,7 +30,7 @@ export function zineView({
   categories,
   notDaily,
   t,
-  language,
+  money,
   dates,
   showAmounts,
 }: {
@@ -42,7 +40,8 @@ export function zineView({
   readonly categories: MoneySnapshot['categories'];
   readonly notDaily: ReadonlySet<string>;
   readonly t: I18n['t'];
-  readonly language: Language;
+  /** Money in the home currency. */
+  readonly money: MoneyFormat;
   readonly dates: ReturnType<typeof useDiaryDates>;
   readonly showAmounts: boolean;
 }) {
@@ -63,7 +62,7 @@ export function zineView({
     diary.spare >= 0
       ? t('diary.zine.headline.spare', {
           month: monthName,
-          amount: formatShort(diary.spare, language),
+          amount: money.short(diary.spare),
         })
       : data.futureYou.added > 0
         ? t('diary.zine.headline.overPaid')
@@ -72,13 +71,13 @@ export function zineView({
   const stats: ZineStat[] = [
     {
       key: t('diary.zine.spent'),
-      value: formatShort(diary.spent, language),
-      sub: t('diary.zine.spentSub', { plan: formatShort(diary.plan, language) }),
+      value: money.short(diary.spent),
+      sub: t('diary.zine.spentSub', { plan: money.short(diary.plan) }),
     },
     {
       key: t('diary.zine.futureYou'),
-      value: `+${formatShort(data.futureYou.added, language)}`,
-      sub: t('diary.zine.futureYouSub', { total: formatShort(data.futureYou.total, language) }),
+      value: `+${money.short(data.futureYou.added)}`,
+      sub: t('diary.zine.futureYouSub', { total: money.short(data.futureYou.total) }),
     },
     {
       key: t('diary.zine.under'),
@@ -99,7 +98,7 @@ export function zineView({
     return {
       name: p.merchant,
       sub: t('diary.places.visits', { count: p.visits }),
-      amount: formatShort(p.amount, language),
+      amount: money.short(p.amount),
       icon: merchantIcon(p.merchant, icon),
       hue: category?.hue ?? 80,
       pct: Math.round((p.amount / Math.max(1, top)) * 100),
@@ -112,7 +111,7 @@ export function zineView({
       : {
           label,
           date: dates.stamp(d.day),
-          amount: formatVnd(d.spent),
+          amount: money.full(d.spent),
           note: rowOf(d)?.note ?? null,
         };
 
@@ -120,7 +119,7 @@ export function zineView({
     key: d.day,
     dow: dates.weekdayShort(d.day),
     day: d.day.slice(8),
-    total: formatShort(d.spent, language),
+    total: money.short(d.spent),
     dot: dayDot(d.spent, d.line) === 'under' ? dots.paperUnder : dots.paperOver,
   }));
 
@@ -147,8 +146,8 @@ export function zineView({
       dots: diary.dots,
       stat: showAmounts
         ? t('diary.zine.shareSpent', {
-            spent: formatShort(diary.spent, language),
-            plan: formatShort(diary.plan, language),
+            spent: money.short(diary.spent),
+            plan: money.short(diary.plan),
           })
         : t('diary.zine.shareUnder', {
             pct: diary.closed.length ? Math.round((diary.under / diary.closed.length) * 100) : 0,

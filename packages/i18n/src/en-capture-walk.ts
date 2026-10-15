@@ -84,6 +84,7 @@ export const enCaptureWalk = {
 
   'capture.walk.bank.done': 'Transfer successful',
   'capture.walk.bank.from': 'From',
+  'capture.walk.bank.yourBank': 'Your bank',
   'capture.walk.bank.share': 'Share',
   'capture.walk.bank.home': 'Home',
 

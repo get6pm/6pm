@@ -4,6 +4,7 @@ import { notDailyOf, readMonthDiary, useStoreQuery } from '../../../data/diary-q
 import { useMoney } from '../../../data/money-provider';
 import type { MoneyStore } from '../../../data/money-store';
 import { useI18n } from '../../../i18n/i18n';
+import { useMoneyFormat } from '../../../money/use-money-format';
 import { useDiaryDates } from '../diary-dates';
 import { zineView } from './zine-view';
 
@@ -11,7 +12,8 @@ import { zineView } from './zine-view';
 // `month` is 'YYYY-MM'.
 export function useMoneyDiary(month: string, showAmounts: boolean) {
   const snap = useMoney();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const dates = useDiaryDates();
   const { plan, closedDays, cycleSpends, potSaved } = snap;
   const payday = useMemo(() => plan?.payday ?? { kind: 'lastDay' as const }, [plan]);
@@ -31,7 +33,7 @@ export function useMoneyDiary(month: string, showAmounts: boolean) {
     categories: snap.categories,
     notDaily: notDailyOf(snap),
     t,
-    language,
+    money,
     dates,
     showAmounts,
   });

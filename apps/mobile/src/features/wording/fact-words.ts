@@ -1,4 +1,4 @@
-import { formatShort, type Fact, type FactKind, type FactSlot, slotsOf } from '@6pm/domain';
+import { type Fact, type FactKind, type FactSlot, type MoneyFormat, slotsOf } from '@6pm/domain';
 import type { Language } from '@6pm/i18n';
 
 /** The companion's voice: a personality, or plain in serious mode. */
@@ -6,6 +6,8 @@ export type Voice = 'soft' | 'cheeky' | 'roast' | 'plain';
 
 export interface SlotWords {
   readonly language: Language;
+  /** Money in the home currency: a money slot is its short form ("353k", "$12"). */
+  readonly money: MoneyFormat;
   /** Looks up a catalogue key with runtime params. */
   readonly say: (key: string, params?: Readonly<Record<string, string | number>>) => string;
   readonly categoryName: (id: string) => string;
@@ -16,7 +18,7 @@ export interface SlotWords {
 function slotText(slot: FactSlot, words: SlotWords): string {
   switch (slot.type) {
     case 'money':
-      return formatShort(slot.value, words.language);
+      return words.money.short(slot.value);
     case 'count':
       return String(slot.value);
     case 'date': {

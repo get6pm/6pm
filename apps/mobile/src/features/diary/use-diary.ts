@@ -3,8 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   calendarCells,
   diaryShelf,
-  floorToThousand,
-  formatShort,
+  floorToStep,
   monthEnd,
   monthOf,
   previousMonth,
@@ -29,6 +28,7 @@ import { useDay, useMoneySelector } from '../../data/money-provider';
 import type { MoneySnapshot } from '../../data/money-store';
 import type { MoneyStore } from '../../data/money-store';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
 import { useDiaryRequest } from '../today/diary-request';
 import { useDiaryDates } from './diary-dates';
@@ -68,7 +68,9 @@ const sameInputs = (a: ReturnType<typeof diaryInputs>, b: ReturnType<typeof diar
 export function useDiary() {
   const day = useDay();
   const { today, closedDays, cycleSpends, categories } = useMoneySelector(diaryInputs, sameInputs);
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
+  const { currency } = money;
   const dates = useDiaryDates();
   const current = monthOf(today);
   const monday = startOfWeek(today);
@@ -151,8 +153,9 @@ export function useDiary() {
         closed: weekClosed,
         spends: (data?.weekSpends ?? []).map(toDiarySpend),
         notDaily,
+        currency,
       }),
-    [today, line, data, weekClosed, notDaily],
+    [today, line, data, weekClosed, notDaily, currency],
   );
 
   const row = monthClosed.find((d) => d.day === receiptData?.day);
@@ -187,7 +190,7 @@ export function useDiary() {
   const monthLine =
     month === current || monthClosed.length === 0
       ? line
-      : floorToThousand(monthClosed.reduce((sum, d) => sum + d.line, 0) / monthClosed.length);
+      : floorToStep(monthClosed.reduce((sum, d) => sum + d.line, 0) / monthClosed.length, currency);
   return {
     ready: data !== null,
     kicker: t('diary.kicker', {
@@ -205,7 +208,7 @@ export function useDiary() {
         : t('diary.cal.summary', {
             closed: monthClosed.length,
             under,
-            line: formatShort(monthLine, language),
+            line: money.short(monthLine),
           }),
     cells: calendarCells({ month, today, closed: monthClosed, since: data?.since ?? null }),
     selected,

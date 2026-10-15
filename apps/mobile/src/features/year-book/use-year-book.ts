@@ -8,6 +8,7 @@ import { monthsOfYear, type YearKey } from '@6pm/domain';
 import { notDailyOf, readMonthDiary } from '../../data/diary-queries';
 import { useMoney, useMoneyStore } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { useCompanionForm } from '../../ui/companion/companion-form';
 import { haptics } from '../../ui/haptics';
 import { useTheme } from '../../ui/theme/theme';
@@ -52,6 +53,7 @@ export function useYearBook() {
   const store = useMoneyStore();
   const snap = useMoney();
   const { t, language } = useI18n();
+  const money = useMoneyFormat();
   const dates = useDiaryDates();
   const { palette, serious } = useTheme();
   const form = useCompanionForm();
@@ -84,7 +86,7 @@ export function useYearBook() {
               categories: snap.categories,
               notDaily,
               t,
-              language,
+              money,
               dates,
               showAmounts: true,
             }),
@@ -96,6 +98,7 @@ export function useYearBook() {
             zines,
             t,
             language,
+            money,
             dates,
             display: displayStack(palette.dispFont),
             fonts: await fontFaces(palette.dispFont),
@@ -127,7 +130,7 @@ export function useYearBook() {
         setBinding(null);
       }
     },
-    [store, snap, t, language, dates, palette.dispFont, serious, form, toast],
+    [store, snap, t, language, money, dates, palette.dispFont, serious, form, toast],
   );
 
   return { bind, binding };

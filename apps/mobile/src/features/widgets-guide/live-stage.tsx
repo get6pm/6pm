@@ -2,10 +2,11 @@ import type { ReactNode } from 'react';
 import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, type SharedValue } from 'react-native-reanimated';
 
-import { formatVnd } from '@6pm/domain';
+import { designAmount } from '@6pm/domain';
 import { activityInk } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { Companion } from '../../ui/companion/companion';
 import { Symbol } from '../../ui/icons/symbol';
 import { body } from '../../ui/type/fonts';
@@ -18,8 +19,8 @@ const HEIGHT = 310;
 const LOOP = 5600;
 /** Reduce Motion holds the banner up, waiting for its Paid tap. */
 const STILL = 0.42;
-/** The example the guide pictures: a bowl of phở paid by QR. */
-const AMOUNT = 45000;
+/** The example the guide pictures: a bowl of phở paid by QR, 45.000₫ in the design. */
+const AMOUNT_DONG = 45_000;
 const MERCHANT = 'Phở Hòa';
 const BANNER_TOP = 170;
 const PAID = { x: 402 - 16 - 14 - 40, y: BANNER_TOP + 14 + 23 } as const;
@@ -41,6 +42,8 @@ export function LiveStage({
   readonly width: number;
 }) {
   const { t } = useI18n();
+  const money = useMoneyFormat();
+  const amount = money.full(designAmount(AMOUNT_DONG, money.currency));
   const clock = useLoop(LOOP, STILL);
   const accent = preview.ink['accent'];
   const onAccent = preview.ink['onAccent'];
@@ -76,7 +79,7 @@ export function LiveStage({
                 {t('surfaces.activity.waiting')}
               </Text>
               <Text numberOfLines={1} style={{ ...body(15, 650), color: activityInk.ink }}>
-                {t('surfaces.activity.to', { amount: formatVnd(AMOUNT), merchant: MERCHANT })}
+                {t('surfaces.activity.to', { amount, merchant: MERCHANT })}
               </Text>
             </View>
             <View

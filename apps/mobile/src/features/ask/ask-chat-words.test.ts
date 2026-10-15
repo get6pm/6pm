@@ -1,5 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
+import { moneyFormat, vndLocale } from '@6pm/domain';
 import { t, type Language } from '@6pm/i18n';
 
 import type { Voice } from '../wording/fact-words';
@@ -23,7 +24,13 @@ function env(language: Language, voice: Voice): LedgerWordsEnv {
     weekday: (d) => d,
     categoryName: (id) => id,
     voice,
-    slotWords: { language, say, categoryName: (id) => id, dayMonth: (d) => String(d.getDate()) },
+    slotWords: {
+      language,
+      money: moneyFormat(vndLocale(language)),
+      say,
+      categoryName: (id) => id,
+      dayMonth: (d) => String(d.getDate()),
+    },
   };
 }
 

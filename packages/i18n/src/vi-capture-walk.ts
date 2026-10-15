@@ -83,6 +83,7 @@ export const viCaptureWalk: { readonly [Key in keyof typeof enCaptureWalk]: Entr
 
   'capture.walk.bank.done': 'Chuyển khoản thành công',
   'capture.walk.bank.from': 'Từ',
+  'capture.walk.bank.yourBank': 'Ngân hàng của bạn',
   'capture.walk.bank.share': 'Chia sẻ',
   'capture.walk.bank.home': 'Trang chủ',
 

@@ -8,19 +8,27 @@ import { parseAmount } from '../money/parse-amount';
  * never sees the user's money); offline, `readIntent` reads it with rules. Every number in the
  * answer is then worked out on the phone.
  */
-export const askIntentSchema = z.discriminatedUnion('kind', [
-  /** "Can I afford 2tr on Saturday?" */
-  z.object({ kind: z.literal('afford'), amount: z.number().int().positive() }),
-  /** "How much can I spend this weekend?" */
-  z.object({ kind: z.literal('weekend') }),
-  /** "What if I saved 500k more?" */
-  z.object({ kind: z.literal('saveMore'), amount: z.number().int().positive() }),
-  /** "When will the Tết pot be full?" — the pot's name as the user wrote it, if any. */
-  z.object({ kind: z.literal('potFull'), pot: z.string().max(80).optional() }),
-  /** "How much can I spend today?" */
-  z.object({ kind: z.literal('today') }),
-  z.object({ kind: z.literal('unknown') }),
-]);
+/** The intents' shapes, with `amount` for their amounts (whole minor units on the phone). */
+export function askIntentOptions<Amount extends z.ZodNumber>(amount: Amount) {
+  return [
+    /** "Can I afford 2tr on Saturday?" */
+    z.object({ kind: z.literal('afford'), amount }),
+    /** "How much can I spend this weekend?" */
+    z.object({ kind: z.literal('weekend') }),
+    /** "What if I saved 500k more?" */
+    z.object({ kind: z.literal('saveMore'), amount }),
+    /** "When will the Tết pot be full?" — the pot's name as the user wrote it, if any. */
+    z.object({ kind: z.literal('potFull'), pot: z.string().max(80).optional() }),
+    /** "How much can I spend today?" */
+    z.object({ kind: z.literal('today') }),
+    z.object({ kind: z.literal('unknown') }),
+  ] as const;
+}
+
+export const askIntentSchema = z.discriminatedUnion(
+  'kind',
+  askIntentOptions(z.number().int().positive()),
+);
 export type AskIntent = z.infer<typeof askIntentSchema>;
 
 const WEEKEND = /weekend|cuối tuần|cuoi tuan|saturday and sunday|thứ bảy và chủ nhật/;

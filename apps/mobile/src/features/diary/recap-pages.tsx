@@ -1,10 +1,10 @@
 import { Text, View } from 'react-native';
 
-import { formatShort, type RecapStory, type WeekRecap } from '@6pm/domain';
-import type { Language } from '@6pm/i18n';
+import { type MoneyFormat, type RecapStory, type WeekRecap } from '@6pm/domain';
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { CategoryTile } from '../../ui/category-tile';
 import { Companion } from '../../ui/companion/companion';
 import { DashedRule } from '../../ui/dashed-rule';
@@ -17,17 +17,17 @@ import { inkWash, recapAccent } from './diary-colours';
 function storyText(
   story: RecapStory,
   t: ReturnType<typeof useI18n>['t'],
-  language: Language,
+  money: MoneyFormat,
 ): readonly [string, string] {
   switch (story.kind) {
     case 'under':
       return [
         t('diary.recap.under.lead', { count: story.days }),
-        t('diary.recap.under.accent', { amount: formatShort(story.spare, language) }),
+        t('diary.recap.under.accent', { amount: money.short(story.spare) }),
       ];
     case 'over':
       return [
-        t('diary.recap.over.lead', { amount: formatShort(story.over, language) }),
+        t('diary.recap.over.lead', { amount: money.short(story.over) }),
         t('diary.recap.over.accent'),
       ];
     case 'even':
@@ -40,8 +40,9 @@ function storyText(
 /** Page one: the companion and the week's story in one sentence, its payoff in the accent. */
 export function StoryPage({ story }: { readonly story: RecapStory }) {
   const { palette, serious } = useTheme();
-  const { t, language } = useI18n();
-  const [lead, accent] = storyText(story, t, language);
+  const { t } = useI18n();
+  const money = useMoneyFormat();
+  const [lead, accent] = storyText(story, t, money);
   const happy = story.kind !== 'over';
   return (
     <View style={{ flex: 1, gap: 14 }}>
@@ -65,12 +66,13 @@ export function BarsPage({
   readonly letters: readonly string[];
 }) {
   const { palette } = useTheme();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const wash = inkWash(palette.dark);
   return (
     <View style={{ flex: 1, gap: 12 }}>
       <Text style={{ ...display(24, 500), lineHeight: 26.4, color: palette.ink }}>
-        {t('diary.recap.total', { total: formatShort(recap.total, language) })}{' '}
+        {t('diary.recap.total', { total: money.short(recap.total) })}{' '}
         <Text style={{ color: palette.inkSoft }}>
           {t('diary.recap.under', { under: recap.under, count: recap.days })}
         </Text>
@@ -100,7 +102,7 @@ export function BarsPage({
             }}
           >
             <Text style={{ ...body(10.5, 600), color: palette.inkSoft }}>
-              {bar.value === null ? '' : formatShort(bar.value, language)}
+              {bar.value === null ? '' : money.short(bar.value)}
             </Text>
             <View
               style={{
@@ -128,7 +130,8 @@ export function BarsPage({
 /** Page three: the three places most of the week's money went. */
 export function PlacesPage({ recap }: { readonly recap: WeekRecap }) {
   const { palette } = useTheme();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const { categories } = useMoney();
   return (
     <View style={{ flex: 1, gap: 4 }}>
@@ -162,7 +165,7 @@ export function PlacesPage({ recap }: { readonly recap: WeekRecap }) {
               </Text>
             </View>
             <Text style={{ ...display(22, 500), color: palette.ink }}>
-              {formatShort(place.amount, language)}
+              {money.short(place.amount)}
             </Text>
           </View>
         );

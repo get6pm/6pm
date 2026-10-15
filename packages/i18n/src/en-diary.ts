@@ -35,7 +35,7 @@ export const enDiary = {
   'diary.receipt.lateNote': 'closed it late. still counts.',
   'diary.ask.title': 'Ask 6pm',
   'diary.ask.sub': 'What fits, what if, when it’s covered',
-  'diary.ask.dinner': '2M dinner Saturday?',
+  'diary.ask.dinner': '{amount} dinner Saturday?',
   'diary.ask.weekend': 'This weekend?',
   'diary.ask.tet': 'Tết covered?',
   'diary.zines.title': 'Money diaries',

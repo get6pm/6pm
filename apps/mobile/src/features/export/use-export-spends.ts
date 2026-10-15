@@ -1,9 +1,10 @@
 import { useCallback, useRef, useState } from 'react';
 
-import { spendsCsv, type SpendsCsvLabels } from '@6pm/domain';
+import { localTimeOf, spendsCsv, type Currency, type SpendsCsvLabels } from '@6pm/domain';
 
 import { useMoneyStore } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useHomeCurrency } from '../../money/use-money-format';
 import { useToast } from '../../ui/toast/toast-host';
 import { useClock } from '../../ui/theme/clock';
 import { exportFileName } from './export-file';
@@ -12,14 +13,14 @@ import { shareCsv } from './share-csv';
 type T = ReturnType<typeof useI18n>['t'];
 
 /** The file's words in the app's language. Statuses and sources read as the spend's details do. */
-function labelsOf(t: T): SpendsCsvLabels {
+function labelsOf(t: T, currency: Currency): SpendsCsvLabels {
   return {
     headers: {
       date: t('export.csv.date'),
       time: t('export.csv.time'),
       merchant: t('export.csv.merchant'),
       category: t('export.csv.category'),
-      amount: t('export.csv.amount'),
+      amount: t('export.csv.amount', { code: currency.code }),
       status: t('export.csv.status'),
       source: t('export.csv.source'),
       wallet: t('export.csv.wallet'),
@@ -56,6 +57,7 @@ function labelsOf(t: T): SpendsCsvLabels {
 export function useExportSpends() {
   const store = useMoneyStore();
   const { t } = useI18n();
+  const currency = useHomeCurrency();
   const { today } = useClock();
   const toast = useToast();
   const [busy, setBusy] = useState(false);
@@ -77,7 +79,8 @@ export function useExportSpends() {
         toast(t('export.empty'));
         return;
       }
-      await shareCsv(exportFileName(today), spendsCsv(spends, categories, labelsOf(t)));
+      const csv = spendsCsv(spends, categories, labelsOf(t, currency), localTimeOf, currency);
+      await shareCsv(exportFileName(today), csv);
     } catch (error: unknown) {
       console.error('Exporting the spends failed', error);
       toast(t('export.failed'));
@@ -85,7 +88,7 @@ export function useExportSpends() {
       running.current = false;
       setBusy(false);
     }
-  }, [store, t, today, toast]);
+  }, [currency, store, t, today, toast]);
 
   return { run, busy };
 }

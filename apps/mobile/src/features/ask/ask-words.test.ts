@@ -1,6 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { answerAsk, type AskContext, type AskIntent, type DailyNumber } from '@6pm/domain';
+import {
+  answerAsk,
+  moneyFormat,
+  vndLocale,
+  type AskContext,
+  type AskIntent,
+  type DailyNumber,
+} from '@6pm/domain';
 import { t, type Language } from '@6pm/i18n';
 
 import { describeAnswer, type AskWordsEnv } from './ask-words';
@@ -43,6 +50,7 @@ const names: Record<Language, { weekday: Record<string, string>; month: string; 
 const envFor = (language: Language): AskWordsEnv => ({
   t: (key, ...params) => t(language, key, ...params),
   language,
+  money: moneyFormat(vndLocale(language)),
   monthLong: () => names[language].month,
   dayLongMonth: () => names[language].payday,
   weekday: (d) => names[language].weekday[d] ?? d,

@@ -1,4 +1,4 @@
-import { formatShort, yearSummary, type YearKey } from '@6pm/domain';
+import { yearSummary, type MoneyFormat, type YearKey } from '@6pm/domain';
 import type { Language } from '@6pm/i18n';
 
 import type { I18n } from '../../i18n/i18n';
@@ -15,6 +15,8 @@ export function yearBookDoc(input: {
   readonly zines: readonly ZineView[];
   readonly t: I18n['t'];
   readonly language: Language;
+  /** Money in the home currency. */
+  readonly money: MoneyFormat;
   readonly dates: ReturnType<typeof useDiaryDates>;
   readonly display: string;
   readonly fonts: string;
@@ -26,7 +28,7 @@ export function yearBookDoc(input: {
     zines.map((z) => z.diary),
     Object.fromEntries(zines.map((z) => [z.diary.month, z.futureYouAdded])),
   );
-  const short = (amount: number) => formatShort(amount, language);
+  const short = (amount: number) => input.money.short(amount);
   const days = (count: number) => t('diary.zine.days', { count });
   return {
     language,

@@ -140,6 +140,7 @@ export function rankedFacts(ledger: AskLedger, ctx: AskContext): Fact[] {
     notDaily: ledger.notDaily,
     bills: ledger.bills,
     pots: ledger.pots,
+    ...(ctx.currency === undefined ? {} : { currency: ctx.currency }),
   });
   const seen = new Set<string>();
   return [...facts]

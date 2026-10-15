@@ -31,7 +31,7 @@ export const viDiary: { readonly [Key in keyof typeof enDiary]: Entry } = {
   'diary.receipt.lateNote': 'chốt muộn. vẫn tính nha.',
   'diary.ask.title': 'Hỏi 6pm',
   'diary.ask.sub': 'Có đủ không, nếu như, khi nào đủ',
-  'diary.ask.dinner': 'Ăn tối 2tr thứ Bảy?',
+  'diary.ask.dinner': 'Ăn tối {amount} thứ Bảy?',
   'diary.ask.weekend': 'Cuối tuần này?',
   'diary.ask.tet': 'Đủ tiền Tết chưa?',
   'diary.zines.title': 'Nhật ký tiền',

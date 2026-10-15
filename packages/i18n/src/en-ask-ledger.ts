@@ -67,6 +67,6 @@ export const enAskLedger = {
   'ask.answer.goalNoPace':
     'Nothing goes to Future you each month yet, so there’s no pace to count {amount} for {what} from. A little each month starts one.',
   'ask.answer.goalAmount':
-    'Roughly how much is {what}? Tell me the price, like “3 tỷ”, and I’ll count it out.',
+    'Roughly how much is {what}? Tell me the price, like “{example}”, and I’ll count it out.',
   'ask.row.reachedBy': 'Around',
 } as const;

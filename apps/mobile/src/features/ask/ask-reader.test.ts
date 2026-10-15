@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import type { AskQuery } from '@6pm/domain';
+import { currencyOf, VND, type AskQuery } from '@6pm/domain';
 
 import type { ApiClient } from '../api/api-client';
 import { ApiRequestError } from '../api/api-error';
@@ -16,6 +16,7 @@ const help: ReadingHelp = {
   categories: ['Ăn uống', 'Cà phê'],
   pots: ['Tết'],
   previous: null,
+  currency: VND,
 };
 
 describe('reading a question', () => {
@@ -36,6 +37,18 @@ describe('reading a question', () => {
           pots: ['Tết'],
         },
       }),
+    );
+  });
+
+  it('names a home currency other than đồng, and the rules read amounts in it', async () => {
+    const USD = currencyOf('USD');
+    const { client, request } = apiAnswering(() => Promise.reject(new Error('offline')));
+    expect(await readQuestion(client, 'Can I afford $12.50?', { ...help, currency: USD })).toEqual({
+      query: { kind: 'afford', amount: 1250 },
+      offline: true,
+    });
+    expect(request).toHaveBeenCalledWith(
+      expect.objectContaining({ body: expect.objectContaining({ currency: 'USD' }) }),
     );
   });
 

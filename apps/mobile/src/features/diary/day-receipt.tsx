@@ -1,8 +1,7 @@
 import { Text, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
-import { formatVnd, groupDigits } from '@6pm/domain';
-
+import { useMoneyFormat } from '../../money/use-money-format';
 import { DashedRule } from '../../ui/dashed-rule';
 import { PaperEdge } from '../../ui/paper-edge';
 import { families, mono, tabular } from '../../ui/type/fonts';
@@ -30,6 +29,7 @@ export interface DayReceiptView {
  * spends, its total, a handwritten note and the CLOSED stamp with the time (or LATE).
  */
 export function DayReceipt({ receipt }: { readonly receipt: DayReceiptView }) {
+  const money = useMoneyFormat();
   const line = { ...mono(12), color: paper.ink };
   return (
     <View style={{ alignItems: 'center', marginTop: -6 }}>
@@ -70,7 +70,7 @@ export function DayReceipt({ receipt }: { readonly receipt: DayReceiptView }) {
               <Text numberOfLines={1} style={{ ...line, flex: 1, minWidth: 0 }}>
                 {r.name}
               </Text>
-              <Text style={{ ...line, ...tabular }}>{groupDigits(r.amount)}</Text>
+              <Text style={{ ...line, ...tabular }}>{money.number(r.amount)}</Text>
             </View>
           ))}
           <DashedRule color={paper.rule} />
@@ -79,7 +79,7 @@ export function DayReceipt({ receipt }: { readonly receipt: DayReceiptView }) {
               {receipt.totalLabel}
             </Text>
             <Text style={{ ...mono(14, 600), ...tabular, color: paper.ink }}>
-              {formatVnd(receipt.total)}
+              {money.full(receipt.total)}
             </Text>
           </View>
           <View

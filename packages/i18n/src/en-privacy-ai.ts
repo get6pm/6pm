@@ -1,0 +1,37 @@
+/** Where 6pm's AI runs: the onboarding step and Settings → AI. */
+export const enPrivacyAi = {
+  'privacy.ai.title': 'Where should 6pm think?',
+  'privacy.ai.sub':
+    'Where your questions and companion lines are worked out. Change it any time in Settings.',
+  'privacy.ai.server.title': 'On our server, with Claude',
+  'privacy.ai.server.text':
+    'The sharpest answers, and voice that gets Vietnamese right. Only a question or a few facts leave your phone, never your list of spends.',
+  'privacy.ai.server.tag': 'Recommended',
+  'privacy.ai.device.title': 'Only on this iPhone',
+  'privacy.ai.device.text': 'Nothing AI leaves your phone. A model is downloaded once, over Wi-Fi.',
+  'privacy.ai.device.unavailable': 'This iPhone doesn’t have the memory for a model of its own.',
+  'privacy.ai.models': 'Model',
+  'privacy.model.fast': 'Fastest and lightest',
+  'privacy.model.words': 'Best wording',
+  'privacy.model.reading': 'Best at questions',
+  'privacy.model.size': '{size} GB',
+  'privacy.model.download': 'Download',
+  'privacy.model.downloading': '{percent}%',
+  'privacy.model.verifying': 'Checking',
+  'privacy.model.ready': 'Ready',
+  'privacy.model.failed': 'Try again',
+  'privacy.model.delete': 'Delete',
+  'privacy.model.later': 'You can keep going while it downloads.',
+  'settings.ai': 'AI',
+  'settings.ai.server': 'On our server',
+  'settings.ai.device': 'On this iPhone',
+  'privacy.leaves.title': 'What leaves your phone',
+  'privacy.leaves.server.ask': 'A question, with your category and pot names, to read it',
+  'privacy.leaves.server.lines': 'The few facts in one companion line',
+  'privacy.leaves.server.receipts': 'A receipt photo your phone can’t read',
+  'privacy.leaves.server.voice': 'Your voice while you speak, to turn it into text',
+  'privacy.leaves.device.none': 'Nothing AI. Everything is worked out on this iPhone.',
+  'privacy.leaves.device.network':
+    'Exchange rates (only a date), app updates and purchases still use the internet.',
+  'privacy.leaves.device.emails': 'Receipt emails are off in this mode.',
+} as const;

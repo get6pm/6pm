@@ -1,4 +1,5 @@
 import {
+  asksTheirRecords,
   fillLine,
   localDateOf,
   type ActionAnswer,
@@ -94,8 +95,14 @@ export async function cardOf(
     dayLongMonth: now.format.dayLongMonth,
     weekday: (d: string) => now.weekday(new Date(`${d}T12:00:00`)),
   };
-  // A money question nothing can look up, in on-device mode: the downloaded model explains it.
-  if (answer.kind === 'help' && readAiMode(deps.settings) === 'device') {
+  // A general money question nothing can look up, in on-device mode: the downloaded model explains
+  // it. One about their own records keeps the help card: the model never sees them, so it would
+  // make the numbers up.
+  if (
+    answer.kind === 'help' &&
+    readAiMode(deps.settings) === 'device' &&
+    !asksTheirRecords(question)
+  ) {
     const text = await localExplanation(deps.settings, question, now.language);
     if (text !== null) {
       return {

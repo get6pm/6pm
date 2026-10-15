@@ -5,6 +5,7 @@ export * from './ask-query';
 export * from './ask-units';
 export * from './answer-query';
 export * from './read-query';
+export * from './records-question';
 export * from './ask-ledger';
 export * from './read-prompt';
 export * from './flat-query';

@@ -162,5 +162,9 @@ export const viOnboarding: { readonly [Key in keyof typeof enOnboarding]: Entry 
   'onboarding.category.transport': 'Đi lại',
   'onboarding.category.groceries': 'Đi chợ',
   'onboarding.category.shopping': 'Mua sắm',
+  'onboarding.category.fun': 'Giải trí',
+  'onboarding.category.health': 'Sức khỏe',
+  'onboarding.category.home': 'Nhà cửa',
+  'onboarding.category.family': 'Gia đình',
   'onboarding.category.gifts': 'Quà tặng',
 };

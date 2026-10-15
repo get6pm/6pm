@@ -53,3 +53,14 @@ export async function limitReceiptReads(c: Context<AppEnv>): Promise<void> {
   ]);
   if (!byDevice.success || !byIp.success) throw tooMany();
 }
+
+/**
+ * Called by the category icon route once its device is known, before the body is read. The phone
+ * asks after a pause in the typing, and only when its own word match found nothing.
+ */
+export async function limitIconPicks(c: Context<AppEnv>): Promise<void> {
+  const { success } = await c.env.ICON_PICK_RATE_LIMIT.limit({
+    key: `device:${c.var.device.hash}`,
+  });
+  if (!success) throw tooMany();
+}

@@ -1,0 +1,45 @@
+/**
+ * What each free category icon stands for: a line in English (the option text of the closed
+ * question the server asks) and the words, English and Vietnamese without accents, that point to
+ * it from a category's name. A Vietnamese syllable that also means something common ("cho", "the",
+ * "be", "tra", "no") is kept only inside a phrase.
+ */
+// prettier-ignore
+export const EVERYDAY_ICON_WORDS = {
+  restaurant: ['Eating out: meals and restaurants', 'food, foods, meal, meals, eating out, eat out, dining, restaurant, restaurants, lunch, dinner, breakfast, an uong, an ngoai, an sang, an trua, an toi, nha hang, quan an, do an, bua an, com, pho, bun'],
+  local_cafe: ['Coffee, tea and drinks', 'coffee, cafe, cafes, latte, drink, drinks, beverages, ca phe, caphe, cf, do uong, nuoc uong, nuoc ngot, tra sua, milk tea, boba, bubble tea, tea, sinh to, smoothie, juice, nuoc ep'],
+  lunch_dining: ['Fast food, snacks and takeaway', 'burger, burgers, fast food, takeaway, take away, snack, snacks, an vat, do an nhanh, banh mi, sandwich, sandwiches, street food'],
+  local_bar: ['Bars, beer and drinking out', 'bar, bars, pub, pubs, beer, beers, bia, ruou, nhau, di nhau, cocktail, cocktails, alcohol, drinking'],
+  shopping_cart: ['Groceries and the market', 'groceries, grocery, supermarket, market, di cho, sieu thi, thuc pham, rau, rau cu, trai cay, fruit, fruits, vegetables, veggies, bach hoa, food shopping'],
+  shopping_bag: ['Shopping and things to buy', 'shopping, shop, mua sam, mua do, online shopping, shopee, lazada, tiki, purchases, stuff'],
+  directions_car: ['A car and driving', 'car, cars, oto, o to, xe hoi, xe oto, driving, lai xe'],
+  two_wheeler: ['A motorbike, transport and getting around', 'motorbike, motorbikes, motorcycle, scooter, xe may, transport, transportation, di lai, xe om, getting around'],
+  local_taxi: ['Taxis and ride hailing', 'taxi, taxis, cab, cabs, grab, grabcar, grabbike, xanh sm, gojek, uber, ride hailing, xe dich vu'],
+  directions_bus: ['Buses and public transport', 'bus, buses, xe buyt, xe bus, public transport, metro, coach, xe khach'],
+  local_gas_station: ['Fuel for a car or motorbike', 'fuel, gas, petrol, gasoline, xang, xang dau, do xang, petrolimex'],
+  home: ['Home, rent and the household', 'home, house, household, nha, nha cua, rent, tien nha, thue nha, housing, gia dung, do gia dung'],
+  bolt: ['Electricity', 'electricity, electric, power, energy, dien, tien dien, evn'],
+  water_drop: ['Water', 'water, tien nuoc, nuoc, water bill'],
+  wifi: ['Internet and wifi', 'wifi, internet, mang, broadband, cap quang'],
+  smartphone: ['A phone and its plan', 'phone, phones, mobile, dien thoai, sim, nap the, top up, data, phone bill'],
+  receipt_long: ['Bills, fees and subscriptions', 'bill, bills, hoa don, utilities, fee, fees, phi, subscription, subscriptions, dich vu'],
+  payments: ['Cash and general spending', 'cash, tien mat, money, tien, spending, chi tieu, other, others, khac, misc, general, chung, linh tinh'],
+  savings: ['Savings', 'savings, saving, save, tiet kiem, piggy bank, emergency fund, quy du phong, quy'],
+  credit_card: ['Cards, debt and instalments', 'credit card, credit cards, card, cards, the tin dung, quet the, debt, debts, loan, loans, tra no, khoan no, instalment, installment, tra gop'],
+  redeem: ['Gifts', 'gift, gifts, present, presents, qua, qua tang, li xi, mung, mung cuoi'],
+  celebration: ['Parties and celebrations', 'party, parties, celebration, celebrations, birthday, birthdays, sinh nhat, tiec, lien hoan, event, events, wedding, weddings, dam cuoi, cuoi'],
+  favorite: ['Love and dates', 'love, dating, date, dates, hen ho, nguoi yeu, couple, partner, valentine, crush'],
+  pets: ['Pets', 'pet, pets, dog, dogs, cat, cats, thu cung, con cho, con meo, meo, cho meo, vet, thu y, pet food'],
+  child_care: ['Kids and babies', 'kid, kids, child, children, baby, babies, con, con cai, em be, tre em, tre con, sua bot, diapers'],
+  school: ['School and learning', 'school, education, tuition, hoc, hoc phi, giao duc, course, courses, class, classes, learning, study, khoa hoc, truong'],
+  work: ['Work costs', 'work, office, business, cong viec, van phong, cong tac, business trip, lam viec'],
+  fitness_center: ['The gym and sport', 'gym, fitness, sport, sports, the thao, tap gym, workout, workouts, exercise, tap luyen, yoga'],
+  medical_services: ['Health and doctors', 'health, healthcare, medical, doctor, doctors, hospital, clinic, suc khoe, y te, benh vien, bac si, kham benh, phong kham, bao hiem'],
+  local_pharmacy: ['A pharmacy and medicine', 'pharmacy, medicine, medicines, drugs, thuoc, nha thuoc, hieu thuoc, vitamin, vitamins, long chau, pharmacity'],
+  spa: ['Beauty, spa and self care', 'spa, beauty, massage, lam dep, cham soc, skincare, self care, nails, nail, lam mong, cosmetics, my pham, salon, haircut, cat toc'],
+  checkroom: ['Clothes and fashion', 'clothes, clothing, fashion, quan ao, ao quan, thoi trang, outfit, outfits, shoes, giay dep, giay'],
+  movie: ['Movies, fun and entertainment', 'movie, movies, cinema, film, films, phim, xem phim, rap phim, entertainment, giai tri, fun, netflix, streaming'],
+  sports_esports: ['Video games', 'game, games, gaming, tro choi, choi game, steam, playstation, xbox, nintendo'],
+  flight: ['Flights and travel', 'flight, flights, travel, trip, trips, du lich, ve may bay, may bay, plane, holiday, holidays, vacation, airline'],
+  luggage: ['Trips and hotels', 'luggage, hotel, hotels, khach san, homestay, airbnb, resort, vali, accommodation, nghi duong, booking'],
+} as const satisfies Record<string, readonly [string, string]>;

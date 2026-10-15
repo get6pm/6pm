@@ -15,6 +15,8 @@ import { body, families } from '../../ui/type/fonts';
 import { HuePicker } from './hue-picker';
 import { FREE_ICON_COUNT, MAX_ICON_COUNT } from './icon-packs';
 import { IconPicker } from './icon-picker';
+import { mayAutoPick } from './icon-suggestion';
+import { useIconAutoPick } from './use-icon-auto-pick';
 
 const DELETE_RED = oklchSrgbHex(0.66, 0.19, 25);
 
@@ -50,7 +52,17 @@ export function CategoryEditor({
     onClose();
   }, [onClose]);
 
-  const pickIcon = useCallback((icon: string) => setDraft((d) => ({ ...d, icon })), []);
+  // The icon follows the name until the person picks one; renaming never replaces a hand pick.
+  const [autoPick, setAutoPick] = useState(() => mayAutoPick(initial));
+  const pickIcon = useCallback((icon: string) => {
+    setAutoPick(false);
+    setDraft((d) => ({ ...d, icon }));
+  }, []);
+  useIconAutoPick({
+    name: draft.name,
+    enabled: autoPick && draft.name !== initial.name,
+    onPick: (icon) => setDraft((d) => (d.icon === icon ? d : { ...d, icon })),
+  });
   const pickHue = useCallback((hue: number) => setDraft((d) => ({ ...d, hue })), []);
   const named = draft.name.trim() !== '';
   const label = (text: string) => (

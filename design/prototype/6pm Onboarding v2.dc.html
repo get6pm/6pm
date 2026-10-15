@@ -432,6 +432,88 @@ a:hover{color:#ffd2a8}
       <a href="6pm Onboarding.dc.html" style="color:rgba(246,239,230,.55);">Compare with v1</a>
     </div>
   </div>
+  <div data-screen-label="Built in the app" style="flex-basis:100%; width:100%; max-width:1500px; color:#f6efe6; background:rgba(18,14,26,.72); border-radius:40px; padding:56px 48px 72px; box-sizing:border-box; display:flex; flex-direction:column; gap:88px; letter-spacing:-.01em; -webkit-font-smoothing:antialiased;">
+  <div style="display:flex; flex-direction:column; gap:6px;"><div style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-size:40px; font-weight:600; letter-spacing:-.03em;">Built in the app</div><div style="font-size:15px; color:rgba(246,239,230,.6);">Onboarding states shipped without a design · synced 15 Oct</div></div>
+  <!-- 10. ONBOARDING -->
+  <section data-screen-label="Onboarding updates" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">10</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Onboarding · six ways to catch, every bank</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" time="14:20" hint-size="402px,874px">
+        <div data-screen-label="Onboarding · catching spending" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#f0d9c6 0%,#f6e6d6 55%,#f9eee2 100%); padding:62px 20px 30px; box-sizing:border-box; display:flex; flex-direction:column; gap:14px;">
+          <div style="display:flex; gap:4px; padding:6px 0 0;"><sc-for list="{{ obProg }}" as="p" hint-placeholder-count="8"><span style="flex:1; height:4px; border-radius:4px; background: {{ p }};"></span></sc-for></div>
+          <div style="padding-top:14px; display:flex; flex-direction:column; gap:10px;">
+            <div style="max-width:260px; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:36px; line-height:1; letter-spacing:-.03em;">How 6pm catches spending</div>
+            <div style="font-size:15px; line-height:1.45; color:rgba(27,30,46,.62); text-wrap:pretty;">All of it lands in your Inbox, ready for the close at 18:00.</div>
+          </div>
+          <div style="position:relative; display:flex; gap:4px; overflow:hidden; margin:0 -20px; padding:0 20px;">
+            <sc-for list="{{ capRail }}" as="r" hint-placeholder-count="6">
+              <span style="flex-shrink:0; height:34px; padding:0 12px; border-radius:99px; background: {{ r.bg }}; display:flex; align-items:center; gap:6px; font-size:13px; font-weight:650; white-space:nowrap;"><span style="width:7px; height:7px; border-radius:50%; background: {{ r.dot }};"></span>{{ r.name }}</span>
+            </sc-for>
+          </div>
+          <div style="display:flex; gap:10px; margin:0 -20px; padding:0 20px; overflow:hidden;">
+            <div style="flex-shrink:0; width:300px; border-radius:28px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); padding:10px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px;">
+              <div style="position:relative; height:200px; border-radius:20px; background:#1a1622; overflow:hidden;">
+                <div style="position:absolute; left:50%; top:96px; transform:translateX(-50%) rotate(-8deg); width:150px; height:94px; border-radius:12px; background:linear-gradient(135deg,#3a3550,#6b5a8a); box-shadow:0 10px 24px rgba(0,0,0,.4);"><div style="position:absolute; left:14px; top:14px; width:24px; height:18px; border-radius:4px; background:#d9b76a;"></div><div style="position:absolute; right:12px; bottom:10px; font-family:'Material Symbols Rounded'; font-size:22px; line-height:1; color:rgba(255,255,255,.7);">contactless</div></div>
+                <div style="position:absolute; left:10px; right:10px; top:10px; border-radius:16px; background:rgba(251,248,243,.95); padding:8px 10px; display:flex; align-items:center; gap:8px; color:#1f1a28;"><span style="width:26px; height:26px; border-radius:7px; background:linear-gradient(180deg,#3b3270 0%,#c4607a 62%,#f0975a 100%);"></span><div style="display:flex; flex-direction:column;"><span style="font-size:11px; font-weight:700;">6pm</span><span style="font-size:11.5px;">Caught 65.000₫ · Highlands</span></div></div>
+              </div>
+              <div style="padding:0 8px; display:flex; flex-direction:column; gap:4px;">
+                <div style="font-size:18px; font-weight:650; letter-spacing:-.015em;">Apple Pay taps</div>
+                <div style="font-size:13.5px; line-height:1.4; color:rgba(27,30,46,.62); text-wrap:pretty;">One Shortcuts automation logs every Wallet tap. Set it once.</div>
+              </div>
+              <div style="margin:0 6px 6px; display:flex; gap:8px;">
+                <span style="flex:1; height:42px; border-radius:99px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:650; color:rgba(27,30,46,.7);">About a minute, once</span>
+                <span style="height:42px; padding:0 18px; border-radius:99px; background:#ff8552; color:#2a1424; display:flex; align-items:center; font-size:14px; font-weight:700;">Set up</span>
+              </div>
+            </div>
+            <div style="flex-shrink:0; width:300px; border-radius:28px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); padding:10px; box-sizing:border-box;"><div style="height:200px; border-radius:20px; background:#ece7e0;"></div></div>
+          </div>
+          <div style="flex:1;"></div>
+          <div style="height:56px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; display:flex; align-items:center; justify-content:center; font-weight:650; font-size:17px;">Continue</div>
+        </div>
+      </x-import>
+
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" time="14:20" hint-size="402px,874px">
+        <div data-screen-label="Onboarding · bank search" style="position:relative; height:100%; overflow:hidden; color:#1b1e2e; background:linear-gradient(180deg,#f0d9c6 0%,#f6e6d6 55%,#f9eee2 100%); padding:62px 20px 30px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; gap:4px; padding:6px 0 0;"><sc-for list="{{ obProg4 }}" as="p" hint-placeholder-count="8"><span style="flex:1; height:4px; border-radius:4px; background: {{ p }};"></span></sc-for></div>
+          <div style="padding-top:14px; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:600; font-size:36px; line-height:1; letter-spacing:-.03em;">What do you pay with?</div>
+          <div style="height:44px; border-radius:14px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06); display:flex; align-items:center; gap:8px; padding:0 12px; color:rgba(27,30,46,.5); font-size:16px;"><span style="font-family:'Material Symbols Rounded'; font-size:20px; line-height:1;">search</span>Bank, wallet or code</div>
+          <div style="font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:rgba(27,30,46,.62); padding:4px 4px 0;">Suggested for you</div>
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px;">
+            <sc-for list="{{ bankSug }}" as="b" hint-placeholder-count="6">
+              <div style="position:relative; height:86px; border-radius:22px; border:2px solid {{ b.border }}; box-sizing:border-box; background:#fffdf9; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; font-size:13px; font-weight:650;">
+                <img src="{{ b.logo }}" style="width:34px; height:34px; border-radius:10px; object-fit:contain; background:#fff;"></img>{{ b.name }}
+                <sc-if value="{{ b.on }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:50%; background:#f6a46a; color:#2a1424; display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:15px; line-height:1;">check</span></sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:rgba(27,30,46,.62); padding:6px 4px 0;">All banks and wallets</div>
+          <div style="border-radius:22px; background:#fffdf9; padding:0 14px; overflow:hidden;">
+            <sc-for list="{{ bankAll }}" as="b" hint-placeholder-count="4">
+              <div style="display:flex; align-items:center; gap:12px; padding:10px 0; border-top: {{ b.sep }};">
+                <img src="{{ b.logo }}" style="width:32px; height:32px; border-radius:9px; object-fit:contain; background:#fff; box-shadow:0 0 0 0.5px rgba(27,30,46,.1);"></img>
+                <div style="flex:1; display:flex; flex-direction:column; gap:1px;"><span style="font-size:15px; font-weight:600;">{{ b.name }}</span><span style="font-size:12px; color:rgba(27,30,46,.55);">{{ b.full }}</span></div>
+                <span style="width:24px; height:24px; border-radius:50%; border:1.5px solid rgba(27,30,46,.25); box-sizing:border-box;"></span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </x-import>
+
+      <div style="width:360px; display:flex; flex-direction:column; gap:14px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55);">RAIL DOTS</div>
+        <div style="font-size:14px; line-height:1.5; color:rgba(246,239,230,.75);">Green: works already (Scan, Share, Type or say it, Widgets). Warm: a minute to set up (Apple Pay, Receipt email). The lit pill follows the cards’ scroll; tapping a pill brings its card in.</div>
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55); padding-top:6px;">SEARCH · NO MATCH</div>
+        <div style="border-radius:26px; background:#f6e6d6; color:#1b1e2e; padding:16px; display:flex; flex-direction:column; gap:20px;">
+          <div style="height:44px; border-radius:14px; background:#fffdf9; display:flex; align-items:center; gap:8px; padding:0 12px; font-size:16px;"><span style="font-family:'Material Symbols Rounded'; font-size:20px; line-height:1; color:rgba(27,30,46,.5);">search</span>xyz bank</div>
+          <div style="text-align:center; font-size:14px; color:rgba(27,30,46,.62); padding-bottom:12px;">No bank or wallet matches “xyz bank”.</div>
+        </div>
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55); padding-top:6px;">SETTINGS · BANKS ROW</div>
+        <div style="border-radius:22px; background:#fffdf9; color:#1b1e2e; padding:0 14px; display:flex; align-items:center; gap:12px;"><span style="width:32px; height:32px; border-radius:10px; background:rgba(70,45,30,.06); display:flex; align-items:center; justify-content:center; font-family:'Material Symbols Rounded'; font-size:19px; line-height:1;">account_balance</span><span style="flex:1; font-size:16px; padding:13px 0;">Banks and wallets</span><span style="font-size:15px; color:rgba(27,30,46,.62);">3 chosen</span><span style="font-family:'Material Symbols Rounded'; font-size:20px; line-height:1; opacity:.35;">chevron_right</span></div>
+      </div>
+    </div>
+  </section>
+  </div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>

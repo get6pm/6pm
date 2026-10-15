@@ -1,14 +1,12 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import { Text, useWindowDimensions, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   cancelAnimation,
-  Easing,
   ReduceMotion,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
-  withRepeat,
   withSpring,
   withTiming,
   type SharedValue,
@@ -21,6 +19,7 @@ import { followFinger, landingPage } from '../../home/pager';
 import { PressScale } from '../../../ui/primitives/press-scale';
 import { useTheme } from '../../../ui/theme/theme';
 import { body } from '../../../ui/type/fonts';
+import { Page } from './walkthrough-page';
 
 /** One step: what to do, in words, and the screen it happens on, drawn and playing on `t`. */
 export interface WalkthroughStep {
@@ -44,8 +43,6 @@ export interface FrameSize {
 /** A page lands at the finger's speed and never bounces past it. */
 const LAND = { duration: 320, dampingRatio: 1, overshootClamping: true } as const;
 const SWIPE_START = 12;
-/** A title line and four lines of detail. */
-const CAPTION_HEIGHT = 112;
 
 /**
  * A setup told as drawn screens: one step a page, swiped or stepped through with Back and Next.
@@ -64,6 +61,13 @@ export function Walkthrough({ steps }: { readonly steps: readonly WalkthroughSte
   };
   const last = steps.length - 1;
   const [index, setIndex] = useState(0);
+  // Every page's words get the room of this walkthrough's longest, so the screens all sit at one
+  // height, right under the words.
+  const [captionHeight, setCaptionHeight] = useState(0);
+  const onCaption = useCallback(
+    (height: number) => setCaptionHeight((tallest) => Math.max(tallest, Math.ceil(height))),
+    [],
+  );
   const position = useSharedValue(0);
   const grab = useSharedValue(0);
   const fade = useSharedValue(1);
@@ -166,12 +170,14 @@ export function Walkthrough({ steps }: { readonly steps: readonly WalkthroughSte
               active={k === index}
               still={still}
               number={k + 1}
+              captionHeight={captionHeight}
+              onCaption={onCaption}
             />
           ))}
         </Animated.View>
       </GestureDetector>
 
-      <View style={{ flexDirection: 'row', gap: 10, paddingHorizontal: 16, paddingTop: 22 }}>
+      <View style={{ flexDirection: 'row', gap: 10, paddingHorizontal: 16, paddingTop: 20 }}>
         <StepButton
           label={t('capture.walk.back')}
           disabled={index === 0}
@@ -183,60 +189,6 @@ export function Walkthrough({ steps }: { readonly steps: readonly WalkthroughSte
           onPress={() => go(index === last ? 0 : index + 1)}
         />
       </View>
-    </View>
-  );
-}
-
-/** One page: the drawn screen, playing while it is the one on show, over its words. */
-function Page({
-  step,
-  size,
-  active,
-  still,
-  number,
-}: {
-  readonly step: WalkthroughStep;
-  readonly size: FrameSize;
-  readonly active: boolean;
-  readonly still: boolean;
-  readonly number: number;
-}) {
-  const { palette } = useTheme();
-  const t = useSharedValue(still ? step.still : 0);
-  useEffect(() => {
-    cancelAnimation(t);
-    if (still) {
-      t.set(step.still);
-      return;
-    }
-    // Off screen a page waits at its start, so it begins from there as it comes into view.
-    t.set(0);
-    if (active) {
-      t.set(
-        withRepeat(
-          withTiming(1, {
-            duration: step.loop,
-            easing: Easing.linear,
-            reduceMotion: ReduceMotion.Never,
-          }),
-          -1,
-          false,
-        ),
-      );
-    }
-    return () => cancelAnimation(t);
-  }, [active, still, step.loop, step.still, t]);
-
-  return (
-    <View style={{ width: size.width, paddingHorizontal: 14, gap: 14 }}>
-      {/* Room for the longest words, so every page's screen sits at the same height. */}
-      <View accessible style={{ gap: 5, paddingHorizontal: 6, minHeight: CAPTION_HEIGHT }}>
-        <Text style={{ ...body(17, 650), lineHeight: 22, color: palette.ink }}>
-          {`${number}. ${step.title}`}
-        </Text>
-        <Text style={{ ...body(15), lineHeight: 20.5, color: palette.inkSoft }}>{step.detail}</Text>
-      </View>
-      <View style={{ alignItems: 'center' }}>{step.frame(t, size)}</View>
     </View>
   );
 }

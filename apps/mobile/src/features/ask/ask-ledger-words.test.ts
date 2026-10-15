@@ -111,9 +111,9 @@ describe('describeLedgerAnswer', () => {
   });
 
   it('answers small talk without looking anything up', () => {
-    expect(describeLedgerAnswer({ kind: 'chat' }, env('vi')).card.text).toBe(
-      'Có gì cứ hỏi mình nha, lúc nào cũng được.',
-    );
+    expect(
+      describeLedgerAnswer({ kind: 'chat', topic: null, fact: null }, env('vi')).card.text,
+    ).toBe('Có gì cứ hỏi mình nha, lúc nào cũng được.');
   });
 
   it('counts a big goal in years at what goes to Future you, and asks a price when none was said', () => {

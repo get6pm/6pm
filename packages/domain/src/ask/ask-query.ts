@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { daysInMonth, diffDays, makeDate, parts, addDays, startOfWeek } from '../time/local-date';
 import type { LocalDate } from '../time/local-date';
 import { askIntentSchema, type AskIntent } from './ask-intent';
+import { CHAT_TOPICS } from './chat-topics';
 
 /** A span a question asks about, as words a model or the rules can name. */
 export const askRangePresets = [
@@ -72,8 +73,8 @@ export const askQuerySchema = z.discriminatedUnion('kind', [
     what: name,
     amount: z.number().int().positive().optional(),
   }),
-  /** "Thanks!", "Hi" — a companion line, no numbers. */
-  z.object({ kind: z.literal('chat') }),
+  /** "Thanks!", "Hi", "roast me", "hết tiền rồi": a companion line, no lookup. */
+  z.object({ kind: z.literal('chat'), topic: z.enum(CHAT_TOPICS).optional() }),
 ]);
 export type AskQuery = z.infer<typeof askQuerySchema>;
 

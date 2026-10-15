@@ -1,5 +1,6 @@
 import { ScrollView, Text, View } from 'react-native';
 
+import { BankLogo } from '../../ui/bank-logo/bank-logo';
 import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
@@ -43,7 +44,17 @@ export function WalletRow({
           gap: 5,
         }}
       >
-        <Symbol name={w.icon} size={17} color={on ? palette.btnFg : palette.ink} />
+        {w.bankId ? (
+          <BankLogo
+            id={w.bankId}
+            size={17}
+            radius={5}
+            neutral={palette.ink}
+            neutralInk={palette.cell}
+          />
+        ) : (
+          <Symbol name={w.icon} size={17} color={on ? palette.btnFg : palette.ink} />
+        )}
         <Text
           numberOfLines={1}
           style={{ ...body(13, 650), color: on ? palette.btnFg : palette.ink }}

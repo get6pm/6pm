@@ -11,6 +11,7 @@ import { viBackup } from './vi-backup';
 import { viExport } from './vi-export';
 import { viAsk } from './vi-ask';
 import { viScan } from './vi-scan';
+import { viBanks } from './vi-banks';
 import { viLooks } from './vi-looks';
 import { viOnboarding } from './vi-onboarding';
 import { viDiary } from './vi-diary';
@@ -34,6 +35,7 @@ export const vi: Catalogue = {
   ...viToday,
   ...viCategories,
   ...viScan,
+  ...viBanks,
   ...viLooks,
   ...viCompanion,
   ...viBackup,

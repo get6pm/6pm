@@ -11,6 +11,7 @@ import { enBackup } from './en-backup';
 import { enExport } from './en-export';
 import { enAsk } from './en-ask';
 import { enScan } from './en-scan';
+import { enBanks } from './en-banks';
 import { enLooks } from './en-looks';
 import { enOnboarding } from './en-onboarding';
 import { enDiary } from './en-diary';
@@ -34,6 +35,7 @@ export const en = {
   ...enToday,
   ...enCategories,
   ...enScan,
+  ...enBanks,
   ...enLooks,
   ...enCompanion,
   ...enBackup,

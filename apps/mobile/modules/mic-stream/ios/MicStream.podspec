@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
   s.description    = s.summary
   s.author         = 'Odd Eggs'
   s.homepage       = 'https://6pm.oddeggs.studio'
-  s.license        = 'UNLICENSED'
+  s.license        = 'Apache-2.0'
   s.platforms      = { :ios => '17.0' }
   s.source         = { git: '' }
   s.static_framework = true

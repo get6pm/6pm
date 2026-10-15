@@ -269,7 +269,7 @@ class Component extends DCLogic {
     return {
       market, setIntl: () => this.setState({ market: 'International' }), setVn: () => this.setState({ market: 'Vietnam' }),
       intlBg: vi ? 'transparent' : '#f3eee7', intlFg: vi ? 'rgba(243,238,231,.7)' : '#1a0f0a', vnBg: vi ? '#f3eee7' : 'transparent', vnFg: vi ? '#1a0f0a' : 'rgba(243,238,231,.7)',
-      marketNote: vi ? 'Vietnam storefront · captions in Vietnamese · ₫, VietQR, MoMo, local merchants' : 'All other storefronts · captions in English · $, Apple Pay, cards, generic merchants', guides: !!this.props.guides, m, query: m.query, getLbl: m.get,
+      marketNote: vi ? 'Vietnam storefront · captions and app screens in Vietnamese · ₫, VietQR, MoMo, local merchants' : 'All other storefronts · captions in English · $, Apple Pay, cards, generic merchants', guides: !!this.props.guides, m, query: m.query, getLbl: m.get,
       infoRow: m.info, fields, notes: NOTES, pano, tour: [4, 5, 6, 7, 8, 9, 10, 11].map(mk), cpps: m.cpps.map(c => ({ ...c, order: [c.a, c.b, c.c].map(x => String(x).padStart(2, '0')).join(' · ') })), beats: BEATS,
       ev: { ...m.ev, nameCount: `NAME ${[...m.ev.name].length} / 30`, shortCount: `SHORT ${[...m.ev.short].length} / 50` }
     };

@@ -24,9 +24,30 @@ import type { PotFields } from './pot-sheet';
 import { useSheetMoney } from './sheet-money';
 import { potReflow } from './pot-rows';
 
-// A text field takes no font axes: the display face at its weight, size and tracking.
-const NAME_SIZE = 30;
 const BAR_W = 168;
+
+/**
+ * The tile and name: a new pot's (with its edit badge) and a saved pot's at a glance. A text
+ * field takes no font axes: the name is the display face at its weight, size and tracking.
+ */
+const HERO = {
+  full: {
+    tile: 76,
+    radius: 26,
+    glyph: 40,
+    name: 30,
+    gap: 12,
+    shade: '0 8px 20px rgba(30,10,40,.22)',
+  },
+  glance: {
+    tile: 68,
+    radius: 23,
+    glyph: 36,
+    name: 28,
+    gap: 10,
+    shade: '0 8px 20px rgba(30,10,40,.18)',
+  },
+} as const;
 
 /** The big tile (tap to pick an icon and colour), the name, and for a saved pot what it holds. */
 export function PotHero({
@@ -35,6 +56,7 @@ export function PotHero({
   picking,
   saved,
   currency,
+  glance = false,
   onTogglePick,
   onName,
   onFocusName,
@@ -45,6 +67,8 @@ export function PotHero({
   readonly saved: Vnd | undefined;
   /** The pot's own currency (ISO code), when it is not the home currency. */
   readonly currency?: string | undefined;
+  /** A saved pot's sheet: a smaller tile without the badge, as the edit sheet draws it. */
+  readonly glance?: boolean;
   readonly onTogglePick: () => void;
   readonly onName: (name: string) => void;
   readonly onFocusName: () => void;
@@ -54,6 +78,7 @@ export function PotHero({
   const money = useSheetMoney(currency);
   const reduceMotion = useReducedMotion();
   const tile = categoryTile(fields.hue);
+  const size = glance ? HERO.glance : HERO.full;
   const progress = saved === undefined || fields.goal <= 0 ? 0 : Math.min(1, saved / fields.goal);
   const fill = useSharedValue(progress);
   useEffect(() => {
@@ -62,7 +87,7 @@ export function PotHero({
   const bar = useAnimatedStyle(() => ({ width: Math.max(4, fill.value * BAR_W) }));
 
   return (
-    <View style={{ alignItems: 'center', gap: 12 }}>
+    <View style={{ alignItems: 'center', gap: size.gap }}>
       <PressScale
         accessibilityRole="button"
         accessibilityLabel={t('plan.pot.pickIcon')}
@@ -72,33 +97,36 @@ export function PotHero({
           onTogglePick();
         }}
         style={{
-          width: 76,
-          height: 76,
-          borderRadius: 26,
+          width: size.tile,
+          height: size.tile,
+          borderRadius: size.radius,
           experimental_backgroundImage: `linear-gradient(155deg, ${tile.from} 0%, ${tile.to} 100%)`,
-          boxShadow:
-            'inset 0 1px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(60,20,40,.08), 0 8px 20px rgba(30,10,40,.22)',
+          boxShadow: glance
+            ? `inset 0 1px 0 rgba(255,255,255,.55), ${size.shade}`
+            : `inset 0 1px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(60,20,40,.08), ${size.shade}`,
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        <Symbol name={fields.icon} size={40} fill={1} weight={500} color={tile.glyph} />
-        <View
-          style={{
-            position: 'absolute',
-            right: -5,
-            bottom: -5,
-            width: 26,
-            height: 26,
-            borderRadius: 13,
-            backgroundColor: palette.btnBg,
-            boxShadow: `0 0 0 3px ${palette.sheetSolid}`,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Symbol name={picking ? 'check' : 'edit'} size={15} color={palette.btnFg} />
-        </View>
+        <Symbol name={fields.icon} size={size.glyph} fill={1} weight={500} color={tile.glyph} />
+        {glance && !picking ? null : (
+          <View
+            style={{
+              position: 'absolute',
+              right: -5,
+              bottom: -5,
+              width: 26,
+              height: 26,
+              borderRadius: 13,
+              backgroundColor: palette.btnBg,
+              boxShadow: `0 0 0 3px ${palette.sheetSolid}`,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Symbol name={picking ? 'check' : 'edit'} size={15} color={palette.btnFg} />
+          </View>
+        )}
       </PressScale>
       <TextInput
         value={fields.name}
@@ -112,9 +140,9 @@ export function PotHero({
           textAlign: 'center',
           padding: 0,
           fontFamily: families.display,
-          fontSize: NAME_SIZE,
+          fontSize: size.name,
           fontWeight: '500',
-          letterSpacing: -0.015 * NAME_SIZE,
+          letterSpacing: -0.015 * size.name,
           color: palette.ink,
         }}
       />

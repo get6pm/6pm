@@ -5,8 +5,8 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import {
   goalEntryOf,
   goalEntryValue,
+  goalKeypadUnits,
   goalUnitFits,
-  goalUnitsFor,
   goalUnitTakesDecimals,
   pressGoalKey,
   setGoalUnit,
@@ -22,9 +22,19 @@ import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, tabular } from '../../ui/type/fonts';
+import { potReflow } from './pot-rows';
+import { FAINT, potSheetColours } from './pot-sheet-colours';
 import { useSheetMoney } from './sheet-money';
 
-const KEYS: readonly GoalKey[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'back'];
+/** The keypad's rows: three digits and a unit key each, then the decimal mark, 0 and delete. */
+const DIGITS: readonly (readonly GoalKey[])[] = ['123', '456', '789'].map(
+  (row) => [...row] as GoalKey[],
+);
+const GAP = 6;
+const KEY_H = 48;
+/** The unit column is .9 of a digit column. */
+const UNIT_COL = 0.9;
+const PRESETS = 4;
 
 /** How typed digits are written: đồng the design's way ("1.500,25"), else the phone's way. */
 interface Marks {
@@ -42,20 +52,27 @@ function typed(digits: string, marks: Marks): string {
 }
 
 /**
- * The goal's amount, typed: chips of goals that suit the pot, the number with its unit (nghìn,
- * triệu, tỷ; or the currency's own, thousand, million) and the exact amount under it, the unit
- * row, and a keypad. The first key after opening or after a chip starts over, so a new number
- * never lands after the old one.
+ * The goal's amount, typed: the number with its unit and the exact amount under it, what it costs
+ * a month when the pot has a date, four goals that suit the pot, and one keypad whose right column
+ * is the units (nghìn, triệu, tỷ; or the currency's own, thousand, million): type 2,5, then tap tỷ.
+ * The first key after opening or after a chip starts over, so a new number never lands after the
+ * old one.
  */
 export function GoalAmountEditor({
   goal,
   presets,
   onChange,
+  hue,
+  hint,
   currency: code,
 }: {
   readonly goal: Vnd;
   readonly presets: readonly Vnd[];
   readonly onChange: (goal: Vnd) => void;
+  /** The pot's hue, for the cost line's tint. */
+  readonly hue: number;
+  /** What the typed goal costs a month to make its date; nothing without one. */
+  readonly hint?: string | undefined;
   /** The pot's own currency (ISO code), when it is not the home currency. */
   readonly currency?: string | undefined;
 }) {
@@ -65,9 +82,12 @@ export function GoalAmountEditor({
   const currency = money.currency;
   const dong = currency.code === 'VND';
   const marks = dong ? DONG_MARKS : money.locale;
+  const colours = potSheetColours(palette, hue);
   const [entry, setEntry] = useState<GoalEntry>(() => goalEntryOf(goal, currency));
   const [fresh, setFresh] = useState(true);
+  const [width, setWidth] = useState(0);
   const value = goalEntryValue(entry, currency);
+  const units = goalKeypadUnits(currency);
 
   // A goal set from outside (a template) replaces what is shown; typing only ever echoes back.
   useEffect(() => {
@@ -93,6 +113,73 @@ export function GoalAmountEditor({
         ? t('plan.pot.unit.dong')
         : currency.symbol;
   const noPoint = !goalUnitTakesDecimals(entry.unit, currency);
+  // Digit columns and the narrower unit column, as the prototype's grid lays them out.
+  const col = width > 0 ? (width - GAP * 3) / (3 + UNIT_COL) : 0;
+  const sized = (span: number) => (col > 0 ? { width: col * span + GAP * (span - 1) } : null);
+
+  const digitKey = (key: GoalKey, span = 1) => (
+    <PressScale
+      key={key}
+      scaleTo={0.92}
+      accessibilityRole="keyboardkey"
+      {...(key === '.' ? { accessibilityLabel: t('plan.pot.key.decimal') } : {})}
+      onPress={() => {
+        haptics.tick();
+        set(pressGoalKey(entry, key, fresh, currency));
+      }}
+      style={[
+        {
+          height: KEY_H,
+          borderRadius: 15,
+          backgroundColor: palette.chipBg,
+          opacity: key === '.' && noPoint ? 0.3 : 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        sized(span),
+      ]}
+    >
+      <Text style={{ ...display(24, 500), color: palette.ink }}>
+        {key === '.' ? marks.decimal : key}
+      </Text>
+    </PressScale>
+  );
+
+  const unitKey = (unit: GoalUnit | undefined, row: number) => {
+    if (unit === undefined) return <View key={`unit-${row}`} style={sized(UNIT_COL)} />;
+    const on = unit === entry.unit;
+    const fits = goalUnitFits(entry, unit, currency);
+    return (
+      <PressScale
+        key={unit}
+        scaleTo={0.92}
+        accessibilityRole="button"
+        accessibilityState={{ selected: on, disabled: !fits }}
+        disabled={!fits}
+        onPress={() => {
+          haptics.tick();
+          set(setGoalUnit(entry, unit, currency));
+        }}
+        style={[
+          {
+            height: KEY_H,
+            borderRadius: 15,
+            backgroundColor: on ? palette.btnBg : 'transparent',
+            borderWidth: on ? 0 : 1,
+            borderColor: colours.keyEdge,
+            opacity: fits ? 1 : 0.3,
+            alignItems: 'center',
+            justifyContent: 'center',
+          },
+          sized(UNIT_COL),
+        ]}
+      >
+        <Text style={{ ...body(14.5, 650), color: on ? palette.btnFg : palette.ink }}>
+          {unitLabel(unit)}
+        </Text>
+      </PressScale>
+    );
+  };
 
   return (
     <Animated.View
@@ -100,8 +187,54 @@ export function GoalAmountEditor({
       exiting={FadeOut.duration(140)}
       style={{ paddingHorizontal: 14, paddingBottom: 14, gap: 12 }}
     >
-      <View style={{ flexDirection: 'row', gap: 6 }}>
-        {presets.map((amount) => {
+      <View style={{ alignItems: 'center', gap: 4, paddingTop: 2, paddingBottom: 4 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            style={{
+              ...display(58, 500, -0.025),
+              ...tabular,
+              lineHeight: 62,
+              color: palette.ink,
+              opacity: entry.digits === '' ? 0.5 : 1,
+            }}
+          >
+            {typed(entry.digits, marks)}
+          </Text>
+          <Text style={{ ...display(26, 500), color: palette.inkSoft, opacity: FAINT }}>
+            {unitLabel(entry.unit)}
+          </Text>
+        </View>
+        <Text style={{ ...body(13), ...tabular, color: palette.inkSoft, opacity: FAINT }}>
+          {money.full(value)}
+        </Text>
+        {hint ? (
+          <Animated.View
+            entering={FadeIn.duration(220)}
+            exiting={FadeOut.duration(140)}
+            layout={potReflow}
+            style={{
+              marginTop: 6,
+              height: 28,
+              paddingHorizontal: 12,
+              borderRadius: 99,
+              backgroundColor: colours.fitBg,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 5,
+            }}
+          >
+            <Symbol name="today" size={15} color={colours.fitInk} />
+            <Text numberOfLines={1} style={{ ...body(12.5, 650), color: colours.fitInk }}>
+              {hint}
+            </Text>
+          </Animated.View>
+        ) : null}
+      </View>
+
+      <View style={{ flexDirection: 'row', gap: GAP }}>
+        {presets.slice(-PRESETS).map((amount) => {
           const on = amount === value;
           return (
             <PressScale
@@ -130,110 +263,36 @@ export function GoalAmountEditor({
         })}
       </View>
 
-      <View style={{ alignItems: 'center', gap: 2, paddingVertical: 4 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
-          <Text
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            style={{
-              ...display(40, 500, -0.02),
-              ...tabular,
-              lineHeight: 46,
-              color: palette.ink,
-              opacity: fresh || entry.digits === '' ? 0.5 : 1,
-            }}
-          >
-            {typed(entry.digits, marks)}
-          </Text>
-          <Text style={{ ...body(20, 600), color: palette.inkSoft }}>{unitLabel(entry.unit)}</Text>
-        </View>
-        <Text style={{ ...body(13), ...tabular, color: palette.inkSoft }}>{money.full(value)}</Text>
-      </View>
-
-      <View
-        style={{
-          flexDirection: 'row',
-          padding: 3,
-          gap: 3,
-          borderRadius: 13,
-          backgroundColor: palette.chipBg,
-        }}
-      >
-        {goalUnitsFor(currency).map((unit) => {
-          const on = unit === entry.unit;
-          const fits = goalUnitFits(entry, unit, currency);
-          return (
-            <PressScale
-              key={unit}
-              accessibilityRole="button"
-              accessibilityState={{ selected: on, disabled: !fits }}
-              disabled={!fits}
-              onPress={() => {
-                haptics.tick();
-                set(setGoalUnit(entry, unit, currency));
-              }}
-              style={{
-                flex: 1,
-                height: 32,
-                borderRadius: 10,
-                backgroundColor: on ? palette.cell : 'transparent',
-                boxShadow: on ? palette.cardShadow : undefined,
-                opacity: fits ? 1 : 0.3,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Text style={{ ...body(13.5, on ? 650 : 500), color: palette.ink }}>
-                {unitLabel(unit)}
-              </Text>
-            </PressScale>
-          );
-        })}
-      </View>
-
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-        {KEYS.map((key) => (
+      <View onLayout={(e) => setWidth(e.nativeEvent.layout.width)} style={{ gap: GAP }}>
+        {DIGITS.map((row, k) => (
+          <View key={k} style={{ flexDirection: 'row', gap: GAP }}>
+            {row.map((key) => digitKey(key))}
+            {unitKey(units[k], k)}
+          </View>
+        ))}
+        <View style={{ flexDirection: 'row', gap: GAP }}>
+          {digitKey('.')}
+          {digitKey('0', 2)}
           <PressScale
-            key={key}
             scaleTo={0.92}
             accessibilityRole="keyboardkey"
-            {...(key === 'back'
-              ? { accessibilityLabel: t('plan.pot.key.back') }
-              : key === '.'
-                ? { accessibilityLabel: t('plan.pot.key.decimal') }
-                : {})}
+            accessibilityLabel={t('plan.pot.key.back')}
             onPress={() => {
               haptics.tick();
-              set(pressGoalKey(entry, key, fresh, currency));
+              set(pressGoalKey(entry, 'back', fresh, currency));
             }}
-            {...(key === 'back'
-              ? {
-                  onLongPress: () => {
-                    haptics.tap();
-                    set({ ...entry, digits: '' });
-                  },
-                }
-              : {})}
-            style={{
-              width: '32.2%',
-              flexGrow: 1,
-              height: 48,
-              borderRadius: 15,
-              backgroundColor: palette.chipBg,
-              opacity: key === '.' && noPoint ? 0.3 : 1,
-              alignItems: 'center',
-              justifyContent: 'center',
+            onLongPress={() => {
+              haptics.tap();
+              set({ ...entry, digits: '' });
             }}
+            style={[
+              { height: KEY_H, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
+              sized(UNIT_COL),
+            ]}
           >
-            {key === 'back' ? (
-              <Symbol name="backspace" size={22} color={palette.ink} />
-            ) : (
-              <Text style={{ ...display(24, 500), color: palette.ink }}>
-                {key === '.' ? marks.decimal : key}
-              </Text>
-            )}
+            <Symbol name="backspace" size={22} color={palette.ink} />
           </PressScale>
-        ))}
+        </View>
       </View>
     </Animated.View>
   );

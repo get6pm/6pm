@@ -10,8 +10,8 @@ import { addMonthsTo, potMonthlyNeed } from './plan-river';
 /** How far ahead a pot's month may be: ten years. */
 export const NEEDED_BY_REACH_MONTHS = 120;
 
-/** The quick picks under "Needed by", in months from the pay cycle's month. */
-export const NEEDED_BY_QUICK_PICKS = [3, 6, 12, 24, 60] as const;
+/** The quick picks under the timeline, in months from the pay cycle's month: 1, 2, 5 and 10 years. */
+export const NEEDED_BY_SPANS = [12, 24, 60, 120] as const;
 
 /** The last month a pot can be needed by. */
 export function latestNeededBy(from: string): string {
@@ -25,28 +25,29 @@ export function clampNeededBy(month: string, from: string): string {
   return month > latest ? latest : month;
 }
 
-/** The month a wheel pair stands for (`monthIndex` 0 for January), held inside the reach. */
-export function neededByAt(year: number, monthIndex: number, from: string): string {
-  const month = `${String(year).padStart(4, '0')}-${String(monthIndex + 1).padStart(2, '0')}`;
-  return clampNeededBy(month, from);
+/** Months from the pay cycle's month to `month`, held inside the reach (0 to 120). */
+export function neededByOffset(from: string, month: string): number {
+  const [fy = 0, fm = 0] = from.split('-').map(Number);
+  const [ty = 0, tm = 0] = month.split('-').map(Number);
+  return Math.min(NEEDED_BY_REACH_MONTHS, Math.max(0, (ty - fy) * 12 + (tm - fm)));
 }
 
-/**
- * The months the month wheel offers in a year, as 0-based indexes (0 for January): only those
- * inside the reach, so the wheel can never rest on a month that is not allowed.
- */
-export function neededByMonths(year: number, from: string): { first: number; last: number } {
-  const latest = latestNeededBy(from);
-  const first = year === Number(from.slice(0, 4)) ? Number(from.slice(5, 7)) - 1 : 0;
-  const last = year === Number(latest.slice(0, 4)) ? Number(latest.slice(5, 7)) - 1 : 11;
-  return { first, last };
+/** The month `offset` months after the pay cycle's, rounded to a whole month inside the reach. */
+export function neededByFromOffset(from: string, offset: number): string {
+  const months = Math.min(NEEDED_BY_REACH_MONTHS, Math.max(0, Math.round(offset)));
+  return addMonthsTo(from, months);
 }
 
-/** The years the year wheel offers: the pay cycle's year through the reach's. */
-export function neededByYears(from: string): number[] {
-  const first = Number(from.slice(0, 4));
-  const last = Number(latestNeededBy(from).slice(0, 4));
-  return Array.from({ length: last - first + 1 }, (_, k) => first + k);
+/** One month earlier or later, held inside the reach. */
+export function neededByStep(month: string, from: string, by: 1 | -1): string {
+  return clampNeededBy(addMonthsTo(clampNeededBy(month, from), by), from);
+}
+
+/** The years marked under the timeline: one every two years from the cycle's month to the reach. */
+export function neededByMarks(from: string): number[] {
+  return Array.from({ length: NEEDED_BY_REACH_MONTHS / 24 + 1 }, (_, k) =>
+    Number(addMonthsTo(from, k * 24).slice(0, 4)),
+  );
 }
 
 export interface Horizon {
@@ -98,4 +99,23 @@ export function potRoom(input: {
   readonly otherOccasions: Vnd;
 }): Vnd {
   return Math.max(0, input.income - input.bills - input.futureYou - input.otherOccasions);
+}
+
+export interface PotFit {
+  /** The set-aside is no more than the month has free. */
+  readonly fits: boolean;
+  /** What the month still has free after it (never below zero). */
+  readonly left: Vnd;
+  /** How much of what is free it takes, 0 to 1 (1 when nothing is free). */
+  readonly share: number;
+}
+
+/** How a pot's monthly set-aside sits in what the month has free (`potRoom`). */
+export function potFit(monthly: Vnd, room: Vnd): PotFit {
+  const need = Math.max(0, monthly);
+  return {
+    fits: need <= room,
+    left: Math.max(0, room - need),
+    share: room > 0 ? Math.min(1, need / room) : need > 0 ? 1 : 0,
+  };
 }

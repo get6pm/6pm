@@ -6,6 +6,7 @@ import {
   goalEntryOf,
   goalEntryValue,
   goalUnitFits,
+  goalKeypadUnits,
   goalUnitsFor,
   goalUnitTakesDecimals,
   POT_GOAL_MAX,
@@ -126,6 +127,7 @@ describe('in đồng', () => {
   it('keeps the four units and the bounds the design has', () => {
     expect(GOAL_UNITS).toEqual(['whole', 'thousand', 'million', 'billion']);
     expect(goalUnitsFor(VND)).toEqual(GOAL_UNITS);
+    expect(goalKeypadUnits(VND)).toEqual(['thousand', 'million', 'billion']);
     expect(potGoalMax(VND)).toBe(100_000_000_000);
     expect(potGoalMin(VND)).toBe(10_000);
     expect(goalUnitTakesDecimals('whole', VND)).toBe(false);
@@ -139,6 +141,7 @@ describe('in dollars', () => {
 
   it('counts in cents, with dollars, thousands and millions to type in', () => {
     expect(goalUnitsFor(usd)).toEqual(['whole', 'thousand', 'million']);
+    expect(goalKeypadUnits(usd)).toEqual(['whole', 'thousand', 'million']);
     expect(potGoalMax(usd)).toBe(400_000_000);
     expect(potGoalMin(usd)).toBe(100);
     expect(goalEntryValue({ digits: '12.5', unit: 'whole' }, usd)).toBe(1_250);

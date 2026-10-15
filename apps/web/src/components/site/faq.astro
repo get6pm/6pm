@@ -1,0 +1,88 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].faq;
+---
+
+<section id="faq" class="band">
+  <div class="wrap faq">
+    <h2 class="display" data-reveal="0">{t.title}</h2>
+    <div class="list" data-reveal="80">
+      {
+        t.items.map(([question, answer], i) => (
+          <details name="faq" open={i === 0}>
+            <summary>
+              <span>{question}</span>
+              <span class="sym" aria-hidden="true">
+                add
+              </span>
+            </summary>
+            <p>{answer}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq {
+    max-width: 820px;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(32px, 4vw, 48px);
+  }
+  .display {
+    text-align: center;
+    font-size: clamp(40px, 5vw, 72px);
+  }
+  .list {
+    display: flex;
+    flex-direction: column;
+    border-top: 0.5px solid var(--line-2);
+  }
+  details {
+    border-bottom: 0.5px solid var(--line-2);
+  }
+  summary {
+    min-height: 68px;
+    box-sizing: border-box;
+    padding: 18px 0;
+    font-size: 18px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    cursor: pointer;
+    list-style: none;
+    transition: color 0.2s;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary:hover {
+    color: var(--sun-soft);
+  }
+  summary .sym {
+    font-size: 22px;
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  [open] summary .sym {
+    transform: rotate(45deg);
+  }
+  p {
+    margin: 0;
+    padding: 0 48px 24px 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(243, 238, 231, 0.66);
+    text-wrap: pretty;
+  }
+</style>

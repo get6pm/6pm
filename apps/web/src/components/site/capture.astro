@@ -1,0 +1,198 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import BankStrip from './bank-strip.astro';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].capture;
+// Six ways in, spaced round the orb from twelve o'clock; each label is turned back upright.
+const spokes = t.labels.map((label, i) => {
+  const angle = i * 60 - 90;
+  return { label, icon: t.icons[i] ?? '', angle, delay: `${i * 0.6}s` };
+});
+---
+
+<section id="capture" class="band">
+  <div class="wrap split">
+    <div class="stack" data-reveal="0">
+      <span class="kicker">{t.kicker}</span>
+      <h2 class="display">{t.title}</h2>
+      <p class="sub">{t.sub}</p>
+    </div>
+    <div class="orbit" data-reveal="100">
+      <div class="ring" aria-hidden="true"></div>
+      <ul class="spokes">
+        {
+          spokes.map((s) => (
+            <li class="spoke" style={`transform:rotate(${s.angle}deg);--delay:${s.delay}`}>
+              <div class="ray" aria-hidden="true" />
+              <div class="spark moving" aria-hidden="true" />
+              <div class="end" style={`transform:translate(-50%, -50%) rotate(${-s.angle}deg)`}>
+                <div class="way">
+                  <span class="badge">
+                    <span class="sym" aria-hidden="true">
+                      {s.icon}
+                    </span>
+                  </span>
+                  <span class="mono label">{s.label}</span>
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="core" aria-hidden="true">
+        <div class="ripple moving"></div>
+        <div class="ripple late moving"></div>
+        <div class="orb">6pm</div>
+      </div>
+    </div>
+  </div>
+  {t.bankStrip && <BankStrip label={t.bankStrip} />}
+</section>
+
+<style>
+  .orbit {
+    --S: min(520px, 88vw);
+    position: relative;
+    width: var(--S);
+    height: var(--S);
+    justify-self: center;
+  }
+  .ring {
+    position: absolute;
+    inset: 9%;
+    border-radius: 50%;
+    border: 0.5px dashed rgba(243, 238, 231, 0.14);
+    animation: spin 80s linear infinite;
+  }
+  .spokes {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .spoke {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(var(--S) * 0.4);
+    height: 0;
+    transform-origin: 0 0;
+  }
+  .ray {
+    position: absolute;
+    left: calc(var(--S) * 0.1);
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 133, 82, 0.4), rgba(243, 238, 231, 0.06));
+  }
+  .spark {
+    position: absolute;
+    top: -3.5px;
+    width: 7px;
+    height: 7px;
+    margin-left: -3.5px;
+    border-radius: 50%;
+    background: var(--sun);
+    box-shadow: 0 0 12px var(--sun);
+    animation: travel 3.6s cubic-bezier(0.55, 0, 0.75, 0.4) infinite both;
+    animation-delay: var(--delay);
+  }
+  .end {
+    position: absolute;
+    left: 100%;
+    top: 0;
+  }
+  .way {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    animation: bob 4s ease-in-out infinite;
+    animation-delay: var(--delay);
+  }
+  .badge {
+    width: calc(var(--S) * 0.11);
+    height: calc(var(--S) * 0.11);
+    border-radius: 50%;
+    background: var(--raised);
+    border: 0.5px solid var(--line-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sun-soft);
+  }
+  .badge .sym {
+    font-size: calc(var(--S) * 0.05);
+  }
+  .label {
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--ink-70);
+    white-space: nowrap;
+  }
+  .core {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(var(--S) * 0.24);
+    height: calc(var(--S) * 0.24);
+    transform: translate(-50%, -50%);
+  }
+  .ripple {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 133, 82, 0.6);
+    animation: ripple 1.8s ease-out infinite;
+  }
+  .ripple.late {
+    animation-delay: 0.9s;
+  }
+  .orb {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 35%, #ffd2ae, #ff8552 55%, #c4503a);
+    box-shadow: 0 0 60px rgba(255, 133, 82, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--on-sun);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: calc(var(--S) * 0.06);
+    letter-spacing: -0.05em;
+  }
+
+  @keyframes travel {
+    0% {
+      left: 100%;
+      opacity: 0;
+    }
+    12% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 1;
+    }
+    100% {
+      left: 18%;
+      opacity: 0;
+    }
+  }
+  @keyframes ripple {
+    0% {
+      transform: scale(1);
+      opacity: 0.55;
+    }
+    100% {
+      transform: scale(1.9);
+      opacity: 0;
+    }
+  }
+</style>

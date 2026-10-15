@@ -1,0 +1,210 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].ai;
+---
+
+<div class="card" data-reveal="0">
+  <div class="card-label">
+    <span class="sym" aria-hidden="true">auto_awesome</span>{t.askLabel}
+  </div>
+  <div class="chat">
+    <div class="q">{t.q}</div>
+    <div class="reply">
+      <div class="typing moving" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="a">
+        <span class="a-text">{t.a}</span>
+        <div class="nums">
+          <s class="old">{t.old}</s>
+          <span class="new">{t.new}</span>
+          <span class="per mono">{t.perDay}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+  }
+  .q {
+    align-self: flex-end;
+    max-width: 80%;
+    padding: 13px 18px;
+    border-radius: 22px 22px 6px 22px;
+    background: var(--ink);
+    color: var(--dark-ink);
+    font-size: 17px;
+    line-height: 1.35;
+    animation: bubQ 8s infinite both;
+  }
+  .reply {
+    position: relative;
+    min-height: 96px;
+  }
+  .typing {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    gap: 5px;
+    padding: 16px 18px;
+    border-radius: 22px 22px 22px 6px;
+    background: rgba(243, 238, 231, 0.07);
+    animation: bubDots 8s infinite both;
+  }
+  .typing span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ink);
+    animation: dot 0.9s ease-in-out infinite;
+  }
+  .typing span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .typing span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  .a {
+    position: absolute;
+    left: 0;
+    top: 0;
+    max-width: 88%;
+    padding: 14px 18px;
+    border-radius: 22px 22px 22px 6px;
+    background: rgba(243, 238, 231, 0.07);
+    border: 0.5px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: bubA 8s infinite both;
+  }
+  .a-text {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  .nums {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+  }
+  .old {
+    font-size: 22px;
+    opacity: 0.4;
+    text-decoration: line-through;
+    text-decoration-color: currentColor;
+    animation: numOld 8s infinite both;
+  }
+  .new {
+    font-size: 34px;
+    color: var(--sun);
+    animation: numNew 8s infinite both;
+  }
+  .per {
+    font-size: 12px;
+    letter-spacing: 0;
+    color: var(--ink-55);
+  }
+
+  @keyframes bubQ {
+    0% {
+      opacity: 0;
+      transform: translateY(10px) scale(0.96);
+    }
+    6%,
+    90% {
+      opacity: 1;
+      transform: none;
+    }
+    96%,
+    100% {
+      opacity: 0;
+      transform: none;
+    }
+  }
+  @keyframes bubDots {
+    0%,
+    10% {
+      opacity: 0;
+    }
+    14%,
+    30% {
+      opacity: 1;
+    }
+    33%,
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes bubA {
+    0%,
+    32% {
+      opacity: 0;
+      transform: translateY(10px) scale(0.96);
+    }
+    38%,
+    90% {
+      opacity: 1;
+      transform: none;
+    }
+    96%,
+    100% {
+      opacity: 0;
+      transform: none;
+    }
+  }
+  @keyframes numNew {
+    0%,
+    46% {
+      opacity: 0;
+      transform: translateX(-8px);
+    }
+    52%,
+    90% {
+      opacity: 1;
+      transform: none;
+    }
+    96%,
+    100% {
+      opacity: 0;
+      transform: none;
+    }
+  }
+  @keyframes numOld {
+    0%,
+    46% {
+      opacity: 1;
+      text-decoration-color: transparent;
+    }
+    52%,
+    100% {
+      opacity: 0.4;
+      text-decoration-color: currentColor;
+    }
+  }
+  @keyframes dot {
+    0%,
+    100% {
+      transform: translateY(0);
+      opacity: 0.35;
+    }
+    50% {
+      transform: translateY(-4px);
+      opacity: 1;
+    }
+  }
+</style>

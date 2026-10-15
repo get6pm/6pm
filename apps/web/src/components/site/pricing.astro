@@ -1,0 +1,215 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].pricing;
+---
+
+<section id="pricing" class="band">
+  <div class="wrap pricing" data-pricing>
+    <div class="head" data-reveal="0">
+      <h2 class="display">{t.title}</h2>
+      <div class="period" role="group">
+        <button type="button" aria-pressed="false" data-period="month">{t.monthly}</button>
+        <button type="button" aria-pressed="true" data-period="year">
+          {t.yearly}<span class="mono save">−36%</span>
+        </button>
+      </div>
+    </div>
+    <div class="plans">
+      <div class="plan" data-reveal="0">
+        <div class="top">
+          <span class="name">{t.freeName}</span>
+          <span class="price"><span class="amount">{t.zero}</span><span class="per">{t.freeFor}</span></span>
+        </div>
+        <div class="rule"></div>
+        <ul>
+          {
+            t.free.map((f) => (
+              <li>
+                <span class="sym" aria-hidden="true">
+                  check
+                </span>
+                <span>{f}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="plan max" data-reveal="100">
+        <div class="top">
+          <span class="name-row">
+            <span class="name">6pm Max</span><span class="mono trial">{t.trial}</span>
+          </span>
+          <span class="price">
+            <span
+              class="amount"
+              data-price
+              data-month={t.priceMonth}
+              data-year={t.priceYear}>{t.priceYear}</span
+            ><span class="per" data-per data-month={t.perMonth} data-year={t.perYear}
+              >{t.perYear}</span
+            >
+          </span>
+        </div>
+        <div class="rule"></div>
+        <ul>
+          {
+            t.max.map((f) => (
+              <li>
+                <span class="sym" aria-hidden="true">
+                  check
+                </span>
+                <span>{f}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pricing {
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(36px, 4vw, 48px);
+  }
+  .head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+  }
+  .period {
+    display: flex;
+    padding: 4px;
+    border-radius: 99px;
+    border: 0.5px solid var(--line-3);
+  }
+  .period button {
+    height: 38px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 99px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    background: transparent;
+    color: var(--ink-70);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+  }
+  .period button[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--dark-ink);
+  }
+  .save {
+    font-size: 11px;
+    color: var(--sun-soft);
+  }
+  [aria-pressed='true'] .save {
+    color: #c4502a;
+  }
+  .plans {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 20px;
+  }
+  .plan {
+    border-radius: 28px;
+    border: 0.5px solid var(--line-2);
+    padding: clamp(28px, 3.4vw, 36px);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .plan.max {
+    background: linear-gradient(180deg, #1a1416, #131117 60%);
+    border-color: rgba(255, 133, 82, 0.45);
+    box-shadow: 0 40px 100px -40px rgba(255, 133, 82, 0.3);
+  }
+  .top {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .name {
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .trial {
+    height: 26px;
+    padding: 0 10px;
+    border-radius: 99px;
+    background: rgba(255, 133, 82, 0.14);
+    color: var(--sun-soft);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+  }
+  .price {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .amount {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 52px;
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+  .per {
+    font-size: 15px;
+    color: var(--ink-55);
+  }
+  .rule {
+    height: 0.5px;
+    background: var(--line-2);
+  }
+  .max .rule {
+    background: rgba(255, 133, 82, 0.25);
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  li {
+    display: flex;
+    gap: 12px;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  li .sym {
+    font-size: 18px;
+    line-height: 1.45;
+    color: var(--ink-55);
+  }
+  .max li .sym {
+    color: var(--sun);
+  }
+</style>

@@ -1,0 +1,95 @@
+---
+import { legalPath } from '../../data/legal';
+import { repoUrl, studioUrl } from '../../data/site/config';
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].foot;
+---
+
+<footer class="band">
+  <div class="foot">
+    <div class="sign">
+      <span class="word">6pm</span>
+      <span class="tag">{t.tag}</span>
+    </div>
+    <div class="links">
+      <a class="os" href={repoUrl} target="_blank" rel="noopener">
+        <span class="sym" aria-hidden="true">code</span>{t.openSource}
+      </a>
+      <a href={legalPath(lang, 'privacy')}>{t.privacy}</a>
+      <a href={legalPath(lang, 'terms')}>{t.terms}</a>
+      <span class="mono credit">
+        © 2026 · {t.madeBy}{' '}
+        <a href={studioUrl} target="_blank" rel="noopener">oddeggs.studio</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 36px var(--pad-x) 44px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .sign {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .word {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.05em;
+  }
+  .tag {
+    font-size: 14px;
+    color: var(--ink-55);
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px;
+    font-size: 14px;
+  }
+  .links > a {
+    color: var(--ink-70);
+    text-decoration: none;
+  }
+  .links > a:hover {
+    color: var(--sun-soft);
+  }
+  .os {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .os .sym {
+    font-size: 17px;
+  }
+  .credit {
+    font-size: 12px;
+    color: var(--ink-45);
+  }
+  .credit a {
+    color: var(--ink-75);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .credit a:hover {
+    color: var(--sun-soft);
+  }
+</style>

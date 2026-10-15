@@ -1,0 +1,146 @@
+---
+import { ctaMode, repoUrl, appStoreUrl } from '../../data/site/config';
+import { homePath, siteCopy, type SiteLang } from '../../data/site/copy';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].nav;
+const store = ctaMode === 'store';
+---
+
+<header class="nav">
+  <div class="bar">
+    <a class="brand" href="#top">6pm</a>
+    <nav class="links" aria-label="6pm">
+      <a href="#ritual">{t.ritual}</a>
+      <a href="#capture">{t.capture}</a>
+      <a href="#privacy">{t.privacy}</a>
+      <a href="#pricing">{t.pricing}</a>
+      <a href={repoUrl} target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <div class="langs mono" role="group" aria-label={t.langLabel}>
+      {
+        (['en', 'vi'] as const).map((code) => (
+          <a
+            href={homePath[code]}
+            hreflang={code}
+            lang={code}
+            data-lang-pick={code}
+            aria-current={code === lang ? 'true' : undefined}
+          >
+            {code.toUpperCase()}
+          </a>
+        ))
+      }
+    </div>
+    <a class="cta" href={store ? appStoreUrl : '#join'}>{store ? t.store : t.wait}</a>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: fixed;
+    z-index: 50;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(13, 11, 16, 0.74);
+    backdrop-filter: saturate(1.3) blur(20px);
+    -webkit-backdrop-filter: saturate(1.3) blur(20px);
+    border-bottom: 0.5px solid var(--line);
+  }
+  .bar {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 64px;
+    box-sizing: border-box;
+    padding: 0 var(--pad-x);
+    display: flex;
+    align-items: center;
+    gap: clamp(14px, 3vw, 32px);
+  }
+  .brand {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 24px;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    text-decoration: none;
+  }
+  .brand:hover {
+    color: var(--ink);
+  }
+  /* Links that do not fit wrap onto a hidden second row, so narrow screens keep only what fits. */
+  .links {
+    flex: 1;
+    min-width: 0;
+    height: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 28px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .links a {
+    color: var(--ink-70);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  /* On a phone the bar keeps the brand, the language and the call to action. */
+  @media (max-width: 720px) {
+    .links {
+      visibility: hidden;
+    }
+  }
+  .links a:hover {
+    color: var(--sun-soft);
+  }
+  .langs {
+    display: flex;
+    padding: 3px;
+    border-radius: 99px;
+    border: 0.5px solid var(--line-3);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+  }
+  .langs a {
+    height: 28px;
+    min-width: 36px;
+    box-sizing: border-box;
+    padding: 0 8px;
+    border-radius: 99px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--ink-70);
+  }
+  .langs a[aria-current] {
+    background: var(--ink);
+    color: var(--dark-ink);
+  }
+  .cta {
+    flex-shrink: 0;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 99px;
+    background: var(--sun);
+    color: var(--on-sun);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .cta:hover {
+    background: var(--sun-hover);
+    color: var(--on-sun);
+  }
+</style>

@@ -62,6 +62,7 @@ const pageUrl = new URL(Astro.url.pathname.replace(/(?:\/index)?\.html$/, ''), A
     <meta property="og:description" content={description} />
     <meta property="og:url" content={pageUrl} />
     <meta name="twitter:card" content="summary" />
+    <slot name="head" />
   </head>
   <body>
     <slot />

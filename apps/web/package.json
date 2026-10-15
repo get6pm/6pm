@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "The 6pm 2.0 Coming Soon page: a static Astro site served by Cloudflare Workers static assets at <host>/",
+  "description": "The 6pm website (EN and VI home pages, privacy and terms): a static Astro site served by Cloudflare Workers static assets at <host>/",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

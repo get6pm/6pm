@@ -1,0 +1,226 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import { glyphColor, tileGradient } from '../../data/site/tiles';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].ai;
+// Each line's printed width, and when its amount is blacked out as the scan passes.
+const rows = t.receipt.map((value, i) => ({
+  value,
+  width: ['54%', '40%', '48%'][i] ?? '50%',
+  redact: `r${i + 1}`,
+}));
+---
+
+<div class="card" data-reveal="100">
+  <div class="card-label">
+    <span class="sym" aria-hidden="true">document_scanner</span>{t.scanLabel}
+  </div>
+  <div class="scene">
+    <div class="receipt" aria-hidden="true">
+      <div class="edge top"></div>
+      <div class="paper">
+        <span class="ink title"></span>
+        <span class="ink address"></span>
+        <span class="rule"></span>
+        {
+          rows.map((r) => (
+            <div class="row">
+              <span class="ink line" style={`width:${r.width}`} />
+              <span class="mono amount">
+                {r.value}
+                <span class="redact" style={`animation-name:${r.redact}`} />
+              </span>
+            </div>
+          ))
+        }
+        <span class="rule"></span>
+        <div class="mono total"><span>TOTAL</span><span>{t.receiptTotal}</span></div>
+        <div class="scan moving"></div>
+      </div>
+      <div class="edge bottom"></div>
+    </div>
+    <div class="tags">
+      <div class="tag">
+        <span class="tile" style={`background:${tileGradient(25)};color:${glyphColor(25)}`}>
+          <span class="sym sym-fill" aria-hidden="true">local_cafe</span>
+        </span>
+        <span>{t.shop}</span>
+      </div>
+      <div class="tag late">
+        <span class="tile outline"><span class="sym" aria-hidden="true">sell</span></span>
+        <span>{t.category}</span>
+      </div>
+    </div>
+  </div>
+  <span class="note">{t.scanNote}</span>
+</div>
+
+<style>
+  .scene {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+  .receipt {
+    position: relative;
+    width: 170px;
+    transform: rotate(-3deg);
+    filter: drop-shadow(0 24px 30px rgba(0, 0, 0, 0.5));
+  }
+  .edge {
+    height: 8px;
+  }
+  .edge.top {
+    background: radial-gradient(circle at 5px 0, transparent 4.5px, #f4efe6 5px) 0 0 / 10px 8px
+      repeat-x;
+  }
+  .edge.bottom {
+    background: radial-gradient(circle at 5px 8px, transparent 4.5px, #f4efe6 5px) 0 0 / 10px 8px
+      repeat-x;
+  }
+  .paper {
+    position: relative;
+    background: #f4efe6;
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    overflow: hidden;
+  }
+  .ink {
+    border-radius: 2px;
+  }
+  .title {
+    height: 9px;
+    width: 60%;
+    background: #2b2530;
+    align-self: center;
+  }
+  .address {
+    height: 5px;
+    width: 44%;
+    background: rgba(43, 37, 48, 0.3);
+    align-self: center;
+  }
+  .rule {
+    height: 0;
+    border-top: 1px dashed rgba(43, 37, 48, 0.3);
+    margin: 4px 0;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .line {
+    height: 5px;
+    background: rgba(43, 37, 48, 0.4);
+  }
+  .amount {
+    position: relative;
+    font-size: 10px;
+    color: #2b2530;
+  }
+  .redact {
+    position: absolute;
+    left: -3px;
+    right: -3px;
+    top: -1px;
+    bottom: -1px;
+    background: #2b2530;
+    border-radius: 2px;
+    transform-origin: 0 50%;
+    animation: r1 6s infinite both;
+  }
+  .total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 500;
+    color: #2b2530;
+  }
+  .scan {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--sun);
+    box-shadow: 0 0 14px 3px rgba(255, 133, 82, 0.7);
+    animation: scan 6s cubic-bezier(0.45, 0, 0.55, 1) infinite both;
+  }
+  .tags {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .tag {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px 10px 10px;
+    border-radius: 14px;
+    background: rgba(243, 238, 231, 0.07);
+    border: 0.5px solid rgba(243, 238, 231, 0.1);
+    font-size: 14px;
+    font-weight: 600;
+    animation: tagIn 6s infinite both;
+  }
+  .tag.late {
+    animation-delay: 0.25s;
+  }
+  .tile {
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tile.outline {
+    border: 0.5px solid rgba(243, 238, 231, 0.2);
+    color: var(--sun-soft);
+  }
+  .tile .sym {
+    font-size: 16px;
+  }
+  .note {
+    font-size: 13px;
+    color: var(--ink-55);
+  }
+
+  @keyframes scan {
+    0% { top: 4%; opacity: 0; }
+    6% { opacity: 1; }
+    60% { top: 96%; opacity: 1; }
+    66%, 100% { top: 96%; opacity: 0; }
+  }
+  @keyframes r1 {
+    0%, 18% { transform: scaleX(0); }
+    22%, 88% { transform: scaleX(1); }
+    95%, 100% { transform: scaleX(0); }
+  }
+  @keyframes r2 {
+    0%, 32% { transform: scaleX(0); }
+    36%, 88% { transform: scaleX(1); }
+    95%, 100% { transform: scaleX(0); }
+  }
+  @keyframes r3 {
+    0%, 46% { transform: scaleX(0); }
+    50%, 88% { transform: scaleX(1); }
+    95%, 100% { transform: scaleX(0); }
+  }
+  @keyframes tagIn {
+    0%, 62% { opacity: 0; transform: translateX(-10px); }
+    68%, 88% { opacity: 1; transform: none; }
+    95%, 100% { opacity: 0; transform: none; }
+  }
+</style>

@@ -136,7 +136,7 @@ export const siteCopyVi: SiteCopy = {
       'Chốt ngày và mọi cách ghi',
       'Hôm nay, Kế hoạch và Nhật ký',
       'Cùng nhau',
-      '3 câu hỏi mỗi tuần',
+      '10 câu hỏi mỗi ngày, không giới hạn trên máy',
     ],
     trial: '7 NGÀY MIỄN PHÍ',
     priceMonth: '99.000₫',

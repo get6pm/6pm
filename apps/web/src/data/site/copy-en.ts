@@ -131,7 +131,7 @@ export const siteCopyEn: SiteCopy = {
       'The close and every way to capture',
       'Today, Plan and Diary',
       'Budget together',
-      '3 Ask questions a week',
+      '10 Ask questions a day, unlimited on device',
     ],
     trial: '7 DAYS FREE',
     priceMonth: '$4.99',

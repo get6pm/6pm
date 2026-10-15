@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { priceWaiting, rateDayOf, readForeignNote, waitingForeign } from './foreign-price';
+import {
+  priceWaiting,
+  RATE_PENDING,
+  rateDayOf,
+  readForeignNote,
+  settleTypedAmount,
+  waitingForeign,
+} from './foreign-price';
 
 const saved = {
   amount: 0,
@@ -69,5 +76,25 @@ describe('pricing at the rate of the receipt’s day', () => {
     const waiting = { currency: 'IDR', amount: 496_650, fromNote: false };
     expect(priceWaiting(waiting, '0')).toBeNull();
     expect(priceWaiting(waiting, 'soon')).toBeNull();
+  });
+});
+
+describe('a đồng amount typed for a waiting foreign spend', () => {
+  const waiting = { currency: 'IDR', amount: 496_650, rate: RATE_PENDING };
+
+  it('takes the rate the person paid at', () => {
+    expect(settleTypedAmount(waiting, { amount: 794_640 })).toEqual({
+      currency: 'IDR',
+      amount: 496_650,
+      rate: 794_640 / 496_650,
+    });
+  });
+
+  it('leaves priced spends, đồng spends and other edits alone', () => {
+    expect(settleTypedAmount({ ...waiting, rate: 1.6 }, { amount: 800_000 })).toBeUndefined();
+    expect(settleTypedAmount(null, { amount: 800_000 })).toBeUndefined();
+    expect(settleTypedAmount(waiting, { amount: 0 })).toBeUndefined();
+    expect(settleTypedAmount(waiting, {})).toBeUndefined();
+    expect(settleTypedAmount(waiting, { amount: 9, foreignAmount: null })).toBeUndefined();
   });
 });

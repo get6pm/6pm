@@ -98,3 +98,18 @@ export function priceWaiting(
     foreignAmount: { currency: waiting.currency, amount: waiting.amount, rate: rateNumber(rate) },
   };
 }
+
+/**
+ * A đồng amount typed by hand for a foreign spend still waiting for its rate settles it: the rate
+ * becomes the one the person paid at (đồng over the foreign amount), so it no longer waits and a
+ * later pricing pass never overwrites what they typed. Anything else is left as it is.
+ */
+export function settleTypedAmount(
+  foreign: ForeignAmount | null,
+  typed: { readonly amount?: Vnd; readonly foreignAmount?: ForeignAmount | null },
+): ForeignAmount | null | undefined {
+  if (typed.foreignAmount !== undefined || typed.amount === undefined) return undefined;
+  if (foreign === null || foreign.rate > RATE_PENDING || !(foreign.amount > 0)) return undefined;
+  if (!(typed.amount > 0)) return undefined;
+  return { ...foreign, rate: typed.amount / foreign.amount };
+}

@@ -6,6 +6,7 @@ import {
   mergedStatus,
   merchantKeyOf,
   moneyDayOf,
+  settleTypedAmount,
   type ClosedDayRow,
   type LocalDate,
   type SpendRow,
@@ -108,7 +109,9 @@ export function moneyActions(store: MoneyStore) {
   const update = (id: string, patch: Partial<SpendRow>): Promise<SpendRow | null> =>
     inTurn(async () => {
       const row = await current(id);
-      return row ? patchNow(row, patch) : null;
+      if (!row) return null;
+      const settled = settleTypedAmount(row.foreignAmount, patch);
+      return patchNow(row, settled === undefined ? patch : { ...patch, foreignAmount: settled });
     });
 
   /** The same payment seen a second way: one item, its sightings recorded, never two rows. */

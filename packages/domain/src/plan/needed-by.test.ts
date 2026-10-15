@@ -3,10 +3,13 @@ import { describe, expect, it } from 'vitest';
 import {
   clampNeededBy,
   latestNeededBy,
-  neededByAt,
+  NEEDED_BY_SPANS,
+  neededByFromOffset,
   neededByHorizon,
-  neededByMonths,
-  neededByYears,
+  neededByMarks,
+  neededByOffset,
+  neededByStep,
+  potFit,
   potRoom,
   soonestNeededBy,
 } from './needed-by';
@@ -16,9 +19,7 @@ import { potMonthlyNeed } from './plan-river';
 describe('needed by', () => {
   it('reaches ten years past the pay cycle month', () => {
     expect(latestNeededBy('2026-10')).toBe('2036-10');
-    expect(neededByYears('2026-10')).toEqual([
-      2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036,
-    ]);
+    expect(neededByOffset('2026-10', '2036-10')).toBe(120);
   });
 
   it('holds a month between the cycle month and the reach', () => {
@@ -27,17 +28,25 @@ describe('needed by', () => {
     expect(clampNeededBy('2028-10', '2026-10')).toBe('2028-10');
   });
 
-  it('reads the month and year wheels, held inside the reach', () => {
-    expect(neededByAt(2028, 9, '2026-10')).toBe('2028-10');
-    expect(neededByAt(2026, 0, '2026-10')).toBe('2026-10');
-    expect(neededByAt(2036, 11, '2026-10')).toBe('2036-10');
+  it('places a month on the timeline and reads one back, held inside the reach', () => {
+    expect(neededByOffset('2026-10', '2028-10')).toBe(24);
+    expect(neededByOffset('2026-10', '2026-03')).toBe(0);
+    expect(neededByOffset('2026-10', '2040-01')).toBe(120);
+    expect(neededByFromOffset('2026-10', 23.6)).toBe('2028-10');
+    expect(neededByFromOffset('2026-10', -4)).toBe('2026-10');
+    expect(neededByFromOffset('2026-10', 130)).toBe('2036-10');
   });
 
-  it('offers only the months inside the reach in the first and last year', () => {
-    expect(neededByMonths(2026, '2026-10')).toEqual({ first: 9, last: 11 });
-    expect(neededByMonths(2030, '2026-10')).toEqual({ first: 0, last: 11 });
-    expect(neededByMonths(2036, '2026-10')).toEqual({ first: 0, last: 9 });
-    expect(neededByMonths(2027, '2027-01')).toEqual({ first: 0, last: 11 });
+  it('steps one month at a time, never past either end', () => {
+    expect(neededByStep('2028-10', '2026-10', 1)).toBe('2028-11');
+    expect(neededByStep('2028-01', '2026-10', -1)).toBe('2027-12');
+    expect(neededByStep('2026-10', '2026-10', -1)).toBe('2026-10');
+    expect(neededByStep('2036-10', '2026-10', 1)).toBe('2036-10');
+  });
+
+  it('marks every second year under the timeline and picks whole years', () => {
+    expect(neededByMarks('2026-10')).toEqual([2026, 2028, 2030, 2032, 2034, 2036]);
+    expect(NEEDED_BY_SPANS).toEqual([12, 24, 60, 120]);
   });
 
   it('says how far a month is in years and months', () => {
@@ -96,5 +105,22 @@ describe('potRoom', () => {
     expect(
       potRoom({ income: 5_000_000, bills: 4_200_000, futureYou: 2_000_000, otherOccasions: 0 }),
     ).toBe(0);
+  });
+});
+
+describe('potFit', () => {
+  it('fits when the set-aside is no more than the month has free', () => {
+    expect(potFit(21_400_000, 22_000_000)).toEqual({
+      fits: true,
+      left: 600_000,
+      share: 21_400_000 / 22_000_000,
+    });
+    expect(potFit(22_000_000, 22_000_000)).toEqual({ fits: true, left: 0, share: 1 });
+  });
+
+  it('is too much past what is free, and full with nothing free', () => {
+    expect(potFit(85_000_000, 22_000_000)).toEqual({ fits: false, left: 0, share: 1 });
+    expect(potFit(50_000, 0)).toEqual({ fits: false, left: 0, share: 1 });
+    expect(potFit(0, 0)).toEqual({ fits: true, left: 0, share: 0 });
   });
 });

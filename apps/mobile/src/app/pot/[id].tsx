@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 
 import { aboutPerDay, cycleMonth, joinedShare, potSetAside, savedBefore } from '@6pm/domain';
 
@@ -8,9 +8,10 @@ import { useMoney, useMoneyStore } from '../../data/money-provider';
 import { usePlanActions, type PotPatch } from '../../data/plan-actions';
 import { readPotMoves } from '../../data/pot-moves';
 import { useRunAction } from '../../features/companion/use-run-action';
-import { potRow, StepperRow } from '../../features/plan/pot-rows';
+import { StepperRow } from '../../features/plan/pot-rows';
 import { PotSheet, type PotFields } from '../../features/plan/pot-sheet';
-import { usePotWarn } from '../../features/plan/use-pot-warn';
+import { PauseRow } from '../../features/plan/pot-sheet-rows';
+import { usePotCost } from '../../features/plan/use-pot-cost';
 import { useI18n } from '../../i18n/i18n';
 import { useMoneyFormat } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
@@ -99,39 +100,26 @@ export default function EditPot() {
     cycle: snap.cycle,
     currency: money.currency,
   });
-  const warn = usePotWarn({
-    potId: pot?.id ?? null,
-    goal,
-    saved: held ?? 0,
-    monthly: goalKind ? 0 : monthly,
-    from,
-    onMonth: setMonth,
-  });
-
-  if (!pot || !fields) return null;
   const perDay = aboutPerDay(
     monthly,
     snap.cycle.daysLeft,
     joinedShare(snap.cycle, snap.plan?.startedOn ?? null),
     money.currency,
   );
-  const summary = paused
-    ? { title: t('plan.pot.sumPaused'), sub: t('plan.pot.sumPausedSub') }
-    : goalKind
-      ? futureYou > 0
-        ? {
-            title: t('plan.goal.sumMonthly', { amount: money.short(monthly) }),
-            sub: t('plan.goal.sumSub'),
-          }
-        : { title: t('plan.goal.sumNone'), sub: t('plan.goal.sumNoneSub') }
-      : month
-        ? {
-            title: t('plan.pot.sumMonthly', { amount: money.short(monthly) }),
-            sub: t('plan.pot.sumMonthlySub', { amount: money.short(perDay) }),
-            warn,
-          }
-        : { title: t('plan.pot.sumNone'), sub: t('plan.pot.sumNoneSub') };
+  const { cost, fitsFrom, goalHint } = usePotCost({
+    potId: pot?.id ?? '',
+    goalKind,
+    goal,
+    saved: held ?? 0,
+    monthly,
+    perDay,
+    month,
+    paused,
+    from,
+    onMonth: setMonth,
+  });
 
+  if (!pot || !fields) return null;
   const save = async () => {
     if (busy.current) return;
     busy.current = true;
@@ -172,6 +160,8 @@ export default function EditPot() {
     });
   };
 
+  const pauseLabel = goalKind ? t('plan.goal.pause') : t('plan.pot.pause');
+
   return (
     <PotSheet
       title={goalKind ? t('plan.goal.editTitle') : t('plan.pot.editTitle')}
@@ -193,6 +183,7 @@ export default function EditPot() {
               dimLess={percent <= SHARE_STEP}
               dimMore={percent >= 100 - SHARE_STEP}
               width={56}
+              first
               onStep={(by) =>
                 setPercent((p) =>
                   Math.min(100 - SHARE_STEP, Math.max(SHARE_STEP, p + by * SHARE_STEP)),
@@ -200,18 +191,16 @@ export default function EditPot() {
               }
             />
           ) : null}
-          <View style={[potRow, { borderTopWidth: 0.5, borderColor: palette.hair }]}>
-            <View style={{ flex: 1, gap: 2, paddingVertical: 8 }}>
-              <Text style={{ ...body(16), color: palette.ink }}>{t('plan.pot.pause')}</Text>
-              <Text style={{ ...body(12.5), lineHeight: 16.9, color: palette.inkSoft }}>
-                {t('plan.pot.pauseSub')}
-              </Text>
-            </View>
-            <Switch value={paused} onChange={setPaused} accessibilityLabel={t('plan.pot.pause')} />
-          </View>
+          <PauseRow
+            label={pauseLabel}
+            first={!(goalKind && goals > 1)}
+            control={<Switch value={paused} onChange={setPaused} accessibilityLabel={pauseLabel} />}
+          />
         </>
       }
-      summary={summary}
+      cost={cost}
+      fitsFrom={fitsFrom}
+      goalHint={goalHint}
       cta={{
         label: t('plan.pot.save'),
         enabled: !working && held !== null,
@@ -222,7 +211,7 @@ export default function EditPot() {
           accessibilityRole="button"
           disabled={working}
           onPress={() => void remove()}
-          style={{ height: 48, alignItems: 'center', justifyContent: 'center' }}
+          style={{ height: 44, alignItems: 'center', justifyContent: 'center' }}
         >
           <Text style={{ ...body(16, 600), color: palette.inkSoft }}>
             {goalKind ? t('plan.goal.delete') : t('plan.pot.delete')}

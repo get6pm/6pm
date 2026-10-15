@@ -53,6 +53,15 @@ export function goalUnitsFor(currency: Currency = VND): readonly GoalUnit[] {
   return ALL_UNITS.filter((unit) => unitValue(unit, currency) <= max);
 }
 
+/**
+ * The units the keypad has keys for: the three largest a goal can be typed in (nghìn, triệu and
+ * tỷ in đồng; the dollar, thousand and million in the US). A smaller amount is typed as a decimal
+ * of the smallest.
+ */
+export function goalKeypadUnits(currency: Currency = VND): readonly GoalUnit[] {
+  return goalUnitsFor(currency).slice(-3);
+}
+
 /** Every unit in đồng. */
 export const GOAL_UNITS: readonly GoalUnit[] = goalUnitsFor(VND);
 

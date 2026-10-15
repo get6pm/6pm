@@ -1,6 +1,6 @@
 import { useRef, useState, type ReactNode } from 'react';
-import { Keyboard, ScrollView, Text, View, type ScrollViewInstance } from 'react-native';
-import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { Keyboard, ScrollView, Text, type ScrollViewInstance } from 'react-native';
+import Animated, { FadeIn, FadeOut, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 import { neededByHorizon, potGoalMin, type Vnd } from '@6pm/domain';
 
@@ -17,7 +17,9 @@ import { PotIconPicker, PotTemplates, type PotDraft } from './new-pot-picker';
 import { usePlanFormat } from './plan-format';
 import { goalPresets } from './pot-presets';
 import { DisclosureRow, PotCard, potReflow, SheetHeader } from './pot-rows';
+import { PotCostPanel, type PotCost } from './pot-sheet-cost';
 import { PotHero, PotSummary, type PotSummaryContent } from './pot-sheet-parts';
+import { EditorRow, PotHeroRow, PotSettingsCard } from './pot-sheet-rows';
 import { useSheetMoney } from './sheet-money';
 
 /** What a pot's sheet edits: how it looks and what it is saving for. */
@@ -44,9 +46,19 @@ export interface PotSheetProps {
   readonly from: string;
   /** What a saved pot holds already: shown under its name. */
   readonly saved?: Vnd | undefined;
-  /** More rows on the card (a goal's share, pause). */
+  /** More rows on the card (a goal's share, pause); a card of their own on a saved pot's sheet. */
   readonly rows?: ReactNode;
-  readonly summary: PotSummaryContent;
+  /** Under the card, for a pot not saved yet. */
+  readonly summary?: PotSummaryContent | undefined;
+  /**
+   * A saved pot: what it costs sits on its card, the tile shrinks to a row while an editor is
+   * open, and the rows and delete step aside until it closes.
+   */
+  readonly cost?: PotCost | undefined;
+  /** Over the keypad: what the typed goal costs a month to make its date. */
+  readonly goalHint?: string | undefined;
+  /** The first month whose set-aside fits (null: none within ten years), for the timeline. */
+  readonly fitsFrom?: string | null | undefined;
   readonly cta: {
     readonly label: string;
     readonly enabled: boolean;
@@ -63,12 +75,13 @@ export interface PotSheetProps {
 
 /**
  * The sheet a pot or goal is made and edited on: name it, pick its icon and colour, then a card
- * of rows that open in place: the goal on an amount keypad (10.000₫ to a hundred billion, or as
- * much in the home currency) and the month it is needed by (quick picks and wheels, up to ten
- * years out). What it will set aside, and what that does to a day, update live under the card.
+ * of rows that open in place: the goal on one keypad whose units are keys (10.000₫ to a hundred
+ * billion, or as much in the home currency) and the month it is needed by on a ten-year line.
+ * A new pot shows what it will set aside under the card; a saved pot shows it on the card, with a
+ * bar of what it takes from the month's free money and whether it fits.
  */
 export function PotSheet(props: PotSheetProps) {
-  const { fields, onChange, cta, month } = props;
+  const { fields, onChange, cta, month, cost } = props;
   const { palette } = useTheme();
   const { t } = useI18n();
   const money = useSheetMoney(props.currency);
@@ -82,18 +95,32 @@ export function PotSheet(props: PotSheetProps) {
   const button = useAnimatedStyle(() => ({
     opacity: withTiming(ready ? 1 : 0.35, { duration: 200 }),
   }));
+  const saved = cost !== undefined;
+  const editing = saved && (open === 'goal' || open === 'date');
 
   const toggle = (next: Exclude<Open, null>) => {
     Keyboard.dismiss();
     setOpen((o) => (o === next ? null : next));
     if (open !== next && next !== 'icon') {
-      requestAnimationFrame(() =>
-        scroll.current?.scrollTo({ y: Math.max(0, cardY.current - 12), animated: true }),
-      );
+      // A saved pot's header shrinks to a row, so its card already sits at the top.
+      const y = saved ? 0 : Math.max(0, cardY.current - 12);
+      requestAnimationFrame(() => scroll.current?.scrollTo({ y, animated: true }));
     }
   };
   const horizon = month === null ? null : neededByHorizon(props.from, month);
   const total = horizon === null ? 0 : horizon.years * 12 + horizon.months;
+  const Row = saved ? EditorRow : DisclosureRow;
+  const monthValue = month
+    ? saved
+      ? format.monthShort(month)
+      : format.monthLong(month)
+    : t('plan.pot.noDate');
+  const monthSub =
+    month === null || (saved && open !== null)
+      ? undefined
+      : total === 0
+        ? t('plan.pot.horizonNow')
+        : t('plan.pot.horizon', { span: span(total) });
 
   return (
     <SheetFrame header={<SheetHeader title={props.title} />}>
@@ -106,28 +133,49 @@ export function PotSheet(props: PotSheetProps) {
           paddingTop: 14,
           paddingHorizontal: 18,
           paddingBottom: 28,
-          gap: 20,
+          gap: saved ? (editing ? 14 : 18) : 20,
         }}
       >
-        <PotHero
-          fields={fields}
-          placeholder={props.placeholder}
-          picking={open === 'icon'}
-          saved={props.saved}
-          currency={props.currency}
-          onTogglePick={() => toggle('icon')}
-          onName={(name) => onChange({ name })}
-          onFocusName={() => setOpen(null)}
-        />
+        {editing ? (
+          <PotHeroRow
+            fields={fields}
+            savedLine={
+              props.saved === undefined
+                ? undefined
+                : t('plan.pot.saved', { amount: money.short(props.saved) })
+            }
+            onPress={() => setOpen(null)}
+          />
+        ) : (
+          <Animated.View
+            layout={potReflow}
+            {...(saved ? { entering: FadeIn.duration(220), exiting: FadeOut.duration(120) } : {})}
+          >
+            <PotHero
+              fields={fields}
+              placeholder={props.placeholder}
+              picking={open === 'icon'}
+              saved={props.saved}
+              currency={props.currency}
+              glance={saved}
+              onTogglePick={() => toggle('icon')}
+              onName={(name) => onChange({ name })}
+              onFocusName={() => setOpen(null)}
+            />
+          </Animated.View>
+        )}
 
         {open === 'icon' ? <PotIconPicker draft={fields} onChange={onChange} /> : null}
         {open !== 'icon' && !named && props.onTemplate ? (
           <PotTemplates onPick={props.onTemplate} currency={props.currency} />
         ) : null}
 
-        <View onLayout={(e) => (cardY.current = e.nativeEvent.layout.y)}>
+        <Animated.View
+          layout={potReflow}
+          onLayout={(e) => (cardY.current = e.nativeEvent.layout.y)}
+        >
           <PotCard>
-            <DisclosureRow
+            <Row
               first
               label={t('plan.pot.goal')}
               value={money.short(fields.goal)}
@@ -140,19 +188,15 @@ export function PotSheet(props: PotSheetProps) {
                 goal={fields.goal}
                 presets={goalPresets(fields.icon, money.currency)}
                 currency={props.currency}
+                hue={fields.hue}
+                hint={props.goalHint}
                 onChange={(goal) => onChange({ goal })}
               />
             ) : null}
-            <DisclosureRow
+            <Row
               label={t('plan.pot.neededBy')}
-              value={month ? format.monthLong(month) : t('plan.pot.noDate')}
-              sub={
-                month === null
-                  ? undefined
-                  : total === 0
-                    ? t('plan.pot.horizonNow')
-                    : t('plan.pot.horizon', { span: span(total) })
-              }
+              value={monthValue}
+              sub={monthSub}
               open={open === 'date'}
               hint={t('plan.pot.editDate')}
               onPress={() => toggle('date')}
@@ -162,14 +206,18 @@ export function PotSheet(props: PotSheetProps) {
                 month={month}
                 from={props.from}
                 format={format}
+                hue={fields.hue}
+                fitsFrom={props.fitsFrom}
                 onChange={props.onMonth}
               />
             ) : null}
-            {props.rows}
+            {cost && open !== 'goal' ? <PotCostPanel cost={cost} hue={fields.hue} /> : null}
+            {saved ? null : props.rows}
           </PotCard>
-        </View>
+        </Animated.View>
 
-        <PotSummary content={props.summary} />
+        {saved && !editing && props.rows ? <PotSettingsCard>{props.rows}</PotSettingsCard> : null}
+        {props.summary ? <PotSummary content={props.summary} /> : null}
 
         <Animated.View layout={potReflow} style={button}>
           <PressScale
@@ -189,7 +237,17 @@ export function PotSheet(props: PotSheetProps) {
             <Text style={{ ...body(17, 650), color: palette.btnFg }}>{cta.label}</Text>
           </PressScale>
         </Animated.View>
-        {props.footer ? <Animated.View layout={potReflow}>{props.footer}</Animated.View> : null}
+        {props.footer && !editing ? (
+          <Animated.View
+            layout={potReflow}
+            entering={FadeIn.duration(220)}
+            exiting={FadeOut.duration(140)}
+            // A saved pot's delete sits 4 pt under Save.
+            style={saved ? { marginTop: -14 } : null}
+          >
+            {props.footer}
+          </Animated.View>
+        ) : null}
       </ScrollView>
     </SheetFrame>
   );

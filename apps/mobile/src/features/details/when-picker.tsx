@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import {
@@ -16,6 +17,8 @@ import { Wheel } from '../../ui/wheel/wheel';
 import { wheelRowHeight } from '../../ui/wheel/wheel-maths';
 
 const SIZE = 22;
+/** How long the wheels rest before the spend is saved. */
+const SAVE_AFTER_MS = 400;
 const HOURS = MONEY_DAY_HOURS.map((h) => String(h).padStart(2, '0'));
 const MINUTES = Array.from({ length: 60 }, (_, m) => String(m).padStart(2, '0'));
 
@@ -39,15 +42,39 @@ export function WhenPicker({
 }) {
   const { palette } = useTheme();
   const { t, weekdayDate } = useI18n();
+  // The wheels follow the finger at once; the spend is saved once they rest, not on every row
+  // they pass, and whatever is still waiting is saved as the picker closes.
+  const [shown, setShown] = useState(at);
+  const waiting = useRef<{ timer: ReturnType<typeof setTimeout>; instant: Date } | null>(null);
+  const save = useRef(onChange);
+  save.current = onChange;
+  useEffect(
+    () => () => {
+      const pending = waiting.current;
+      if (pending === null) return;
+      clearTimeout(pending.timer);
+      save.current(pending.instant);
+    },
+    [],
+  );
   const days = daysIn(range);
-  const day = Math.max(0, days.indexOf(moneyDayOf(at)));
-  const hour = Math.max(0, MONEY_DAY_HOURS.indexOf(at.getHours()));
-  const minute = at.getMinutes();
+  const day = Math.max(0, days.indexOf(moneyDayOf(shown)));
+  const hour = Math.max(0, MONEY_DAY_HOURS.indexOf(shown.getHours()));
+  const minute = shown.getMinutes();
   const pick = (d: number, h: number, m: number) => {
     const chosen = days[d];
     const clock = MONEY_DAY_HOURS[h];
     if (chosen === undefined || clock === undefined) return;
-    onChange(instantOnMoneyDay(chosen, clock, m, now));
+    const instant = instantOnMoneyDay(chosen, clock, m, now);
+    setShown(instant);
+    if (waiting.current !== null) clearTimeout(waiting.current.timer);
+    waiting.current = {
+      instant,
+      timer: setTimeout(() => {
+        waiting.current = null;
+        save.current(instant);
+      }, SAVE_AFTER_MS),
+    };
   };
   const dayLabels = days.map((d) =>
     d === today ? t('details.when.today') : weekdayDate(new Date(`${d}T12:00:00`)),

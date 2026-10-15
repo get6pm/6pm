@@ -1,20 +1,28 @@
 import { askRequestSchema } from '@6pm/domain';
 
 import { readQuestion } from '../ai/read-question';
-import { recordAiUsage } from '../ledger';
+import { recordAiUsage, requireAiBudget } from '../ledger';
 import { readBody, type RouteDefinition } from '../route';
 
 /**
- * Reads a question to Ask 6pm into an intent. The phone sends the question alone and works out
- * every number of the answer itself, so the server never sees the user's money.
+ * Questions one device may have read in a UTC day. Free members get three a week on the phone;
+ * this only stops a runaway client from spending the model budget.
+ */
+const askReadsPerDay = 60;
+
+/**
+ * Reads a question to Ask 6pm into a query (and the intent older phones read). The phone sends
+ * the question with its category and pot names and works out every number of the answer itself,
+ * so the server never sees the user's money.
  */
 export const askRoute: RouteDefinition = {
   method: 'POST',
   path: '/v1/ask',
   access: 'device',
   handle: async (c) => {
-    const { question } = await readBody(c, askRequestSchema, { maxBytes: 2_000 });
-    const generated = await readQuestion({ apiKey: c.env.ANTHROPIC_API_KEY }, question);
+    const request = await readBody(c, askRequestSchema, { maxBytes: 8_000 });
+    await requireAiBudget(c.env.DB, c.var.device.hash, 'ask.read', askReadsPerDay);
+    const generated = await readQuestion({ apiKey: c.env.ANTHROPIC_API_KEY }, request);
     c.executionCtx.waitUntil(
       recordAiUsage(c.env.DB, {
         route: 'ask.read',

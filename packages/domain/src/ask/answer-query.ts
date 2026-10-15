@@ -2,7 +2,6 @@ import type { Vnd } from '../money/format';
 import { compareAmounts, type Comparison, type Fact } from '../insights/fact';
 import type { LocalDate } from '../time/local-date';
 import { answerAsk, type AskAnswer, type AskContext } from './ask-engine';
-import type { AskIntent } from './ask-intent';
 import {
   dueBills,
   matchCategory,
@@ -18,6 +17,7 @@ import {
   type AskTotal,
 } from './ask-ledger';
 import {
+  isAskIntent,
   rangeBefore,
   resolveRange,
   type AskQuery,
@@ -82,20 +82,13 @@ export type AskQueryAnswer =
   | { readonly kind: 'noRange' }
   | { readonly kind: 'chat' };
 
-const INTENT_KINDS = new Set(['afford', 'weekend', 'saveMore', 'potFull', 'today', 'unknown']);
-
-/** One of the original intents, which the original engine answers. */
-function isIntent(query: AskQuery): query is AskIntent {
-  return INTENT_KINDS.has(query.kind);
-}
-
 /** Works out the answer to any question from the user's own numbers and records. */
 export function answerQuery(
   query: AskQuery,
   ctx: AskContext,
   ledger: AskLedger | null,
 ): AskQueryAnswer {
-  if (isIntent(query)) return answerAsk(query, ctx);
+  if (isAskIntent(query)) return answerAsk(query, ctx);
   if (query.kind === 'chat') return { kind: 'chat' };
   if (ledger === null) return { kind: 'help' };
   const frame: RangeFrame = {

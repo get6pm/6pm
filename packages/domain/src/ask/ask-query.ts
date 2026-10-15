@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { daysInMonth, diffDays, makeDate, parts, addDays, startOfWeek } from '../time/local-date';
 import type { LocalDate } from '../time/local-date';
-import { askIntentSchema } from './ask-intent';
+import { askIntentSchema, type AskIntent } from './ask-intent';
 
 /** A span a question asks about, as words a model or the rules can name. */
 export const askRangePresets = [
@@ -172,4 +172,47 @@ export function rangeBefore(range: ResolvedRange, frame: RangeFrame): ResolvedRa
   }
   const to = addDays(range.from, -1);
   return { from: addDays(to, -length), to, preset: range.preset === 'today' ? 'yesterday' : null };
+}
+
+const askName = z.string().trim().min(1).max(40);
+
+/**
+ * `POST /v1/ask`: the question, and to read it well, the money day and the names of the user's
+ * own categories and pots, plus the query before it for a follow-up. No amount from the user's
+ * plan or spends is ever sent.
+ */
+export const askRequestSchema = z.object({
+  question: z.string().trim().min(1).max(300),
+  today: localDate.optional(),
+  categories: z.array(askName).max(50).optional(),
+  pots: z.array(askName).max(30).optional(),
+  previous: askQuerySchema.optional(),
+});
+export type AskRequest = z.infer<typeof askRequestSchema>;
+
+/**
+ * The answer: `query` for phones that read queries, and `intent` (a query outside the original
+ * six reads as `unknown`) for phones that only know those.
+ */
+export const askResponseSchema = z.object({
+  intent: askIntentSchema,
+  query: askQuerySchema.optional(),
+});
+export type AskResponse = z.infer<typeof askResponseSchema>;
+
+/** What the model is asked to give back: the query alone. */
+export const askReadOutputSchema = z.object({ query: askQuerySchema });
+
+const INTENT_KINDS: ReadonlySet<string> = new Set(
+  askIntentSchema.options.map((o) => o.shape.kind.value),
+);
+
+/** One of the original intents, which the original engine answers. */
+export function isAskIntent(query: AskQuery): query is AskIntent {
+  return INTENT_KINDS.has(query.kind);
+}
+
+/** The intent an older phone reads from a query. */
+export function intentOf(query: AskQuery): AskIntent {
+  return isAskIntent(query) ? query : { kind: 'unknown' };
 }

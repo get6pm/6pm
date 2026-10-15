@@ -1,13 +1,15 @@
 import { Text, TextInput, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { groupDigits } from '@6pm/domain';
+import type { MoneyParts } from '@6pm/domain';
 
 import { CategoryTile } from '../../ui/category-tile';
 import type { SymbolName } from '../../ui/icons/symbols.generated';
 import { DashedRule } from '../../ui/dashed-rule';
+import { FitWidth } from '../../ui/layout/fit-width';
 import { PaperEdge } from '../../ui/paper-edge';
 import { body, display, mono, tabular } from '../../ui/type/fonts';
+import { AmountText } from './amount-text';
 
 const PAPER = '#fbf7ef';
 const INK = '#231a24';
@@ -21,7 +23,7 @@ export function QuickTicket({
   heading,
   stamp,
   amount,
-  amountText,
+  typed,
   hint,
   note,
   placeholder,
@@ -33,8 +35,8 @@ export function QuickTicket({
   readonly heading: string;
   readonly stamp: string;
   readonly amount: number;
-  /** The amount as typed in another currency ("฿640"), with đồng in the hint; đồng when absent. */
-  readonly amountText?: string;
+  /** The amount as typed: "45.000₫", "$12.5", or abroad "฿640" with home in the hint. */
+  readonly typed: MoneyParts;
   readonly hint: string;
   readonly note: string;
   readonly placeholder: string;
@@ -69,17 +71,19 @@ export function QuickTicket({
           </Text>
         </View>
         <View style={{ alignItems: 'center', gap: 3, paddingVertical: 2 }}>
-          <Text
-            style={{
-              ...display(60, 500, -0.02),
-              ...tabular,
-              lineHeight: 60,
-              color: INK,
-              opacity: amount > 0 ? 1 : 0.35,
-            }}
-          >
-            {amountText ?? `${groupDigits(amount)}₫`}
-          </Text>
+          <FitWidth height={60} align="center">
+            <AmountText
+              parts={typed}
+              numberOfLines={1}
+              style={{
+                ...display(60, 500, -0.02),
+                ...tabular,
+                lineHeight: 60,
+                color: INK,
+                opacity: amount > 0 ? 1 : 0.35,
+              }}
+            />
+          </FitWidth>
           <Text style={{ ...mono(11.5), minHeight: 16, color: 'rgba(35,26,36,.55)' }}>{hint}</Text>
         </View>
         <DashedRule color="rgba(35,26,36,.18)" width={1.5} />

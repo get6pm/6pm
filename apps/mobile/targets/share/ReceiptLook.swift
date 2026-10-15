@@ -14,19 +14,21 @@ enum ReceiptLook {
     let image: String
     let language: String
     let currencyHint: String?
+    /// Left out for đồng, as phones counting it always have.
+    let homeCurrency: String?
   }
 
   /// The answer as JSON (`{receipt: …}`), or nil when there is none to use.
-  static func ask(photo: Data, language: String, currencyHint: String?, host: String) async
-    -> String?
-  {
+  static func ask(
+    photo: Data, language: String, currencyHint: String?, homeCurrency: String?, host: String
+  ) async -> String? {
     guard
       let token = DeviceCredential.token(),
       let url = URL(string: "https://\(host)/api/v1/receipts/read"),
       let body = try? JSONEncoder().encode(
         Request(
           image: photo.base64EncodedString(), language: language == "vi" ? "vi" : "en",
-          currencyHint: currencyHint))
+          currencyHint: currencyHint, homeCurrency: homeCurrency))
     else { return nil }
     var request = URLRequest(url: url, timeoutInterval: timeout)
     request.httpMethod = "POST"

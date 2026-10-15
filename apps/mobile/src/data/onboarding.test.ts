@@ -15,6 +15,10 @@ import type { SqlDatabase, SqlValue } from './table';
 
 jest.mock('expo-crypto', () => ({ randomUUID: () => crypto.randomUUID() }));
 
+// The phone's currency, as its region gives it: Vietnam unless a test moves it.
+let mockPhoneCurrency = 'VND';
+jest.mock('../money/device-money', () => ({ deviceCurrencyCode: () => mockPhoneCurrency }));
+
 // A real SQLite database in memory, from Node's own module (see migrate.test.ts).
 const { DatabaseSync } = process.getBuiltinModule('node:sqlite');
 
@@ -70,6 +74,7 @@ describe('completeOnboarding', () => {
       persona: 'cheeky',
       serious: false,
       startedOn: '2026-10-10',
+      currency: 'VND',
     });
     expect(snap.categories.map((c) => [c.id, c.name, c.icon, c.hue])).toEqual([
       ['food', 'Ăn uống', 'restaurant', 45],
@@ -92,6 +97,24 @@ describe('completeOnboarding', () => {
     // 10 Oct with payday the 25th: 15 days left, 16 days covered, joining 16 days into a 31-day
     // cycle: (15.500.000 − 4.000.000 − 1.900.000) × 16/31 ÷ 16 = 309.677 → 309.000.
     expect(dayOf(snap)?.line).toBe(309_000);
+  });
+
+  it('counts in the phone’s currency, and a month set up again keeps the first one', async () => {
+    mockPhoneCurrency = 'USD';
+    try {
+      const store = openStore('2026-10-10');
+      const dollars = { ...answers, income: 500_000, futureYou: 50_000, bills: [] };
+      await completeOnboarding(store, dollars, { today: '2026-10-10', language: 'en' });
+      expect(store.getSnapshot().plan?.currency).toBe('USD');
+      // ($5,000 − $500) × 16/31 ÷ 16 = $145.16, floored to whole dollars: $145.
+      expect(dayOf(store.getSnapshot())?.line).toBe(14_500);
+
+      mockPhoneCurrency = 'EUR';
+      await completeOnboarding(store, dollars, { today: '2026-10-10', language: 'en' });
+      expect(store.getSnapshot().plan?.currency).toBe('USD');
+    } finally {
+      mockPhoneCurrency = 'VND';
+    }
   });
 
   it('keeps each bill’s due day and counts the ones already due before today as paid', async () => {

@@ -1,4 +1,6 @@
-import { categoryHintOf, likelyCategoriesAt, type EmailCapture } from '@6pm/domain';
+import { capturedInHome, categoryHintOf, likelyCategoriesAt, type EmailCapture } from '@6pm/domain';
+
+import { homeCurrencyOf } from '../money/use-money-format';
 
 import { alreadyImported } from './inbox-import';
 import type { moneyActions } from './money-actions';
@@ -54,9 +56,13 @@ export async function importEmailCaptures(deps: EmailImportDeps): Promise<EmailI
   const done: string[] = [];
   for (const capture of captures) {
     if (!(await alreadyImported(store, { id: capture.id, source: 'email', at: capture.at }))) {
+      // Emailed receipts are Vietnamese, in đồng: on another home they wait to be priced.
+      const home = homeCurrencyOf(store.getSnapshot().plan).code;
+      const priced = capturedInHome(capture.amount, 'VND', home);
       await actions.captureSpend({
         id: capture.id,
-        amount: capture.amount,
+        amount: priced.amount,
+        foreignAmount: priced.foreignAmount,
         categoryId: await categoryFor(deps, capture),
         merchant: capture.merchant.trim(),
         source: 'email',

@@ -1,4 +1,9 @@
-import { SURFACES_VERSION, type MerchantRuleRow, type SurfaceContext } from '@6pm/domain';
+import {
+  SURFACES_VERSION,
+  type MerchantRuleRow,
+  type PhoneNumberStyle,
+  type SurfaceContext,
+} from '@6pm/domain';
 import { categoryTile } from '@6pm/theme';
 
 import { dayOf, type MoneySnapshot } from '../../data/money-store';
@@ -24,8 +29,9 @@ export function contextStrings(t: I18n['t']): SurfaceContext['strings'] {
 
 /**
  * What the share extension and the shortcuts file a spend with, without the database: the
- * categories and their tiles, the merchant rules the user taught, today's number, and the trip
- * and rates a foreign receipt is read and priced with.
+ * categories and their tiles, the merchant rules the user taught, today's number, the home
+ * currency and how the phone writes numbers, and the trip and rates a foreign receipt is read and
+ * priced with. Đồng is left unsaid, so a phone counting đồng writes the context it always has.
  */
 export function surfaceContext(input: {
   readonly money: MoneySnapshot;
@@ -37,7 +43,12 @@ export function surfaceContext(input: {
   readonly tripCurrency?: string | null;
   /** The last rates the app has, so a shared foreign receipt is priced as Travel prices it. */
   readonly rates?: readonly { readonly currency: string; readonly rate: string }[];
+  /** The home currency (ISO 4217). */
+  readonly currency?: string;
+  /** How the phone writes numbers (`phoneNumberStyle()`). */
+  readonly numberStyle?: PhoneNumberStyle;
 }): SurfaceContext {
+  const home = input.currency && input.currency !== 'VND' ? input.currency : null;
   const { money } = input;
   return {
     v: SURFACES_VERSION,
@@ -59,5 +70,15 @@ export function surfaceContext(input: {
     strings: input.strings ?? {},
     travel: input.tripCurrency ? { currency: input.tripCurrency } : null,
     rates: (input.rates ?? []).map(({ currency, rate }) => ({ currency, rate })),
+    ...(home ? { currency: home } : {}),
+    ...(home && input.numberStyle ? { numberStyle: numberStyleOf(input.numberStyle) } : {}),
+  };
+}
+
+function numberStyleOf(style: PhoneNumberStyle): NonNullable<SurfaceContext['numberStyle']> {
+  return {
+    languageTag: style.languageTag ?? null,
+    decimal: style.decimal ?? null,
+    group: style.group ?? null,
   };
 }

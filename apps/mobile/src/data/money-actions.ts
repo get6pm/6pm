@@ -12,6 +12,8 @@ import {
   type SpendRow,
 } from '@6pm/domain';
 
+import { homeCurrencyOf } from '../money/use-money-format';
+
 import { findSpend, type MoneyStore } from './money-store';
 
 export interface NewSpend {
@@ -110,7 +112,11 @@ export function moneyActions(store: MoneyStore) {
     inTurn(async () => {
       const row = await current(id);
       if (!row) return null;
-      const settled = settleTypedAmount(row.foreignAmount, patch);
+      const settled = settleTypedAmount(
+        row.foreignAmount,
+        patch,
+        homeCurrencyOf(store.getSnapshot().plan),
+      );
       return patchNow(row, settled === undefined ? patch : { ...patch, foreignAmount: settled });
     });
 

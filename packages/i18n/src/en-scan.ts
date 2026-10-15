@@ -14,7 +14,8 @@ export const enScan = {
   'scan.cameraOff.body': 'Turn it on to scan QR codes, or type the amount instead.',
   'scan.cameraOff.settings': 'Open Settings',
   'scan.abroad.title': 'This is a {scheme} QR.',
-  'scan.abroad.body': 'Paying it from 6pm isn’t supported yet. Log it and we’ll show ₫ underneath.',
+  'scan.abroad.body':
+    'Paying it from 6pm isn’t supported yet. Log it and we’ll show {symbol} underneath.',
   'scan.abroad.log': 'Log {amount} by hand',
   'scan.abroad.logPlain': 'Log it by hand',
   'scan.scheme.promptpay': 'Thai PromptPay',

@@ -1,3 +1,4 @@
+import type { Currency } from '../money/currency';
 import type { Vnd } from '../money/format';
 import type { DailyNumber } from '../plan/daily-number';
 import type { PayCycle } from '../plan/pay-cycle';
@@ -109,6 +110,8 @@ export interface InsightInput {
   readonly notDaily: ReadonlySet<string>;
   readonly bills: readonly InsightBill[];
   readonly pots: readonly InsightPot[];
+  /** The home currency, for what counts as worth a word; đồng when not given. */
+  readonly currency?: Currency;
 }
 
 /** `now` against `before`. Below 20% either way is `about`. */

@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 import type { ReadReceipt } from '../capture/read-receipt';
 import { foldWords } from '../capture/spoken-spend';
-import { decimalsOf, toDecimal } from './share-amount';
+import { VND, type Currency } from '../money/currency';
+import { decimalsOf, homeMinorOf, toDecimal } from './share-amount';
 
 /**
  * What the server's closer look at a receipt photo answers (`POST /v1/receipts/read`). The amount
@@ -76,29 +77,31 @@ function mergedCurrency(read: ReadReceipt | null, server: NonNullable<ReceiptLoo
  * `mergedCurrency` decides; the server's amount where the phone was unsure, or where the server
  * is sure and they differ; its name replaces a name the phone only guessed, when the photo
  * printed it; its time fills in a time the phone could not read. A reading the server could not
- * make leaves the phone's as it was.
+ * make leaves the phone's as it was. A total in the home currency is the reading's amount.
  */
 export function mergeLook(
   read: ReadReceipt | null,
   look: ReceiptLook,
   lines: readonly string[],
+  home: Currency = VND,
 ): ReadReceipt | null {
   const server = look.receipt;
   if (!server) return read;
   const merged = mergedCurrency(read, server);
   const currency = merged.currency ?? server.currency;
   const serverValue = server.amount / 10 ** decimalsOf(server.currency);
-  const serverPrinted = currency === server.currency ? toDecimal(serverValue, currency) : null;
+  const serverPrinted =
+    currency === server.currency ? toDecimal(serverValue, currency, home) : null;
   const takeTotal = serverPrinted !== null && (!read?.totalSure || server.sure);
   const printed = takeTotal ? serverPrinted : (read?.printed ?? null);
-  const inDong = currency === 'VND' && printed !== null && !printed.includes('.');
+  const inHome = currency === home.code ? homeMinorOf(printed, home) : null;
   const named = server.merchant?.trim() ?? '';
   const takeName = named !== '' && !read?.payeeSure && printedName(named, lines);
   const at = read?.at ?? (server.at ? localInstant(server.at) : null);
   return {
     kind: read?.kind ?? 'shop',
-    amount: inDong ? Number(printed) : null,
-    foreign: currency !== 'VND' && printed !== null ? { currency, amount: printed } : null,
+    amount: inHome,
+    foreign: currency !== home.code && printed !== null ? { currency, amount: printed } : null,
     currency,
     printed,
     currencySure: merged.printed,

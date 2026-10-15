@@ -1,6 +1,7 @@
 import { Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { designAmount } from '@6pm/domain';
 import { categoryTile } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
@@ -11,6 +12,7 @@ import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
 import { swatch } from './plan-colours';
+import { useSheetMoney } from './sheet-money';
 
 /** The icons a pot can wear, and the hues of the colour row (the prototype's `PI` and `HU`). */
 export const POT_ICONS = [
@@ -38,7 +40,10 @@ export interface PotDraft {
   readonly ahead: number;
 }
 
-/** Starting points: a name, an icon, a hue, a goal and how many months ahead. */
+/**
+ * Starting points: a name, an icon, a hue, a goal (in đồng, scaled by value to the home currency)
+ * and how many months ahead.
+ */
 export const POT_TEMPLATES = [
   { key: 'plan.pot.tpl.birthday', icon: 'cake', hue: 330, goal: 1_000_000, ahead: 2 },
   { key: 'plan.pot.tpl.trip', icon: 'flight', hue: 200, goal: 5_000_000, ahead: 5 },
@@ -138,9 +143,17 @@ export function PotIconPicker({
 }
 
 /** Template chips, shown until the pot has a name. */
-export function PotTemplates({ onPick }: { readonly onPick: (draft: PotDraft) => void }) {
+export function PotTemplates({
+  onPick,
+  currency: code,
+}: {
+  readonly onPick: (draft: PotDraft) => void;
+  /** The pot's own currency (ISO code), when it is not the home currency. */
+  readonly currency?: string | undefined;
+}) {
   const { palette } = useTheme();
   const { t } = useI18n();
+  const { currency } = useSheetMoney(code);
   return (
     <View
       style={{
@@ -161,7 +174,7 @@ export function PotTemplates({ onPick }: { readonly onPick: (draft: PotDraft) =>
               name: t(tpl.key),
               icon: tpl.icon,
               hue: tpl.hue,
-              goal: tpl.goal,
+              goal: designAmount(tpl.goal, currency),
               ahead: tpl.ahead,
             });
           }}

@@ -1,12 +1,23 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { answerAsk, readIntent } from '@6pm/domain';
+import {
+  answerAsk,
+  currencyOf,
+  moneyFormat,
+  moneyLocale,
+  readIntent,
+  vndLocale,
+} from '@6pm/domain';
 import { t, type Language } from '@6pm/i18n';
 
 import { askSuggestions } from './ask-suggestions';
 
 const suggestionsIn = (language: Language, pot: string | null) =>
-  askSuggestions((key, ...params) => t(language, key, ...params), pot);
+  askSuggestions(
+    (key, ...params) => t(language, key, ...params),
+    pot,
+    moneyFormat(vndLocale(language)),
+  );
 
 describe('the suggested questions', () => {
   it('offers the pot question only when there is a pot', () => {
@@ -26,6 +37,19 @@ describe('the suggested questions', () => {
       expect(readIntent(pot ?? '', ['Tết'])).toEqual({ kind: 'potFull', pot: 'Tết' });
     },
   );
+
+  it('prices the examples in the home currency, and reads them back in it', () => {
+    const USD = currencyOf('USD');
+    const [afford, , spend] = askSuggestions(
+      (key, ...params) => t('en', key, ...params),
+      null,
+      moneyFormat(moneyLocale(USD, 'en')),
+    );
+    expect(afford).toBe('Can I afford a $80 dinner Saturday?');
+    expect(spend).toBe('What if I buy a $15 jacket?');
+    expect(readIntent(afford ?? '', [], USD)).toEqual({ kind: 'afford', amount: 8000 });
+    expect(readIntent(spend ?? '', [], USD)).toEqual({ kind: 'afford', amount: 1500 });
+  });
 
   it('has an answer for each, whatever the plan', () => {
     for (const question of suggestionsIn('en', null)) {

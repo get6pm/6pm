@@ -1,12 +1,17 @@
 import { describe, expect, it } from '@jest/globals';
 
+import { currencyOf, formatVnd, parseSpokenSpend, VND } from '@6pm/domain';
+
 import {
   contextualStrings,
   offersLocale,
   speechLocale,
+  spendIn,
   spokenCategory,
   spokenChips,
 } from './voice-support';
+
+const vnd = { full: formatVnd };
 
 describe('speechLocale', () => {
   it('follows the app language', () => {
@@ -58,17 +63,33 @@ describe('spokenCategory', () => {
 describe('spokenChips', () => {
   it('shows name, amount and category', () => {
     expect(
-      spokenChips({ name: 'Trà sữa', amount: 45_000, categoryHint: 'drinks' }, 'Drinks'),
+      spokenChips({ name: 'Trà sữa', amount: 45_000, categoryHint: 'drinks' }, 'Drinks', vnd),
     ).toEqual(['Trà sữa', '45.000₫', 'Drinks']);
   });
 
   it('shows only what was heard', () => {
-    expect(spokenChips({ name: '', amount: 20_000, categoryHint: null }, null)).toEqual([
+    expect(spokenChips({ name: '', amount: 20_000, categoryHint: null }, null, vnd)).toEqual([
       '20.000₫',
     ]);
-    expect(spokenChips({ name: 'Phở', amount: null, categoryHint: 'food' }, 'Food')).toEqual([
+    expect(spokenChips({ name: 'Phở', amount: null, categoryHint: 'food' }, 'Food', vnd)).toEqual([
       'Phở',
       'Food',
     ]);
+  });
+});
+
+describe('spendIn', () => {
+  it('keeps đồng as the words read', () => {
+    const spend = parseSpokenSpend('phở forty-five k');
+    expect(spendIn(spend, 'phở forty-five k', VND)).toBe(spend);
+  });
+
+  it('reads the amount in the home currency', () => {
+    const usd = currencyOf('USD');
+    const text = 'lunch twelve dollars';
+    const spend = spendIn(parseSpokenSpend(text), text, usd);
+    expect(spend.name).toBe(parseSpokenSpend(text).name);
+    expect(spend.amount).toBe(1200);
+    expect(spendIn(parseSpokenSpend('taxi 45 k'), 'taxi 45 k', usd).amount).toBe(4_500_000);
   });
 });

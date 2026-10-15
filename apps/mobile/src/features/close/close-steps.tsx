@@ -1,9 +1,7 @@
 import { Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 
-import { formatShort, groupDigits } from '@6pm/domain';
-
-import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { DashedRule } from '../../ui/dashed-rule';
 import { CashVoice } from '../voice/cash-voice';
 import { glide } from '../voice/glide';
@@ -125,7 +123,7 @@ export function CashStep({
   readonly onDone: () => void;
 }) {
   const { palette } = useTheme();
-  const { language } = useI18n();
+  const money = useMoneyFormat();
   const total = added.reduce((sum, c) => sum + c.amount, 0);
   return (
     <Animated.View entering={FadeInDown.duration(450)} style={{ flex: 1, gap: 20, paddingTop: 22 }}>
@@ -164,7 +162,7 @@ export function CashStep({
           >
             <Text style={{ ...body(15, 600), color: palette.ink }}>{chip.name}</Text>
             <Text style={{ ...body(15, 500), color: palette.ink, opacity: 0.6 }}>
-              {formatShort(chip.amount, language)}
+              {money.short(chip.amount)}
             </Text>
           </PressScale>
         ))}
@@ -202,7 +200,7 @@ export function CashStep({
           >
             <Text style={{ ...mono(13, 400, 0.04), color: palette.ink }}>+ {chip.name}</Text>
             <Text style={{ ...mono(13), ...tabular, color: palette.ink }}>
-              {groupDigits(chip.amount)}
+              {money.number(chip.amount)}
             </Text>
           </Animated.View>
         ))}
@@ -220,7 +218,7 @@ export function CashStep({
       >
         <Text style={{ ...mono(11.5, 400, 0.12), color: palette.inkSoft }}>{totalLabel}</Text>
         <Text style={{ ...body(15, 600), ...tabular, color: palette.ink }}>
-          {groupDigits(total)}₫
+          {money.full(total)}
         </Text>
       </View>
       <PressScale

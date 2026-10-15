@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
-import type { InboxSpend, LocalDate } from '@6pm/domain';
+import { currencyOf, type InboxSpend, type LocalDate } from '@6pm/domain';
 
 import { openMemoryDb } from '../features/backup/test/memory-db';
 import { priceWaitingForeign, type ForeignPricingDeps } from './foreign-pricing';
@@ -127,6 +127,31 @@ describe('pricing captured foreign amounts', () => {
     expect((await store.tables.spends.get(item.id))?.amount).toBe(0);
     expect(await price({ ...offline, lastRate: () => '1.62' })).toBe(1);
     expect((await store.tables.spends.get(item.id))?.amount).toBe(804_573);
+  });
+
+  it('prices in a home other than đồng with home’s quote of the same day', async () => {
+    const item = jumi();
+    await save([item]);
+    const usd = currencyOf('USD');
+    const ratesOn = () =>
+      Promise.resolve([
+        { currency: 'IDR', rate: '1.6' },
+        { currency: 'USD', rate: '26000' },
+      ]);
+    expect(await price({ ratesOn, home: usd })).toBe(1);
+    // Rp496.650 at 1,6₫ ÷ 26.000₫ a dollar = $30.56
+    expect(await store.tables.spends.get(item.id)).toMatchObject({
+      amount: 3_056,
+      foreignAmount: { currency: 'IDR', amount: 496_650, rate: 0.000061538461 },
+    });
+  });
+
+  it('falls back to the last rate kept when the day has no quote for home', async () => {
+    const item = jumi();
+    await save([item]);
+    const home = currencyOf('USD');
+    expect(await price({ home, lastRate: () => '0.0000615' })).toBe(1);
+    expect((await store.tables.spends.get(item.id))?.amount).toBe(3_054);
   });
 
   it('repairs a receipt saved at 0₫ with its printed amount in the note', async () => {

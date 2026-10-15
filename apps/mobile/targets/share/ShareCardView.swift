@@ -83,7 +83,8 @@ struct ShareCardView: View {
     }
   }
 
-  /// 64 pt Bricolage, the đồng sign at 0.42 of it and a little faded.
+  /// 64 pt Bricolage, the home currency's sign at 0.42 of it and a little faded, on its side.
+  /// A foreign amount carries its own sign at full size ("S$68,80").
   private var amount: some View {
     ZStack(alignment: .leading) {
       if model.editing {
@@ -96,15 +97,16 @@ struct ShareCardView: View {
         .font(ShareFont.amount(64))
         .trackingEm(-0.02, size: 64)
       } else {
-        let text = model.amountText
-        let number = text.hasSuffix("₫") ? String(text.dropLast()) : text
+        let parts = model.amountParts
         HStack(alignment: .firstTextBaseline, spacing: 4) {
-          // A foreign amount carries its own sign in front ("S$68,80"); đồng keeps its small ₫.
-          Text(number).font(ShareFont.amount(64)).trackingEm(-0.02, size: 64)
+          if !parts.prefix.isEmpty {
+            Text(parts.prefix).font(ShareFont.amount(64 * 0.42)).opacity(0.55)
+          }
+          Text(parts.number).font(ShareFont.amount(64)).trackingEm(-0.02, size: 64)
             .lineLimit(1)
             .minimumScaleFactor(0.5)
-          if text.hasSuffix("₫") {
-            Text("₫").font(ShareFont.amount(64 * 0.42)).opacity(0.55)
+          if !parts.suffix.isEmpty {
+            Text(parts.suffix).font(ShareFont.amount(64 * 0.42)).opacity(0.55)
           }
         }
         .accessibilityElement(children: .combine)

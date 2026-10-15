@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { FACT_KINDS, type Fact } from '@6pm/domain';
+import { FACT_KINDS, moneyFormat, vndLocale, type Fact } from '@6pm/domain';
 import { t, type Language } from '@6pm/i18n';
 
 /** The catalogue looked up by keys built at run time. */
@@ -14,6 +14,7 @@ import { catalogueKey, catalogueLine, slotValues, type SlotWords } from './fact-
 
 const words = (language: Language): SlotWords => ({
   language,
+  money: moneyFormat(vndLocale(language)),
   say: (key, params) => lookUp(language, key, params),
   categoryName: (id) => ({ drinks: 'Cà phê' })[id] ?? id,
   dayMonth: (date) => `${String(date.getDate())}/${String(date.getMonth() + 1)}`,

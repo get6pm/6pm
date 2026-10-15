@@ -1,4 +1,11 @@
-import { ceilToFiftyThousand, type Vnd } from '../money/format';
+import {
+  ceilToSetAside,
+  designAmount,
+  roundToStep,
+  VND,
+  type Currency,
+  type Money as Vnd,
+} from '../money/currency';
 import {
   addDays,
   daysInMonth,
@@ -76,15 +83,15 @@ export function whatIfDaily(input: DailyNumberInput, candidate: Vnd): Vnd {
  * How a day changes per extra amount set aside now: "about 5k a day" for 100k over 22 days. A pot
  * that sets money aside out of the cycle's free money takes only the joined `share` of it.
  */
-export function aboutPerDay(amount: Vnd, daysLeft: number, share = 1): Vnd {
+export function aboutPerDay(amount: Vnd, daysLeft: number, share = 1, currency = VND): Vnd {
   const taken = amount * share;
   if (daysLeft <= 0) return Math.round(taken);
-  return Math.round(taken / daysLeft / 1000) * 1000;
+  return roundToStep(taken / daysLeft, currency);
 }
 
-/** The day bars' full height: 600k, or the most a day could be with nothing set aside. */
+/** The day bars' full height: the design's 600k, or the most a day could be with nothing set aside. */
 export function dayBarScale(input: DailyNumberInput): Vnd {
-  return Math.max(600_000, whatIfDaily(input, 0));
+  return Math.max(designAmount(600_000, input.currency ?? VND), whatIfDaily(input, 0));
 }
 
 /** A day bar's height as a fraction of the row: never below 8%, never above full. */
@@ -119,12 +126,17 @@ export function monthsUntil(today: LocalDate, month: string): number {
 
 /**
  * An occasion pot's monthly set-aside: what is left, spread over the months to its date, rounded
- * up to 50.000₫ but never more than what is left. Nothing when it is full or has no date.
+ * up to fifty steps (50.000₫, $50) but never more than what is left. Nothing when it is full or has no date.
  */
-export function potMonthlyNeed(goal: Vnd, saved: Vnd, monthsLeft: number | null): Vnd {
+export function potMonthlyNeed(
+  goal: Vnd,
+  saved: Vnd,
+  monthsLeft: number | null,
+  currency: Currency = VND,
+): Vnd {
   const left = Math.max(0, goal - saved);
   if (left === 0 || monthsLeft === null || monthsLeft <= 0) return 0;
-  return Math.min(left, ceilToFiftyThousand(left / monthsLeft));
+  return Math.min(left, ceilToSetAside(left / monthsLeft, currency));
 }
 
 /** A goal's share of Future you, each month. */

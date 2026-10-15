@@ -2,7 +2,10 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { findBank, type BankInfo } from '@6pm/domain';
 
+import { bankNameOf } from '../../features/banks/named-bank';
+import { useHomeCurrency } from '../../money/use-money-format';
 import { body } from '../type/fonts';
+import { symbolStyle } from '../type/symbol-face';
 import { BANK_LOGOS } from './bank-logos';
 
 /** The wallet code for money that never touches a bank. */
@@ -12,9 +15,14 @@ const CASH_TINT = '#b8895a';
 /** Letters on a brand-coloured monogram: every brand colour here is deep enough for white. */
 const ON_TINT = '#ffffff';
 
-/** The letters a bank without a logo is drawn with: a short code as is, else its name's start. */
-function monogram(bank: BankInfo | null, id: string): string {
-  if (id === CASH) return '₫';
+/**
+ * The letters a bank without a logo is drawn with: a short code as is, else its name's start (the
+ * name typed for a bank 6pm does not know). Cash is the home currency's symbol.
+ */
+function monogram(bank: BankInfo | null, id: string, cashSymbol: string): string {
+  if (id === CASH) return cashSymbol;
+  const typed = bankNameOf(id);
+  if (typed !== null) return typed.slice(0, 2);
   const code = bank?.id ?? id;
   if (code.length <= 4 && /^[A-Z]+$/.test(code)) return code;
   return (bank?.shortName ?? code).slice(0, 2);
@@ -22,7 +30,7 @@ function monogram(bank: BankInfo | null, id: string): string {
 
 /**
  * A bank or wallet's logo as a rounded square: its bundled logo, or a monogram on the bank's
- * colour when 6pm has none. Cash draws the đồng sign on its own tint.
+ * colour when 6pm has none. Cash draws the home currency's sign (₫, $) on its own tint.
  */
 export function BankLogo({
   id,
@@ -43,6 +51,7 @@ export function BankLogo({
   /** A hairline around a logo, so a white one holds its shape on a white card. */
   readonly edge?: string;
 }) {
+  const cashSymbol = useHomeCurrency().symbol;
   const bank = id === CASH ? null : findBank(id);
   const logo = bank ? BANK_LOGOS[bank.id] : undefined;
   const frame = { width: size, height: size, borderRadius: radius, overflow: 'hidden' } as const;
@@ -66,7 +75,7 @@ export function BankLogo({
       </View>
     );
   }
-  const letters = monogram(bank, id);
+  const letters = monogram(bank, id, cashSymbol);
   const own = id === CASH ? CASH_TINT : (bank?.color ?? null);
   return (
     <View
@@ -79,7 +88,10 @@ export function BankLogo({
         allowFontScaling={false}
         numberOfLines={1}
         style={{
-          ...body(Math.round(size * (letters.length > 3 ? 0.28 : 0.36)), 800, -0.02),
+          ...symbolStyle(
+            body(Math.round(size * (letters.length > 3 ? 0.28 : 0.36)), 800, -0.02),
+            letters,
+          ),
           color: own === null ? neutralInk : ON_TINT,
         }}
       >

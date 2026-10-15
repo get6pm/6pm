@@ -71,6 +71,7 @@ export function weekFacts(input: InsightInput): Fact[] {
     closed: input.closed.filter((d) => d.day >= from && d.day <= input.today),
     spends: input.spends.filter((s) => s.day >= from && s.day <= input.today),
     notDaily: input.notDaily,
+    ...(input.currency === undefined ? {} : { currency: input.currency }),
   });
   if (story.kind === 'under') {
     return [

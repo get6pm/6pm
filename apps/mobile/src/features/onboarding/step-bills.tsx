@@ -1,9 +1,8 @@
 import { Text, View } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
 
-import { formatShort } from '@6pm/domain';
-
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { Symbol } from '../../ui/icons/symbol';
 import { Odometer } from '../../ui/odometer';
 import { PressScale } from '../../ui/primitives/press-scale';
@@ -25,6 +24,7 @@ function TrayChip({
   readonly onPress: () => void;
 }) {
   const i18n = useI18n();
+  const money = useMoneyFormat();
   const reduceMotion = useReducedMotion();
   const tile = tileOf(bill.hue);
   return (
@@ -59,9 +59,7 @@ function TrayChip({
           {billName(i18n, bill.card, bill.option)}
         </Text>
         <Text style={{ ...body(12.5, 600), color: pal.ink, opacity: 0.55 }}>
-          {bill.amount
-            ? formatShort(bill.amount, i18n.language)
-            : i18n.t('onboarding.bills.amountLater')}
+          {bill.amount ? money.short(bill.amount) : i18n.t('onboarding.bills.amountLater')}
         </Text>
       </PressScale>
     </Animated.View>
@@ -86,14 +84,15 @@ export function StepBills({
   readonly onAnswers: (next: BillAnswers) => void;
   readonly onGo: (index: number, direction: 1 | -1) => void;
 }) {
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const total = billTotal(bills);
   const count = bills.length;
   const endTitle =
     count === 0
       ? t('onboarding.bills.endNone')
       : total > 0
-        ? t('onboarding.bills.endTotal', { count, amount: formatShort(total, language) })
+        ? t('onboarding.bills.endTotal', { count, amount: money.short(total) })
         : t('onboarding.bills.endCount', { count });
   return (
     <View style={{ flex: 1, gap: 14 }}>

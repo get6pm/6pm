@@ -11,7 +11,7 @@ export const viExport: { readonly [Key in keyof typeof enExport]: string } = {
   'export.csv.time': 'Giờ',
   'export.csv.merchant': 'Nơi chi',
   'export.csv.category': 'Danh mục',
-  'export.csv.amount': 'Số tiền (VND)',
+  'export.csv.amount': 'Số tiền ({code})',
   'export.csv.status': 'Trạng thái',
   'export.csv.source': 'Nguồn',
   'export.csv.wallet': 'Ví',

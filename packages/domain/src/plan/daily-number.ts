@@ -1,4 +1,4 @@
-import { floorToThousand, type Vnd } from '../money/format';
+import { floorToStep, VND, type Currency, type Money as Vnd } from '../money/currency';
 import { sumCounted, type CountedSpend } from '../spend/spend';
 
 /** The month's plan, as the Plan tab sets it. Every field is a monthly amount. */
@@ -30,6 +30,8 @@ export interface DailyNumberInput {
    * cycle the user joined (see `joinedShare`).
    */
   readonly share?: number;
+  /** The home currency: lines floor to its step. Đồng when not given. */
+  readonly currency?: Currency;
 }
 
 export interface DailyNumber {
@@ -51,16 +53,16 @@ export interface DailyNumber {
 
 /**
  * The one number. Free money is split evenly across the days left, today included, and rounded
- * down to whole thousands so the promise is always kept.
+ * down to a whole step (1.000₫, $1) so the promise is always kept.
  */
 export function dailyNumber(input: DailyNumberInput): DailyNumber {
-  const { plan, daysLeft, share = 1 } = input;
+  const { plan, daysLeft, share = 1, currency = VND } = input;
   const planned = plan.income - plan.bills - plan.futureYou - plan.occasions;
   const startFree = Math.round(planned * share) - plan.topUps - input.spentBefore;
-  const line = floorToThousand(startFree / (daysLeft + 1));
+  const line = floorToStep(startFree / (daysLeft + 1), currency);
   const spent = sumCounted(input.today, input.notDaily);
   const free = startFree - spent;
-  const tomorrow = daysLeft > 0 ? Math.max(0, floorToThousand(free / daysLeft)) : 0;
+  const tomorrow = daysLeft > 0 ? Math.max(0, floorToStep(free / daysLeft, currency)) : 0;
   return {
     startFree,
     line,

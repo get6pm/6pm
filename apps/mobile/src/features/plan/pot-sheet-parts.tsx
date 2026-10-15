@@ -9,7 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { formatShort, type Vnd } from '@6pm/domain';
+import type { Vnd } from '@6pm/domain';
 import { categoryTile } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
@@ -21,6 +21,7 @@ import { useTheme } from '../../ui/theme/theme';
 import { body, families } from '../../ui/type/fonts';
 import { swatch } from './plan-colours';
 import type { PotFields } from './pot-sheet';
+import { useSheetMoney } from './sheet-money';
 import { potReflow } from './pot-rows';
 
 // A text field takes no font axes: the display face at its weight, size and tracking.
@@ -33,6 +34,7 @@ export function PotHero({
   placeholder,
   picking,
   saved,
+  currency,
   onTogglePick,
   onName,
   onFocusName,
@@ -41,12 +43,15 @@ export function PotHero({
   readonly placeholder: string;
   readonly picking: boolean;
   readonly saved: Vnd | undefined;
+  /** The pot's own currency (ISO code), when it is not the home currency. */
+  readonly currency?: string | undefined;
   readonly onTogglePick: () => void;
   readonly onName: (name: string) => void;
   readonly onFocusName: () => void;
 }) {
   const { palette } = useTheme();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useSheetMoney(currency);
   const reduceMotion = useReducedMotion();
   const tile = categoryTile(fields.hue);
   const progress = saved === undefined || fields.goal <= 0 ? 0 : Math.min(1, saved / fields.goal);
@@ -116,8 +121,8 @@ export function PotHero({
       {saved === undefined ? null : (
         <View style={{ alignItems: 'center', gap: 7, marginTop: -2 }}>
           <Text style={{ ...body(13.5, 600), color: palette.inkSoft }}>
-            {t('plan.pot.saved', { amount: formatShort(saved, language) })}{' '}
-            {t('plan.occasions.of', { amount: formatShort(fields.goal, language) })}
+            {t('plan.pot.saved', { amount: money.short(saved) })}{' '}
+            {t('plan.occasions.of', { amount: money.short(fields.goal) })}
           </Text>
           <View
             style={{

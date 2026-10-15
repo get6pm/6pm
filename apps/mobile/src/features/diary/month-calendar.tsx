@@ -1,9 +1,10 @@
 import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
-import { formatShort, type CalendarCell } from '@6pm/domain';
+import { type CalendarCell } from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, mono, tabular } from '../../ui/type/fonts';
@@ -33,7 +34,7 @@ function ClosedCell({
   readonly onPress: () => void;
 }) {
   const { palette } = useTheme();
-  const { language } = useI18n();
+  const money = useMoneyFormat();
   const lift = useAnimatedStyle(() => ({
     transform: [{ translateY: withTiming(selected ? -2 : 0, { duration: SELECT_MS }) }],
   }));
@@ -83,7 +84,7 @@ function ClosedCell({
             }}
           />
           <Text style={{ ...mono(9.5, 500), lineHeight: 9.5, color: paper.ink }}>
-            {formatShort(cell.spent, language)}
+            {money.short(cell.spent)}
           </Text>
         </View>
       </PressScale>

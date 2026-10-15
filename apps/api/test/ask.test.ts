@@ -2,7 +2,7 @@ import { createExecutionContext, waitOnExecutionContext } from 'cloudflare:test'
 import { env } from 'cloudflare:workers';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { askRequestSchema, readQuestionPrompt } from '@6pm/domain';
+import { askRequestSchema, readQuestionPrompt, readQuestionSystem } from '@6pm/domain';
 
 import { readQuestion } from '../src/ai/read-question';
 import { createApp } from '../src/app';
@@ -145,6 +145,45 @@ describe('reading a question with the model', () => {
       readQuestion(
         { apiKey: 'test', fetch: modelReplying({ query: { kind: 'afford', amount: -5 } }) },
         request,
+      ),
+    ).rejects.toMatchObject({ code: 'model_unavailable' });
+  });
+
+  it('reads đồng with the rules it always had when the phone names no currency', async () => {
+    const send = vi.fn<typeof fetch>(modelReplying({ query: spendQuery }));
+    await readQuestion({ apiKey: 'test', fetch: send }, request);
+    const body = sentBody(send.mock.calls[0]?.[1]) as { system: string };
+    expect(body.system).toBe(readQuestionSystem);
+  });
+
+  it('reads amounts in the home currency, and answers in its minor units', async () => {
+    const dollars = askRequestSchema.parse({
+      question: 'Can I afford $3.50 on coffee?',
+      currency: 'USD',
+      previous: { kind: 'list', range: { preset: 'thisWeek' }, minAmount: 2_000 },
+    });
+    const send = vi.fn<typeof fetch>(modelReplying({ query: { kind: 'afford', amount: 3.5 } }));
+    const read = await readQuestion({ apiKey: 'test', fetch: send }, dollars);
+    expect(read.output.query).toEqual({ kind: 'afford', amount: 350 });
+    expect(read.output.intent).toEqual({ kind: 'afford', amount: 350 });
+    const body = sentBody(send.mock.calls[0]?.[1]) as {
+      system: string;
+      messages: { content: string }[];
+    };
+    expect(body.system).toContain('amount in USD');
+    expect(body.system).not.toContain('đồng');
+    // The previous query goes to the model in dollars, as it reads them.
+    expect(body.messages[0]?.content).toContain('"minAmount":20');
+  });
+
+  it('refuses a home-currency amount that rounds to nothing', async () => {
+    await expect(
+      readQuestion(
+        {
+          apiKey: 'test',
+          fetch: modelReplying({ query: { kind: 'afford', amount: 0.001 } }),
+        },
+        askRequestSchema.parse({ question: 'Can I afford a tenth of a cent?', currency: 'USD' }),
       ),
     ).rejects.toMatchObject({ code: 'model_unavailable' });
   });

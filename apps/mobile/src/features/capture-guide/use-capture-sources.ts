@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useHomeCurrency } from '../../money/use-money-format';
 import { useReceiptAddress } from '../receipt-email/receipt-address';
 import { useSpendLabels } from '../today/use-spend-rows';
 import { GUIDES, type GuideContent } from './guide-content';
@@ -28,8 +29,9 @@ export function useCaptureSources(): {
   const emailAddress = useReceiptAddress();
   const { t } = useI18n();
   const labels = useSpendLabels();
+  const home = useHomeCurrency();
   return useMemo(() => {
-    const statuses = sourceStatuses([...cycleSpends, ...waitingBefore]);
+    const statuses = sourceStatuses([...cycleSpends, ...waitingBefore], home.code);
     const sources = statuses.map((status): CaptureSourceView => {
       const guide = GUIDES[status.source];
       const last = status.last
@@ -50,7 +52,7 @@ export function useCaptureSources(): {
     });
     const walletOn = statuses.some((s) => s.source === 'wallet' && s.on);
     return { sources, summary, walletOn, emailAddress };
-  }, [cycleSpends, waitingBefore, t, labels, emailAddress]);
+  }, [cycleSpends, waitingBefore, t, labels, emailAddress, home]);
 }
 
 type T = ReturnType<typeof useI18n>['t'];

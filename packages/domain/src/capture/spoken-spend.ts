@@ -1,4 +1,4 @@
-import type { Vnd } from '../money/format';
+import { VND, type Currency, type Money } from '../money/currency';
 import { readSpokenNumbers, spokenAmount } from '../money/spoken-number';
 
 /** The ids of the categories every month starts with. */
@@ -18,8 +18,8 @@ export type StarterCategoryId =
 export interface SpokenSpend {
   /** What it was, capitalised: "Trà sữa", "Veggies & eggs". Empty when only an amount was said. */
   readonly name: string;
-  /** Null when no amount was said. */
-  readonly amount: Vnd | null;
+  /** In minor units of the currency it was read in; null when no amount was said. */
+  readonly amount: Money | null;
   /** The starter category the words point to, when one does. */
   readonly categoryHint: StarterCategoryId | null;
 }
@@ -124,7 +124,9 @@ const LEADING_VERB =
   /^(?:log|add|ghi|thêm|spent|i spent|paid|bought|mua|chi)\s+(?:on\s+|for\s+)?/iu;
 const LINKING_BEFORE =
   /(?:^|\s)(?:for|is|was|cost|costs|about|là|hết|giá|mất|tốn|khoảng)\s*[:,]?\s*$/iu;
-const CURRENCY_AFTER = /^\s*(?:đồng|đ|₫|vnd|vnđ|dong|bucks)(?!\p{L})/iu;
+/** Currency words said after an amount, dropped from the name: "twelve dollars". */
+const CURRENCY_AFTER =
+  /^\s*(?:đồng|đ|₫|vnd|vnđ|dong|bucks|dollars?|usd|euros?|eur|pounds?|quid|yen|won|baht|ringgit|rupees?|rupiah|pesos?|francs?|kronor|krona|kroner|krone|yuan|reais|real|rand|lira|zloty|dirhams?|riyals?|dinars?)(?!\p{L})/iu;
 /** Where the name stops and the place or the details start. */
 const DETAIL = /\s(?:with|at|from|in|for|ở|tại|từ|cho|ngoài)\s/iu;
 const EDGE_PUNCTUATION = /^[\s,.;:!?"“”'‘’()-]+|[\s,.;:!?"“”'‘’()-]+$/gu;
@@ -147,9 +149,10 @@ function nameFrom(rest: string): string {
  * Reads a spend said out loud: "trà sữa with pearls, forty-five k" is Trà sữa · 45.000₫ · drinks;
  * "veggies and eggs at the market, thirty-five k" is Veggies & eggs · 35.000₫ · groceries. The
  * amount is the last number said with a unit, else the last number said; the name is what is left
- * before any place or detail.
+ * before any place or detail. Amounts are in `currency` (đồng unless told), as Quick add reads
+ * them: "forty-five" is 45.000₫ in Vietnam, $45 in the US.
  */
-export function parseSpokenSpend(text: string): SpokenSpend {
+export function parseSpokenSpend(text: string, currency: Currency = VND): SpokenSpend {
   const s = text.normalize('NFC').trim();
   const numbers = readSpokenNumbers(s);
   const spoken = [...numbers].reverse().find((n) => n.scaled) ?? numbers[numbers.length - 1];
@@ -158,7 +161,7 @@ export function parseSpokenSpend(text: string): SpokenSpend {
   const after = s.slice(spoken.end).replace(CURRENCY_AFTER, ' ');
   return {
     name: nameFrom(`${before} ${after}`),
-    amount: spokenAmount(spoken),
+    amount: spokenAmount(spoken, currency),
     categoryHint: categoryHintOf(s),
   };
 }

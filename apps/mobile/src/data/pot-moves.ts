@@ -1,6 +1,7 @@
 import {
   dueSetAsides,
   moneyDayOf,
+  type Currency,
   type LocalDate,
   type Payday,
   type PotMove,
@@ -53,6 +54,7 @@ export async function recordDueSetAsides(
     readonly futureYou: number;
     readonly payday: Payday;
     readonly today: LocalDate;
+    readonly currency: Currency;
   },
 ): Promise<PotMove[]> {
   const due = dueSetAsides({ ...input, dayOf: (instant) => moneyDayOf(new Date(instant)) });

@@ -1,10 +1,13 @@
+import { currencyOf, toMinor, type Currency } from '../money/currency';
+
 /**
  * Quick add's keypad. Amounts are typed as digits; `k` and `000` add three zeros ("45" then k is
- * 45.000), the currency key switches between đồng and the other currency (and clears): dollars,
- * or the local currency while travelling. The other currency takes as many decimals as it is
- * written with (two for dollars and baht, none for yen). At most 10 digits.
+ * 45.000), the currency key switches between the home currency and the other one (and clears):
+ * dollars (euros for a dollar home), or the local currency while travelling. Each currency takes
+ * as many decimals as it is written with (none for đồng and yen, two for dollars and baht). At
+ * most 10 digits.
  */
-/** "VND", or the ISO 4217 code of the other currency. */
+/** The ISO 4217 code of what is being typed: home or the other currency. */
 export type KeypadCurrency = string;
 
 /** The currency the currency key flips to, and its decimals. */
@@ -14,6 +17,7 @@ export interface KeypadForeign {
 }
 
 const DOLLARS: KeypadForeign = { code: 'USD', decimals: 2 };
+const EUROS: KeypadForeign = { code: 'EUR', decimals: 2 };
 
 export type KeypadKey =
   | '0'
@@ -35,23 +39,40 @@ export type KeypadKey =
 export interface KeypadState {
   readonly digits: string;
   readonly currency: KeypadCurrency;
-  /** The other currency; dollars when not set. */
+  /** The other currency; dollars (euros for a dollar home) when not set. */
   readonly foreign?: KeypadForeign;
+  /** The home currency; đồng when not set. */
+  readonly home?: string;
 }
 
 const MAX_DIGITS = 10;
 
 export const emptyKeypad: KeypadState = { digits: '', currency: 'VND' };
 
-/** A keypad that starts in `foreign` (abroad, the local currency) and flips to đồng. */
-export function foreignKeypad(foreign: KeypadForeign): KeypadState {
-  return { digits: '', currency: foreign.code, foreign };
+/** An empty keypad in the home currency. */
+export function homeKeypad(home: Currency): KeypadState {
+  return home.code === 'VND' ? emptyKeypad : { digits: '', currency: home.code, home: home.code };
+}
+
+function homeOf(state: KeypadState): string {
+  return state.home ?? 'VND';
+}
+
+function otherOf(state: KeypadState): KeypadForeign {
+  if (state.foreign) return state.foreign;
+  return homeOf(state) === 'USD' ? EUROS : DOLLARS;
+}
+
+/** A keypad that starts in `foreign` (abroad, the local currency) and flips to home. */
+export function foreignKeypad(foreign: KeypadForeign, home?: Currency): KeypadState {
+  const state: KeypadState = { digits: '', currency: foreign.code, foreign };
+  return home === undefined || home.code === 'VND' ? state : { ...state, home: home.code };
 }
 
 /** Decimals the current currency takes: none for đồng. */
 function decimalsOf(state: KeypadState): number {
-  if (state.currency === 'VND') return 0;
-  return (state.foreign ?? DOLLARS).decimals;
+  if (state.currency === homeOf(state)) return currencyOf(state.currency).minorDigits;
+  return otherOf(state).decimals;
 }
 
 export function pressKey(state: KeypadState, key: KeypadKey): KeypadState {
@@ -64,7 +85,7 @@ export function pressKey(state: KeypadState, key: KeypadKey): KeypadState {
       return {
         ...state,
         digits: '',
-        currency: currency === 'VND' ? (state.foreign ?? DOLLARS).code : 'VND',
+        currency: currency === homeOf(state) ? otherOf(state).code : homeOf(state),
       };
     case 'k':
     case '000':
@@ -97,6 +118,16 @@ export function pressKey(state: KeypadState, key: KeypadKey): KeypadState {
 export function keypadValue(state: KeypadState): number {
   const value = Number(state.digits || '0');
   return Number.isFinite(value) ? value : 0;
+}
+
+/** The amount typed in the home currency, in its minor units (cents for dollars). */
+export function keypadHomeMinor(state: KeypadState): number {
+  return toMinor(keypadValue(state), currencyOf(homeOf(state)));
+}
+
+/** Whether what is typed is in the home currency rather than the other one. */
+export function keypadInHome(state: KeypadState): boolean {
+  return state.currency === homeOf(state);
 }
 
 /** The amount in đồng, at a rate for the other currency (see `foreignToVnd` for exact rates). */

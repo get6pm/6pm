@@ -7,7 +7,7 @@ export const viTravel: { readonly [Key in keyof typeof enTravel]: Entry } = {
   'travel.settings.locationOff': 'Cho phép vị trí để biết khi bạn ở nước ngoài',
   'travel.settings.stale': 'Tỷ giá ngày {date}',
   'travel.settings.noRates': 'Đang chờ tỷ giá hôm nay',
-  'travel.pill': '{place} · {symbol} kèm ₫ bên dưới',
+  'travel.pill': '{place} · {symbol} kèm {home} bên dưới',
   'travel.activity.place': '{place} · hôm nay',
   'travel.activity.left': 'còn {amount}',
   'travel.activity.over': 'lố {amount}',
@@ -17,6 +17,8 @@ export const viTravel: { readonly [Key in keyof typeof enTravel]: Entry } = {
   'travel.quick.currency': 'Đổi đơn vị tiền',
   'travel.scan.body':
     'Trả bằng app ngân hàng: hầu hết ngân hàng Việt Nam nhận mã này. 6pm ghi bằng {symbol}, kèm ₫ bên dưới.',
+  'travel.scan.bodyAway':
+    'Trả theo cách bạn vẫn trả ở đó. 6pm ghi bằng {symbol}, kèm {home} bên dưới.',
   'travel.scan.keep': 'Đã trả · ghi {amount}',
   'travel.scan.logIn': 'Ghi bằng {symbol}',
 };

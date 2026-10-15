@@ -9,8 +9,10 @@ import {
   popularity,
   quickPicks,
   suggestedBanks,
+  banksInVietnam,
   type DeviceRegion,
 } from './bank-ranking';
+import { namedBankId } from './named-bank';
 
 const vietnam: DeviceRegion = { region: 'VN', currency: 'VND', timeZone: 'Asia/Ho_Chi_Minh' };
 const known = (id: string) => findBank(id) !== null;
@@ -33,29 +35,45 @@ describe('countrySignals', () => {
 
 describe('suggestedBanks', () => {
   it('suggests the most used banks for a Vietnamese phone', () => {
-    expect(suggestedBanks(vietnam, 5)).toEqual(POPULAR.slice(0, 5));
+    expect(suggestedBanks(vietnam, 5, 'VND')).toEqual(POPULAR.slice(0, 5));
   });
 
   it('leads with home banks for a phone from abroad, then the local ones', () => {
     const korean = { region: 'KR', currency: 'KRW', timeZone: 'Asia/Ho_Chi_Minh' };
-    expect(suggestedBanks(korean, 5)).toEqual(['SHBVN', 'WVN', 'IBK-HCM', 'MB', 'VCB']);
+    expect(suggestedBanks(korean, 5, 'KRW')).toEqual(['SHBVN', 'WVN', 'IBK-HCM', 'MB', 'VCB']);
   });
 
   it('reads the clock when the region says nothing', () => {
     const thai = { region: null, currency: null, timeZone: 'Asia/Bangkok' };
-    expect(suggestedBanks(thai, 3)).toEqual(['KBANK', 'MB', 'VCB']);
+    expect(suggestedBanks(thai, 3, 'VND')).toEqual(['KBANK', 'MB', 'VCB']);
   });
 
   it('puts the stronger country first', () => {
     // Set up in Malaysia, now in Singapore: two votes for Malaysia, one for Singapore.
     const device = { region: 'MY', currency: 'MYR', timeZone: 'Asia/Singapore' };
-    expect(suggestedBanks(device, 4)).toEqual(['CIMB', 'HLBVN', 'PBVN', 'MB']);
+    expect(suggestedBanks(device, 4, 'VND')).toEqual(['CIMB', 'HLBVN', 'PBVN', 'MB']);
+  });
+
+  it('suggests no bank outside Vietnam, not even a foreign bank’s Vietnamese branch', () => {
+    const london = { region: 'GB', currency: 'GBP', timeZone: 'Europe/London' };
+    expect(suggestedBanks(london, 6, 'GBP')).toEqual([]);
+    const thai = { region: null, currency: null, timeZone: 'Asia/Bangkok' };
+    expect(suggestedBanks(thai, 3, 'THB')).toEqual([]);
+  });
+
+  it('suggests Vietnam’s banks when home is đồng or the phone is in Vietnam', () => {
+    const us = { region: 'US', currency: 'USD', timeZone: 'America/New_York' };
+    expect(banksInVietnam(us, 'VND')).toBe(true);
+    expect(banksInVietnam(us, 'USD')).toBe(false);
+    expect(banksInVietnam({ region: 'KR', currency: 'KRW', timeZone: 'Asia/Saigon' }, 'KRW')).toBe(
+      true,
+    );
   });
 
   it('only suggests banks 6pm knows', () => {
     for (const id of [
       ...POPULAR,
-      ...suggestedBanks({ region: 'KR', currency: null, timeZone: null }, 20),
+      ...suggestedBanks({ region: 'KR', currency: null, timeZone: null }, 20, 'VND'),
     ]) {
       expect(findBank(id)?.id).toBe(id);
     }
@@ -72,11 +90,11 @@ describe('popularity', () => {
 
 describe('quickPicks', () => {
   it('fills two rows with cash and suggestions when nothing is chosen', () => {
-    expect(quickPicks([], vietnam, known)).toEqual([CASH, ...POPULAR.slice(0, 5)]);
+    expect(quickPicks([], vietnam, known, 'VND')).toEqual([CASH, ...POPULAR.slice(0, 5)]);
   });
 
   it('keeps chosen banks in reach, in the order they were chosen', () => {
-    expect(quickPicks(['SCB', CASH, 'MB'], vietnam, known)).toEqual([
+    expect(quickPicks(['SCB', CASH, 'MB'], vietnam, known, 'VND')).toEqual([
       CASH,
       'SCB',
       'MB',
@@ -88,12 +106,24 @@ describe('quickPicks', () => {
 
   it('grows by whole rows when many are chosen', () => {
     const chosen = BANKS.slice(0, 7).map((b) => b.id);
-    const picks = quickPicks(chosen, vietnam, known);
+    const picks = quickPicks(chosen, vietnam, known, 'VND');
     expect(picks).toHaveLength(9);
     expect(picks.slice(0, 8)).toEqual([CASH, ...chosen]);
   });
 
+  it('outside Vietnam, offers cash and what was chosen, typed names included', () => {
+    const us = { region: 'US', currency: 'USD', timeZone: 'America/New_York' };
+    const chase = namedBankId('Chase') ?? '';
+    expect(quickPicks([], us, known, 'USD')).toEqual([CASH]);
+    expect(quickPicks([chase, 'MB', 'GONE'], us, known, 'USD')).toEqual([CASH, chase, 'MB']);
+  });
+
+  it('keeps a typed name in reach in Vietnam too', () => {
+    const own = namedBankId('Credit union') ?? '';
+    expect(quickPicks([own], vietnam, known, 'VND').slice(0, 2)).toEqual([CASH, own]);
+  });
+
   it('drops codes 6pm no longer knows', () => {
-    expect(quickPicks(['GONE', 'MB'], vietnam, known)).not.toContain('GONE');
+    expect(quickPicks(['GONE', 'MB'], vietnam, known, 'VND')).not.toContain('GONE');
   });
 });

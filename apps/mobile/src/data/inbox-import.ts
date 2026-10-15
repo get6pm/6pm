@@ -26,6 +26,11 @@ export interface InboxImportDeps {
   readonly enrich: (item: InboxSpend) => Promise<InboxSpend>;
   /** Told when a file is dropped; never given the file's content. */
   readonly report: (message: string) => void;
+  /**
+   * The home currency the app counts in now (ISO 4217); đồng when not given. An item counted in
+   * another is kept as a foreign amount, priced when its rate arrives.
+   */
+  readonly home?: string;
 }
 
 /** What one import did, for the caller to refresh what the extensions show. */
@@ -105,6 +110,7 @@ async function saveSpend(deps: InboxImportDeps, incoming: InboxSpend): Promise<b
     fallbackCategoryId:
       snap.categories.find((c) => likely.includes(c.id))?.id ?? snap.categories[0]?.id ?? 'food',
     categoryIds,
+    ...(deps.home ? { home: deps.home } : {}),
   });
   await actions.captureSpend(draft);
   return true;

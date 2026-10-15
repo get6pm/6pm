@@ -1,13 +1,14 @@
 import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, type SharedValue } from 'react-native-reanimated';
 
-import { groupDigits } from '@6pm/domain';
-
 import { CategoryTile } from '../../ui/category-tile';
 import { DashedRule } from '../../ui/dashed-rule';
+import { FitWidth } from '../../ui/layout/fit-width';
 import { PaperEdge } from '../../ui/paper-edge';
 import { body, display, mono, tabular } from '../../ui/type/fonts';
+import { AmountText } from '../quick-add/amount-text';
 import type { SpendRowView } from '../today/spend-row';
+import { useMoneyFormat } from '../../money/use-money-format';
 
 const PAPER = '#f4efe4';
 const INK = '#2a2230';
@@ -96,6 +97,7 @@ export function CloseCard({
   readonly top: boolean;
 }) {
   const { row, labels } = content;
+  const money = useMoneyFormat();
   return (
     <View style={{ boxShadow: '0 22px 34px rgba(20,6,30,.32)' }}>
       <View
@@ -136,21 +138,26 @@ export function CloseCard({
               {labels.keptSoFar}
             </Text>
             <Text style={{ ...mono(11.5), ...tabular, color: 'rgba(42,34,48,.62)' }}>
-              {groupDigits(content.keptBefore)}
+              {money.number(content.keptBefore)}
             </Text>
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ ...mono(11.5, 400, 0.1), color: INK }}>{labels.withThis}</Text>
             <Text style={{ ...mono(11.5, 600), ...tabular, color: INK }}>
-              {groupDigits(content.keptBefore + content.amount)}
+              {money.number(content.keptBefore + content.amount)}
             </Text>
           </View>
         </View>
-        <Text style={{ ...display(72, 500, -0.02), ...tabular, lineHeight: 72, color: INK }}>
-          {groupDigits(content.amount)}
-          {/* The prototype's inline `<span style="font-size:.42em; margin-left:4px">₫</span>`. */}
-          <Text style={{ ...display(30, 500), opacity: 0.55 }}>{'\u2006₫'}</Text>
-        </Text>
+        {/* The prototype's inline `<span style="font-size:.42em; margin-left:4px">₫</span>`. */}
+        <FitWidth height={72}>
+          <AmountText
+            parts={money.parts(content.amount)}
+            numberOfLines={1}
+            gap={'\u2006'}
+            style={{ ...display(72, 500, -0.02), ...tabular, lineHeight: 72, color: INK }}
+            symbol={{ ...display(30, 500), opacity: 0.55 }}
+          />
+        </FitWidth>
         {content.detail ? (
           <View style={{ gap: 10 }}>
             <DashedRule color={RULE} />

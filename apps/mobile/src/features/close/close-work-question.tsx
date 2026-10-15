@@ -1,13 +1,12 @@
 import { Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { groupDigits } from '@6pm/domain';
-
 import { Companion } from '../../ui/companion/companion';
 import { PaperEdge } from '../../ui/paper-edge';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, mono } from '../../ui/type/fonts';
+import { useMoneyFormat } from '../../money/use-money-format';
 
 export function WorkQuestionStep({
   line,
@@ -26,6 +25,7 @@ export function WorkQuestionStep({
   readonly no: string;
   readonly onAnswer: (forWork: boolean) => void;
 }) {
+  const money = useMoneyFormat();
   const { palette } = useTheme();
   return (
     <Animated.View entering={FadeInDown.duration(450)} style={{ flex: 1, gap: 20, paddingTop: 56 }}>
@@ -69,7 +69,7 @@ export function WorkQuestionStep({
           <Text style={{ ...mono(12.5), color: 'rgba(43,37,48,.55)' }}>{receiptLine.time}</Text>
           <Text style={{ ...mono(12.5), color: '#2b2530' }}>{receiptLine.name.toUpperCase()}</Text>
           <Text style={{ ...mono(12.5, 600), color: '#2b2530' }}>
-            {groupDigits(receiptLine.amount)}
+            {money.number(receiptLine.amount)}
           </Text>
         </View>
         <PaperEdge color="#f7f2e8" height={7} step={10} radius={4.75} />

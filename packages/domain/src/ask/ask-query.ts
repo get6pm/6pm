@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { daysInMonth, diffDays, makeDate, parts, addDays, startOfWeek } from '../time/local-date';
 import type { LocalDate } from '../time/local-date';
-import { askIntentSchema, type AskIntent } from './ask-intent';
+import { askIntentOptions, askIntentSchema, type AskIntent } from './ask-intent';
 import { CHAT_TOPICS } from './chat-topics';
 
 /** A span a question asks about, as words a model or the rules can name. */
@@ -34,48 +34,56 @@ const name = z.string().trim().min(1).max(60);
 /**
  * What a question asks, read by the server's model, the phone's model or the rules. It names
  * things in words; every number of the answer is worked out on the phone from its own data.
- * The first six are the original intents, unchanged.
+ * The first six are the original intents, unchanged. `amount` is the shape of its amounts: whole
+ * minor units of the home currency on the phone.
  */
-export const askQuerySchema = z.discriminatedUnion('kind', [
-  ...askIntentSchema.options,
-  /** "How much did I spend on coffee this month?" */
-  z.object({
-    kind: z.literal('spend'),
-    range: askRangeSchema,
-    category: name.optional(),
-    merchant: name.optional(),
-  }),
-  /** "Where did my money go last week?" */
-  z.object({ kind: z.literal('breakdown'), range: askRangeSchema }),
-  /** "Am I spending more on Grab than last month?" — against the span before, unless named. */
-  z.object({
-    kind: z.literal('compare'),
-    range: askRangeSchema,
-    against: askRangeSchema.optional(),
-    category: name.optional(),
-    merchant: name.optional(),
-  }),
-  /** "What did I buy at Circle K this week?" */
-  z.object({
-    kind: z.literal('list'),
-    range: askRangeSchema,
-    category: name.optional(),
-    merchant: name.optional(),
-    minAmount: z.number().int().positive().optional(),
-  }),
-  /** "What bills are left before payday?" */
-  z.object({ kind: z.literal('bills') }),
-  /** "How am I doing this month?" */
-  z.object({ kind: z.literal('howAmIDoing') }),
-  /** "When can I buy a house?" — what, as the user wrote it, and its price if they said one. */
-  z.object({
-    kind: z.literal('goal'),
-    what: name,
-    amount: z.number().int().positive().optional(),
-  }),
-  /** "Thanks!", "Hi", "roast me", "hết tiền rồi": a companion line, no lookup. */
-  z.object({ kind: z.literal('chat'), topic: z.enum(CHAT_TOPICS).optional() }),
-]);
+export function askQueryOptions<Amount extends z.ZodNumber>(amount: Amount) {
+  return [
+    ...askIntentOptions(amount),
+    /** "How much did I spend on coffee this month?" */
+    z.object({
+      kind: z.literal('spend'),
+      range: askRangeSchema,
+      category: name.optional(),
+      merchant: name.optional(),
+    }),
+    /** "Where did my money go last week?" */
+    z.object({ kind: z.literal('breakdown'), range: askRangeSchema }),
+    /** "Am I spending more on Grab than last month?" — against the span before, unless named. */
+    z.object({
+      kind: z.literal('compare'),
+      range: askRangeSchema,
+      against: askRangeSchema.optional(),
+      category: name.optional(),
+      merchant: name.optional(),
+    }),
+    /** "What did I buy at Circle K this week?" */
+    z.object({
+      kind: z.literal('list'),
+      range: askRangeSchema,
+      category: name.optional(),
+      merchant: name.optional(),
+      minAmount: amount.optional(),
+    }),
+    /** "What bills are left before payday?" */
+    z.object({ kind: z.literal('bills') }),
+    /** "How am I doing this month?" */
+    z.object({ kind: z.literal('howAmIDoing') }),
+    /** "When can I buy a house?" — what, as the user wrote it, and its price if they said one. */
+    z.object({
+      kind: z.literal('goal'),
+      what: name,
+      amount: amount.optional(),
+    }),
+    /** "Thanks!", "Hi", "roast me", "hết tiền rồi": a companion line, no lookup. */
+    z.object({ kind: z.literal('chat'), topic: z.enum(CHAT_TOPICS).optional() }),
+  ] as const;
+}
+
+export const askQuerySchema = z.discriminatedUnion(
+  'kind',
+  askQueryOptions(z.number().int().positive()),
+);
 export type AskQuery = z.infer<typeof askQuerySchema>;
 
 /** The span each earlier span is set against when a question names only the earlier one. */
@@ -215,6 +223,11 @@ export const askRequestSchema = z.object({
   categories: z.array(askName).max(50).optional(),
   pots: z.array(askName).max(30).optional(),
   previous: askQuerySchema.optional(),
+  /** The home currency's ISO code, so amounts are read in it; đồng when absent. */
+  currency: z
+    .string()
+    .regex(/^[A-Z]{3}$/)
+    .optional(),
 });
 export type AskRequest = z.infer<typeof askRequestSchema>;
 

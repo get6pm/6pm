@@ -50,7 +50,7 @@ const logged = (amount: string, merchant: string | null, ctx = contextJson) =>
 
 describe('the native entry', () => {
   it('is the version the extensions were written against', () => {
-    expect(NATIVE_API_VERSION).toBe(3);
+    expect(NATIVE_API_VERSION).toBe(4);
   });
 });
 
@@ -58,6 +58,7 @@ describe('shareCard', () => {
   it('reads a receipt into the card, filed by the merchant rule', () => {
     expect(card(mbbank)).toEqual({
       amount: 120_000,
+      home: 'VND',
       payee: 'CIRCLE K VN',
       payeeSure: false,
       at: new Date(2026, 9, 9, 16, 40).toISOString(),
@@ -65,6 +66,7 @@ describe('shareCard', () => {
       bank: 'MB Bank',
       categoryId: 'groceries',
       amountText: '120.000₫',
+      amountParts: { prefix: '', number: '120.000', suffix: '₫' },
       safeAfterText: 'Safe today is now 125k',
       categoryName: 'Groceries',
       whenText: 'Today · 16:40',
@@ -78,7 +80,7 @@ describe('shareCard', () => {
       totalLine: null,
       printed: '120000',
       foreign: null,
-      inDongText: null,
+      inHomeText: null,
       editText: '120.000',
       decimalEntry: false,
       currencies: [],
@@ -226,12 +228,16 @@ describe('logSpend', () => {
     },
   );
 
-  it('keeps a foreign amount as the note for the close to settle', () => {
-    expect(logged('$3.50', 'Starbucks SG').item).toMatchObject({
+  it('keeps a foreign amount it has no rate for waiting for one', () => {
+    const result = logged('$3.50', 'Starbucks SG');
+    expect(result.item).toMatchObject({
       amount: null,
-      note: '$3.50',
+      foreign: { currency: 'USD', amount: '3.50' },
       categoryId: 'drinks',
     });
+    expect(result.item?.foreign?.rate).toBeUndefined();
+    expect(result.item?.note).toBeUndefined();
+    expect(result.amountText).toBe('$3,50');
   });
 
   it('logs what was said to Siri as kept voice', () => {

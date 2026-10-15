@@ -8,9 +8,9 @@ export const enAsk = {
   'ask.try': 'Try',
   'ask.placeholder': 'Can I afford…',
   'ask.send': 'Send',
-  'ask.suggest.afford': 'Can I afford a 2M dinner Saturday?',
+  'ask.suggest.afford': 'Can I afford a {amount} dinner Saturday?',
   'ask.suggest.weekend': 'How much for this weekend?',
-  'ask.suggest.spend': 'What if I buy a 450k jacket?',
+  'ask.suggest.spend': 'What if I buy a {amount} jacket?',
   'ask.suggest.pot': 'When is {pot} covered?',
   'ask.suggest.save': 'Should I save more?',
   'ask.meter': '{left} of {total} free questions left this week',
@@ -57,7 +57,7 @@ export const enAsk = {
   'ask.answer.today': 'You can spend {safe} today. Tomorrow’s number is {tomorrow}.',
   'ask.answer.today.used': 'Today’s number is used up. Tomorrow’s is {tomorrow}.',
   'ask.answer.help':
-    'I can tell you what fits, how a big spend changes your days, or when a pot will be full. Try “Can I afford 2M on Saturday?”',
+    'I can tell you what fits, how a big spend changes your days, or when a pot will be full. Try “Can I afford {amount} on Saturday?”',
   'ask.error': 'Something went wrong, so I couldn’t answer that. Try again.',
   'ask.answer.offline': 'I couldn’t reach the server, so I only read simple questions right now.',
 } as const;

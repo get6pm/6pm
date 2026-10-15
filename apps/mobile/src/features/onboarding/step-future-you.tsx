@@ -3,9 +3,9 @@ import { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { useDerivedValue, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { formatShort } from '@6pm/domain';
-
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
+import { FitWidth } from '../../ui/layout/fit-width';
 import { body, display } from '../../ui/type/fonts';
 import { Wheel } from '../../ui/wheel/wheel';
 import { ease } from './onboarding-motion';
@@ -15,6 +15,8 @@ import { Card, StepHeading, WheelBand } from './step-parts';
 
 const RING = 200;
 const HOLE = 168;
+/** The amount keeps clear of the ring: it shrinks to the hole, less a little air. */
+const FIT_PAD = (RING - HOLE) / 2 + 8;
 /** The ring fills 2.5% of its turn per percent: 40% of money in closes it. */
 const TURN_PER_PERCENT = 0.025;
 
@@ -83,13 +85,14 @@ export function StepFutureYou({
 }: {
   readonly pal: OnboardingPalette;
   readonly percent: number;
-  /** Set aside each payday, in đồng. */
+  /** Set aside each payday, in the home currency. */
   readonly amount: number;
   /** Money in less bills and this, for the month. */
   readonly free: number;
   readonly onPercent: (percent: number) => void;
 }) {
   const { t, language } = useI18n();
+  const money = useMoneyFormat();
   const month =
     language === 'vi'
       ? String(new Date().getMonth() + 1)
@@ -122,12 +125,16 @@ export function StepFutureYou({
             >
               {t('onboarding.future.each')}
             </Text>
-            <Text style={{ ...display(44, 600, -0.03), lineHeight: 44, color: pal.ink }}>
-              {formatShort(amount, language)}
-            </Text>
+            <View style={{ alignSelf: 'stretch', paddingHorizontal: FIT_PAD }}>
+              <FitWidth height={44} align="center">
+                <Text style={{ ...display(44, 600, -0.03), lineHeight: 44, color: pal.ink }}>
+                  {money.short(amount)}
+                </Text>
+              </FitWidth>
+            </View>
             <Text style={{ ...body(12.5, 600), color: pal.inkSoft }}>
               {amount > 0
-                ? t('onboarding.future.year', { amount: formatShort(amount * 12, language), month })
+                ? t('onboarding.future.year', { amount: money.short(amount * 12), month })
                 : t('onboarding.future.skip')}
             </Text>
           </View>
@@ -164,7 +171,7 @@ export function StepFutureYou({
       </Card>
       <Text style={{ ...body(13), lineHeight: 18.85, paddingHorizontal: 6, color: pal.inkSoft }}>
         {free > 0
-          ? t('onboarding.future.note', { amount: formatShort(free, language) })
+          ? t('onboarding.future.note', { amount: money.short(free) })
           : t('onboarding.future.noteNone')}
       </Text>
     </View>

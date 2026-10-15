@@ -250,6 +250,9 @@ export const POT_GENERIC = new Set([
   'for',
   'the',
 ]);
-/** "over 500k", "trên 1tr5": the smallest amount a list keeps. Read on the question as written. */
+/**
+ * "over 500k", "trên 1tr5", "over $20": the smallest amount a list keeps. Read on the question as
+ * written.
+ */
 export const OVER =
-  /(?:^|\s)(?:over|above|at least|more than|trên|tren|hơn|hon|từ|tu)\s+(\d[\d.,]*\s*\p{L}*\d{0,3})/u;
+  /(?:^|\s)(?:over|above|at least|more than|trên|tren|hơn|hon|từ|tu)\s+((?:[^\s\d\p{L}]{1,2})?\d[\d.,]*\s*\p{L}*\d{0,3})/u;

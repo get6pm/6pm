@@ -1,3 +1,5 @@
+import { currencyOf, VND, type Currency } from '../money/currency';
+
 /** An amount as a payment app printed it, in its own currency. */
 export interface WalletAmount {
   /** ISO 4217, upper case: "VND", "USD". */
@@ -6,39 +8,52 @@ export interface WalletAmount {
   readonly amount: number;
 }
 
-/** Symbols and codes as payment apps print them, longest first so "US$" wins over "$". */
-const CURRENCY_MARKS: readonly (readonly [RegExp, string])[] = [
+/**
+ * Symbols and codes as payment apps print them, longest first so "US$" wins over "$". A bare
+ * symbol several currencies write ($, ¥, £) is the home currency's when home writes it so.
+ */
+const CURRENCY_MARKS: readonly (readonly [RegExp, string, 'bare'?])[] = [
   [/vnđ|vnd|₫|đồng|\d\s?đ(?!\p{L})/iu, 'VND'],
   [/us\$|usd/i, 'USD'],
   [/s\$|sgd/i, 'SGD'],
   [/a\$|aud/i, 'AUD'],
   [/eur|€/i, 'EUR'],
-  [/gbp|£/i, 'GBP'],
-  [/jpy|¥/i, 'JPY'],
+  [/gbp/i, 'GBP'],
+  [/£/, 'GBP', 'bare'],
+  [/jpy/i, 'JPY'],
+  [/¥/, 'JPY', 'bare'],
   [/krw|₩/i, 'KRW'],
   [/thb|฿/i, 'THB'],
-  [/\$/, 'USD'],
+  [/\$/, 'USD', 'bare'],
 ];
 
-/** Currencies with no minor unit in daily use; every other one has two decimals. */
-const WHOLE_CURRENCIES = new Set(['VND', 'JPY', 'KRW']);
+/** The currency an amount is printed in: its mark, else home. */
+function currencyIn(text: string, home: Currency): string {
+  if (home.code !== 'VND' && new RegExp(`(?<![a-z])${home.code}(?![a-z])`, 'i').test(text)) {
+    return home.code;
+  }
+  const found = CURRENCY_MARKS.find(([mark]) => mark.test(text));
+  if (!found) return home.code;
+  const [, code, bare] = found;
+  return bare && currencyOf(code).symbol === home.symbol ? home.code : code;
+}
 
 /**
  * Reads the amount a payment app hands over, such as the Wallet automation's "Amount":
- * "₫45,000", "45.000 ₫", "VND 45,000.00", "45000", "$3.50". With no currency mark it is đồng, taken
- * as written (unlike a typed amount, "45" is 45₫). Returns null when nothing is readable or the
- * amount is zero: Wallet passes "0.0" or nothing when it could not read the card's amount.
+ * "₫45,000", "45.000 ₫", "VND 45,000.00", "45000", "$3.50". With no currency mark it is in the
+ * home currency, taken as written (unlike a typed amount, "45" is 45₫ in Vietnam). Returns null
+ * when nothing is readable or the amount is zero: Wallet passes "0.0" or nothing when it could
+ * not read the card's amount.
  */
-export function parseWalletAmount(text: string): WalletAmount | null {
+export function parseWalletAmount(text: string, home: Currency = VND): WalletAmount | null {
   const s = text.normalize('NFC').trim();
   if (s === '') return null;
-  const currency = CURRENCY_MARKS.find(([mark]) => mark.test(s))?.[1] ?? 'VND';
+  const currency = currencyIn(s, home);
   const digits = /\d(?:[\d.,'\s]*\d)?/.exec(s)?.[0];
   if (digits === undefined) return null;
   const value = readPrintedNumber(digits);
   if (value === null || value <= 0) return null;
-  const scale = WHOLE_CURRENCIES.has(currency) ? 1 : 100;
-  const amount = Math.round(value * scale);
+  const amount = Math.round(value * currencyOf(currency).minorPerMajor);
   return amount > 0 && Number.isSafeInteger(amount) ? { currency, amount } : null;
 }
 

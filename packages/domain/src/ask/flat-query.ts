@@ -1,3 +1,4 @@
+import { designAmount, toMinor, VND, type Currency } from '../money/currency';
 import { askQuerySchema, askRangePresets, type AskQuery, type AskRangePreset } from './ask-query';
 
 /**
@@ -22,11 +23,11 @@ export const flatQueryNote =
   'Fill every field: range and against are "none" when not said, category, merchant and pot are empty, amount is 0.';
 
 /**
- * The query a flat reading stands for, checked like any other, or null when it is not one (an
+ * The query a flat reading stands for, its amount in minor units of `currency`, checked like any other, or null when it is not one (an
  * amount question with no amount, a kind it does not know). Unsaid spans take the same defaults
  * the rules use.
  */
-export function queryOfFlat(flat: FlatQuery): AskQuery | null {
+export function queryOfFlat(flat: FlatQuery, currency: Currency = VND): AskQuery | null {
   const range = isPreset(flat.range) ? flat.range : null;
   const against = isPreset(flat.against) ? flat.against : null;
   const text = (value: string) => {
@@ -39,7 +40,8 @@ export function queryOfFlat(flat: FlatQuery): AskQuery | null {
     ...(category === undefined ? {} : { category }),
     ...(merchant === undefined ? {} : { merchant }),
   };
-  const amount = Math.round(flat.amount);
+  // The model reads amounts as said, in major units of the home currency.
+  const amount = toMinor(flat.amount, currency);
 
   const candidate: unknown = (() => {
     switch (flat.kind) {
@@ -47,7 +49,9 @@ export function queryOfFlat(flat: FlatQuery): AskQuery | null {
       case 'saveMore':
         return {
           kind: flat.kind,
-          amount: flat.kind === 'saveMore' && amount <= 0 ? 500_000 : amount,
+          // With no amount said, saving more asks about the design's 500k.
+          amount:
+            flat.kind === 'saveMore' && amount <= 0 ? designAmount(500_000, currency) : amount,
         };
       case 'potFull': {
         const pot = text(flat.pot);

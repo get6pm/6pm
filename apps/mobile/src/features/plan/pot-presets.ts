@@ -1,10 +1,11 @@
-import type { Vnd } from '@6pm/domain';
+import { designAmount, VND, type Currency, type Vnd } from '@6pm/domain';
 
 import type { SymbolName } from '../../ui/icons/symbols.generated';
 
 /**
  * Goal chips over the amount keypad, by what the pot is for: a home or a car runs to billions, a
- * birthday to a few million. They are starting points; any amount can be typed.
+ * birthday to a few million. They are starting points; any amount can be typed. They are in đồng
+ * and scale by value to the home currency (a 5tr trip is $200).
  */
 const BY_ICON: Partial<Record<SymbolName, readonly Vnd[]>> = {
   home: [500_000_000, 1_000_000_000, 2_000_000_000, 3_000_000_000, 5_000_000_000],
@@ -21,6 +22,7 @@ const BY_ICON: Partial<Record<SymbolName, readonly Vnd[]>> = {
 
 const ANY: readonly Vnd[] = [1_000_000, 5_000_000, 10_000_000, 50_000_000, 100_000_000];
 
-export function goalPresets(icon: SymbolName): readonly Vnd[] {
-  return BY_ICON[icon] ?? ANY;
+export function goalPresets(icon: SymbolName, currency: Currency = VND): readonly Vnd[] {
+  const dong = BY_ICON[icon] ?? ANY;
+  return currency.code === 'VND' ? dong : dong.map((amount) => designAmount(amount, currency));
 }

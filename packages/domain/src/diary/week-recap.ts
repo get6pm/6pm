@@ -1,3 +1,4 @@
+import { designAmount, VND, type Currency } from '../money/currency';
 import type { Vnd } from '../money/format';
 import { countsTowardDay, type CountedSpend } from '../spend/spend';
 import { addDays, startOfWeek, type LocalDate } from '../time/local-date';
@@ -57,7 +58,7 @@ export interface WeekRecap {
 }
 
 /** The design's chart reads 500k as 70% of its height; bigger weeks rescale to fit. */
-const CHART_SPAN = 500_000;
+const CHART_SPAN_DONG = 500_000;
 const CHART_FILL = 70;
 const MIN_BAR = 5;
 
@@ -110,6 +111,8 @@ export function weekRecap(input: {
   /** Spends from Monday through today, any status. */
   readonly spends: readonly DiarySpend[];
   readonly notDaily: ReadonlySet<string>;
+  /** The home currency, for the chart's starting scale; đồng when not given. */
+  readonly currency?: Currency;
 }): WeekRecap {
   const from = startOfWeek(input.today);
   const closed = new Map(input.closed.map((d) => [d.day, d]));
@@ -127,7 +130,8 @@ export function weekRecap(input: {
   });
   const so = days.filter((d) => d.value !== null);
   // The design's scale until a day (or the line) passes 500k; then the tallest fills 70%.
-  const scale = Math.max(CHART_SPAN, input.line, ...so.map((d) => d.value ?? 0));
+  const span = designAmount(CHART_SPAN_DONG, input.currency ?? VND);
+  const scale = Math.max(span, input.line, ...so.map((d) => d.value ?? 0));
   const pct = (v: number) => Math.round((v / scale) * CHART_FILL);
 
   const bars = days.map((d): RecapBar => ({

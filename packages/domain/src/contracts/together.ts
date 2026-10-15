@@ -13,8 +13,20 @@ export const togetherIdSchema = z
   .string()
   .regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
 
-/** Whole đồng, more than nothing, and never past what a pot can hold. */
+/**
+ * Whole minor units of the pot's currency (đồng, cents, yen), more than nothing, and never past
+ * what a pot can hold.
+ */
 export const sharedAmountSchema = z.number().int().positive().max(MAX_SHARED_AMOUNT);
+
+/**
+ * A pot's currency, ISO 4217 upper case. Fixed when the pot is made: its maker's home currency.
+ * A phone that sends none, or a pot kept before pots had one, is in đồng.
+ */
+export const sharedCurrencySchema = z
+  .string()
+  .regex(/^[A-Z]{3}$/)
+  .default('VND');
 
 /** An invite code: 22 URL-safe characters (16 random bytes). */
 export const inviteCodePattern = /^[A-Za-z0-9_-]{22}$/;
@@ -35,7 +47,11 @@ export const sharedPotFieldsSchema = z.strictObject({
 });
 export type SharedPotFields = z.infer<typeof sharedPotFieldsSchema>;
 
-export const createSharedPotRequestSchema = sharedPotFieldsSchema.extend({ id: togetherIdSchema });
+export const createSharedPotRequestSchema = sharedPotFieldsSchema.extend({
+  id: togetherIdSchema,
+  currency: sharedCurrencySchema,
+});
+/** An edit never changes the currency: every amount already in the pot is counted in it. */
 export const editSharedPotRequestSchema = sharedPotFieldsSchema;
 
 export const addContributionRequestSchema = z.strictObject({
@@ -71,6 +87,7 @@ export type SharedContribution = z.infer<typeof sharedContributionSchema>;
 
 export const sharedPotSchema = sharedPotFieldsSchema.extend({
   id: togetherIdSchema,
+  currency: sharedCurrencySchema,
   createdBy: z.string(),
   createdAt: z.string(),
   contributions: z.array(sharedContributionSchema),

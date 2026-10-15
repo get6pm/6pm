@@ -10,4 +10,7 @@ export const viBanks: { readonly [Key in keyof typeof enBanks]: Entry } = {
   'banks.yours': 'Của bạn và gợi ý',
   'banks.all': 'Tất cả ngân hàng và ví',
   'banks.none': 'Không có ngân hàng hay ví nào khớp “{query}”.',
+  'banks.yoursOnly': 'Của bạn',
+  'banks.typeHint': 'Tìm ngân hàng hay ví của bạn, hoặc gõ tên để thêm vào.',
+  'banks.byName': 'Thêm theo tên',
 };

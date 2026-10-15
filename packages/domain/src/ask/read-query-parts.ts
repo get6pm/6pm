@@ -1,4 +1,5 @@
 import { foldWords } from '../capture/spoken-spend';
+import { VND, type Currency } from '../money/currency';
 import { parseAmount } from '../money/parse-amount';
 import type { AskRangePreset } from './ask-query';
 import {
@@ -98,9 +99,9 @@ const NOT_MONEY = [
 ];
 
 /** The amount a question names, once numbers of days, months, cups and shares are left out. */
-export function moneyIn(question: string): number | null {
+export function moneyIn(question: string, currency: Currency = VND): number | null {
   const money = NOT_MONEY.reduce((text, pattern) => text.replace(pattern, ' '), question);
-  return parseAmount(money);
+  return parseAmount(money, currency);
 }
 
 /** The pot a question means by a telling word of its name ("nhà" for "Mua nhà"). */
@@ -142,8 +143,8 @@ export function goalWhatIn(question: string, f: string): string | undefined {
 }
 
 /** The smallest amount a list keeps ("over 500k", "trên 1tr5"). */
-export function overIn(question: string): number | undefined {
+export function overIn(question: string, currency: Currency = VND): number | undefined {
   const match = OVER.exec(question.toLowerCase().normalize('NFC'));
   if (match?.[1] === undefined) return undefined;
-  return parseAmount(match[1]) ?? undefined;
+  return parseAmount(match[1], currency) ?? undefined;
 }

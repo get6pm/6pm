@@ -76,7 +76,7 @@ export function createTogetherApi(api: ApiClient): TogetherApi {
             method: 'POST',
             path: '/v1/together/pots',
             schema: state,
-            body: { id: op.id, ...op.fields },
+            body: { id: op.id, currency: op.currency, ...op.fields },
           });
         case 'editPot':
           return api.request({

@@ -2,12 +2,10 @@ import { Canvas, Circle, Path } from '@shopify/react-native-skia';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
-import { formatVnd } from '@6pm/domain';
-
 import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
 import { body, display, mono } from '../../ui/type/fonts';
-import { box, ring, SAMPLE, TapRing } from './catch-demo-kit';
+import { box, ring, SAMPLE, TapRing, useSampleMoney } from './catch-demo-kit';
 import { useLoop } from './onboarding-motion';
 import { DEMO, type OnboardingPalette } from './onboarding-palette';
 
@@ -55,19 +53,20 @@ function MailRow({
 
 export function EmailDemo() {
   const { t } = useI18n();
+  const sample = useSampleMoney();
   return (
     <View style={[box, { backgroundColor: DEMO.mailBg, padding: 14, gap: 8 }]}>
       <MailRow
         delay={0}
         dot={DEMO.mailGrab}
         from="Grab"
-        line={t('onboarding.catch.email.receipt', { amount: formatVnd(SAMPLE.grab) })}
+        line={t('onboarding.catch.email.receipt', { amount: sample.full(SAMPLE.grab) })}
       />
       <MailRow
         delay={1500}
         dot={DEMO.mailShopee}
         from="Shopee"
-        line={t('onboarding.catch.email.order', { amount: formatVnd(SAMPLE.shopee) })}
+        line={t('onboarding.catch.email.order', { amount: sample.full(SAMPLE.shopee) })}
       />
       <View style={{ flex: 1 }} />
       <View

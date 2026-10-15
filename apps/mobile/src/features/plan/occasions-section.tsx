@@ -10,11 +10,12 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { formatShort, potTopUpStep } from '@6pm/domain';
+import { potTopUpStep } from '@6pm/domain';
 import { curves } from '@6pm/theme';
 
 import { usePlanActions } from '../../data/plan-actions';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { useCompanionToast } from '../companion/use-companion-toast';
 import { useRunAction } from '../companion/use-run-action';
 import { CategoryTile } from '../../ui/category-tile';
@@ -45,7 +46,8 @@ function Jar({
   readonly format: PlanFormat;
 }) {
   const { palette } = useTheme();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const router = useRouter();
   const actions = usePlanActions();
   const run = useRunAction();
@@ -59,7 +61,7 @@ function Jar({
   const fillStyle = useAnimatedStyle(() => ({ height: fill.value * CARD_H }));
   const jar = jarTint(view.pot.hue, palette.dark);
   const { pot, full } = view;
-  const step = potTopUpStep(pot.goal);
+  const step = potTopUpStep(pot.goal, money.currency);
   const add = () => {
     if (full) return;
     haptics.tap();
@@ -127,7 +129,7 @@ function Jar({
             accessibilityLabel={
               full
                 ? t('plan.occasions.full')
-                : t('plan.future.add', { amount: formatShort(step, language), name: pot.name })
+                : t('plan.future.add', { amount: money.short(step), name: pot.name })
             }
             onPress={add}
             style={{
@@ -147,17 +149,26 @@ function Jar({
               color={full ? colours.ok : palette.ink}
             />
             <Text style={{ ...body(12.5, 700), color: full ? colours.ok : palette.ink }}>
-              {full ? t('plan.occasions.full') : formatShort(step, language)}
+              {full ? t('plan.occasions.full') : money.short(step)}
             </Text>
           </PressScale>
         </View>
         <View style={{ gap: 3 }}>
           <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
-            <Text style={{ ...display(30, 500, -0.02), lineHeight: 30, color: palette.ink }}>
-              {formatShort(view.saved, language)}
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={{
+                ...display(30, 500, -0.02),
+                lineHeight: 30,
+                color: palette.ink,
+                flexShrink: 1,
+              }}
+            >
+              {money.short(view.saved)}
             </Text>
             <Text style={{ ...body(12.5, 600), color: palette.inkSoft }}>
-              {t('plan.occasions.of', { amount: formatShort(pot.goal, language) })}
+              {t('plan.occasions.of', { amount: money.short(pot.goal) })}
             </Text>
           </View>
           <Text
@@ -177,7 +188,7 @@ function Jar({
                   : view.paused
                     ? t('plan.occasions.paused')
                     : view.monthly > 0
-                      ? t('plan.occasions.monthly', { amount: formatShort(view.monthly, language) })
+                      ? t('plan.occasions.monthly', { amount: money.short(view.monthly) })
                       : t('plan.occasions.whenever')
               }
               bg={full ? colours.okBg : palette.chipBg}

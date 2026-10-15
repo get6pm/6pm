@@ -1,7 +1,8 @@
-import { addDays, formatShort, payCycleOn, type DailyNumber, type LocalDate } from '@6pm/domain';
+import { addDays, payCycleOn, type DailyNumber, type LocalDate } from '@6pm/domain';
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { monthDots } from './month-dots';
 import { CloseReveal } from './close-reveal';
 
@@ -16,6 +17,7 @@ export function CloseRevealStep({
   readonly onDone: () => void;
 }) {
   const { t, language } = useI18n();
+  const money = useMoneyFormat();
   const snap = useMoney();
   const plan = snap.plan;
   if (!plan) return null;
@@ -41,14 +43,14 @@ export function CloseRevealStep({
         plan.serious
           ? null
           : lineFor(`companion.${event}.${plan.persona}`, {
-              t: formatShort(number.tomorrow, language),
-              b: formatShort(number.line, language),
+              t: money.short(number.tomorrow),
+              b: money.short(number.line),
               day: new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(on),
             })
       }
       mood={event === 'replan' ? 'nod' : 'happy'}
       sub={t('close.reveal.free', {
-        free: formatShort(number.free, language),
+        free: money.short(number.free),
         days: payCycleOn(day, plan.payday).daysLeft,
       })}
       month={monthName.toUpperCase()}

@@ -1,4 +1,5 @@
 import { foldWords } from '../capture/spoken-spend';
+import { designAmount, VND, type Currency } from '../money/currency';
 import { parseAmount } from '../money/parse-amount';
 import type { AskQuery, AskRange, AskRangePreset } from './ask-query';
 import { chatTopicIn, urgentTopicIn } from './read-chat';
@@ -72,9 +73,10 @@ function followUp(
   f: string,
   previous: AskQuery,
   ranges: readonly AskRangePreset[],
+  currency: Currency,
 ): AskQuery | null {
   const spoken = f.trim().split(' ');
-  const amount = parseAmount(question);
+  const amount = parseAmount(question, currency);
   if (previous.kind === 'goal' && previous.amount === undefined && amount !== null) {
     return spoken.length <= 4 ? { ...previous, amount } : null;
   }
@@ -97,6 +99,7 @@ function readPlan(
   f: string,
   amount: number | null,
   pots: readonly string[],
+  currency: Currency,
 ): AskQuery | null {
   const pot = potIn(f, pots);
   const lastTime = has(f, LIST) && has(f, words('lan cuoi', 'last time', 'when did i last'));
@@ -110,7 +113,7 @@ function readPlan(
   if (has(f, NOT_YET)) return UNKNOWN;
   const saving = has(f, SAVE);
   if (saving && has(f, WHAT_IF) && (amount !== null || has(f, MORE))) {
-    return { kind: 'saveMore', amount: amount ?? 500_000 } as const;
+    return { kind: 'saveMore', amount: amount ?? designAmount(500_000, currency) } as const;
   }
   if (saving && amount !== null && has(f, MORE)) return { kind: 'saveMore', amount } as const;
   if (amount !== null && !saving && (has(f, CAN) || has(f, BUY))) {
@@ -137,10 +140,11 @@ export function readQuery(
   question: string,
   names: ReadNames = {},
   previous: AskQuery | null = null,
+  currency: Currency = VND,
 ): AskQuery {
   const f = foldWords(question);
   const spoken = f.trim().split(' ');
-  const amount = moneyIn(question);
+  const amount = moneyIn(question, currency);
   const ranges = rangesIn(f);
 
   const urgent = urgentTopicIn(f, amount !== null);
@@ -148,7 +152,7 @@ export function readQuery(
   const topic = amount === null ? chatTopicIn(f, spoken.length) : undefined;
   if (topic !== undefined) return { kind: 'chat', topic };
   if (previous !== null) {
-    const changed = followUp(question, f, previous, ranges);
+    const changed = followUp(question, f, previous, ranges, currency);
     if (changed !== null) return changed;
   }
   // Logging a spend, making a pot or setting a budget is not something Ask does yet.
@@ -158,10 +162,11 @@ export function readQuery(
     return { kind: 'bills' };
   }
   // "Spends over 500k this month": a list with a floor, not a price.
-  if (overIn(question) !== undefined) return readLookup(question, f, spoken.length, ranges, names);
-  const plan = readPlan(question, f, amount, names.pots ?? []);
+  if (overIn(question, currency) !== undefined)
+    return readLookup(question, f, spoken.length, ranges, names, currency);
+  const plan = readPlan(question, f, amount, names.pots ?? [], currency);
   if (plan !== null) return plan;
-  return readLookup(question, f, spoken.length, ranges, names);
+  return readLookup(question, f, spoken.length, ranges, names, currency);
 }
 
 /** Lookups in the user's records: a span, a category or place, a list, a comparison. */
@@ -171,6 +176,7 @@ function readLookup(
   spoken: number,
   ranges: readonly AskRangePreset[],
   names: ReadNames,
+  currency: Currency,
 ): AskQuery {
   const category = categoryIn(f, names.categories ?? []);
   const merchant = merchantIn(question, f, names.merchants ?? []);
@@ -181,7 +187,7 @@ function readLookup(
   };
 
   // "Spends over 500k this month": a list with a floor, read before "more than" compares.
-  const over = overIn(question);
+  const over = overIn(question, currency);
   if (over !== undefined) {
     return { kind: 'list', range: range(ranges[0], 'thisWeek'), ...filters, minAmount: over };
   }

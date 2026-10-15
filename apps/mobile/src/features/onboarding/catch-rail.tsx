@@ -11,7 +11,7 @@ import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { body } from '../../ui/type/fonts';
-import { CATCH_WAYS, needsSetup, WAY_ICON, type CatchWay } from './catch-ways';
+import { needsSetup, WAY_ICON, type CatchWay } from './catch-ways';
 import type { OnboardingPalette } from './onboarding-palette';
 
 const PAD = 4;
@@ -103,6 +103,7 @@ export function CatchRail({
   page,
   selected,
   onPick,
+  ways,
 }: {
   readonly pal: OnboardingPalette;
   /** The cards' scroll offset. */
@@ -111,9 +112,11 @@ export function CatchRail({
   readonly page: number;
   readonly selected: number;
   readonly onPick: (index: number) => void;
+  /** The ways shown, in order. */
+  readonly ways: readonly CatchWay[];
 }) {
   const inner = useSharedValue(0);
-  const count = CATCH_WAYS.length;
+  const count = ways.length;
   const pill = useAnimatedStyle(() => {
     const column = inner.value / count;
     const at = Math.max(0, Math.min(count - 1, x.value / page));
@@ -148,7 +151,7 @@ export function CatchRail({
           pill,
         ]}
       />
-      {CATCH_WAYS.map((way, i) => (
+      {ways.map((way, i) => (
         <RailItem
           key={way}
           way={way}

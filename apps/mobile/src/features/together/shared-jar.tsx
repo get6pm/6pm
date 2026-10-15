@@ -11,7 +11,6 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import {
-  formatShort,
   potTopUpStep,
   sharedPotMonthly,
   sharedPotProgress,
@@ -32,6 +31,7 @@ import { body, display } from '../../ui/type/fonts';
 import { useCompanionToast } from '../companion/use-companion-toast';
 import { jarTint, type PlanColours } from '../plan/plan-colours';
 import { Pill } from '../plan/plan-parts';
+import { usePotMoney } from './pot-money';
 import { useTogetherRun } from './together-provider';
 
 const ease = Easing.bezier(...curves.enter);
@@ -60,14 +60,15 @@ export function SharedJar({
   readonly colours: PlanColours;
 }) {
   const { palette } = useTheme();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const { currency, money } = usePotMoney(pot.currency);
   const router = useRouter();
   const run = useTogetherRun();
   const say = useCompanionToast();
   const reduceMotion = useReducedMotion();
   const memberIds = partner === null ? [me.id] : [me.id, partner.id];
   const progress = sharedPotProgress(pot.goal, pot.contributions, memberIds);
-  const monthly = sharedPotMonthly(pot.goal, progress.saved, pot.neededBy, cycle);
+  const monthly = sharedPotMonthly(pot.goal, progress.saved, pot.neededBy, cycle, currency);
   const level = Math.max(0.06, progress.progress);
   const fill = useSharedValue(level);
   useEffect(() => {
@@ -76,8 +77,8 @@ export function SharedJar({
   const fillStyle = useAnimatedStyle(() => ({ height: fill.value * JAR_H }));
   const jar = jarTint(pot.hue, palette.dark);
   const { full } = progress;
-  const short = (n: number) => formatShort(n, language);
-  const step = potTopUpStep(pot.goal);
+  const short = (n: number) => money.short(n);
+  const step = potTopUpStep(pot.goal, currency);
   const mine = progress.byMember[me.id] ?? 0;
   const theirs = partner === null ? 0 : (progress.byMember[partner.id] ?? 0);
 

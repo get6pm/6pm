@@ -1,7 +1,7 @@
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { Text, View } from 'react-native';
 
-import { formatShort, sharedPotProgress, type SharedPot } from '@6pm/domain';
+import { sharedPotProgress, type SharedPot } from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
 import { CategoryTile } from '../../ui/category-tile';
@@ -10,6 +10,7 @@ import { isSymbolName, Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
+import { usePotMoney } from './pot-money';
 
 /**
  * Apple's own Sign in with Apple button, as Apple requires, sized and rounded like the sheet's
@@ -78,7 +79,8 @@ export function SharedPotRow({
   readonly onPress: () => void;
 }) {
   const { palette } = useTheme();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const { money } = usePotMoney(pot.currency);
   const { saved } = sharedPotProgress(pot.goal, pot.contributions);
   return (
     <PressScale
@@ -112,7 +114,7 @@ export function SharedPotRow({
           {pot.name}
         </Text>
         <Text style={{ ...body(15), color: palette.inkSoft, fontVariant: ['tabular-nums'] }}>
-          {`${formatShort(saved, language)} ${t('plan.occasions.of', { amount: formatShort(pot.goal, language) })}`}
+          {`${money.short(saved)} ${t('plan.occasions.of', { amount: money.short(pot.goal) })}`}
         </Text>
         <Symbol name="chevron_right" size={20} color={palette.ink} style={{ opacity: 0.35 }} />
       </View>

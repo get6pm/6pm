@@ -1,13 +1,12 @@
 import {
-  formatForeignWhole,
-  formatShort,
-  formatVnd,
+  foreignAmountText,
   SURFACES_VERSION,
   tripDay,
   type DailyNumber,
+  type MoneyFormat,
+  type PhoneNumberStyle,
   type SpendRow,
 } from '@6pm/domain';
-import type { Language } from '@6pm/i18n';
 import { planInk, type Palette } from '@6pm/theme';
 
 import type { I18n } from '../../i18n/i18n';
@@ -40,7 +39,7 @@ export interface PendingPayState {
 
 /**
  * Travel mode, abroad: "Bangkok · today", "฿560 left", the day's spend against its line in the
- * local currency and in đồng. The view ships with the widgets; Travel starts it.
+ * local currency and in the home currency. The view ships with the widgets; Travel starts it.
  */
 export interface TravelState {
   readonly v: typeof SURFACES_VERSION;
@@ -60,18 +59,22 @@ export function pendingPayState(
   spend: Pick<SpendRow, 'id' | 'amount' | 'merchant'>,
   context: {
     readonly t: I18n['t'];
-    readonly language: Language;
+    /** Money in the home currency. */
+    readonly format: MoneyFormat;
     readonly palette: Palette;
     readonly serious: boolean;
   },
 ): PendingPayState {
-  const { t, language, palette, serious } = context;
+  const { t, format, palette, serious } = context;
   return {
     v: SURFACES_VERSION,
     spendId: spend.id,
     caption: t('surfaces.activity.waiting'),
-    title: t('surfaces.activity.to', { amount: formatVnd(spend.amount), merchant: spend.merchant }),
-    short: formatShort(spend.amount, language),
+    title: t('surfaces.activity.to', {
+      amount: format.full(spend.amount),
+      merchant: spend.merchant,
+    }),
+    short: format.short(spend.amount),
     paid: t('surfaces.activity.paid'),
     path: `/app/spend/${encodeURIComponent(spend.id)}`,
     companion: serious ? null : 'calm',
@@ -82,17 +85,28 @@ export function pendingPayState(
 
 /**
  * The trip's activity: the place and what is left of today in its currency, the day's spend
- * against its line, and the spend in đồng. Null until the trip has a rate.
+ * against its line, and the spend in the home currency. Null until the trip has a rate (home
+ * units for one unit of the trip's currency).
  */
 export function travelState(
   trip: Trip,
   day: Pick<DailyNumber, 'line' | 'spent'>,
-  context: { readonly t: I18n['t']; readonly palette: Palette },
+  context: {
+    readonly t: I18n['t'];
+    readonly palette: Palette;
+    /** Money in the home currency. */
+    readonly format: MoneyFormat;
+    /** How the phone writes numbers, for the local amounts. */
+    readonly phone?: PhoneNumberStyle;
+  },
 ): TravelState | null {
-  const { t, palette } = context;
-  const today = trip.rate === null ? null : tripDay(day, trip.rate.rate);
+  const { t, palette, format } = context;
+  const home = format.currency;
+  const today = trip.rate === null ? null : tripDay(day, trip.rate.rate, home);
   if (today === null) return null;
-  const money = (whole: number) => formatForeignWhole(whole, trip.currency);
+  const style = { home, language: format.locale.language, phone: context.phone ?? {} };
+  const money = (whole: number) =>
+    foreignAmountText({ currency: trip.currency.code, amount: whole }, style);
   return {
     v: SURFACES_VERSION,
     icon: glyphOf('flight'),
@@ -102,7 +116,7 @@ export function travelState(
         ? t('travel.activity.left', { amount: money(today.left) })
         : t('travel.activity.over', { amount: money(-today.left) }),
     spent: money(today.spent),
-    of: t('travel.activity.of', { line: money(today.line), vnd: formatVnd(today.spentVnd) }),
+    of: t('travel.activity.of', { line: money(today.line), vnd: format.full(today.spentHome) }),
     fraction: today.fraction,
     path: '/',
     accent: palette.accent,

@@ -7,6 +7,7 @@ import {
 } from '@6pm/domain';
 
 import { dayOf, type MoneySnapshot } from '../../data/money-store';
+import { homeCurrencyOf } from '../../money/use-money-format';
 import { goalViews, occasionViews } from '../plan/plan-view';
 import { insightInputOf, previousCycleStartOf } from '../wording/insight-input';
 
@@ -38,6 +39,7 @@ export function askContextOf(snap: MoneySnapshot): AskContext | null {
     futureYou: snap.plan.futureYou,
     share: joinedShare(snap.cycle, snap.plan.startedOn ?? null),
     pots: askPots(snap),
+    currency: homeCurrencyOf(snap.plan),
   };
 }
 

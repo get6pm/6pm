@@ -2,12 +2,11 @@ import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
 
-import { formatShort } from '@6pm/domain';
-
 import { useI18n, type I18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import type { CompanionMood } from '../../ui/companion/companion-mood';
 import { useDesignInsets } from '../../ui/layout/design-insets';
-import { CATCH_WAYS, READY_WAYS } from './catch-ways';
+import { catchWaysFor, readyWays } from './catch-ways';
 import { CompanionLine, OnboardingCta, OnboardingHeader } from './onboarding-chrome';
 import { stepEntering } from './onboarding-motion';
 import { onboardingPalette } from './onboarding-palette';
@@ -55,8 +54,10 @@ function stepLine(o: Onboarding, i18n: I18n): string | null {
       return o.wallets.length === 0
         ? t('onboarding.line.walletsNone')
         : t('onboarding.line.wallets', { count: o.wallets.length });
-    case 5:
-      return t('onboarding.line.catch', { count: READY_WAYS, total: CATCH_WAYS.length });
+    case 5: {
+      const ways = catchWaysFor(o.currency);
+      return t('onboarding.line.catch', { count: readyWays(ways), total: ways.length });
+    }
     case CLOSE_STEP:
       return t('onboarding.line.close', { time: o.closeAt });
     default:
@@ -93,6 +94,7 @@ function ctaFor(o: Onboarding, { t }: I18n) {
 export function OnboardingFlow({ startStep = 0 }: { readonly startStep?: number }) {
   const o = useOnboarding(startStep);
   const i18n = useI18n();
+  const money = useMoneyFormat();
   const reduceMotion = useReducedMotion();
   const { top, bottom, insets } = useDesignInsets();
   const pal = onboardingPalette(o.step);
@@ -145,7 +147,7 @@ export function OnboardingFlow({ startStep = 0 }: { readonly startStep?: number 
             pal={pal}
             date={`${i18n.weekday(new Date())} ${i18n.dayMonth(new Date())}`}
             closeAt={o.closeAt}
-            safe={formatShort(o.first.line, i18n.language)}
+            safe={money.short(o.first.line)}
           />
         );
       case CLOSE_STEP:

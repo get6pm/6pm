@@ -25,7 +25,8 @@
       ],
       // COMMIT_SHA is overridden at deploy time (`--var COMMIT_SHA:<sha>`).
       "vars": { "ENVIRONMENT": "dev", "COMMIT_SHA": "local" },
-      // Travel mode's exchange rates, fetched four times a day (the ingest is idempotent).
+      // Exchange rates in đồng, four times a day: the travel currencies every run, the rest of the
+      // currency table in turns (`currenciesForRun`). The ingest is idempotent.
       "triggers": { "crons": ["20 */6 * * *"] },
       "d1_databases": [
         {

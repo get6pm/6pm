@@ -11,16 +11,19 @@ import {
 } from 'react';
 import { AppState } from 'react-native';
 
-import { fxRatesResponseSchema } from '@6pm/domain';
+import { fxRatesResponseSchema, type FxRate } from '@6pm/domain';
 
+import { useHomeCurrency } from '../../money/use-money-format';
 import { useApi } from '../api/native-api';
 import { useEntitlement } from '../purchases/purchases-provider';
 import { askForLocation, currentPlace, locationAccess, type LocationAccess } from './trip-location';
 import {
+  dongQuoteOf,
   FX_CACHE_KEY,
   nextFxCache,
   parseFxCache,
   parsePlace,
+  rateFor,
   shouldRefreshRates,
   TRAVEL_ON_KEY,
   TRAVEL_PLACE_KEY,
@@ -39,8 +42,15 @@ export interface TravelValue {
   readonly access: LocationAccess | null;
   /** The trip under way, or null at home, with the switch off, or without Max. */
   readonly trip: Trip | null;
-  /** The last good set of rates, kept for offline use. */
+  /** The last good set of rates (đồng quotes), kept for offline use. */
   readonly rates: FxCache | null;
+  /**
+   * A currency's rate in home units from the kept set, on a trip or not: a VietQR or a đồng
+   * receipt on a phone whose home is not đồng is converted with it. Null for home itself.
+   */
+  readonly homeRateFor: (currency: string) => FxRate | null;
+  /** The đồng for one unit of a currency in the kept set ("1" for the đồng), or null. */
+  readonly dongQuote: (currency: string) => string | null;
   /** Turns the switch; turning it on asks for location the first time. */
   readonly setOn: (next: boolean) => void;
   /** Fetches the rates now if the kept set is old (Scan calls it on a foreign QR). */
@@ -53,12 +63,15 @@ const TravelContext = createContext<TravelValue | null>(null);
  * Travel mode for the whole app. The switch, the last place and the last rates are read
  * synchronously at launch, so Home's pill is there in the first frame; the place is checked
  * again whenever the app comes to the foreground with the switch on, and the rates (every six
- * hours at most) whether it is on or not.
+ * hours at most) whether it is on or not, with or without Max: converting a scanned VietQR or a
+ * shared receipt into a home that is not đồng is not a Max feature. A trip is wherever the
+ * currency is not home's.
  */
 export function TravelProvider({ children }: { readonly children: ReactNode }) {
   const db = useSQLiteContext();
   const api = useApi();
   const { max } = useEntitlement();
+  const home = useHomeCurrency();
   const read = (key: string) =>
     db.getFirstSync<{ value: string }>('SELECT value FROM settings WHERE key = ?', [key])?.value;
   const [on, setOnState] = useState(() => read(TRAVEL_ON_KEY) === '1');
@@ -153,12 +166,27 @@ export function TravelProvider({ children }: { readonly children: ReactNode }) {
   );
 
   const trip = useMemo(
-    () => tripOf({ on, max, place, cache: rates, now }),
-    [on, max, place, rates, now],
+    () => tripOf({ on, max, place, cache: rates, now, home }),
+    [on, max, place, rates, now, home],
   );
+  const homeRateFor = useCallback(
+    (currency: string) => rateFor(rates, currency, home),
+    [rates, home],
+  );
+  const dongQuote = useCallback((currency: string) => dongQuoteOf(rates, currency), [rates]);
   const value = useMemo<TravelValue>(
-    () => ({ on, locked: !max, access, trip, rates, setOn, refreshRates }),
-    [on, max, access, trip, rates, setOn, refreshRates],
+    () => ({
+      on,
+      locked: !max,
+      access,
+      trip,
+      rates,
+      homeRateFor,
+      dongQuote,
+      setOn,
+      refreshRates,
+    }),
+    [on, max, access, trip, rates, homeRateFor, dongQuote, setOn, refreshRates],
   );
   return <TravelContext value={value}>{children}</TravelContext>;
 }

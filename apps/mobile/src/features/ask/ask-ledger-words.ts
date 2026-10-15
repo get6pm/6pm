@@ -1,6 +1,4 @@
 import {
-  formatShort,
-  formatVnd,
   slotsOf,
   type AskAnswer,
   type AskQueryAnswer,
@@ -10,6 +8,7 @@ import {
 
 import { catalogueLine, slotValues, type SlotWords, type Voice } from '../wording/fact-words';
 import { describeChat } from './ask-chat-words';
+import { goalPriceExample } from './ask-suggestions';
 import type { AskCard, AskWordsEnv } from './ask-words';
 
 /** The answers read from the user's records, as opposed to the original six. */
@@ -71,7 +70,7 @@ function single(kind: string, values: Record<string, string>): AnswerWording {
  */
 export function describeLedgerAnswer(answer: LedgerAnswer, env: LedgerWordsEnv): LedgerCard {
   const say = env.t as unknown as Say;
-  const short = (amount: number) => formatShort(amount, env.language);
+  const short = (amount: number) => env.money.short(amount);
   const partial = (yes: boolean, since: string) =>
     yes ? say('ask.answer.partial', { since: env.dayLongMonth(since) }) : null;
 
@@ -95,7 +94,7 @@ export function describeLedgerAnswer(answer: LedgerAnswer, env: LedgerWordsEnv):
       const text = none
         ? say(`ask.answer.${key.replace('spent', 'spentNone')}`, values)
         : say(`ask.answer.${key}`, { ...values, count: spent.count });
-      const rows = answer.places.map((p) => ({ key: p.merchant, value: formatVnd(p.amount) }));
+      const rows = answer.places.map((p) => ({ key: p.merchant, value: env.money.full(p.amount) }));
       return {
         card: card(text, none ? 'calm' : 'think', rows, partial(answer.partial, spent.range.from)),
         wording: none ? null : single('spent', values),
@@ -115,7 +114,7 @@ export function describeLedgerAnswer(answer: LedgerAnswer, env: LedgerWordsEnv):
       };
       const rows = answer.categories.map((c) => ({
         key: env.categoryName(c.categoryId),
-        value: formatVnd(c.amount),
+        value: env.money.full(c.amount),
       }));
       return {
         card: card(
@@ -141,8 +140,8 @@ export function describeLedgerAnswer(answer: LedgerAnswer, env: LedgerWordsEnv):
       const up = answer.compare === 'more' || answer.compare === 'muchMore';
       const key = answer.compare === 'about' ? 'same' : up ? 'up' : 'down';
       const rows = [
-        { key: capitalised(range), value: formatVnd(answer.now.total) },
-        { key: capitalised(against), value: formatVnd(answer.before.total) },
+        { key: capitalised(range), value: env.money.full(answer.now.total) },
+        { key: capitalised(against), value: env.money.full(answer.before.total) },
       ];
       return {
         card: card(
@@ -163,7 +162,7 @@ export function describeLedgerAnswer(answer: LedgerAnswer, env: LedgerWordsEnv):
       const values = { count: String(count), range, total: short(answer.total) };
       const rows = answer.spends.map((s) => ({
         key: `${s.merchant} · ${env.dayLongMonth(s.day)}`,
-        value: formatVnd(s.amount),
+        value: env.money.full(s.amount),
       }));
       const notes = [
         answer.more > 0 ? say('ask.answer.listedMore', { more: answer.more }) : null,
@@ -186,7 +185,7 @@ export function describeLedgerAnswer(answer: LedgerAnswer, env: LedgerWordsEnv):
       const values = { count: String(answer.due.length), total: short(answer.total) };
       const rows = answer.due.map((b) => ({
         key: `${b.name} · ${env.dayLongMonth(b.on)}`,
-        value: formatVnd(b.amount),
+        value: env.money.full(b.amount),
       }));
       return {
         card: card(say('ask.answer.bills', { ...values, count: answer.due.length }), 'think', rows),
@@ -226,8 +225,8 @@ export function describeLedgerAnswer(answer: LedgerAnswer, env: LedgerWordsEnv):
           ? say('ask.answer.goalPace.months', { ...values, count: answer.months })
           : say('ask.answer.goalPace.years', { ...values, count: answer.years });
       const rows = [
-        { key: say('ask.row.goal'), value: formatVnd(answer.amount) },
-        { key: say('ask.row.perMonth'), value: formatVnd(answer.monthly) },
+        { key: say('ask.row.goal'), value: env.money.full(answer.amount) },
+        { key: say('ask.row.perMonth'), value: env.money.full(answer.monthly) },
         { key: say('ask.row.reachedBy'), value: values.month },
       ];
       return {
@@ -249,7 +248,13 @@ export function describeLedgerAnswer(answer: LedgerAnswer, env: LedgerWordsEnv):
       };
     case 'goalAmount':
       return {
-        card: card(say('ask.answer.goalAmount', { what: answer.what }), 'think'),
+        card: card(
+          say('ask.answer.goalAmount', {
+            what: answer.what,
+            example: goalPriceExample(env.money),
+          }),
+          'think',
+        ),
         wording: null,
       };
     case 'noSuchCategory':

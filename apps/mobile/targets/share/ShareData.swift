@@ -14,7 +14,16 @@ struct ShareCardData: Decodable {
     var id: String { code }
   }
 
+  /// An amount in pieces: the home currency's symbol on its own side, trimmed.
+  struct Parts: Decodable {
+    let prefix: String
+    let number: String
+    let suffix: String
+  }
+
   let amount: Int?
+  /// The home currency the card was read for.
+  let home: String
   let payee: String
   let payeeSure: Bool
   let code: String?
@@ -22,13 +31,14 @@ struct ShareCardData: Decodable {
   let categoryId: String?
   let categoryName: String?
   let amountText: String
+  let amountParts: Parts
   let whenText: String
   let currency: String?
   /// The receipt printed no currency: the card offers this one as a chip to check.
   let currencyGuessed: Bool
   let printed: String?
   let foreign: Foreign?
-  let inDongText: String?
+  let inHomeText: String?
   let editText: String
   let decimalEntry: Bool
   let currencies: [Currency]
@@ -51,7 +61,8 @@ extension Dictionary where Key == String, Value == String {
 /// What the card shows with the edits applied (`shareShown`).
 struct ShareShown: Decodable {
   let amountText: String
-  let inDongText: String?
+  let amountParts: ShareCardData.Parts
+  let inHomeText: String?
   let decimalEntry: Bool
   let canConfirm: Bool
 }
@@ -72,6 +83,10 @@ struct ShareContext: Decodable {
   let host: String
   let categories: [Category]
   let travel: Trip?
+  /// The home currency; absent when it is đồng.
+  let currency: String?
+
+  var home: String { currency ?? "VND" }
 }
 
 extension ShareContext {

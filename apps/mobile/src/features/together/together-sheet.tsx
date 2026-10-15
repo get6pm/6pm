@@ -1,11 +1,10 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 
-import { formatShort } from '@6pm/domain';
-
 import { useMoney, useMoneyStore } from '../../data/money-provider';
 import { keptTogetherMoves, type KeptPot } from '../../data/together-moves';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
 import { SheetScreen } from '../../ui/navigation/sheet-screen';
 import { useToast } from '../../ui/toast/toast-host';
@@ -44,7 +43,8 @@ function useKept(): readonly KeptPot[] {
  * deleting the account (each tapped twice).
  */
 export function TogetherSheet() {
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const router = useRouter();
   const toast = useToast();
   const { state, offline } = useTogether();
@@ -138,7 +138,7 @@ export function TogetherSheet() {
         <BackupCard
           icon="savings"
           title={t('together.kept.title')}
-          sub={t('together.kept.sub', { amount: formatShort(total, language) })}
+          sub={t('together.kept.sub', { amount: money.short(total) })}
         />
       ) : null}
       {error === null ? null : <BackupNote error>{error}</BackupNote>}

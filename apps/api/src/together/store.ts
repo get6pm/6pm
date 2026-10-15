@@ -90,6 +90,7 @@ interface PotRow {
   icon: string;
   hue: number;
   goal: number;
+  currency: string;
   needed_by: string | null;
   created_by: string;
   created_at: string;
@@ -117,7 +118,8 @@ export async function readState(db: D1Database, user: TogetherUser): Promise<Tog
       .bind(pairId),
     db
       .prepare(
-        `SELECT id, name, icon, hue, goal, needed_by, created_by, created_at FROM together_pots
+        `SELECT id, name, icon, hue, goal, currency, needed_by, created_by, created_at
+         FROM together_pots
          WHERE pair_id = ? ORDER BY created_at, id`,
       )
       .bind(pairId),
@@ -145,6 +147,7 @@ export async function readState(db: D1Database, user: TogetherUser): Promise<Tog
         icon: p.icon,
         hue: p.hue,
         goal: p.goal,
+        currency: p.currency,
         neededBy: p.needed_by,
         createdBy: p.created_by,
         createdAt: p.created_at,

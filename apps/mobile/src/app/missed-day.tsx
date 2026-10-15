@@ -2,7 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, Text, useWindowDimensions, View } from 'react-native';
 
-import { formatShort, monthOf, needsReview, sumCounted } from '@6pm/domain';
+import { monthOf, needsReview, sumCounted } from '@6pm/domain';
 
 import {
   notDailyOf,
@@ -19,6 +19,7 @@ import { useDiaryDates } from '../features/diary/diary-dates';
 import { toRowViews } from '../features/today/today-view';
 import { useSpendLabels } from '../features/today/use-spend-rows';
 import { useI18n } from '../i18n/i18n';
+import { useMoneyFormat } from '../money/use-money-format';
 import { CategoryTile } from '../ui/category-tile';
 import { Companion } from '../ui/companion/companion';
 import { useCompanionToast } from '../features/companion/use-companion-toast';
@@ -38,7 +39,8 @@ export default function MissedDay() {
   const params = useLocalSearchParams<{ day?: string }>();
   const day = params.day && DAY.test(params.day) ? params.day : null;
   const { palette, serious } = useTheme();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const dates = useDiaryDates();
   const say = useCompanionToast();
   const run = useRunAction();
@@ -180,7 +182,7 @@ export default function MissedDay() {
                 }}
               >
                 <Text style={{ ...body(17, 650), color: palette.btnFg }}>
-                  {t('diary.missed.close', { day: weekday, amount: formatShort(spent, language) })}
+                  {t('diary.missed.close', { day: weekday, amount: money.short(spent) })}
                 </Text>
               </PressScale>
             ) : null}

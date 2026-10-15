@@ -10,9 +10,9 @@ export const viAsk: { readonly [Key in keyof typeof enAsk]: Entry } = {
   'ask.try': 'Thử hỏi',
   'ask.placeholder': 'Mình mua nổi…',
   'ask.send': 'Gửi',
-  'ask.suggest.afford': 'Thứ Bảy ăn tối 2tr được không?',
+  'ask.suggest.afford': 'Thứ Bảy ăn tối {amount} được không?',
   'ask.suggest.weekend': 'Cuối tuần này chi được bao nhiêu?',
-  'ask.suggest.spend': 'Nếu mua áo khoác 450k thì sao?',
+  'ask.suggest.spend': 'Nếu mua áo khoác {amount} thì sao?',
   'ask.suggest.pot': 'Khi nào đủ tiền {pot}?',
   'ask.suggest.save': 'Có nên để dành thêm không?',
   'ask.meter': 'Còn {left}/{total} câu hỏi miễn phí tuần này',
@@ -61,7 +61,7 @@ export const viAsk: { readonly [Key in keyof typeof enAsk]: Entry } = {
   'ask.answer.today': 'Hôm nay bạn chi được {safe}. Con số ngày mai là {tomorrow}.',
   'ask.answer.today.used': 'Con số hôm nay đã hết. Ngày mai là {tomorrow}.',
   'ask.answer.help':
-    'Mình cho bạn biết khoản nào vừa túi, một khoản lớn đổi những ngày sau ra sao, hay khi nào hũ đầy. Thử hỏi “Thứ Bảy mình chi 2tr được không?”',
+    'Mình cho bạn biết khoản nào vừa túi, một khoản lớn đổi những ngày sau ra sao, hay khi nào hũ đầy. Thử hỏi “Thứ Bảy mình chi {amount} được không?”',
   'ask.error': 'Có trục trặc nên mình chưa trả lời được. Thử lại nhé.',
   'ask.answer.offline':
     'Mình không kết nối được máy chủ, nên lúc này chỉ đọc được câu hỏi đơn giản.',

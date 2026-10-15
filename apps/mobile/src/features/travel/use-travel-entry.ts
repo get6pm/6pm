@@ -1,92 +1,121 @@
 import {
-  emptyKeypad,
   foreignKeypad,
-  foreignToVnd,
+  foreignToHome,
   formatTypedForeign,
-  formatVnd,
-  keypadVnd,
+  homeKeypad,
+  homeRate,
+  keypadHomeMinor,
   rateNumber,
+  type Currency,
   type KeypadState,
+  type MoneyParts,
   type SpendRow,
 } from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
+import { homeDecimalMark, typedParts } from '../quick-add/typed-amount';
 import type { KeypadCurrencyKey } from '../../ui/keypad';
 import type { Trip } from './trip';
 import { useTravel } from './travel-provider';
 
-/** A trip with a rate: what entry abroad needs. */
-type PricedTrip = Trip & { readonly rate: NonNullable<Trip['rate']> };
+/** A trip with a rate in the home currency: what entry abroad needs. */
+interface PricedTrip {
+  readonly trip: Trip & { readonly rate: NonNullable<Trip['rate']> };
+  /** Home units for one unit of the local currency, as an exact decimal. */
+  readonly rate: string;
+}
 
-const priced = (trip: Trip | null): trip is PricedTrip => trip !== null && trip.rate !== null;
+/** The đồng for one unit of a currency, from the kept set of the server's quotes. */
+type DongQuote = (code: string) => string | null;
 
-/** Quick add opens in the local currency abroad (once there is a rate), else in đồng. */
-export function initialKeypad(trip: Trip | null): KeypadState {
-  if (!priced(trip)) return emptyKeypad;
-  return foreignKeypad({ code: trip.currency.code, decimals: trip.currency.decimals });
+/**
+ * The trip, when entry can be priced: the server's đồng quotes for the local currency and for
+ * home, divided. A trip in the home currency is no trip.
+ */
+function pricedTrip(trip: Trip | null, home: Currency, dongQuote: DongQuote): PricedTrip | null {
+  if (trip === null || trip.rate === null || trip.currency.code === home.code) return null;
+  const rate = homeRate(trip.currency.code, home, dongQuote);
+  return rate === null ? null : { trip: { ...trip, rate: trip.rate }, rate };
+}
+
+/** Quick add opens in the local currency abroad (once there is a rate), else in the home currency. */
+export function initialKeypad(
+  trip: Trip | null,
+  home: Currency,
+  dongQuote: DongQuote,
+): KeypadState {
+  const priced = pricedTrip(trip, home, dongQuote);
+  if (priced === null) return homeKeypad(home);
+  const { currency } = priced.trip;
+  return foreignKeypad({ code: currency.code, decimals: currency.decimals }, home);
 }
 
 export interface TravelEntry {
-  /** In đồng, to the nearest đồng. */
+  /** In minor units of the home currency, to the nearest one. */
   readonly amount: number;
-  /** "฿12,5" while typing in the local currency; undefined in đồng. */
-  readonly amountText: string | undefined;
-  /** "≈ 9.627₫" under a foreign amount; null in đồng. */
+  /** What is typed, as it will be written: "฿12,5" abroad, "$12.5" or "45.000₫" at home. */
+  readonly typed: MoneyParts;
+  /** "≈ $9.63" under a foreign amount; null in the home currency. */
   readonly underneath: string | null;
   /** The keypad's currency key abroad; undefined at home. */
   readonly currencyKey: KeypadCurrencyKey | undefined;
-  /** What the spend row records about the foreign amount; null in đồng. */
+  /** The decimal key's mark while typing in a home currency with decimals. */
+  readonly decimal: string | undefined;
+  /** What the spend row records about the foreign amount; null in the home currency. */
   readonly foreignAmount: SpendRow['foreignAmount'];
 }
 
 /**
- * Entry abroad: amounts typed in the local currency show as that currency with đồng underneath,
- * and are kept as đồng with the foreign amount and its rate beside them.
+ * Entry abroad: amounts typed in the local currency show as that currency with home underneath,
+ * and are kept in the home currency with the foreign amount and its rate (home units for one
+ * unit) beside them.
  */
 export function useTravelEntry(keys: KeypadState): TravelEntry {
-  const { trip } = useTravel();
+  const { trip, dongQuote } = useTravel();
+  const money = useMoneyFormat();
+  const home = money.currency;
   const { t, dayMonth } = useI18n();
-  if (!priced(trip)) {
-    return {
-      amount: keypadVnd(keys, 0),
-      amountText: undefined,
-      underneath: null,
-      currencyKey: undefined,
-      foreignAmount: null,
-    };
-  }
-  const { currency, rate } = trip;
+  const priced = pricedTrip(trip, home, dongQuote);
+  const atHome: Omit<TravelEntry, 'currencyKey'> = {
+    amount: keypadHomeMinor({ ...keys, home: home.code }),
+    typed: typedParts(keys.digits, money),
+    underneath: null,
+    decimal: homeDecimalMark(money),
+    foreignAmount: null,
+  };
+  if (priced === null) return { ...atHome, currencyKey: undefined };
+  const { trip: abroad, rate } = priced;
+  const { currency } = abroad;
   const inForeign = keys.currency === currency.code;
   const currencyKey: KeypadCurrencyKey = {
-    label: inForeign ? '₫' : currency.symbol,
+    label: inForeign ? home.symbol : currency.symbol,
     accessibilityLabel: t('travel.quick.currency'),
     decimal: inForeign && currency.decimals > 0,
   };
-  if (!inForeign) {
-    return {
-      amount: keypadVnd(keys, 0),
-      amountText: undefined,
-      underneath: null,
-      currencyKey,
-      foreignAmount: null,
-    };
-  }
+  if (!inForeign) return { ...atHome, currencyKey };
   const typed = keys.digits.replace(/\.$/, '') || '0';
-  const amount = foreignToVnd(typed, rate.rate) ?? 0;
-  const vnd = formatVnd(amount);
+  const amount = foreignToHome(typed, rate, home) ?? 0;
+  const inHome = money.full(amount);
   return {
     amount,
-    amountText: formatTypedForeign(keys.digits, currency),
-    underneath: trip.stale
+    typed: {
+      sign: '',
+      prefix: currency.symbol,
+      number: formatTypedForeign(keys.digits, currency).slice(currency.symbol.length),
+      suffix: '',
+    },
+    underneath: abroad.stale
       ? t('travel.quick.underneathStale', {
-          amount: vnd,
-          date: dayMonth(new Date(`${rate.asOf}T00:00:00`)),
+          amount: inHome,
+          date: dayMonth(new Date(`${abroad.rate.asOf}T00:00:00`)),
         })
-      : t('travel.quick.underneath', { amount: vnd }),
+      : t('travel.quick.underneath', { amount: inHome }),
     currencyKey,
+    decimal: undefined,
     foreignAmount:
       amount > 0
-        ? { currency: currency.code, amount: Number(typed), rate: rateNumber(rate.rate) }
+        ? { currency: currency.code, amount: Number(typed), rate: rateNumber(rate) }
         : null,
   };
 }

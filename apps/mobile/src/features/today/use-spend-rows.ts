@@ -4,11 +4,13 @@ import type { SpendRow } from '@6pm/domain';
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { toRowViews, type Labels } from './today-view';
 
 /** The labels every spend list uses, in the current language. */
 export function useSpendLabels(): Labels {
   const { t, language } = useI18n();
+  const money = useMoneyFormat();
   return useMemo(() => {
     const time = new Intl.DateTimeFormat(language === 'vi' ? 'vi-VN' : 'en-GB', {
       hour: '2-digit',
@@ -28,8 +30,9 @@ export function useSpendLabels(): Labels {
               : row.status === 'skipped'
                 ? t('today.row.notMine')
                 : null,
+      money,
     };
-  }, [t, language]);
+  }, [t, language, money]);
 }
 
 export function useSpendRows(

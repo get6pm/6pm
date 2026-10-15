@@ -1,3 +1,4 @@
+import { designAmount, VND } from '../money/currency';
 import { countsTowardDay } from '../spend/spend';
 import { addDays, diffDays, startOfWeek } from '../time/local-date';
 import {
@@ -12,14 +13,14 @@ import {
 
 /** A category is compared only once this many days of the cycle have passed. */
 const MIN_PACE_DAYS = 3;
-/** Neither side of a comparison under this is worth a word. */
-const MIN_PACE_AMOUNT = 100_000;
+/** Neither side of a comparison under this is worth a word (the design's 100k). */
+const MIN_PACE_DONG = 100_000;
 /** At most this many category comparisons, the biggest changes first. */
 const MAX_PACE_FACTS = 2;
 const REPEAT_VISITS = 3;
-/** A spend is "big" at this many times today's line, and never under the floor. */
+/** A spend is "big" at this many times today's line, and never under the floor (the design's 150k). */
 const BIG_LINE_TIMES = 2;
-const BIG_FLOOR = 150_000;
+const BIG_FLOOR_DONG = 150_000;
 
 function counted(input: InsightInput, from: string, to: string): InsightSpend[] {
   return input.spends.filter(
@@ -46,11 +47,12 @@ export function categoryPaceFacts(input: InsightInput): Fact[] {
 
   const now = byCategory(counted(input, cycle.start, today));
   const before = byCategory(counted(input, previousCycleStart, previousEnd));
+  const minimum = designAmount(MIN_PACE_DONG, input.currency ?? VND);
   const facts: { fact: Fact; change: number }[] = [];
   for (const category of new Set([...now.keys(), ...before.keys()])) {
     const a = now.get(category) ?? 0;
     const b = before.get(category) ?? 0;
-    if (a < MIN_PACE_AMOUNT && b < MIN_PACE_AMOUNT) continue;
+    if (a < minimum && b < minimum) continue;
     // A category new this cycle has nothing to be measured against.
     if (b === 0) continue;
     const word = compareAmounts(a, b);
@@ -135,7 +137,8 @@ export function firstTimeFacts(input: InsightInput): Fact[] {
 
 /** The week's biggest spend, when it stands out against the daily line. */
 export function biggestSpendFacts(input: InsightInput): Fact[] {
-  const floor = Math.max(BIG_FLOOR, input.day.line * BIG_LINE_TIMES);
+  const bigFloor = designAmount(BIG_FLOOR_DONG, input.currency ?? VND);
+  const floor = Math.max(bigFloor, input.day.line * BIG_LINE_TIMES);
   const biggest = counted(input, startOfWeek(input.today), input.today)
     .filter((s) => s.amount >= floor)
     .sort((a, b) => b.amount - a.amount || a.id.localeCompare(b.id))[0];

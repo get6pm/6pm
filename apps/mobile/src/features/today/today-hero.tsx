@@ -1,10 +1,11 @@
 import { Text, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
-import { formatShort, lineUsed, type DailyNumber } from '@6pm/domain';
+import { lineUsed, type DailyNumber } from '@6pm/domain';
 import { curves } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { useHomeNav } from '../home/home-nav';
 import { TravelPill } from '../travel/travel-pill';
 import { Symbol } from '../../ui/icons/symbol';
@@ -36,7 +37,8 @@ export function TodayHero({
 }) {
   const { palette } = useTheme();
   const { dayDate } = useClock();
-  const { t, weekday, dayMonth, language } = useI18n();
+  const { t, weekday, dayMonth } = useI18n();
+  const money = useMoneyFormat();
   const { goToTab } = useHomeNav();
   const { top } = useDesignInsets();
 
@@ -50,14 +52,14 @@ export function TodayHero({
   }));
 
   const left = over
-    ? t('today.meterOver', { over: formatShort(-day.safe, language) })
+    ? t('today.meterOver', { over: money.short(-day.safe) })
     : day.spent
       ? t('today.meterUsed', {
-          spent: formatShort(day.spent, language),
-          line: formatShort(day.line, language),
+          spent: money.short(day.spent),
+          line: money.short(day.line),
         })
       : t('today.meterNothing');
-  const right = t('today.tomorrowAbout', { amount: formatShort(day.tomorrow, language) });
+  const right = t('today.tomorrowAbout', { amount: money.short(day.tomorrow) });
 
   return (
     <View

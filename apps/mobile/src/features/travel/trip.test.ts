@@ -1,11 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
 
-import type { FxRatesResponse } from '@6pm/domain';
+import { currencyOf, type FxRatesResponse } from '@6pm/domain';
 
 import {
+  dongQuoteOf,
   nextFxCache,
   parseFxCache,
   parsePlace,
+  rateFor,
   shouldRefreshRates,
   tripOf,
   type FxCache,
@@ -46,6 +48,46 @@ describe('a trip', () => {
     expect(tripOf({ on: true, max: true, place: tokyo, cache, now })?.stale).toBe(true);
     const bare = tripOf({ on: true, max: true, place: bangkok, cache: null, now });
     expect(bare).toMatchObject({ rate: null, stale: true });
+  });
+});
+
+describe('a trip from a home that is not đồng', () => {
+  const usd = currencyOf('USD');
+  const withDollar: FxCache = {
+    ...cache,
+    rates: {
+      ...answer,
+      rates: [
+        ...answer.rates,
+        { currency: 'USD', rate: '26000', asOf: '2026-10-12', source: 'frankfurter' },
+      ],
+    },
+  };
+  const hanoi = { country: 'VN', name: 'Hanoi', at: now.toISOString() };
+
+  it('is in Vietnam, in đồng, at home units for one đồng', () => {
+    const trip = tripOf({ on: true, max: true, place: hanoi, cache: withDollar, now, home: usd });
+    expect(trip?.currency).toMatchObject({ code: 'VND', symbol: '₫', decimals: 0 });
+    expect(trip?.rate?.rate).toBe('0.000038461538');
+    expect(trip?.stale).toBe(false);
+  });
+
+  it('is not at home, and has no rate without home’s own quote', () => {
+    const newYork = { country: 'US', name: 'New York', at: now.toISOString() };
+    const base = { on: true, max: true, cache: withDollar, now, home: usd };
+    expect(tripOf({ ...base, place: newYork })).toBeNull();
+    const bare = tripOf({ ...base, place: bangkok, cache });
+    expect(bare).toMatchObject({ rate: null, stale: true });
+    expect(tripOf({ ...base, place: bangkok })?.rate?.rate).toBe('0.029621923076');
+  });
+
+  it('converts through the kept đồng quotes, trip or not', () => {
+    expect(rateFor(withDollar, 'THB')?.rate).toBe('770.17');
+    expect(rateFor(withDollar, 'VND', usd)?.rate).toBe('0.000038461538');
+    expect(rateFor(withDollar, 'USD', usd)).toBeNull();
+    expect(dongQuoteOf(withDollar, 'USD')).toBe('26000');
+    expect(dongQuoteOf(withDollar, 'VND')).toBe('1');
+    expect(dongQuoteOf(null, 'USD')).toBeNull();
   });
 });
 

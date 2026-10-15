@@ -1,12 +1,25 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { payCycleOn, type ClosedDayRow, type SpendRow } from '@6pm/domain';
+import {
+  currencyOf,
+  formatVnd,
+  moneyFormat,
+  moneyLocale,
+  payCycleOn,
+  type ClosedDayRow,
+  type SpendRow,
+} from '@6pm/domain';
 
 import type { MoneySnapshot } from '../../data/money-store';
 import { openMemoryStore } from '../backup/test/memory-db';
-import { todayView, type Labels } from './today-view';
+import { toRowViews, todayView, type Labels } from './today-view';
 
-const labels: Labels = { source: (s) => s, tag: () => null, time: (iso) => iso.slice(11, 16) };
+const labels: Labels = {
+  source: (s) => s,
+  tag: () => null,
+  time: (iso) => iso.slice(11, 16),
+  money: { full: formatVnd },
+};
 const at = '2026-10-11T03:00:00.000Z';
 
 const spend = (id: string, day: string, status: SpendRow['status']): SpendRow => ({
@@ -109,5 +122,36 @@ describe('todayView', () => {
     expect(view.moment).toBe('closed');
     expect(view.closedAt).toBe('2026-10-11T11:30:00.000Z');
     expect(view.closedThisMonth).toBe(2);
+  });
+});
+
+describe('toRowViews', () => {
+  const foreign = {
+    ...spend('Grab', '2026-10-11', 'kept'),
+    amount: 2_970,
+    foreignAmount: { currency: 'THB', amount: 100, rate: 0.297 },
+  };
+
+  it('writes đồng rows as they always were', () => {
+    const [row] = toRowViews([spend('Phở', '2026-10-11', 'kept')], [], labels);
+    expect(row?.amount).toBe('30.000₫');
+  });
+
+  it('writes a foreign spend with its home amount under it', () => {
+    const usd = moneyFormat(
+      moneyLocale(currencyOf('USD'), 'en', { languageTag: 'en-US', decimal: '.', group: ',' }),
+    );
+    const [row] = toRowViews([foreign], [], { ...labels, money: usd });
+    expect(row?.amount).toBe('$29.70');
+    expect(row?.foreign?.inHome).toBe('$29.70');
+  });
+
+  it('leaves the home amount out while the rate is pending', () => {
+    const [row] = toRowViews(
+      [{ ...foreign, amount: 0, foreignAmount: { ...foreign.foreignAmount, rate: 0 } }],
+      [],
+      labels,
+    );
+    expect(row?.foreign?.inHome).toBeNull();
   });
 });

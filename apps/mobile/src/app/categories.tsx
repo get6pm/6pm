@@ -3,13 +3,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { Text } from 'react-native';
 import { LayoutAnimationConfig } from 'react-native-reanimated';
 
-import { formatShort, type MerchantRuleRow } from '@6pm/domain';
+import { type MerchantRuleRow } from '@6pm/domain';
 
 import { tallyByCategory, useCategoryActions } from '../data/category-actions';
 import { useMoney } from '../data/money-provider';
 import { CategoryListRow, ListSection, NewCategoryRow } from '../features/categories/category-list';
 import { NoRules, RuleListRow } from '../features/categories/rule-list';
 import { useI18n } from '../i18n/i18n';
+import { useMoneyFormat } from '../money/use-money-format';
 import { haptics } from '../ui/haptics';
 import { SheetScreen } from '../ui/navigation/sheet-screen';
 import { useTheme } from '../ui/theme/theme';
@@ -21,7 +22,8 @@ import { body } from '../ui/type/fonts';
  */
 export default function Categories() {
   const { palette } = useTheme();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const snap = useMoney();
   const actions = useCategoryActions();
   const router = useRouter();
@@ -81,7 +83,7 @@ export default function Categories() {
                   tally
                     ? t('categories.tally', {
                         count: tally.count,
-                        amount: formatShort(tally.total, language),
+                        amount: money.short(tally.total),
                       })
                     : t('categories.tallyNone')
                 }

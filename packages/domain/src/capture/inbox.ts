@@ -1,4 +1,5 @@
 import type { InboxSpend } from '../contracts/surfaces';
+import { currencyOf, toMajor } from '../money/currency';
 import type { SpendSource } from '../spend/spend';
 import { rateNumber } from '../travel/fx';
 import { BANKS } from '../vietqr/bank-catalogue';
@@ -22,8 +23,8 @@ export interface InboxSpendDraft {
   readonly detail: string | null;
   readonly at: Date;
   /**
-   * A spend in another currency: what Travel mode records beside the đồng, with the rate that
-   * priced it, or `RATE_PENDING` while it waits for one.
+   * A spend in another currency: what Travel mode records beside the home amount, with the rate
+   * that priced it (home units for one unit), or `RATE_PENDING` while it waits for one.
    */
   readonly foreignAmount: { currency: string; amount: number; rate: number } | null;
   /** The receipt printed no currency and the one saved was guessed. */
@@ -37,6 +38,24 @@ export interface InboxFiling {
   readonly fallbackCategoryId: string;
   /** Categories that exist now: an extension's context may be older than an archive. */
   readonly categoryIds: ReadonlySet<string>;
+  /** The home currency the app counts in now; đồng when not given. */
+  readonly home?: string;
+}
+
+/**
+ * An amount counted in one currency, saved by an app counting in `home`: as it is when they are
+ * the same, else a foreign amount waiting for its rate (0 in home until it is priced). A
+ * Vietnamese bank's đồng on a phone counting euros, or an extension's file from before the home
+ * currency changed.
+ */
+export function capturedInHome(
+  amount: number,
+  counted: string,
+  home: string,
+): { amount: number; foreignAmount: InboxSpendDraft['foreignAmount'] } {
+  if (counted === home) return { amount, foreignAmount: null };
+  const major = toMajor(amount, currencyOf(counted));
+  return { amount: 0, foreignAmount: { currency: counted, amount: major, rate: RATE_PENDING } };
 }
 
 /** What a shared receipt says about where it came from, as the spend's detail line. */
@@ -58,8 +77,8 @@ export function receiptBankOf(detail: string | null): string | null {
 }
 
 /**
- * The foreign amount a capture keeps beside its đồng: priced at its rate, or with no rate yet a
- * pending one (`RATE_PENDING`), never dropped, so it is priced later instead of staying 0₫.
+ * The foreign amount a capture keeps beside its home amount: priced at its rate, or with no rate
+ * yet a pending one (`RATE_PENDING`), never dropped, so it is priced later instead of staying 0.
  */
 function foreignAmountOf(item: InboxSpend): InboxSpendDraft['foreignAmount'] {
   const foreign = item.foreign;
@@ -104,7 +123,8 @@ function noteOf(item: InboxSpend): string | null {
  * the merchant's rule, else the fallback. An amount the source could not read is saved as 0 and
  * caught, so the close asks for it rather than the capture being lost; a foreign one keeps its
  * amount with the rate pending, to be priced when a rate arrives. So does a foreign receipt shared
- * days after it was paid: it is priced again at the rate of its own day.
+ * days after it was paid: it is priced again at the rate of its own day, and an item counted in
+ * another home currency than the app's now (written before it changed) is priced again in it.
  */
 export function inboxItemToNewSpend(
   item: InboxSpend,
@@ -113,9 +133,21 @@ export function inboxItemToNewSpend(
 ): InboxSpendDraft {
   const named =
     item.categoryId !== null && filing.categoryIds.has(item.categoryId) ? item.categoryId : null;
-  const kept = foreignAmountOf(item);
-  const reprice = kept !== null && kept.rate > 0 && pricedLate(item, now);
-  const amount = reprice ? null : item.amount;
+  const home = filing.home ?? 'VND';
+  const counted = item.currency ?? 'VND';
+  let kept = foreignAmountOf(item);
+  let amount = item.amount;
+  if (counted !== home) {
+    kept = kept
+      ? { ...kept, rate: RATE_PENDING }
+      : amount === null
+        ? null
+        : capturedInHome(amount, counted, home).foreignAmount;
+    amount = null;
+  } else if (kept !== null && kept.rate > 0 && pricedLate(item, now)) {
+    kept = { ...kept, rate: RATE_PENDING };
+    amount = null;
+  }
   return {
     id: item.id,
     amount: amount ?? 0,
@@ -126,7 +158,7 @@ export function inboxItemToNewSpend(
     note: noteOf(item),
     detail: receiptDetail(item.receipt),
     at: new Date(item.at),
-    foreignAmount: reprice ? { ...kept, rate: RATE_PENDING } : kept,
+    foreignAmount: kept,
     currencyGuessed: item.currencyGuessed === true,
   };
 }

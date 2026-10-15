@@ -2,10 +2,13 @@ import { memo } from 'react';
 import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
-import { formatShort, lineUsed, type DailyNumber } from '@6pm/domain';
+import { lineUsed, type DailyNumber } from '@6pm/domain';
 
 import { useMoneySelector } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
+import { AmountText } from '../quick-add/amount-text';
+import { shortParts } from '../quick-add/typed-amount';
 import { PLAN_SECTIONS } from '../plan/plan-page';
 import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
@@ -37,6 +40,7 @@ export const HomeTopNav = memo(function HomeTopNav({
 }) {
   const { palette } = useTheme();
   const { t, language } = useI18n();
+  const money = useMoneyFormat();
   const { dayDate } = useClock();
   const daysLeft = useMoneySelector((snapshot) => snapshot.cycle.daysLeft);
   const used = day.safe < 0 ? 1 : lineUsed(day);
@@ -53,16 +57,17 @@ export const HomeTopNav = memo(function HomeTopNav({
               {t('today.safeToSpend')}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
-              <Text style={{ ...display(27, 500, -0.02), lineHeight: 27, color: palette.ink }}>
-                {formatShort(Math.max(0, day.safe), language)}
-              </Text>
+              <AmountText
+                parts={shortParts(Math.max(0, day.safe), money)}
+                style={{ ...display(27, 500, -0.02), lineHeight: 27, color: palette.ink }}
+              />
               <Text
                 numberOfLines={1}
                 style={{ ...body(12.5), ...tabular, color: palette.inkSoft, flexShrink: 1 }}
               >
                 {t('today.meterUsed', {
-                  spent: formatShort(day.spent, language),
-                  line: formatShort(day.line, language),
+                  spent: money.short(day.spent),
+                  line: money.short(day.line),
                 })}
               </Text>
             </View>

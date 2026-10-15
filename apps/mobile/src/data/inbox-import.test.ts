@@ -65,13 +65,18 @@ describe('importInbox', () => {
     report = jest.fn<(message: string) => void>();
   });
 
-  const run = (inbox: ReturnType<typeof memoryInbox>, enrich?: InboxImportDeps['enrich']) =>
+  const run = (
+    inbox: ReturnType<typeof memoryInbox>,
+    enrich?: InboxImportDeps['enrich'],
+    home?: string,
+  ) =>
     importInbox({
       store,
       actions,
       inbox,
       report,
       enrich: enrich ?? ((item) => Promise.resolve(item)),
+      ...(home ? { home } : {}),
     });
 
   it('saves a capture under its own id and removes the file', async () => {
@@ -194,5 +199,24 @@ describe('importInbox', () => {
     const item = tap({ source: 'voice', status: 'kept', amount: null, merchant: '' });
     await run(memoryInbox([item]));
     expect(await store.tables.spends.get(item.id)).toMatchObject({ amount: 0, status: 'caught' });
+  });
+
+  it('saves a dollar capture in dollars on a phone counting them', async () => {
+    const item = tap({ amount: 350, currency: 'USD' });
+    await run(memoryInbox([item]), undefined, 'USD');
+    expect(await store.tables.spends.get(item.id)).toMatchObject({
+      amount: 350,
+      foreignAmount: null,
+    });
+  });
+
+  it('keeps a đồng capture from before as a foreign amount waiting for its rate', async () => {
+    const item = tap();
+    await run(memoryInbox([item]), undefined, 'USD');
+    expect(await store.tables.spends.get(item.id)).toMatchObject({
+      amount: 0,
+      status: 'caught',
+      foreignAmount: { currency: 'VND', amount: 45_000, rate: 0 },
+    });
   });
 });

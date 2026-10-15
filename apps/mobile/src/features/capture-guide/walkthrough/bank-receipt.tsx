@@ -1,17 +1,26 @@
 import { Text, View } from 'react-native';
 import type { SharedValue } from 'react-native-reanimated';
 
-import { formatVnd } from '@6pm/domain';
+import { designAmount } from '@6pm/domain';
 
 import { useI18n } from '../../../i18n/i18n';
+import { useMoneyFormat } from '../../../money/use-money-format';
 import { Symbol } from '../../../ui/icons/symbol';
 import { body } from '../../../ui/type/fonts';
 import { bankInk, iosInk } from './frame-ink';
 import { TapFlash } from './moving-parts';
 
-/** The receipt's transfer, as the pictured bank shows it and 6pm reads it. */
-export const AMOUNT = 120000;
+/** The receipt's transfer, as the pictured bank shows it and 6pm reads it: 120.000₫ in the design. */
+const AMOUNT_DONG = 120_000;
 export const PAYEE = 'CIRCLE K';
+/** The pictured bank, which is Vietnamese: outside đồng the receipt names no bank. */
+const BANK = 'Techcombank';
+
+/** The receipt's transfer in the home currency, at the design's worth. */
+export function useReceiptAmount(): string {
+  const money = useMoneyFormat();
+  return money.full(designAmount(AMOUNT_DONG, money.currency));
+}
 
 /** A bank app's transfer receipt, with its Share button at the bottom. */
 export function BankReceipt({
@@ -22,9 +31,14 @@ export function BankReceipt({
   readonly flashAt: number;
 }) {
   const { t: tr } = useI18n();
+  const money = useMoneyFormat();
+  const amount = useReceiptAmount();
   const rows = [
     [tr('native.share.to'), PAYEE],
-    [tr('capture.walk.bank.from'), 'Techcombank'],
+    [
+      tr('capture.walk.bank.from'),
+      money.currency.code === 'VND' ? BANK : tr('capture.walk.bank.yourBank'),
+    ],
     [tr('native.share.when'), '16:40 · 14/10'],
   ] as const;
   return (
@@ -62,9 +76,7 @@ export function BankReceipt({
           gap: 14,
         }}
       >
-        <Text style={{ ...body(36, 700), color: iosInk.label, textAlign: 'center' }}>
-          {formatVnd(AMOUNT)}
-        </Text>
+        <Text style={{ ...body(36, 700), color: iosInk.label, textAlign: 'center' }}>{amount}</Text>
         {rows.map(([k, v]) => (
           <View
             key={k}

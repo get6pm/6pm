@@ -1,16 +1,17 @@
 import {
   addDays,
-  formatShort,
-  formatVnd,
   lineUsed,
   payCycleOn,
   SURFACES_VERSION,
   type DailyNumber,
   type LocalDate,
+  moneyFormat,
+  moneyLocale,
+  VND,
+  type MoneyFormat,
   type SpendRow,
   type SurfaceSnapshot,
 } from '@6pm/domain';
-import type { Language } from '@6pm/i18n';
 
 import { dayOf, waitingOf, type MoneySnapshot } from '../../data/money-store';
 import type { I18n } from '../../i18n/i18n';
@@ -56,7 +57,10 @@ export function nextMoneyDay(money: MoneySnapshot): MoneySnapshot {
   };
 }
 
-function rowsOf(money: MoneySnapshot): { rows: Row[]; hues: number[]; total: number } {
+function rowsOf(
+  money: MoneySnapshot,
+  format: MoneyFormat,
+): { rows: Row[]; hues: number[]; total: number } {
   const categories = new Map(money.categories.map((c) => [c.id, c]));
   const todays = money.cycleSpends.filter(
     (s) => s.day === money.today && s.status !== 'skipped' && s.status !== 'deleted',
@@ -66,7 +70,7 @@ function rowsOf(money: MoneySnapshot): { rows: Row[]; hues: number[]; total: num
     const categoryIcon = category && isSymbolName(category.icon) ? category.icon : 'payments';
     return {
       name: s.merchant,
-      amountText: formatVnd(s.amount),
+      amountText: format.full(s.amount),
       icon: glyphOf(merchantIcon(s.merchant, categoryIcon)),
       hue: category?.hue ?? 80,
       pending: s.status === 'pending',
@@ -86,15 +90,15 @@ function entryOf(
   list: { rows: Row[]; total: number },
   pending: number,
   t: I18n['t'],
-  language: Language,
+  format: MoneyFormat,
 ): Entry {
-  const safeShort = formatShort(Math.max(0, day.safe), language);
+  const safeShort = format.short(Math.max(0, day.safe));
   const more = list.total - list.rows.length;
   return {
     from: from.toISOString(),
     safeText: t('surfaces.amountLeft', { amount: safeShort }),
     safeShort,
-    tomorrowText: t('today.tomorrowAbout', { amount: formatShort(day.tomorrow, language) }),
+    tomorrowText: t('today.tomorrowAbout', { amount: format.short(day.tomorrow) }),
     pendingText: pending > 0 ? t('surfaces.pending', { count: pending }) : '',
     ringFraction: day.safe < 0 ? 0 : 1 - lineUsed(day),
     list: list.rows,
@@ -108,7 +112,10 @@ export interface SnapshotInput {
   /** The look id when the user has Max (widgets in their look), else null. */
   readonly maxLook: string | null;
   readonly t: I18n['t'];
-  readonly language: Language;
+  /** Money in the home currency, the app's language and the phone's number style. */
+  readonly format?: MoneyFormat;
+  /** Without a `format`, đồng in this language. */
+  readonly language?: 'en' | 'vi';
   readonly writtenAt: Date;
 }
 
@@ -119,18 +126,19 @@ export interface SnapshotInput {
  * and the widgets ask to open 6pm.
  */
 export function surfaceSnapshot(input: SnapshotInput): SurfaceSnapshot {
-  const { money, look, t, language } = input;
+  const { money, look, t } = input;
+  const format = input.format ?? moneyFormat(moneyLocale(VND, input.language ?? 'en'));
   const today = dayOf(money);
   const pending = pendingCount(money);
-  const list = rowsOf(money);
+  const list = rowsOf(money, format);
   const entries: Entry[] = [];
   if (today !== null) {
-    entries.push(entryOf(today, moneyDayStart(money.today), list, pending, t, language));
+    entries.push(entryOf(today, moneyDayStart(money.today), list, pending, t, format));
     const next = nextMoneyDay(money);
     const tomorrow = dayOf(next);
     if (tomorrow !== null) {
       entries.push(
-        entryOf(tomorrow, moneyDayStart(next.today), { rows: [], total: 0 }, pending, t, language),
+        entryOf(tomorrow, moneyDayStart(next.today), { rows: [], total: 0 }, pending, t, format),
       );
     }
   }

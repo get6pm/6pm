@@ -1,8 +1,13 @@
+import { toMajor, VND, type Currency } from '../money/currency';
 import { travelCurrency } from '../travel/currencies';
-import { DECIMAL_PATTERN, foreignToVnd } from '../travel/fx';
-import { emptyKeypad, keypadValue, pressKey, type KeypadKey, type KeypadState } from './keypad';
+import { DECIMAL_PATTERN } from '../travel/fx';
+import { foreignToHome } from '../travel/home-fx';
+import { homeKeypad, keypadHomeMinor, pressKey, type KeypadKey, type KeypadState } from './keypad';
 
-/** A spend's amount as its row keeps it: đồng, and the foreign amount it was priced from. */
+/**
+ * A spend's amount as its row keeps it: minor units of the home currency, and the foreign amount
+ * it was priced from (its rate is home units for one unit).
+ */
 export interface SpendAmount {
   readonly amount: number;
   readonly foreignAmount: { currency: string; amount: number; rate: number } | null;
@@ -21,15 +26,24 @@ function digitsOf(value: number, decimals: number): string {
 
 /**
  * The keypad an amount opens in for fixing: the foreign amount as printed, in its currency (the
- * currency key flips to đồng), or the đồng. Nothing typed for an amount that was never read.
+ * currency key flips to home), or the home amount. Nothing typed for an amount never read.
  */
-export function editKeypadOf({ amount, foreignAmount }: SpendAmount): KeypadState {
+export function editKeypadOf(
+  { amount, foreignAmount }: SpendAmount,
+  home: Currency = VND,
+): KeypadState {
+  const base = homeKeypad(home);
   if (foreignAmount) {
     const decimals = decimalsOf(foreignAmount.currency);
     const foreign = { code: foreignAmount.currency, decimals };
-    return { digits: digitsOf(foreignAmount.amount, decimals), currency: foreign.code, foreign };
+    return {
+      ...base,
+      digits: digitsOf(foreignAmount.amount, decimals),
+      currency: foreign.code,
+      foreign,
+    };
   }
-  return { ...emptyKeypad, digits: digitsOf(amount, 0) };
+  return { ...base, digits: digitsOf(toMajor(amount, home), home.minorDigits) };
 }
 
 /**
@@ -52,18 +66,22 @@ function rateText(rate: number): string | null {
  * What the row keeps for an amount typed on the keypad. In đồng the foreign amount goes; in the
  * spend's own currency it is re-priced at the rate it was priced at (0₫ while there is none).
  */
-export function editedAmount(keys: KeypadState, original: SpendAmount): SpendAmount {
+export function editedAmount(
+  keys: KeypadState,
+  original: SpendAmount,
+  home: Currency = VND,
+): SpendAmount {
   const foreign = original.foreignAmount;
-  if (keys.currency === 'VND' || !foreign || keys.currency !== foreign.currency) {
-    return { amount: Math.round(keypadValue(keys)), foreignAmount: null };
+  if (keys.currency === home.code || !foreign || keys.currency !== foreign.currency) {
+    return { amount: keypadHomeMinor({ ...keys, home: home.code }), foreignAmount: null };
   }
   const typed = keys.digits.replace(/\.$/, '') || '0';
   const exact = rateText(foreign.rate);
-  const vnd =
+  const priced =
     exact !== null
-      ? (foreignToVnd(typed, exact) ?? 0)
+      ? (foreignToHome(typed, exact, home) ?? 0)
       : foreign.rate > 0
-        ? Math.round(Number(typed) * foreign.rate)
+        ? Math.round(Number(typed) * foreign.rate * home.minorPerMajor)
         : 0;
-  return { amount: vnd, foreignAmount: { ...foreign, amount: Number(typed) } };
+  return { amount: priced, foreignAmount: { ...foreign, amount: Number(typed) } };
 }

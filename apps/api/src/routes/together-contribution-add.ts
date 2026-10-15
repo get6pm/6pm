@@ -5,8 +5,8 @@ import { readBody, type RouteDefinition } from '../route';
 import { answerState, requirePair, requirePot, requireUser } from '../together/store';
 
 /**
- * Says the person put money into a shared pot: whole đồng, counted, never moved. The phone picks
- * the id, so sending the same contribution again adds it once.
+ * Says the person put money into a shared pot: whole minor units of the pot's currency, counted,
+ * never moved. The phone picks the id, so sending the same contribution again adds it once.
  */
 export const togetherContributionAddRoute: RouteDefinition = {
   method: 'POST',

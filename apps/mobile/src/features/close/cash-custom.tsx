@@ -4,18 +4,21 @@ import { GestureDetector } from 'react-native-gesture-handler';
 import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from 'react-native-reanimated';
 
 import {
-  emptyKeypad,
-  groupDigits,
-  keypadVnd,
+  homeKeypad,
+  keypadHomeMinor,
   pressKey,
   type CategoryRow,
   type KeypadKey,
 } from '@6pm/domain';
 
+import { useMoneyFormat } from '../../money/use-money-format';
+import { AmountText } from '../quick-add/amount-text';
+import { homeDecimalMark, typedParts } from '../quick-add/typed-amount';
 import { haptics } from '../../ui/haptics';
 import { isSymbolName, Symbol } from '../../ui/icons/symbol';
 import { Keypad } from '../../ui/keypad';
 import { useDesignInsets } from '../../ui/layout/design-insets';
+import { FitWidth } from '../../ui/layout/fit-width';
 import { easeOut } from '../../ui/motion/curves';
 import { useDragDismiss } from '../../ui/motion/use-drag-dismiss';
 import { PressScale } from '../../ui/primitives/press-scale';
@@ -45,9 +48,10 @@ export function CashCustom({
   const { bottom } = useDesignInsets();
   const { height } = useWindowDimensions();
   const sheet = useDragDismiss({ area: height, onDismissed: onCancel, enter: false });
-  const [keys, setKeys] = useState(emptyKeypad);
+  const money = useMoneyFormat();
+  const [keys, setKeys] = useState(() => homeKeypad(money.currency));
   const [categoryId, setCategoryId] = useState(initialCategoryId);
-  const amount = keypadVnd(keys, 0);
+  const amount = keypadHomeMinor({ ...keys, home: money.currency.code });
 
   return (
     <View style={{ position: 'absolute', inset: 0, zIndex: 20 }}>
@@ -95,18 +99,20 @@ export function CashCustom({
             <Text style={{ ...body(17, 650), color: palette.ink, textAlign: 'center' }}>
               {title}
             </Text>
-            <Text
-              style={{
-                ...display(48, 500, -0.02),
-                ...tabular,
-                lineHeight: 52,
-                textAlign: 'center',
-                color: palette.ink,
-                opacity: amount > 0 ? 1 : 0.35,
-              }}
-            >
-              {groupDigits(amount)}₫
-            </Text>
+            <FitWidth height={52} align="center">
+              <AmountText
+                parts={typedParts(keys.digits, money)}
+                numberOfLines={1}
+                style={{
+                  ...display(48, 500, -0.02),
+                  ...tabular,
+                  lineHeight: 52,
+                  textAlign: 'center',
+                  color: palette.ink,
+                  opacity: amount > 0 ? 1 : 0.35,
+                }}
+              />
+            </FitWidth>
             <View
               style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, justifyContent: 'center' }}
             >
@@ -144,7 +150,10 @@ export function CashCustom({
                 );
               })}
             </View>
-            <Keypad onPress={(key: KeypadKey) => setKeys((k) => pressKey(k, key))} />
+            <Keypad
+              onPress={(key: KeypadKey) => setKeys((k) => pressKey(k, key))}
+              decimal={homeDecimalMark(money)}
+            />
             <PressScale
               scaleTo={0.97}
               disabled={amount <= 0}

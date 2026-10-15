@@ -21,6 +21,7 @@
 "title" = "Add to 6pm";
 "to" = "To";
 "unknownCurrency" = "Couldn’t tell the currency. Type the amount in đồng.";
+"unknownCurrencyIn" = "Couldn’t tell the currency. Type the amount in {currency}.";
 "unreadable" = "Couldn’t read this receipt. Type the amount.";
 "unsure" = "Not sure about the name. Tap it to check.";
 "when" = "When";

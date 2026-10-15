@@ -1,4 +1,5 @@
 import type { CategoryRow, SpendRow } from '../contracts/local-rows';
+import { VND, type Currency, type Money } from '../money/currency';
 import type { SpendSource, SpendStatus } from '../spend/spend';
 
 /**
@@ -65,15 +66,30 @@ function byDayThenTime(a: SpendRow, b: SpendRow): number {
 }
 
 /**
+ * An amount in the home currency's major units, with its decimals and a point, never grouped:
+ * "49000" in đồng, "12.50" in dollars.
+ */
+export function csvAmount(amount: Money, currency: Currency): string {
+  if (currency.minorDigits === 0) return String(amount);
+  const sign = amount < 0 ? '-' : '';
+  const abs = Math.abs(Math.round(amount));
+  const whole = Math.floor(abs / currency.minorPerMajor);
+  const minor = String(abs % currency.minorPerMajor).padStart(currency.minorDigits, '0');
+  return `${sign}${whole}.${minor}`;
+}
+
+/**
  * The CSV of every spend that is not deleted. The date is the spend's money day (the day it
- * counts on, which a spend just before midnight can move); the amount is whole đồng with no
- * grouping, so it adds up in any spreadsheet. A category since archived still gives its name.
+ * counts on, which a spend just before midnight can move); the amount is in the home currency
+ * (`csvAmount`) with no grouping, so it adds up in any spreadsheet. A category since archived
+ * still gives its name.
  */
 export function spendsCsv(
   spends: readonly SpendRow[],
   categories: readonly CategoryRow[],
   labels: SpendsCsvLabels,
   timeOf: (instant: string) => string = localTimeOf,
+  currency: Currency = VND,
 ): string {
   const names = new Map(categories.map((c) => [c.id, c.name]));
   const rows = spends
@@ -84,7 +100,7 @@ export function spendsCsv(
       time: timeOf(s.at),
       merchant: textCell(s.merchant),
       category: textCell(names.get(s.categoryId) ?? null),
-      amount: String(s.amount),
+      amount: csvAmount(s.amount, currency),
       status: s.status === 'deleted' ? '' : labels.status[s.status],
       source: labels.source[s.source],
       wallet: textCell(s.wallet),

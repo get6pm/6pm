@@ -8,7 +8,17 @@ import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
 import { body, display, mono } from '../../ui/type/fonts';
 import { AppIconImage } from '../../ui/app-icon-image';
-import { box, checker, H, inOut, SAMPLE, stripes, TapRing, W } from './catch-demo-kit';
+import {
+  box,
+  checker,
+  H,
+  inOut,
+  SAMPLE,
+  stripes,
+  TapRing,
+  useSampleMoney,
+  W,
+} from './catch-demo-kit';
 import { useLoop } from './onboarding-motion';
 import { DEMO, type OnboardingPalette } from './onboarding-palette';
 
@@ -21,6 +31,7 @@ function ScanLine({ phase }: { readonly phase: SharedValue<number> }) {
   return <Animated.View style={[styles.scanLine, style]} />;
 }
 
+/** Shown only when home is đồng: a VietQR is always in đồng. */
 export function ScanDemo({ pal }: { readonly pal: OnboardingPalette }) {
   const phase = useLoop(2400, 0, 0.5);
   return (
@@ -63,6 +74,7 @@ export function ScanDemo({ pal }: { readonly pal: OnboardingPalette }) {
 
 export function ShareDemo() {
   const { t } = useI18n();
+  const sample = useSampleMoney();
   const blank = { width: 36, height: 36, borderRadius: 10, backgroundColor: DEMO.rule };
   return (
     <View
@@ -100,7 +112,7 @@ export function ShareDemo() {
             {t('onboarding.catch.share.receipt')}
           </Text>
           <Text style={{ ...display(20, 600), lineHeight: 20, color: DEMO.paperInk }}>
-            {formatVnd(SAMPLE.transfer)}
+            {sample.full(SAMPLE.transfer)}
           </Text>
           <View style={{ height: 5, width: '80%', borderRadius: 3, backgroundColor: DEMO.rule }} />
           <View style={{ height: 5, width: '55%', borderRadius: 3, backgroundColor: DEMO.rule }} />

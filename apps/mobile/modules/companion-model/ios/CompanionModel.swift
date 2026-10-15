@@ -60,7 +60,7 @@ struct ReadQuery: Encodable {
   var merchant: String
   @Guide(description: "The pot's name from their pots, or empty.")
   var pot: String
-  @Guide(description: "An amount in whole đồng, or 0.")
+  @Guide(description: "An amount they named, in whole units of the money they count in, or 0.")
   var amount: Int
 }
 #endif

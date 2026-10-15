@@ -10,6 +10,7 @@ import {
 
 import type { MoneySnapshot } from '../../data/money-store';
 import { openMoneyTables } from '../../data/money-tables';
+import { homeCurrencyOf } from '../../money/use-money-format';
 import type { SqlDatabase } from '../../data/table';
 
 export function insightSpendOf(row: SpendRow): InsightSpend {
@@ -79,5 +80,6 @@ export function insightInputOf(
       goal: p.goal,
       saved: snap.potSaved[p.id] ?? 0,
     })),
+    currency: homeCurrencyOf(snap.plan),
   };
 }

@@ -3,7 +3,10 @@ import { z } from 'zod';
 import {
   currencyOfCountry,
   fxRatesResponseSchema,
+  homeFxRate,
   isFxStale,
+  VND,
+  type Currency,
   type FxRate,
   type FxRatesResponse,
   type TravelCurrency,
@@ -58,20 +61,37 @@ export const parsePlace = (raw: string | null | undefined): Place | null =>
 export const parseFxCache = (raw: string | null | undefined): FxCache | null =>
   parseJson(raw, fxCacheSchema);
 
-/** A trip under way: Travel mode is on, Max is active and the phone is abroad somewhere 6pm knows. */
+/**
+ * A trip under way: Travel mode is on, Max is active and the phone is somewhere 6pm knows whose
+ * currency is not home's (a Vietnamese phone in Bangkok; an American one in Hanoi).
+ */
 export interface Trip {
   /** What a Live Activity follows: a new country is a new trip. */
   readonly key: string;
   readonly place: Place;
   readonly currency: TravelCurrency;
-  /** The currency's rate in đồng, or null before any set has arrived. */
+  /** The currency's rate in home units (đồng for a đồng home), or null without one. */
   readonly rate: FxRate | null;
   /** The rate is older than the staleness threshold (or missing). */
   readonly stale: boolean;
 }
 
-export function rateFor(cache: FxCache | null, currency: string): FxRate | null {
-  return cache?.rates.rates.find((r) => r.currency === currency) ?? null;
+/**
+ * A currency's rate in home units from the kept set (the đồng quote itself when home is đồng),
+ * dated by the older of the two quotes it is made of. Null for home itself and without a quote.
+ */
+export function rateFor(
+  cache: FxCache | null,
+  currency: string,
+  home: Currency = VND,
+): FxRate | null {
+  return cache === null ? null : homeFxRate(cache.rates.rates, currency, home);
+}
+
+/** The đồng for one unit of a currency in the kept set ("1" for the đồng), or null. */
+export function dongQuoteOf(cache: FxCache | null, currency: string): string | null {
+  if (currency === 'VND') return '1';
+  return cache?.rates.rates.find((r) => r.currency === currency)?.rate ?? null;
 }
 
 export function tripOf(input: {
@@ -80,12 +100,14 @@ export function tripOf(input: {
   readonly place: Place | null;
   readonly cache: FxCache | null;
   readonly now: Date;
+  /** Default đồng. */
+  readonly home?: Currency;
 }): Trip | null {
-  const { on, max, place, cache, now } = input;
+  const { on, max, place, cache, now, home = VND } = input;
   if (!on || !max || place === null) return null;
-  const currency = currencyOfCountry(place.country);
+  const currency = currencyOfCountry(place.country, home);
   if (currency === null) return null;
-  const rate = rateFor(cache, currency.code);
+  const rate = rateFor(cache, currency.code, home);
   return {
     key: `trip-${place.country}`,
     place,

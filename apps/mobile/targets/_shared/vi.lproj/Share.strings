@@ -21,6 +21,7 @@
 "title" = "Thêm vào 6pm";
 "to" = "Đến";
 "unknownCurrency" = "Không rõ loại tiền. Nhập số tiền bằng đồng nhé.";
+"unknownCurrencyIn" = "Không rõ loại tiền. Nhập số tiền bằng {currency} nhé.";
 "unreadable" = "Không đọc được biên lai này. Nhập số tiền nhé.";
 "unsure" = "Chưa chắc về tên. Chạm vào để kiểm tra.";
 "when" = "Lúc";

@@ -2,10 +2,9 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Linking, ScrollView, Text, View } from 'react-native';
 
-import { formatShort } from '@6pm/domain';
-
 import { useDay } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
@@ -40,7 +39,8 @@ export function MaxSheet() {
   /** A Max companion tapped in the picker: the hero shows it, and buying Max puts it on. */
   const wanted = parseMaxCompanion(params.companion);
   const companionStore = useCompanionSettingsStore();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const toast = useToast();
   const say = useCompanionToast();
   const { hour } = useClock();
@@ -58,7 +58,7 @@ export function MaxSheet() {
   const { config } = useLookSettings();
   const lookStore = useLookSettingsStore();
   const on = customer.max.active;
-  const safe = formatShort(Math.max(0, day?.safe ?? 0), language);
+  const safe = money.short(Math.max(0, day?.safe ?? 0));
   const statusLine = useMaxStatusLine(customer);
 
   const [chosen, setChosen] = useState<MaxPlan | null>(null);

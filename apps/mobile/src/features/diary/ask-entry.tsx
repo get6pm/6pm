@@ -1,18 +1,24 @@
 import { Text, View } from 'react-native';
 
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
+import { askExamples } from '../ask/ask-suggestions';
 import { Companion } from '../../ui/companion/companion';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
 
-const PREVIEWS = ['diary.ask.dinner', 'diary.ask.weekend', 'diary.ask.tet'] as const;
-
 /** The way into Ask 6pm: the thinking companion and three questions to start from. */
 export function AskEntry({ onAsk }: { readonly onAsk: (question?: string) => void }) {
   const { palette, serious } = useTheme();
   const { t } = useI18n();
+  const money = useMoneyFormat();
+  const previews = [
+    t('diary.ask.dinner', { amount: askExamples(money).dinner }),
+    t('diary.ask.weekend'),
+    t('diary.ask.tet'),
+  ];
   return (
     <View
       style={{
@@ -36,11 +42,11 @@ export function AskEntry({ onAsk }: { readonly onAsk: (question?: string) => voi
         <Symbol name="chevron_right" size={22} color={palette.ink} style={{ opacity: 0.45 }} />
       </PressScale>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-        {PREVIEWS.map((key) => (
+        {previews.map((question) => (
           <PressScale
-            key={key}
+            key={question}
             accessibilityRole="button"
-            onPress={() => onAsk(t(key))}
+            onPress={() => onAsk(question)}
             style={{
               height: 34,
               paddingHorizontal: 13,
@@ -49,7 +55,7 @@ export function AskEntry({ onAsk }: { readonly onAsk: (question?: string) => voi
               justifyContent: 'center',
             }}
           >
-            <Text style={{ ...body(13, 600), color: palette.ink }}>{t(key)}</Text>
+            <Text style={{ ...body(13, 600), color: palette.ink }}>{question}</Text>
           </PressScale>
         ))}
       </View>

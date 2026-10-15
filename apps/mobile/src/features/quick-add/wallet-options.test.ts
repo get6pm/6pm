@@ -10,8 +10,22 @@ describe('walletOptions', () => {
     expect(options[2]?.icon).toBe('account_balance_wallet');
   });
 
-  it('offers the design banks when none were chosen', () => {
-    expect(walletOptions([], 'Cash').map((o) => o.label)).toEqual(['Cash', 'MB Bank', 'MoMo']);
+  it('offers only cash when none were chosen', () => {
+    expect(walletOptions([], 'Cash').map((o) => o.label)).toEqual(['Cash']);
+    expect(walletOptions(['CASH'], 'Cash').map((o) => o.label)).toEqual(['Cash']);
+  });
+
+  it('offers a bank chosen by its typed name, stored by that name', () => {
+    const options = walletOptions(['name:Chase', 'MB'], 'Cash');
+    expect(options.map((o) => o.value)).toEqual(['Cash', 'Chase', 'MB Bank']);
+    expect(options[1]?.bankId).toBe('name:Chase');
+  });
+
+  it('never offers a typed name that reads as a catalogue code as that bank', () => {
+    expect(walletOptions(['name:MB'], 'Cash').map((o) => [o.value, o.bankId])).toEqual([
+      ['Cash', undefined],
+      ['MB', 'name:MB'],
+    ]);
   });
 
   it('keeps a wallet the spend already has, even if it is no longer chosen', () => {

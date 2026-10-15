@@ -9,7 +9,7 @@ export const enExport = {
   'export.csv.time': 'Time',
   'export.csv.merchant': 'Merchant',
   'export.csv.category': 'Category',
-  'export.csv.amount': 'Amount (VND)',
+  'export.csv.amount': 'Amount ({code})',
   'export.csv.status': 'Status',
   'export.csv.source': 'Source',
   'export.csv.wallet': 'Wallet',

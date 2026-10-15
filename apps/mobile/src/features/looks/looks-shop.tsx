@@ -2,11 +2,11 @@ import { useNavigation, useRouter } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
-import { formatShort } from '@6pm/domain';
 import type { LookId } from '@6pm/theme';
 
 import { useDay } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
 import { SheetFrame } from '../../ui/navigation/sheet-frame';
 import { PressScale } from '../../ui/primitives/press-scale';
@@ -32,7 +32,8 @@ const GAP = 12;
 export function LooksShop() {
   const router = useRouter();
   const { palette } = useTheme();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const { hour } = useClock();
   const toast = useToast();
   const say = useCompanionToast();
@@ -42,7 +43,7 @@ export function LooksShop() {
   const store = useLookSettingsStore();
   const copy = useMemo(() => lookCopy(t), [t]);
   const worn = resolveLook(look, customer);
-  const safe = formatShort(Math.max(0, day?.safe ?? 0), language);
+  const safe = money.short(Math.max(0, day?.safe ?? 0));
 
   // While a look is tried on, the page behind wears it: the shop's sheet stops dimming it.
   const navigation = useNavigation();

@@ -1,5 +1,8 @@
+import { steps } from '@6pm/domain';
+
 import { useMoney, useMoneyActions } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useHomeCurrency } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
 import type { CashChip } from './close-steps';
 import type { useClose } from './use-close';
@@ -12,12 +15,32 @@ export function useCloseCash(close: ReturnType<typeof useClose>) {
   const { t } = useI18n();
   const snap = useMoney();
   const actions = useMoneyActions();
+  const home = useHomeCurrency();
 
+  // The design's 5.000₫, 10.000₫, 20.000₫ and 50.000₫, named for Vietnamese life in đồng and
+  // plainly elsewhere.
+  const vietnam = home.code === 'VND';
   const chips: CashChip[] = [
-    { key: 'transport', name: t('close.cash.parking'), amount: 5_000 },
-    { key: 'drinks', name: t('close.cash.sugarcane'), amount: 10_000 },
-    { key: 'food', name: t('close.cash.xoi'), amount: 20_000 },
-    { key: 'groceries', name: t('close.cash.market'), amount: 50_000 },
+    {
+      key: 'transport',
+      name: t(vietnam ? 'close.cash.parking' : 'close.cash.fare'),
+      amount: steps(5, home),
+    },
+    {
+      key: 'drinks',
+      name: t(vietnam ? 'close.cash.sugarcane' : 'close.cash.coffee'),
+      amount: steps(10, home),
+    },
+    {
+      key: 'food',
+      name: t(vietnam ? 'close.cash.xoi' : 'close.cash.snack'),
+      amount: steps(20, home),
+    },
+    {
+      key: 'groceries',
+      name: t(vietnam ? 'close.cash.market' : 'close.cash.groceries'),
+      amount: steps(50, home),
+    },
   ];
   const categoryFor = (key: string) =>
     snap.categories.find((c) => c.id === key)?.id ?? snap.categories[0]?.id ?? key;

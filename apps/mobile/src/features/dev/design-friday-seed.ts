@@ -1,6 +1,6 @@
 import { randomUUID } from 'expo-crypto';
 
-import { addDays, diffDays, parts, payCycleOn, type LocalDate } from '@6pm/domain';
+import { addDays, currencyOf, diffDays, parts, payCycleOn, VND, type LocalDate } from '@6pm/domain';
 
 import type { MoneyStore } from '../../data/money-store';
 import { writePlan } from '../../data/plan-settings';
@@ -10,8 +10,18 @@ import { writePlan } from '../../data/plan-settings';
  * four bills, a 750k-a-month occasion, 2.365.000₫ spent earlier this cycle and the six spends of
  * the day) placed on today's date, so every screen can be compared with the design renders.
  * Replaces everything in the money tables.
+ * With another currency, every amount is worth about the same in it (17,4tr is about $670).
  */
-export async function seedDesignFriday(store: MoneyStore, today: LocalDate): Promise<void> {
+export async function seedDesignFriday(
+  store: MoneyStore,
+  today: LocalDate,
+  code = 'VND',
+): Promise<void> {
+  const currency = currencyOf(code);
+  const worth = (dong: number) =>
+    currency.code === 'VND'
+      ? dong
+      : Math.round((dong / VND.perUsd) * currency.perUsd * currency.minorPerMajor);
   const { db, tables } = store;
   const now = new Date();
   const iso = now.toISOString();
@@ -28,12 +38,13 @@ export async function seedDesignFriday(store: MoneyStore, today: LocalDate): Pro
       await db.runAsync(`DELETE FROM ${table}`, []);
     }
     await writePlan(db, {
-      income: 17_400_000,
+      income: worth(17_400_000),
       payday: { kind: 'sameDay', day: 31 },
-      futureYou: 2_000_000,
+      futureYou: worth(2_000_000),
       closeAt: '18:00',
       persona: 'cheeky',
       serious: false,
+      currency: currency.code,
     });
     const categories = [
       ['food', 'Food', 'restaurant', 45],
@@ -67,7 +78,7 @@ export async function seedDesignFriday(store: MoneyStore, today: LocalDate): Pro
         name,
         icon,
         hue: 60 + i * 70,
-        amount,
+        amount: worth(amount),
         dueDay,
         paidCycle: paid ? cycle.start : null,
         sort: i,
@@ -82,7 +93,7 @@ export async function seedDesignFriday(store: MoneyStore, today: LocalDate): Pro
       name: 'Tết',
       icon: 'celebration',
       hue: 20,
-      goal: 2_250_000,
+      goal: worth(2_250_000),
       neededBy: due.toISOString().slice(0, 7),
       share: null,
       paused: false,
@@ -128,9 +139,9 @@ export async function seedDesignFriday(store: MoneyStore, today: LocalDate): Pro
         day,
         closedAt: new Date(`${day}T18:20:00`).toISOString(),
         late: false,
-        spent: 280_000,
-        line: 340_000,
-        tomorrow: 345_000,
+        spent: worth(280_000),
+        line: worth(340_000),
+        tomorrow: worth(345_000),
         note: null,
       });
       if (weekday === 0) break;
@@ -143,7 +154,7 @@ export async function seedDesignFriday(store: MoneyStore, today: LocalDate): Pro
         id: randomUUID(),
         day,
         at,
-        amount,
+        amount: worth(amount),
         categoryId,
         merchant,
         note: null,

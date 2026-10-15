@@ -36,6 +36,7 @@ const paired = (contributions: { id: string; memberId: string; amount: number }[
         {
           ...fields,
           id: POT,
+          currency: 'VND',
           createdBy: 'an',
           createdAt: '2026-10-13T00:00:00.000Z',
           contributions: contributions.map((c) => ({ ...c, addedAt: '2026-10-13T01:00:00.000Z' })),
@@ -242,11 +243,16 @@ describe('the history this phone keeps', () => {
 
 describe('the shared copy', () => {
   it('lays a new pot over a phone that has no pair yet', () => {
-    const next = applyOp({ me: AN, pair: null }, { kind: 'createPot', id: POT, fields });
+    const next = applyOp(
+      { me: AN, pair: null },
+      { kind: 'createPot', id: POT, fields, currency: 'USD' },
+    );
     expect(next.pair?.members).toEqual([AN]);
-    expect(next.pair?.pots[0]?.name).toBe('Đà Lạt');
+    expect(next.pair?.pots[0]).toMatchObject({ name: 'Đà Lạt', currency: 'USD' });
     // Applying it again (the server's answer already has it) adds nothing.
-    expect(applyOp(next, { kind: 'createPot', id: POT, fields }).pair?.pots).toHaveLength(1);
+    expect(
+      applyOp(next, { kind: 'createPot', id: POT, fields, currency: 'USD' }).pair?.pots,
+    ).toHaveLength(1);
   });
 
   it('never lets one partner take back the other’s money', () => {
@@ -261,9 +267,19 @@ describe('the shared copy', () => {
       { id: 'c1', memberId: 'an', amount: 100_000 },
       { id: 'c2', memberId: 'binh', amount: 200_000 },
     ]);
+    const at = '2026-10-13T01:00:00.000Z';
     expect(ownContributions(state)).toEqual([
-      { id: 'c1', potId: POT, potName: 'Đà Lạt', amount: 100_000, at: '2026-10-13T01:00:00.000Z' },
+      { id: 'c1', potId: POT, potName: 'Đà Lạt', amount: 100_000, currency: 'VND', at },
     ]);
+  });
+
+  it('reads a copy kept before pots had a currency as đồng', () => {
+    const state = paired();
+    const old = {
+      ...state,
+      pair: { ...state.pair, pots: state.pair.pots.map(({ currency: _c, ...p }) => p) },
+    };
+    expect(parseTogetherCache(JSON.stringify(old))?.pair?.pots[0]?.currency).toBe('VND');
   });
 
   it('makes the invite a link into the app on the build’s own host', () => {

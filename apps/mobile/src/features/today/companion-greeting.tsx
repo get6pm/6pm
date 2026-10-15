@@ -1,10 +1,11 @@
 import { Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { formatShort, type DailyNumber } from '@6pm/domain';
+import { type DailyNumber } from '@6pm/domain';
 
 import type { PlanSettings } from '../../data/plan-settings';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { Companion } from '../../ui/companion/companion';
 import { companionMood } from '../../ui/companion/companion-mood';
 import { PressScale } from '../../ui/primitives/press-scale';
@@ -32,7 +33,8 @@ export function CompanionGreeting({
   readonly onPress: () => void;
 }) {
   const { palette, serious } = useTheme();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const { hour } = useClock();
   // A calm day says something about the user's own days; the other events keep their lines.
   const own = useCompanionLine(event === 'closedIdle' ? 'close' : 'today', 'bubble', {
@@ -49,8 +51,8 @@ export function CompanionGreeting({
   const line =
     own?.text ??
     t(`companion.${event}.${plan.persona}` as 'companion.replan.cheeky', {
-      t: formatShort(day.tomorrow, language),
-      b: formatShort(day.line, language),
+      t: money.short(day.tomorrow),
+      b: money.short(day.line),
     });
   return (
     <View

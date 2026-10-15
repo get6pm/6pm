@@ -64,7 +64,7 @@ Chúng tôi không lưu câu hỏi, các dòng biên lai hay ảnh biên lai c�
 
 ### Biên lai qua email
 
-6pm cấp cho điện thoại của bạn một địa chỉ riêng, kiểu receipts+abc123@at6pm.app. Nếu bạn để ngân hàng gửi email, hoặc tự chuyển tiếp email của ngân hàng, tới địa chỉ đó, các khoản thanh toán sẽ vào Hộp thư của bạn.
+6pm cấp cho điện thoại của bạn một địa chỉ riêng, kiểu k7m2qx@at6pm.app. Nếu bạn để ngân hàng gửi email, hoặc tự chuyển tiếp email của ngân hàng, tới địa chỉ đó, các khoản thanh toán sẽ vào Hộp thư của bạn.
 
 Máy chủ của chúng tôi đọc từng email khi nó đến. Nếu email có một khoản thanh toán, máy chủ chỉ giữ những gì đọc được: số tiền, nơi nhận tiền, thời gian và địa chỉ người gửi. Thông tin này được khoá bằng mã hoá cho đến khi điện thoại của bạn lấy về, rồi bị xoá. Bản thân email không bao giờ được lưu, chuyển tiếp hay ghi nhật ký, và thư nào không phải biên lai đều bị bỏ đi. Biên lai nào điện thoại chưa lấy về sau 30 ngày sẽ bị xoá mà không đọc.
 

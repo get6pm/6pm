@@ -8,7 +8,8 @@ const app = createApp(Object.values(routes));
 
 export default {
   fetch: app.fetch,
-  // Receipt email: Email Routing hands every message to `receipts+<handle>@<host>` to this.
+  // Receipt email: Email Routing hands every message to `<handle>@at6pm.app` (its catch-all), `r+<handle>@<host>`
+  // and the older `receipts+<handle>@<host>` to this.
   // Only the outcome is logged, never anything from the email.
   email: async (message, env) => {
     console.log('receipt email', { outcome: await receiveEmail(message, env) });

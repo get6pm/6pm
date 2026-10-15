@@ -111,7 +111,7 @@ export async function seedDesignFriday(store: MoneyStore, today: LocalDate): Pro
         38_000,
         'transport',
         'caught',
-        'From receipts+k7m2q9xd4p@6pm.oddeggs.studio',
+        'From k7m2qx@at6pm.app',
       ],
       [today, '15:05', 'Trà sữa', 45_000, 'drinks', 'kept', null],
       [today, '16:40', 'Circle K', 120_000, 'shopping', 'caught', 'Vietcombank · FT26285ABC'],

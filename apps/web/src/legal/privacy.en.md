@@ -64,7 +64,7 @@ We do not store your questions, receipt lines or receipt photos. For each reques
 
 ### Receipt email
 
-6pm gives your phone its own address, like receipts+abc123@at6pm.app. If you have your bank email you, or forward its emails, to that address, the payments land in your Inbox.
+6pm gives your phone its own address, like k7m2qx@at6pm.app. If you have your bank email you, or forward its emails, to that address, the payments land in your Inbox.
 
 Our server reads each email as it arrives. If the email holds a payment, the server keeps only what it read: the amount, the merchant, the time, and the sender's address. It locks this with encryption until your phone collects it, then deletes it. The email itself is never stored, forwarded or logged, and anything that is not a receipt is dropped. A receipt your phone has not collected after 30 days is deleted unread.
 

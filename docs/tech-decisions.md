@@ -41,7 +41,7 @@ Deliberately absent: Postgres, PowerSync, Redis, Docker, Turbo, NativeWind/Tailw
 | Updates channel | `dev` | `prd` |
 | Purchases | sandbox | real |
 
-One host per environment on the `at6pm.app` zone (changed 15 Oct 2026 from the founder's `oddeggs.studio` zone, whose `6pm` and `6pm-dev` hosts keep their routes, email rules and universal links as legacy hosts): the Astro site serves `/`, the API Worker owns the route `<host>/api/*`, Email Routing delivers `receipts+*@<host>` to the API Worker (one address rule per host, subaddressing on), and the site serves `/.well-known/apple-app-site-association` for universal links. Hosts stay one level below the zone so Cloudflare's universal certificate covers them.
+One host per environment on the `at6pm.app` zone (changed 15 Oct 2026 from the founder's `oddeggs.studio` zone, whose `6pm` and `6pm-dev` hosts keep their routes, email rules and universal links as legacy hosts): the Astro site serves `/`, the API Worker owns the route `<host>/api/*`, Email Routing delivers every address on `at6pm.app` (its catch-all, with `hello@` forwarded first by its own rule) and `r+*@dev.at6pm.app` to the API Worker (one address rule per subdomain host, subaddressing on; the legacy hosts keep their `receipts+*` rules), and the site serves `/.well-known/apple-app-site-association` for universal links. Hosts stay one level below the zone so Cloudflare's universal certificate covers them.
 
 `APP_VARIANT` = `dev` (default) | `prd` | `e2e-test`. Runtime version policy: fingerprint. The v1 runtime `1.0.2` is never published to.
 

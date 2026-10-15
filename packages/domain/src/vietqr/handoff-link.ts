@@ -64,9 +64,9 @@ function base64(text: string): string {
     const b = bytes[i + 1];
     const c = bytes[i + 2];
     const n = (a << 16) | ((b ?? 0) << 8) | (c ?? 0);
-    out += ALPHABET[(n >> 18) & 63]! + ALPHABET[(n >> 12) & 63]!;
-    out += b === undefined ? '=' : ALPHABET[(n >> 6) & 63]!;
-    out += c === undefined ? '=' : ALPHABET[n & 63]!;
+    out += ALPHABET.charAt((n >> 18) & 63) + ALPHABET.charAt((n >> 12) & 63);
+    out += b === undefined ? '=' : ALPHABET.charAt((n >> 6) & 63);
+    out += c === undefined ? '=' : ALPHABET.charAt(n & 63);
   }
   return out;
 }

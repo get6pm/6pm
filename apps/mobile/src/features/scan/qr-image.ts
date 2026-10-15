@@ -13,7 +13,7 @@ const QUIET = 4;
  * A payment code as a picture to save to Photos, black on white, so a bank app that cannot be
  * handed the payment can read it back from the user's photos. The text is drawn exactly as given.
  */
-export async function qrImage(payload: string): Promise<SkImage> {
+export function qrImage(payload: string): SkImage {
   const qr = encodeQR(payload);
   const side = (qr.size + QUIET * 2) * MODULE;
   const surface = Skia.Surface.Make(side, side);

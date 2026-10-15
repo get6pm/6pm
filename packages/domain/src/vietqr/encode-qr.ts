@@ -7,6 +7,7 @@ import {
   rawDataModules,
   type QrLevel,
 } from './qr-tables';
+import { rsDivisor, rsRemainder } from './reed-solomon';
 import { utf8 } from './utf8';
 
 /** A QR Code as dark (true) and light modules, row by row: `rows[y][x]`. */
@@ -87,13 +88,37 @@ function withErrorCorrection(data: number[], version: number, level: QrLevel): n
   return out;
 }
 
+/** A square of modules kept flat, read and written by position. */
+class Grid {
+  private readonly cells: boolean[];
+  constructor(readonly size: number) {
+    this.cells = new Array<boolean>(size * size).fill(false);
+  }
+  get(x: number, y: number): boolean {
+    return this.cells[y * this.size + x] === true;
+  }
+  set(x: number, y: number, on: boolean) {
+    this.cells[y * this.size + x] = on;
+  }
+  copy(): Grid {
+    const grid = new Grid(this.size);
+    this.cells.forEach((on, i) => (grid.cells[i] = on));
+    return grid;
+  }
+  rows(): boolean[][] {
+    return Array.from({ length: this.size }, (_, y) =>
+      Array.from({ length: this.size }, (_, x) => this.get(x, y)),
+    );
+  }
+}
+
 function draw(version: number, level: QrLevel, data: number[], fixedMask?: number): QrMatrix {
   const size = version * 4 + 17;
-  const dark = Array.from({ length: size }, () => new Array<boolean>(size).fill(false));
-  const fixed = Array.from({ length: size }, () => new Array<boolean>(size).fill(false));
+  const dark = new Grid(size);
+  const fixed = new Grid(size);
   const set = (x: number, y: number, on: boolean) => {
-    dark[y]![x] = on;
-    fixed[y]![x] = true;
+    dark.set(x, y, on);
+    fixed.set(x, y, true);
   };
 
   for (let i = 0; i < size; i++) {
@@ -147,8 +172,8 @@ function draw(version: number, level: QrLevel, data: number[], fixedMask?: numbe
       for (let j = 0; j < 2; j++) {
         const x = right - j;
         const y = ((right + 1) & 2) === 0 ? size - 1 - vert : vert;
-        if (!fixed[y]![x] && bit < data.length * 8) {
-          dark[y]![x] = (((data[bit >>> 3] ?? 0) >>> (7 - (bit & 7))) & 1) === 1;
+        if (!fixed.get(x, y) && bit < data.length * 8) {
+          dark.set(x, y, (((data[bit >>> 3] ?? 0) >>> (7 - (bit & 7))) & 1) === 1);
           bit++;
         }
       }
@@ -156,33 +181,47 @@ function draw(version: number, level: QrLevel, data: number[], fixedMask?: numbe
   }
 
   const masked = (mask: number) => {
-    const rows = dark.map((row, y) =>
-      row.map((on, x) => (fixed[y]![x] ? on : on !== MASKS[mask]!(x, y))),
-    );
-    drawFormat((x, y, on) => (rows[y]![x] = on), size, level, mask);
-    return rows;
+    const grid = dark.copy();
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        if (!fixed.get(x, y) && maskFlips(mask, x, y)) grid.set(x, y, !grid.get(x, y));
+      }
+    }
+    drawFormat((x, y, on) => grid.set(x, y, on), size, level, mask);
+    return grid;
   };
-  if (fixedMask !== undefined) return { size, rows: masked(fixedMask) };
+  if (fixedMask !== undefined) return { size, rows: masked(fixedMask).rows() };
   let best = masked(0);
   let bestScore = penalty(best);
   for (let mask = 1; mask < 8; mask++) {
-    const rows = masked(mask);
-    const score = penalty(rows);
-    if (score < bestScore) [best, bestScore] = [rows, score];
+    const grid = masked(mask);
+    const score = penalty(grid);
+    if (score < bestScore) [best, bestScore] = [grid, score];
   }
-  return { size, rows: best };
+  return { size, rows: best.rows() };
 }
 
-const MASKS: readonly ((x: number, y: number) => boolean)[] = [
-  (x, y) => (x + y) % 2 === 0,
-  (_, y) => y % 2 === 0,
-  (x) => x % 3 === 0,
-  (x, y) => (x + y) % 3 === 0,
-  (x, y) => (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0,
-  (x, y) => ((x * y) % 2) + ((x * y) % 3) === 0,
-  (x, y) => (((x * y) % 2) + ((x * y) % 3)) % 2 === 0,
-  (x, y) => (((x + y) % 2) + ((x * y) % 3)) % 2 === 0,
-];
+/** Whether mask 0–7 inverts the data module at (x, y). */
+function maskFlips(mask: number, x: number, y: number): boolean {
+  switch (mask) {
+    case 0:
+      return (x + y) % 2 === 0;
+    case 1:
+      return y % 2 === 0;
+    case 2:
+      return x % 3 === 0;
+    case 3:
+      return (x + y) % 3 === 0;
+    case 4:
+      return (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0;
+    case 5:
+      return ((x * y) % 2) + ((x * y) % 3) === 0;
+    case 6:
+      return (((x * y) % 2) + ((x * y) % 3)) % 2 === 0;
+    default:
+      return (((x + y) % 2) + ((x * y) % 3)) % 2 === 0;
+  }
+}
 
 function drawFormat(
   set: (x: number, y: number, on: boolean) => void,
@@ -206,10 +245,10 @@ function drawFormat(
 }
 
 /** The ISO/IEC 18004 mask score: long runs, 2×2 blocks, finder look-alikes, dark/light balance. */
-function penalty(rows: boolean[][]): number {
-  const size = rows.length;
+function penalty(grid: Grid): number {
+  const { size } = grid;
   const line = (i: number, vertical: boolean) =>
-    Array.from({ length: size }, (_, k) => (vertical ? rows[k]![i]! : rows[i]![k]!));
+    Array.from({ length: size }, (_, k) => (vertical ? grid.get(i, k) : grid.get(k, i)));
   const finder = [true, false, true, true, true, false, true];
   let score = 0;
   for (let i = 0; i < size; i++) {
@@ -232,52 +271,18 @@ function penalty(rows: boolean[][]): number {
   let darkCount = 0;
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
-      if (rows[y]![x]) darkCount++;
-      const c = rows[y]![x];
-      if (
+      const c = grid.get(x, y);
+      if (c) darkCount++;
+      const block =
         x < size - 1 &&
         y < size - 1 &&
-        rows[y]![x + 1] === c &&
-        rows[y + 1]![x] === c &&
-        rows[y + 1]![x + 1] === c
-      )
-        score += 3;
+        grid.get(x + 1, y) === c &&
+        grid.get(x, y + 1) === c &&
+        grid.get(x + 1, y + 1) === c;
+      if (block) score += 3;
     }
   }
   const total = size * size;
   score += (Math.ceil(Math.abs(darkCount * 20 - total * 10) / total) - 1) * 10;
   return score;
-}
-
-function rsMultiply(x: number, y: number): number {
-  let z = 0;
-  for (let i = 7; i >= 0; i--) {
-    z = (z << 1) ^ ((z >>> 7) * 0x11d);
-    z ^= ((y >>> i) & 1) * x;
-  }
-  return z;
-}
-
-function rsDivisor(degree: number): number[] {
-  const result = new Array<number>(degree).fill(0);
-  result[degree - 1] = 1;
-  let root = 1;
-  for (let i = 0; i < degree; i++) {
-    for (let j = 0; j < degree; j++) {
-      result[j] = rsMultiply(result[j]!, root);
-      if (j + 1 < degree) result[j]! ^= result[j + 1]!;
-    }
-    root = rsMultiply(root, 0x02);
-  }
-  return result;
-}
-
-function rsRemainder(data: number[], divisor: number[]): number[] {
-  const result = new Array<number>(divisor.length).fill(0);
-  for (const b of data) {
-    const factor = b ^ (result.shift() ?? 0);
-    result.push(0);
-    divisor.forEach((coef, i) => (result[i]! ^= rsMultiply(coef, factor)));
-  }
-  return result;
 }

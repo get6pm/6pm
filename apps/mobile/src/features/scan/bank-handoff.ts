@@ -48,7 +48,10 @@ export async function handOff(bank: BankInfo | null, qr: VietQR, amount: number)
 /** Saves the code to Photos; a refusal or a failure leaves the copied amount to carry the payment. */
 async function saveQr(payload: string): Promise<boolean> {
   try {
-    const saved = await saveImage(() => qrImage(payload), shareFileName('payment-qr', ''));
+    const saved = await saveImage(
+      () => Promise.resolve(qrImage(payload)),
+      shareFileName('payment-qr', ''),
+    );
     return saved === 'saved';
   } catch {
     return false;

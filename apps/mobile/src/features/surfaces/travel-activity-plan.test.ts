@@ -78,7 +78,11 @@ describe('what the trip’s activity says', () => {
   it('reads like the design: place, what is left, spent of the line, đồng underneath', () => {
     const active = tripOf({ on: true, max: true, place, cache, now });
     expect(active).not.toBeNull();
-    const state = travelState(active!, { line: 924_000, spent: 493_000 }, { t, palette, format });
+    const state = travelState(
+      active!,
+      { line: 924_000, spent: 493_000, safe: 431_000 },
+      { t, palette, format },
+    );
     expect(state).toMatchObject({
       place: 'Bangkok · today',
       left: '฿559 left',
@@ -86,16 +90,27 @@ describe('what the trip’s activity says', () => {
       of: 'of ฿1.199 · ≈ 493.000₫',
       path: '/',
       accent: palette.accent,
+      leftAmount: '฿559',
+      leftDetail: 'left of ฿1.199 · ≈ 431.000₫',
+      leftHome: 'left · ≈ 431.000₫',
+      log: 'Log ฿',
+      logPath: '/app/quick-add',
     });
   });
 
   it('says how far over when the day went over, and nothing without a rate', () => {
     const active = tripOf({ on: true, max: true, place, cache, now })!;
-    expect(
-      travelState(active, { line: 100_000, spent: 150_000 }, { t, palette, format })?.left,
-    ).toBe('฿65 over');
+    const over = travelState(
+      active,
+      { line: 100_000, spent: 150_000, safe: -50_000 },
+      { t, palette, format },
+    );
+    expect(over?.left).toBe('฿65 over');
+    expect(over).toMatchObject({ leftAmount: '฿65', leftHome: 'over · ≈ 50.000₫' });
     const noRate = tripOf({ on: true, max: true, place, cache: null, now })!;
-    expect(travelState(noRate, { line: 100_000, spent: 0 }, { t, palette, format })).toBeNull();
+    expect(
+      travelState(noRate, { line: 100_000, spent: 0, safe: 100_000 }, { t, palette, format }),
+    ).toBeNull();
   });
 
   it('shows the day in the home currency on a phone counting dollars', () => {
@@ -115,13 +130,14 @@ describe('what the trip’s activity says', () => {
     const active = tripOf({ on: true, max: true, place, cache: quotes, now, home: usd })!;
     const state = travelState(
       active,
-      { line: 3_000, spent: 1_500 },
+      { line: 3_000, spent: 1_500, safe: 1_500 },
       { t, palette, format: dollars, phone },
     );
     expect(state).toMatchObject({
       left: '฿506 left',
       spent: '฿506',
       of: 'of ฿1,012 · ≈ $15',
+      leftDetail: 'left of ฿1,012 · ≈ $15',
     });
   });
 });

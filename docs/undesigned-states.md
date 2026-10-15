@@ -271,3 +271,6 @@ fakes behaviour the app cannot fake. Founder review.
 | Onboarding · Catching | Receipt email in on-device mode | The Email tab and card are left out of the rail, and the companion's count is of the ways shown | Receipt email exists only in server mode |
 | Share extension | A photo the phone is unsure of, in on-device mode | The card shows what the phone read at once, with no “looking” wait | The server's closer look is AI on our server |
 | Ask | A question the rules cannot read, in on-device mode | The help answer, without the offline note | Rules reading is the chosen mode, not a fallback |
+| Live Activity · Waiting to pay | No "Didn't pay" yet | Paid alone, as one full-width pill under the amount | The design pairs Paid with "Didn't pay", which the inbox cannot carry yet |
+| Live Activity · Travel day | No "Trip so far" yet; the day over its line | "Log ฿" alone, full width; over the line the large amount is how far over, with "over ฿1.200 · ≈ …" beside it | The design pairs Log with a trip summary that does not exist, and only draws a day under its line |
+| Widgets · Large (Today) | A dark Home Screen | The night card, as the small widget's Dark appearance, with the PENDING tag in its dark ink | The gallery shows only the small widget's Dark appearance |

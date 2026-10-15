@@ -133,6 +133,14 @@ export const surfaceEntrySchema = z.object({
     }),
   ),
   moreText: z.string(),
+  /** "155k spent", under the large widget's bar; absent in files from before it was drawn. */
+  spentText: z.string().optional(),
+  /** "of 400k": the day's line, beside `spentText`. */
+  lineText: z.string().optional(),
+  /** How much of the line is spent, 0 to 1: the bar's fill. */
+  spentFraction: z.number().min(0).max(1).optional(),
+  /** "40.000₫": what the spends past the list add up to, beside `moreText`. */
+  moreAmountText: z.string().optional(),
 });
 
 /** What the widgets draw: every number and word decided by the app, in its language. */

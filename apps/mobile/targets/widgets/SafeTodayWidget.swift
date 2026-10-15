@@ -57,32 +57,42 @@ struct SetUpView: View {
   }
 }
 
-/// Small (`SS:115-120`): the companion, then "245k" and "safe today" on the light card.
+/// Small (gallery and Looks): the companion and Scan QR over the number and "safe today". Free, it
+/// sits on the light card (the night card on a dark Home Screen); in the user's look (Max), on the
+/// look's own ground in its display face: day ground before the flip, dusk ground after.
 struct SafeSmall: View {
+  @Environment(\.colorScheme) private var scheme
   let entry: SurfaceEntry
 
   var body: some View {
     if let day = entry.entry {
-      let ink = entry.color("cardInk")
+      let style = SmallStyle(entry: entry, dark: scheme == .dark)
       VStack(alignment: .leading, spacing: 0) {
-        if let companion = entry.companion {
-          Image(uiImage: companion).resizable().frame(width: 40, height: 40)
+        HStack(alignment: .top, spacing: 0) {
+          CompanionPicture(image: entry.companion(size: 36), size: 36)
+          Spacer(minLength: 0)
+          RoundLink(
+            glyph: entry.text("glyph.scan"), path: "/app/scan", size: 36, glyphSize: 20,
+            background: style.button, foreground: style.onButton)
         }
         Spacer(minLength: 0)
         VStack(alignment: .leading, spacing: 2) {
           Text(day.safeShort)
-            .font(SurfaceFont.display(entry.displayFont, size: 44))
+            .font(SurfaceFont.display(entry.displayFont, size: style.size, weight: style.weight))
+            .foregroundStyle(style.number)
             .minimumScaleFactor(0.6)
             .lineLimit(1)
+            .widgetAccentable()
           Text(entry.state == .stale ? entry.text("openApp") : entry.text("safeTodayShort"))
             .font(SurfaceFont.body(size: 12, weight: 600))
-            .opacity(0.6)
+            .opacity(style.labelOpacity)
+            .lineLimit(1)
         }
       }
-      .foregroundStyle(ink)
+      .foregroundStyle(style.ink)
       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
       .padding(16)
-      .containerBackground(entry.color("cardBg"), for: .widget)
+      .containerBackground(for: .widget) { style.ground }
     } else {
       SetUpView(entry: entry)
     }
@@ -162,7 +172,8 @@ struct ActionTile: View {
   }
 }
 
-/// Lock Screen ring (`SS:44-48`): what is left of today's line, "245k" over "left".
+/// Lock Screen ring (`SS:44-48`): what is left of today's line, "245k" over "left", inside a
+/// 4.5 pt ring set 4 pt in from the glass.
 struct SafeRing: View {
   let entry: SurfaceEntry
 
@@ -170,22 +181,26 @@ struct SafeRing: View {
     let fraction = entry.state == .day ? (entry.entry?.ringFraction ?? 0) : 0
     ZStack {
       AccessoryWidgetBackground()
-      Circle().stroke(ThemeTokens.Activity.ringTrack, lineWidth: 5)
-      Circle()
-        .trim(from: 0, to: fraction)
-        .stroke(ThemeTokens.Activity.ink, style: StrokeStyle(lineWidth: 5, lineCap: .butt))
-        .rotationEffect(.degrees(-90))
-      VStack(spacing: 1) {
+      Group {
+        Circle().stroke(ThemeTokens.Activity.ink.opacity(0.25), lineWidth: 4.5)
+        Circle()
+          .trim(from: 0, to: fraction)
+          .stroke(ThemeTokens.Activity.ink, style: StrokeStyle(lineWidth: 4.5, lineCap: .butt))
+          .rotationEffect(.degrees(-90))
+      }
+      .padding(6.25)
+      VStack(spacing: 0) {
         Text(entry.entry?.safeShort ?? "–")
-          .font(SurfaceFont.body(size: 17, weight: 700))
-          .trackingEm(-0.02, size: 17)
+          .font(SurfaceFont.body(size: 18, weight: 700))
+          .trackingEm(-0.03, size: 18)
           .minimumScaleFactor(0.6)
           .lineLimit(1)
         Text(entry.snapshot == nil ? "" : entry.text("left"))
           .font(SurfaceFont.body(size: 10, weight: 600))
-          .opacity(0.75)
+          .trackingEm(0.02, size: 10)
+          .opacity(0.7)
       }
-      .padding(.horizontal, 7)
+      .padding(.horizontal, 13)
     }
     .widgetAccentable()
     .containerBackground(for: .widget) {}

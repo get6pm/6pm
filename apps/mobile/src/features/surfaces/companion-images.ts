@@ -4,16 +4,32 @@ import type { CompanionForm } from '../../ui/companion/companion-mood';
 import { drawCompanion } from '../../ui/companion/draw-companion';
 import { makeFrame } from '../../ui/companion/make-frame';
 
-/** The moods the widgets and the Live Activity show, and the sizes (points) they show them at. */
-export const SURFACE_MOODS = ['calm', 'happy'] as const;
-export const SURFACE_SIZES = [24, 40, 44, 46] as const;
+/** The moods the surfaces show: the widgets follow the hour, a waiting payment thinks. */
+export const SURFACE_MOODS = ['calm', 'happy', 'wave', 'nod', 'sleepy', 'think'] as const;
+export type SurfaceMood = (typeof SURFACE_MOODS)[number];
+
+/**
+ * Each picture a surface draws, in points: the small widget's (36) and the large one's title (22)
+ * in every mood the hour can bring; the waiting payment's Dynamic Island (24, 26, 46) and Lock
+ * Screen (52); the share card's (40) and the Siri snippet's (44).
+ */
+const SURFACE_PICTURES: readonly (readonly [SurfaceMood, number])[] = [
+  ...(['calm', 'happy', 'wave', 'nod', 'sleepy'] as const).flatMap((mood) => [
+    [mood, 22] as const,
+    [mood, 36] as const,
+  ]),
+  ['think', 24],
+  ['think', 26],
+  ['think', 46],
+  ['think', 52],
+  ['calm', 40],
+  ['happy', 44],
+];
 /** Drawn at @3× so the picture is sharp on every iPhone. */
 const SCALE = 3;
 /** The same still moment the app holds with Reduce Motion: eyes open, settled. */
 const STILL_SECONDS = 2.6;
 const SETTLED_SECONDS = 99;
-
-export type SurfaceMood = (typeof SURFACE_MOODS)[number];
 
 /** `companion-calm-44`: the file name Swift reads from the App Group's surfaces folder. */
 export function companionImageName(mood: SurfaceMood, size: number): string {
@@ -60,11 +76,9 @@ export function renderCompanion(
 /** Every picture the surfaces need, by file name. */
 export function renderCompanions(form: CompanionForm): { name: string; png: string }[] {
   const out: { name: string; png: string }[] = [];
-  for (const mood of SURFACE_MOODS) {
-    for (const size of SURFACE_SIZES) {
-      const png = renderCompanion(mood, size, form);
-      if (png !== null) out.push({ name: companionImageName(mood, size), png });
-    }
+  for (const [mood, size] of SURFACE_PICTURES) {
+    const png = renderCompanion(mood, size, form);
+    if (png !== null) out.push({ name: companionImageName(mood, size), png });
   }
   return out;
 }

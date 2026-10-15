@@ -159,7 +159,11 @@ describe('pendingPayState', () => {
       short: '45k',
       paid: 'Paid',
       path: '/app/spend/b',
-      companion: 'calm',
+      companion: 'think',
+      amount: { prefix: '', number: '45.000', suffix: '₫' },
+      detail: 'to Phở Hòa',
+      bankCaption: 'Waiting · tap when paid',
+      since: '2026-10-09T05:10:00.000Z',
     });
     const serious = pendingPayState(newer, {
       t: (key, ...params) => translate('vi', key, ...params),
@@ -169,6 +173,20 @@ describe('pendingPayState', () => {
     });
     expect(serious.companion).toBeNull();
     expect(serious.title).toBe('45.000₫ cho Phở Hòa');
+  });
+
+  it('names the bank the payment went to, when the scan chose one', () => {
+    const state = pendingPayState(
+      { ...newer, wallet: 'MB Bank' },
+      {
+        t: (key, ...params) => translate('en', key, ...params),
+        format: moneyFormat(moneyLocale(VND, 'en')),
+        palette: paletteFor({ look: 'golden', hour: 18, serious: false }),
+        serious: false,
+      },
+    );
+    expect(state.detail).toBe('to Phở Hòa · opened MB Bank');
+    expect(state.bankCaption).toBe('Waiting · MB Bank');
   });
 
   it('writes a large waiting payment the short way of the app’s language', () => {

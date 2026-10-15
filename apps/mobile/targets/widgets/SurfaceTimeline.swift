@@ -23,6 +23,13 @@ struct SurfaceSnapshot: Decodable {
     let ringFraction: Double
     let list: [Row]
     let moreText: String
+    /// The large widget's bar: "155k spent" of "of 400k", and how full it is. Absent in a snapshot
+    /// written before the bar was drawn.
+    let spentText: String?
+    let lineText: String?
+    let spentFraction: Double?
+    /// What the spends past the list add up to, beside "+2 more".
+    let moreAmountText: String?
   }
 
   struct HourPalette: Decodable {
@@ -86,8 +93,15 @@ struct SurfaceEntry: TimelineEntry {
   func color(_ token: String) -> Color { Color(css: tokens[token]) }
   func text(_ key: String) -> String { snapshot?.text(key) ?? "" }
   var displayFont: String? { snapshot?.strings["font.display"] }
-  var companion: UIImage? {
-    snapshot?.serious == false ? CompanionImage.load(mood: "calm", size: 40) : nil
+  /// Drawn in the user's look (Max): the look's own ground and display face.
+  var inLook: Bool { snapshot?.maxLook != nil }
+
+  /// The companion in the hour's mood at a size, or nil in serious mode (and before the app drew
+  /// it in that mood).
+  func companion(size: Int) -> UIImage? {
+    guard snapshot?.serious == false else { return nil }
+    return CompanionImage.load(mood: tokens["mood"] ?? "calm", size: size)
+      ?? CompanionImage.load(mood: "calm", size: size)
   }
 }
 

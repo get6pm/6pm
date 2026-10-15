@@ -1,7 +1,8 @@
 import SwiftUI
 import WidgetKit
 
-/// Today (large, `SS:121-127`): what is left, then today's newest three spends and "+N more".
+/// Today (large, `SS:121-127`): what is left, the day's spend against its line, then today's newest
+/// three spends and "+N more" with what they add up to.
 struct TodayListWidget: Widget {
   var body: some WidgetConfiguration {
     StaticConfiguration(kind: "TodayList", provider: SurfaceTimelineProvider()) { entry in
@@ -15,20 +16,42 @@ struct TodayListWidget: Widget {
 }
 
 struct TodayListView: View {
+  @Environment(\.colorScheme) private var scheme
   let entry: SurfaceEntry
 
   var body: some View {
     if let day = entry.entry {
-      let ink = entry.color("cardInk")
-      VStack(alignment: .leading, spacing: 2) {
-        HStack(alignment: .firstTextBaseline) {
-          Text(entry.text("today")).font(SurfaceFont.body(size: 15, weight: 700))
+      // Free, the card turns to the night card on a dark Home Screen, as the small one does.
+      let dark = scheme == .dark && !entry.inLook
+      let ink = dark ? ThemeTokens.PlainNight.ink : entry.color("cardInk")
+      VStack(alignment: .leading, spacing: 0) {
+        HStack(alignment: .lastTextBaseline) {
+          HStack(spacing: 8) {
+            CompanionPicture(image: entry.companion(size: 22), size: 22)
+            Text(entry.text("today")).font(SurfaceFont.body(size: 15, weight: 700))
+          }
           Spacer(minLength: 8)
           Text(day.safeText)
             .font(SurfaceFont.display(entry.displayFont, size: 24))
             .lineLimit(1)
+            .widgetAccentable()
         }
-        .padding(.bottom, 6)
+        if let fraction = day.spentFraction {
+          VStack(spacing: 5) {
+            LineBar(fraction: fraction, track: ink.opacity(0.08), fill: entry.color("accent"))
+            HStack {
+              Text(day.spentText ?? "")
+              Spacer(minLength: 8)
+              Text(day.lineText ?? "")
+            }
+            .font(SurfaceFont.body(size: 11, weight: 600))
+            .foregroundStyle(ink.opacity(0.55))
+            .lineLimit(1)
+          }
+          .padding(EdgeInsets(top: 6, leading: 0, bottom: 8, trailing: 0))
+        } else {
+          Spacer().frame(height: 6)
+        }
         if day.list.isEmpty {
           ListLine(ink: ink) {
             Text(entry.text("listEmpty")).opacity(0.55)
@@ -36,13 +59,17 @@ struct TodayListView: View {
           }
         }
         ForEach(Array(day.list.enumerated()), id: \.offset) { _, row in
-          SpendLine(row: row, entry: entry, ink: ink)
+          SpendLine(
+            row: row, entry: entry, ink: ink,
+            pendingInk: entry.color(dark ? "pendingInkDark" : "pendingInk"))
         }
         if !day.moreText.isEmpty {
           ListLine(ink: ink, vertical: 7) {
-            Text(day.moreText).opacity(0.55)
+            Text(day.moreText)
             Spacer(minLength: 0)
+            Text(day.moreAmountText ?? "")
           }
+          .opacity(0.55)
         }
         if entry.state == .stale {
           ListLine(ink: ink, vertical: 7) {
@@ -54,8 +81,9 @@ struct TodayListView: View {
       }
       .font(SurfaceFont.body(size: 14, weight: 400))
       .foregroundStyle(ink)
-      .padding(EdgeInsets(top: 16, leading: 16, bottom: 10, trailing: 16))
-      .containerBackground(entry.color("cardBg"), for: .widget)
+      .padding(EdgeInsets(top: 14, leading: 16, bottom: 6, trailing: 16))
+      .containerBackground(
+        dark ? ThemeTokens.PlainNight.sheetSolid : entry.color("cardBg"), for: .widget)
     } else {
       SetUpView(entry: entry)
     }
@@ -82,12 +110,12 @@ struct SpendLine: View {
   let row: SurfaceSnapshot.Row
   let entry: SurfaceEntry
   let ink: Color
+  let pendingInk: Color
 
   var body: some View {
     let hue = row.hue.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(row.hue)) : String(row.hue)
     ListLine(ink: ink) {
-      Text(row.icon)
-        .font(SurfaceFont.symbol(size: 16, filled: true))
+      FilledGlyph(glyph: row.icon, size: 16)
         .foregroundStyle(Color(css: entry.text("tile.\(hue).glyph")))
         .frame(width: 26, height: 26)
         .background(
@@ -104,7 +132,7 @@ struct SpendLine: View {
           Text(entry.text("pendingTag").uppercased())
             .font(SurfaceFont.body(size: 11, weight: 700))
             .trackingEm(0.04, size: 11)
-            .foregroundStyle(entry.color("pendingInk"))
+            .foregroundStyle(pendingInk)
         }
       }
       Spacer(minLength: 8)

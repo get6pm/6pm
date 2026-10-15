@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useReducedMotion, withTiming } from 'react-native-reanimated';
 
-import { formatShort } from '@6pm/domain';
-
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { Companion } from '../../ui/companion/companion';
 import { haptics } from '../../ui/haptics';
 import { FitWidth } from '../../ui/layout/fit-width';
@@ -57,7 +56,8 @@ export function StepFirstNumber({
   readonly reminded: boolean;
   readonly leaving: boolean;
 }) {
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const reduceMotion = useReducedMotion();
   const [shown, setShown] = useState(0);
   useEffect(() => {
@@ -149,14 +149,14 @@ export function StepFirstNumber({
                 <Text style={{ ...body(12), color: pal.inkSoft }}>{part.label}</Text>
               </View>
               <Text style={{ ...body(15, 700), color: pal.ink }}>
-                {formatShort(Math.max(0, part.value), language)}
+                {money.short(Math.max(0, part.value))}
               </Text>
             </View>
           ))}
         </View>
         <Text style={{ ...body(12.5), lineHeight: 17.5, color: pal.inkSoft }}>
           {t('onboarding.reveal.math', {
-            income: formatShort(income, language),
+            income: money.short(income),
             count: first.days,
           })}
         </Text>
@@ -176,7 +176,8 @@ export function LeavingOverlay({
   readonly line: number;
   readonly pal: OnboardingPalette;
 }) {
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const reduceMotion = useReducedMotion();
   const fade = useMountProgress(600, ease.cssIn);
   const style = useAnimatedStyle(() => ({ opacity: fade.value }));
@@ -199,9 +200,7 @@ export function LeavingOverlay({
         {t('onboarding.leave.kicker')}
       </Text>
       <Animated.View entering={riseEntering(500, 100, reduceMotion)}>
-        <Text style={{ ...display(56, 500, -0.03), color: pal.light }}>
-          {formatShort(line, language)}
-        </Text>
+        <Text style={{ ...display(56, 500, -0.03), color: pal.light }}>{money.short(line)}</Text>
       </Animated.View>
     </Animated.View>
   );

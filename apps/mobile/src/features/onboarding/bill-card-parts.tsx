@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
-import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
 import type { SymbolName } from '../../ui/icons/symbols.generated';
 import { PressScale } from '../../ui/primitives/press-scale';
@@ -10,9 +9,21 @@ import { BalancedText } from '../../ui/type/balanced-text';
 import { body, display, mono } from '../../ui/type/fonts';
 import { Wheel } from '../../ui/wheel/wheel';
 import { BILL_CARDS, type DeckItem } from './bill-deck';
-import { BILL_MILLIONS, billDigits, billOf, DIGITS } from './onboarding-maths';
+import {
+  billDigits,
+  billMillionsItems,
+  billOf,
+  DIGITS,
+  markAfter,
+  zerosBelow,
+} from './onboarding-maths';
 import { tileOf, type OnboardingPalette } from './onboarding-palette';
 import { WheelBand } from './step-parts';
+import { useWheelMoney, WheelSymbol } from './wheel-money';
+
+/** The bill millions wheel's width, and what a group mark inside its two digits adds. */
+const MILLIONS_WIDTH = 54;
+const INNER_MARK_WIDTH = 8;
 
 /** The pieces a bills card is made of: buttons, the icon row, the question, the amount wheels. */
 
@@ -123,58 +134,53 @@ export function AmountWheels({
   readonly band: string;
   readonly onValue: (value: number) => void;
 }) {
-  const { t } = useI18n();
-  const { millions, hundreds, tens } = billDigits(value);
+  const w = useWheelMoney();
+  const c = w.currency;
+  const { millions, hundreds, tens } = billDigits(value, c);
   const number = { ...display(30, 600, -0.03), color: ink };
+  const innerMark = markAfter(w.place + 1, w.mark) !== '';
+  const afterMillions = markAfter(w.place, w.mark);
+  const afterHundreds = markAfter(w.place - 1, w.mark);
   return (
     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
       <WheelBand height={44} radius={14} color={band} />
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <WheelSymbol symbol={w.before} size={15} offset={48} ink={ink} side="before" />
         <Wheel
-          items={BILL_MILLIONS}
+          items={billMillionsItems(c, w.mark)}
           index={millions}
-          onChange={(k) => onValue(billOf(k, hundreds, tens))}
+          onChange={(k) => onValue(billOf(k, hundreds, tens, c))}
           size={30}
           padX={0}
           align="flex-end"
           ink={ink}
-          width={54}
-          label={t('onboarding.bills.millions')}
+          width={MILLIONS_WIDTH + (innerMark ? INNER_MARK_WIDTH : 0)}
+          label={w.label('millions', 'onboarding.bills.millions')}
         />
-        <Text style={number}>.</Text>
+        {afterMillions === '' ? null : <Text style={number}>{afterMillions}</Text>}
         <Wheel
           items={DIGITS}
           index={hundreds}
-          onChange={(k) => onValue(billOf(millions, k, tens))}
+          onChange={(k) => onValue(billOf(millions, k, tens, c))}
           size={30}
           padX={0}
           ink={ink}
           width={19}
-          label={t('onboarding.bills.hundreds')}
+          label={w.label('hundreds', 'onboarding.bills.hundreds')}
         />
+        {afterHundreds === '' ? null : <Text style={number}>{afterHundreds}</Text>}
         <Wheel
           items={DIGITS}
           index={tens}
-          onChange={(k) => onValue(billOf(millions, hundreds, k))}
+          onChange={(k) => onValue(billOf(millions, hundreds, k, c))}
           size={30}
           padX={0}
           ink={ink}
           width={19}
-          label={t('onboarding.bills.tens')}
+          label={w.label('tens', 'onboarding.bills.tens')}
         />
-        <Text style={number}>0.000</Text>
-        <Text
-          style={{
-            ...display(15, 600),
-            color: ink,
-            marginLeft: 4,
-            opacity: 0.55,
-            alignSelf: 'flex-start',
-            marginTop: 48,
-          }}
-        >
-          ₫
-        </Text>
+        {w.place - 2 > 0 ? <Text style={number}>{zerosBelow(w.place - 2, w.mark)}</Text> : null}
+        <WheelSymbol symbol={w.after} size={15} offset={48} ink={ink} side="after" />
       </View>
     </View>
   );

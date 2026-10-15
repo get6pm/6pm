@@ -24,9 +24,9 @@ describe('payWallets', () => {
     expect(payWallets(['MB', 'CASH', 'MOMO']).map((b) => b.id)).toEqual(['MB', 'MOMO']);
   });
 
-  it('falls back to the design’s three when the user picked none', () => {
-    expect(payWallets([]).map((b) => b.id)).toEqual(['MB', 'VCB', 'MOMO']);
-    expect(payWallets(['CASH']).map((b) => b.id)).toEqual(['MB', 'VCB', 'MOMO']);
+  it('offers no bank the user did not pick, and none they named by hand', () => {
+    expect(payWallets([])).toEqual([]);
+    expect(payWallets(['CASH', 'name:MB'])).toEqual([]);
   });
 });
 
@@ -43,6 +43,11 @@ describe('payOptions', () => {
     const options = payOptions(merchant, ['MOMO', 'TCB']);
     expect(options.mode).toBe('bankApp');
     expect(options.mode === 'bankApp' && options.bank?.id).toBe('TCB');
+  });
+
+  it('sends a transfer to a bank app when the user picked no bank 6pm knows', () => {
+    expect(payOptions(vcb, [])).toEqual({ mode: 'bankApp', bank: null });
+    expect(payOptions(vcb, ['CASH', 'name:Chase'])).toEqual({ mode: 'bankApp', bank: null });
   });
 
   it('still offers a merchant QR when none of the user’s wallets can be opened', () => {

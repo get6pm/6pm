@@ -5,12 +5,14 @@ import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
 import { BANKS, findBank, type BankInfo } from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
+import { useHomeCurrency } from '../../money/use-money-format';
 import { body } from '../../ui/type/fonts';
 import { Grid3 } from '../onboarding/step-parts';
 import { BankRow, PickerLabel, QuickTile, SearchField, type PickerInks } from './bank-picker-parts';
-import { CASH, quickPicks } from './bank-ranking';
+import { banksInVietnam, CASH, quickPicks } from './bank-ranking';
 import { searchBanks } from './bank-search';
 import { readDeviceRegion } from './device-region';
+import { bankNameOf, namedBankId, tidyBankName } from './named-bank';
 
 const known = (id: string) => findBank(id) !== null;
 
@@ -20,6 +22,44 @@ const ALL_BANKS: readonly BankInfo[] = [...BANKS].sort((a, b) =>
 );
 
 const listMotion = LinearTransition.duration(220);
+
+const cardStyle = (inks: PickerInks) =>
+  ({
+    borderRadius: 22,
+    backgroundColor: inks.cell,
+    boxShadow: inks.cardShadow,
+    overflow: 'hidden',
+  }) as const;
+
+/** The name being searched for, as a bank of the person's own: tick it to add it by name. */
+function NamedRow({
+  query,
+  chosen,
+  inks,
+  onToggle,
+}: {
+  readonly query: string;
+  readonly chosen: readonly string[];
+  readonly inks: PickerInks;
+  readonly onToggle: (id: string) => void;
+}) {
+  const { t } = useI18n();
+  const id = namedBankId(query);
+  if (id === null) return null;
+  return (
+    <Animated.View entering={FadeIn.duration(160)} layout={listMotion} style={cardStyle(inks)}>
+      <BankRow
+        id={id}
+        label={tidyBankName(query)}
+        sub={t('banks.byName')}
+        on={chosen.includes(id)}
+        first
+        inks={inks}
+        onPress={() => onToggle(id)}
+      />
+    </Animated.View>
+  );
+}
 
 function BankList({
   banks,
@@ -36,15 +76,7 @@ function BankList({
   readonly onToggle: (id: string) => void;
 }) {
   return (
-    <Animated.View
-      {...(animate ? { layout: listMotion } : {})}
-      style={{
-        borderRadius: 22,
-        backgroundColor: inks.cell,
-        boxShadow: inks.cardShadow,
-        overflow: 'hidden',
-      }}
-    >
+    <Animated.View {...(animate ? { layout: listMotion } : {})} style={cardStyle(inks)}>
       {banks.map((bank, i) => (
         <Animated.View
           key={bank.id}
@@ -68,8 +100,10 @@ function BankList({
 /**
  * Pick the banks and wallets you pay with: a search over every one 6pm knows (accents and spaces
  * never matter), a grid of quick picks (cash, what is already chosen, then suggestions for where
- * the phone is set up and is), and the full list A to Z. Onboarding and Settings both host it;
- * `scroll` keeps the search pinned over its own scrolling list, else the host scrolls it all.
+ * the phone is set up and is), and the full list A to Z. Every bank 6pm knows is Vietnamese,
+ * so outside Vietnam there is no list and no suggestion: cash and the person's own, and a bank of
+ * their own added by typing its name. Onboarding and Settings both host it; `scroll` keeps the
+ * search pinned over its own scrolling list, else the host scrolls it all.
  */
 export function BankPicker({
   inks,
@@ -83,23 +117,37 @@ export function BankPicker({
   readonly scroll: boolean;
 }) {
   const { t } = useI18n();
+  const home = useHomeCurrency().code;
   const [query, setQuery] = useState('');
   // Taken once, so tiles never move while the person is picking.
-  const [picks] = useState(() => quickPicks(chosen, readDeviceRegion(), known));
+  const [local] = useState(() => banksInVietnam(readDeviceRegion(), home));
+  const [picks] = useState(() => quickPicks(chosen, readDeviceRegion(), known, home));
   const [hadChoice] = useState(() => chosen.some((id) => id !== CASH));
+  // With no full list to find them in again, banks added from a search join the grid's end.
+  const [added, setAdded] = useState<readonly string[]>([]);
   const results = useMemo(() => searchBanks(ALL_BANKS, query), [query]);
   const searching = query.trim() !== '';
+  const tiles = [...picks, ...added];
+  const typed = tidyBankName(query).toLocaleLowerCase();
+  const offerName =
+    !local && typed !== '' && !results.some((b) => b.shortName.toLocaleLowerCase() === typed);
 
   // The host answers the tap (and its haptic), as onboarding already does for its tiles.
-  const toggle = onToggle;
+  const toggle = (id: string) => {
+    if (!local && !tiles.includes(id)) setAdded((list) => [...list, id]);
+    onToggle(id);
+  };
   const label = (id: string) =>
-    id === CASH ? t('onboarding.wallets.cash') : (findBank(id)?.shortName ?? id);
+    id === CASH ? t('onboarding.wallets.cash') : (bankNameOf(id) ?? findBank(id)?.shortName ?? id);
 
   const browse = (
     <Animated.View key="browse" entering={FadeIn.duration(200)} style={{ gap: 14 }}>
-      <PickerLabel inks={inks} text={t(hadChoice ? 'banks.yours' : 'banks.suggested')} />
+      <PickerLabel
+        inks={inks}
+        text={t(!local ? 'banks.yoursOnly' : hadChoice ? 'banks.yours' : 'banks.suggested')}
+      />
       <Grid3
-        items={picks}
+        items={tiles}
         gap={8}
         render={(id) => (
           <QuickTile
@@ -111,9 +159,23 @@ export function BankPicker({
           />
         )}
       />
-      <View style={{ height: 4 }} />
-      <PickerLabel inks={inks} text={t('banks.all')} />
-      <BankList banks={ALL_BANKS} chosen={chosen} inks={inks} animate={false} onToggle={toggle} />
+      {local ? (
+        <>
+          <View style={{ height: 4 }} />
+          <PickerLabel inks={inks} text={t('banks.all')} />
+          <BankList
+            banks={ALL_BANKS}
+            chosen={chosen}
+            inks={inks}
+            animate={false}
+            onToggle={toggle}
+          />
+        </>
+      ) : (
+        <Text style={{ ...body(15), color: inks.inkSoft, paddingHorizontal: 6 }}>
+          {t('banks.typeHint')}
+        </Text>
+      )}
     </Animated.View>
   );
   const found = (
@@ -135,6 +197,7 @@ export function BankPicker({
           </Text>
         </Animated.View>
       )}
+      {offerName ? <NamedRow query={query} chosen={chosen} inks={inks} onToggle={toggle} /> : null}
     </Animated.View>
   );
   const content = searching ? found : browse;

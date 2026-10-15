@@ -6,17 +6,21 @@ import { DEFAULT_CLOSE_AT, type Payday } from '@6pm/domain';
 import { useMoneyStore } from '../../data/money-provider';
 import { completeOnboarding } from '../../data/onboarding';
 import { useI18n } from '../../i18n/i18n';
+import { useHomeCurrency } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
 import { useClock } from '../../ui/theme/clock';
 import { billName } from './bill-copy';
 import { billTotal, chosenBills, dealDeck, NO_BILL_ANSWERS, type BillAnswers } from './bill-deck';
 import { DECK_START, type DeckNav } from './bill-deck-view';
 import { askForReminders, scheduleCloseReminder } from './close-reminder';
-import { firstDay, futureYouOf } from './onboarding-maths';
+import { firstDay, futureYouOf, startingIncome } from './onboarding-maths';
 import { STEP_COUNT } from './onboarding-palette';
 
-/** The design's starting answers: a wheel has to rest somewhere. Bills always start at zero. */
-const START = { income: 15_500_000, payday: 25, percent: 12 } as const;
+/**
+ * The design's starting answers: a wheel has to rest somewhere. Bills always start at zero; money
+ * in starts at 15.500.000₫, or about as much in the home currency.
+ */
+const START = { payday: 25, percent: 12 } as const;
 /** "Open 6pm" holds the closing sky this long before Home takes over. */
 const LEAVE_MS = 1100;
 export const LAST_STEP = STEP_COUNT - 1;
@@ -29,10 +33,11 @@ export function useOnboarding(startStep = 0) {
   const store = useMoneyStore();
   const i18n = useI18n();
   const { today } = useClock();
+  const currency = useHomeCurrency();
 
   const [step, setStep] = useState(startStep);
   const [direction, setDirection] = useState<1 | -1>(1);
-  const [income, setIncome] = useState<number>(START.income);
+  const [income, setIncome] = useState<number>(() => startingIncome(currency));
   const [sameDay, setSameDay] = useState<number>(START.payday);
   const [payday, setPaydayState] = useState<Payday>({ kind: 'sameDay', day: START.payday });
   const [percent, setPercent] = useState<number>(START.percent);
@@ -47,9 +52,9 @@ export function useOnboarding(startStep = 0) {
   const deck = dealDeck(answers);
   const bills = chosenBills(deck, answers);
   const billSum = billTotal(bills);
-  const futureYou = futureYouOf(income, percent);
-  const first = firstDay({ income, payday, bills: billSum, futureYou }, today);
-  const dailyHint = firstDay({ income, payday, bills: 0, futureYou: 0 }, today).line;
+  const futureYou = futureYouOf(income, percent, currency);
+  const first = firstDay({ income, payday, bills: billSum, futureYou }, today, currency);
+  const dailyHint = firstDay({ income, payday, bills: 0, futureYou: 0 }, today, currency).line;
 
   const finish = async () => {
     if (busy.current) return;
@@ -115,6 +120,7 @@ export function useOnboarding(startStep = 0) {
   return {
     step,
     direction,
+    currency,
     leaving,
     today,
     income,

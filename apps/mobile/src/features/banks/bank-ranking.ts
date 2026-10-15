@@ -1,3 +1,5 @@
+import { isNamedBank } from './named-bank';
+
 /** The wallet code for money that never touches a bank. */
 export const CASH = 'CASH';
 
@@ -111,10 +113,25 @@ export function popularity(id: string): number {
 const MAX_HOME = 3;
 
 /**
- * The banks to suggest, best first: banks from the countries the phone points at (strongest
- * signal first, then their own order), then Vietnam's most used banks and wallets.
+ * Whether the person banks in Vietnam: home is đồng, or the phone points at Vietnam at all (its
+ * region, currency or clock). Every bank 6pm knows is Vietnamese, the branches of foreign banks
+ * included, so only then are there banks to suggest.
  */
-export function suggestedBanks(device: DeviceRegion, count: number): string[] {
+export function banksInVietnam(device: DeviceRegion, homeCurrency: string): boolean {
+  return homeCurrency.toUpperCase() === 'VND' || countrySignals(device).has('VN');
+}
+
+/**
+ * The banks to suggest, best first. In Vietnam: the local branches of banks from the countries
+ * the phone points at (strongest signal first, then their own order), then Vietnam's most used
+ * banks and wallets. Elsewhere none: 6pm knows no bank there, and never offers Vietnam's instead.
+ */
+export function suggestedBanks(
+  device: DeviceRegion,
+  count: number,
+  homeCurrency: string,
+): string[] {
+  if (!banksInVietnam(device, homeCurrency)) return [];
   const signals = [...countrySignals(device)].sort((a, b) => b[1] - a[1]);
   const home = signals.flatMap(([country]) => HOME_BANKS[country] ?? []).slice(0, MAX_HOME);
   return [...new Set([...home, ...POPULAR])].slice(0, count);
@@ -126,16 +143,19 @@ const MIN_TILES = 6;
 
 /**
  * The quick-pick grid at the top of the picker: cash, the banks already chosen (so they are in
- * reach when changing them later), then suggestions, filling whole rows of three. Taken once when
+ * reach when changing them later, typed names included), then suggestions, filling whole rows of
+ * three. With nothing to suggest (outside Vietnam) it is cash and what was chosen. Taken once when
  * the picker opens, so tiles never move under the finger.
  */
 export function quickPicks(
   chosen: readonly string[],
   device: DeviceRegion,
   known: (id: string) => boolean,
+  homeCurrency: string,
 ): string[] {
-  const own = [...new Set(chosen)].filter((id) => id !== CASH && known(id));
+  const own = [...new Set(chosen)].filter((id) => id !== CASH && (known(id) || isNamedBank(id)));
   const size = Math.max(MIN_TILES, Math.ceil((own.length + 1) / COLUMNS) * COLUMNS);
-  const suggestions = suggestedBanks(device, size).filter(known);
+  const suggestions = suggestedBanks(device, size, homeCurrency).filter(known);
+  if (suggestions.length === 0) return [CASH, ...own];
   return [...new Set([CASH, ...own, ...suggestions])].slice(0, size);
 }

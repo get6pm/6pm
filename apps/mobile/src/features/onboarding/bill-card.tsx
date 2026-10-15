@@ -1,9 +1,8 @@
 import { Text, View } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
 
-import { formatVnd } from '@6pm/domain';
-
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { Symbol } from '../../ui/icons/symbol';
 import { body, display } from '../../ui/type/fonts';
 import { AmountWheels, CardTop, Pill, Question } from './bill-card-parts';
@@ -37,6 +36,7 @@ export function BillCardFace({
 }: BillCardProps) {
   const i18n = useI18n();
   const { t } = i18n;
+  const money = useMoneyFormat();
   const reduceMotion = useReducedMotion();
   const face = {
     flex: 1,
@@ -245,7 +245,7 @@ export function BillCardFace({
         <Pill
           label={
             value
-              ? t('onboarding.bills.save', { amount: formatVnd(value) })
+              ? t('onboarding.bills.save', { amount: money.full(value) })
               : t('onboarding.bills.spin')
           }
           bg={value ? pal.btnBg : pal.chipBg}

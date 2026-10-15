@@ -7,13 +7,16 @@ import type { MoneyStore } from './money-store';
 import { deviceCurrencyCode } from '../money/device-money';
 import { DEFAULT_PLAN, planCurrencyCode, readPlan, writePlan } from './plan-settings';
 
-/** Everything onboarding asks, ready to store. Amounts are integer đồng a month. */
+/** Everything onboarding asks, ready to store. Amounts are monthly, in home-currency minor units. */
 export interface OnboardingAnswers {
   readonly income: number;
   readonly payday: Payday;
   readonly futureYou: number;
   readonly bills: readonly OnboardingBill[];
-  /** Bank and wallet codes from the VietQR catalogue ("MB", "MOMO"), plus "CASH". */
+  /**
+   * Bank and wallet codes from the VietQR catalogue ("MB", "MOMO"), "CASH", and banks added by the
+   * name typed for them ("name:Chase"; see `features/banks/named-bank`).
+   */
   readonly wallets: readonly string[];
   /** 'HH:MM', one of the close times the app offers. */
   readonly closeAt: string;
@@ -126,7 +129,7 @@ async function setUp(
   await store.loadInTurn(today);
 }
 
-/** The banks and wallets chosen in onboarding, for capture and the scan hand-off. */
+/** The banks and wallets chosen in onboarding, for capture and the scan hand-off; codes as saved. */
 export async function readWallets(store: MoneyStore): Promise<string[]> {
   const rows = await store.db.getAllAsync<{ value: string }>(
     'SELECT value FROM settings WHERE key = ?',

@@ -8,4 +8,7 @@ export const enBanks = {
   'banks.yours': 'Yours and suggested',
   'banks.all': 'All banks and wallets',
   'banks.none': 'No bank or wallet matches “{query}”.',
+  'banks.yoursOnly': 'Yours',
+  'banks.typeHint': 'Search for your bank or wallet, or type its name to add it.',
+  'banks.byName': 'Add by its name',
 } as const;

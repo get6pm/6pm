@@ -1,5 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
+import { currencyOf } from '@6pm/domain';
+
 import { billTotal, chosenBills, dealDeck, NO_BILL_ANSWERS, type BillAnswers } from './bill-deck';
 import {
   billDigits,
@@ -9,8 +11,20 @@ import {
   firstDay,
   futureYouOf,
   incomeDigits,
+  incomeLeads,
+  incomeMax,
+  incomeMillionsItems,
   incomeOf,
+  billMillionsItems,
+  markAfter,
+  millionsPlace,
+  startingIncome,
+  zerosBelow,
 } from './onboarding-maths';
+
+const USD = currencyOf('USD');
+const JPY = currencyOf('JPY');
+const KRW = currencyOf('KRW');
 
 describe('onboarding maths', () => {
   it('reads the wheels as the digits of a real amount', () => {
@@ -35,6 +49,52 @@ describe('onboarding maths', () => {
     expect(futureYouOf(15_500_000, 0)).toBe(0);
   });
 
+  it('starts money in at 15.500.000₫', () => {
+    expect(startingIncome()).toBe(15_500_000);
+    expect(incomeMax()).toBe(1_000_000_000);
+  });
+
+  it('writes the wheels and their zeros as đồng are written', () => {
+    expect(millionsPlace()).toBe(6);
+    expect(incomeLeads()).toEqual(['', '1', '2', '3', '4', '5', '6', '7', '8', '9', '1.0']);
+    expect(incomeMillionsItems(0).slice(0, 2)).toEqual(['0', '1']);
+    expect(incomeMillionsItems(1).slice(0, 2)).toEqual(['00', '01']);
+    expect(markAfter(6, '.')).toBe('.');
+    expect(markAfter(5, '.')).toBe('');
+    expect(zerosBelow(5, '.')).toBe('00.000');
+    expect(zerosBelow(4, '.')).toBe('0.000');
+  });
+
+  it('counts the wheels in steps of another currency', () => {
+    // Dollars: the "millions" wheel counts $1,000 and the next $100, in cents.
+    expect(millionsPlace(USD)).toBe(3);
+    expect(incomeOf(0, 15, 5, USD)).toBe(1_550_000);
+    expect(incomeDigits(1_550_000, USD)).toEqual({ lead: 0, millions: 15, hundreds: 5 });
+    expect(incomeOf(0, 0, 0, USD)).toBe(100_000);
+    expect(incomeMax(USD)).toBe(100_000_000);
+    expect(incomeLeads(USD, ',').at(-1)).toBe('1,0');
+    expect(zerosBelow(2, ',')).toBe('00');
+    expect(billOf(1, 2, 3, USD)).toBe(123_000);
+    expect(billDigits(123_000, USD)).toEqual({ millions: 1, hundreds: 2, tens: 3 });
+    expect(futureYouOf(1_550_000, 12, USD)).toBe(190_000);
+    // Yen: ¥10,000 a "million", so the group mark falls after the lead digit and in the zeros.
+    expect(millionsPlace(JPY)).toBe(4);
+    expect(incomeLeads(JPY, ',')[1]).toBe('1,');
+    expect(zerosBelow(3, ',')).toBe(',000');
+    // Won: ₩100,000 a "million", so the mark falls inside the two-digit wheel.
+    expect(billMillionsItems(KRW, ',').slice(9, 12)).toEqual(['9', '1,0', '1,1']);
+  });
+
+  it('starts money in at about 15.500.000₫ worth, on the wheels', () => {
+    for (const c of [USD, JPY, KRW]) {
+      const start = startingIncome(c);
+      const { lead, millions, hundreds } = incomeDigits(start, c);
+      expect(incomeOf(lead, millions, hundreds, c)).toBe(start);
+    }
+    // About $600 is below the wheels' least, $1,000.
+    expect(startingIncome(USD)).toBe(100_000);
+  });
+
   it('offers close times 15:00 to 23:45 in quarter hours', () => {
     expect(CLOSE_HOURS).toEqual(['15', '16', '17', '18', '19', '20', '21', '22', '23']);
     expect(CLOSE_MINUTES).toEqual(['00', '15', '30', '45']);
@@ -55,6 +115,16 @@ describe('onboarding maths', () => {
     expect(day.days).toBe(23);
     expect(day.free).toBe(8_050_000);
     expect(day.line).toBe(350_000);
+  });
+
+  it('floors the first day to the home currency step', () => {
+    const day = firstDay(
+      { income: 1_741_000, payday: { kind: 'sameDay', day: 31 }, bills: 0, futureYou: 0 },
+      '2026-10-09',
+      USD,
+    );
+    expect(day.line % 100).toBe(0);
+    expect(day.line).toBeGreaterThan(0);
   });
 
   it('never reveals a negative number', () => {

@@ -10,12 +10,15 @@ import { body, display } from '../../ui/type/fonts';
 import { Wheel } from '../../ui/wheel/wheel';
 import {
   DIGITS,
-  INCOME_LEADS,
   incomeDigits,
+  incomeLeads,
   incomeMillionsItems,
   incomeOf,
+  markAfter,
+  zerosBelow,
 } from './onboarding-maths';
 import { ordinalDay, WheelBand } from './step-parts';
+import { useWheelMoney, WheelSymbol } from './wheel-money';
 
 /** The colours these controls draw with: onboarding's sky palette, or a sheet's own. */
 export interface PickerInk {
@@ -39,6 +42,9 @@ const MODES = [
 
 /** The hundreds-of-millions wheel's width once it has come in. */
 const LEAD_WIDTH = 52;
+/** The millions wheel's width, and what a group mark inside its two digits adds. */
+const MILLIONS_WIDTH = 44;
+const INNER_MARK_WIDTH = 9;
 /** Millions from which the hundreds-of-millions wheel comes in: 90.000.000₫ and up. */
 const LEAD_FROM = 90;
 const LEAD_MOVE = { duration: durations.sheet, easing: Easing.bezier(...curves.enter) };
@@ -46,7 +52,8 @@ const LEAD_MOVE = { duration: durations.sheet, easing: Easing.bezier(...curves.e
 /**
  * Money in on wheels read as the amount itself: millions and hundred thousands, and, once the
  * millions reach 90, a hundreds-of-millions wheel that slides in on their left, up to
- * 1.000.000.000₫ a month. It stays while it holds a digit.
+ * 1.000.000.000₫ a month. It stays while it holds a digit. In another currency the wheels count
+ * its steps ($1,000 and $100), with its group marks and its symbol on its side.
  */
 export function IncomeWheels({
   income,
@@ -57,8 +64,11 @@ export function IncomeWheels({
   readonly onIncome: (income: number) => void;
   readonly colours: Pick<PickerInk, 'ink' | 'chipBg'>;
 }) {
-  const { t } = useI18n();
-  const { lead, millions, hundreds } = incomeDigits(income);
+  const w = useWheelMoney();
+  const c = w.currency;
+  const { lead, millions, hundreds } = incomeDigits(income, c);
+  const between = markAfter(w.place, w.mark);
+  const innerMark = markAfter(w.place + 1, w.mark) !== '';
   const number = { ...display(SIZE, 600, -0.03), color: colours.ink };
   const leadShown = lead > 0 || millions >= LEAD_FROM;
   const leadStyle = useAnimatedStyle(() => ({
@@ -69,57 +79,47 @@ export function IncomeWheels({
     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
       <WheelBand height={48} radius={15} color={colours.chipBg} />
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <WheelSymbol symbol={w.before} size={18} offset={52} ink={colours.ink} side="before" />
         <Animated.View
           pointerEvents={leadShown ? 'auto' : 'none'}
           style={[{ overflow: 'hidden', alignItems: 'flex-end' }, leadStyle]}
         >
           <Wheel
-            items={INCOME_LEADS}
+            items={incomeLeads(c, w.mark)}
             index={lead}
-            onChange={(k) => onIncome(incomeOf(k, millions, hundreds))}
+            onChange={(k) => onIncome(incomeOf(k, millions, hundreds, c))}
             size={SIZE}
             padX={0}
             align="flex-end"
             ink={colours.ink}
             width={LEAD_WIDTH}
-            label={t('onboarding.income.hundredMillions')}
+            label={w.label('lead', 'onboarding.income.hundredMillions')}
           />
         </Animated.View>
         <Wheel
-          items={incomeMillionsItems(lead)}
+          items={incomeMillionsItems(lead, c, w.mark)}
           index={millions}
-          onChange={(k) => onIncome(incomeOf(lead, k, hundreds))}
+          onChange={(k) => onIncome(incomeOf(lead, k, hundreds, c))}
           size={SIZE}
           padX={0}
           align={lead > 0 ? 'flex-start' : 'flex-end'}
           ink={colours.ink}
-          width={44}
-          label={t('onboarding.income.millions')}
+          width={MILLIONS_WIDTH + (innerMark ? INNER_MARK_WIDTH : 0)}
+          label={w.label('millions', 'onboarding.income.millions')}
         />
-        <Text style={number}>.</Text>
+        {between === '' ? null : <Text style={number}>{between}</Text>}
         <Wheel
           items={DIGITS}
           index={hundreds}
-          onChange={(k) => onIncome(incomeOf(lead, millions, k))}
+          onChange={(k) => onIncome(incomeOf(lead, millions, k, c))}
           size={SIZE}
           padX={0}
           ink={colours.ink}
           width={22}
-          label={t('onboarding.income.hundreds')}
+          label={w.label('hundreds', 'onboarding.income.hundreds')}
         />
-        <Text style={number}>00.000</Text>
-        <Text
-          style={{
-            ...display(18, 600),
-            color: colours.ink,
-            marginLeft: 4,
-            opacity: 0.55,
-            alignSelf: 'flex-start',
-            marginTop: 52,
-          }}
-        >
-          ₫
-        </Text>
+        <Text style={number}>{zerosBelow(w.place - 1, w.mark)}</Text>
+        <WheelSymbol symbol={w.after} size={18} offset={52} ink={colours.ink} side="after" />
       </View>
     </View>
   );

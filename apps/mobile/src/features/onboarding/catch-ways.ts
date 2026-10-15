@@ -1,3 +1,5 @@
+import type { Currency } from '@6pm/domain';
+
 import type { SymbolName } from '../../ui/icons/symbols.generated';
 
 /** The ways onboarding shows spending being caught, in the order of its cards. */
@@ -18,8 +20,18 @@ export function walkedWay(way: CatchWay): WalkedWay | null {
   return way === 'wallet' || way === 'email' || way === 'share' ? way : null;
 }
 
+/**
+ * The ways shown for a home currency. Scan to pay reads VietQR, which only Vietnamese banks
+ * print, so it is left out when home is not đồng.
+ */
+export function catchWaysFor(home: Currency): readonly CatchWay[] {
+  return home.code === 'VND' ? CATCH_WAYS : CATCH_WAYS.filter((way) => way !== 'scan');
+}
+
 /** How many work the moment onboarding ends, with nothing to set up. */
-export const READY_WAYS = CATCH_WAYS.filter((way) => !needsSetup(way)).length;
+export function readyWays(ways: readonly CatchWay[]): number {
+  return ways.filter((way) => !needsSetup(way)).length;
+}
 
 export const WAY_ICON: Readonly<Record<CatchWay, SymbolName>> = {
   scan: 'qr_code_scanner',

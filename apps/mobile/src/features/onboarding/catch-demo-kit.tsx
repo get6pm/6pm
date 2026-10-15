@@ -3,6 +3,10 @@ import type { ReactNode } from 'react';
 import { View } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
+import { designAmount, roundToStep, steps } from '@6pm/domain';
+
+import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { useLoop } from './onboarding-motion';
 import { DEMO } from './onboarding-palette';
 
@@ -24,6 +28,23 @@ export const SAMPLE = {
   tap: 59_000,
   said: 35_000,
 };
+
+/**
+ * The pictures' amounts in the home currency: a sample in đồng, worth about the same.
+ * `said` is the spoken coffee, rounded to a whole step so the words and the spend agree.
+ */
+export function useSampleMoney() {
+  const { t } = useI18n();
+  const money = useMoneyFormat();
+  const c = money.currency;
+  const spoken = Math.max(steps(1, c), roundToStep(designAmount(SAMPLE.said, c), c));
+  return {
+    full: (dong: number) => money.full(designAmount(dong, c)),
+    said: money.full(c.code === 'VND' ? SAMPLE.said : spoken),
+    /** The coffee as the words say it: "35k", "35 nghìn", "$2". */
+    saidWords: c.code === 'VND' ? t('onboarding.catch.add.amountDong') : money.short(spoken),
+  };
+}
 
 /**
  * A step of a looping demo: 0 before `from`, 1 after `to`, eased between. For a beat that

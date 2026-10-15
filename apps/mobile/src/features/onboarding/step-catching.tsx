@@ -9,14 +9,16 @@ import Animated, {
 import { scheduleOnRN } from 'react-native-worklets';
 
 import { useI18n } from '../../i18n/i18n';
+import { useHomeCurrency } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
 import { CatchCard, type CatchAction, type CatchStatus } from './catch-card';
+import { useSampleMoney } from './catch-demo-kit';
 import { ScanDemo, ShareDemo } from './catch-demos';
 import { EmailDemo, LockDemo } from './catch-demos-mail-lock';
 import { VoiceDemo, WalletDemo } from './catch-demos-tap-voice';
 import { CatchRail } from './catch-rail';
 import { CatchSetupSheet } from './catch-setup-sheet';
-import { CATCH_WAYS, type CatchWay, type WalkedWay } from './catch-ways';
+import { catchWaysFor, type CatchWay, type WalkedWay } from './catch-ways';
 import type { OnboardingPalette } from './onboarding-palette';
 import { StepHeading } from './step-parts';
 
@@ -44,6 +46,12 @@ export function StepCatching({
   readonly safe: string;
 }) {
   const { t } = useI18n();
+  const ways = catchWaysFor(useHomeCurrency());
+  const sample = useSampleMoney();
+  const bodyOf = (way: CatchWay) =>
+    way === 'add'
+      ? t('onboarding.catch.add.body', { amount: sample.saidWords })
+      : t(`onboarding.catch.${way}.body`);
   const { width: screen } = useWindowDimensions();
   const cards = useAnimatedRef<Animated.ScrollView>();
   const x = useSharedValue(0);
@@ -123,7 +131,7 @@ export function StepCatching({
         sub={t('onboarding.catch.sub', { time: closeAt })}
         pal={pal}
       />
-      <CatchRail pal={pal} x={x} page={PAGE} selected={selected} onPick={pick} />
+      <CatchRail pal={pal} x={x} page={PAGE} selected={selected} onPick={pick} ways={ways} />
       <Animated.ScrollView
         ref={cards}
         horizontal
@@ -142,7 +150,7 @@ export function StepCatching({
           paddingRight: Math.max(SIDE, screen - SIDE - CARD),
         }}
       >
-        {CATCH_WAYS.map((way) => {
+        {ways.map((way) => {
           const { demo, status, ...rest } = card(way);
           return (
             <CatchCard
@@ -151,7 +159,7 @@ export function StepCatching({
               width={CARD}
               demo={demo}
               title={t(`onboarding.catch.${way}.title`)}
-              text={t(`onboarding.catch.${way}.body`)}
+              text={bodyOf(way)}
               status={status}
               {...rest}
             />

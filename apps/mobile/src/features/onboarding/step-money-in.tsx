@@ -1,14 +1,15 @@
 import { Text, View } from 'react-native';
 
-import { formatShort, type Payday } from '@6pm/domain';
+import type { Payday } from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { body } from '../../ui/type/fonts';
 import { IncomeWheels, PaydayPicker } from './money-in-controls';
 import type { OnboardingPalette } from './onboarding-palette';
 import { Card, StepHeading } from './step-parts';
 
-/** Money in: millions and hundred thousands on two wheels, then when it lands. */
+/** Money in: millions and hundred thousands on wheels (the home currency's steps), then payday. */
 export function StepMoneyIn({
   pal,
   income,
@@ -28,7 +29,8 @@ export function StepMoneyIn({
   readonly onIncome: (income: number) => void;
   readonly onPayday: (payday: Payday) => void;
 }) {
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   return (
     <View style={{ gap: 14 }}>
       <StepHeading
@@ -39,7 +41,7 @@ export function StepMoneyIn({
       <Card pal={pal} style={{ paddingTop: 12, paddingHorizontal: 16, paddingBottom: 14, gap: 6 }}>
         <IncomeWheels income={income} onIncome={onIncome} colours={pal} />
         <Text style={{ ...body(13), textAlign: 'center', color: pal.inkSoft }}>
-          {t('onboarding.income.daily', { amount: formatShort(dailyHint, language) })}
+          {t('onboarding.income.daily', { amount: money.short(dailyHint) })}
         </Text>
       </Card>
       <Card pal={pal} style={{ paddingVertical: 14, paddingHorizontal: 16, gap: 10 }}>

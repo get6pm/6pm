@@ -1,13 +1,11 @@
 import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
-import { formatVnd } from '@6pm/domain';
-
 import { useI18n } from '../../i18n/i18n';
 import { AppIconImage } from '../../ui/app-icon-image';
 import { Symbol } from '../../ui/icons/symbol';
 import { body, display, mono } from '../../ui/type/fonts';
-import { box, SAMPLE, step, TapRing } from './catch-demo-kit';
+import { box, SAMPLE, step, TapRing, useSampleMoney } from './catch-demo-kit';
 import { useLoop } from './onboarding-motion';
 import { DEMO, tileOf, type OnboardingPalette } from './onboarding-palette';
 
@@ -20,6 +18,7 @@ const DRINKS = tileOf(25);
  */
 export function WalletDemo() {
   const { t } = useI18n();
+  const sample = useSampleMoney();
   const phase = useLoop(3600, 0, 0.6);
   const card = useAnimatedStyle(() => {
     const p = phase.value;
@@ -84,7 +83,7 @@ export function WalletDemo() {
           <Text numberOfLines={1} style={{ ...body(11.5), color: DEMO.paperInk, opacity: 0.75 }}>
             {t('onboarding.catch.wallet.logged', {
               merchant: SAMPLE.tapMerchant,
-              amount: formatVnd(SAMPLE.tap),
+              amount: sample.full(SAMPLE.tap),
             })}
           </Text>
         </View>
@@ -99,6 +98,7 @@ export function WalletDemo() {
  */
 export function VoiceDemo({ pal }: { readonly pal: OnboardingPalette }) {
   const { t } = useI18n();
+  const sample = useSampleMoney();
   const phase = useLoop(3400, 0, 0.6);
   const said = useAnimatedStyle(() => {
     const p = phase.value;
@@ -136,7 +136,7 @@ export function VoiceDemo({ pal }: { readonly pal: OnboardingPalette }) {
         ]}
       >
         <Text style={{ ...body(14, 600), color: DEMO.paperInk }}>
-          {t('onboarding.catch.add.said')}
+          {t('onboarding.catch.add.said', { amount: sample.saidWords })}
         </Text>
       </Animated.View>
       <Animated.View
@@ -170,7 +170,7 @@ export function VoiceDemo({ pal }: { readonly pal: OnboardingPalette }) {
         <Text style={{ ...body(13.5, 650), color: DEMO.paperInk, flex: 1 }}>
           {t('onboarding.catch.add.item')}
         </Text>
-        <Text style={{ ...display(16, 600), color: DEMO.paperInk }}>{formatVnd(SAMPLE.said)}</Text>
+        <Text style={{ ...display(16, 600), color: DEMO.paperInk }}>{sample.said}</Text>
       </Animated.View>
       <TapRing size={46} radius={23}>
         <View

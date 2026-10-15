@@ -1,26 +1,26 @@
 import { findBank, type BankInfo, type VietQR, type VietQRFailure } from '@6pm/domain';
 
-/** The three the design offers when the user has not said which banks they use. */
-const DESIGN_WALLETS = ['MB', 'VCB', 'MOMO'] as const;
-
 /**
  * How a scanned VietQR gets paid. A transfer to an account or card offers the user's own banks
  * and wallets to hand off to; a NAPAS merchant QR has no account a person can type, so it can only
- * be paid by scanning it again inside a bank app: 6pm copies the amount and opens that app.
+ * be paid by scanning it again inside a bank app: 6pm copies the amount and opens that app. With
+ * none of the user's own banks in 6pm's list, a transfer is paid that way too.
  */
 export type PayOptions =
   | { readonly mode: 'wallets'; readonly wallets: readonly BankInfo[] }
   | { readonly mode: 'bankApp'; readonly bank: BankInfo | null };
 
-/** The banks and wallets to pay from, from the ids the user picked in onboarding ("CASH" aside). */
+/**
+ * The banks and wallets to pay from: the ones the user picked that 6pm's list knows ("CASH" and
+ * banks added by typed name aside, since neither can take a VietQR).
+ */
 export function payWallets(walletIds: readonly string[]): BankInfo[] {
-  const own = walletIds.flatMap((id) => findBank(id) ?? []);
-  return own.length > 0 ? own : DESIGN_WALLETS.flatMap((id) => findBank(id) ?? []);
+  return walletIds.flatMap((id) => findBank(id) ?? []);
 }
 
 export function payOptions(qr: VietQR, walletIds: readonly string[]): PayOptions {
   const wallets = payWallets(walletIds);
-  if (qr.service === 'merchant') {
+  if (qr.service === 'merchant' || wallets.length === 0) {
     return { mode: 'bankApp', bank: wallets.find((w) => w.ios !== null) ?? null };
   }
   return { mode: 'wallets', wallets };

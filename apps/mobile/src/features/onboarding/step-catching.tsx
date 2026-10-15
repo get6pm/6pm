@@ -1,100 +1,34 @@
-import type { ReactNode } from 'react';
-import { Text, View } from 'react-native';
+import { useState } from 'react';
+import { useWindowDimensions, View } from 'react-native';
 import Animated, {
+  scrollTo,
+  useAnimatedRef,
   useAnimatedScrollHandler,
-  useAnimatedStyle,
   useSharedValue,
-  type SharedValue,
 } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 
 import { useI18n } from '../../i18n/i18n';
-import { Symbol } from '../../ui/icons/symbol';
-import type { SymbolName } from '../../ui/icons/symbols.generated';
-import { body } from '../../ui/type/fonts';
+import { haptics } from '../../ui/haptics';
+import { CatchCard, type CatchAction, type CatchStatus } from './catch-card';
 import { ScanDemo, ShareDemo } from './catch-demos';
 import { EmailDemo, LockDemo } from './catch-demos-mail-lock';
+import { VoiceDemo, WalletDemo } from './catch-demos-tap-voice';
+import { CatchRail } from './catch-rail';
+import { CatchSetupSheet } from './catch-setup-sheet';
+import { CATCH_WAYS, type CatchWay, type WalkedWay } from './catch-ways';
 import type { OnboardingPalette } from './onboarding-palette';
 import { StepHeading } from './step-parts';
 
 const CARD = 300;
 const GAP = 10;
 const PAGE = CARD + GAP;
-const CARDS = 4;
-
-function DemoCard({
-  pal,
-  demo,
-  title,
-  text,
-  status,
-}: {
-  readonly pal: OnboardingPalette;
-  readonly demo: ReactNode;
-  readonly title: string;
-  readonly text: string;
-  readonly status: { readonly label: string; readonly icon: SymbolName; readonly ready: boolean };
-}) {
-  return (
-    <View
-      style={{
-        width: CARD,
-        borderRadius: 28,
-        backgroundColor: pal.cell,
-        boxShadow: pal.cardShadow,
-        padding: 10,
-        gap: 12,
-      }}
-    >
-      {demo}
-      <View style={{ paddingHorizontal: 8, gap: 4 }}>
-        <Text style={{ ...body(18, 650, -0.015), color: pal.ink }}>{title}</Text>
-        <Text style={{ ...body(13.5), lineHeight: 18.9, color: pal.inkSoft }}>{text}</Text>
-      </View>
-      <View style={{ flex: 1 }} />
-      <View
-        style={{
-          marginHorizontal: 6,
-          marginBottom: 6,
-          height: 42,
-          borderRadius: 99,
-          backgroundColor: status.ready ? pal.greenSoft : pal.chipBg,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 6,
-        }}
-      >
-        <Symbol name={status.icon} size={18} color={status.ready ? pal.okInk : pal.inkSoft} />
-        <Text style={{ ...body(14, 650), color: status.ready ? pal.okInk : pal.inkSoft }}>
-          {status.label}
-        </Text>
-      </View>
-    </View>
-  );
-}
-
-/** A page dot: stretches to 18 pt and brightens as its card comes under the finger. */
-function Dot({
-  index,
-  x,
-  pal,
-}: {
-  readonly index: number;
-  readonly x: SharedValue<number>;
-  readonly pal: OnboardingPalette;
-}) {
-  const style = useAnimatedStyle(() => {
-    const near = Math.max(0, 1 - Math.abs(x.value / PAGE - index));
-    return { width: 6 + 12 * near, opacity: 0.25 + 0.65 * near };
-  });
-  return (
-    <Animated.View style={[{ height: 6, borderRadius: 6, backgroundColor: pal.ink }, style]} />
-  );
-}
+const SIDE = 20;
 
 /**
- * How 6pm catches spending: swipeable cards, each with a small live picture. Scan to pay works
- * already; the others are not set up from the app yet, so they say that instead of pretending.
+ * How 6pm catches spending: a tab per way above swipeable cards, each card a small live picture,
+ * a line on what it does, and whether it works already. The two that need a minute outside 6pm
+ * (the Wallet automation, mail forwarding) and sharing open their drawn walkthrough in a sheet.
  */
 export function StepCatching({
   pal,
@@ -110,63 +44,121 @@ export function StepCatching({
   readonly safe: string;
 }) {
   const { t } = useI18n();
+  const { width: screen } = useWindowDimensions();
+  const cards = useAnimatedRef<Animated.ScrollView>();
   const x = useSharedValue(0);
+  const shown = useSharedValue(0);
+  const [selected, setSelected] = useState(0);
+  const [setup, setSetup] = useState<WalkedWay | null>(null);
+
   const onScroll = useAnimatedScrollHandler((e) => {
     x.value = e.contentOffset.x;
+    const i = Math.round(e.contentOffset.x / PAGE);
+    if (i !== shown.value) {
+      shown.value = i;
+      scheduleOnRN(setSelected, i);
+    }
   });
-  const later = { label: t('onboarding.catch.later'), icon: 'schedule', ready: false } as const;
+
+  const pick = (index: number) => {
+    haptics.tick();
+    scrollTo(cards, index * PAGE, 0, true);
+  };
+  const open = (way: WalkedWay) => {
+    haptics.tap();
+    setSetup(way);
+  };
+
+  const ready = (label: string): CatchStatus => ({ label, ready: true });
+  const nothingToDo = ready(t('onboarding.catch.readyNothing'));
+  const setUp = (way: 'wallet' | 'email'): CatchAction => ({
+    label: t('onboarding.catch.setUp'),
+    accent: true,
+    onPress: () => open(way),
+  });
+
+  const card = (way: CatchWay) => {
+    switch (way) {
+      case 'scan':
+        return {
+          demo: <ScanDemo pal={pal} />,
+          status: nothingToDo,
+        };
+      case 'share':
+        return {
+          demo: <ShareDemo />,
+          status: ready(t('onboarding.catch.ready')),
+          action: {
+            label: t('onboarding.catch.seeHow'),
+            accent: false,
+            onPress: () => open('share'),
+          },
+        };
+      case 'wallet':
+        return {
+          demo: <WalletDemo />,
+          status: { label: t('capture.wallet.time'), ready: false },
+          action: setUp('wallet'),
+        };
+      case 'email':
+        return {
+          demo: <EmailDemo />,
+          status: { label: t('capture.email.time'), ready: false },
+          action: setUp('email'),
+        };
+      case 'add':
+        return { demo: <VoiceDemo pal={pal} />, status: nothingToDo };
+      case 'lock':
+        return {
+          demo: <LockDemo pal={pal} date={date} time={closeAt} safe={safe} />,
+          status: ready(t('onboarding.catch.lock.ready')),
+        };
+    }
+  };
+
   return (
     <View style={{ gap: 14 }}>
-      <StepHeading title={t('onboarding.catch.title')} sub={t('onboarding.catch.sub')} pal={pal} />
+      <StepHeading
+        title={t('onboarding.catch.title')}
+        sub={t('onboarding.catch.sub', { time: closeAt })}
+        pal={pal}
+      />
+      <CatchRail pal={pal} x={x} page={PAGE} selected={selected} onPick={pick} />
       <Animated.ScrollView
+        ref={cards}
         horizontal
         showsHorizontalScrollIndicator={false}
         snapToInterval={PAGE}
         decelerationRate="fast"
         onScroll={onScroll}
         scrollEventThrottle={16}
-        style={{ marginHorizontal: -20 }}
+        style={{ marginHorizontal: -SIDE }}
         contentContainerStyle={{
           gap: GAP,
-          paddingTop: 4,
+          paddingTop: 2,
           paddingBottom: 14,
-          paddingHorizontal: 20,
+          paddingLeft: SIDE,
+          // Room for the last card to snap into place like the others.
+          paddingRight: Math.max(SIDE, screen - SIDE - CARD),
         }}
       >
-        <DemoCard
-          pal={pal}
-          demo={<ScanDemo pal={pal} />}
-          title={t('onboarding.catch.scan.title')}
-          text={t('onboarding.catch.scan.body')}
-          status={{ label: t('onboarding.catch.scan.ready'), icon: 'check_circle', ready: true }}
-        />
-        <DemoCard
-          pal={pal}
-          demo={<ShareDemo />}
-          title={t('onboarding.catch.share.title')}
-          text={t('onboarding.catch.share.body')}
-          status={later}
-        />
-        <DemoCard
-          pal={pal}
-          demo={<EmailDemo />}
-          title={t('onboarding.catch.email.title')}
-          text={t('onboarding.catch.email.body')}
-          status={later}
-        />
-        <DemoCard
-          pal={pal}
-          demo={<LockDemo pal={pal} date={date} time={closeAt} safe={safe} />}
-          title={t('onboarding.catch.lock.title')}
-          text={t('onboarding.catch.lock.body')}
-          status={later}
-        />
+        {CATCH_WAYS.map((way) => {
+          const { demo, status, ...rest } = card(way);
+          return (
+            <CatchCard
+              key={way}
+              pal={pal}
+              width={CARD}
+              demo={demo}
+              title={t(`onboarding.catch.${way}.title`)}
+              text={t(`onboarding.catch.${way}.body`)}
+              status={status}
+              {...rest}
+            />
+          );
+        })}
       </Animated.ScrollView>
-      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: -4 }}>
-        {Array.from({ length: CARDS }, (_, i) => (
-          <Dot key={i} index={i} x={x} pal={pal} />
-        ))}
-      </View>
+      <CatchSetupSheet way={setup} onClose={() => setSetup(null)} />
     </View>
   );
 }

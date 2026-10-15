@@ -159,6 +159,14 @@ export const DEMO = {
   lockRingCore: 'rgba(60,35,80,.9)',
   lockWidget: 'rgba(255,255,255,.18)',
   lockButton: 'rgba(20,12,30,.45)',
+  walletBg: '#16131d',
+  walletCard: 'linear-gradient(135deg, #3b3358 0%, #7a3f72 60%, #e0855a 100%)',
+  walletCardInk: '#ffffff',
+  walletCardShadow: '0 10px 24px rgba(0,0,0,.45)',
+  bannerBg: 'rgba(246,242,248,.95)',
+  bannerShadow: '0 6px 18px rgba(0,0,0,.3)',
+  voiceBg: '#efe8f1',
+  voiceBubble: '#ffffff',
 } as const;
 
 /** The welcome's three horizon lines under the companion. */

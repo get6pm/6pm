@@ -7,6 +7,7 @@ import { formatShort } from '@6pm/domain';
 import { useI18n, type I18n } from '../../i18n/i18n';
 import type { CompanionMood } from '../../ui/companion/companion-mood';
 import { useDesignInsets } from '../../ui/layout/design-insets';
+import { CATCH_WAYS, READY_WAYS } from './catch-ways';
 import { CompanionLine, OnboardingCta, OnboardingHeader } from './onboarding-chrome';
 import { stepEntering } from './onboarding-motion';
 import { onboardingPalette } from './onboarding-palette';
@@ -27,9 +28,6 @@ import {
   useOnboarding,
   type Onboarding,
 } from './use-onboarding';
-
-/** Capture ways that work without setup today: Scan to pay. */
-const READY_WAYS = 1;
 
 /** The companion's line for the step, from what has been answered so far. */
 function stepLine(o: Onboarding, i18n: I18n): string | null {
@@ -58,7 +56,7 @@ function stepLine(o: Onboarding, i18n: I18n): string | null {
         ? t('onboarding.line.walletsNone')
         : t('onboarding.line.wallets', { count: o.wallets.length });
     case 5:
-      return t('onboarding.line.catch', { count: READY_WAYS });
+      return t('onboarding.line.catch', { count: READY_WAYS, total: CATCH_WAYS.length });
     case CLOSE_STEP:
       return t('onboarding.line.close', { time: o.closeAt });
     default:

@@ -70,6 +70,10 @@ describe('completeOnboarding', () => {
       ['transport', 'Đi lại', 'two_wheeler', 245],
       ['groceries', 'Đi chợ', 'shopping_basket', 140],
       ['shopping', 'Mua sắm', 'local_mall', 300],
+      ['fun', 'Giải trí', 'movie', 85],
+      ['health', 'Sức khỏe', 'medical_services', 175],
+      ['home', 'Nhà cửa', 'home', 210],
+      ['family', 'Gia đình', 'family_restroom', 275],
       ['gifts', 'Quà tặng', 'redeem', 350],
     ]);
     expect(snap.bills.map((b) => [b.name, b.amount, b.dueDay, b.sort])).toEqual([

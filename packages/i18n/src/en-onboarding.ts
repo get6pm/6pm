@@ -164,5 +164,9 @@ export const enOnboarding = {
   'onboarding.category.transport': 'Transport',
   'onboarding.category.groceries': 'Groceries',
   'onboarding.category.shopping': 'Shopping',
+  'onboarding.category.fun': 'Fun',
+  'onboarding.category.health': 'Health',
+  'onboarding.category.home': 'Home',
+  'onboarding.category.family': 'Family',
   'onboarding.category.gifts': 'Gifts',
 } as const;

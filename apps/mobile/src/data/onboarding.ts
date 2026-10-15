@@ -29,13 +29,20 @@ export interface OnboardingBill {
   readonly dueDay?: number;
 }
 
-/** The categories a new month starts with: id, icon and hue. Names follow the user's language. */
+/**
+ * The categories a new install starts with: id, icon and hue. Names follow the user's language.
+ * Seeded only when there are none yet, so an install that already has categories keeps its own.
+ */
 export const DEFAULT_CATEGORIES = [
   ['food', 'restaurant', 45],
   ['drinks', 'local_cafe', 25],
   ['transport', 'two_wheeler', 245],
   ['groceries', 'shopping_basket', 140],
   ['shopping', 'local_mall', 300],
+  ['fun', 'movie', 85],
+  ['health', 'medical_services', 175],
+  ['home', 'home', 210],
+  ['family', 'family_restroom', 275],
   ['gifts', 'redeem', 350],
 ] as const;
 

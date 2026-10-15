@@ -3,7 +3,16 @@ import { readSpokenNumbers, spokenAmount } from '../money/spoken-number';
 
 /** The ids of the categories every month starts with. */
 export type StarterCategoryId =
-  'food' | 'drinks' | 'transport' | 'groceries' | 'shopping' | 'gifts';
+  | 'food'
+  | 'drinks'
+  | 'transport'
+  | 'groceries'
+  | 'shopping'
+  | 'fun'
+  | 'health'
+  | 'home'
+  | 'family'
+  | 'gifts';
 
 /** A spend said out loud, read into the three chips Quick add shows. */
 export interface SpokenSpend {
@@ -52,6 +61,26 @@ const CATEGORY_WORDS: Readonly<Record<StarterCategoryId, readonly string[]>> = {
     'shopee, lazada, tiki, tiktok shop, uniqlo, circle k, gs25, ministop, familymart, ' +
       '7 eleven, 7eleven, mall, vincom, shopping, quan ao, ao, giay, shoes, clothes, shirt, ' +
       'muji, zara, watsons, guardian, dien may xanh, the gioi di dong, fpt shop, cellphones',
+  ),
+  fun: words(
+    'xem phim, rap phim, cinema, movie, movies, cgv, lotte cinema, bhd, galaxy cinema, ' +
+      'karaoke, concert, game, games, bowling, bida, billiards, khu vui choi, cong vien, ' +
+      'theme park, netflix, spotify, ticketbox',
+  ),
+  health: words(
+    'nha thuoc, hieu thuoc, mua thuoc, tien thuoc, pharmacy, pharmacity, long chau, ' +
+      'an khang, medicine, vitamin, vitamins, benh vien, hospital, phong kham, clinic, ' +
+      'kham benh, bac si, doctor, nha khoa, dentist, vinmec, gym, yoga',
+  ),
+  home: words(
+    'do gia dung, gia dung, noi that, furniture, ikea, sua nha, sua dien, sua nuoc, ' +
+      'giat ui, giat say, laundry, don nha, don dep, cleaning, nuoc giat, nuoc rua chen, ' +
+      'household, cay canh',
+  ),
+  family: words(
+    'cho con, cho me, cho bo, bieu bo me, bieu me, gui me, hoc phi, tuition, sua bot, ' +
+      'formula, bim, ta bim, diapers, do choi, toys, kids, baby, em be, tre em, con cai, ' +
+      'gia dinh, family, parents, babysitter',
   ),
   gifts: words(
     'qua tang, mua qua, tang qua, qua sinh nhat, gift, gifts, present, flowers, flower, ' +

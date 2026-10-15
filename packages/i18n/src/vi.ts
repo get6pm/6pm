@@ -20,6 +20,7 @@ import { viPlan } from './vi-plan';
 import { viClose } from './vi-close';
 import type { Catalogue } from './catalogue-types';
 import { viCompanion } from './vi-companion';
+import { viInsights } from './vi-insights';
 import { viToday } from './vi-today';
 import { viCategories } from './vi-categories';
 import { viTravel } from './vi-travel';
@@ -38,6 +39,7 @@ export const vi: Catalogue = {
   ...viBanks,
   ...viLooks,
   ...viCompanion,
+  ...viInsights,
   ...viBackup,
   ...viExport,
   ...viAsk,

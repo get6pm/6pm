@@ -19,6 +19,7 @@ import { enYearBook } from './en-year-book';
 import { enPlan } from './en-plan';
 import { enClose } from './en-close';
 import { enCompanion } from './en-companion';
+import { enInsights } from './en-insights';
 import { enToday } from './en-today';
 import { enCategories } from './en-categories';
 import { enTravel } from './en-travel';
@@ -38,6 +39,7 @@ export const en = {
   ...enBanks,
   ...enLooks,
   ...enCompanion,
+  ...enInsights,
   ...enBackup,
   ...enExport,
   ...enAsk,

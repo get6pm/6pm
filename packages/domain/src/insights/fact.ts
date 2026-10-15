@@ -4,7 +4,7 @@ import type { DailyNumber } from '../plan/daily-number';
 import type { PayCycle } from '../plan/pay-cycle';
 import type { DiarySpend } from '../diary/week-recap';
 import type { ClosedDayTotal } from '../diary/calendar';
-import type { SpendSource } from '../spend/spend';
+import { countsTowardDay, type SpendSource } from '../spend/spend';
 import type { LocalDate } from '../time/local-date';
 
 /**
@@ -63,6 +63,8 @@ export interface FactOf<K extends FactKind> {
   readonly salience: number;
   readonly repeatAfterDays: number;
   readonly slots: { readonly [S in (typeof FACT_SLOTS)[K][number]]: FactSlot };
+  /** Categories the fact is about beyond its slots, such as the spends at a merchant it names. */
+  readonly about?: readonly string[];
 }
 
 export type Fact = { [K in FactKind]: FactOf<K> }[FactKind];
@@ -112,6 +114,13 @@ export interface InsightInput {
   readonly pots: readonly InsightPot[];
   /** The home currency, for what counts as worth a word; đồng when not given. */
   readonly currency?: Currency;
+}
+
+/** Spends counted toward the daily number, from `from` through `to`. */
+export function countedSpends(input: InsightInput, from: LocalDate, to: LocalDate): InsightSpend[] {
+  return input.spends.filter(
+    (s) => s.day >= from && s.day <= to && countsTowardDay(s, input.notDaily),
+  );
 }
 
 /** `now` against `before`. Below 20% either way is `about`. */

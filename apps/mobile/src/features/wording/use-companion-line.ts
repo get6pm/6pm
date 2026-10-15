@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   collectFacts,
   fillLine,
+  lineVoice,
   pickFact,
   type Fact,
   type LineSurface,
@@ -65,32 +66,33 @@ export function useCompanionLine(
   const money = useMoneyFormat();
   const { serious } = useTheme();
   const form = useCompanionForm();
-  const voiceName: Voice = serious ? 'plain' : (snap.plan?.persona ?? 'cheeky');
+  const chosenVoice: Voice = serious ? 'plain' : (snap.plan?.persona ?? 'cheeky');
 
   // The previous cycle's spends, which patterns compare against; read once per cycle.
-  const previousStart = previousCycleStartOf(snap);
+  const historyStart = previousCycleStartOf(snap);
   const [earlier, setEarlier] = useState<{ key: string; rows: SpendRow[] } | null>(null);
-  const earlierKey = `${previousStart ?? ''}|${snap.cycle.start}`;
+  const earlierKey = `${historyStart ?? ''}|${snap.cycle.start}`;
   useEffect(() => {
-    if (previousStart === null) {
+    if (historyStart === null) {
       setEarlier({ key: earlierKey, rows: [] });
       return;
     }
     let live = true;
-    readEarlierSpends(db, previousStart, snap.cycle.start)
+    readEarlierSpends(db, historyStart, snap.cycle.start)
       .then((rows) => live && setEarlier({ key: earlierKey, rows }))
       .catch(() => live && setEarlier({ key: earlierKey, rows: [] }));
     return () => {
       live = false;
     };
-  }, [db, earlierKey, previousStart, snap.cycle.start]);
+  }, [db, earlierKey, historyStart, snap.cycle.start]);
 
   const ready = earlier?.key === earlierKey && day !== null;
-  const fact: Fact | null = useMemo(() => {
+  const picked = useMemo(() => {
     if (!enabled || !ready || day === null) return null;
-    const facts = collectFacts(insightInputOf(snap, day, earlier.rows));
+    const input = insightInputOf(snap, day, earlier.rows);
+    const facts = collectFacts(input);
     const voice = readVoice(db);
-    return factFor(voice, moment, snap.today, facts, () =>
+    const fact = factFor(voice, moment, snap.today, facts, () =>
       pickFact({
         moment,
         facts,
@@ -100,7 +102,11 @@ export function useCompanionLine(
         ...(focusMerchant === undefined ? {} : { focusMerchant }),
       }),
     );
-  }, [enabled, ready, day, snap, earlier, db, moment, focusMerchant]);
+    // A roast or a tease turns soft on a hard day, and about what is never teased.
+    return fact === null ? null : { fact, voice: lineVoice(chosenVoice, fact, day, input.spends) };
+  }, [enabled, ready, day, snap, earlier, db, moment, focusMerchant, chosenVoice]);
+  const fact: Fact | null = picked?.fact ?? null;
+  const voiceName: Voice = picked?.voice ?? chosenVoice;
 
   const say = t as SlotWords['say'];
   const words: SlotWords = useMemo(

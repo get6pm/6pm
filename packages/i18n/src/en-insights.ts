@@ -14,27 +14,30 @@ export const enInsights = {
 
   'insight.todayOver.soft.1': 'Over by {over} today. That’s okay: tomorrow’s {tomorrow}.',
   'insight.todayOver.soft.2': 'A bigger day, {over} over. The plan bends: tomorrow’s {tomorrow}.',
-  'insight.todayOver.cheeky.1': '{over} over. Tomorrow’s {tomorrow}. We regroup.',
+  'insight.todayOver.cheeky.1': '{over} over today. Tomorrow’s {tomorrow}, and it’s a fresh one.',
   'insight.todayOver.cheeky.2':
-    'Today went {over} past the line. Tomorrow: {tomorrow}. Deep breath.',
-  'insight.todayOver.roast.1': '{over} over. Bold. Tomorrow’s {tomorrow}, so, gently now.',
-  'insight.todayOver.roast.2': 'The line said no; today said {over} more. Tomorrow’s {tomorrow}.',
+    'Today ran {over} past the line. Plot twist; tomorrow’s {tomorrow}.',
+  'insight.todayOver.roast.1':
+    '{over} over. The line put up a fight. Tomorrow’s {tomorrow}, gently now.',
+  'insight.todayOver.roast.2':
+    'The line said no; today said {over} more. Tomorrow’s {tomorrow}, round two.',
   'insight.todayOver.plain': 'Today is {over} over its line. Tomorrow’s line is {tomorrow}.',
 
   'insight.todayUnder.soft.1': '{spent} so far, {safe} still safe. Nice and steady.',
   'insight.todayUnder.soft.2': 'Still {safe} of room today. You’re doing fine.',
-  'insight.todayUnder.cheeky.1': '{safe} left today. Use it wisely. Or not. Your call.',
+  'insight.todayUnder.cheeky.1': '{safe} left today. Spend it well, or keep it. Your call.',
   'insight.todayUnder.cheeky.2': '{spent} down, {safe} to go. Smooth.',
-  'insight.todayUnder.roast.1': 'Only {spent} so far? Who are you today.',
-  'insight.todayUnder.roast.2': '{safe} still safe. I’m almost proud.',
+  'insight.todayUnder.roast.1':
+    'Only {spent} so far? The wallet is confused, in a good way. {safe} still safe.',
+  'insight.todayUnder.roast.2': '{safe} still safe. Almost suspicious. Keep it up.',
   'insight.todayUnder.plain': '{spent} spent today, {safe} still safe.',
 
   'insight.noSpendYet.soft.1': 'Nothing spent yet. All {line} is still yours today.',
   'insight.noSpendYet.soft.2': 'A clean slate: {line} for today.',
-  'insight.noSpendYet.cheeky.1': 'Zero spent. {line} burning a hole in your pocket?',
+  'insight.noSpendYet.cheeky.1': '{line} today and not a scratch on it. Yet.',
   'insight.noSpendYet.cheeky.2': 'Full {line} today, untouched. For now.',
-  'insight.noSpendYet.roast.1': 'Nothing spent yet. The day is young.',
-  'insight.noSpendYet.roast.2': '{line} sitting there, unspent. Suspicious.',
+  'insight.noSpendYet.roast.1': 'Nothing spent yet. {line} is waiting to see what you do.',
+  'insight.noSpendYet.roast.2': '{line} sitting there, unspent. Suspicious. Carry on.',
   'insight.noSpendYet.plain': 'Nothing spent yet. Today’s line is {line}.',
 
   'insight.waitingTonight.soft.1': {
@@ -46,16 +49,16 @@ export const enInsights = {
     other: '{count} spends to look over tonight, {amount} in all.',
   },
   'insight.waitingTonight.cheeky.1': {
-    one: 'One spend is waiting for its verdict tonight.',
-    other: '{count} spends are waiting for their verdict tonight.',
+    one: 'One spend ({amount}) is waiting for its verdict tonight.',
+    other: '{count} spends ({amount}) are waiting for their verdict tonight.',
   },
   'insight.waitingTonight.cheeky.2': {
     one: 'Tonight’s close: one spend, {amount}. Easy.',
     other: 'Tonight’s close: {count} spends, {amount}. Easy.',
   },
   'insight.waitingTonight.roast.1': {
-    one: 'One spend waiting. It won’t close itself.',
-    other: '{count} spends waiting. They won’t close themselves.',
+    one: '{amount} waiting. It won’t close itself, but a minute does it.',
+    other: '{count} spends, {amount}, waiting. They won’t close themselves; a minute does it.',
   },
   'insight.waitingTonight.roast.2': {
     one: '{amount} waiting for you to say “yep, that was me”.',
@@ -139,9 +142,10 @@ export const enInsights = {
   'insight.categoryPaceUp.cheeky.1':
     '{category}: {now} already. Last cycle you were at {before}. Hmm.',
   'insight.categoryPaceUp.cheeky.2': '{category} is having a moment: {now} vs {before}.',
-  'insight.categoryPaceUp.roast.1': '{category} at {now}. Last cycle: {before}. I see you.',
+  'insight.categoryPaceUp.roast.1':
+    '{category} at {now}. Last cycle: {before}. I see it. A quiet week evens it out.',
   'insight.categoryPaceUp.roast.2':
-    '{now} on {category} already. It was {before} last time. Just saying.',
+    '{now} on {category} already; it was {before} last time. Just saying, with love.',
   'insight.categoryPaceUp.plain':
     '{category}: {now} this cycle, {before} at this point last cycle.',
 
@@ -150,7 +154,7 @@ export const enInsights = {
   'insight.categoryPaceDown.soft.2': '{compare} on {category} than last cycle: {now} vs {before}.',
   'insight.categoryPaceDown.cheeky.1': '{category}: {now}, down from {before}. Look at you.',
   'insight.categoryPaceDown.cheeky.2': '{category} went on a diet: {now} vs {before}.',
-  'insight.categoryPaceDown.roast.1': '{category} only {now}? It was {before}. Who replaced you?',
+  'insight.categoryPaceDown.roast.1': '{category} only {now}? It was {before}. Keep this version.',
   'insight.categoryPaceDown.roast.2': '{now} on {category}, down from {before}. Growth.',
   'insight.categoryPaceDown.plain':
     '{category}: {now} this cycle, {before} at this point last cycle.',
@@ -178,14 +182,15 @@ export const enInsights = {
   'insight.biggestSpend.cheeky.1': 'Headliner of the week: {merchant}, {amount}.',
   'insight.biggestSpend.cheeky.2': '{amount} at {merchant}. Treat yourself, apparently.',
   'insight.biggestSpend.roast.1': '{amount} at {merchant}. The week’s main character.',
-  'insight.biggestSpend.roast.2': '{merchant} took {amount} this week. Worth it? Don’t answer.',
+  'insight.biggestSpend.roast.2':
+    '{merchant} took {amount} this week. Worth it? Don’t answer. The plan has it.',
   'insight.biggestSpend.plain': 'Biggest spend this week: {amount} at {merchant}.',
 
   'insight.underStreak.soft.1': '{days} days in a row under the line. Steady you.',
   'insight.underStreak.soft.2': '{days} calm days back to back.',
   'insight.underStreak.cheeky.1': '{days} days under the line. Streak era.',
   'insight.underStreak.cheeky.2': 'Under the line {days} days running. Don’t jinx it.',
-  'insight.underStreak.roast.1': '{days} days under. Who taught you this?',
+  'insight.underStreak.roast.1': '{days} days under the line. I had jokes ready. Wasted.',
   'insight.underStreak.roast.2': '{days} days in a row. I’m running out of jokes.',
   'insight.underStreak.plain': '{days} closed days in a row at or under the line.',
 
@@ -193,7 +198,8 @@ export const enInsights = {
   'insight.closeStreak.soft.2': 'A {days}-day close streak. Thank you for showing up.',
   'insight.closeStreak.cheeky.1': '{days} closes in a row. Habit unlocked.',
   'insight.closeStreak.cheeky.2': 'Streak: {days}. Tonight makes it more.',
-  'insight.closeStreak.roast.1': '{days} days straight. Commitment? From you?',
+  'insight.closeStreak.roast.1':
+    '{days} days straight. The streak looks good on you; don’t break it.',
   'insight.closeStreak.roast.2': '{days} closes running. Don’t break it now.',
   'insight.closeStreak.plain': '{days} days closed in a row.',
 
@@ -218,8 +224,8 @@ export const enInsights = {
     other: '{count} days under, {spare} spare. Don’t spend it all at once.',
   },
   'insight.weekSpare.roast.2': {
-    one: 'You’re {spare} up this week. Who are you.',
-    other: 'You’re {spare} up this week. Who are you.',
+    one: 'The week is {spare} up. I’ll allow it.',
+    other: 'The week is {spare} up. I’ll allow it.',
   },
   'insight.weekSpare.plain': {
     one: 'This week’s closed days left {spare} over.',
@@ -231,7 +237,8 @@ export const enInsights = {
   'insight.weekOver.soft.2': '{over} over this week. We’ll smooth it out.',
   'insight.weekOver.cheeky.1': 'Week’s {over} over. The rest of the month adjusts.',
   'insight.weekOver.cheeky.2': '{over} over so far. Plot twist, not the ending.',
-  'insight.weekOver.roast.1': 'This week: {over} over. The month remembers.',
+  'insight.weekOver.roast.1':
+    'This week: {over} over. A quieter next week and the month can take it.',
   'insight.weekOver.roast.2': '{over} over. A week to forget, a month to fix it.',
   'insight.weekOver.plain': 'This week’s closed days went {over} over the line.',
 
@@ -239,7 +246,7 @@ export const enInsights = {
   'insight.potMilestone.soft.2': '{percent}% of the way to {pot}.',
   'insight.potMilestone.cheeky.1': '{pot}: {percent}% there. It’s happening.',
   'insight.potMilestone.cheeky.2': '{percent}% of {pot}, done. Keep feeding it.',
-  'insight.potMilestone.roast.1': '{pot} at {percent}%. Saving? You?',
+  'insight.potMilestone.roast.1': '{pot} at {percent}%. The pot is winning. Let it.',
   'insight.potMilestone.roast.2': '{percent}% to {pot}. Don’t raid it.',
   'insight.potMilestone.plain': '{pot} is past {percent}% of its goal.',
 
@@ -247,8 +254,8 @@ export const enInsights = {
   'insight.potFull.soft.2': '{pot}: done. Enjoy it, truly.',
   'insight.potFull.cheeky.1': '{pot} is full! Confetti, but quietly.',
   'insight.potFull.cheeky.2': '{pot}, filled to the brim.',
-  'insight.potFull.roast.1': '{pot} is full. I didn’t think you’d make it. You did.',
-  'insight.potFull.roast.2': 'Full pot: {pot}. Now don’t spend it on nonsense.',
+  'insight.potFull.roast.1': '{pot} is full. I had a joke ready; you didn’t need it.',
+  'insight.potFull.roast.2': 'Full pot: {pot}. Now spend it on the thing it was for.',
   'insight.potFull.plain': '{pot} has reached its goal.',
 
   'insight.workToClaim.soft.1': {

@@ -1,0 +1,4 @@
+# The LiteRT-LM framework the local-model podspec downloads at pod install: it appears during
+# the build, so counting it would make the build's runtime version differ from the one worked
+# out before it. Its version and checksum are pinned in the podspec, which is counted.
+modules/local-model/ios/Frameworks/**

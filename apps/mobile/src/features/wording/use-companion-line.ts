@@ -22,7 +22,7 @@ import { useTheme } from '../../ui/theme/theme';
 import { useApi } from '../api/native-api';
 import { factFor, lineKey, withLine, withPick } from './companion-voice';
 import { catalogueLine, slotValues, type SlotWords, type Voice } from './fact-words';
-import { insightInputOf, previousCycleStartOf, readEarlierSpends } from './insight-input';
+import { historyStartOf, insightInputOf, readEarlierSpends } from './insight-input';
 import { readModelChoice } from './model-choice';
 import { readVoice, writeVoice } from './voice-store';
 import { wordWithModel } from './word-chain';
@@ -68,8 +68,8 @@ export function useCompanionLine(
   const form = useCompanionForm();
   const chosenVoice: Voice = serious ? 'plain' : (snap.plan?.persona ?? 'cheeky');
 
-  // The previous cycle's spends, which patterns compare against; read once per cycle.
-  const historyStart = previousCycleStartOf(snap);
+  // The earlier cycles' spends, which patterns compare against; read once per cycle.
+  const historyStart = historyStartOf(snap);
   const [earlier, setEarlier] = useState<{ key: string; rows: SpendRow[] } | null>(null);
   const earlierKey = `${historyStart ?? ''}|${snap.cycle.start}`;
   useEffect(() => {

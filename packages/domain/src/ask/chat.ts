@@ -12,6 +12,11 @@ const ROASTABLE: ReadonlySet<Fact['kind']> = new Set([
   'todayOver',
   'weekOver',
   'firstTimeMerchant',
+  'recordDay',
+  'lateNight',
+  'weekendHeavy',
+  'likelySubscription',
+  'firstWeekPace',
 ]);
 
 /** Facts that lift someone: what is going right. */
@@ -24,6 +29,10 @@ const UPLIFTING: ReadonlySet<Fact['kind']> = new Set([
   'potFull',
   'paydaySoon',
   'noSpendYet',
+  'noSpendDay',
+  'noSpendStreak',
+  'backUnder',
+  'paceSpare',
 ]);
 
 export interface ChatAnswer {

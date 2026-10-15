@@ -60,9 +60,9 @@ function catalogueKind(fact: Fact): string {
   if (fact.kind === 'billDue' && fact.slots.days.type === 'count' && fact.slots.days.value === 0) {
     return 'billDueToday';
   }
-  if (fact.kind === 'categoryPace') {
+  if (fact.kind === 'categoryPace' || fact.kind === 'firstWeekPace') {
     const word = fact.slots.compare.type === 'compare' ? fact.slots.compare.value : 'more';
-    return word === 'more' || word === 'muchMore' ? 'categoryPaceUp' : 'categoryPaceDown';
+    return `${fact.kind}${word === 'more' || word === 'muchMore' ? 'Up' : 'Down'}`;
   }
   return fact.kind;
 }

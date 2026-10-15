@@ -6,13 +6,18 @@ import { Symbol } from '../../../ui/icons/symbol';
 import type { SymbolName } from '../../../ui/icons/symbols.generated';
 import { body } from '../../../ui/type/fonts';
 import { iosInk } from './frame-ink';
-import { GlassButton } from './ios-parts';
+import { GlassButton, GlyphTile } from './ios-parts';
 
 /** The Shortcuts editor as iOS 27 draws it, in points, from the screens it really shows. */
 
 /** The 6pm app icon, as Shortcuts and the share sheet list it. */
 export function SixPmIcon({ size = 30 }: { readonly size?: number }) {
   return <AppIconImage size={size} radius={size * 0.225} />;
+}
+
+/** The 6pm shortcut's icon, as Shortcuts lists it once added. */
+export function LogShortcutIcon({ size = 30 }: { readonly size?: number }) {
+  return <GlyphTile glyph="layers" color={iosInk.logTile} size={size} />;
 }
 
 /** The editor's top bar: back, the shortcut's icon and name, and the describe button. */

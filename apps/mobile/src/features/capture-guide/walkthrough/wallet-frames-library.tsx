@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Text, View } from 'react-native';
 import type { SharedValue } from 'react-native-reanimated';
 
@@ -5,10 +6,8 @@ import { useI18n } from '../../../i18n/i18n';
 import { Symbol } from '../../../ui/icons/symbol';
 import type { SymbolName } from '../../../ui/icons/symbols.generated';
 import { body } from '../../../ui/type/fonts';
-import { Phone } from './device';
 import { iosInk } from './frame-ink';
 import { GlassButton, LargeTitle } from './ios-parts';
-import { Reveal, TapFlash, Touch } from './moving-parts';
 import { SixPmIcon } from './shortcuts-chrome';
 
 const FULL = { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 } as const;
@@ -72,93 +71,146 @@ export function EmptyAutomation() {
   );
 }
 
-/** Library: the folders, Automation among them; the finger taps Automation. */
-export function LibraryFrame({ t, scale }: FrameProps) {
-  const { t: tr } = useI18n();
+/** Library: the folders, Automation among them, and 6pm under Apps. `flash` marks Automation. */
+export function LibraryScreen({ flash }: { readonly flash?: ReactNode }) {
+  const { t } = useI18n();
   const rows: readonly { label: string; glyph: SymbolName }[] = [
-    { label: tr('capture.walk.ios.allShortcuts'), glyph: 'stack' },
-    { label: tr('capture.walk.ios.shareSheet'), glyph: 'ios_share' },
+    { label: t('capture.walk.ios.allShortcuts'), glyph: 'stack' },
+    { label: t('capture.walk.ios.shareSheet'), glyph: 'ios_share' },
     { label: 'Apple Watch', glyph: 'watch' },
-    { label: tr('capture.walk.ios.gallery'), glyph: 'apps' },
-    { label: tr('capture.walk.ios.automation'), glyph: 'schedule' },
+    { label: t('capture.walk.ios.gallery'), glyph: 'apps' },
+    { label: t('capture.walk.ios.automation'), glyph: 'schedule' },
   ];
   return (
-    <Phone t={t} scale={scale} background={iosInk.grouped}>
-      <Reveal t={t} from={0.42} to={0.52} out style={FULL}>
-        <LargeTitle
-          title={tr('capture.walk.ios.library')}
-          right={
-            <View style={{ flexDirection: 'row', gap: 10 }}>
-              <GlassButton text={tr('capture.walk.ios.edit')} />
-              <GlassButton glyph="add_box" />
-            </View>
-          }
-        />
-        <View
-          style={{
-            marginTop: 10,
-            marginHorizontal: 16,
-            borderRadius: 26,
-            backgroundColor: iosInk.bg,
-            overflow: 'hidden',
-          }}
-        >
-          {rows.map((row, k) => (
-            <View
-              key={row.glyph}
-              style={{ height: 54, flexDirection: 'row', alignItems: 'center', paddingLeft: 16 }}
-            >
-              {k === rows.length - 1 ? <TapFlash t={t} at={0.4} /> : null}
-              <Symbol name={row.glyph} size={24} color={iosInk.blue} />
-              <View
-                style={{
-                  flex: 1,
-                  height: 54,
-                  marginLeft: 14,
-                  paddingRight: 14,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  borderTopWidth: k === 0 ? 0 : 0.6,
-                  borderTopColor: iosInk.separator,
-                }}
-              >
-                <Text style={{ flex: 1, ...body(17), color: iosInk.label }}>{row.label}</Text>
-                <Symbol name="chevron_right" size={22} color={iosInk.tertiary} />
-              </View>
-            </View>
-          ))}
-        </View>
-        <Text style={{ ...body(22, 700), color: iosInk.label, marginTop: 26, marginLeft: 32 }}>
-          {tr('capture.walk.ios.apps')}
-        </Text>
-        <View
-          style={{
-            marginTop: 10,
-            marginHorizontal: 16,
-            height: 60,
-            borderRadius: 26,
-            backgroundColor: iosInk.bg,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 14,
-            paddingHorizontal: 14,
-          }}
-        >
-          <SixPmIcon size={32} />
-          <Text style={{ flex: 1, ...body(17), color: iosInk.label }}>6pm</Text>
-          <Symbol name="chevron_right" size={22} color={iosInk.tertiary} />
-        </View>
-      </Reveal>
-      <Reveal t={t} from={0.44} to={0.56} dx={60} style={FULL}>
-        <EmptyAutomation />
-      </Reveal>
-      <Touch
-        t={t}
-        stops={[
-          { at: 0.16, x: 260, y: 600 },
-          { at: 0.4, x: 280, y: 411, tap: true },
-        ]}
+    <View style={FULL}>
+      <LargeTitle
+        title={t('capture.walk.ios.library')}
+        right={
+          <View style={{ flexDirection: 'row', gap: 10 }}>
+            <GlassButton text={t('capture.walk.ios.edit')} />
+            <GlassButton glyph="add_box" />
+          </View>
+        }
       />
-    </Phone>
+      <View
+        style={{
+          marginTop: 10,
+          marginHorizontal: 16,
+          borderRadius: 26,
+          backgroundColor: iosInk.bg,
+          overflow: 'hidden',
+        }}
+      >
+        {rows.map((row, k) => (
+          <View
+            key={row.glyph}
+            style={{ height: 54, flexDirection: 'row', alignItems: 'center', paddingLeft: 16 }}
+          >
+            {k === rows.length - 1 ? flash : null}
+            <Symbol name={row.glyph} size={24} color={iosInk.blue} />
+            <View
+              style={{
+                flex: 1,
+                height: 54,
+                marginLeft: 14,
+                paddingRight: 14,
+                flexDirection: 'row',
+                alignItems: 'center',
+                borderTopWidth: k === 0 ? 0 : 0.6,
+                borderTopColor: iosInk.separator,
+              }}
+            >
+              <Text style={{ flex: 1, ...body(17), color: iosInk.label }}>{row.label}</Text>
+              <Symbol name="chevron_right" size={22} color={iosInk.tertiary} />
+            </View>
+          </View>
+        ))}
+      </View>
+      <Text style={{ ...body(22, 700), color: iosInk.label, marginTop: 26, marginLeft: 32 }}>
+        {t('capture.walk.ios.apps')}
+      </Text>
+      <View
+        style={{
+          marginTop: 10,
+          marginHorizontal: 16,
+          height: 60,
+          borderRadius: 26,
+          backgroundColor: iosInk.bg,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 14,
+          paddingHorizontal: 14,
+        }}
+      >
+        <SixPmIcon size={32} />
+        <Text style={{ flex: 1, ...body(17), color: iosInk.label }}>6pm</Text>
+        <Symbol name="chevron_right" size={22} color={iosInk.tertiary} />
+      </View>
+    </View>
+  );
+}
+
+/** A new shortcut, offering to describe one, with Edit at the top right. */
+export function NewShortcutScreen() {
+  const { t } = useI18n();
+  return (
+    <View style={FULL}>
+      <View
+        style={{
+          position: 'absolute',
+          top: 62,
+          left: 16,
+          right: 16,
+          height: 44,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <GlassButton glyph="chevron_left" />
+        <Text style={{ ...body(17, 600), color: iosInk.label }}>
+          {t('capture.walk.ios.newShortcut')}
+        </Text>
+        <GlassButton text={t('capture.walk.ios.edit')} />
+      </View>
+      <View
+        style={{
+          position: 'absolute',
+          top: 150,
+          left: 34,
+          right: 34,
+          height: 236,
+          borderRadius: 48,
+          backgroundColor: iosInk.bg,
+          boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 30,
+        }}
+      >
+        <Symbol name="auto_awesome" size={44} color={iosInk.blue} />
+        <Text style={{ ...body(20, 600), color: iosInk.label, textAlign: 'center', marginTop: 12 }}>
+          {t('capture.walk.ios.describe')}
+        </Text>
+      </View>
+      <View
+        style={{
+          position: 'absolute',
+          left: 32,
+          right: 32,
+          bottom: 36,
+          height: 50,
+          borderRadius: 25,
+          backgroundColor: iosInk.bg,
+          boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
+          justifyContent: 'center',
+          paddingHorizontal: 18,
+        }}
+      >
+        <Text style={{ ...body(17), color: iosInk.tertiary }}>
+          {t('capture.walk.ios.describe')}
+        </Text>
+      </View>
+    </View>
   );
 }

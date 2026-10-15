@@ -5,12 +5,13 @@ import { formatVnd } from '@6pm/domain';
 import { useI18n } from '../../../i18n/i18n';
 import { Symbol } from '../../../ui/icons/symbol';
 import { body } from '../../../ui/type/fonts';
+import { WALLET_SHORTCUT_NAME } from '../wallet-shortcut';
 import { Phone } from './device';
 import { iosInk } from './frame-ink';
 import { GlassButton, LargeTitle } from './ios-parts';
 import { Reveal, Switch, TapFlash, Touch } from './moving-parts';
-import { EditorBar, EditorCard, SixPmIcon } from './shortcuts-chrome';
-import { LogSpendCard, TriggerCard } from './shortcuts-cards';
+import { EditorBar, EditorCard, LogShortcutIcon } from './shortcuts-chrome';
+import { RunShortcutCard, TriggerCard } from './shortcuts-cards';
 import { DockedDrawer } from './shortcuts-drawer';
 import type { FrameProps } from './wallet-frames-library';
 
@@ -22,17 +23,12 @@ export function FinishFrame({ t, scale }: FrameProps) {
   return (
     <Phone t={t} scale={scale} background={iosInk.grouped}>
       <Reveal t={t} from={0.5} to={0.6} out dx={-60} style={FULL}>
-        <EditorBar name={tr('native.intents.logSpend.title')} />
+        <EditorBar name={tr('capture.walk.ios.runShortcut')} icon={false} />
         <EditorCard top={143}>
           <TriggerCard />
         </EditorCard>
         <EditorCard top={251}>
-          <LogSpendCard
-            t={t}
-            amount={{ token: tr('capture.walk.ios.amount') }}
-            where={{ token: tr('capture.walk.ios.merchant') }}
-            showOffAt={0.26}
-          />
+          <RunShortcutCard t={t} showOffAt={0.26} />
         </EditorCard>
         <DockedDrawer />
       </Reveal>
@@ -58,7 +54,7 @@ export function FinishFrame({ t, scale }: FrameProps) {
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Symbol name="wallet" size={28} color={iosInk.blue} fill={1} />
             <Symbol name="arrow_forward" size={20} color={iosInk.tertiary} />
-            <SixPmIcon size={28} />
+            <LogShortcutIcon size={28} />
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
             <Text style={{ flex: 1, ...body(19, 600), color: iosInk.label }}>
@@ -66,16 +62,14 @@ export function FinishFrame({ t, scale }: FrameProps) {
             </Text>
             <Switch t={t} from={2} to={2.1} startsOn />
           </View>
-          <Text style={{ ...body(15), color: iosInk.secondary }}>
-            {tr('native.intents.logSpend.title')}
-          </Text>
+          <Text style={{ ...body(15), color: iosInk.secondary }}>{WALLET_SHORTCUT_NAME}</Text>
         </View>
       </Reveal>
       <Touch
         t={t}
         stops={[
           { at: 0.08, x: 250, y: 620 },
-          { at: 0.26, x: 345, y: 419, tap: true },
+          { at: 0.26, x: 345, y: 335, tap: true },
           { at: 0.5, x: 38, y: 84, tap: true },
         ]}
       />

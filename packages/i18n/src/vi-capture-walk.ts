@@ -9,42 +9,39 @@ export const viCaptureWalk: { readonly [Key in keyof typeof enCaptureWalk]: Entr
   'capture.walk.again': 'Xem lại từ đầu',
   'capture.walk.mistakes': 'Hay bị nhầm',
 
-  'capture.walk.wallet.s1Title': 'Mở Phím tắt, rồi Tự động hóa',
+  'capture.walk.wallet.s1Title': 'Thêm phím tắt của 6pm',
   'capture.walk.wallet.s1Body':
-    'Trong Thư viện, chạm Tự động hóa. Nếu Phím tắt mở ở Tất cả phím tắt, chạm mũi tên quay lại trước.',
-  'capture.walk.wallet.s2Title': 'Chạm + để tạo mới',
+    'Chạm “Thêm phím tắt 6pm” bên dưới, rồi Thêm phím tắt. Nó tên là “Log to 6pm”.',
+  'capture.walk.wallet.s2Title': 'Mở Tự động hóa và chạm +',
   'capture.walk.wallet.s2Body':
-    'Một phím tắt mới mở ra. Nếu thấy “Mô tả phím tắt”, chạm Sửa ở góc trên bên phải.',
+    'Trong Phím tắt, chạm Thư viện, rồi Tự động hóa, rồi +. Nếu thấy “Mô tả phím tắt”, chạm Sửa.',
   'capture.walk.wallet.s3Title': 'Thêm bộ kích hoạt Ví',
   'capture.walk.wallet.s3Body':
     'Ở bảng phía dưới, chạm Tự động hóa rồi chạm Ví. Thẻ “Khi Bất kỳ thẻ nào được chạm vào” sẽ hiện ra.',
-  'capture.walk.wallet.s4Title': 'Thêm “Ghi vào 6pm”',
+  'capture.walk.wallet.s4Title': 'Chạy “Log to 6pm”',
   'capture.walk.wallet.s4Body':
-    'Chạm Tìm kiếm, gõ “Ghi vào 6pm” rồi chạm vào nó. Nó nằm ngay dưới Ví.',
-  'capture.walk.wallet.s5Title': 'Điền Số tiền từ lần chạm',
+    'Chạm Tìm kiếm, gõ “Chạy phím tắt” rồi chạm vào nó. Sau đó chạm Phím tắt và chọn “Log to 6pm”.',
+  'capture.walk.wallet.s5Title': 'Tắt Hiển thị khi chạy, rồi quay lại',
   'capture.walk.wallet.s5Body':
-    'Chạm ô Số tiền, rồi chạm Giao dịch ngay trên bàn phím. Chạm vào chữ Giao dịch màu xanh và chọn Số lượng.',
-  'capture.walk.wallet.s6Title': 'Điền Ở đâu tương tự',
-  'capture.walk.wallet.s6Body':
-    'Chạm Ở đâu, rồi Giao dịch. Chạm vào nó lần nữa và chọn Điểm bán hàng.',
-  'capture.walk.wallet.s7Title': 'Tắt Hiển thị khi chạy, rồi quay lại',
-  'capture.walk.wallet.s7Body':
     'Để Tự động hóa bật. Quay lại là đã lưu. Muốn chỉ bắt vài thẻ, chạm Bất kỳ thẻ nào và chọn thẻ.',
-  'capture.walk.wallet.s8Title': 'Thử ngay',
-  'capture.walk.wallet.s8Body':
+  'capture.walk.wallet.s6Title': 'Thử ngay',
+  'capture.walk.wallet.s6Body':
     'Trả một món bằng Apple Pay trên iPhone này, rồi mở 6pm. Lần chạm đã nằm trong Inbox.',
   'capture.walk.wallet.mistake1':
     'Tạo phím tắt mà không có thẻ “Khi Bất kỳ thẻ nào được chạm vào” ở trên cùng. Nó chỉ chạy khi bạn tự bấm.',
   'capture.walk.wallet.mistake2':
-    'Để trống Số tiền và Ở đâu. Hai ô này phải có Số lượng và Điểm bán hàng màu xanh lấy từ Giao dịch.',
+    'Để Chạy phím tắt mà chưa chọn phím tắt. Chạm Phím tắt và chọn “Log to 6pm”, không thì chẳng ghi được gì.',
   'capture.walk.wallet.mistake3':
     'Để bật Hiển thị khi chạy. Mỗi lần chạm sẽ dừng lại hiện một thẻ thay vì ghi lặng lẽ.',
   'capture.walk.wallet.olderTitle': 'Trên iOS 26',
   'capture.walk.wallet.older1': 'Trong Phím tắt, mở tab Tự động hóa và chạm +.',
   'capture.walk.wallet.older2': 'Chạm Ví, chọn thẻ, chọn Chạy ngay lập tức, rồi Tiếp.',
-  'capture.walk.wallet.older3': 'Chạm Tạo phím tắt mới và thêm “Ghi vào 6pm”.',
-  'capture.walk.wallet.older4':
-    'Đặt Số tiền là Đầu vào phím tắt › Số lượng và Ở đâu là Đầu vào phím tắt › Điểm bán hàng. Tắt Hiển thị khi chạy, rồi Xong.',
+  'capture.walk.wallet.older3': 'Chọn “Log to 6pm” trong danh sách phím tắt, rồi Xong.',
+  'capture.walk.wallet.handTitle': 'Muốn tự làm lấy?',
+  'capture.walk.wallet.hand1':
+    'Thay vì Chạy phím tắt, thêm “Ghi vào 6pm” và tắt Hiển thị khi chạy.',
+  'capture.walk.wallet.hand2':
+    'Đặt Số tiền là Giao dịch › Số lượng, và Ở đâu là Giao dịch › Điểm bán hàng.',
 
   'capture.walk.email.s1Title': 'Trên máy tính, mở cài đặt Gmail',
   'capture.walk.email.s1Body':
@@ -120,15 +117,13 @@ export const viCaptureWalk: { readonly [Key in keyof typeof enCaptureWalk]: Entr
   'capture.walk.ios.isTapped': 'được chạm vào',
   'capture.walk.ios.anyCard': 'Bất kỳ thẻ nào',
   'capture.walk.ios.showWhenRun': 'Hiển thị khi chạy',
-  'capture.walk.ios.shortcutInput': 'Đầu vào phím tắt',
-  'capture.walk.ios.transaction': 'Giao dịch',
-  'capture.walk.ios.clearVariable': 'Xóa biến',
-  'capture.walk.ios.return': 'Trở lại',
-  'capture.walk.ios.get': 'Lấy',
-  'capture.walk.ios.cardOrPass': 'Thẻ hoặc vé',
-  'capture.walk.ios.merchant': 'Điểm bán hàng',
-  'capture.walk.ios.amount': 'Số lượng',
-  'capture.walk.ios.name': 'Tên',
+  'capture.walk.ios.addShortcut': 'Thêm phím tắt',
+  'capture.walk.ios.dontAdd': 'Không thêm',
+  'capture.walk.ios.runShortcut': 'Chạy phím tắt',
+  'capture.walk.ios.run': 'Chạy',
+  'capture.walk.ios.shortcut': 'Phím tắt',
+  'capture.walk.ios.shortcutA': 'Giờ về nhà',
+  'capture.walk.ios.shortcutB': 'Hẹn giờ giặt đồ',
   'capture.walk.ios.personal': 'Cá nhân',
   'capture.walk.ios.walletSummary': 'Khi tôi chạm vào một thẻ thanh toán hoặc thẻ Ví',
   'capture.walk.ios.messages': 'Tin nhắn',

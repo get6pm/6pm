@@ -32,13 +32,7 @@ export function TriggerCard() {
 }
 
 /** A labelled row of a card, with whatever sits on its right. */
-function FieldRow({
-  label,
-  children,
-}: {
-  readonly label: string;
-  readonly children?: ReactNode;
-}) {
+function FieldRow({ label, children }: { readonly label: string; readonly children?: ReactNode }) {
   return (
     <View
       style={{

@@ -1,5 +1,6 @@
 import type { Vnd } from '../money/format';
 import { parseBankReceipt, readFields, toRows, type Field, type ReceiptLine } from './bank-receipt';
+import type { CurrencySource } from './receipt-currency';
 import { parseShopReceipt } from './shop-receipt';
 import { foldWords } from './spoken-spend';
 
@@ -22,6 +23,8 @@ export interface ReadReceipt {
   /** The total as printed, a decimal in the receipt's own units, whatever its currency. */
   readonly printed: string | null;
   readonly currencySure: boolean;
+  /** What decided the currency: anything but `printed` is a guess. */
+  readonly currencyFrom: CurrencySource;
   readonly totalSure: boolean;
   /** The row of `receiptReadingOrder` the amount was read from, when one was. */
   readonly totalLine: number | null;
@@ -46,14 +49,16 @@ function readsAsTransfer(lines: readonly ReceiptLine[]): boolean {
 
 /**
  * Reads a shared receipt. Transfer screenshots are read as before (always đồng); anything else
- * labelled like a shop's bill is read for its total and its currency, with `prior` (the trip's
- * currency in Travel mode) used only when the receipt itself says nothing.
+ * labelled like a shop's bill is read for its total and its currency. When the receipt prints no
+ * currency, `located` (the currency where the photo was taken) is the first guess and `prior`
+ * (the trip's currency in Travel mode) the last before đồng.
  */
 export function readReceipt(
   lines: readonly ReceiptLine[],
   prior: string | null = null,
+  located: string | null = null,
 ): ReadReceipt | null {
-  const shop = readsAsTransfer(lines) ? null : parseShopReceipt(lines, prior);
+  const shop = readsAsTransfer(lines) ? null : parseShopReceipt(lines, { prior, located });
   if (shop) {
     const inDong = shop.currency === 'VND' && shop.total !== null;
     const abroad = shop.currency !== null && shop.currency !== 'VND' && shop.total !== null;
@@ -64,6 +69,7 @@ export function readReceipt(
       currency: shop.currency,
       printed: shop.total,
       currencySure: shop.currencySure,
+      currencyFrom: shop.currencyFrom,
       totalSure: shop.totalSure,
       totalLine: shop.totalLine,
       payee: shop.merchant,
@@ -83,6 +89,7 @@ export function readReceipt(
     currency: 'VND',
     printed: bank.amount === null ? null : String(bank.amount),
     currencySure: true,
+    currencyFrom: 'printed',
     totalSure: bank.amount !== null,
     totalLine: null,
   };

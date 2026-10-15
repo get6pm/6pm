@@ -1,6 +1,7 @@
 import { sql as createSettings } from '../../../db/migrations/0001-create-settings';
 import { sql as createMoneyTables } from '../../../db/migrations/0002-create-money-tables';
 import { sql as createTogetherMoves } from '../../../db/migrations/0003-create-together-moves';
+import { sql as addCurrencyGuessed } from '../../../db/migrations/0004-spend-currency-guessed';
 import { createMoneyStore, type MoneyStore } from '../../../data/money-store';
 import type { SqlDatabase, SqlValue } from '../../../data/table';
 
@@ -12,6 +13,7 @@ export function openMemoryDb(): SqlDatabase {
   sqlite.exec(createSettings);
   sqlite.exec(createMoneyTables);
   sqlite.exec(createTogetherMoves);
+  sqlite.exec(addCurrencyGuessed);
   return {
     getAllAsync: <T>(source: string, params: SqlValue[]) =>
       Promise.resolve(sqlite.prepare(source).all(...params) as T[]),

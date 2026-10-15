@@ -26,6 +26,7 @@ const grabReceipt: ReceiptModelOutput = {
   merchant: 'Cơm Gà Hải Nam',
   at: '2026-09-30T18:47:00',
   sure: true,
+  currencyPrinted: true,
 };
 
 /** A recorded Messages API answer. */
@@ -139,6 +140,7 @@ describe('POST /v1/receipts/read', () => {
         merchant: 'Cơm Gà Hải Nam',
         at: '2026-09-30T18:47:00',
         sure: true,
+        currencyPrinted: true,
       },
     });
     expect(await ledgerRows(token)).toEqual([
@@ -294,6 +296,17 @@ describe('the reading from the model output', () => {
     expect(
       toReceiptReading({ ...grabReceipt, currency: 'sgd', total: '68.80' }, null),
     ).toMatchObject({ amount: 6_880, currency: 'SGD', sure: true });
+  });
+
+  it('says whether the currency was printed, never for one taken from the hint', () => {
+    expect(toReceiptReading(grabReceipt, null)?.currencyPrinted).toBe(true);
+    const inferred = { ...grabReceipt, total: '368,160', currency: 'IDR', currencyPrinted: false };
+    expect(toReceiptReading(inferred, 'VND')).toMatchObject({
+      currency: 'IDR',
+      currencyPrinted: false,
+    });
+    const hinted = { ...grabReceipt, total: '368,160', currency: null };
+    expect(toReceiptReading(hinted, 'IDR')).toMatchObject({ currencyPrinted: false });
   });
 
   it('drops a time that is not a printed local time and an empty merchant', () => {

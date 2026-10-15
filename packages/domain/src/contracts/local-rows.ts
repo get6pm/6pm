@@ -32,7 +32,8 @@ export type CategoryRow = z.infer<typeof categoryRowSchema>;
 export const foreignAmountSchema = z.object({
   currency: z.string().length(3),
   amount: z.number().nonnegative(),
-  rate: z.number().positive(),
+  /** Đồng for one unit; 0 while a captured foreign amount waits for a rate. */
+  rate: z.number().nonnegative(),
 });
 
 export const spendRowSchema = z.object({
@@ -50,6 +51,11 @@ export const spendRowSchema = z.object({
   forWork: z.boolean(),
   detail: z.string().nullable(),
   foreignAmount: foreignAmountSchema.nullable(),
+  /**
+   * The receipt printed no currency and the one saved was guessed; absent on rows and backups
+   * from before it was kept.
+   */
+  currencyGuessed: z.boolean().optional(),
   createdAt: instant,
   updatedAt: instant,
 });

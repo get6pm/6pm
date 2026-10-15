@@ -20,11 +20,20 @@ struct ReceiptLine: Encodable {
   let confidence: Double?
 }
 
-/// One receipt as it was read: its lines, and for a photo a smaller copy of it for a closer look.
+/// Where a photo was taken, from its own GPS, in degrees (south and west negative).
+struct PhotoPlace: Encodable {
+  let latitude: Double
+  let longitude: Double
+}
+
+/// One receipt as it was read: its lines, and for a photo a smaller copy of it for a closer look
+/// and where it was taken.
 struct SharedReceipt {
   let lines: [ReceiptLine]
   /// A JPEG no larger than `ReceiptReader.lookPixels` on its long side; nil for a PDF or text.
   let photo: Data?
+  /// Read on this iPhone only, to guess the currency of a receipt that prints none; never sent.
+  var place: PhotoPlace? = nil
 }
 
 /// Turns what was shared (up to ten images, or one PDF, or plain text) into receipt lines, on
@@ -90,7 +99,20 @@ enum ReceiptReader {
     // One bitmap at a time, released before the next, to stay inside the extension's memory.
     let lines = autoreleasepool { downscaled(source).map(recognise) ?? [] }
     let photo = autoreleasepool { lookCopy(source) }
-    return SharedReceipt(lines: lines, photo: photo)
+    return SharedReceipt(lines: lines, photo: photo, place: place(of: source))
+  }
+
+  /// The photo's GPS position, when the camera recorded one and the share kept it.
+  static func place(of source: CGImageSource) -> PhotoPlace? {
+    guard
+      let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+      let gps = properties[kCGImagePropertyGPSDictionary] as? [CFString: Any],
+      let latitude = (gps[kCGImagePropertyGPSLatitude] as? NSNumber)?.doubleValue,
+      let longitude = (gps[kCGImagePropertyGPSLongitude] as? NSNumber)?.doubleValue
+    else { return nil }
+    let south = (gps[kCGImagePropertyGPSLatitudeRef] as? String)?.uppercased() == "S"
+    let west = (gps[kCGImagePropertyGPSLongitudeRef] as? String)?.uppercased() == "W"
+    return PhotoPlace(latitude: south ? -latitude : latitude, longitude: west ? -longitude : longitude)
   }
 
   /// The photo as a JPEG for the server's closer look, under its size limit.

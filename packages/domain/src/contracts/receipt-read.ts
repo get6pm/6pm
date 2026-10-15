@@ -48,6 +48,11 @@ export const receiptReadingSchema = z.object({
   at: printedLocalTime.nullable(),
   /** False when the total or the currency could not be read with confidence. */
   sure: z.boolean(),
+  /**
+   * The currency is printed on the receipt (a symbol or code); false when it was decided from the
+   * country the receipt is from, or the hint.
+   */
+  currencyPrinted: z.boolean(),
 });
 export type ReceiptReading = z.infer<typeof receiptReadingSchema>;
 

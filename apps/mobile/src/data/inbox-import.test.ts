@@ -126,6 +126,7 @@ describe('importInbox', () => {
   it('saves a shared foreign receipt in đồng with its own amount and rate', async () => {
     const item = tap({
       source: 'shared',
+      at: new Date().toISOString(),
       amount: 1_341_634,
       foreign: { currency: 'SGD', amount: '68.80', rate: '19500.5' },
     });
@@ -134,6 +135,14 @@ describe('importInbox', () => {
       amount: 1_341_634,
       foreignAmount: { currency: 'SGD', amount: 68.8, rate: 19_500.5 },
     });
+  });
+
+  it('keeps a guessed currency marked on the saved spend', async () => {
+    const guessed = tap({ source: 'shared', amount: 368_160, currencyGuessed: true });
+    const printed = tap({ source: 'shared', amount: 101_500, at: new Date().toISOString() });
+    await run(memoryInbox([guessed, printed]));
+    expect((await store.tables.spends.get(guessed.id))?.currencyGuessed).toBe(true);
+    expect((await store.tables.spends.get(printed.id))?.currencyGuessed).toBe(false);
   });
 
   it('files under the rule for the merchant when the extension named no category', async () => {

@@ -68,6 +68,7 @@ export const viToday: { readonly [Key in keyof typeof enToday]: Entry } = {
   'inbox.orAtSix': 'Hoặc xem từng khoản lúc 6 giờ.',
   'inbox.keep': 'Giữ',
   'inbox.skip': 'Bỏ qua',
+  'inbox.needsALook': 'Cần xem lại',
   'inbox.inDong': 'khoảng {amount}',
   'inbox.ratePending': 'Chưa có tỷ giá',
   'inbox.noAmount': 'Chưa có số tiền',

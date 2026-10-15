@@ -10,6 +10,8 @@ export interface I18n {
   readonly t: <Key extends StringKey>(key: Key, ...params: ParamsArgument<Key>) => string;
   /** "Friday", "Thứ Sáu". */
   readonly weekday: (date: Date) => string;
+  /** "Wed 2 Sept", "Thứ 4, 2 thg 9": a day outside this week. */
+  readonly weekdayDate: (date: Date) => string;
   /** "9 October", "9 tháng 10". */
   readonly dayMonth: (date: Date) => string;
   /** Keeps a language for the app, or follows the phone again with null. */
@@ -24,10 +26,16 @@ function make(language: Language, setLanguage: I18n['setLanguage']): I18n {
   const locale = language === 'vi' ? 'vi-VN' : 'en-GB';
   const weekday = new Intl.DateTimeFormat(locale, { weekday: 'long' });
   const dayMonth = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long' });
+  const weekdayDate = new Intl.DateTimeFormat(locale, {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
   return {
     language,
     t: (key, ...params) => t(language, key, ...params),
     weekday: (date) => weekday.format(date),
+    weekdayDate: (date) => weekdayDate.format(date),
     dayMonth: (date) => dayMonth.format(date),
     setLanguage,
   };

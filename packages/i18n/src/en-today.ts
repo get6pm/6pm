@@ -72,6 +72,7 @@ export const enToday = {
   'inbox.orAtSix': 'Or go through them one by one at 6pm.',
   'inbox.keep': 'Keep',
   'inbox.skip': 'Skip',
+  'inbox.needsALook': 'Needs a look',
   'inbox.inDong': '≈ {amount}',
   'inbox.ratePending': 'Rate pending',
   'inbox.noAmount': 'No amount',

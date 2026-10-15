@@ -4,7 +4,7 @@ Source: the designer's export of 15 Oct 2026, copied verbatim into `design/proto
 
 | File | What it carries |
 | --- | --- |
-| `6pm App v2.dc.html` | The app prototype with Looks 2.0. It is now the source for looks, type and screens (`6pm App.dc.html` is the pre-revamp copy, kept for older line refs). |
+| `6pm App v2.dc.html` | The app prototype with Looks 2.0. It is now the source for looks, type and screens. `6pm App.dc.html` stays the pre-revamp prototype the app is generated from until the looks phase moves the generator to v2. |
 | `6pm Looks Lookbook.dc.html`, `looks-data.json` | Every look at 08:30 / 13:00 / 18:07 / 21:30 on Today, Try on and the Close; display and interface faces, palettes, contrast floors, motion. |
 | `6pm Companions.dc.html`, `companion.js` | Six forms × seven moods. `companion.js` is a Canvas port of `apps/mobile/src/ui/companion`, then polished: the polish is what moves back. |
 | `6pm App Icons.dc.html`, `icons.js`, `apps/mobile/assets/icon/v2/*.png` | Every companion meets the horizon: six 1024 px icons; "App icon follows my companion" in Settings. |

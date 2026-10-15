@@ -1,7 +1,8 @@
 import { Text, View } from 'react-native';
-import Animated, { FadeIn, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, FadeIn, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 import type { Payday } from '@6pm/domain';
+import { curves, durations } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
 import { PressScale } from '../../ui/primitives/press-scale';
@@ -36,9 +37,16 @@ const MODES = [
   ['varies', 'onboarding.payday.varies'],
 ] as const;
 
+/** The hundreds-of-millions wheel's width once it has come in. */
+const LEAD_WIDTH = 52;
+/** Millions from which the hundreds-of-millions wheel comes in: 90.000.000₫ and up. */
+const LEAD_FROM = 90;
+const LEAD_MOVE = { duration: durations.sheet, easing: Easing.bezier(...curves.enter) };
+
 /**
- * Money in on three wheels, read as the amount itself: hundreds of millions, millions, and hundred
- * thousands, up to 1.000.000.000₫ a month.
+ * Money in on wheels read as the amount itself: millions and hundred thousands, and, once the
+ * millions reach 90, a hundreds-of-millions wheel that slides in on their left, up to
+ * 1.000.000.000₫ a month. It stays while it holds a digit.
  */
 export function IncomeWheels({
   income,
@@ -52,21 +60,31 @@ export function IncomeWheels({
   const { t } = useI18n();
   const { lead, millions, hundreds } = incomeDigits(income);
   const number = { ...display(SIZE, 600, -0.03), color: colours.ink };
+  const leadShown = lead > 0 || millions >= LEAD_FROM;
+  const leadStyle = useAnimatedStyle(() => ({
+    width: withTiming(leadShown ? LEAD_WIDTH : 0, LEAD_MOVE),
+    opacity: withTiming(leadShown ? 1 : 0, LEAD_MOVE),
+  }));
   return (
     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
       <WheelBand height={48} radius={15} color={colours.chipBg} />
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Wheel
-          items={INCOME_LEADS}
-          index={lead}
-          onChange={(k) => onIncome(incomeOf(k, millions, hundreds))}
-          size={SIZE}
-          padX={0}
-          align="flex-end"
-          ink={colours.ink}
-          width={52}
-          label={t('onboarding.income.hundredMillions')}
-        />
+        <Animated.View
+          pointerEvents={leadShown ? 'auto' : 'none'}
+          style={[{ overflow: 'hidden', alignItems: 'flex-end' }, leadStyle]}
+        >
+          <Wheel
+            items={INCOME_LEADS}
+            index={lead}
+            onChange={(k) => onIncome(incomeOf(k, millions, hundreds))}
+            size={SIZE}
+            padX={0}
+            align="flex-end"
+            ink={colours.ink}
+            width={LEAD_WIDTH}
+            label={t('onboarding.income.hundredMillions')}
+          />
+        </Animated.View>
         <Wheel
           items={incomeMillionsItems(lead)}
           index={millions}

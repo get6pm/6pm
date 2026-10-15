@@ -15,7 +15,8 @@ import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display } from '../../ui/type/fonts';
 import { captureColours } from './capture-colours';
-import { GuideSample, GuideSection, GuideSteps, GuideTip, type LiveChip } from './guide-sections';
+import { HowItWorks } from './guide-how';
+import { GuideSample, GuideSection, GuideTip, type LiveChip } from './guide-sections';
 import type { CaptureSource } from './source-status';
 import { useCaptureSources } from './use-capture-sources';
 
@@ -141,9 +142,12 @@ export function CaptureGuideSheet({ source }: { readonly source: CaptureSource }
             </Text>
           </View>
 
-          <GuideSection title={t('capture.guide.howItWorks')} note={t(guide.time)}>
-            <GuideSteps guide={guide} firstChip={addressChip} />
-          </GuideSection>
+          <HowItWorks
+            source={source}
+            guide={guide}
+            addressChip={addressChip}
+            emailAddress={emailAddress}
+          />
 
           <GuideSection title={t('capture.guide.lands')}>
             <GuideSample guide={guide} />

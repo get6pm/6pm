@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';
 
@@ -17,12 +18,27 @@ import { useClock } from '../ui/theme/clock';
 import { useTheme } from '../ui/theme/theme';
 import { body, display } from '../ui/type/fonts';
 import { Companion } from '../ui/companion/companion';
+import { UndoHost, useOfferUndo } from '../ui/undo/undo-host';
 
 /** The card closing up as a row leaves it. */
 const reflow = LinearTransition.springify().damping(22).stiffness(240);
 
+/** Inside a sheet the app's own undo bar is covered, so the Inbox brings one of its own. */
 export default function Inbox() {
+  return (
+    <UndoHost lift={UNDO_LIFT}>
+      <InboxSheet />
+    </UndoHost>
+  );
+}
+
+/** Just above the home indicator: a sheet has no tab bar to clear. */
+const UNDO_LIFT = 50;
+
+function InboxSheet() {
   const { palette, serious } = useTheme();
+  const router = useRouter();
+  const offerUndo = useOfferUndo();
   const { t, weekday } = useI18n();
   const { dayDate } = useClock();
   const snap = useMoney();
@@ -40,9 +56,27 @@ export default function Inbox() {
   const earlierDays = [...new Set(waiting.filter((s) => s.day < snap.today).map((s) => s.day))]
     .sort()
     .reverse();
+  const confirm = (id: string) => void run(() => actions.setStatus(id, 'kept'));
   const keep = (id: string) => {
     haptics.tap();
-    void run(() => actions.setStatus(id, 'kept'));
+    confirm(id);
+  };
+  const skip = (id: string) => {
+    const name = waiting.find((s) => s.id === id)?.merchant ?? '';
+    void run(() => actions.setStatus(id, 'deleted')).then((saved) => {
+      if (saved) {
+        offerUndo(t('undo.skipped', { name }), t('undo.action'), () => {
+          void run(() => actions.undo(id));
+        });
+      }
+    });
+  };
+  const open = (id: string) => router.push(`/spend/${id}`);
+  const rowLabels = {
+    keep: t('inbox.keep'),
+    confirm: t('today.row.confirm'),
+    edit: t('details.edit'),
+    skip: t('inbox.skip'),
   };
   const keepAll = () => {
     haptics.success();
@@ -76,9 +110,12 @@ export default function Inbox() {
             <InboxRow
               key={row.id}
               row={row}
-              keepLabel={t('inbox.keep')}
+              labels={rowLabels}
               amountMissing={row.foreign === null && missing.has(row.id)}
               onKeep={keep}
+              onConfirm={confirm}
+              onSkip={skip}
+              onOpen={open}
             />
           ))}
         </Animated.View>

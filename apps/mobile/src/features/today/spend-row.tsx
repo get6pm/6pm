@@ -1,29 +1,14 @@
-import { useCallback, useMemo, useRef } from 'react';
 import { Text, View } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, {
-  ReduceMotion,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
-import { scheduleOnRN } from 'react-native-worklets';
-
-import { gestures } from '@6pm/theme';
+import { GestureDetector } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
 
 import { CategoryTile } from '../../ui/category-tile';
-import { haptics } from '../../ui/haptics';
 import type { SymbolName } from '../../ui/icons/symbols.generated';
-import { release } from '../../ui/motion/physics';
 import { useTheme } from '../../ui/theme/theme';
 import { body, tabular } from '../../ui/type/fonts';
-import { rowOffset, rowRelease } from './row-release';
+import { useRowSwipe } from './row-swipe';
 import { SpendRowBackdrop } from './spend-row-backdrop';
 import { SpendRowMenu } from './spend-row-menu';
-
-/** Far enough left that a deleted row has left the screen before the list closes the gap. */
-const GONE = -440;
-const reduceMotion = ReduceMotion.System;
 
 export interface SpendRowView {
   readonly id: string;
@@ -44,13 +29,9 @@ export interface SpendRowView {
   readonly first: boolean;
 }
 
-type RowAction = 'confirm' | 'delete' | 'open';
-
 /**
  * A Today row. Swipe right past 90 pt to confirm a caught spend; swipe left to reveal Delete
- * (past −48 it stays open at −96, past −150 it deletes). The release reads where the flick was
- * heading, so a quick flick commits short of the line; the row then carries the finger's speed.
- * Haptic ticks mark each threshold. Held, it offers the same actions in a menu.
+ * (`useRowSwipe` has the thresholds). Held, it offers the same actions in a menu.
  */
 export function SpendRow({
   row,
@@ -70,75 +51,13 @@ export function SpendRow({
   readonly onOpen: (id: string) => void;
 }) {
   const { palette } = useTheme();
-  const x = useSharedValue(0);
-  const start = useSharedValue(0);
   const warn = palette.dark ? '#ffbe8a' : '#b8622a';
   const { id, reviewable } = row;
-
-  // Read through a ref so the list's fresh callbacks each render do not rebuild the gestures.
-  const handlers = useRef({ onConfirm, onDelete, onOpen });
-  handlers.current = { onConfirm, onDelete, onOpen };
-  const act = useCallback((action: RowAction, target: string) => {
-    const h = handlers.current;
-    if (action === 'confirm') h.onConfirm(target);
-    else if (action === 'delete') h.onDelete(target);
-    else h.onOpen(target);
-  }, []);
-
-  const swipe = useMemo(() => {
-    const pan = Gesture.Pan()
-      .activeOffsetX([-10, 10])
-      .failOffsetY([-10, 10])
-      .onStart(() => {
-        start.set(x.get());
-      })
-      .onUpdate((e) => {
-        const next = rowOffset(start.get() + e.translationX, reviewable);
-        const was = x.get();
-        if (
-          was > gestures.rowCommitDelete !== next > gestures.rowCommitDelete ||
-          (reviewable && was > gestures.rowConfirm !== next > gestures.rowConfirm)
-        ) {
-          scheduleOnRN(haptics.tick);
-        }
-        x.set(next);
-      })
-      .onEnd((e) => {
-        const velocity = e.velocityX;
-        const decision = rowRelease(x.get(), velocity, reviewable);
-        if (decision === 'delete') {
-          scheduleOnRN(haptics.commit);
-          x.set(
-            withSpring(GONE, { ...release.away, velocity, reduceMotion }, (finished) => {
-              if (finished) scheduleOnRN(act, 'delete', id);
-            }),
-          );
-          return;
-        }
-        if (decision === 'confirm') {
-          scheduleOnRN(haptics.tap);
-          scheduleOnRN(act, 'confirm', id);
-        }
-        const target = decision === 'reveal' ? -gestures.rowDeleteWidth : 0;
-        x.set(withSpring(target, { ...release.home, velocity, reduceMotion }));
-      });
-    const tap = Gesture.Tap().onEnd((_e, success) => {
-      if (!success) return;
-      if (x.get() !== 0) x.set(withSpring(0, { ...release.home, reduceMotion }));
-      else scheduleOnRN(act, 'open', id);
-    });
-    return Gesture.Exclusive(pan, tap);
-  }, [x, start, id, reviewable, act]);
-
-  const front = useAnimatedStyle(() => ({ transform: [{ translateX: x.get() }] }));
-  const deleteFromPanel = () => {
-    haptics.commit();
-    x.set(
-      withSpring(GONE, { ...release.away, reduceMotion }, (finished) => {
-        if (finished) scheduleOnRN(act, 'delete', id);
-      }),
-    );
-  };
+  const { x, gesture, front, deleteAway, act } = useRowSwipe(id, reviewable, {
+    onConfirm,
+    onDelete,
+    onOpen,
+  });
 
   const accessibilityActions = [
     { name: 'activate' },
@@ -152,7 +71,7 @@ export function SpendRow({
         x={x}
         confirmLabel={confirmLabel}
         deleteLabel={deleteLabel}
-        onDeletePress={deleteFromPanel}
+        onDeletePress={deleteAway}
       />
       <SpendRowMenu
         href={`/spend/${id}`}
@@ -162,9 +81,9 @@ export function SpendRow({
         deleteLabel={deleteLabel}
         onConfirm={() => act('confirm', id)}
         onEdit={() => act('open', id)}
-        onDelete={deleteFromPanel}
+        onDelete={deleteAway}
       >
-        <GestureDetector gesture={swipe}>
+        <GestureDetector gesture={gesture}>
           <Animated.View
             accessible
             accessibilityRole="button"

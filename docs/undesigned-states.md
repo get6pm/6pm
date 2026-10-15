@@ -132,6 +132,8 @@ fakes behaviour the app cannot fake. Founder review.
 | Home · Scan button | Press | Sinks over 0.1 s and comes back over 0.15 s on a strong ease-out | The prototype's 0.24 s release feels slow on a control pressed many times a day |
 | Home · Top bar | Plan section chips, quick add | Touch areas reach 44 pt (the drawn sizes stay 30 pt and 36 pt); a chip ticks when it changes the section | The drawn controls are smaller than the iOS minimum touch target |
 | Inbox | Waiting items from several earlier days | One section per day: "Mon · after you closed" or "Mon · not confirmed yet" | Drawn with a single "after you closed" section |
+| Inbox | Swiping and holding a row | Today's row swipe, thresholds, haptics and menu: right confirms and the row flies off; left opens on a red Skip (a cross), past the line skips it (deleted) with “Skipped {name} · Undo”; held: Confirm, Edit, Skip. A tap opens the spend's details. The round ✓ stays | Founder feedback: the prototype's Inbox can only keep a row |
+| Inbox | Undo while the Inbox is open | The Inbox sheet carries its own undo bar, just above the home indicator | The app's undo bar sits under the sheet |
 | Details | Spend seen two ways | Source trail "Seen 2 ways · QR + Email", then one line per sighting | The prototype labels it only on the Inbox and close cards |
 | Quick add / Details | More than three wallets | The wallet row scrolls sideways; Details’ wallet cell cycles the same list | The design shows three |
 | Any sheet | A write fails | Island toast "That didn’t save. Try again." and the sheet stays open | No failure state is drawn |

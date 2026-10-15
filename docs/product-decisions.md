@@ -24,7 +24,7 @@ Rules that never bend:
 | Domain | `at6pm.app`: website at `/`, API at `/api/*`, receipt email `{handle}@at6pm.app` (dev `r+{handle}@dev.at6pm.app`). Dev: `dev.at6pm.app`. Changed 15 Oct 2026 from `6pm.oddeggs.studio` (dev `6pm-dev.oddeggs.studio`), which keeps its routes, links and receipt mailbox so builds and forwarding set up before the move keep working |
 | Platforms | iPhone at launch. Android is built and kept green in CI, not released *(default)* |
 | Languages | English and Vietnamese from the first screen; device language, switchable in Settings |
-| Currency | VND home currency (integers, no decimals). USD entry in Quick add; Travel mode for other currencies |
+| Currency | The phone's currency, read once when the month is first set up and kept in the plan (a plan from before has none and is VND). 6pm works in every country. Amounts are integers in that currency's minor unit (đồng has none, so VND data never changed). Quick add's currency key switches to one other currency (USD, or EUR for a dollar home); Travel mode works from any home: a trip is wherever the money differs from home. Decided 2026-10-15 |
 
 ## 3. Money rules (the domain package implements these, with tests)
 
@@ -44,7 +44,7 @@ Rules that never bend:
 | M8b | **Category icon follows its name.** While a category is named in the editor, its icon is chosen for it: the phone's own word match first (English and Vietnamese, accents optional, works offline), then, after a pause in the typing and only when the phone found nothing, `POST /v1/category-icon`, where Jev (Claude when Jev does not answer) picks one icon from the icons the person may use. Only the name and the icon list are sent. An icon the person picks by hand is never replaced, and renaming an existing category changes its icon only while it still wears the icon its old name pointed to. Founder request 2026-10-14 |
 | M9 | **Duplicates.** Same amount, different capture sources (QR, shared receipt, email, Apple Pay), within 3 minutes → merged into one item with a source trail ("Seen 2 ways"). Something the user typed (Quick add, voice, cash) is never merged with anything. Cancelling a scanned payment takes back only the scan's own sighting |
 | M10 | **Work spends.** The close asks once a day, about the largest waiting spend of 100.000₫ or more read from a bank receipt or email *(default)*. Marked "for work" in the close → Claim back, excluded from the daily number |
-| M11 | Rounding: daily lines floor to 1.000₫; pot set-asides ceil to 50.000₫; formatting per design (dot thousands, `₫`, U+2212 minus, `tr`/`k` short forms) |
+| M11 | Rounding: daily lines floor to one **step**; pot set-asides ceil to 50 steps. A step is what 1.000₫ is to the design: 1.000₫, $1, ¥10, ₩100, Rp1.000 (from the currency's rough value, never below one unit). Amounts the design names in đồng scale by value (thresholds, chart scales, starting goals, presets) or by step (cash chips, steppers, the keypad's k). Formatting: VND exactly per design (dot thousands, `₫`, U+2212 minus, `tr`/`k`/`tỷ` short forms); other currencies with the phone's separators and symbol position, cents only when an amount has them, short forms `$353`, `$17.4k`, `$1.2M`. Decided 2026-10-15 |
 
 ## 4. Capture
 

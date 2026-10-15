@@ -10,14 +10,31 @@ import { DEMO } from './onboarding-palette';
 
 export const W = 280;
 export const H = 176;
-/** Sample merchants for the pictures: what a scanned code and two receipt emails look like. */
+/**
+ * Sample merchants for the pictures: what a scanned code, two receipt emails, an Apple Pay tap
+ * and a spoken spend look like.
+ */
 export const SAMPLE = {
   qrMerchant: 'Bún chả Cô Lan',
   qr: 55_000,
   transfer: 120_000,
   grab: 68_000,
   shopee: 249_000,
+  tapMerchant: 'Highlands Coffee',
+  tap: 59_000,
+  said: 35_000,
 };
+
+/**
+ * A step of a looping demo: 0 before `from`, 1 after `to`, eased between. For a beat that
+ * comes in and later goes, multiply one rising step by one falling (`1 - step(…)`).
+ */
+export function step(p: number, from: number, to: number): number {
+  'worklet';
+  if (p <= from) return 0;
+  if (p >= to) return 1;
+  return inOut((p - from) / (to - from));
+}
 
 export const box = { height: H, borderRadius: 20, overflow: 'hidden' } as const;
 

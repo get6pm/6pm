@@ -1,6 +1,7 @@
 import {
   askReadOutputSchema,
   intentOf,
+  likeForLike,
   readQuestionPrompt,
   readQuestionSystem,
   type AskRequest,
@@ -28,7 +29,9 @@ export async function readQuestion(
     schema: askReadOutputSchema,
     maxTokens: askReadMaxTokens,
     timeoutMs: askReadTimeoutMs,
+    // The phone stops waiting before a second attempt could answer, and reads it itself.
+    retries: 0,
   });
-  const { query } = generated.output;
+  const query = likeForLike(generated.output.query);
   return { ...generated, output: { intent: intentOf(query), query } };
 }

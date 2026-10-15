@@ -18,6 +18,7 @@ import {
 } from './ask-ledger';
 import {
   isAskIntent,
+  likeForLike,
   rangeBefore,
   resolveRange,
   type AskQuery,
@@ -84,10 +85,11 @@ export type AskQueryAnswer =
 
 /** Works out the answer to any question from the user's own numbers and records. */
 export function answerQuery(
-  query: AskQuery,
+  asked: AskQuery,
   ctx: AskContext,
   ledger: AskLedger | null,
 ): AskQueryAnswer {
+  const query = likeForLike(asked);
   if (isAskIntent(query)) return answerAsk(query, ctx);
   if (query.kind === 'chat') return { kind: 'chat' };
   if (ledger === null) return { kind: 'help' };

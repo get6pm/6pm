@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { askQuerySchema, rangeBefore, resolveRange, type RangeFrame } from './ask-query';
+import {
+  askQuerySchema,
+  likeForLike,
+  rangeBefore,
+  resolveRange,
+  type RangeFrame,
+} from './ask-query';
 
 // Friday 9 October 2026, cycle from 30 Sep, the one before from 31 Aug.
 const frame: RangeFrame = {
@@ -99,5 +105,32 @@ describe('askQuerySchema', () => {
         merchant: 'x'.repeat(61),
       }).success,
     ).toBe(false);
+  });
+});
+
+describe('likeForLike', () => {
+  it('sets an earlier span against its own counterpart', () => {
+    const asked = askQuerySchema.parse({
+      kind: 'compare',
+      range: { preset: 'thisCycle' },
+      against: { preset: 'lastWeek' },
+      category: 'Mua sắm',
+    });
+    expect(likeForLike(asked)).toEqual({ ...asked, range: { preset: 'thisWeek' } });
+  });
+
+  it('leaves dates, unnamed spans and spans without a counterpart as they were', () => {
+    const queries = [
+      { kind: 'compare', range: { preset: 'thisMonth' }, against: { preset: 'lastMonth' } },
+      { kind: 'compare', range: { preset: 'thisCycle' } },
+      { kind: 'compare', range: { preset: 'last7Days' }, against: { preset: 'last30Days' } },
+      {
+        kind: 'compare',
+        range: { from: '2026-10-01', to: '2026-10-09' },
+        against: { preset: 'lastWeek' },
+      },
+      { kind: 'spend', range: { preset: 'lastWeek' } },
+    ].map((q) => askQuerySchema.parse(q));
+    for (const query of queries) expect(likeForLike(query)).toBe(query);
   });
 });

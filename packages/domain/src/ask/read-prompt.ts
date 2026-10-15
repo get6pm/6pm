@@ -17,7 +17,7 @@ Kinds:
 - chat: thanks, greetings or small talk with nothing to look up.
 - unknown: anything else, including advice on investing, loans or credit.
 
-Spans: preset today, yesterday, thisWeek, lastWeek (weeks start Monday), thisCycle, lastCycle (a cycle runs payday to payday), thisMonth, lastMonth, last7Days, last30Days; or from/to dates (YYYY-MM-DD) worked out from the date given. With no span said, use thisCycle for spend, breakdown and compare, and thisWeek for list.
+Spans: preset today, yesterday, thisWeek, lastWeek (weeks start Monday), thisCycle, lastCycle (a cycle runs payday to payday), thisMonth, lastMonth, last7Days, last30Days; or from/to dates (YYYY-MM-DD) worked out from the date given. With no span said, use thisCycle for spend, breakdown and compare, and thisWeek for list. A compare that names only the span before ("than last week?") takes its counterpart as the range: lastWeek with thisWeek, lastMonth with thisMonth, lastCycle with thisCycle, yesterday with today.
 
 category: one of their category names exactly as listed, when the question means one; otherwise leave it out. merchant: the place as they wrote it. A follow-up ("what about last month?") keeps the previous query and changes only what the new question changes.
 

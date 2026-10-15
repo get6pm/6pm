@@ -16,6 +16,9 @@
   "env": {
     "dev": {
       "name": "sixpm-api-dev",
+      // Run near Singapore: close to D1 (APAC), and Anthropic does not take requests from the
+      // Hong Kong data center that serves Vietnam by default.
+      "placement": { "region": "aws:ap-southeast-1" },
       "routes": [
         { "pattern": "dev.at6pm.app/api/*", "zone_name": "at6pm.app" },
         { "pattern": "6pm-dev.oddeggs.studio/api/*", "zone_name": "oddeggs.studio" },
@@ -77,6 +80,9 @@
     },
     "prd": {
       "name": "sixpm-api",
+      // Run near Singapore: close to D1 (APAC), and Anthropic does not take requests from the
+      // Hong Kong data center that serves Vietnam by default.
+      "placement": { "region": "aws:ap-southeast-1" },
       "routes": [
         { "pattern": "at6pm.app/api/*", "zone_name": "at6pm.app" },
         { "pattern": "6pm.oddeggs.studio/api/*", "zone_name": "oddeggs.studio" },

@@ -47,6 +47,8 @@ export type StructuredRequest<Schema extends z.ZodType> = {
   readonly maxTokens: number;
   /** Per attempt; one more attempt follows a busy provider or a dropped connection. */
   readonly timeoutMs: number;
+  /** Attempts after the first: 1 unless the caller cannot wait for a second. */
+  readonly retries?: number;
   /** `anthropicModel` unless the route names another. */
   readonly model?: AnthropicModel;
 };
@@ -83,13 +85,17 @@ function toModelError(error: unknown): ApiError {
 }
 
 /** The SDK client for one call. Creating one is cheap: it holds no connection. */
-export function anthropicClient(config: AnthropicConfig, timeoutMs: number): Anthropic {
+export function anthropicClient(
+  config: AnthropicConfig,
+  timeoutMs: number,
+  retries = 1,
+): Anthropic {
   if (config.apiKey === undefined || config.apiKey === '') throw unavailable('missing_key');
   return new Anthropic({
     apiKey: config.apiKey,
     timeout: timeoutMs,
-    // One more attempt on 429, 5xx and dropped connections, after the SDK's own short backoff.
-    maxRetries: 1,
+    // Another attempt on 429, 5xx and dropped connections, after the SDK's own short backoff.
+    maxRetries: retries,
     ...(config.fetch === undefined ? {} : { fetch: config.fetch }),
   });
 }
@@ -104,7 +110,7 @@ async function structured<Schema extends z.ZodType>(
   request: StructuredRequest<Schema>,
   content: string | Anthropic.Beta.BetaContentBlockParam[],
 ): Promise<ImageRead<z.infer<Schema>>> {
-  const client = anthropicClient(config, request.timeoutMs);
+  const client = anthropicClient(config, request.timeoutMs, request.retries);
   const { type, schema } = zodOutputFormat(request.schema);
   const model = request.model ?? anthropicModel;
   let message: Anthropic.Beta.BetaMessage;

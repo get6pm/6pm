@@ -71,6 +71,27 @@ export const askQuerySchema = z.discriminatedUnion('kind', [
 ]);
 export type AskQuery = z.infer<typeof askQuerySchema>;
 
+/** The span each earlier span is set against when a question names only the earlier one. */
+const COUNTERPART: Partial<Record<AskRangePreset, AskRangePreset>> = {
+  yesterday: 'today',
+  lastWeek: 'thisWeek',
+  lastCycle: 'thisCycle',
+  lastMonth: 'thisMonth',
+};
+
+/**
+ * A comparison against last week, month or cycle (or yesterday) runs from its own counterpart,
+ * so "more than last week?" never sets this cycle against one week, whatever the reader said.
+ */
+export function likeForLike(query: AskQuery): AskQuery {
+  if (query.kind !== 'compare' || query.against === undefined || !('preset' in query.against)) {
+    return query;
+  }
+  const counterpart = COUNTERPART[query.against.preset];
+  if (counterpart === undefined || !('preset' in query.range)) return query;
+  return query.range.preset === counterpart ? query : { ...query, range: { preset: counterpart } };
+}
+
 /** A span as dates, from and to inclusive. */
 export interface ResolvedRange {
   readonly from: LocalDate;

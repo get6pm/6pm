@@ -1,6 +1,7 @@
 import {
   addDays,
   closeMoment,
+  foreignAmountText,
   formatVnd,
   needsReview,
   startOfWeek,
@@ -65,6 +66,12 @@ export function toRowViews(
         .filter((part) => part !== null)
         .join(' · '),
       amount: formatVnd(s.amount),
+      foreign: s.foreignAmount
+        ? {
+            printed: foreignAmountText(s.foreignAmount),
+            inDong: s.foreignAmount.rate > 0 && s.amount > 0 ? formatVnd(s.amount) : null,
+          }
+        : null,
       icon: merchantIcon(s.merchant, categoryIcon),
       hue: category?.hue ?? 80,
       tag: labels.tag(s),

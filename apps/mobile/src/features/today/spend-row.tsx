@@ -30,6 +30,11 @@ export interface SpendRowView {
   readonly name: string;
   readonly meta: string;
   readonly amount: string;
+  /**
+   * Spent in another currency: the amount as printed ("Rp496.650") and its đồng ("780.000₫"),
+   * or null đồng while there is no rate to price it.
+   */
+  readonly foreign: { readonly printed: string; readonly inDong: string | null } | null;
   readonly icon: SymbolName;
   readonly hue: number;
   readonly tag: string | null;

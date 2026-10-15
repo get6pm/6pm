@@ -31,6 +31,7 @@ export default function Inbox() {
   const labels = useSpendLabels();
   // Oldest first: the order they were caught in. Every waiting item shows, whatever day or pay cycle it is from.
   const waiting = waitingOf(snap).reverse();
+  const missing = new Set(waiting.filter((s) => s.amount <= 0).map((s) => s.id));
   const closedDays = new Set(snap.closedDays.map((d) => d.day));
   const rowsOf = (spends: readonly SpendRow[]) =>
     toRowViews(spends, snap.categories, labels, false);
@@ -72,7 +73,13 @@ export default function Inbox() {
           }}
         >
           {rows.map((row) => (
-            <InboxRow key={row.id} row={row} keepLabel={t('inbox.keep')} onKeep={keep} />
+            <InboxRow
+              key={row.id}
+              row={row}
+              keepLabel={t('inbox.keep')}
+              amountMissing={row.foreign === null && missing.has(row.id)}
+              onKeep={keep}
+            />
           ))}
         </Animated.View>
       </View>

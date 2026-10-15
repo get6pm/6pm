@@ -4,6 +4,7 @@ import Animated, { FadeOut, LinearTransition } from 'react-native-reanimated';
 import { Symbol } from '../../ui/icons/symbol';
 import { CategoryTile } from '../../ui/category-tile';
 import { PressScale } from '../../ui/primitives/press-scale';
+import { useI18n } from '../../i18n/i18n';
 import { useTheme } from '../../ui/theme/theme';
 import { body, tabular } from '../../ui/type/fonts';
 import type { SpendRowView } from '../today/spend-row';
@@ -14,10 +15,13 @@ const layout = LinearTransition.springify().damping(22).stiffness(240);
 export function InboxRow({
   row,
   keepLabel,
+  amountMissing,
   onKeep,
 }: {
   readonly row: SpendRowView;
   readonly keepLabel: string;
+  /** Nothing was read for it: "No amount" stands where 0₫ would. */
+  readonly amountMissing: boolean;
   readonly onKeep: (id: string) => void;
 }) {
   const { palette } = useTheme();
@@ -46,7 +50,7 @@ export function InboxRow({
             {row.meta}
           </Text>
         </View>
-        <Text style={{ ...body(16, 600), ...tabular, color: palette.ink }}>{row.amount}</Text>
+        <InboxAmount row={row} amountMissing={amountMissing} />
         <PressScale
           accessibilityRole="button"
           accessibilityLabel={`${keepLabel} ${row.name}`}
@@ -66,4 +70,34 @@ export function InboxRow({
       </View>
     </Animated.View>
   );
+}
+
+/** The amount as printed, with its đồng under it when it was spent in another currency. */
+function InboxAmount({
+  row,
+  amountMissing,
+}: {
+  readonly row: SpendRowView;
+  readonly amountMissing: boolean;
+}) {
+  const { palette } = useTheme();
+  const { t } = useI18n();
+  if (row.foreign) {
+    return (
+      <View style={{ alignItems: 'flex-end', gap: 3 }}>
+        <Text style={{ ...body(16, 600), ...tabular, color: palette.ink }}>
+          {row.foreign.printed}
+        </Text>
+        <Text style={{ ...body(13), ...tabular, color: palette.inkSoft }}>
+          {row.foreign.inDong === null
+            ? t('inbox.ratePending')
+            : t('inbox.inDong', { amount: row.foreign.inDong })}
+        </Text>
+      </View>
+    );
+  }
+  if (amountMissing) {
+    return <Text style={{ ...body(15, 550), color: palette.inkSoft }}>{t('inbox.noAmount')}</Text>;
+  }
+  return <Text style={{ ...body(16, 600), ...tabular, color: palette.ink }}>{row.amount}</Text>;
 }

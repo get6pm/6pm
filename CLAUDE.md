@@ -1,6 +1,6 @@
 # 6pm: agent contract
 
-Binding for every coding agent working on 6pm v2 (branch `v2` of `get6pm/6pm`).
+Binding for every coding agent working on 6pm v2 (branch `main` of `get6pm/6pm`).
 
 ## Read before coding
 
@@ -45,7 +45,7 @@ Only `.env.example` files are committed. Never print a secret value; list names 
 
 ## Commits
 
-Branch from `v2` as `feat/<area>-<behaviour>`; conventional commits; one commit per task; no AI references or attribution lines.
+Branch from `main` as `feat/<area>-<behaviour>`; conventional commits; one commit per task; no AI references or attribution lines.
 
 ## Status
 

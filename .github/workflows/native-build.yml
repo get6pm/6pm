@@ -14,7 +14,7 @@ on:
       ref:
         description: Branch, tag or commit to build
         required: true
-        default: v2
+        default: main
       profile:
         description: e2e-test (simulator app), dev (signed, 6pm Dev) or prd (signed, the 6pm app)
         required: true

@@ -15,7 +15,7 @@ import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, tabular } from '../../ui/type/fonts';
+import { body, display, leading, tabular } from '../../ui/type/fonts';
 import { answerBubbleIn, growEase, meBubbleIn, riseIn } from './ask-motion';
 import type { AskBarsView, AskCard } from './ask-words';
 
@@ -202,7 +202,7 @@ export function AnswerBubble({
         transformOrigin: 'left bottom',
       }}
     >
-      <Text style={{ ...display(21, 500, -0.01), lineHeight: 25.2, color: palette.ink }}>
+      <Text style={{ ...leading(display(21, 500, -0.01), 25.2), color: palette.ink }}>
         {card.text}
       </Text>
       {card.bars === null ? null : <Bars bars={card.bars} />}

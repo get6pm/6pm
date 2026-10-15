@@ -1,6 +1,7 @@
 import { Platform, type TextStyle } from 'react-native';
 
 import { faceOf, type Face } from './faces';
+import { FONT_LINE_HEIGHT } from './font-metrics.generated';
 
 /** Family names as the font files register them (tools/fonts/build_fonts.py). */
 export const families = {
@@ -124,6 +125,39 @@ export function withOpticalSize(style: TextStyle, opsz: number | null): TextStyl
   const axes = style.fontVariationSettings;
   if (opsz === null || typeof axes !== 'string' || !axes.includes("'opsz'")) return style;
   return { ...style, fontVariationSettings: axes.replace(/'opsz' [\d.]+/, `'opsz' ${opsz}`) };
+}
+
+/** SF Pro's line height in ems, as `UIFont.systemFont(ofSize:).lineHeight` gives it. */
+const SYSTEM_LINE_HEIGHT = 1.1934;
+
+/**
+ * A text style set at `lineHeight`, drawn where the browser draws it. Below the face's own line
+ * height iOS sits each line's baseline at the bottom of the line and cuts off what rises above the
+ * text's box, where the browser centres the line and lets it overflow. The text gets that room
+ * back and its margins hold the box where it was (adding to any the style already sets). Text that wraps takes the room as top padding,
+ * so its lines stay `lineHeight` apart; `oneLine` text is set at the face's own line height
+ * instead, so a row aligned on baselines still finds its baseline (iOS leaves padding out of it).
+ */
+export function leading(style: TextStyle, lineHeight: number, oneLine = false): TextStyle {
+  const em =
+    style.fontFamily === undefined
+      ? SYSTEM_LINE_HEIGHT
+      : (FONT_LINE_HEIGHT[style.fontFamily] ?? SYSTEM_LINE_HEIGHT);
+  const natural = (style.fontSize ?? 14) * em;
+  const lost = natural - lineHeight;
+  if (Platform.OS !== 'ios' || lost <= 0) return { ...style, lineHeight };
+  const box = {
+    marginTop: num(style.marginTop) - lost / 2,
+    marginBottom: num(style.marginBottom) - lost / 2,
+  };
+  return oneLine
+    ? { ...style, ...box, lineHeight: natural }
+    : { ...style, ...box, lineHeight, paddingTop: num(style.paddingTop) + lost };
+}
+
+/** A margin or padding the style sets in points, 0 when it sets none. */
+function num(value: TextStyle['marginTop']): number {
+  return typeof value === 'number' ? value : 0;
 }
 
 /** IBM Plex Mono for kickers, receipts and stamps, usually uppercase and letter-spaced. */

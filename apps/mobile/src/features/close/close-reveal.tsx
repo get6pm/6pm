@@ -9,7 +9,7 @@ import { FitWidth } from '../../ui/layout/fit-width';
 import { Odometer } from '../../ui/odometer';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, mono } from '../../ui/type/fonts';
+import { body, display, leading, mono } from '../../ui/type/fonts';
 
 /** The pause before tomorrow's number rolls in, so the eye lands on today's first. */
 const ROLL_AFTER_MS = 700;
@@ -81,11 +81,9 @@ export function CloseReveal(props: {
       {props.line !== null ? (
         <Text
           style={{
-            ...display(25),
-            lineHeight: 30,
+            ...leading({ ...display(25), marginTop: 6 }, 30),
             maxWidth: 310,
             textAlign: 'center',
-            marginTop: 6,
             color: palette.ink,
           }}
         >

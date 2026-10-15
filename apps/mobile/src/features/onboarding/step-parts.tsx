@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 
 import type { I18n } from '../../i18n/i18n';
 import { BalancedText } from '../../ui/type/balanced-text';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import type { OnboardingPalette } from './onboarding-palette';
 
 /** A step's title and its line under it, clear of the companion on the right. */
@@ -20,7 +20,7 @@ export function StepHeading({
     <View style={{ paddingTop: 20, paddingRight: 76, gap: 10 }}>
       <BalancedText
         accessibilityRole="header"
-        style={{ ...display(36, 600, -0.03), lineHeight: 36, maxWidth: 220, color: pal.ink }}
+        style={{ ...leading(display(36, 600, -0.03), 36), maxWidth: 220, color: pal.ink }}
       >
         {title}
       </BalancedText>

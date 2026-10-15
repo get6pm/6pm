@@ -22,7 +22,7 @@ import { AmountText } from '../quick-add/amount-text';
 import { homeDecimalMark, typedParts } from '../quick-add/typed-amount';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, tabular } from '../../ui/type/fonts';
+import { body, display, leading, tabular } from '../../ui/type/fonts';
 
 /** "Rp496.650" as typed so far; a currency without a symbol writes its code after the digits. */
 function typedText(keys: KeypadState): string {
@@ -103,7 +103,11 @@ export function AmountEditor({
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit
-            style={{ ...display(56, 500, -0.02), ...tabular, lineHeight: 60, color: palette.ink }}
+            style={{
+              ...leading(display(56, 500, -0.02), 60, true),
+              ...tabular,
+              color: palette.ink,
+            }}
           >
             {big}
           </Text>
@@ -115,9 +119,8 @@ export function AmountEditor({
               // The design's " ₫" after the number; a symbol that comes first sits close.
               gap={homeParts.suffix ? ' ' : '\u2006'}
               style={{
-                ...display(72 * palette.numK, 500, -0.02),
+                ...leading(display(72 * palette.numK, 500, -0.02), 72, true),
                 ...tabular,
-                lineHeight: 72,
                 color: palette.ink,
                 opacity: shown.amount > 0 ? 1 : 0.35,
               }}

@@ -6,7 +6,7 @@ import { Switch } from '../../ui/primitives/switch';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { BalancedText } from '../../ui/type/balanced-text';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { useI18n } from '../../i18n/i18n';
 import type { PlanSettings } from '../../data/plan-settings';
 
@@ -50,7 +50,7 @@ export function CompanionCard({
           >
             {t('settings.companion')}
           </Text>
-          <BalancedText style={{ ...display(20, 500, -0.01), lineHeight: 24, color: palette.ink }}>
+          <BalancedText style={{ ...leading(display(20, 500, -0.01), 24), color: palette.ink }}>
             {`“${preview}”`}
           </BalancedText>
         </View>

@@ -25,7 +25,7 @@ import { Symbol } from '../../ui/icons/symbol';
 import { easeOut } from '../../ui/motion/curves';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { NeededByTimeline } from './needed-by-timeline';
 import type { PlanFormat } from './plan-format';
 import { potSheetColours } from './pot-sheet-colours';
@@ -177,7 +177,7 @@ export function NeededByEditor({
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit
-            style={{ ...display(32, 500, -0.02), lineHeight: 34, color: palette.ink }}
+            style={{ ...leading(display(32, 500, -0.02), 34, true), color: palette.ink }}
           >
             {format.monthLong(shown)}
           </Text>

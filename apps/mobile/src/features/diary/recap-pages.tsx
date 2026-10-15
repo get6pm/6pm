@@ -10,7 +10,7 @@ import { Companion } from '../../ui/companion/companion';
 import { DashedRule } from '../../ui/dashed-rule';
 import { isSymbolName } from '../../ui/icons/symbol';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { merchantIcon } from '../today/merchant-icon';
 import { inkWash, recapAccent } from './diary-colours';
 
@@ -47,7 +47,7 @@ export function StoryPage({ story }: { readonly story: RecapStory }) {
   return (
     <View style={{ flex: 1, gap: 14 }}>
       {!serious ? <Companion size={72} mood={happy ? 'happy' : 'nod'} /> : null}
-      <Text style={{ ...display(31, 500, -0.02), lineHeight: 33.5, color: palette.ink }}>
+      <Text style={{ ...leading(display(31, 500, -0.02), 33.5), color: palette.ink }}>
         {lead}{' '}
         <Text style={{ color: serious ? palette.inkSoft : recapAccent(palette.dark) }}>
           {accent}
@@ -71,7 +71,7 @@ export function BarsPage({
   const wash = inkWash(palette.dark);
   return (
     <View style={{ flex: 1, gap: 12 }}>
-      <Text style={{ ...display(24, 500), lineHeight: 26.4, color: palette.ink }}>
+      <Text style={{ ...leading(display(24, 500), 26.4), color: palette.ink }}>
         {t('diary.recap.total', { total: money.short(recap.total) })}{' '}
         <Text style={{ color: palette.inkSoft }}>
           {t('diary.recap.under', { under: recap.under, count: recap.days })}
@@ -135,7 +135,7 @@ export function PlacesPage({ recap }: { readonly recap: WeekRecap }) {
   const { categories } = useMoney();
   return (
     <View style={{ flex: 1, gap: 4 }}>
-      <Text style={{ ...display(24, 500), lineHeight: 26.4, paddingBottom: 8, color: palette.ink }}>
+      <Text style={{ ...leading(display(24, 500), 26.4), paddingBottom: 8, color: palette.ink }}>
         {t('diary.recap.places')}
       </Text>
       {recap.places.length === 0 ? (

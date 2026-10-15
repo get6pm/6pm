@@ -4,7 +4,7 @@ import Animated, { FadeIn, useAnimatedStyle, withTiming } from 'react-native-rea
 import { useI18n } from '../../i18n/i18n';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { glide } from './glide';
 import { MicButton } from './mic-button';
 import { OpenSettingsPill } from './open-settings-pill';
@@ -56,8 +56,7 @@ export function VoicePanel({
         {said !== '' ? (
           <Text
             style={{
-              ...display(24, 500),
-              lineHeight: 28.8,
+              ...leading(display(24, 500), 28.8),
               color: palette.inkSoft,
               textAlign: 'center',
             }}

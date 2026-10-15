@@ -23,7 +23,7 @@ import type { SymbolName } from '../../ui/icons/symbols.generated';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { BalancedText } from '../../ui/type/balanced-text';
-import { body, display, mono } from '../../ui/type/fonts';
+import { body, display, leading, mono } from '../../ui/type/fonts';
 import { cardFling } from './card-fling';
 import { CloseCard, type CloseCardContent } from './close-card';
 
@@ -246,7 +246,7 @@ export function CloseCards(props: CloseCardsProps) {
     <View style={{ flex: 1, gap: 20, paddingTop: 22 }}>
       <View style={{ gap: 6 }}>
         <Text style={{ ...mono(11, 400, 0.14), color: palette.inkSoft }}>{props.kicker}</Text>
-        <BalancedText style={{ ...display(40, 500, -0.01), lineHeight: 40.8, color: palette.ink }}>
+        <BalancedText style={{ ...leading(display(40, 500, -0.01), 40.8), color: palette.ink }}>
           {props.title}
         </BalancedText>
         {props.undoText ? (

@@ -6,7 +6,7 @@ import type { CompanionForm } from '../../ui/companion/companion-mood';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 
 /** The live preview's size, and the height of the window it stands in. */
 const PREVIEW = 112;
@@ -97,7 +97,7 @@ export function CompanionTile({
       <View style={{ paddingTop: 4, paddingHorizontal: 12, paddingBottom: 13, gap: 3 }}>
         <Text
           numberOfLines={1}
-          style={{ ...display(18, 500), lineHeight: 20.7, color: palette.ink }}
+          style={{ ...leading(display(18, 500), 20.7, true), color: palette.ink }}
         >
           {name}
         </Text>

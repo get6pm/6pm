@@ -7,7 +7,7 @@ import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { useLookCardLines } from '../looks/look-card-lines';
 import { LookPreview, SHOP_PREVIEW } from '../looks/look-preview';
 import { useLookSettings } from '../looks/look-settings-provider';
@@ -84,8 +84,7 @@ export function SettingsLookCard({ onPress }: { readonly onPress: () => void }) 
           </Text>
           <Text
             style={{
-              ...display(23, 500, 0, lookById(worn).font),
-              lineHeight: 25.3,
+              ...leading(display(23, 500, 0, lookById(worn).font), 25.3),
               color: palette.ink,
             }}
           >

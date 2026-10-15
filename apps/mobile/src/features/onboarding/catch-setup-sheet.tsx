@@ -10,7 +10,7 @@ import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, mono } from '../../ui/type/fonts';
+import { body, display, leading, mono } from '../../ui/type/fonts';
 import { captureColours } from '../capture-guide/capture-colours';
 import { GuideSection } from '../capture-guide/guide-sections';
 import { useWalkthroughSteps } from '../capture-guide/guide-walkthroughs';
@@ -120,8 +120,7 @@ function SetupBody({
         <View style={{ paddingTop: 6, paddingHorizontal: 16, paddingBottom: 44, gap: 22 }}>
           <Text
             style={{
-              ...display(29, 500, -0.015),
-              lineHeight: 32,
+              ...leading(display(29, 500, -0.015), 32),
               color: palette.ink,
               paddingHorizontal: 4,
             }}

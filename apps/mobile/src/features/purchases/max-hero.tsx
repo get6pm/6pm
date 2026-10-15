@@ -17,7 +17,7 @@ import { Companion } from '../../ui/companion/companion';
 import type { CompanionForm } from '../../ui/companion/companion-mood';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { LookPreview, MAX_PREVIEW } from '../looks/look-preview';
 import { MaxGlow } from './max-glow';
 import { SCENE_LOOKS } from './products';
@@ -195,7 +195,7 @@ export function MaxHero({
           gap: 9,
         }}
       >
-        <Text style={{ ...display(32, 700, -0.03, MAX_FONT), lineHeight: 32, color: MAX_CREAM }}>
+        <Text style={{ ...leading(display(32, 700, -0.03, MAX_FONT), 32), color: MAX_CREAM }}>
           6pm
         </Text>
         <View

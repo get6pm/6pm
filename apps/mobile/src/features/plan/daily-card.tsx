@@ -17,7 +17,7 @@ import { useMoneyFormat } from '../../money/use-money-format';
 import { useRunAction } from '../companion/use-run-action';
 import { haptics } from '../../ui/haptics';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, mono, tabular } from '../../ui/type/fonts';
+import { body, display, leading, mono, tabular } from '../../ui/type/fonts';
 import type { PlanColours } from './plan-colours';
 import type { PlanFormat } from './plan-format';
 import { PlanCard } from './plan-parts';
@@ -110,8 +110,7 @@ export function DailyCard({
           numberOfLines={1}
           adjustsFontSizeToFit
           style={{
-            ...display(64 * palette.numK, 500, -0.03),
-            lineHeight: 64,
+            ...leading(display(64 * palette.numK, 500, -0.03), 64, true),
             ...tabular,
             color: palette.ink,
             flexShrink: 0.01,

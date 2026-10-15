@@ -16,7 +16,7 @@ import { curves, durations } from '@6pm/theme';
 import { useMoneyFormat } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { PlanCard } from './plan-parts';
 import type { PlanColours } from './plan-colours';
 
@@ -209,8 +209,7 @@ export function MoneyRiverCard({
             numberOfLines={1}
             adjustsFontSizeToFit
             style={{
-              ...display(44 * palette.numK, 500, -0.03),
-              lineHeight: 44 * palette.numK,
+              ...leading(display(44 * palette.numK, 500, -0.03), 44 * palette.numK, true),
               color: palette.ink,
             }}
           >

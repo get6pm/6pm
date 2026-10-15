@@ -15,7 +15,7 @@ import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, tabular } from '../../ui/type/fonts';
+import { body, display, leading, tabular } from '../../ui/type/fonts';
 import type { HomeTab } from './home-tabs';
 import { TopNav } from './top-nav';
 
@@ -59,7 +59,7 @@ export const HomeTopNav = memo(function HomeTopNav({
             <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
               <AmountText
                 parts={shortParts(Math.max(0, day.safe), money)}
-                style={{ ...display(27, 500, -0.02), lineHeight: 27, color: palette.ink }}
+                style={{ ...leading(display(27, 500, -0.02), 27, true), color: palette.ink }}
               />
               <Text
                 numberOfLines={1}

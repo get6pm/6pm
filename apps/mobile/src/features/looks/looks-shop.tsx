@@ -13,7 +13,7 @@ import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
 import { BalancedText } from '../../ui/type/balanced-text';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { useCompanionToast } from '../companion/use-companion-toast';
 import { useToast } from '../../ui/toast/toast-host';
 import { resolveLook } from '../purchases/entitlement';
@@ -122,7 +122,7 @@ export function LooksShop() {
           <View style={{ paddingTop: 4, paddingHorizontal: 6, gap: 8 }}>
             <BalancedText
               accessibilityRole="header"
-              style={{ ...display(31, 500, -0.01), lineHeight: 32.9, color: palette.ink }}
+              style={{ ...leading(display(31, 500, -0.01), 32.9), color: palette.ink }}
             >
               {t('looks.heading')}
             </BalancedText>

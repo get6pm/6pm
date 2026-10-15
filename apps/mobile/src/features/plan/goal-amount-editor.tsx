@@ -21,7 +21,7 @@ import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, tabular } from '../../ui/type/fonts';
+import { body, display, leading, tabular } from '../../ui/type/fonts';
 import { potReflow } from './pot-rows';
 import { FAINT, potSheetColours } from './pot-sheet-colours';
 import { useSheetMoney } from './sheet-money';
@@ -193,9 +193,8 @@ export function GoalAmountEditor({
             numberOfLines={1}
             adjustsFontSizeToFit
             style={{
-              ...display(58, 500, -0.025),
+              ...leading(display(58, 500, -0.025), 62, true),
               ...tabular,
-              lineHeight: 62,
               color: palette.ink,
               opacity: entry.digits === '' ? 0.5 : 1,
             }}

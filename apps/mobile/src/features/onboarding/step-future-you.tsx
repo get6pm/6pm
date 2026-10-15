@@ -6,7 +6,7 @@ import { useDerivedValue, useSharedValue, withTiming } from 'react-native-reanim
 import { useI18n } from '../../i18n/i18n';
 import { useMoneyFormat } from '../../money/use-money-format';
 import { FitWidth } from '../../ui/layout/fit-width';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { Wheel } from '../../ui/wheel/wheel';
 import { ease } from './onboarding-motion';
 import { PERCENTS } from './onboarding-maths';
@@ -127,7 +127,7 @@ export function StepFutureYou({
             </Text>
             <View style={{ alignSelf: 'stretch', paddingHorizontal: FIT_PAD }}>
               <FitWidth height={44} align="center">
-                <Text style={{ ...display(44, 600, -0.03), lineHeight: 44, color: pal.ink }}>
+                <Text style={{ ...leading(display(44, 600, -0.03), 44), color: pal.ink }}>
                   {money.short(amount)}
                 </Text>
               </FitWidth>

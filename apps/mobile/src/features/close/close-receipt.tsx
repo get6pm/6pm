@@ -16,7 +16,7 @@ import { barcode } from './barcode';
 import { PaperEdge } from '../../ui/paper-edge';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, families, mono, tabular } from '../../ui/type/fonts';
+import { body, display, families, leading, mono, tabular } from '../../ui/type/fonts';
 import { useMoneyFormat } from '../../money/use-money-format';
 
 const PAPER = '#f7f2e8';
@@ -127,10 +127,9 @@ export function CloseReceipt(props: {
           >
             <Text
               style={{
-                ...display(42, 500, -0.01),
+                ...leading(display(42, 500, -0.01), 42),
                 color: INK,
                 textAlign: 'center',
-                lineHeight: 42,
               }}
             >
               6pm

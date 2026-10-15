@@ -8,7 +8,7 @@ import { glide } from '../voice/glide';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, mono, tabular } from '../../ui/type/fonts';
+import { body, display, leading, mono, tabular } from '../../ui/type/fonts';
 
 /** The bubble pops with the design's springy `cubic-bezier(.2,1.6,.4,1)`. */
 const pop = ZoomIn.springify().damping(9).stiffness(220);
@@ -128,7 +128,7 @@ export function CashStep({
   return (
     <Animated.View entering={FadeInDown.duration(450)} style={{ flex: 1, gap: 20, paddingTop: 22 }}>
       <View style={{ gap: 6 }}>
-        <Text style={{ ...display(40, 500, -0.01), lineHeight: 40.8, color: palette.ink }}>
+        <Text style={{ ...leading(display(40, 500, -0.01), 40.8), color: palette.ink }}>
           {title}
         </Text>
         <Text style={{ ...body(15), lineHeight: 21.75, color: palette.inkSoft, paddingTop: 4 }}>

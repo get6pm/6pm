@@ -16,7 +16,7 @@ import { useDesignInsets } from '../../ui/layout/design-insets';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useToast } from '../../ui/toast/toast-host';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { useCompanionToast } from '../companion/use-companion-toast';
 import { canUseLook, lookAccess, resolveLook } from '../purchases/entitlement';
 import { isPaidLook } from '../purchases/products';
@@ -163,7 +163,7 @@ export function LookDetail({ look }: { readonly look: LookId }) {
           <View style={{ gap: 5 }}>
             <Text
               accessibilityRole="header"
-              style={{ ...display(34, 500, -0.01, def.font), lineHeight: 34.7, color: palette.ink }}
+              style={{ ...leading(display(34, 500, -0.01, def.font), 34.7), color: palette.ink }}
             >
               {copy.name(look)}
             </Text>

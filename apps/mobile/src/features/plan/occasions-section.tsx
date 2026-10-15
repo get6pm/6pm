@@ -23,7 +23,7 @@ import { haptics } from '../../ui/haptics';
 import { isSymbolName, Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { jarTint, type PlanColours } from './plan-colours';
 import type { PlanFormat } from './plan-format';
 import { Pill } from './plan-parts';
@@ -159,8 +159,7 @@ function Jar({
               numberOfLines={1}
               adjustsFontSizeToFit
               style={{
-                ...display(30, 500, -0.02),
-                lineHeight: 30,
+                ...leading(display(30, 500, -0.02), 30, true),
                 color: palette.ink,
                 flexShrink: 1,
               }}

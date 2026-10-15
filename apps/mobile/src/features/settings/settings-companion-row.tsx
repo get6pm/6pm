@@ -6,7 +6,7 @@ import { useCompanionForm } from '../../ui/companion/companion-form';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 
 /**
  * Settings' card for the companion worn, beside the Look card: it stands there live, with
@@ -43,7 +43,7 @@ export function SettingsCompanionRow({ onPress }: { readonly onPress: () => void
         >
           {t('companions.title')}
         </Text>
-        <Text style={{ ...display(21, 500), lineHeight: 24, color: palette.ink }}>{name}</Text>
+        <Text style={{ ...leading(display(21, 500), 24), color: palette.ink }}>{name}</Text>
         <Text numberOfLines={1} style={{ ...body(13), color: palette.inkSoft }}>
           {t(`companions.line.${form}`)}
         </Text>

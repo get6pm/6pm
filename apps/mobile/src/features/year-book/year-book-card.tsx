@@ -9,7 +9,7 @@ import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { useCompanionToast } from '../companion/use-companion-toast';
 import { useYearBook } from './use-year-book';
 
@@ -64,7 +64,7 @@ function YearBookCard({
             'linear-gradient(90deg, rgba(0,0,0,.4), rgba(255,255,255,.05))',
         }}
       />
-      <Text style={{ ...display(34, 500, -0.03), lineHeight: 34, color: yearBookInk.gold }}>
+      <Text style={{ ...leading(display(34, 500, -0.03), 34), color: yearBookInk.gold }}>
         {year}
       </Text>
       <View style={{ flex: 1, minWidth: 0, gap: 2 }}>

@@ -11,6 +11,7 @@ export function SpendRowMenu({
   confirmLabel,
   editLabel,
   deleteLabel,
+  deleteIcon = 'trash',
   onConfirm,
   onEdit,
   onDelete,
@@ -21,6 +22,8 @@ export function SpendRowMenu({
   readonly confirmLabel: string;
   readonly editLabel: string;
   readonly deleteLabel: string;
+  /** The SF Symbol beside the removing action. */
+  readonly deleteIcon?: 'trash' | 'xmark';
   readonly onConfirm: () => void;
   readonly onEdit: () => void;
   readonly onDelete: () => void;
@@ -36,7 +39,7 @@ export function SpendRowMenu({
         <Link.MenuAction icon="pencil" onPress={onEdit}>
           {editLabel}
         </Link.MenuAction>
-        <Link.MenuAction icon="trash" destructive onPress={onDelete}>
+        <Link.MenuAction icon={deleteIcon} destructive onPress={onDelete}>
           {deleteLabel}
         </Link.MenuAction>
       </Link.Menu>

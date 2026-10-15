@@ -24,6 +24,8 @@ struct ShareCardData: Decodable {
   let amountText: String
   let whenText: String
   let currency: String?
+  /// The receipt printed no currency: the card offers this one as a chip to check.
+  let currencyGuessed: Bool
   let printed: String?
   let foreign: Foreign?
   let inDongText: String?
@@ -70,4 +72,15 @@ struct ShareContext: Decodable {
   let host: String
   let categories: [Category]
   let travel: Trip?
+}
+
+extension ShareContext {
+  /// Serious mode has no companion; the app says so in the widgets' snapshot.
+  static func serious() -> Bool {
+    guard
+      let data = GroupFiles.readSurface("snapshot"),
+      let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+    else { return false }
+    return object["serious"] as? Bool ?? false
+  }
 }

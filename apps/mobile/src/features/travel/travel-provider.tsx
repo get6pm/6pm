@@ -51,8 +51,9 @@ const TravelContext = createContext<TravelValue | null>(null);
 
 /**
  * Travel mode for the whole app. The switch, the last place and the last rates are read
- * synchronously at launch, so Home's pill is there in the first frame; the place and the rates
- * are checked again whenever the app comes to the foreground with the switch on.
+ * synchronously at launch, so Home's pill is there in the first frame; the place is checked
+ * again whenever the app comes to the foreground with the switch on, and the rates (every six
+ * hours at most) whether it is on or not.
  */
 export function TravelProvider({ children }: { readonly children: ReactNode }) {
   const db = useSQLiteContext();
@@ -109,20 +110,29 @@ export function TravelProvider({ children }: { readonly children: ReactNode }) {
     keep(TRAVEL_PLACE_KEY, JSON.stringify(found));
   }, [keep]);
 
-  // With the switch on: where the phone is and today's rates, now and on every return.
+  // Today's rates, now and on every return, whether or not the switch is on: a receipt shared
+  // from abroad is priced with them (the share extension reads them from its context).
+  useEffect(() => {
+    refreshRates();
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') refreshRates();
+    });
+    return () => sub.remove();
+  }, [refreshRates]);
+
+  // With the switch on: where the phone is, now and on every return.
   useEffect(() => {
     if (!on || !max) return undefined;
     const check = () => {
       setNow(new Date());
       locate().catch(() => undefined);
-      refreshRates();
     };
     check();
     const sub = AppState.addEventListener('change', (state) => {
       if (state === 'active') check();
     });
     return () => sub.remove();
-  }, [on, max, locate, refreshRates]);
+  }, [on, max, locate]);
 
   const setOn = useCallback(
     (next: boolean) => {

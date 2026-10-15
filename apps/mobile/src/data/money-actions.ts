@@ -6,6 +6,7 @@ import {
   mergedStatus,
   merchantKeyOf,
   moneyDayOf,
+  settleTypedAmount,
   type ClosedDayRow,
   type LocalDate,
   type SpendRow,
@@ -26,6 +27,8 @@ export interface NewSpend {
   readonly wallet?: string | null;
   readonly detail?: string | null;
   readonly foreignAmount?: SpendRow['foreignAmount'];
+  /** The receipt printed no currency and the one saved was guessed. */
+  readonly currencyGuessed?: boolean;
   /** When it happened; now unless the source says otherwise. */
   readonly at?: Date;
   /**
@@ -106,7 +109,9 @@ export function moneyActions(store: MoneyStore) {
   const update = (id: string, patch: Partial<SpendRow>): Promise<SpendRow | null> =>
     inTurn(async () => {
       const row = await current(id);
-      return row ? patchNow(row, patch) : null;
+      if (!row) return null;
+      const settled = settleTypedAmount(row.foreignAmount, patch);
+      return patchNow(row, settled === undefined ? patch : { ...patch, foreignAmount: settled });
     });
 
   /** The same payment seen a second way: one item, its sightings recorded, never two rows. */
@@ -158,6 +163,7 @@ export function moneyActions(store: MoneyStore) {
       forWork: false,
       detail: input.detail ?? null,
       foreignAmount: input.foreignAmount ?? null,
+      currencyGuessed: input.currencyGuessed ?? false,
       createdAt: now,
       updatedAt: now,
     };

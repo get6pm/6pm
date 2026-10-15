@@ -49,8 +49,9 @@ export function createTable<Row extends object>(db: SqlDatabase, spec: TableSpec
   const keyColumn = columnOf(spec.key);
 
   const encode = (field: string, value: unknown): SqlValue => {
-    if (value === null || value === undefined) return null;
+    // A flag the row leaves out (one added after the row's contract) is stored as false.
     if (booleans.has(field)) return value === true ? 1 : 0;
+    if (value === null || value === undefined) return null;
     if (json.has(field)) return JSON.stringify(value);
     return value as string | number;
   };

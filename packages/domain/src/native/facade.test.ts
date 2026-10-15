@@ -50,7 +50,7 @@ const logged = (amount: string, merchant: string | null, ctx = contextJson) =>
 
 describe('the native entry', () => {
   it('is the version the extensions were written against', () => {
-    expect(NATIVE_API_VERSION).toBe(2);
+    expect(NATIVE_API_VERSION).toBe(3);
   });
 });
 
@@ -72,6 +72,7 @@ describe('shareCard', () => {
       atRead: true,
       kind: 'transfer',
       currency: 'VND',
+      currencyGuessed: false,
       currencySure: true,
       totalSure: true,
       totalLine: null,

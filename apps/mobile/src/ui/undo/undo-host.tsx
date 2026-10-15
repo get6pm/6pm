@@ -33,7 +33,17 @@ const UndoContext = createContext<
  * offer replaces the last (the last one's change stays). VoiceOver reads it as it appears; a finger
  * on it stops the clock, and a pull down puts it away.
  */
-export function UndoHost({ children }: { readonly children: ReactNode }) {
+export function UndoHost({
+  children,
+  lift = 102,
+}: {
+  readonly children: ReactNode;
+  /**
+   * How far above the screen's foot the bar sits, in the design's points: over the tab bar by
+   * default; lower inside a sheet, which covers the app's own bar and has no tab bar.
+   */
+  readonly lift?: number;
+}) {
   const { bottom } = useDesignInsets();
   const [offer, setOffer] = useState<UndoOffer | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -88,7 +98,7 @@ export function UndoHost({ children }: { readonly children: ReactNode }) {
           key={offer.key}
           text={offer.text}
           actionLabel={offer.actionLabel}
-          bottom={bottom(102)}
+          bottom={bottom(lift)}
           onUndo={() => {
             haptics.tap();
             offer.undo();

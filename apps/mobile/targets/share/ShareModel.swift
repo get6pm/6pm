@@ -20,6 +20,8 @@ final class ShareModel: ObservableObject {
   /// One shared receipt, once read.
   struct Receipt {
     let linesJson: String
+    /// Where the photo was taken (`{latitude, longitude}`), or "null".
+    let placeJson: String
     var cardJson: String
     var card: ShareCardData?
     let photo: Data?
@@ -68,16 +70,7 @@ final class ShareModel: ObservableObject {
     contextJson = contextData.flatMap { String(data: $0, encoding: .utf8) } ?? "null"
     categories = context?.categories ?? []
     text = ShareText(language: context?.language)
-    showsCompanion = !ShareModel.serious()
-  }
-
-  /// Serious mode has no companion; the app says so in the widgets' snapshot.
-  private static func serious() -> Bool {
-    guard
-      let data = GroupFiles.readSurface("snapshot"),
-      let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
-    else { return false }
-    return object["serious"] as? Bool ?? false
+    showsCompanion = !ShareContext.serious()
   }
 
   var total: Int { receipts.count }
@@ -105,7 +98,7 @@ final class ShareModel: ObservableObject {
 
   private func readOne(_ source: ReceiptReader.Source?) async -> Receipt {
     let contextJson = contextJson
-    let made: (DomainBridge?, String, String, Data?) = await Task.detached(
+    let made: (DomainBridge?, String, String, String, Data?) = await Task.detached(
       priority: .userInitiated
     ) {
       var shared = SharedReceipt(lines: [], photo: nil)
@@ -113,13 +106,21 @@ final class ShareModel: ObservableObject {
       let linesJson =
         (try? JSONEncoder().encode(shared.lines)).flatMap { String(data: $0, encoding: .utf8) }
         ?? "[]"
-      guard let bridge = try? DomainBridge() else { return (nil, linesJson, "null", shared.photo) }
-      let json = (try? bridge.call("shareCard", [linesJson, contextJson, ShareModel.now()])) ?? "null"
-      return (bridge, linesJson, json, shared.photo)
+      let placeJson =
+        shared.place.flatMap { try? JSONEncoder().encode($0) }
+        .flatMap { String(data: $0, encoding: .utf8) } ?? "null"
+      guard let bridge = try? DomainBridge() else {
+        return (nil, linesJson, placeJson, "null", shared.photo)
+      }
+      let json =
+        (try? bridge.call("shareCard", [linesJson, contextJson, ShareModel.now(), placeJson]))
+        ?? "null"
+      return (bridge, linesJson, placeJson, json, shared.photo)
     }.value
     if bridge == nil { bridge = made.0 }
     return Receipt(
-      linesJson: made.1, cardJson: made.2, card: ShareCardData.decode(made.2), photo: made.3)
+      linesJson: made.1, placeJson: made.2, cardJson: made.3, card: ShareCardData.decode(made.3),
+      photo: made.4)
   }
 
   nonisolated private static func now() -> String {
@@ -162,9 +163,11 @@ final class ShareModel: ObservableObject {
       guard let photo = receipts[at]?.photo, let context else { continue }
       looks += 1
       Task {
+        // The phone's guess (where the photo was taken, first) is the server's tie-breaker.
+        let card = receipts[at]?.card
+        let hint = card?.currencyGuessed == true ? card?.currency : context.travel?.currency
         let answer = await ReceiptLook.ask(
-          photo: photo, language: context.language, currencyHint: context.travel?.currency,
-          host: context.host)
+          photo: photo, language: context.language, currencyHint: hint, host: context.host)
         looked(at, answer)
       }
     }
@@ -177,7 +180,7 @@ final class ShareModel: ObservableObject {
     receipt.looking = false
     if let answer, let bridge,
       let json = try? bridge.call(
-        "shareLook", [receipt.linesJson, answer, contextJson, Self.now()]),
+        "shareLook", [receipt.linesJson, answer, contextJson, Self.now(), receipt.placeJson]),
       let merged = ShareCardData.decode(json)
     {
       receipt.cardJson = json
@@ -214,6 +217,9 @@ final class ShareModel: ObservableObject {
 
   var decimalEntry: Bool { shown?.decimalEntry ?? card?.decimalEntry ?? false }
 
+  /// A guessed currency the user has not picked yet: shown as a chip to check.
+  var currencyUnsure: Bool { currency == nil && card?.currencyGuessed == true }
+
   /// The Currency row's value; the row shows only when the currency could be another.
   var currencyLabel: String? {
     guard let options = card?.currencies, !options.isEmpty else { return nil }
@@ -238,7 +244,8 @@ final class ShareModel: ObservableObject {
   private func edits(includeName: Bool) -> [String: String] {
     var edits: [String: String] = [:]
     if !typedAmount.isEmpty, typedAmount != readAmountShown { edits["amountText"] = typedAmount }
-    if let currency, currency != card?.currency { edits["currency"] = currency }
+    // A currency picked on the card, even the one read, is no longer a guess.
+    if let currency { edits["currency"] = currency }
     if includeName, let typedName { edits["payee"] = typedName }
     if includeName, let categoryId, categoryId != card?.categoryId {
       edits["categoryId"] = categoryId

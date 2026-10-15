@@ -42,16 +42,35 @@ export function toReceiptLines(lines: z.infer<typeof receiptLinesSchema>): Recei
   }));
 }
 
+/** What a receipt from abroad is most likely in, offered when its currency is a guess. */
+export const LIKELY_CURRENCIES: readonly string[] = [
+  'IDR',
+  'THB',
+  'SGD',
+  'MYR',
+  'USD',
+  'EUR',
+  'JPY',
+  'KRW',
+  'CNY',
+];
+
+/** A shop receipt whose currency was not printed: whatever it says, it is a guess. */
+function guessed(read: ReadReceipt | null): boolean {
+  return read?.kind === 'shop' && !read.currencySure;
+}
+
 /**
- * Currencies Edit offers: the one read, the trip's and đồng, unless the receipt is certainly in
- * đồng (a transfer, or a Vietnamese bill).
+ * Currencies the card offers: none when the receipt's own is certain; for a guess, the guess,
+ * đồng, the trip's and the likely ones; else the one read, the trip's and đồng.
  */
 function currenciesFor(read: ReadReceipt | null, context: SurfaceContext | null) {
   if (read?.kind === 'transfer' || (read?.currency === 'VND' && read.currencySure)) return [];
-  const codes = [read?.currency, context?.travel?.currency, 'VND'].filter(
-    (code): code is string => typeof code === 'string',
-  );
-  const unique = [...new Set(codes)];
+  const trip = context?.travel?.currency;
+  const codes = guessed(read)
+    ? [read?.currency, 'VND', trip, ...LIKELY_CURRENCIES]
+    : [read?.currency, trip, 'VND'];
+  const unique = [...new Set(codes.filter((code): code is string => typeof code === 'string'))];
   return unique.length > 1 ? unique.map((code) => currencyOption(context, code)) : [];
 }
 
@@ -85,6 +104,7 @@ export function cardOf(
     kind: read?.kind ?? 'shop',
     currency,
     currencySure: read?.currencySure ?? false,
+    currencyGuessed: guessed(read),
     totalSure: read?.totalSure ?? false,
     totalLine: read?.totalLine ?? null,
     printed: printed ?? read?.printed ?? null,
@@ -115,24 +135,26 @@ export function cardOf(
 
 /**
  * The card for a shared receipt. Nothing readable still gives a card, with no amount, so the
- * extension can ask for one rather than fail. In Travel mode the trip's currency is the guess
- * for a receipt that prints none.
+ * extension can ask for one rather than fail. For a receipt that prints no currency, where the
+ * photo was taken (`located`) is the first guess, and the trip's currency in Travel mode the last
+ * before đồng.
  */
 export function buildShareCard(
   lines: readonly ReceiptLine[],
   context: SurfaceContext | null,
   now: Date,
+  located: string | null = null,
 ): ShareCard {
-  const read = readReceipt(lines, context?.travel?.currency ?? null);
+  const read = readReceipt(lines, context?.travel?.currency ?? null, located);
   return cardOf(read, lines, context, now);
 }
 
 /**
  * The inbox item Confirm writes: the card with the user's edits, caught so the close shows it.
+ * A currency the user picked on the card is no longer a guess.
  * Null while there is no amount (Confirm stays off until one is typed). An edited amount in đồng
  * is read like a typed one ("45" is 45.000₫). A foreign amount keeps its currency and the rate
- * it was priced at; with no rate yet its đồng is left for the close, and the printed amount is
- * the note, as a foreign Apple Pay tap is.
+ * it was priced at; with no rate yet its đồng is null and the app prices it when a rate arrives.
  */
 export function buildShareItem(card: ShareCard, edits: ShareEdits, id: string): InboxSpend | null {
   const shown = shareAmount(card, edits);
@@ -149,7 +171,7 @@ export function buildShareItem(card: ShareCard, edits: ShareEdits, id: string): 
     amount: shown.amount,
     merchant: payee,
     categoryId: edits.categoryId ?? card.categoryId,
-    ...(foreign && shown.amount === null ? { note: shown.amountText } : {}),
+    ...(card.currencyGuessed && edits.currency === undefined ? { currencyGuessed: true } : {}),
     receipt: {
       ...(card.bank ? { bank: card.bank } : {}),
       ...(card.code ? { code: card.code } : {}),

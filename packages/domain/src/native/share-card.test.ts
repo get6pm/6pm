@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import bejana from '../capture/fixtures/receipts/shop-bejana-uluwatu-no-mark.json';
 import coffeeBean from '../capture/fixtures/receipts/shop-coffee-bean-singapore.json';
 import grabfood from '../capture/fixtures/receipts/shop-grabfood-analy.json';
 import kelingking from '../capture/fixtures/receipts/shop-kelingking-bali-no-mark.json';
@@ -62,11 +63,12 @@ describe('a receipt in another currency', () => {
     });
   });
 
-  it('keeps its own amount, and leaves the đồng to the close, with no rate yet', () => {
+  it('keeps its own amount, with no đồng until a rate arrives', () => {
     const unpriced = card(coffeeBean, noRates);
     expect(unpriced).toMatchObject({ amount: null, amountText: 'S$68,80', inDongText: null });
     const saved = item(unpriced);
-    expect(saved).toMatchObject({ amount: null, note: 'S$68,80' });
+    expect(saved).toMatchObject({ amount: null });
+    expect(saved.note).toBeUndefined();
     expect(saved.foreign).toEqual({ currency: 'SGD', amount: '68.80' });
   });
 
@@ -79,9 +81,57 @@ describe('a receipt in another currency', () => {
 
   it('can be switched to đồng when the guess was wrong', () => {
     const guessed = card(kelingking);
-    expect(guessed.currencies.map((c) => c.code)).toEqual(['IDR', 'VND']);
+    expect(guessed.currencies.map((c) => c.code)).toEqual([
+      'IDR',
+      'VND',
+      'THB',
+      'SGD',
+      'MYR',
+      'USD',
+      'EUR',
+      'JPY',
+      'KRW',
+      'CNY',
+    ]);
     expect(item(guessed, { currency: 'VND' })).toMatchObject({ amount: 935_550 });
     expect(item(guessed, { currency: 'VND' }).foreign).toBeUndefined();
+  });
+
+  it('marks a currency it guessed, until the person picks one', () => {
+    const guessed = card(kelingking);
+    expect(guessed).toMatchObject({ currencyGuessed: true, currencySure: false });
+    expect(item(guessed)).toMatchObject({ currencyGuessed: true, amount: 1_496_880 });
+    expect(item(guessed, { currency: 'IDR' }).currencyGuessed).toBeUndefined();
+    const switched = item(guessed, { currency: 'SGD' });
+    expect(switched.foreign).toEqual({ currency: 'SGD', amount: '935550', rate: '19500.5' });
+    expect(switched.currencyGuessed).toBeUndefined();
+  });
+
+  it('never marks a printed currency or a transfer as a guess', () => {
+    expect(card([{ text: 'Kopi' }, { text: 'TOTAL S$12.50' }]).currencyGuessed).toBe(false);
+    expect(card(mbbank)).toMatchObject({ currencyGuessed: false, currencies: [] });
+    expect(item(card(mbbank)).currencyGuessed).toBeUndefined();
+  });
+});
+
+describe('where the photo was taken', () => {
+  const uluwatu = JSON.stringify({ latitude: -8.83, longitude: 115.09 });
+  const saigon = JSON.stringify({ latitude: 10.78, longitude: 106.7 });
+  const at = (lines: unknown, place: string) =>
+    shareCardSchema.parse(JSON.parse(shareCard(JSON.stringify(lines), withRates, now, place)));
+
+  it('names the currency of a receipt that prints none', () => {
+    expect(at(bejana, uluwatu)).toMatchObject({ currency: 'IDR', amountText: 'Rp368.160' });
+    expect(at(kelingking, saigon)).toMatchObject({ currency: 'VND', currencySure: false });
+  });
+
+  it('never overrules a printed currency or a Vietnamese bill', () => {
+    expect(at([{ text: 'Kopi' }, { text: 'TOTAL S$12.50' }], uluwatu).currency).toBe('SGD');
+    expect(at(grabfood, uluwatu)).toMatchObject({ currency: 'VND', amount: 101_500 });
+  });
+
+  it('is ignored when it is not a place', () => {
+    expect(at(grabfood, '{"latitude":"x"}').amount).toBe(101_500);
   });
 });
 
@@ -138,6 +188,55 @@ describe('shareLook', () => {
       mbbank,
     );
     expect(merged).toMatchObject({ amount: 120_000, payee: 'CIRCLE K VN' });
+  });
+
+  it('takes a currency the server read printed over the phone’s guess', () => {
+    const merged = look(
+      {
+        amount: 368_160,
+        currency: 'IDR',
+        merchant: null,
+        at: null,
+        sure: true,
+        currencyPrinted: true,
+      },
+      [{ text: 'GRAND TOTAL 368,160' }],
+    );
+    expect(merged).toMatchObject({ currency: 'IDR', currencyGuessed: false, printed: '368160' });
+  });
+
+  it('keeps the photo’s place over a server that only inferred the country', () => {
+    const lines = [{ text: 'GRAND TOTAL 368,160' }];
+    const uluwatu = JSON.stringify({ latitude: -8.83, longitude: 115.09 });
+    const answer = JSON.stringify({
+      receipt: {
+        amount: 368_160,
+        currency: 'VND',
+        merchant: null,
+        at: null,
+        sure: true,
+        currencyPrinted: false,
+      },
+    });
+    const merged = shareCardSchema.parse(
+      JSON.parse(shareLook(JSON.stringify(lines), answer, withRates, now, uluwatu)),
+    );
+    expect(merged).toMatchObject({ currency: 'IDR', currencyGuessed: true });
+  });
+
+  it('takes a sure server’s inferred currency over a guess from nothing, still as a guess', () => {
+    const merged = look(
+      {
+        amount: 368_160,
+        currency: 'IDR',
+        merchant: null,
+        at: null,
+        sure: true,
+        currencyPrinted: false,
+      },
+      [{ text: 'GRAND TOTAL 368,160' }],
+    );
+    expect(merged).toMatchObject({ currency: 'IDR', currencyGuessed: true });
   });
 
   it('converts the server’s cents for a currency with them', () => {

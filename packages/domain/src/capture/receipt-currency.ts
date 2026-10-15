@@ -1,8 +1,10 @@
 /**
  * Which currency a shop receipt is in. A receipt from abroad must never become đồng by default:
- * its own marks decide first (S$, Rp, ฿, "(IDR)"), then what it says about where it was printed
- * (a city, "GST REG", a +62 phone, the language of its labels), then the trip Travel mode is on,
- * and only then đồng, unless its amounts carry cents, which đồng never does.
+ * its own marks decide first (S$, Rp, ฿, "(IDR)"), then where the photo was taken (its GPS, read
+ * on the phone), then what it says about where it was printed (a city, "GST REG", a +62 phone,
+ * the language of its labels), then the trip Travel mode is on, and only then đồng, unless its
+ * amounts carry cents, which đồng never does. Only a printed mark, or a bill written in
+ * Vietnamese, is sure: everything after it is a guess the person is asked to check.
  */
 
 export interface ReceiptCurrency {
@@ -10,6 +12,21 @@ export interface ReceiptCurrency {
   readonly currency: string | null;
   /** True only when the receipt printed the currency itself; false when it was inferred. */
   readonly sure: boolean;
+  /**
+   * What decided it: the receipt itself (a mark, or Vietnamese), where the photo was taken, the
+   * place or words in its text, the trip, or nothing (đồng by default).
+   */
+  readonly from: CurrencySource;
+}
+
+export type CurrencySource = 'printed' | 'photo' | 'text' | 'trip' | 'none';
+
+/** What else is known about where a receipt was paid, weakest last. */
+export interface CurrencyHints {
+  /** The currency where the photo was taken, from its own GPS; null without one. */
+  readonly located: string | null;
+  /** The trip's currency in Travel mode. */
+  readonly prior: string | null;
 }
 
 /** Marks a receipt prints next to its amounts, by currency. Longer marks first. */
@@ -42,14 +59,20 @@ const PLACES: readonly (readonly [string, RegExp])[] = [
   ['SGD', /singapore|gst reg|\+65\b/i],
   [
     'IDR',
-    /indonesia|\bbali\b|jakarta|\bkuta\b|\bubud\b|nusa ?penida|lombok|surabaya|bandung|\+62/i,
+    /indonesia|\bbali\b|jakarta|\bkuta\b|\bubud\b|nusa ?(?:penida|dua|lembongan)|lombok|surabaya|bandung|uluwatu|canggu|seminyak|denpasar|\bsanur\b|jimbaran|\bgili\b|labuan ?bajo|yogyakarta|\bjogja\b|legian|\bamed\b|lovina|\bbatam\b|\+62/i,
   ],
-  ['THB', /thailand|bangkok|phuket|chiang mai|pattaya|\+66\b|[฀-๿]/i],
-  ['MYR', /malaysia|kuala lumpur|penang|\+60\b|\bsst\b/i],
-  ['JPY', /japan|tokyo|osaka|kyoto|\+81\b|[぀-ヿ]/i],
-  ['KRW', /korea|seoul|busan|\+82\b|[가-힯]/i],
-  ['PHP', /philippines|manila|cebu|\+63\b/i],
-  ['KHR', /cambodia|phnom penh|siem reap|\+855\b/i],
+  [
+    'THB',
+    /thailand|bangkok|phuket|chiang ?mai|chiang ?rai|pattaya|krabi|koh ?(?:samui|phangan|tao|lipe|chang)|hua ?hin|ayutthaya|\+66\b|[฀-๿]/i,
+  ],
+  [
+    'MYR',
+    /malaysia|kuala lumpur|penang|langkawi|malacca|melaka|johor|sabah|sarawak|kota kinabalu|\+60\b|\bsst\b/i,
+  ],
+  ['JPY', /japan|tokyo|osaka|kyoto|sapporo|fukuoka|okinawa|\+81\b|[぀-ヿ]/i],
+  ['KRW', /korea|seoul|busan|jeju|incheon|\+82\b|[가-힯]/i],
+  ['PHP', /philippines|manila|cebu|boracay|palawan|el nido|\+63\b/i],
+  ['KHR', /cambodia|phnom penh|siem reap|sihanoukville|kampot|\+855\b/i],
   ['LAK', /\blaos\b|vientiane|luang prabang|\+856\b/i],
   ['HKD', /hong kong|\+852\b/i],
   ['TWD', /taiwan|taipei|\+886\b/i],
@@ -61,7 +84,10 @@ const PLACES: readonly (readonly [string, RegExp])[] = [
 /** The language of a receipt's own labels, a weaker hint than a place. */
 const VIETNAMESE = /[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/iu;
 const WORDS: readonly (readonly [string, RegExp])[] = [
-  ['IDR', /terima kasih|pembayaran|\bjumlah\b|\bharga\b|\bkasir\b|\btanggal\b|\bpajak\b|\bmeja\b/i],
+  [
+    'IDR',
+    /terima kasih|pembayaran|\bjumlah\b|\bharga\b|\bkasir\b|\btanggal\b|\bpajak\b|\bmeja\b|\bpra[ -]?invoice\b|\bfaktur\b|\bwaktu\b|\bbarang\b|\btunai\b|\bkembali(?:an)?\b|\bbayar\b|\bgov(?:ernment|\.)? ?tax\b|\bpb ?1\b/i,
+  ],
   ['VND', VIETNAMESE],
 ];
 
@@ -98,17 +124,17 @@ function countMarks(rows: readonly string[]): Map<string, number> {
 
 /**
  * The currency of a shop receipt from its rows in reading order. `centsPrinted` says the amounts
- * carry two decimals (68.80), which rules đồng out. `prior` is the trip's currency in Travel mode.
+ * carry two decimals (68.80), which rules đồng out.
  */
 export function readReceiptCurrency(
   rows: readonly string[],
   centsPrinted: boolean,
-  prior: string | null,
+  { located, prior }: CurrencyHints,
 ): ReceiptCurrency {
   const marks = countMarks(rows);
   if (centsPrinted) marks.delete('VND');
   const marked = best(marks);
-  if (marked !== null) return { currency: marked, sure: true };
+  if (marked !== null) return { currency: marked, sure: true, from: 'printed' };
 
   const text = rows.join('\n');
   const scores = tally(text, PLACES, PLACE_WEIGHT);
@@ -120,7 +146,14 @@ export function readReceiptCurrency(
   // A receipt written in Vietnamese with nothing foreign on it is in đồng: its language is
   // printed as plainly as a mark would be.
   const vietnamese = placed === 'VND' && scores.size === 1 && VIETNAMESE.test(text);
-  if (placed !== null) return { currency: placed, sure: vietnamese };
-  if (prior !== null && (prior !== 'VND' || !centsPrinted)) return { currency: prior, sure: false };
-  return { currency: centsPrinted ? null : 'VND', sure: false };
+  if (vietnamese) return { currency: 'VND', sure: true, from: 'printed' };
+  // Where the photo was taken beats what the text suggests: a bill in Bali prints no "Bali".
+  if (located !== null && (located !== 'VND' || !centsPrinted)) {
+    return { currency: located, sure: false, from: 'photo' };
+  }
+  if (placed !== null) return { currency: placed, sure: false, from: 'text' };
+  if (prior !== null && (prior !== 'VND' || !centsPrinted)) {
+    return { currency: prior, sure: false, from: 'trip' };
+  }
+  return { currency: centsPrinted ? null : 'VND', sure: false, from: 'none' };
 }

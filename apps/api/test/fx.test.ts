@@ -178,4 +178,37 @@ describe('GET /v1/fx', () => {
     await seed([['THB', '771', '2026-10-11']]);
     expect((await readLatestRates(env.DB, now)).stale).toBe(false);
   });
+
+  it('answers the rates of a day: the newest on or before it, else the newest', async () => {
+    await seed([
+      ['IDR', '1.55', '2026-08-28'],
+      ['IDR', '1.6', '2026-09-01'],
+      ['IDR', '1.62', '2026-09-03'],
+      ['THB', '770.17', '2026-10-12'],
+    ]);
+    const token = await registerDevice();
+    const response = await call('/api/v1/fx?on=2026-09-02', { token });
+    expect(response.status).toBe(200);
+    const answer = fxRatesResponseSchema.parse(await response.json());
+    expect(answer.rates.map(({ currency, rate, asOf }) => [currency, rate, asOf])).toEqual([
+      ['IDR', '1.6', '2026-09-01'],
+      ['THB', '770.17', '2026-10-12'],
+    ]);
+    const before = await readLatestRates(env.DB, now, '2026-08-01');
+    expect(before.rates.find((r) => r.currency === 'IDR')?.rate).toBe('1.62');
+  });
+
+  it('says a day’s rates are stale only when they are old for that day', async () => {
+    await seed([['IDR', '1.6', '2026-09-01']]);
+    expect((await readLatestRates(env.DB, now, '2026-09-02')).stale).toBe(false);
+    expect((await readLatestRates(env.DB, now, '2026-09-20')).stale).toBe(true);
+  });
+
+  it('refuses a day that is not one', async () => {
+    const token = await registerDevice();
+    for (const on of ['yesterday', '2026-13-45', '2026-9-2']) {
+      const response = await call(`/api/v1/fx?on=${on}`, { token });
+      expect(response.status).toBe(400);
+    }
+  });
 });

@@ -5,6 +5,7 @@ import acb from './fixtures/receipts/synthetic-acb.json';
 import mbbank from './fixtures/receipts/synthetic-mbbank.json';
 import textShare from './fixtures/receipts/synthetic-text-share.json';
 import bacHien from './fixtures/receipts/shop-bac-hien-kiotviet.json';
+import bejana from './fixtures/receipts/shop-bejana-uluwatu-no-mark.json';
 import bwResto from './fixtures/receipts/shop-bw-resto-bali-rupiah.json';
 import coffeeBean from './fixtures/receipts/shop-coffee-bean-singapore.json';
 import coffeeHouseQ12 from './fixtures/receipts/shop-coffee-house-q12.json';
@@ -13,6 +14,7 @@ import cukcuk from './fixtures/receipts/shop-cukcuk-promotion.json';
 import grabfood from './fixtures/receipts/shop-grabfood-analy.json';
 import handwritten from './fixtures/receipts/shop-handwritten-bali.json';
 import johnnyRockets from './fixtures/receipts/shop-johnny-rockets-bali.json';
+import jumi from './fixtures/receipts/shop-jumi-bali-rupiah.json';
 import kelingking from './fixtures/receipts/shop-kelingking-bali-no-mark.json';
 import mrCrab from './fixtures/receipts/shop-mr-crab.json';
 import omNuong from './fixtures/receipts/shop-om-nuong.json';
@@ -85,6 +87,17 @@ const shops: [string, readonly ReceiptLine[], Truth][] = [
     { total: '1091420', currency: 'IDR', merchant: 'POLENG RESTAURANT' },
   ],
   ['a handwritten Indonesian bill', handwritten, { total: '755700', currency: 'IDR' }],
+  [
+    'a Bali takeaway bill printing Rp on every amount',
+    jumi,
+    { total: '496650', currency: 'IDR', at: local(2026, 9, 2, 11, 55) },
+  ],
+  [
+    // The total as the phone read it ("368,160"); the place is only in the logo, misread.
+    'an Uluwatu pre-invoice with no currency and no readable place',
+    bejana,
+    { total: '368160', currency: 'IDR', merchant: 'be ja na' },
+  ],
   ['an airport burger bill', johnnyRockets, { total: '647378', currency: 'IDR', misread: true }],
   [
     'a temple ticket',
@@ -193,6 +206,49 @@ describe('readReceipt on shop receipts', () => {
   it('lets the receipt overrule the trip', () => {
     expect(readReceipt(omNuong, 'THB')).toMatchObject({ currency: 'VND', amount: 2_810_580 });
   });
+});
+
+describe('the currency of a receipt that prints none', () => {
+  it('lets a printed mark beat where the photo was taken', () => {
+    expect(readReceipt(jumi, null, 'USD')).toMatchObject({ currency: 'IDR', currencySure: true });
+    expect(readReceipt(grabfood, null, 'IDR')).toMatchObject({
+      currency: 'VND',
+      currencySure: true,
+    });
+  });
+
+  it('lets where the photo was taken beat the place the text names, as a guess', () => {
+    expect(readReceipt(kelingking, null, 'USD')).toMatchObject({
+      currency: 'USD',
+      currencySure: false,
+    });
+    expect(readReceipt(bejana, null, 'IDR')).toMatchObject({
+      currency: 'IDR',
+      currencySure: false,
+      foreign: { currency: 'IDR', amount: '368160' },
+    });
+  });
+
+  it('lets where the photo was taken beat the trip', () => {
+    const lines = [{ text: 'Coffee 4.50' }, { text: 'TOTAL 4.50' }];
+    expect(readReceipt(lines, 'SGD', 'THB')).toMatchObject({
+      currency: 'THB',
+      currencySure: false,
+    });
+  });
+
+  it('never takes đồng from the place when the amounts carry cents', () => {
+    const lines = [{ text: 'Coffee 4.50' }, { text: 'TOTAL 4.50' }];
+    expect(readReceipt(lines, 'SGD', 'VND')).toMatchObject({ currency: 'SGD' });
+  });
+
+  it.each(['Uluwatu', 'Canggu', 'Seminyak', 'Denpasar', 'Labuan Bajo', 'Yogyakarta', 'Gili'])(
+    'reads %s on a bill as a guess at rupiah',
+    (place) => {
+      const lines = [{ text: place }, { text: 'Nasi goreng 55,000' }, { text: 'TOTAL 55,000' }];
+      expect(readReceipt(lines)).toMatchObject({ currency: 'IDR', currencySure: false });
+    },
+  );
 });
 
 describe('readReceipt on transfers', () => {

@@ -4,6 +4,7 @@ import Animated, { type SharedValue, useAnimatedStyle } from 'react-native-reani
 import { gestures, oklchSrgbHex } from '@6pm/theme';
 
 import { Symbol } from '../../ui/icons/symbol';
+import type { SymbolName } from '../../ui/icons/symbols.generated';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
 
@@ -18,11 +19,14 @@ export function SpendRowBackdrop({
   x,
   confirmLabel,
   deleteLabel,
+  deleteIcon = 'delete',
   onDeletePress,
 }: {
   readonly x: SharedValue<number>;
   readonly confirmLabel: string;
   readonly deleteLabel: string;
+  /** The glyph over the removing side: the bin on Today, a cross where the row is skipped. */
+  readonly deleteIcon?: SymbolName;
   readonly onDeletePress: () => void;
 }) {
   const { palette } = useTheme();
@@ -111,7 +115,7 @@ export function SpendRowBackdrop({
             deleteLabelStyle,
           ]}
         >
-          <Symbol name="delete" size={22} color="#fff" />
+          <Symbol name={deleteIcon} size={22} color="#fff" />
           <Text style={{ ...body(11.5, 700), color: '#fff' }}>{deleteLabel}</Text>
         </Animated.View>
       </Pressable>

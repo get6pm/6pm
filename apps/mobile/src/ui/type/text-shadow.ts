@@ -27,6 +27,16 @@ export function textShadows(css: string): TextStyle[] {
     .reverse();
 }
 
+/**
+ * Room a text needs around it for its shadow: iOS clips a text's shadow to the text's own box, so a
+ * glowing copy is set in a box grown by this much on every side (and padded back in place).
+ */
+export function shadowRoom(shadow: TextStyle): number {
+  const offset = shadow.textShadowOffset;
+  const shift = offset ? Math.max(Math.abs(offset.width), Math.abs(offset.height)) : 0;
+  return Math.ceil(2 * (shadow.textShadowRadius ?? 0) + shift);
+}
+
 /** `'opsz' 22` → 22: the optical size a look pins a face to, or null for `normal`. */
 export function pinnedOpticalSize(css: string): number | null {
   const m = /'opsz'\s+([\d.]+)/.exec(css);

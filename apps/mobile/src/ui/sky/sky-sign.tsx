@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { display } from '../type/fonts';
-import { textShadows } from '../type/text-shadow';
+import { shadowRoom, textShadows } from '../type/text-shadow';
 
 /** The sign's place and type in the prototype: 20 pt in, 110 pt down, 42 pt, tracked .03 em. */
 const SIGN = { left: 20, top: 110, size: 42, tracking: 0.03 } as const;
@@ -32,7 +32,20 @@ export function SkySign({
   return (
     <View style={styles.sign}>
       {layers.map((shadow, i) => (
-        <Text key={i} style={[style, shadow, StyleSheet.absoluteFill]} numberOfLines={1}>
+        <Text
+          key={i}
+          style={[
+            style,
+            shadow,
+            {
+              position: 'absolute',
+              left: -shadowRoom(shadow),
+              top: -shadowRoom(shadow),
+              padding: shadowRoom(shadow),
+            },
+          ]}
+          numberOfLines={1}
+        >
           {words}
         </Text>
       ))}

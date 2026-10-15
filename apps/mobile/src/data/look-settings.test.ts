@@ -44,7 +44,7 @@ describe('reading and writing the look', () => {
     const { db } = openDb();
     const settings = {
       look: 'neon' as const,
-      config: { neon: { v: 2, k: 35, rain: false }, golden: { grain: false } },
+      config: { neon: { v: 1, k: 35, sign: false }, golden: { grain: false } },
     };
     await writeLookSettings(db, settings);
     expect(await readLookSettings(db)).toEqual(settings);
@@ -60,8 +60,8 @@ describe('reading and writing the look', () => {
 
   it('cleans a look’s settings to what the look has', () => {
     expect(
-      sanitizeConfig('neon', { v: 9, k: 140, rain: false, lights: 'yes', bogus: true }),
-    ).toEqual({ v: 2, k: 100, rain: false });
+      sanitizeConfig('neon', { v: 9, k: 140, sign: false, flicker: 'yes', bogus: true }),
+    ).toEqual({ v: 1, k: 100, sign: false });
     expect(sanitizeConfig('basic', { v: -3, k: 12.4, sun: true })).toEqual({
       v: 0,
       k: 12,

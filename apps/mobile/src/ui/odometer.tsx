@@ -13,6 +13,7 @@ import { curves, durations } from '@6pm/theme';
 import { useMoneyFormat } from '../money/use-money-format';
 import { display, tabular, withOpticalSize } from './type/fonts';
 import { symbolStyle } from './type/symbol-face';
+import { shadowRoom } from './type/text-shadow';
 
 const ease = Easing.bezier(...curves.enter);
 const DIGITS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -27,9 +28,12 @@ function DigitColumn({
   position,
   textStyle,
   glows,
+  bleed,
 }: {
   readonly digit: number;
   readonly height: number;
+  /** Points the column reaches above and below its line, so a tall face is never cut off. */
+  readonly bleed: number;
   readonly position: number;
   readonly textStyle: TextStyle;
   readonly glows: readonly TextStyle[];
@@ -47,7 +51,7 @@ function DigitColumn({
   const rolling = useAnimatedStyle(() => ({ transform: [{ translateY: offset.value }] }));
   const glowing = useAnimatedStyle(() => ({ opacity: lit.value }));
   return (
-    <View>
+    <View style={{ marginTop: -bleed }}>
       {glows.map((glow, i) => (
         <Animated.Text
           key={i}
@@ -56,10 +60,12 @@ function DigitColumn({
             glow,
             {
               position: 'absolute',
-              left: 0,
-              right: 0,
+              left: -shadowRoom(glow),
+              right: -shadowRoom(glow),
+              top: -shadowRoom(glow),
+              padding: shadowRoom(glow),
               textAlign: 'center',
-              height,
+              height: height + 2 * shadowRoom(glow),
               lineHeight: height,
             },
             glowing,
@@ -110,7 +116,11 @@ export function Odometer({
   readonly opsz?: number | null;
 }) {
   const money = useMoneyFormat();
-  const height = Math.round(size * 1.04);
+  const line = Math.round(size * 1.04);
+  // Each digit is set on a taller line than the prototype's 1.04 em and pulled back up by the
+  // difference: iOS cuts a glyph off at its line, and some look faces rise above it.
+  const bleed = Math.round(size * 0.16);
+  const height = line + 2 * bleed;
   const textStyle: TextStyle = {
     ...withOpticalSize(display(size, weight, letterSpacingEm), opsz),
     ...tabular,
@@ -135,7 +145,7 @@ export function Odometer({
     <View
       accessible
       accessibilityLabel={money.spoken(Math.abs(value))}
-      style={{ flexDirection: 'row', alignItems: 'flex-start', height }}
+      style={{ flexDirection: 'row', alignItems: 'flex-start', height: line }}
     >
       {before ? <Text style={[symbol, { marginRight: size * 0.05 }]}>{before}</Text> : null}
       {chars.map((c, i) => {
@@ -148,13 +158,25 @@ export function Odometer({
             position={position}
             textStyle={textStyle}
             glows={glows}
+            bleed={bleed}
           />
         ) : (
-          <View key={`p${position}sep`}>
+          <View key={`p${position}sep`} style={{ marginTop: -bleed }}>
             {glows.map((glow, g) => (
               <Text
                 key={g}
-                style={[textStyle, glow, { position: 'absolute', height, lineHeight: height }]}
+                style={[
+                  textStyle,
+                  glow,
+                  {
+                    position: 'absolute',
+                    left: -shadowRoom(glow),
+                    top: -shadowRoom(glow),
+                    padding: shadowRoom(glow),
+                    height: height + 2 * shadowRoom(glow),
+                    lineHeight: height,
+                  },
+                ]}
               >
                 {c}
               </Text>

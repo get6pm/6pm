@@ -19,7 +19,10 @@ import { grownRadii, roundedBox } from './box-path';
 import type { SceneMotion } from './scene-motion';
 
 const rgba = (c: Rgba, k = 1): number[] => [c[0], c[1], c[2], c[3] * k];
-const deg = (d: number) => (d * Math.PI) / 180;
+const deg = (d: number) => {
+  'worklet';
+  return (d * Math.PI) / 180;
+};
 
 /** An outer box-shadow: the box grown by its spread, offset and blurred, never under the box. */
 function OuterShadow({ box, s }: { readonly box: Box; readonly s: BoxShadow }) {

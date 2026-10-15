@@ -4,9 +4,10 @@ import type { LookSun } from '../../sun-geometry';
 
 /**
  * Looks whose sun the shared disc cannot draw: Sơn Mài's gold leaf (seams over an off-centre
- * highlight), Bát Tràng's painted rings, Riso Club's flat ink with its misprinted ghost.
+ * highlight), Bát Tràng's painted rings, Riso Club's flat ink with its misprinted ghost, Paper
+ * Diorama's paper disc on its thread.
  */
-const OWN_SUN: readonly LookId[] = ['lacquer', 'glaze', 'riso'];
+const OWN_SUN: readonly LookId[] = ['lacquer', 'glaze', 'riso', 'paper'];
 
 export const drawsOwnSun = (look: LookId): boolean => OWN_SUN.includes(look);
 

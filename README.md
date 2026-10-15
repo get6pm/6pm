@@ -97,3 +97,7 @@ Read [CLAUDE.md](CLAUDE.md) first: it is the working contract for anyone, human 
 this code. [docs/product-decisions.md](docs/product-decisions.md) says what 6pm does,
 [docs/tech-decisions.md](docs/tech-decisions.md) how, and
 [docs/design-system.md](docs/design-system.md) how it looks.
+
+---
+
+<p align="center">Made in Saigon by Odd Eggs Studio.</p>

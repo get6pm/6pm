@@ -7,6 +7,8 @@ export * from './backup-put';
 export * from './devices';
 export * from './email-captures-ack';
 export * from './email-captures-get';
+export * from './email-forwarding-check-dismiss';
+export * from './email-forwarding-check-get';
 export * from './email-handle-get';
 export * from './email-handle-rotate';
 export * from './fx';

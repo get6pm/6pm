@@ -2,12 +2,14 @@ import {
   EMAIL_CAPTURES_MAX_PENDING,
   emailCaptureSchema,
   handleOfRecipient,
+  parseForwardingConfirmation,
   parseReceiptEmail,
   type ReceiptEmail,
 } from '@6pm/domain';
 import PostalMime from 'postal-mime';
 
 import type { Bindings } from '../env';
+import { storeForwardingCheck } from './forwarding-checks';
 import { deviceOfHandle } from './handles';
 import { sealCapture, sealKeyOf } from './seal';
 
@@ -27,6 +29,7 @@ export type ReceiveOutcome =
   | 'not_configured'
   | 'unreadable'
   | 'not_a_receipt'
+  | 'forwarding_check'
   | 'full'
   | 'stored';
 
@@ -59,7 +62,9 @@ function instantOrNull(value: string | undefined): string | null {
  * receipt can be, is refused (the sender gets a bounce). Mail to a real handle is read in memory:
  * when it holds a payment, only what was read is kept, sealed, for the phone to fetch; the email
  * itself is never stored or forwarded, and nothing from it is logged. Anything that is not a
- * receipt is dropped without a bounce, so a forwarding filter is never turned off by one.
+ * receipt is dropped without a bounce, so a forwarding filter is never turned off by one. A mail
+ * service's "confirm forwarding" email is read first: its code and confirm link are kept, sealed,
+ * for the phone to show, since forwarding cannot start until the person uses one of them.
  */
 export async function receiveEmail(
   message: InboundEmail,
@@ -108,6 +113,12 @@ export async function receiveEmail(
   } catch {
     console.error('receipt email: a message could not be decoded');
     return 'unreadable';
+  }
+
+  const confirmation = parseForwardingConfirmation(email, { receivedAt: now.toISOString() });
+  if (confirmation !== null) {
+    const kept = await storeForwardingCheck(env.DB, secret, deviceHash, confirmation, now);
+    return kept ? 'forwarding_check' : 'not_a_receipt';
   }
 
   const read = parseReceiptEmail(email, { receivedAt: now.toISOString() });

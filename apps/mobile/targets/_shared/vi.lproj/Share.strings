@@ -13,7 +13,7 @@
 "inDong" = "khoảng {amount}";
 "looking" = "Đang đọc kỹ hơn…";
 "nameHint" = "Bạn trả cho ai";
-"noRate" = "Chưa có tỉ giá. Bạn sẽ nhập số đồng lúc chốt ngày.";
+"noRate" = "Chưa có tỉ giá. 6pm sẽ quy đổi theo tỉ giá của ngày đó khi có.";
 "readFromBank" = "Đọc ngay trên iPhone từ biên lai {bank} của bạn";
 "readHere" = "Đọc ngay trên iPhone từ biên lai của bạn";
 "skip" = "Bỏ qua";

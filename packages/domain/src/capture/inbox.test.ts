@@ -61,14 +61,52 @@ describe('inboxItemToNewSpend', () => {
     expect(inboxItemToNewSpend({ ...tap, categoryId: 'drinks' }, ruled).categoryId).toBe('drinks');
   });
 
-  it('keeps a priced foreign amount beside its đồng, and none without a rate', () => {
+  it('keeps a priced foreign amount beside its đồng', () => {
     const foreign = { currency: 'SGD', amount: '68.80', rate: '19500.5' };
     expect(
       inboxItemToNewSpend({ ...tap, amount: 1_341_634, foreign }, filing).foreignAmount,
     ).toEqual({ currency: 'SGD', amount: 68.8, rate: 19_500.5 });
-    const unpriced = { ...tap, amount: null, foreign: { currency: 'SGD', amount: '68.80' } };
-    expect(inboxItemToNewSpend(unpriced, filing)).toMatchObject({ amount: 0, foreignAmount: null });
     expect(inboxItemToNewSpend(tap, filing).foreignAmount).toBeNull();
+  });
+
+  it('never drops a foreign amount with no rate: it waits for one, never a silent 0₫', () => {
+    const unpriced = { ...tap, amount: null, foreign: { currency: 'IDR', amount: '496650' } };
+    expect(inboxItemToNewSpend(unpriced, filing)).toMatchObject({
+      amount: 0,
+      status: 'caught',
+      note: null,
+      foreignAmount: { currency: 'IDR', amount: 496_650, rate: 0 },
+    });
+  });
+
+  it('prices a receipt shared days after it was paid again, at the rate of its day', () => {
+    const shared: InboxSpend = {
+      ...tap,
+      source: 'shared',
+      at: new Date(2026, 8, 2, 11, 55).toISOString(),
+      amount: 794_640,
+      foreign: { currency: 'IDR', amount: '496650', rate: '1.6' },
+    };
+    expect(inboxItemToNewSpend(shared, filing, new Date(2026, 8, 4, 9, 0))).toMatchObject({
+      amount: 794_640,
+      foreignAmount: { rate: 1.6 },
+    });
+    expect(inboxItemToNewSpend(shared, filing, new Date(2026, 9, 14, 9, 0))).toMatchObject({
+      amount: 0,
+      status: 'caught',
+      foreignAmount: { currency: 'IDR', amount: 496_650, rate: 0 },
+    });
+  });
+
+  it('drops a note that only repeats the foreign amount, from older files', () => {
+    const older = {
+      ...tap,
+      amount: null,
+      note: 'Rp496.650',
+      foreign: { currency: 'IDR', amount: '496650' },
+    };
+    expect(inboxItemToNewSpend(older, filing).note).toBeNull();
+    expect(inboxItemToNewSpend({ ...older, note: 'Dinner' }, filing).note).toBe('Dinner');
   });
 
   it('keeps a guessed currency marked, and older files unmarked', () => {

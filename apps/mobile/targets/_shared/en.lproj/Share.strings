@@ -13,7 +13,7 @@
 "inDong" = "≈ {amount}";
 "looking" = "Reading it more closely…";
 "nameHint" = "Who you paid";
-"noRate" = "No rate yet. You’ll set it in đồng at the close.";
+"noRate" = "No rate yet. 6pm prices it at that day’s rate once it has one.";
 "readFromBank" = "Read on this iPhone from your {bank} receipt";
 "readHere" = "Read on this iPhone from your receipt";
 "skip" = "Skip";

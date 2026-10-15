@@ -63,11 +63,12 @@ describe('a receipt in another currency', () => {
     });
   });
 
-  it('keeps its own amount, and leaves the đồng to the close, with no rate yet', () => {
+  it('keeps its own amount, with no đồng until a rate arrives', () => {
     const unpriced = card(coffeeBean, noRates);
     expect(unpriced).toMatchObject({ amount: null, amountText: 'S$68,80', inDongText: null });
     const saved = item(unpriced);
-    expect(saved).toMatchObject({ amount: null, note: 'S$68,80' });
+    expect(saved).toMatchObject({ amount: null });
+    expect(saved.note).toBeUndefined();
     expect(saved.foreign).toEqual({ currency: 'SGD', amount: '68.80' });
   });
 

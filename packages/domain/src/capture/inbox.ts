@@ -2,6 +2,8 @@ import type { InboxSpend } from '../contracts/surfaces';
 import type { SpendSource } from '../spend/spend';
 import { rateNumber } from '../travel/fx';
 import { BANKS } from '../vietqr/bank-catalogue';
+import { addDays } from '../time/local-date';
+import { RATE_PENDING, rateDayOf, readForeignNote } from './foreign-price';
 import { merchantKeyOf } from './merchant-rule';
 
 /** Wallet runs an automation twice for one tap, and again on a decline: one spend, not three. */
@@ -19,7 +21,10 @@ export interface InboxSpendDraft {
   readonly note: string | null;
   readonly detail: string | null;
   readonly at: Date;
-  /** A spend in another currency priced at a rate: what Travel mode records beside the đồng. */
+  /**
+   * A spend in another currency: what Travel mode records beside the đồng, with the rate that
+   * priced it, or `RATE_PENDING` while it waits for one.
+   */
   readonly foreignAmount: { currency: string; amount: number; rate: number } | null;
   /** The receipt printed no currency and the one saved was guessed. */
   readonly currencyGuessed: boolean;
@@ -52,36 +57,76 @@ export function receiptBankOf(detail: string | null): string | null {
   return BANKS.some((bank) => bank.shortName === first) ? first : null;
 }
 
-/** The foreign amount a priced capture keeps beside its đồng; null for đồng or unpriced. */
+/**
+ * The foreign amount a capture keeps beside its đồng: priced at its rate, or with no rate yet a
+ * pending one (`RATE_PENDING`), never dropped, so it is priced later instead of staying 0₫.
+ */
 function foreignAmountOf(item: InboxSpend): InboxSpendDraft['foreignAmount'] {
   const foreign = item.foreign;
-  if (!foreign?.rate || item.amount === null) return null;
+  if (!foreign) return null;
+  const priced = foreign.rate !== undefined && item.amount !== null;
   return {
     currency: foreign.currency,
     amount: Number(foreign.amount),
-    rate: rateNumber(foreign.rate),
+    rate: priced && foreign.rate ? rateNumber(foreign.rate) : RATE_PENDING,
   };
+}
+
+/**
+ * Days a shared receipt can be older than today and still keep the rate its card priced it at
+ * (the newest the phone had). An older one is priced again at the rate of its own day.
+ */
+export const RECEIPT_RATE_SLACK_DAYS = 2;
+
+/** A receipt shared long after it was paid: the card's rate is not that day's. */
+function pricedLate(item: InboxSpend, now: Date): boolean {
+  if (item.source !== 'shared') return false;
+  const paid = new Date(item.at);
+  if (Number.isNaN(paid.getTime())) return false;
+  return rateDayOf(paid) < addDays(rateDayOf(now), -RECEIPT_RATE_SLACK_DAYS);
+}
+
+/** The note, unless it only repeats the foreign amount kept beside it ("Rp496.650"). */
+function noteOf(item: InboxSpend): string | null {
+  const note = item.note ?? null;
+  const noted = readForeignNote(note);
+  const foreign = item.foreign;
+  const repeats =
+    noted !== null &&
+    foreign !== undefined &&
+    noted.currency === foreign.currency &&
+    noted.amount === Number(foreign.amount);
+  return repeats ? null : note;
 }
 
 /**
  * The spend an inbox item becomes. The category is the extension's when it still exists, else
  * the merchant's rule, else the fallback. An amount the source could not read is saved as 0 and
- * caught, so the close asks for it rather than the capture being lost.
+ * caught, so the close asks for it rather than the capture being lost; a foreign one keeps its
+ * amount with the rate pending, to be priced when a rate arrives. So does a foreign receipt shared
+ * days after it was paid: it is priced again at the rate of its own day.
  */
-export function inboxItemToNewSpend(item: InboxSpend, filing: InboxFiling): InboxSpendDraft {
+export function inboxItemToNewSpend(
+  item: InboxSpend,
+  filing: InboxFiling,
+  now: Date = new Date(),
+): InboxSpendDraft {
   const named =
     item.categoryId !== null && filing.categoryIds.has(item.categoryId) ? item.categoryId : null;
+  const kept = foreignAmountOf(item);
+  const reprice = kept !== null && kept.rate > 0 && pricedLate(item, now);
+  const amount = reprice ? null : item.amount;
   return {
     id: item.id,
-    amount: item.amount ?? 0,
+    amount: amount ?? 0,
     categoryId: named ?? filing.ruleCategoryId ?? filing.fallbackCategoryId,
     merchant: item.merchant.trim(),
     source: item.source,
-    status: item.amount === null ? 'caught' : item.status,
-    note: item.note ?? null,
+    status: amount === null ? 'caught' : item.status,
+    note: noteOf(item),
     detail: receiptDetail(item.receipt),
     at: new Date(item.at),
-    foreignAmount: foreignAmountOf(item),
+    foreignAmount: reprice ? { ...kept, rate: RATE_PENDING } : kept,
     currencyGuessed: item.currencyGuessed === true,
   };
 }

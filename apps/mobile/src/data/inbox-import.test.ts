@@ -126,6 +126,7 @@ describe('importInbox', () => {
   it('saves a shared foreign receipt in đồng with its own amount and rate', async () => {
     const item = tap({
       source: 'shared',
+      at: new Date().toISOString(),
       amount: 1_341_634,
       foreign: { currency: 'SGD', amount: '68.80', rate: '19500.5' },
     });

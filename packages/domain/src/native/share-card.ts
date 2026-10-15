@@ -154,8 +154,7 @@ export function buildShareCard(
  * A currency the user picked on the card is no longer a guess.
  * Null while there is no amount (Confirm stays off until one is typed). An edited amount in đồng
  * is read like a typed one ("45" is 45.000₫). A foreign amount keeps its currency and the rate
- * it was priced at; with no rate yet its đồng is left for the close, and the printed amount is
- * the note, as a foreign Apple Pay tap is.
+ * it was priced at; with no rate yet its đồng is null and the app prices it when a rate arrives.
  */
 export function buildShareItem(card: ShareCard, edits: ShareEdits, id: string): InboxSpend | null {
   const shown = shareAmount(card, edits);
@@ -172,7 +171,6 @@ export function buildShareItem(card: ShareCard, edits: ShareEdits, id: string): 
     amount: shown.amount,
     merchant: payee,
     categoryId: edits.categoryId ?? card.categoryId,
-    ...(foreign && shown.amount === null ? { note: shown.amountText } : {}),
     ...(card.currencyGuessed && edits.currency === undefined ? { currencyGuessed: true } : {}),
     receipt: {
       ...(card.bank ? { bank: card.bank } : {}),

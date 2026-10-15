@@ -32,7 +32,8 @@ export type CategoryRow = z.infer<typeof categoryRowSchema>;
 export const foreignAmountSchema = z.object({
   currency: z.string().length(3),
   amount: z.number().nonnegative(),
-  rate: z.number().positive(),
+  /** Đồng for one unit; 0 while a captured foreign amount waits for a rate. */
+  rate: z.number().nonnegative(),
 });
 
 export const spendRowSchema = z.object({

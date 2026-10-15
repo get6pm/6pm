@@ -124,7 +124,7 @@ export const enOnboarding = {
     'Grab, Shopee and bank emails sent on to your own 6pm address log themselves.',
   'onboarding.catch.email.receipt': 'Your receipt · {amount}',
   'onboarding.catch.email.order': 'Order paid · {amount}',
-  'onboarding.catch.email.address': 'you@6pm.oddeggs.studio',
+  'onboarding.catch.email.address': 'you@at6pm.app',
   'onboarding.catch.add.tab': 'Say it',
   'onboarding.catch.add.title': 'Type it or say it',
   'onboarding.catch.add.body':

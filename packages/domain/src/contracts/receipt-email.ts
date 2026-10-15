@@ -49,7 +49,7 @@ export const ackEmailCapturesResponseSchema = z.object({
   removed: z.number().int().nonnegative(),
 });
 
-/** The host of an API base (`https://6pm.oddeggs.studio/api` → `6pm.oddeggs.studio`). */
+/** The host of an API base (`https://at6pm.app/api` → `at6pm.app`). */
 export function hostOfApiBase(apiBase: string): string | null {
   return /^https?:\/\/([^/:?#]+)/i.exec(apiBase)?.[1]?.toLowerCase() ?? null;
 }

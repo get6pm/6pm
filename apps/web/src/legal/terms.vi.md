@@ -14,7 +14,7 @@ updated: '2026-10-11'
 
 ## Chúng tôi là ai, và điều khoản này áp dụng cho gì
 
-6pm do {{OWNER}} ("chúng tôi") thực hiện. Điều khoản này áp dụng cho ứng dụng 6pm trên iPhone và trang web 6pm.oddeggs.studio. Khi cài đặt hoặc dùng 6pm, bạn đồng ý với các điều khoản này. Nếu không đồng ý, xin đừng dùng 6pm.
+6pm do {{OWNER}} ("chúng tôi") thực hiện. Điều khoản này áp dụng cho ứng dụng 6pm trên iPhone và trang web at6pm.app. Khi cài đặt hoặc dùng 6pm, bạn đồng ý với các điều khoản này. Nếu không đồng ý, xin đừng dùng 6pm.
 
 6pm cũng chịu sự điều chỉnh của [Thoả thuận cấp phép người dùng cuối tiêu chuẩn của Apple (EULA)](https://www.apple.com/legal/internet-services/itunes/dev/stdeula/), là một phần của thoả thuận này. Nếu hai văn bản khác nhau về điều EULA của Apple quy định, EULA được ưu tiên. Apple không phải là một bên của các điều khoản này và không chịu trách nhiệm về 6pm, hỗ trợ hay nội dung của 6pm.
 

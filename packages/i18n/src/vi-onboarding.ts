@@ -125,7 +125,7 @@ export const viOnboarding: { readonly [Key in keyof typeof enOnboarding]: Entry 
     'Email của Grab, Shopee hay ngân hàng chuyển tới địa chỉ 6pm riêng của bạn là tự ghi.',
   'onboarding.catch.email.receipt': 'Biên lai của bạn · {amount}',
   'onboarding.catch.email.order': 'Đã thanh toán · {amount}',
-  'onboarding.catch.email.address': 'ban@6pm.oddeggs.studio',
+  'onboarding.catch.email.address': 'ban@at6pm.app',
   'onboarding.catch.add.tab': 'Nói',
   'onboarding.catch.add.title': 'Gõ hay nói đều được',
   'onboarding.catch.add.body':

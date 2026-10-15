@@ -104,15 +104,7 @@ export async function seedDesignFriday(store: MoneyStore, today: LocalDate): Pro
       [today, '07:42', 'Bánh mì Cô Ba', 25_000, 'food', 'kept', null],
       [today, '08:15', 'Cà phê sữa đá', 29_000, 'drinks', 'caught', 'MB Bank · FT26285XYZ'],
       [today, '12:10', 'Phở Hòa', 45_000, 'food', 'pending', 'You didn’t say if it went through'],
-      [
-        today,
-        '13:30',
-        'Grab ride home',
-        38_000,
-        'transport',
-        'caught',
-        'From k7m2qx@at6pm.app',
-      ],
+      [today, '13:30', 'Grab ride home', 38_000, 'transport', 'caught', 'From k7m2qx@at6pm.app'],
       [today, '15:05', 'Trà sữa', 45_000, 'drinks', 'kept', null],
       [today, '16:40', 'Circle K', 120_000, 'shopping', 'caught', 'Vietcombank · FT26285ABC'],
     );

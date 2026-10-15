@@ -18,6 +18,11 @@ interface VariantConfig {
   legacyHost: string;
   /** Over-the-air updates. Off for device runs, which swap in the commit's own bundle. */
   updates: boolean;
+  /**
+   * The increased memory limit for on-device mode's larger models. Each App ID needs it turned on
+   * by hand on the Apple developer site first; a signed build with it on before that fails.
+   */
+  increasedMemory: boolean;
 }
 
 /** The v1 project on the `sixpm` Expo account: v2 ships as an update to the same store app. */
@@ -33,6 +38,7 @@ const DEV: VariantConfig = {
   host: 'dev.at6pm.app',
   legacyHost: '6pm-dev.oddeggs.studio',
   updates: true,
+  increasedMemory: false,
 };
 
 const VARIANTS: Record<AppVariant, VariantConfig> = {
@@ -46,6 +52,7 @@ const VARIANTS: Record<AppVariant, VariantConfig> = {
     host: 'at6pm.app',
     legacyHost: '6pm.oddeggs.studio',
     updates: true,
+    increasedMemory: false,
   },
 };
 
@@ -162,6 +169,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     entitlements: {
       'com.apple.security.application-groups': [variant.appGroup],
       'com.apple.developer.usernotifications.time-sensitive': true,
+      // On-device mode keeps a 2.6–3.7 GB model in memory; without this iOS ends the app well
+      // below what the phone has. Turned on by hand for each App ID on the Apple developer site.
+      ...(variant.increasedMemory
+        ? { 'com.apple.developer.kernel.increased-memory-limit': true }
+        : {}),
     },
     config: { usesNonExemptEncryption: false },
     infoPlist: {

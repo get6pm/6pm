@@ -6,6 +6,7 @@ import { ScrollView, Text } from 'react-native';
 import { useMoneyStore } from '../../data/money-provider';
 import { companionModel } from '../../../modules/companion-model';
 import { seedDesignFriday } from '../../features/dev/design-friday-seed';
+import { useDevLocalModelRows } from '../../features/dev/dev-local-model';
 import { readModelChoice, writeModelChoice } from '../../features/wording/model-choice';
 import { EMPTY_VOICE } from '../../features/wording/companion-voice';
 import { writeVoice } from '../../features/wording/voice-store';
@@ -27,6 +28,7 @@ export default function DeveloperTools() {
   const { language } = useI18n();
   const [model, setModel] = useState(() => readModelChoice(db));
   const onDevice = companionModel?.availability(language) ?? 'not built in';
+  const localModelRows = useDevLocalModelRows();
   // `sixpm-dev://tools?seed=friday` loads the fixture without a tap, for scripted design checks.
   useEffect(() => {
     if (seed !== 'friday') return;
@@ -59,6 +61,7 @@ export default function DeveloperTools() {
         haptics.success();
       },
     ],
+    ...localModelRows,
   ];
   return (
     <ScrollView

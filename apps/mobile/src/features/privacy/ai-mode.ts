@@ -14,9 +14,9 @@ export interface LocalModel {
   readonly id: LocalModelId;
   /** Shown as is: model names are not translated. */
   readonly name: string;
-  /** Which runtime loads it. */
-  readonly runtime: 'litert' | 'mlx';
-  /** The download, in bytes, as stored on the phone. */
+  /** Which runtime loads it: Google's LiteRT-LM runs all three (`modules/local-model`). */
+  readonly runtime: 'litert';
+  /** The download, in bytes, as stored on the phone (the pinned file in `local-model/model-files`). */
   readonly bytes: number;
   /** The least memory a phone needs to run it well, in GB. */
   readonly minMemoryGb: number;
@@ -30,7 +30,7 @@ export const LOCAL_MODELS: readonly LocalModel[] = [
     id: 'gemma-4-e2b',
     name: 'Gemma 4 E2B',
     runtime: 'litert',
-    bytes: 2_430_000_000,
+    bytes: 2_588_147_712,
     minMemoryGb: 6,
     strength: 'fast',
   },
@@ -38,15 +38,15 @@ export const LOCAL_MODELS: readonly LocalModel[] = [
     id: 'gemma-4-e4b',
     name: 'Gemma 4 E4B',
     runtime: 'litert',
-    bytes: 3_490_000_000,
+    bytes: 3_659_530_240,
     minMemoryGb: 8,
     strength: 'words',
   },
   {
     id: 'qwen-3.5-4b',
     name: 'Qwen3.5 4B',
-    runtime: 'mlx',
-    bytes: 3_060_000_000,
+    runtime: 'litert',
+    bytes: 2_754_365_536,
     minMemoryGb: 8,
     strength: 'reading',
   },

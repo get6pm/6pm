@@ -8,6 +8,7 @@ plans/
 **/.expo/
 apps/mobile/ios/
 apps/mobile/android/
+apps/mobile/modules/local-model/ios/Frameworks/
 **/*.md
 
 # Written by tools/scripts/generate-index.ts (formatting follows the generator)

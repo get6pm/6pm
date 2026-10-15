@@ -2,9 +2,9 @@ import { createExecutionContext, waitOnExecutionContext } from 'cloudflare:test'
 import { env } from 'cloudflare:workers';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { askRequestSchema } from '@6pm/domain';
+import { askRequestSchema, readQuestionPrompt } from '@6pm/domain';
 
-import { readQuestion, readQuestionPrompt } from '../src/ai/read-question';
+import { readQuestion } from '../src/ai/read-question';
 import { createApp } from '../src/app';
 import { hashDeviceToken } from '../src/device-auth';
 import * as routes from '../src/routes/index.generated';

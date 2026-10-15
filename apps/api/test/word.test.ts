@@ -2,9 +2,8 @@ import { createExecutionContext, waitOnExecutionContext } from 'cloudflare:test'
 import { env } from 'cloudflare:workers';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { wordRequestSchema } from '@6pm/domain';
+import { wordPrompt, wordRequestSchema } from '@6pm/domain';
 
-import { wordPrompt } from '../src/ai/word-line';
 import { createApp } from '../src/app';
 import { hashDeviceToken } from '../src/device-auth';
 import * as routes from '../src/routes/index.generated';

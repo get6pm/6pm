@@ -9,7 +9,7 @@ export interface NeedsALookInput {
     readonly rate: number;
   } | null;
   /** The receipt printed no currency and the one saved was guessed. */
-  readonly currencyGuessed?: boolean;
+  readonly currencyGuessed?: boolean | undefined;
 }
 
 /**

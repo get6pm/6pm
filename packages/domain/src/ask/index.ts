@@ -12,3 +12,4 @@ export * from './goal';
 export * from './chat';
 export * from './chat-topics';
 export * from './ask-actions';
+export * from './local-prompt';

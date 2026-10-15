@@ -14,8 +14,9 @@ import type { useMoneyFormat } from '../../money/use-money-format';
 import type { usePlanFormat } from '../plan/plan-format';
 import { newPotLocked } from '../plan/plan-view';
 import type { SlotWords, Voice } from '../wording/fact-words';
-import type { AiModeSettings } from '../privacy/ai-mode';
 import type { ModelChoice } from '../wording/model-choice';
+import { localExplanation } from '../local-model/local-tiers';
+import { readAiMode, type AiModeSettings } from '../privacy/ai-mode';
 import { wordWithModel } from '../wording/word-chain';
 import { describeAction, type PendingAction } from './ask-action-words';
 import { askContextOf } from './ask-context';
@@ -93,6 +94,16 @@ export async function cardOf(
     dayLongMonth: now.format.dayLongMonth,
     weekday: (d: string) => now.weekday(new Date(`${d}T12:00:00`)),
   };
+  // A money question nothing can look up, in on-device mode: the downloaded model explains it.
+  if (answer.kind === 'help' && readAiMode(deps.settings) === 'device') {
+    const text = await localExplanation(deps.settings, question, now.language);
+    if (text !== null) {
+      return {
+        card: { text, mood: 'think', bars: null, rows: [], note: null },
+        pending: null,
+      };
+    }
+  }
   if (ORIGINAL_ANSWERS.has(answer.kind)) {
     const ctx = askContextOf(snap);
     if (ctx === null) throw new Error('Ask was opened before the month was set up');

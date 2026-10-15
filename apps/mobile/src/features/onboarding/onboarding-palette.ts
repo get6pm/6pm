@@ -21,7 +21,7 @@ const SKY_RGBA: readonly (readonly number[][])[] = SKY_STOPS.map(([, ...colours]
 );
 const SKY_AT: readonly number[] = SKY_STOPS.map(([at]) => at);
 
-export const STEP_COUNT = 8;
+export const STEP_COUNT = 9;
 
 export function stepProgress(step: number): number {
   return step / (STEP_COUNT - 1);

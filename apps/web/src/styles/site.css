@@ -1,0 +1,237 @@
+/*
+ * The home page: near-black dusk with one sunset accent. Its tokens live on `.site` so the legal
+ * pages keep their own.
+ */
+.site {
+  --bg: #0d0b10;
+  --bg-2: #100e13;
+  --card: #131117;
+  --raised: #16141a;
+  --ink: #f3eee7;
+  --ink-75: rgba(243, 238, 231, 0.75);
+  --ink-70: rgba(243, 238, 231, 0.7);
+  --ink-62: rgba(243, 238, 231, 0.62);
+  --ink-55: rgba(243, 238, 231, 0.55);
+  --ink-45: rgba(243, 238, 231, 0.45);
+  --line: rgba(243, 238, 231, 0.08);
+  --line-2: rgba(243, 238, 231, 0.12);
+  --line-3: rgba(243, 238, 231, 0.16);
+  --sun: #ff8552;
+  --sun-hover: #ff9a6e;
+  --sun-soft: #ffb08a;
+  --on-sun: #1a0f0a;
+  --dark-ink: #16131a;
+  --lilac: #c9b8f0;
+  --mint: #a8dcb8;
+  --error: #ffb4a3;
+  --pad-x: clamp(20px, 4vw, 40px);
+  --pad-y: clamp(96px, 12vw, 160px);
+
+  position: relative;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+body:has(.site) {
+  background: #0d0b10;
+}
+
+.site :where(a) {
+  color: var(--ink);
+}
+.site :where(a:hover) {
+  color: var(--sun-soft);
+}
+.site ::selection {
+  background: var(--sun);
+  color: var(--on-sun);
+}
+.site input::placeholder {
+  color: rgba(243, 238, 231, 0.42);
+}
+
+.site section[id] {
+  scroll-margin-top: 64px;
+}
+
+/* A Material Symbol by its ligature name. */
+.sym {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  font-feature-settings: 'liga';
+  user-select: none;
+}
+.sym-fill {
+  font-variation-settings: 'FILL' 1;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sun);
+}
+
+.display {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variation-settings:
+    'opsz' 96,
+    'wdth' 92;
+  font-size: clamp(44px, 6vw, 88px);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+
+.sub {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink-62);
+}
+
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: var(--pad-y) var(--pad-x);
+}
+
+/* A copy block beside an illustration, stacking under 860px or so. */
+.split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  align-items: center;
+  gap: clamp(40px, 6vw, 80px);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.band {
+  border-top: 0.5px solid var(--line);
+}
+.band-dim {
+  background: var(--bg-2);
+}
+
+.site .pill-btn {
+  flex: 0 0 auto;
+  border: none;
+  border-radius: 99px;
+  background: var(--sun);
+  color: var(--on-sun);
+  font-family: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.site .pill-btn:hover {
+  background: var(--sun-hover);
+  color: var(--on-sun);
+}
+
+.site :where(a, button, summary, input):focus-visible {
+  outline: 2px solid var(--sun-soft);
+  outline-offset: 3px;
+}
+
+/* Scroll reveals: set up by the page script on what starts below the fold. */
+[data-reveal][data-hidden] {
+  opacity: 0;
+  translate: 0 28px;
+}
+[data-reveal] {
+  transition:
+    opacity 1s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms),
+    translate 1s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms);
+}
+
+/* Loops rest while their section is off screen. */
+[data-idle] *,
+[data-idle] *::before,
+[data-idle] *::after {
+  animation-play-state: paused !important;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.025);
+    filter: brightness(1.08);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/*
+ * Reduce Motion: nothing loops, each scene rests on its finished frame, and what only exists to
+ * move (playheads, pulses, scan lines, flying coins) is left out.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .site *,
+  .site *::before,
+  .site *::after {
+    animation: none !important;
+  }
+  .site [data-reveal] {
+    transition: none;
+  }
+  .site .moving {
+    display: none !important;
+  }
+}

@@ -1,0 +1,78 @@
+---
+import '../../styles/site.css';
+
+import { siteBackground } from '../../data/site/config';
+import { homePath, siteCopy, type SiteLang } from '../../data/site/copy';
+import PageLayout from '../../layouts/page-layout.astro';
+import Beliefs from './beliefs.astro';
+import Capture from './capture.astro';
+import Faq from './faq.astro';
+import FinalCta from './final-cta.astro';
+import Hero from './hero.astro';
+import Intelligence from './intelligence.astro';
+import OneNumber from './one-number.astro';
+import OpenSource from './open-source.astro';
+import Pricing from './pricing.astro';
+import Privacy from './privacy.astro';
+import Ritual from './ritual.astro';
+import SiteFoot from './site-foot.astro';
+import SiteNav from './site-nav.astro';
+import Together from './together.astro';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const { meta } = siteCopy[lang];
+---
+
+<PageLayout
+  title={meta.title}
+  description={meta.description}
+  lang={lang}
+  alternates={homePath}
+  themeColors={[{ color: siteBackground }]}
+>
+  <script is:inline slot="head">
+    // The visitor's language: the one they picked here before, else their phone's, on the
+    // English page only (a link straight to /vi stays in Vietnamese).
+    (function () {
+      try {
+        var page = document.documentElement.lang;
+        var want = localStorage.getItem('6pm-site-lang');
+        if (!want) {
+          if (page !== 'en') return;
+          want = (navigator.language || '').toLowerCase().indexOf('vi') === 0 ? 'vi' : 'en';
+        }
+        if (want !== page && (want === 'en' || want === 'vi')) {
+          location.replace((want === 'vi' ? '/vi' : '/') + location.search + location.hash);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <div class="site" data-site>
+    <SiteNav lang={lang} />
+    <main>
+      <Hero lang={lang} />
+      <Ritual lang={lang} />
+      <Capture lang={lang} />
+      <OneNumber lang={lang} />
+      <Beliefs lang={lang} />
+      <Intelligence lang={lang} />
+      <Privacy lang={lang} />
+      <OpenSource lang={lang} />
+      <Together lang={lang} />
+      <Pricing lang={lang} />
+      <Faq lang={lang} />
+      <FinalCta lang={lang} />
+    </main>
+    <SiteFoot lang={lang} />
+  </div>
+</PageLayout>
+
+<script>
+  import { startSite } from '../../scripts/site/start-site';
+
+  startSite();
+</script>

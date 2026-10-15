@@ -3,25 +3,6 @@
   --font-display: 'Bricolage Grotesque', 'Bricolage Grotesque Fallback', system-ui, sans-serif;
   --font-text: 'Be Vietnam Pro', 'Be Vietnam Pro Fallback', -apple-system, system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', 'IBM Plex Mono Fallback', ui-monospace, monospace;
-  --font-serif: 'Playfair Display', 'Playfair Display Fallback', Georgia, serif;
-  --font-hand: 'Patrick Hand', 'Patrick Hand Fallback', cursive;
-
-  --night-ink: #0b0716;
-  --ink: #fbf4ec;
-  --ink-82: rgba(251, 244, 236, 0.82);
-  --ink-80: rgba(251, 244, 236, 0.8);
-  --ink-70: rgba(251, 244, 236, 0.7);
-  --ink-60: rgba(251, 244, 236, 0.6);
-  --hairline: rgba(251, 244, 236, 0.16);
-  --accent: #ff8552;
-  --on-accent: #2a1424;
-  --leak: #ffb4a3;
-  --saved: #9fe0b6;
-  --paper: #fbf7ef;
-  --paper-ink: #2b2530;
-  --stamp: #c0443a;
-  --stamp-light: #ff8f7a;
-  --sun-ink: #140a1f;
 }
 
 html {
@@ -30,7 +11,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--night-ink);
+  background: #0b0716;
 }
 
 a {
@@ -39,10 +20,6 @@ a {
 
 a:hover {
   color: #ffd2a8;
-}
-
-input::placeholder {
-  color: rgba(43, 37, 48, 0.4);
 }
 
 :where(a, button):focus-visible {
@@ -62,207 +39,8 @@ input::placeholder {
   border: 0;
 }
 
-/* Type roles the scenes share. */
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  color: var(--ink-80);
-}
-
-.headline {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-variation-settings:
-    'wdth' 78,
-    'opsz' 96;
-  font-size: clamp(46px, 6.4vw, 104px);
-  line-height: 0.9;
-  letter-spacing: -0.012em;
-  word-spacing: 0.1em;
-  text-wrap: balance;
-}
-
-.headline em {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 500;
-  font-variation-settings: normal;
-  color: var(--accent);
-}
-
-.vi-line {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(18px, 1.8vw, 26px);
-  color: var(--ink-60);
-  margin-top: -8px;
-}
-
-.lede {
-  margin: 0;
-  max-width: 440px;
-  font-size: clamp(17px, 1.5vw, 20px);
-  line-height: 1.5;
-  color: var(--ink-82);
-  text-wrap: pretty;
-}
-
-/* Bricolage at its narrowest, for the big numerals. */
-.numeral {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-variation-settings:
-    'wdth' 75,
-    'opsz' 96;
-}
-
-/* A Material Symbol by its ligature name; the box is one em whether or not the face has loaded. */
-.icon {
-  display: block;
-  width: 1em;
-  overflow: hidden;
-  font-family: 'Material Symbols Rounded';
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  letter-spacing: normal;
-  white-space: nowrap;
-  font-feature-settings: 'liga';
-}
-
-.icon-filled {
-  font-variation-settings: 'FILL' 1;
-}
-
-@keyframes grain {
-  0% {
-    background-position: 0 0;
-  }
-  33% {
-    background-position: -47px 31px;
-  }
-  66% {
-    background-position: 63px -22px;
-  }
-  100% {
-    background-position: -18px 54px;
-  }
-}
-@keyframes drift1 {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  100% {
-    transform: translate(8vw, -6vh) scale(1.15);
-  }
-}
-@keyframes drift2 {
-  0% {
-    transform: translate(0, 0) scale(1.1);
-  }
-  100% {
-    transform: translate(-9vw, 5vh) scale(0.92);
-  }
-}
-@keyframes leak {
-  0% {
-    opacity: 0.45;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@keyframes shimmer {
-  0%,
-  100% {
-    opacity: 0.2;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-@keyframes tw {
-  0%,
-  100% {
-    opacity: 0.25;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-@keyframes stampIn {
-  0% {
-    opacity: 0;
-    transform: rotate(-16deg) scale(2.6);
-  }
-  60% {
-    opacity: 1;
-    transform: rotate(-8deg) scale(0.94);
-  }
-  100% {
-    opacity: 0.94;
-    transform: rotate(-8deg) scale(1);
-  }
-}
-@keyframes shake {
-  0%,
-  100% {
-    transform: none;
-  }
-  20% {
-    transform: translate(-7px, 2px) rotate(-0.7deg);
-  }
-  40% {
-    transform: translate(6px, -2px) rotate(0.6deg);
-  }
-  60% {
-    transform: translate(-3px, 1px);
-  }
-  80% {
-    transform: translate(2px, 0);
-  }
-}
-@keyframes bubbleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.7) translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes nudge {
-  0%,
-  70%,
-  100% {
-    transform: translateX(0);
-  }
-  80% {
-    transform: translateX(10px);
-  }
-  90% {
-    transform: translateX(0);
-  }
-}
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-}
-
-/* Reduce Motion: loops stop, entrances become a short fade, the page jumps instead of gliding. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-  .loop {
-    animation: none !important;
-  }
-  .entrance {
-    animation: fadeIn 0.2s both !important;
   }
 }

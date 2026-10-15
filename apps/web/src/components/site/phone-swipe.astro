@@ -1,0 +1,108 @@
+---
+interface Props {
+  label: string;
+}
+
+// The close: the thumb slides across, the bar fills, and the label gives way.
+const { label } = Astro.props;
+---
+
+<div class="swipe">
+  <div class="fill"></div>
+  <span class="swipe-label">{label}</span>
+  <span class="thumb"><span class="sym">arrow_forward</span></span>
+</div>
+
+<style>
+  .swipe {
+    position: relative;
+    margin: 0 14px 26px;
+    height: 52px;
+    border-radius: 99px;
+    background: rgba(243, 238, 231, 0.08);
+    border: 0.5px solid var(--line-2);
+    overflow: hidden;
+  }
+  .fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 52px;
+    border-radius: 99px;
+    background: rgba(255, 133, 82, 0.9);
+    animation: fill 10s cubic-bezier(0.5, 0, 0.2, 1) infinite both;
+  }
+  .swipe-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 40px;
+    font-size: 12.5px;
+    font-weight: 600;
+    animation: swipeLbl 10s infinite both;
+  }
+  .thumb {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--on-sun);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    animation: thumb 10s cubic-bezier(0.5, 0, 0.2, 1) infinite both;
+  }
+  .thumb .sym {
+    font-size: 20px;
+  }
+
+  @keyframes thumb {
+    0%,
+    40% {
+      transform: translateX(0);
+    }
+    50%,
+    90% {
+      transform: translateX(200px);
+    }
+    97%,
+    100% {
+      transform: translateX(0);
+    }
+  }
+  @keyframes fill {
+    0%,
+    40% {
+      width: 52px;
+    }
+    50%,
+    90% {
+      width: 100%;
+    }
+    97%,
+    100% {
+      width: 52px;
+    }
+  }
+  @keyframes swipeLbl {
+    0%,
+    38% {
+      opacity: 1;
+    }
+    44%,
+    92% {
+      opacity: 0;
+    }
+    98%,
+    100% {
+      opacity: 1;
+    }
+  }
+</style>

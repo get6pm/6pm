@@ -1,0 +1,98 @@
+---
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+// A dozen of the banks and wallets 6pm reads, by their file in `public/banks`.
+const banks = [
+  ['vcb', 'Vietcombank'],
+  ['tcb', 'Techcombank'],
+  ['mb', 'MB Bank'],
+  ['bidv', 'BIDV'],
+  ['icb', 'VietinBank'],
+  ['acb', 'ACB'],
+  ['vpb', 'VPBank'],
+  ['tpb', 'TPBank'],
+  ['shbvn', 'Shinhan Bank'],
+  ['cake', 'Cake'],
+  ['momo', 'MoMo'],
+  ['zalopay', 'ZaloPay'],
+] as const;
+---
+
+<div class="strip">
+  <span class="mono label">{label}</span>
+  <div class="window">
+    <div class="track">
+      {
+        [false, true].map((copy) => (
+          <ul class="run" aria-hidden={copy ? 'true' : undefined}>
+            {banks.map(([file, name]) => (
+              <li>
+                <img
+                  src={`/banks/${file}.png`}
+                  alt={copy ? '' : name}
+                  width="60"
+                  height="60"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .strip {
+    padding: 0 0 clamp(80px, 10vw, 128px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+  }
+  .label {
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    color: var(--ink-55);
+    text-align: center;
+    padding: 0 var(--pad-x);
+  }
+  .window {
+    width: 100%;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+  .track {
+    display: flex;
+    gap: 18px;
+    width: max-content;
+    animation: marquee 36s linear infinite;
+  }
+  .run {
+    display: flex;
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  img {
+    display: block;
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    background: #fff;
+    object-fit: cover;
+    box-shadow: 0 0 0 0.5px var(--line-3);
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(calc(-50% - 9px));
+    }
+  }
+</style>

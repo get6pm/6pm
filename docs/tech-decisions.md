@@ -24,7 +24,7 @@ Decided 10 Oct 2026. Change one only with new evidence, and record the change he
 | Purchases | RevenueCat (StoreKit 2): looks (non-consumable), Max (subscription, 7-day trial) | Entitlements and restore without a receipt server |
 | Native surfaces | `@bacons/apple-targets` (`apps/mobile/targets`): widgets with the Live Activity and controls, the share extension, the App Intents extension. One local Expo module, `modules/surfaces`, for the inbox, widget files and the Live Activity. Vision OCR runs in the share extension itself; when its reading is not sure of the total or currency it sends the photo (JPEG, long side ≤ 1600 px, ≤ 1.5 MB) to `POST /api/v1/receipts/read` and keeps its own reading offline. Extension logic runs `@6pm/domain` in JavaScriptCore (`generate-native.ts` bundles it) | Declared once in the first native batch. Only the share extension reads receipts, so OCR in a module would be dead code in the app; one parser, tested in Vitest |
 | Extensions and the store | Extensions never open the database. Each capture is one JSON file in `<group>/inbox/`, which the app imports through the normal capture and then deletes; the app writes what extensions show to `<group>/surfaces/`. Group files are written whole and renamed into place, readable after first unlock, left out of backups | SQLite in WAL holds a file lock, and iOS kills a suspended extension holding one in a group container (0xdead10cc). SQLCipher lives inside the expo-sqlite pod. One writer keeps the store's write queue true |
-| Website | Astro on Cloudflare for the Coming Soon / waitlist page (launch countdown), waitlist stored in D1 | Same platform as the API |
+| Website | Astro on Cloudflare: the home page in English and Vietnamese (launch waitlist until launch, then App Store link), privacy and terms; waitlist stored in D1 | Same platform as the API |
 | i18n | Typed TS catalogues in `@6pm/i18n` (en, vi) with a completeness test | Scootch pattern; no runtime catalogue loading |
 | Errors | Sentry (DSN optional) | |
 | Repo | pnpm 12 workspace with `catalog:` pins, TS 6 strict, ESLint flat config, Prettier, Vitest (packages, api), Jest (mobile) | Scootch tooling verbatim |
@@ -50,7 +50,7 @@ One host per environment on the `at6pm.app` zone (changed 15 Oct 2026 from the f
 ```
 apps/mobile      Expo app (src/app routes, src/features, src/ui, src/db, src/data)
 apps/api         Hono Worker (routes registry, D1 migrations, email handler, cron)
-apps/web         Astro Coming Soon page
+apps/web         Astro website (home, privacy, terms)
 packages/domain  money, time, plan maths, close state machine, VietQR, amount parser, contracts
 packages/theme   looks catalogue, keyframe palettes, token derivation, oklch, motion curves
 packages/i18n    en/vi catalogues, translate, completeness

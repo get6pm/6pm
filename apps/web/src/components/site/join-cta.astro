@@ -1,0 +1,151 @@
+---
+import { appStoreUrl, ctaMode } from '../../data/site/config';
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+
+interface Props {
+  lang: SiteLang;
+  /** `hero` sits on the bare page; `final` is a touch taller, over the sunset. */
+  size: 'hero' | 'final';
+}
+
+const { lang, size } = Astro.props;
+const t = siteCopy[lang].cta;
+const id = `email-${size}`;
+---
+
+{
+  ctaMode === 'store' ? (
+    <a class:list={['store pill-btn', size]} href={appStoreUrl}>
+      <span class="sym" aria-hidden="true">
+        phone_iphone
+      </span>
+      {t.store}
+    </a>
+  ) : (
+    <div class:list={['join', size]} data-join>
+      <form class="form" novalidate data-join-form>
+        <label class="sr-only" for={id}>
+          {t.emailLabel}
+        </label>
+        <input
+          id={id}
+          type="email"
+          name="email"
+          autocomplete="email"
+          placeholder={t.emailPh}
+          required
+          data-join-email
+        />
+        <button class="pill-btn" type="submit">
+          {t.wait}
+        </button>
+      </form>
+      <div class="sent" role="status" hidden data-join-sent>
+        <span class="sym" aria-hidden="true">
+          check_circle
+        </span>
+        <span data-join-sent-line />
+      </div>
+      <span class="note" aria-live="polite" data-join-note data-calm={t.note}>
+        {t.note}
+      </span>
+    </div>
+  )
+}
+
+<style>
+  .join {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 26px;
+  }
+  .final {
+    gap: 12px;
+  }
+  .form {
+    width: 100%;
+    max-width: 460px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .form[hidden] {
+    display: none;
+  }
+  input {
+    flex: 1 1 220px;
+    min-width: 0;
+    height: 52px;
+    box-sizing: border-box;
+    padding: 0 20px;
+    border-radius: 99px;
+    border: 0.5px solid rgba(243, 238, 231, 0.2);
+    background: rgba(243, 238, 231, 0.05);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 16px;
+    outline: none;
+  }
+  input:focus-visible {
+    border-color: rgba(255, 176, 138, 0.7);
+    outline: none;
+  }
+  .final input {
+    height: 56px;
+    padding: 0 22px;
+    background: rgba(13, 11, 16, 0.6);
+  }
+  button {
+    height: 52px;
+    padding: 0 24px;
+    font-size: 15px;
+  }
+  button[aria-busy='true'] {
+    opacity: 0.7;
+    cursor: progress;
+  }
+  .final button {
+    height: 56px;
+    padding: 0 26px;
+  }
+  .sent {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 52px;
+    font-size: 16px;
+  }
+  .sent[hidden] {
+    display: none;
+  }
+  .final .sent {
+    height: 56px;
+    font-size: 17px;
+  }
+  .sent .sym {
+    font-size: 22px;
+    color: var(--sun);
+  }
+  .note {
+    font-size: 13.5px;
+    color: var(--ink-55);
+  }
+  .note[data-error] {
+    color: var(--error);
+  }
+  .store {
+    height: 56px;
+    padding: 0 26px 0 20px;
+    font-size: 16px;
+  }
+  .store.final {
+    height: 58px;
+    padding: 0 28px 0 22px;
+  }
+  .store .sym {
+    font-size: 22px;
+  }
+</style>

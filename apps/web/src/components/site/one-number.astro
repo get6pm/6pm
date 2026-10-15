@@ -1,0 +1,234 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].number;
+const ritual = siteCopy[lang].ritual;
+const [bills, pots, future, free] = t.bars;
+---
+
+<section class="band band-dim">
+  <div class="wrap number">
+    <div class="stack head" data-reveal="0">
+      <span class="kicker">{t.kicker}</span>
+      <h2 class="display">{t.title}</h2>
+    </div>
+    <div class="month" data-reveal="100">
+      <span class="mono in">{t.barIn}</span>
+      <div class="bar" aria-hidden="true">
+        <div class="parts">
+          <div class="part bills"><div class="fill"></div></div>
+          <div class="part pots"><div class="fill"></div></div>
+          <div class="part future"><div class="fill"></div></div>
+          <div class="part free">
+            <div class="fill"></div>
+            <div class="days"></div>
+          </div>
+        </div>
+        <div class="slice"></div>
+        <div class="callout">
+          <span class="call-num">{ritual.num}</span>
+          <span class="mono">{t.today}</span>
+        </div>
+      </div>
+      <div class="mono legend">
+        <span class="bills">{bills}</span>
+        <span class="pots">{pots}</span>
+        <span class="future">{future}</span>
+        <span class="free">{free}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .number {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(48px, 6vw, 72px);
+  }
+  .head {
+    gap: 18px;
+    max-width: 860px;
+  }
+  .month {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 90px;
+  }
+  .in {
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    color: rgba(243, 238, 231, 0.6);
+  }
+  .bar {
+    position: relative;
+    height: clamp(56px, 7vw, 80px);
+  }
+  .parts {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    gap: 3px;
+  }
+  .part {
+    position: relative;
+    border-radius: 4px;
+    background: rgba(243, 238, 231, 0.1);
+    overflow: hidden;
+  }
+  .fill {
+    position: absolute;
+    inset: 0;
+  }
+  .bills {
+    width: 37%;
+  }
+  .pots {
+    width: 15%;
+  }
+  .future {
+    width: 11%;
+  }
+  .free {
+    flex: 1;
+  }
+  .part.bills {
+    border-radius: 16px 4px 4px 16px;
+  }
+  .part.free {
+    border-radius: 4px 16px 16px 4px;
+  }
+  .bills .fill {
+    background: rgba(243, 238, 231, 0.38);
+    animation: c1 10s infinite both;
+  }
+  .pots .fill {
+    background: var(--lilac);
+    animation: c2 10s infinite both;
+  }
+  .future .fill {
+    background: var(--mint);
+    animation: c3 10s infinite both;
+  }
+  .free .fill {
+    background: var(--sun);
+    animation: c4 10s infinite both;
+  }
+  /* The free money cut into the month's 22 remaining days. */
+  .days {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0 calc(100% / 22 - 2px),
+      var(--bg-2) calc(100% / 22 - 2px) calc(100% / 22)
+    );
+    animation: splits 10s cubic-bezier(0.5, 0, 0.3, 1) infinite both;
+  }
+  .slice {
+    position: absolute;
+    left: 63.2%;
+    top: 0;
+    bottom: 0;
+    width: calc(37% / 22 - 2px);
+    border-radius: 4px;
+    background: #ffe2cf;
+    box-shadow: 0 0 24px rgba(255, 180, 140, 0.9);
+    transform: translateY(-14px);
+    animation: slice 10s cubic-bezier(0.3, 1.4, 0.5, 1) infinite both;
+  }
+  .callout {
+    position: absolute;
+    left: 64%;
+    bottom: calc(100% + 26px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 16px;
+    border-radius: 16px;
+    background: var(--ink);
+    color: var(--dark-ink);
+    white-space: nowrap;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    transform: translate(-50%, 0);
+    animation: callIn 10s cubic-bezier(0.3, 1.4, 0.5, 1) infinite both;
+  }
+  .call-num {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .callout .mono {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+  .legend {
+    display: flex;
+    gap: 3px;
+    font-size: clamp(9.5px, 1vw, 11.5px);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+  .legend .bills {
+    color: var(--ink-70);
+    animation: c1 10s infinite both;
+  }
+  .legend .pots {
+    color: var(--lilac);
+    animation: c2 10s infinite both;
+  }
+  .legend .future {
+    color: var(--mint);
+    animation: c3 10s infinite both;
+  }
+  .legend .free {
+    color: var(--sun);
+    animation: c4 10s infinite both;
+  }
+
+  @keyframes c1 {
+    0%, 8% { opacity: 0; }
+    14%, 92% { opacity: 1; }
+    98%, 100% { opacity: 0; }
+  }
+  @keyframes c2 {
+    0%, 20% { opacity: 0; }
+    26%, 92% { opacity: 1; }
+    98%, 100% { opacity: 0; }
+  }
+  @keyframes c3 {
+    0%, 32% { opacity: 0; }
+    38%, 92% { opacity: 1; }
+    98%, 100% { opacity: 0; }
+  }
+  @keyframes c4 {
+    0%, 46% { opacity: 0; }
+    52%, 92% { opacity: 1; }
+    98%, 100% { opacity: 0; }
+  }
+  @keyframes splits {
+    0%, 54% { clip-path: inset(0 100% 0 0); }
+    64%, 92% { clip-path: inset(0 0 0 0); }
+    98%, 100% { clip-path: inset(0 100% 0 0); }
+  }
+  @keyframes slice {
+    0%, 66% { opacity: 0; transform: translateY(0); }
+    72%, 92% { opacity: 1; transform: translateY(-14px); }
+    98%, 100% { opacity: 0; transform: translateY(0); }
+  }
+  @keyframes callIn {
+    0%, 70% { opacity: 0; transform: translate(-50%, 8px) scale(0.9); }
+    76%, 92% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    98%, 100% { opacity: 0; transform: translate(-50%, 0) scale(1); }
+  }
+</style>

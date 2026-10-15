@@ -21,6 +21,8 @@ export interface InboxSpendDraft {
   readonly at: Date;
   /** A spend in another currency priced at a rate: what Travel mode records beside the đồng. */
   readonly foreignAmount: { currency: string; amount: number; rate: number } | null;
+  /** The receipt printed no currency and the one saved was guessed. */
+  readonly currencyGuessed: boolean;
 }
 
 export interface InboxFiling {
@@ -80,6 +82,7 @@ export function inboxItemToNewSpend(item: InboxSpend, filing: InboxFiling): Inbo
     detail: receiptDetail(item.receipt),
     at: new Date(item.at),
     foreignAmount: foreignAmountOf(item),
+    currencyGuessed: item.currencyGuessed === true,
   };
 }
 

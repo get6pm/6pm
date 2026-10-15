@@ -50,6 +50,11 @@ export const spendRowSchema = z.object({
   forWork: z.boolean(),
   detail: z.string().nullable(),
   foreignAmount: foreignAmountSchema.nullable(),
+  /**
+   * The receipt printed no currency and the one saved was guessed; absent on rows and backups
+   * from before it was kept.
+   */
+  currencyGuessed: z.boolean().optional(),
   createdAt: instant,
   updatedAt: instant,
 });

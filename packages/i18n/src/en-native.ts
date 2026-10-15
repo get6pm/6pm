@@ -38,6 +38,8 @@ export const enNative = {
   'native.share.done': 'Done',
   'native.share.confirm': 'Confirm',
   'native.share.currency': 'Currency',
+  'native.share.currencyUnsure': 'The receipt doesn’t print its currency. Tap it to check.',
+  'native.share.checkCurrency': 'Check the currency',
   'native.share.inDong': '≈ {amount}',
   'native.share.noRate': 'No rate yet. You’ll set it in đồng at the close.',
   'native.share.unknownCurrency': 'Couldn’t tell the currency. Type the amount in đồng.',

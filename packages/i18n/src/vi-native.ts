@@ -36,6 +36,8 @@ export const viNative: { readonly [Key in keyof typeof enNative]: Entry } = {
   'native.share.done': 'Xong',
   'native.share.confirm': 'Xác nhận',
   'native.share.currency': 'Tiền tệ',
+  'native.share.currencyUnsure': 'Biên lai không ghi loại tiền. Chạm vào để kiểm tra.',
+  'native.share.checkCurrency': 'Kiểm tra loại tiền',
   'native.share.inDong': 'khoảng {amount}',
   'native.share.noRate': 'Chưa có tỉ giá. Bạn sẽ nhập số đồng lúc chốt ngày.',
   'native.share.unknownCurrency': 'Không rõ loại tiền. Nhập số tiền bằng đồng nhé.',

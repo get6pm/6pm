@@ -1,5 +1,6 @@
 import type { Vnd } from '../money/format';
 import { parseBankReceipt, readFields, toRows, type Field, type ReceiptLine } from './bank-receipt';
+import type { CurrencySource } from './receipt-currency';
 import { parseShopReceipt } from './shop-receipt';
 import { foldWords } from './spoken-spend';
 
@@ -22,6 +23,8 @@ export interface ReadReceipt {
   /** The total as printed, a decimal in the receipt's own units, whatever its currency. */
   readonly printed: string | null;
   readonly currencySure: boolean;
+  /** What decided the currency: anything but `printed` is a guess. */
+  readonly currencyFrom: CurrencySource;
   readonly totalSure: boolean;
   /** The row of `receiptReadingOrder` the amount was read from, when one was. */
   readonly totalLine: number | null;
@@ -66,6 +69,7 @@ export function readReceipt(
       currency: shop.currency,
       printed: shop.total,
       currencySure: shop.currencySure,
+      currencyFrom: shop.currencyFrom,
       totalSure: shop.totalSure,
       totalLine: shop.totalLine,
       payee: shop.merchant,
@@ -85,6 +89,7 @@ export function readReceipt(
     currency: 'VND',
     printed: bank.amount === null ? null : String(bank.amount),
     currencySure: true,
+    currencyFrom: 'printed',
     totalSure: bank.amount !== null,
     totalLine: null,
   };

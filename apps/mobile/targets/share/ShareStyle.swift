@@ -101,3 +101,16 @@ extension View {
     tracking(em * size)
   }
 }
+
+/// The companion the app drew for the surfaces, or the one bundled with the extension when the
+/// app has not drawn it yet.
+enum CompanionPicture {
+  static func calm40() -> UIImage? {
+    if let folder = try? GroupFiles.folder("surfaces"),
+      let drawn = UIImage(contentsOfFile: folder.appendingPathComponent("companion-calm-40.png").path)
+    {
+      return drawn
+    }
+    return UIImage(named: "companion-calm-40")
+  }
+}

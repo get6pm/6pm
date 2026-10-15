@@ -71,6 +71,14 @@ describe('inboxItemToNewSpend', () => {
     expect(inboxItemToNewSpend(tap, filing).foreignAmount).toBeNull();
   });
 
+  it('keeps a guessed currency marked, and older files unmarked', () => {
+    expect(inboxItemToNewSpend({ ...tap, currencyGuessed: true }, filing).currencyGuessed).toBe(
+      true,
+    );
+    expect(inboxItemToNewSpend(tap, filing).currencyGuessed).toBe(false);
+    expect(inboxItemSchema.safeParse(tap).success).toBe(true);
+  });
+
   it('ignores a category archived since the extension last read the context', () => {
     expect(inboxItemToNewSpend({ ...tap, categoryId: 'gone' }, filing).categoryId).toBe('food');
   });

@@ -136,6 +136,14 @@ describe('importInbox', () => {
     });
   });
 
+  it('keeps a guessed currency marked on the saved spend', async () => {
+    const guessed = tap({ source: 'shared', amount: 368_160, currencyGuessed: true });
+    const printed = tap({ source: 'shared', amount: 101_500, at: new Date().toISOString() });
+    await run(memoryInbox([guessed, printed]));
+    expect((await store.tables.spends.get(guessed.id))?.currencyGuessed).toBe(true);
+    expect((await store.tables.spends.get(printed.id))?.currencyGuessed).toBe(false);
+  });
+
   it('files under the rule for the merchant when the extension named no category', async () => {
     await actions.rememberMerchant('Phở Hòa', 'shopping');
     const item = tap();

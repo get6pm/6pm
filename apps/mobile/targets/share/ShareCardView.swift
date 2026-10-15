@@ -27,8 +27,8 @@ struct ShareCardView: View {
           .padding(.top, -10)
       }
       rows
-      if model.payeeUnsure && !model.editing {
-        Text(model.text("unsure"))
+      if let unsure = unsureLine, !model.editing {
+        Text(unsure)
           .font(ShareFont.body(13))
           .foregroundStyle(Ink.unsureText)
           .padding(.horizontal, 4)
@@ -48,6 +48,12 @@ struct ShareCardView: View {
     )
     .animation(ShareMotion.sheet(reduceMotion: reduceMotion), value: model.editing)
     .onAppear { if model.editing { focus = .amount } }
+  }
+
+  /// What the card is unsure of, the name first.
+  private var unsureLine: String? {
+    if model.payeeUnsure { return model.text("unsure") }
+    return model.currencyUnsure ? model.text("currencyUnsure") : nil
   }
 
   private var header: some View {
@@ -161,15 +167,7 @@ struct ShareCardView: View {
           Text(model.payee).font(ShareFont.body(15, weight: 600))
           Text(Symbol.help).font(ShareFont.symbol(16)).foregroundStyle(Ink.unsureGlyph)
         }
-        .padding(.vertical, 3)
-        .padding(.horizontal, 8)
-        .background(
-          RoundedRectangle(cornerRadius: 8, style: .continuous).fill(Ink.unsureFill)
-            .overlay(
-              RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .strokeBorder(Ink.unsureEdge, style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
-            )
-        )
+        .unsureChip()
       }
       .buttonStyle(.plain)
       .accessibilityHint(model.text("checkName"))
@@ -178,22 +176,33 @@ struct ShareCardView: View {
     }
   }
 
+  /// In Edit, a menu; a guessed currency is a dashed chip that opens the same menu, so it can be
+  /// switched (re-pricing the card) without opening Edit.
   @ViewBuilder private func currency(
     _ label: String, _ options: [ShareCardData.Currency]
   ) -> some View {
     let name = Text(label).font(ShareFont.body(15, weight: 600))
-    if model.editing {
+    if model.editing || model.currencyUnsure {
       Menu {
         Picker("", selection: $model.currency) {
           ForEach(options) { Text($0.label).tag(Optional($0.code)) }
         }
       } label: {
-        HStack(spacing: 4) {
-          name
-          Text(Symbol.unfoldMore).font(ShareFont.symbol(16)).foregroundStyle(Ink.soft)
+        if model.currencyUnsure && !model.editing {
+          HStack(spacing: 6) {
+            name
+            Text(Symbol.unfoldMore).font(ShareFont.symbol(16)).foregroundStyle(Ink.unsureGlyph)
+          }
+          .unsureChip()
+        } else {
+          HStack(spacing: 4) {
+            name
+            Text(Symbol.unfoldMore).font(ShareFont.symbol(16)).foregroundStyle(Ink.soft)
+          }
         }
       }
       .tint(Ink.ink)
+      .accessibilityHint(model.currencyUnsure ? model.text("checkCurrency") : "")
     } else {
       name
     }
@@ -258,21 +267,23 @@ struct ShareCardView: View {
   }
 }
 
+extension View {
+  /// The dashed chip around something the card is unsure of (the name, a guessed currency).
+  func unsureChip() -> some View {
+    padding(.vertical, 3)
+      .padding(.horizontal, 8)
+      .background(
+        RoundedRectangle(cornerRadius: 8, style: .continuous).fill(Ink.unsureFill)
+          .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+              .strokeBorder(Ink.unsureEdge, style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+          )
+      )
+  }
+}
+
 /// Material Symbols by codepoint: the bundled font is cut to the app's icons, without ligatures.
 private enum Symbol {
   static let help = "\u{e8fd}"
   static let unfoldMore = "\u{e5d7}"
-}
-
-/// The companion the app drew for the surfaces, or the one bundled with the extension when the
-/// app has not drawn it yet.
-enum CompanionPicture {
-  static func calm40() -> UIImage? {
-    if let folder = try? GroupFiles.folder("surfaces"),
-      let drawn = UIImage(contentsOfFile: folder.appendingPathComponent("companion-calm-40.png").path)
-    {
-      return drawn
-    }
-    return UIImage(named: "companion-calm-40")
-  }
 }

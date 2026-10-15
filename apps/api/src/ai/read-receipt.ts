@@ -27,6 +27,7 @@ export const receiptModelOutputSchema = z.object({
   merchant: z.string().nullable(),
   at: z.string().nullable(),
   sure: z.boolean(),
+  currencyPrinted: z.boolean(),
 });
 export type ReceiptModelOutput = z.infer<typeof receiptModelOutputSchema>;
 
@@ -42,7 +43,9 @@ merchant: the shop's own name, the way people say it ("The Coffee Bean & Tea Lea
 
 at: when the purchase was made, as printed, in the receipt's local time, written YYYY-MM-DDTHH:MM:SS. Dates are day first (29/08/2026) unless the receipt is from the United States. When it prints a time in and a time out or printed, use the later one: that is when they paid. null when the date or the time is not printed.
 
-sure: true only when the total and its currency are clearly legible and there is no doubt which amount is the total paid. false when digits are blurred or cut off, when several amounts could be the total, or when the currency rests on the hint.`;
+sure: true only when the total and its currency are clearly legible and there is no doubt which amount is the total paid. false when digits are blurred or cut off, when several amounts could be the total, or when the currency rests on the hint.
+
+currencyPrinted: true only when a currency symbol or code for the total is printed on the receipt itself ("Rp", "S$", "₫", "VND", "IDR"). false when you decided the currency from the country, the address, the tax registration, the language or the hint.`;
 
 const languageNames = { en: 'English', vi: 'Vietnamese' } as const;
 
@@ -78,6 +81,7 @@ export function toReceiptReading(
     merchant: merchant === '' ? null : merchant,
     at: printedLocalTime.test(at) && !Number.isNaN(Date.parse(at)) ? at : null,
     sure: output.sure && named.success,
+    currencyPrinted: output.currencyPrinted && named.success,
   });
   return reading.success ? reading.data : null;
 }

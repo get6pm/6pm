@@ -12,7 +12,14 @@ export interface ReceiptCurrency {
   readonly currency: string | null;
   /** True only when the receipt printed the currency itself; false when it was inferred. */
   readonly sure: boolean;
+  /**
+   * What decided it: the receipt itself (a mark, or Vietnamese), where the photo was taken, the
+   * place or words in its text, the trip, or nothing (đồng by default).
+   */
+  readonly from: CurrencySource;
 }
+
+export type CurrencySource = 'printed' | 'photo' | 'text' | 'trip' | 'none';
 
 /** What else is known about where a receipt was paid, weakest last. */
 export interface CurrencyHints {
@@ -127,7 +134,7 @@ export function readReceiptCurrency(
   const marks = countMarks(rows);
   if (centsPrinted) marks.delete('VND');
   const marked = best(marks);
-  if (marked !== null) return { currency: marked, sure: true };
+  if (marked !== null) return { currency: marked, sure: true, from: 'printed' };
 
   const text = rows.join('\n');
   const scores = tally(text, PLACES, PLACE_WEIGHT);
@@ -139,12 +146,14 @@ export function readReceiptCurrency(
   // A receipt written in Vietnamese with nothing foreign on it is in đồng: its language is
   // printed as plainly as a mark would be.
   const vietnamese = placed === 'VND' && scores.size === 1 && VIETNAMESE.test(text);
-  if (vietnamese) return { currency: 'VND', sure: true };
+  if (vietnamese) return { currency: 'VND', sure: true, from: 'printed' };
   // Where the photo was taken beats what the text suggests: a bill in Bali prints no "Bali".
   if (located !== null && (located !== 'VND' || !centsPrinted)) {
-    return { currency: located, sure: false };
+    return { currency: located, sure: false, from: 'photo' };
   }
-  if (placed !== null) return { currency: placed, sure: false };
-  if (prior !== null && (prior !== 'VND' || !centsPrinted)) return { currency: prior, sure: false };
-  return { currency: centsPrinted ? null : 'VND', sure: false };
+  if (placed !== null) return { currency: placed, sure: false, from: 'text' };
+  if (prior !== null && (prior !== 'VND' || !centsPrinted)) {
+    return { currency: prior, sure: false, from: 'trip' };
+  }
+  return { currency: centsPrinted ? null : 'VND', sure: false, from: 'none' };
 }

@@ -1,6 +1,6 @@
 import { travelCurrency } from '../travel/currencies';
 import { readReceiptTime, toRows, type ReceiptLine, type Row } from './bank-receipt';
-import { readReceiptCurrency, type CurrencyHints } from './receipt-currency';
+import { readReceiptCurrency, type CurrencyHints, type CurrencySource } from './receipt-currency';
 import { readShopName } from './receipt-merchant';
 import { foldWords } from './spoken-spend';
 import {
@@ -19,6 +19,8 @@ export interface ShopReceipt {
   readonly currency: string | null;
   /** The receipt printed its currency (or is plainly Vietnamese); false when it was inferred. */
   readonly currencySure: boolean;
+  /** What decided the currency. */
+  readonly currencyFrom: CurrencySource;
   /**
    * A total label was read and nothing on the receipt argues with it: no second total of the
    * same kind with another amount, no card charge or subtotal that disagrees.
@@ -152,7 +154,11 @@ export function parseShopReceipt(
   const labelled = labelledRows(rows);
   if (!labelled.some((item) => item.kind !== 'other')) return null;
   const texts = rows.map((row) => row.cells.join(' '));
-  const { currency, sure: currencySure } = readReceiptCurrency(texts, printsCents(texts), hints);
+  const {
+    currency,
+    sure: currencySure,
+    from: currencyFrom,
+  } = readReceiptCurrency(texts, printsCents(texts), hints);
   const picked = pickTotal(rows, labelled, currency);
   const firstPrice = texts.findIndex((text) => PRICE.test(text));
   const at = texts.map(readReceiptTime).find((read) => read !== null) ?? null;
@@ -160,6 +166,7 @@ export function parseShopReceipt(
     total: picked ? decimalOf(picked.value) : null,
     currency,
     currencySure,
+    currencyFrom,
     totalSure: picked?.sure ?? false,
     totalLine: picked?.line ?? null,
     merchant: readShopName(rows, firstPrice < 0 ? rows.length : firstPrice),

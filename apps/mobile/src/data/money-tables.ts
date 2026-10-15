@@ -22,7 +22,7 @@ export function openMoneyTables(db: SqlDatabase) {
       name: 'spends',
       schema: spendRowSchema,
       key: 'id',
-      booleans: ['forWork'],
+      booleans: ['forWork', 'currencyGuessed'],
       json: ['foreignAmount'],
     }),
     rules: createTable(db, {

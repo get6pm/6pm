@@ -21,6 +21,7 @@ export * from './close/close-queue';
 export * from './capture/duplicate';
 export * from './capture/merchant-rule';
 export * from './capture/inbox';
+export * from './capture/needs-a-look';
 export * from './capture/bank-receipt';
 export * from './capture/read-receipt';
 export * from './capture/email-body';

@@ -48,6 +48,12 @@ export const inboxSpendSchema = z.object({
   foreign: z
     .object({ currency: currencyCode, amount: decimal, rate: decimal.optional() })
     .optional(),
+  /**
+   * The receipt printed no currency and the one saved was guessed (from where the photo was
+   * taken, the place it names, the trip, or đồng by default); absent when it was printed, picked
+   * by the user, or on older files.
+   */
+  currencyGuessed: z.boolean().optional(),
 });
 export type InboxSpend = z.infer<typeof inboxSpendSchema>;
 
@@ -156,6 +162,8 @@ export const shareCardSchema = z.object({
   /** The receipt's currency; null when its amounts are not đồng and nothing says what they are. */
   currency: currencyCode.nullable(),
   currencySure: z.boolean(),
+  /** A shop receipt whose currency was not printed: the card offers it as a chip to switch. */
+  currencyGuessed: z.boolean(),
   totalSure: z.boolean(),
   /** The row of the receipt (in reading order) the total was read from. */
   totalLine: z.number().int().nonnegative().nullable(),
@@ -171,7 +179,11 @@ export const shareCardSchema = z.object({
   editText: z.string(),
   /** The amount is typed with decimals (a currency with cents). */
   decimalEntry: z.boolean(),
-  /** Currencies Edit can switch between; empty when the receipt's own is certain. */
+  /**
+   * Currencies the card can switch between: when the currency is a guess, the guess, đồng and
+   * the likely ones; else the one read, the trip's and đồng. Empty when the receipt's own is
+   * certain.
+   */
   currencies: z.array(shareCurrencySchema),
   /** The reading is unsure of the total or the currency, and the photo is worth a closer look. */
   needsCheck: z.boolean(),

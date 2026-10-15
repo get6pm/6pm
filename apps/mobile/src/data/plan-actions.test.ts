@@ -3,6 +3,7 @@ import { describe, expect, it, jest } from '@jest/globals';
 import { sql as createSettings } from '../db/migrations/0001-create-settings';
 import { sql as createMoneyTables } from '../db/migrations/0002-create-money-tables';
 import { sql as createTogetherMoves } from '../db/migrations/0003-create-together-moves';
+import { sql as addCurrencyGuessed } from '../db/migrations/0004-spend-currency-guessed';
 import { createMoneyStore, dayOf } from './money-store';
 import { planActions } from './plan-actions';
 import { DEFAULT_PLAN, writePlan } from './plan-settings';
@@ -19,6 +20,7 @@ async function open(today: string, startedOn = '2026-09-01') {
   sqlite.exec(createSettings);
   sqlite.exec(createMoneyTables);
   sqlite.exec(createTogetherMoves);
+  sqlite.exec(addCurrencyGuessed);
   const db: SqlDatabase = {
     getAllAsync: <T>(source: string, params: SqlValue[]) =>
       Promise.resolve(sqlite.prepare(source).all(...params) as T[]),

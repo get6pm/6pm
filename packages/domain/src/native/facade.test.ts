@@ -72,6 +72,7 @@ describe('shareCard', () => {
       atRead: true,
       kind: 'transfer',
       currency: 'VND',
+      currencyGuessed: false,
       currencySure: true,
       totalSure: true,
       totalLine: null,

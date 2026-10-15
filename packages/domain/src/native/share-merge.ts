@@ -21,6 +21,8 @@ export const receiptLookSchema = z.object({
         .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/)
         .nullable(),
       sure: z.boolean(),
+      /** The currency is printed on the receipt; absent from servers that do not say. */
+      currencyPrinted: z.boolean().optional(),
     })
     .nullable(),
 });
@@ -52,10 +54,29 @@ function localInstant(at: string): string | null {
 }
 
 /**
- * The phone's reading with the server's laid over it, field by field: the server's amount and
- * currency replace the phone's where the phone was unsure, or where the server is sure and they
- * differ; its name replaces a name the phone only guessed, when the photo printed it; its time fills in a time the phone
- * could not read. A reading the server could not make leaves the phone's as it was.
+ * The currency once the server has looked, and whether it was printed. A currency the server
+ * read printed on the receipt wins; else the phone's printed one stays; else the server's sure
+ * reading beats a phone that only guessed from the text, the trip or nothing, but not one that
+ * knows where the photo was taken.
+ */
+function mergedCurrency(read: ReadReceipt | null, server: NonNullable<ReceiptLook['receipt']>) {
+  const serverPrinted = server.sure && server.currencyPrinted !== false;
+  if (serverPrinted) return { currency: server.currency, printed: true };
+  if (read?.currencySure) return { currency: read.currency, printed: true };
+  const fromPhoto = read?.currencyFrom === 'photo' && read.currency !== null;
+  const takeServer = read?.currency == null || (server.sure && !fromPhoto);
+  return {
+    currency: takeServer ? server.currency : (read?.currency ?? server.currency),
+    printed: false,
+  };
+}
+
+/**
+ * The phone's reading with the server's laid over it, field by field: the currency as
+ * `mergedCurrency` decides; the server's amount where the phone was unsure, or where the server
+ * is sure and they differ; its name replaces a name the phone only guessed, when the photo
+ * printed it; its time fills in a time the phone could not read. A reading the server could not
+ * make leaves the phone's as it was.
  */
 export function mergeLook(
   read: ReadReceipt | null,
@@ -64,8 +85,8 @@ export function mergeLook(
 ): ReadReceipt | null {
   const server = look.receipt;
   if (!server) return read;
-  const takeCurrency = !read?.currencySure || server.sure;
-  const currency = takeCurrency ? server.currency : (read?.currency ?? server.currency);
+  const merged = mergedCurrency(read, server);
+  const currency = merged.currency ?? server.currency;
   const serverValue = server.amount / 10 ** decimalsOf(server.currency);
   const serverPrinted = currency === server.currency ? toDecimal(serverValue, currency) : null;
   const takeTotal = serverPrinted !== null && (!read?.totalSure || server.sure);
@@ -80,7 +101,12 @@ export function mergeLook(
     foreign: currency !== 'VND' && printed !== null ? { currency, amount: printed } : null,
     currency,
     printed,
-    currencySure: (read?.currencySure ?? false) || server.sure,
+    currencySure: merged.printed,
+    currencyFrom: merged.printed
+      ? 'printed'
+      : currency === read?.currency
+        ? read.currencyFrom
+        : 'text',
     totalSure: (read?.totalSure ?? false) || (takeTotal && server.sure),
     totalLine: takeTotal ? null : (read?.totalLine ?? null),
     payee: takeName ? named : (read?.payee ?? ''),

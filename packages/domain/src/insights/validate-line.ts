@@ -22,7 +22,9 @@ export type LineProblem =
   | 'tooLong'
   | 'digit'
   | 'unknownPlaceholder'
+  | 'missingFact'
   | 'brokenPlaceholder'
+  | 'tooFewWords'
   | 'wrongLanguage'
   | 'shaming';
 
@@ -30,6 +32,12 @@ export type LineCheck =
   { readonly ok: true } | { readonly ok: false; readonly problem: LineProblem };
 
 const PLACEHOLDER = /\{([A-Za-z]+)\}/g;
+const WORD = /\p{L}+/gu;
+/**
+ * Words a line needs besides its placeholders, and it needs more words than placeholders: fewer is
+ * a fragment ("{days}", "hũ") or values strung together ("mình, hũ {bill} {amount} {days} nha").
+ */
+export const LINE_MIN_WORDS = 3;
 const DIGIT = /\p{Nd}/u;
 /**
  * Letters only Vietnamese writes, of the two languages. Letters French or Spanish borrow into
@@ -81,7 +89,8 @@ export function placeholdersOf(text: string): string[] {
 export function validateLine(
   text: string,
   options: {
-    readonly allowed: readonly string[];
+    /** Each fact's slot names: a line uses only these, and at least one of each fact's. */
+    readonly facts: readonly (readonly string[])[];
     readonly language: LineLanguage;
     readonly surface: LineSurface;
   },
@@ -90,13 +99,19 @@ export function validateLine(
   if (line === '') return { ok: false, problem: 'empty' };
   if (line.length > LINE_MAX_LENGTH[options.surface]) return { ok: false, problem: 'tooLong' };
 
-  const allowed = new Set(options.allowed);
-  if (placeholdersOf(line).some((name) => !allowed.has(name))) {
+  const used = new Set(placeholdersOf(line));
+  const allowed = new Set(options.facts.flat());
+  if ([...used].some((name) => !allowed.has(name))) {
     return { ok: false, problem: 'unknownPlaceholder' };
   }
   const bare = line.replace(PLACEHOLDER, '');
   if (bare.includes('{') || bare.includes('}')) return { ok: false, problem: 'brokenPlaceholder' };
   if (DIGIT.test(bare)) return { ok: false, problem: 'digit' };
+  if (options.facts.some((slots) => slots.length > 0 && !slots.some((name) => used.has(name)))) {
+    return { ok: false, problem: 'missingFact' };
+  }
+  const words = (bare.match(WORD) ?? []).length;
+  if (words < LINE_MIN_WORDS || words <= used.size) return { ok: false, problem: 'tooFewWords' };
 
   const vietnamese = VIETNAMESE.test(bare);
   if (options.language === 'vi' ? !vietnamese : vietnamese) {

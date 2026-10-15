@@ -18,7 +18,7 @@ export const wordMaxTokens = 1_024;
 
 /**
  * Words facts in the companion's voice. A line that fails the phone's own check (a digit, an
- * unknown placeholder, the wrong language, a put-down) is asked for once more, then fails as
+ * unknown placeholder, a fact left out, a fragment, the wrong language, a put-down) is asked for once more, then fails as
  * `model_unavailable` so the phone words it from its catalogue.
  */
 export async function wordLine(
@@ -26,7 +26,7 @@ export async function wordLine(
   request: WordRequest,
   maxLength: number,
 ): Promise<Generated<WordResponse>> {
-  const allowed = request.facts.flatMap((f) => f.slots.map((s) => s.name));
+  const facts = request.facts.map((f) => f.slots.map((s) => s.name));
   const attempt = () =>
     generate(config, {
       system: wordSystem,
@@ -37,7 +37,7 @@ export async function wordLine(
     });
   const ok = (line: Generated<WordResponse>) =>
     validateLine(line.output.text, {
-      allowed,
+      facts,
       language: request.language,
       surface: request.surface,
     }).ok;

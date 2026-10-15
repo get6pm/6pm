@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { fillLine, placeholdersOf, validateLine } from './validate-line';
 
 const en = {
-  allowed: ['merchant', 'visits', 'amount'],
+  facts: [['merchant', 'visits', 'amount']],
   language: 'en',
   surface: 'bubble',
 } as const;
@@ -43,7 +43,7 @@ describe('validateLine', () => {
       ok: false,
       problem: 'wrongLanguage',
     });
-    expect(validateLine('Another {merchant} run', vi)).toEqual({
+    expect(validateLine('Another {merchant} run this week', vi)).toEqual({
       ok: false,
       problem: 'wrongLanguage',
     });
@@ -53,7 +53,10 @@ describe('validateLine', () => {
   });
 
   it('rejects words that put the person down, as whole words only', () => {
-    expect(validateLine('Lazy week at {merchant}?', en)).toEqual({ ok: false, problem: 'shaming' });
+    expect(validateLine('Lazy week again at {merchant}?', en)).toEqual({
+      ok: false,
+      problem: 'shaming',
+    });
     expect(validateLine('Bạn lười quá, {merchant} lại thắng', vi)).toEqual({
       ok: false,
       problem: 'shaming',
@@ -64,8 +67,27 @@ describe('validateLine', () => {
 
   it('rejects empty and over-long lines for the surface', () => {
     expect(validateLine('   ', en)).toEqual({ ok: false, problem: 'empty' });
-    expect(validateLine('a'.repeat(141), en)).toEqual({ ok: false, problem: 'tooLong' });
-    expect(validateLine('a'.repeat(141), { ...en, surface: 'answer' })).toEqual({ ok: true });
+    const long = `{merchant} ${'again '.repeat(22)}`;
+    expect(validateLine(long, en)).toEqual({ ok: false, problem: 'tooLong' });
+    expect(validateLine(long, { ...en, surface: 'answer' })).toEqual({ ok: true });
+  });
+
+  it('rejects a line that leaves out a fact, or is only a fragment', () => {
+    const two = { ...en, facts: [['merchant', 'visits'], ['days']] };
+    expect(validateLine('{merchant} again, {visits} since Monday', two)).toEqual({
+      ok: false,
+      problem: 'missingFact',
+    });
+    expect(validateLine('{merchant} again, and {days} days under your line', two)).toEqual({
+      ok: true,
+    });
+    // Lines Apple's on-device model wrote: a lone word, and placeholders strung together.
+    expect(validateLine('hũ', vi)).toEqual({ ok: false, problem: 'missingFact' });
+    expect(validateLine('{visits}', en)).toEqual({ ok: false, problem: 'tooFewWords' });
+    expect(validateLine('mình, hũ {merchant} {amount} {visits} nha', vi)).toEqual({
+      ok: false,
+      problem: 'tooFewWords',
+    });
   });
 });
 

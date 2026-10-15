@@ -2,6 +2,7 @@ import type { Vnd } from '../money/format';
 import { compareAmounts, type Comparison, type Fact } from '../insights/fact';
 import type { LocalDate } from '../time/local-date';
 import { answerAsk, type AskAnswer, type AskContext } from './ask-engine';
+import type { ActionAnswer } from './ask-actions';
 import { answerChat, type ChatAnswer } from './chat';
 import { answerGoal, type GoalAnswer } from './goal';
 import {
@@ -35,6 +36,7 @@ const BREAKDOWN_LIMIT = 5;
 export type AskQueryAnswer =
   | AskAnswer
   | GoalAnswer
+  | ActionAnswer
   | {
       readonly kind: 'spent';
       readonly spent: AskTotal;
@@ -96,6 +98,20 @@ export function answerQuery(
   if (isAskIntent(query)) return answerAsk(query, ctx);
   if (query.kind === 'chat') return answerChat(query.topic, ctx, ledger);
   if (query.kind === 'goal') return answerGoal(query, ctx);
+  if (query.kind === 'logSpend') {
+    return {
+      kind: 'confirmSpend',
+      amount: query.amount,
+      name: query.name,
+      category: query.category ?? null,
+    };
+  }
+  if (query.kind === 'makePot') {
+    return query.goal === undefined
+      ? { kind: 'potGoal', name: query.name }
+      : { kind: 'confirmPot', name: query.name, goal: query.goal, neededBy: query.by ?? null };
+  }
+  if (query.kind === 'howTo') return { kind: 'howTo', topic: query.topic };
   if (ledger === null) return { kind: 'help' };
   const frame: RangeFrame = {
     today: ctx.today,
@@ -170,7 +186,11 @@ export function answerQuery(
       const minAmount = query.minAmount ?? 0;
       const spends = matching(ledger, range, filter)
         .filter((s) => s.amount >= minAmount)
-        .sort((a, b) => b.day.localeCompare(a.day) || b.amount - a.amount);
+        .sort((a, b) =>
+          query.sort === 'amount'
+            ? b.amount - a.amount || b.day.localeCompare(a.day)
+            : b.day.localeCompare(a.day) || b.amount - a.amount,
+        );
       return {
         kind: 'listed',
         range,

@@ -82,13 +82,25 @@ export const TALK_CASES: readonly EvalCase[] = [
   { group: 'M', question: 'Should I pay off my credit card first or save?', want: 'gap' },
   { group: 'M', question: 'What does a 0% instalment really cost?', want: 'gap' },
   { group: 'M', question: 'How do I get out of credit card debt?', want: 'gap' },
-  // N. How the app works
-  { group: 'N', question: 'con số mỗi ngày tính sao vậy', want: 'gap' },
-  { group: 'N', question: 'sao hôm nay số âm', want: 'gap' },
-  { group: 'N', question: 'heo đất là gì', want: 'gap' },
-  { group: 'N', question: 'How is the daily number calculated?', want: 'gap' },
-  { group: 'N', question: "What's a pot?", want: 'gap' },
-  { group: 'N', question: "What happens if I don't close the day?", want: 'gap' },
+  // N. How 6pm works
+  {
+    group: 'N',
+    question: 'con số mỗi ngày tính sao vậy',
+    want: { kind: 'howTo', topic: 'dailyNumber' },
+  },
+  { group: 'N', question: 'sao hôm nay số âm', want: { kind: 'howTo', topic: 'negative' } },
+  { group: 'N', question: 'heo đất là gì', want: { kind: 'howTo', topic: 'pot' } },
+  {
+    group: 'N',
+    question: 'How is the daily number calculated?',
+    want: { kind: 'howTo', topic: 'dailyNumber' },
+  },
+  { group: 'N', question: "What's a pot?", want: { kind: 'howTo', topic: 'pot' } },
+  {
+    group: 'N',
+    question: "What happens if I don't close the day?",
+    want: { kind: 'howTo', topic: 'close' },
+  },
   { group: 'N', question: "What's the 50/30/20 rule?", want: 'gap' },
   // O. Money education; picks and timing are refused
   { group: 'O', question: 'lãi kép là gì', want: 'gap' },
@@ -175,14 +187,60 @@ export const TALK_CASES: readonly EvalCase[] = [
   // V. Corrections
   { group: 'V', question: 'sao tổng tháng này sai vậy', want: 'gap' },
   { group: 'V', question: "Why does it say I'm over?", want: 'gap' },
-  // S. Actions: logging, pots, budgets and how to capture. Not designed yet.
-  { group: 'S', question: 'vừa ăn phở 50k', want: 'gap' },
-  { group: 'S', question: 'ghi giúp mình cà phê 45k', want: 'gap' },
-  { group: 'S', question: 'tạo hũ du lịch 10tr', want: 'gap' },
-  { group: 'S', question: 'đặt ngân sách cà phê 1tr mỗi tháng', want: 'gap' },
-  { group: 'S', question: 'làm sao để thêm chi tiêu từ email ngân hàng', want: 'gap' },
-  { group: 'S', question: 'Log 120k for lunch', want: 'gap' },
-  { group: 'S', question: 'Make a pot for a new phone, 15m by March', want: 'gap' },
-  { group: 'S', question: 'How do I add spends from a receipt photo?', want: 'gap' },
-  { group: 'S', question: 'What are the ways to add a spend?', want: 'gap' },
+  // S. Actions: logging a spend, making a pot, budgets and how to catch spending.
+  { group: 'S', question: 'vừa ăn phở 50k', want: { kind: 'logSpend', amount: 50_000 } },
+  { group: 'S', question: 'ghi giúp mình cà phê 45k', want: { kind: 'logSpend', amount: 45_000 } },
+  {
+    group: 'S',
+    question: 'tạo hũ du lịch 10tr',
+    want: { kind: 'makePot', name: 'Du lịch', goal: 10_000_000 },
+  },
+  {
+    group: 'S',
+    question: 'đặt ngân sách cà phê 1tr mỗi tháng',
+    want: { kind: 'howTo', topic: 'budget' },
+  },
+  {
+    group: 'S',
+    question: 'làm sao để thêm chi tiêu từ email ngân hàng',
+    want: { kind: 'howTo', topic: 'email' },
+  },
+  {
+    group: 'S',
+    question: 'Log 120k for lunch',
+    want: { kind: 'logSpend', amount: 120_000, name: 'Lunch' },
+  },
+  {
+    group: 'S',
+    question: 'Make a pot for a new phone, 15m by March',
+    want: { kind: 'makePot', goal: 15_000_000 },
+  },
+  {
+    group: 'S',
+    question: 'How do I add spends from a receipt photo?',
+    want: { kind: 'howTo', topic: 'share' },
+  },
+  {
+    group: 'S',
+    question: 'What are the ways to add a spend?',
+    want: { kind: 'howTo', topic: 'ways' },
+  },
+  { group: 'S', question: 'ghi 30k gửi xe', want: { kind: 'logSpend', amount: 30_000 } },
+  {
+    group: 'S',
+    question: 'I just paid 65k for coffee',
+    want: { kind: 'logSpend', amount: 65_000 },
+  },
+  { group: 'S', question: 'tạo hũ mua laptop', want: { kind: 'makePot', name: 'Mua laptop' } },
+  {
+    group: 'S',
+    question: 'làm sao để tự ghi khi quẹt Apple Pay',
+    want: { kind: 'howTo', topic: 'wallet' },
+  },
+  { group: 'S', question: 'How do I scan a QR to pay?', want: { kind: 'howTo', topic: 'scan' } },
+  {
+    group: 'S',
+    question: 'Can I set a budget for coffee?',
+    want: { kind: 'howTo', topic: 'budget' },
+  },
 ];

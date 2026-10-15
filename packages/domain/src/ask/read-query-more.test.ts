@@ -109,4 +109,17 @@ describe('readQuery, follow-ups', () => {
       amount: 2_000_000,
     });
   });
+
+  it('orders the last list largest first when asked for the biggest', () => {
+    const before: AskQuery = { kind: 'list', range: { preset: 'thisWeek' }, merchant: 'Grab' };
+    expect(readQuery('cái nào nhiều nhất?', vi, before)).toEqual({ ...before, sort: 'amount' });
+  });
+
+  it('takes a bare amount as the goal of a pot named without one', () => {
+    expect(readQuery('10tr', vi, { kind: 'makePot', name: 'Du lịch' })).toEqual({
+      kind: 'makePot',
+      name: 'Du lịch',
+      goal: 10_000_000,
+    });
+  });
 });

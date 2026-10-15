@@ -5,6 +5,7 @@ import {
   aboutPerDay,
   cycleMonth,
   designAmount,
+  suggestCategoryIcon,
   goalMonthly,
   joinedShare,
   potMonthlyNeed,
@@ -34,8 +35,19 @@ const SHARE_STEP = 5;
  */
 export default function NewPot() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ kind?: string }>();
+  // Ask opens this sheet filled in from "tạo hũ du lịch 10tr": a name, a goal, a month.
+  const params = useLocalSearchParams<{
+    kind?: string;
+    name?: string;
+    goal?: string;
+    by?: string;
+  }>();
   const kind = params.kind === 'goal' ? 'goal' : 'occasion';
+  const askedName = typeof params.name === 'string' ? params.name.slice(0, 40) : '';
+  const askedGoal = Number(params.goal);
+  const askedBy =
+    typeof params.by === 'string' && /^\d{4}-\d{2}$/.test(params.by) ? params.by : null;
+  const askedIcon = askedName === '' ? null : suggestCategoryIcon(askedName);
   const { t } = useI18n();
   const money = useMoneyFormat();
   const currency = money.currency;
@@ -46,14 +58,18 @@ export default function NewPot() {
   const { max } = useEntitlement();
   const from = cycleMonth(snap.cycle);
   const [draft, setDraft] = useState<PotFields>({
-    name: '',
-    icon: kind === 'goal' ? 'savings' : 'celebration',
+    name: askedName,
+    icon: askedIcon ?? (kind === 'goal' ? 'savings' : 'celebration'),
     hue: kind === 'goal' ? 150 : 85,
-    // The design's 10tr goal and 2tr pot, worth as much in the home currency.
-    goal: designAmount(kind === 'goal' ? 10_000_000 : 2_000_000, currency),
+    // A goal Ask heard, already in the home currency; else the design's 10tr goal and 2tr pot,
+    // worth as much in it.
+    goal:
+      Number.isFinite(askedGoal) && askedGoal > 0
+        ? askedGoal
+        : designAmount(kind === 'goal' ? 10_000_000 : 2_000_000, currency),
   });
-  const [month, setMonth] = useState<string | null>(() =>
-    potMonthAt(from, kind === 'goal' ? 0 : 3),
+  const [month, setMonth] = useState<string | null>(
+    () => askedBy ?? potMonthAt(from, kind === 'goal' ? 0 : 3),
   );
   const others = snap.pots.filter((p) => p.kind === 'goal').length;
   const [percent, setPercent] = useState(

@@ -15,7 +15,10 @@ Kinds:
 - spend: how much they spent over a span, optionally on one category or at one place ("how much on coffee this month", "tuần trước xài bao nhiêu").
 - breakdown: where the money went over a span ("tiền đi đâu hết").
 - compare: a span against the one before it, or against a named span ("more on Grab than last month?": range thisMonth, against lastMonth).
-- list: which spends match ("what did I buy at Circle K this week"); minAmount in đồng when they say "over 500k".
+- list: which spends match ("what did I buy at Circle K this week"); minAmount in đồng when they say "over 500k"; sort amount for the biggest ("biggest purchase this month", or "which was the biggest?" after a list).
+- logSpend: they want a spend recorded ("vừa ăn phở 50k", "ghi giúp cà phê 45k", "log 120k for lunch"): amount in đồng, name = what it was in their words ("Phở", "Lunch"), category only if they named one of theirs. Only with an amount.
+- makePot: they want a savings pot made ("tạo hũ du lịch 10tr", "make a pot for a new phone, 15m by March"): name in their words, goal in đồng if said, by = YYYY-MM if a month is said (worked out from today).
+- howTo: how 6pm works; topic ways (ways to add spends), share (sharing a bank receipt or photo), email (forwarding receipt emails), scan (VietQR), wallet (Apple Pay), widgets, quickAdd (typing or voice), dailyNumber (how the daily number is worked out), negative (why it is negative), pot (what a pot is), close (closing the day), budget (any budget or spending limit: 6pm has none per category, the daily number is the budget).
 - bills: which bills are left before payday, or when a bill such as rent or electricity is due ("tiền nhà hạn ngày mấy", "tiền điện tháng này bao nhiêu").
 - howAmIDoing: how they are doing in general.
 - chat: nothing to look up; topic is one of:
@@ -26,11 +29,11 @@ Kinds:
   - offTopic: nothing to do with money (weather, homework, code);
   - investing: which stock, coin, fund or gold to buy, or when ("có nên mua vàng bây giờ không", "which coin will pump");
   - unsafe: high-interest or illegal lending (vay nóng, tín dụng đen, loan apps), gambling (lô đề, cá độ), hiding money from a partner.
-- unknown: anything else, including how-to questions about the app, logging a spend, making a pot or setting a budget, debt, credit cards and instalments (trả góp), whether a category is over budget, savings interest, subscriptions, payday, trends over time, and general money education.
+- unknown: anything else, including debt, credit cards and instalments (trả góp), whether a category is over budget, savings interest, subscriptions, payday, trends over time, and general money education.
 
 Spans: preset today, yesterday, thisWeek, lastWeek (weeks start Monday), thisCycle, lastCycle (a cycle runs payday to payday), thisMonth, lastMonth, last7Days, last30Days; or from/to dates (YYYY-MM-DD) worked out from the date given. With no span said, use thisCycle for spend, breakdown and compare, and thisWeek for list. A compare that names only the span before ("than last week?") takes its counterpart as the range: lastWeek with thisWeek, lastMonth with thisMonth, lastCycle with thisCycle, yesterday with today.
 
-category: one of their category names exactly as listed, when the question means one; otherwise leave it out. merchant: the place as they wrote it. A follow-up ("what about last month?") keeps the previous query and changes only what the new question changes; a bare amount after a goal with no amount ("3 tỷ") is that goal's price.
+category: one of their category names exactly as listed, when the question means one; otherwise leave it out. merchant: the place as they wrote it. A follow-up ("what about last month?") keeps the previous query and changes only what the new question changes; a bare amount after a goal or a pot with no amount ("3 tỷ") is its price. Earlier queries, oldest first, come before the previous one when a follow-up reaches further back.
 
 Amounts: "k"/"nghìn"/"ngàn" ×1.000; "tr"/"triệu"/"củ"/"m" ×1.000.000; "tỷ"/"tỉ"/"bn" ×1.000.000.000; "1tr5" = 1.500.000; "rưỡi" adds half the unit; a bare number under 1000 means thousands; "$" amounts are not đồng: use unknown.`;
 
@@ -57,6 +60,8 @@ function systemIn(currency: Currency): string {
       `(amount in ${code}; ${major(500_000)} if none is said)`,
     )
     .replace('amount in đồng only if', `amount in ${code} only if`)
+    .replace('amount in đồng, name =', `amount in ${code}, name =`)
+    .replace('goal in đồng if said', `goal in ${code} if said`)
     .replace(
       'minAmount in đồng when they say "over 500k"',
       `minAmount in ${code} when they say "over ${example(500_000)}"`,
@@ -87,6 +92,9 @@ export function readQuestionPrompt(request: AskRequest): string {
   }
   if (request.pots !== undefined && request.pots.length > 0) {
     lines.push(`Their pots: ${request.pots.join(' | ')}`);
+  }
+  if (request.earlier !== undefined && request.earlier.length > 0) {
+    lines.push(`Earlier queries: ${request.earlier.map((q) => JSON.stringify(q)).join(' | ')}`);
   }
   if (request.previous !== undefined) {
     const previous = queryInMajor(request.previous, askCurrencyOf(request));

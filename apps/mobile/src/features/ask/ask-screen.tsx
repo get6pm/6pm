@@ -118,7 +118,11 @@ export function AskScreen({ question }: { readonly question: string | null }) {
               message.kind === 'me' ? (
                 <MeBubble key={message.id} text={message.text} />
               ) : (
-                <AnswerBubble key={message.id} card={message.card} />
+                <AnswerBubble
+                  key={message.id}
+                  card={message.card}
+                  onAction={(choice) => void chat.act(message.id, choice)}
+                />
               ),
             )}
             {chat.typing ? <TypingBubble /> : null}

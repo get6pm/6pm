@@ -63,7 +63,11 @@ export const LOOKUP_CASES: readonly EvalCase[] = [
     question: 'Show me everything over 500k this week.',
     want: { kind: 'list', range: { preset: 'thisWeek' }, minAmount: 500_000 },
   },
-  { group: 'A', question: 'What was my biggest purchase this month?', want: 'gap' },
+  {
+    group: 'A',
+    question: 'What was my biggest purchase this month?',
+    want: { kind: 'list', range: { preset: 'thisMonth' }, sort: 'amount' },
+  },
   // B. Merchants
   {
     group: 'B',

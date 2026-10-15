@@ -32,6 +32,14 @@ export interface AskCard {
   readonly bars: AskBarsView | null;
   readonly rows: readonly { readonly key: string; readonly value: string }[];
   readonly note: string | null;
+  /** Buttons under an answer that offers to do something: the first does it. */
+  readonly actions?: readonly AskCardAction[];
+}
+
+export interface AskCardAction {
+  readonly id: 'go' | 'cancel';
+  readonly label: string;
+  readonly primary: boolean;
 }
 
 /** How the answer arrived: offline, the question was read with rules and may be missed. */

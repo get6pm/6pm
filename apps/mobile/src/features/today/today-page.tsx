@@ -90,7 +90,8 @@ export function TodayPage({
           borderTopRightRadius: 40,
           backgroundColor: palette.sheet,
           boxShadow: 'inset 0 1px 0 rgba(255,255,255,.06)',
-          paddingTop: snap.plan?.serious ? 20 : 92,
+          // The companion's greeting keeps its own room under it.
+          paddingTop: snap.plan ? 20 : 92,
           paddingHorizontal: 16,
           paddingBottom: 128,
           gap: 28,

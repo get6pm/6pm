@@ -78,7 +78,7 @@ const PERMISSION = JSON.parse(readFileSync(join(__dirname, 'locales/en.json'), '
 /**
  * The companions' Home Screen icons, which the picker can switch to; the sun is the app's own
  * icon. The names match `APP_ICON_NAMES` in `src/features/app-icon/app-icon.ts`, which this config
- * cannot import. Rendered by `tools/scripts/render-app-icons.ts`.
+ * cannot import. Only the light image is drawn for each, so iOS dims and tints it itself.
  */
 const COMPANION_ICONS = [
   ['CompanionMax', 'max'],
@@ -88,9 +88,7 @@ const COMPANION_ICONS = [
   ['CompanionHac', 'hac'],
 ].map(([name, id]) => ({
   name: name ?? '',
-  light: `./assets/icon/${id}/light.png`,
-  dark: `./assets/icon/${id}/dark.png`,
-  tinted: `./assets/icon/${id}/tinted.png`,
+  light: `./assets/icon/${id}/icon.png`,
 }));
 
 /** The page colour behind the first frame: the Golden Hour night sheet, so launch never flashes. */

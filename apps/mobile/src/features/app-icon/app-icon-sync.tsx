@@ -1,10 +1,18 @@
 import { useEffect } from 'react';
 import { AppState } from 'react-native';
 
+import type { CompanionForm } from '../../ui/companion/companion-mood';
 import { useCompanionSettings } from '../companion/companion-settings-provider';
 import { appIconCompanion } from '../purchases/entitlement';
 import { useEntitlement } from '../purchases/purchases-provider';
 import { applyAppIcon } from './app-icon';
+
+/** The companion the Home Screen icon shows, or null for the app's own icon (the sun). */
+export function useAppIconCompanion(): CompanionForm | null {
+  const settings = useCompanionSettings();
+  const { customer } = useEntitlement();
+  return appIconCompanion(settings, customer);
+}
 
 /**
  * Keeps the Home Screen icon on the companion it should show: at launch, whenever the pick or
@@ -12,9 +20,7 @@ import { applyAppIcon } from './app-icon';
  * back to the app's own icon. iOS changes icons only while the app is in front.
  */
 export function AppIconSync() {
-  const settings = useCompanionSettings();
-  const { customer } = useEntitlement();
-  const form = appIconCompanion(settings, customer);
+  const form = useAppIconCompanion();
 
   useEffect(() => {
     const apply = () => {

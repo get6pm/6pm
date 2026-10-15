@@ -88,12 +88,11 @@ export default function Companions() {
       {iconSupported ? (
         <View
           style={{
-            marginTop: 8,
             flexDirection: 'row',
             alignItems: 'center',
             gap: 12,
-            paddingVertical: 14,
-            paddingHorizontal: 16,
+            paddingVertical: 12,
+            paddingHorizontal: 14,
             borderRadius: 22,
             backgroundColor: palette.cell,
             boxShadow: palette.cardShadow,

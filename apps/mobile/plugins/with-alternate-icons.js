@@ -8,7 +8,7 @@ const { IOSConfig, withDangerousMod, withXcodeProject } = require('expo/config-p
 /* eslint-enable @typescript-eslint/no-require-imports */
 
 /**
- * @typedef {{ name: string; light: string; dark: string; tinted: string }} AlternateIcon
+ * @typedef {{ name: string; light: string; dark?: string; tinted?: string }} AlternateIcon
  */
 
 const APPEARANCES = /** @type {const} */ ({
@@ -18,8 +18,9 @@ const APPEARANCES = /** @type {const} */ ({
 });
 
 /**
- * iOS alternate app icons, each with its light, dark and tinted 1024² image: one app icon set
- * per icon in the app's asset catalogue, and the app target told to build them in. Only the
+ * iOS alternate app icons, each a 1024² image with an optional dark and tinted one (without them
+ * iOS shows the light image in dark mode and tints it itself): one app icon set per icon in the
+ * app's asset catalogue, and the app target told to build them in. Only the
  * target whose primary icon is `AppIcon` gets them: the widget, share and intents extensions are
  * left alone.
  *
@@ -38,8 +39,10 @@ function withAlternateIcons(config, { icons }) {
         fs.mkdirSync(set, { recursive: true });
         const images = [];
         for (const variant of /** @type {const} */ (['light', 'dark', 'tinted'])) {
+          const source = icon[variant];
+          if (source === undefined) continue;
           const filename = `${icon.name}-${variant}.png`;
-          fs.copyFileSync(path.join(projectRoot, icon[variant]), path.join(set, filename));
+          fs.copyFileSync(path.join(projectRoot, source), path.join(set, filename));
           const appearances = APPEARANCES[variant];
           images.push({
             ...(appearances ? { appearances } : {}),

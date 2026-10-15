@@ -48,14 +48,24 @@ describe('skyFrame', () => {
     expect(late.layout.bokeh[0]).toMatchObject({ x: 0.12, y: 318, size: 18, periodMs: 3400 });
   });
 
-  it('keeps Basic quiet: its tinted sky, a dimmed sun and faint grain only', () => {
+  it('keeps Basic to the system: a flat sky, no grain, and a sun only when asked for', () => {
     const basic = skyFrame({ look: 'basic', hour: 14, serious: false, showSun: true });
     expect(basic.values[SLOT.bloomOp]).toBe(0);
     expect(basic.values[SLOT.leakOp]).toBe(0);
     expect(basic.layout.leaks).toHaveLength(0);
-    expect(basic.values[SLOT.grainOp]).toBe(0.04);
-    expect(basic.values[SLOT.sunOp]).toBeCloseTo(0.9);
+    expect(basic.values[SLOT.grainOp]).toBe(0);
+    expect(basic.values[SLOT.sunOp]).toBe(0);
     expect(basic.values[SLOT.vignette + 3]).toBe(0);
+    expect(color(basic.values, SLOT.sky)).toEqual(color(basic.values, SLOT.sky + 8));
+    const marked = skyFrame({
+      look: 'basic',
+      config: { sun: true },
+      hour: 14,
+      serious: false,
+      showSun: true,
+    });
+    expect(marked.values[SLOT.sunSize]).toBe(14);
+    expect(marked.values[SLOT.sunOp]).toBe(1);
   });
 
   it('turns slate with only grain in serious mode', () => {

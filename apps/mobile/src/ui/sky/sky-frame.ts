@@ -1,4 +1,4 @@
-import { atmosphereFor, paletteFor, sunFor, type FrameInput, type Palette } from '@6pm/theme';
+import { atmosphereFor, paletteFor, type FrameInput, type Palette } from '@6pm/theme';
 
 import { bloomProfile, type RadialProfile } from './blur-profile';
 import {
@@ -23,7 +23,8 @@ import {
   SUN_STOPS,
   writeColor,
 } from './sky-slots';
-import { baseSun, moonOpacity } from './sun-geometry';
+import { drawsOwnSun } from './scenes/boxes/box-sun';
+import { lookSun, moonOpacity, type LookSun } from './sun-geometry';
 
 /** The CSS blend modes the atmosphere uses, by their Skia names. */
 export type SkyBlend = 'srcOver' | 'screen' | 'multiply' | 'overlay';
@@ -71,6 +72,8 @@ export interface SkyFrame {
   /** The hour's palette and atmosphere, for the looks' own layers (`scenes/`). */
   readonly palette: Palette;
   readonly atm: Readonly<Record<string, unknown>>;
+  /** The look's sun for the hour (`sunFx`), for looks the shared sun cannot draw. */
+  readonly sun: LookSun;
 }
 
 export interface SkyInput extends FrameInput {
@@ -121,8 +124,8 @@ function bloom(css: string, size: number, sigma: number): { color: Rgba; profile
   return { color, profile: bloomProfile(size, { positions: stops.positions, alphas }, sigma) };
 }
 
-function writeSun(v: number[], input: SkyInput, palette: ReturnType<typeof paletteFor>) {
-  const sun = sunFor(input, palette, baseSun(input.hour, palette, input.showSun, input.serious));
+function writeSun(v: number[], input: SkyInput, palette: ReturnType<typeof paletteFor>): LookSun {
+  const sun = lookSun(input, palette, input.showSun);
   const disc = typeof sun.color === 'string' ? sun.color : 'none';
   const radial = firstRadial(disc);
   const flat = parseColor(disc);
@@ -149,6 +152,10 @@ function writeSun(v: number[], input: SkyInput, palette: ReturnType<typeof palet
     v[SLOT.haloSigma] = halo.blur / 2;
     v[SLOT.haloSpread] = halo.spread;
   }
+  // Suns the shared disc cannot draw (gold leaf, glaze rings, the misprint's ghost) are drawn as
+  // boxes instead (`scenes/boxes/box-sun`).
+  if (drawsOwnSun(input.look)) v[SLOT.sunOp] = 0;
+  return sun;
 }
 
 function leakShape(g: GradientValue): LeakShape {
@@ -184,10 +191,17 @@ export function skyFrame(input: SkyInput): SkyFrame {
   const v = new Array<number>(SLOT.length).fill(0);
 
   const sky = parseGradients(palette.sky).find((g) => g.kind === 'linear');
-  const skyStops = fixedStops(sky ? resolveStops(sky.stops) : { colors: [], positions: [] }, 3);
+  // Basic's sky is one flat colour (the system background), drawn as three equal stops.
+  const flatSky = sky ? null : parseColor(palette.sky);
+  const skyStops = fixedStops(
+    sky
+      ? resolveStops(sky.stops)
+      : { colors: flatSky ? [flatSky] : [], positions: flatSky ? [0] : [] },
+    3,
+  );
   skyStops.colors.forEach((c, i) => writeColor(v, SLOT.sky + 4 * i, c));
 
-  writeSun(v, input, palette);
+  const sun = writeSun(v, input, palette);
   const sunOpacity = v[SLOT.sunOp] ?? 0;
   const atm = atmosphereFor(input, palette, sunOpacity);
 
@@ -209,7 +223,7 @@ export function skyFrame(input: SkyInput): SkyFrame {
   v[SLOT.streakOp] = number(atm, 'streakOp');
   v[SLOT.streakSoft] = number(atm, 'streakSoft');
 
-  v[SLOT.moonOp] = moonOpacity(input);
+  v[SLOT.moonOp] = moonOpacity(input) * atm.moonK;
 
   const bokeh = bokehSpots(atm.bokeh);
   bokeh.forEach(({ color }, i) => writeColor(v, SLOT.bokeh + 4 * i, color));
@@ -245,5 +259,5 @@ export function skyFrame(input: SkyInput): SkyFrame {
     bokeh: bokeh.map(({ spot }) => spot),
     grainBlend: blendOf(atm.grainBlend),
   };
-  return { values: v, layout, palette, atm };
+  return { values: v, layout, palette, atm, sun };
 }

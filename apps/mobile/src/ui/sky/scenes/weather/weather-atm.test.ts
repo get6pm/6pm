@@ -2,7 +2,14 @@ import { describe, expect, it } from '@jest/globals';
 import { atmosphereFor, paletteFor, type LookConfig } from '@6pm/theme';
 
 import { parseDrops, parseFog, parseRainTile } from './weather-atm';
-import { RAIN_LAYERS, RAIN_OVERHANG, RAIN_TILT_DEG, rainCells, rainPath } from './rain-geometry';
+import {
+  RAIN_LAYERS,
+  RAIN_OVERHANG,
+  RAIN_TILT_DEG,
+  rainCells,
+  rainLayersFor,
+  rainPath,
+} from './rain-geometry';
 
 const tileUrl = (stroke: string) =>
   `url("data:image/svg+xml,${encodeURIComponent(
@@ -12,12 +19,25 @@ const tileUrl = (stroke: string) =>
 describe('parseRainTile', () => {
   it('reads the size, stroke and vertical strokes the prototype writes', () => {
     const tile = parseRainTile(tileUrl('rgba(255,255,255,.75)'));
-    expect(tile).toMatchObject({ width: 90, height: 140, strokeWidth: 1.1 });
+    expect(tile).toMatchObject({ width: 90, height: 140 });
     expect(tile?.color).toEqual([1, 1, 1, 0.75]);
     expect(tile?.strokes).toEqual([
-      { x: 10, y: 4, length: 26 },
-      { x: 38, y: 52, length: 18 },
-      { x: 62, y: 92, length: 30 },
+      { x: 10, y: 4, length: 26, width: 1.1, opacity: 1 },
+      { x: 38, y: 52, length: 18, width: 1.1, opacity: 1 },
+      { x: 62, y: 92, length: 30, width: 1.1, opacity: 1 },
+    ]);
+  });
+
+  it('reads Monsoon’s tile: each stroke its own weight and ink', () => {
+    const input = { look: 'monsoon' as const, hour: 16.6, serious: false, config: { rain: true } };
+    const atm = atmosphereFor(input, paletteFor(input), 0);
+    const tile = parseRainTile(atm.rainTile);
+    expect(tile).toMatchObject({ width: 120, height: 200 });
+    expect(tile?.strokes).toHaveLength(16);
+    expect(new Set(tile?.strokes.map((s) => s.opacity)).size).toBeGreaterThan(1);
+    expect(rainLayersFor(atm).map((l) => l.tile)).toEqual([
+      [84, 140],
+      [138, 230],
     ]);
   });
 
@@ -87,7 +107,7 @@ describe('rainCells', () => {
     const spec = RAIN_LAYERS[0];
     if (!tile || !spec) throw new Error('fixture');
     const { c0, c1, r0, r1 } = rainCells(spec, 402, 874);
-    const strokes = rainPath(tile, spec, 402, 874).split('M').length - 1;
+    const strokes = rainPath(tile, tile.strokes, spec, 402, 874).split('M').length - 1;
     expect(strokes).toBe(3 * (c1 - c0 + 1) * (r1 - r0 + 1));
   });
 });
@@ -98,20 +118,19 @@ describe('the look engine feeds the layers', () => {
     return atmosphereFor(input, paletteFor(input), 0);
   };
 
-  it('Neon has rain, no fog, drops or lightning', () => {
-    const atm = at('neon', 21.5, { rain: true, lights: true, k: 70 });
-    expect(atm.rainOn).toBe(true);
-    expect(parseRainTile(atm.rainTile)).not.toBeNull();
+  it('Neon Alley has no weather', () => {
+    const atm = at('neon', 21.5, { k: 70 });
+    expect(atm.rainOn).toBe(false);
     expect(atm.fogOn).toBe(false);
     expect(atm.dropsOn).toBe(false);
     expect(atm.flashOn).toBe(false);
   });
 
-  it('Monsoon has fog, rain, 18 drops, and lightning only in the dark', () => {
+  it('Monsoon has fog, rain, 8 drops at the window’s edges, and thunder from seven', () => {
     const night = at('monsoon', 21.5, { rain: true, thunder: true, k: 70 });
     const day = at('monsoon', 14, { rain: true, thunder: true, k: 70 });
     expect(night.fogOn).toBe(true);
-    expect(parseDrops(night.drops)).toHaveLength(18);
+    expect(parseDrops(night.drops)).toHaveLength(8);
     expect(night.flashOn).toBe(true);
     expect(day.flashOn).toBe(false);
     expect(parseFog(day.fog)).not.toBeNull();

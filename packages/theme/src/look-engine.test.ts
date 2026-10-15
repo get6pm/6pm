@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { configFor, looks, paletteFor, swatchesFor } from './look-engine';
+import { atmosphereFor, configFor, looks, paletteFor, swatchesFor } from './look-engine';
 import { LOOK_IDS } from './look-types';
 
 describe('paletteFor', () => {
@@ -61,6 +61,29 @@ describe('catalogue', () => {
 
   it('lists every look the prototype sells, in its order', () => {
     expect(Object.keys(looks()).filter((id) => id !== 'v1')).toEqual([...LOOK_IDS]);
+  });
+});
+
+describe('atmosphere', () => {
+  const at = (look: 'golden' | 'cafe' | 'neon', closed = false, tab = 'today') => {
+    const input = { look, hour: 21, serious: false, closed, tab } as const;
+    return atmosphereFor(input, paletteFor(input), 0);
+  };
+
+  it('hides the moon in scenes that bring their own night', () => {
+    expect(at('golden').moonK).toBe(1);
+    expect(at('cafe').moonK).toBe(0);
+  });
+
+  it('turns Neon Alley’s sign once the day is closed', () => {
+    expect(at('neon').signText).toBe('mở cửa');
+    expect(at('neon', true).signText).toBe('đóng cửa');
+  });
+
+  it('pours Cà Phê’s glass on Today only', () => {
+    const today = at('cafe').front as unknown[];
+    const plan = at('cafe', false, 'plan').front as unknown[];
+    expect(today.length).toBeGreaterThan(plan.length);
   });
 });
 

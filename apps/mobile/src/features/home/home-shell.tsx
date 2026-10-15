@@ -8,6 +8,7 @@ import { scheduleOnUI } from 'react-native-worklets';
 
 import type { DailyNumber } from '@6pm/domain';
 
+import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
 import { useDesignInsets } from '../../ui/layout/design-insets';
@@ -55,6 +56,9 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
   const planSections = useRef<PlanSectionsHandle>(null);
   const [planSection, setPlanSection] = useState(0);
   const homeVisible = useHomeVisible();
+  const money = useMoney();
+  // Neon Alley's sign knows when the day is closed.
+  const closedToday = money.closedDays.some((d) => d.day === money.today);
 
   const build = useCallback((index: number) => {
     setMounted((current) =>
@@ -121,6 +125,7 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
           look={look}
           hour={hour}
           serious={serious}
+          closed={closedToday}
           scrollY={y}
           showSun={sun}
           active={homeVisible}

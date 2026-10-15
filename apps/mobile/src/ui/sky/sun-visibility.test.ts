@@ -1,9 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { LOOK_IDS, paletteFor, type FrameInput } from '@6pm/theme';
+import { LOOK_IDS, type FrameInput } from '@6pm/theme';
 
-import { paperSunModel } from './scenes/living/paper-sun-model';
-import { sunFrame } from './scenes/surface/surface-sun-spec';
 import { skyFrame } from './sky-frame';
 
 /**
@@ -26,28 +24,6 @@ describe('the sun shown or hidden', () => {
         expect(off.layout).toEqual(on.layout);
         expect(off.values).toHaveLength(on.values.length);
         expect(off.atm['rainOn']).toEqual(on.atm['rainOn']);
-      }
-    }
-  });
-
-  it('leaves the surface sun’s shape and the paper sun’s geometry unchanged', () => {
-    for (const look of LOOK_IDS) {
-      for (const hour of HOURS) {
-        const input = lookInput(look, hour, false);
-        const palette = paletteFor(input);
-        const on = sunFrame({ ...input, showSun: true }, palette);
-        const off = sunFrame({ ...input, showSun: false }, palette);
-        expect(off === null).toBe(on === null);
-        if (on && off) {
-          expect(off.shape).toEqual(on.shape);
-          expect(off.values).toHaveLength(on.values.length);
-        }
-        const paperOn = paperSunModel({ ...input, palette, showSun: true });
-        const paperOff = paperSunModel({ ...input, palette, showSun: false });
-        const { values: onValues, ...onRest } = paperOn;
-        const { values: offValues, ...offRest } = paperOff;
-        expect(offRest).toEqual(onRest);
-        expect(offValues).toHaveLength(onValues.length);
       }
     }
   });

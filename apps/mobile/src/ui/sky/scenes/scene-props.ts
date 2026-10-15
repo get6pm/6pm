@@ -2,6 +2,8 @@ import type { SharedValue } from 'react-native-reanimated';
 
 import type { LookConfig, LookId, Palette } from '@6pm/theme';
 
+import type { SceneMotion } from './boxes/scene-motion';
+
 /**
  * What a look's own layers draw from (rain, fog, CRT, holo foil, lanterns, hills, star trails…).
  * They sit outside the shared slot array: each scene reads the prototype's atmosphere for this
@@ -21,6 +23,8 @@ export interface SceneProps {
   readonly time: SharedValue<number>;
   /** The Today list's scroll offset, for parallax. */
   readonly scrollY: SharedValue<number>;
+  /** The phone's tilt, swing and stillness, for the living scenes that sense it. */
+  readonly motion: SceneMotion;
 }
 
 /**

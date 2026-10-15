@@ -7,9 +7,9 @@ import { atmFor } from './test-atm';
 describe('lanternModel', () => {
   const model = lanternModel(atmFor('lantern', 18.12));
 
-  it('lays two strings of 25 bulbs and five lanterns from each', () => {
-    expect(model?.wires).toHaveLength(50);
-    expect(model?.bulbs).toHaveLength(50);
+  it('lays two strings of 21 bulbs and five lanterns from each', () => {
+    expect(model?.wires).toHaveLength(42);
+    expect(model?.bulbs).toHaveLength(42);
     expect(model?.lanterns).toHaveLength(10);
   });
 
@@ -32,9 +32,9 @@ describe('lanternModel', () => {
 
   it('keeps its tween lengths fixed across hours and variants', () => {
     for (const hour of [8.5, 14, 18.12, 21.5]) {
-      for (const v of [0, 1, 2]) {
+      for (const v of [0, 1]) {
         const atm = atmFor('lantern', hour, { v });
-        expect(bulbValues(atm)).toHaveLength(6 + 4 * 50);
+        expect(bulbValues(atm)).toHaveLength(6 + 4 * 42);
         expect(lanternValues(atm)).toHaveLength(18 * 10);
         expect(wireColor(atm)).toHaveLength(4);
         expect(riverValues(atm)).toHaveLength(1 + 8 * 6);

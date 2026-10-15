@@ -13,14 +13,25 @@ import { floaters, floatValues, riverModel, riverValues } from './river-model';
 /** The lanterns' layer rises with the scroll at 0.2×. */
 const PARALLAX = 0.2;
 
-function RiverLayers({ atm, time, width }: Pick<SceneProps, 'atm' | 'time' | 'width'>) {
+function RiverLayers({
+  atm,
+  time,
+  width,
+  motion,
+}: Pick<SceneProps, 'atm' | 'time' | 'width' | 'motion'>) {
   const model = useMemo(() => riverModel(atm), [atm]);
   const colors = useSceneTween(riverValues(atm));
   const drifters = useMemo(() => floaters(atm), [atm]);
   const lit = useSceneTween(floatValues(atm));
+  // The reflections slide 10 pt per unit of tilt (`translate: calc(var(--tx) * 10px) 0`).
+  const slide = useDerivedValue(() => [{ translateX: 10 * motion.tx.value }]);
   return (
     <>
-      {model && <River layers={model.layers} colors={colors} time={time} width={width} />}
+      {model && (
+        <Group transform={slide}>
+          <River layers={model.layers} colors={colors} time={time} width={width} />
+        </Group>
+      )}
       <Floaters floaters={drifters} values={lit} time={time} />
     </>
   );
@@ -31,7 +42,7 @@ function RiverLayers({ atm, time, width }: Pick<SceneProps, 'atm' | 'time' | 'wi
  * lanterns hung from each. The glow ramps up with the hour (16:18 to 18:18). The whole layer
  * rises with the scroll at 0.2×.
  */
-export function LanternScene({ atm, time, scrollY, width }: SceneProps) {
+export function LanternScene({ atm, time, scrollY, width, motion }: SceneProps) {
   const model = useMemo(() => lanternModel(atm), [atm]);
   const wire = useSceneTween(wireColor(atm));
   const bulbs = useSceneTween(bulbValues(atm));
@@ -40,10 +51,10 @@ export function LanternScene({ atm, time, scrollY, width }: SceneProps) {
   if (!model) return null;
   return (
     <Group transform={lift}>
-      {atm.riverOn === true && <RiverLayers atm={atm} time={time} width={width} />}
+      {atm.riverOn === true && <RiverLayers atm={atm} time={time} width={width} motion={motion} />}
       <Wires wires={model.wires} color={wire} />
       <Bulbs bulbs={model.bulbs} values={bulbs} time={time} />
-      <Lanterns lanterns={model.lanterns} values={silk} time={time} />
+      <Lanterns lanterns={model.lanterns} values={silk} time={time} pend={motion.pend} />
     </Group>
   );
 }

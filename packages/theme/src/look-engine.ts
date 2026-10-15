@@ -81,13 +81,16 @@ export function swatchesFor(look: LookId, variantIndex: number): readonly string
  * The atmosphere layers of a frame (blooms, flare, grain, rain, …) as the prototype describes them.
  * `sunOpacity` is the sun's visibility at this hour (see the sky layer).
  */
-export function atmosphereFor(input: FrameInput, palette: Palette, sunOpacity: number) {
-  return select(input.look, input.config, input).atm(
-    palette,
-    input.hour,
-    input.serious,
-    sunOpacity,
-  );
+export function atmosphereFor(
+  input: FrameInput,
+  palette: Palette,
+  sunOpacity: number,
+): Record<string, unknown> & { readonly moonK: number } {
+  const looks = select(input.look, input.config, input);
+  const atm = looks.atm(palette, input.hour, input.serious, sunOpacity);
+  // The prototype keeps the moon's share on itself (`_moonK`): 0 for scenes with their own night.
+  const moonK = typeof looks._moonK === 'number' ? looks._moonK : 1;
+  return { ...atm, moonK };
 }
 
 /**

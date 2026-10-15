@@ -26,5 +26,6 @@
     "vitest": "catalog:"
   },
   "homepage": "https://at6pm.app",
+  "author": "Odd Eggs Studio <hello@at6pm.app> (https://oddeggs.studio)",
   "license": "Apache-2.0"
 }

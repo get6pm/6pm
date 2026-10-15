@@ -20,47 +20,89 @@ struct ReceiptLine: Encodable {
   let confidence: Double?
 }
 
-/// Turns the one thing shared (an image, a PDF or plain text) into receipt lines, on this iPhone.
-/// Nothing is sent anywhere: images and scanned PDFs are read by Vision.
+/// One receipt as it was read: its lines, and for a photo a smaller copy of it for a closer look.
+struct SharedReceipt {
+  let lines: [ReceiptLine]
+  /// A JPEG no larger than `ReceiptReader.lookPixels` on its long side; nil for a PDF or text.
+  let photo: Data?
+}
+
+/// Turns what was shared (up to ten images, or one PDF, or plain text) into receipt lines, on
+/// this iPhone. Nothing is sent anywhere here: images and scanned PDFs are read by Vision.
 enum ReceiptReader {
+  /// What was shared, one receipt each.
+  enum Source {
+    case image(NSItemProvider)
+    case pdf(NSItemProvider)
+    case text(NSItemProvider)
+  }
+
   /// The extension has about 120 MB; a receipt at 2000 px on its long side reads as well as the
   /// original.
   static let maxPixels = 2000
+  /// The copy kept for a closer look: enough to read a receipt, small enough to send.
+  static let lookPixels = 1600
+  static let lookBytes = 1_500_000
   /// A PDF page with less text than this is a scan, and is read as a picture.
   static let minimumPdfText = 20
+  /// Photos are read one after another, each confirmed on its own card; more than ten at once is
+  /// a camera roll, not a handful of receipts (the share sheet's rule says the same).
+  static let maxImages = 10
 
-  static func lines(from items: [NSExtensionItem]) async -> [ReceiptLine] {
+  /// The receipts shared: every image (up to ten), else the one PDF or text.
+  static func sources(from items: [NSExtensionItem]) -> [Source] {
     let providers = items.flatMap { $0.attachments ?? [] }
+    let images = providers.filter { $0.hasItemConformingToTypeIdentifier(UTType.image.identifier) }
+    if !images.isEmpty { return images.prefix(maxImages).map(Source.image) }
     for provider in providers {
-      if provider.hasItemConformingToTypeIdentifier(UTType.pdf.identifier) {
-        return await pdfLines(provider)
-      }
-      if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
-        return await imageLines(provider)
-      }
+      if provider.hasItemConformingToTypeIdentifier(UTType.pdf.identifier) { return [.pdf(provider)] }
       if provider.hasItemConformingToTypeIdentifier(UTType.plainText.identifier) {
-        return await textLines(provider)
+        return [.text(provider)]
       }
     }
     return []
   }
 
+  static func read(_ source: Source) async -> SharedReceipt {
+    switch source {
+    case .image(let provider): return await imageReceipt(provider)
+    case .pdf(let provider): return SharedReceipt(lines: await pdfLines(provider), photo: nil)
+    case .text(let provider): return SharedReceipt(lines: await textLines(provider), photo: nil)
+    }
+  }
+
   // MARK: Sources
 
-  private static func imageLines(_ provider: NSItemProvider) async -> [ReceiptLine] {
+  private static func imageReceipt(_ provider: NSItemProvider) async -> SharedReceipt {
+    let none = SharedReceipt(lines: [], photo: nil)
     guard let item = try? await provider.loadItem(forTypeIdentifier: UTType.image.identifier)
-    else { return [] }
+    else { return none }
     let source: CGImageSource?
     switch item {
     case let url as URL: source = CGImageSourceCreateWithURL(url as CFURL, nil)
     case let data as Data: source = CGImageSourceCreateWithData(data as CFData, nil)
     case let image as UIImage:
-      guard let data = image.jpegData(compressionQuality: 0.95) else { return [] }
+      guard let data = image.jpegData(compressionQuality: 0.95) else { return none }
       source = CGImageSourceCreateWithData(data as CFData, nil)
     default: source = nil
     }
-    guard let source, let image = downscaled(source) else { return [] }
-    return recognise(image)
+    guard let source else { return none }
+    // One bitmap at a time, released before the next, to stay inside the extension's memory.
+    let lines = autoreleasepool { downscaled(source).map(recognise) ?? [] }
+    let photo = autoreleasepool { lookCopy(source) }
+    return SharedReceipt(lines: lines, photo: photo)
+  }
+
+  /// The photo as a JPEG for the server's closer look, under its size limit.
+  private static func lookCopy(_ source: CGImageSource) -> Data? {
+    guard let image = downscaled(source, to: lookPixels) else { return nil }
+    let picture = UIImage(cgImage: image)
+    for quality in [0.7, 0.5, 0.35] {
+      if let data = picture.jpegData(compressionQuality: quality), data.count <= lookBytes {
+        return data
+      }
+    }
+    return nil
   }
 
   private static func pdfLines(_ provider: NSItemProvider) async -> [ReceiptLine] {
@@ -108,13 +150,13 @@ enum ReceiptReader {
       .map { ReceiptLine(text: $0, box: nil, confidence: nil) }
   }
 
-  /// The image no larger than `maxPixels` on its long side, upright.
-  static func downscaled(_ source: CGImageSource) -> CGImage? {
+  /// The image no larger than `pixels` on its long side, upright.
+  static func downscaled(_ source: CGImageSource, to pixels: Int = maxPixels) -> CGImage? {
     let options: [CFString: Any] = [
       kCGImageSourceCreateThumbnailFromImageAlways: true,
       kCGImageSourceCreateThumbnailWithTransform: true,
       kCGImageSourceShouldCacheImmediately: true,
-      kCGImageSourceThumbnailMaxPixelSize: maxPixels,
+      kCGImageSourceThumbnailMaxPixelSize: pixels,
     ]
     return CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
   }

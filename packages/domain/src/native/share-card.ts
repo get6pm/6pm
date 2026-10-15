@@ -1,15 +1,16 @@
 import { z } from 'zod';
 
-import { parseBankReceipt, receiptReadingOrder, type ReceiptLine } from '../capture/bank-receipt';
+import { receiptReadingOrder, type ReceiptLine } from '../capture/bank-receipt';
 import { numbersFree } from '../capture/inbox';
+import { readReceipt, type ReadReceipt } from '../capture/read-receipt';
 import {
   SURFACES_VERSION,
   type InboxSpend,
   type ShareCard,
   type SurfaceContext,
 } from '../contracts/surfaces';
-import { parseAmount } from '../money/parse-amount';
-import { amountText, fileCategory, safeAfterText, whenText } from './file-category';
+import { fileCategory, safeAfterText, whenText } from './file-category';
+import { currencyOption, editTextOf, rateIn, shareAmount, toDecimal } from './share-amount';
 
 /** Lines as the share extension hands them over: recognised text, a PDF's text or a text share. */
 export const receiptLinesSchema = z.array(
@@ -25,6 +26,11 @@ export const shareEditsSchema = z.object({
   amountText: z.string().optional(),
   payee: z.string().optional(),
   categoryId: z.string().min(1).optional(),
+  /** The currency picked in Edit, when it is not the one read. */
+  currency: z
+    .string()
+    .regex(/^[A-Z]{3}$/)
+    .optional(),
 });
 export type ShareEdits = z.infer<typeof shareEditsSchema>;
 
@@ -37,47 +43,102 @@ export function toReceiptLines(lines: z.infer<typeof receiptLinesSchema>): Recei
 }
 
 /**
+ * Currencies Edit offers: the one read, the trip's and đồng, unless the receipt is certainly in
+ * đồng (a transfer, or a Vietnamese bill).
+ */
+function currenciesFor(read: ReadReceipt | null, context: SurfaceContext | null) {
+  if (read?.kind === 'transfer' || (read?.currency === 'VND' && read.currencySure)) return [];
+  const codes = [read?.currency, context?.travel?.currency, 'VND'].filter(
+    (code): code is string => typeof code === 'string',
+  );
+  const unique = [...new Set(codes)];
+  return unique.length > 1 ? unique.map((code) => currencyOption(context, code)) : [];
+}
+
+/** The card for what was read (null when nothing was), in the app's words and categories. */
+export function cardOf(
+  read: ReadReceipt | null,
+  lines: readonly ReceiptLine[],
+  context: SurfaceContext | null,
+  now: Date,
+): ShareCard {
+  const at = read?.at ? new Date(read.at) : now;
+  const payee = read?.payee ?? '';
+  const currency = read ? read.currency : 'VND';
+  const printed =
+    read?.printed != null && currency !== null ? toDecimal(Number(read.printed), currency) : null;
+  const foreignRead = currency !== null && currency !== 'VND' && printed !== null;
+  const base: ShareCard = {
+    amount: read?.amount ?? null,
+    payee,
+    payeeSure: read?.payeeSure ?? false,
+    at: at.toISOString(),
+    atRead: read?.at != null,
+    code: read?.code ?? null,
+    bank: read?.bank ?? null,
+    categoryId: null,
+    amountText: '',
+    safeAfterText: null,
+    categoryName: null,
+    whenText: whenText(context, at, now),
+    namingLines: numbersFree(receiptReadingOrder(lines)),
+    kind: read?.kind ?? 'shop',
+    currency,
+    currencySure: read?.currencySure ?? false,
+    totalSure: read?.totalSure ?? false,
+    totalLine: read?.totalLine ?? null,
+    printed: printed ?? read?.printed ?? null,
+    foreign: foreignRead ? { currency, amount: printed, rate: rateIn(context, currency) } : null,
+    inDongText: null,
+    editText: '',
+    decimalEntry: false,
+    currencies: currenciesFor(read, context),
+    needsCheck: read === null || (read.kind === 'shop' && !(read.totalSure && read.currencySure)),
+  };
+  const shown = shareAmount(base, {});
+  const category = fileCategory(context, payee, payee, at);
+  return {
+    ...base,
+    amount: shown.amount,
+    categoryId: category?.id ?? null,
+    categoryName: category?.name ?? null,
+    amountText: shown.amountText,
+    inDongText: shown.inDongText,
+    decimalEntry: shown.decimalEntry,
+    editText: editTextOf(
+      shown.foreign?.amount ?? (shown.amount === null ? null : String(shown.amount)),
+      currency ?? 'VND',
+    ),
+    safeAfterText: safeAfterText(context, category, shown.amount),
+  };
+}
+
+/**
  * The card for a shared receipt. Nothing readable still gives a card, with no amount, so the
- * extension can ask for one rather than fail.
+ * extension can ask for one rather than fail. In Travel mode the trip's currency is the guess
+ * for a receipt that prints none.
  */
 export function buildShareCard(
   lines: readonly ReceiptLine[],
   context: SurfaceContext | null,
   now: Date,
 ): ShareCard {
-  const receipt = parseBankReceipt(lines);
-  const at = receipt?.at ? new Date(receipt.at) : now;
-  const payee = receipt?.payee ?? '';
-  const amount = receipt?.amount ?? null;
-  const category = fileCategory(context, payee, payee, at);
-  return {
-    amount,
-    payee,
-    payeeSure: receipt?.payeeSure ?? false,
-    at: at.toISOString(),
-    code: receipt?.code ?? null,
-    bank: receipt?.bank ?? null,
-    categoryId: category?.id ?? null,
-    amountText: amountText(amount),
-    safeAfterText: safeAfterText(context, category, amount),
-    categoryName: category?.name ?? null,
-    whenText: whenText(context, at, now),
-    namingLines: numbersFree(receiptReadingOrder(lines)),
-  };
+  const read = readReceipt(lines, context?.travel?.currency ?? null);
+  return cardOf(read, lines, context, now);
 }
 
 /**
  * The inbox item Confirm writes: the card with the user's edits, caught so the close shows it.
- * Null while there is no amount (Confirm stays off until one is typed). An edited amount is read
- * like a typed one ("45" is 45.000₫).
+ * Null while there is no amount (Confirm stays off until one is typed). An edited amount in đồng
+ * is read like a typed one ("45" is 45.000₫). A foreign amount keeps its currency and the rate
+ * it was priced at; with no rate yet its đồng is left for the close, and the printed amount is
+ * the note, as a foreign Apple Pay tap is.
  */
 export function buildShareItem(card: ShareCard, edits: ShareEdits, id: string): InboxSpend | null {
-  const amount =
-    edits.amountText !== undefined && edits.amountText.trim() !== ''
-      ? parseAmount(edits.amountText)
-      : card.amount;
-  if (amount === null || amount <= 0) return null;
+  const shown = shareAmount(card, edits);
+  if (shown.amount === null && shown.foreign === null) return null;
   const payee = (edits.payee ?? card.payee).trim();
+  const foreign = shown.foreign;
   return {
     v: SURFACES_VERSION,
     id,
@@ -85,14 +146,24 @@ export function buildShareItem(card: ShareCard, edits: ShareEdits, id: string): 
     source: 'shared',
     status: 'caught',
     at: card.at,
-    amount,
+    amount: shown.amount,
     merchant: payee,
     categoryId: edits.categoryId ?? card.categoryId,
+    ...(foreign && shown.amount === null ? { note: shown.amountText } : {}),
     receipt: {
       ...(card.bank ? { bank: card.bank } : {}),
       ...(card.code ? { code: card.code } : {}),
       namingLines: card.namingLines,
       payeeSure: card.payeeSure || edits.payee !== undefined,
     },
+    ...(foreign
+      ? {
+          foreign: {
+            currency: foreign.currency,
+            amount: foreign.amount,
+            ...(foreign.rate !== null && shown.amount !== null ? { rate: foreign.rate } : {}),
+          },
+        }
+      : {}),
   };
 }

@@ -7,6 +7,8 @@ import type { RequestIdVariables } from 'hono/request-id';
  */
 export const secretNames = [
   'DEEPSEEK_API_KEY',
+  /** Anthropic: the vision model that reads a receipt photo the phone could not read. */
+  'ANTHROPIC_API_KEY',
   'TYPESAFE_API_KEY',
   'REVENUECAT_API_V2_KEY',
   'REVENUECAT_WEBHOOK_AUTH',
@@ -31,6 +33,7 @@ export type Bindings = Secrets & {
   readonly DEVICE_RATE_LIMIT: RateLimit;
   readonly BACKUP_RATE_LIMIT: RateLimit;
   readonly EMAIL_RATE_LIMIT: RateLimit;
+  readonly RECEIPT_READ_RATE_LIMIT: RateLimit;
   readonly ENVIRONMENT: EnvironmentName;
   readonly COMMIT_SHA: string;
 };

@@ -61,6 +61,16 @@ describe('inboxItemToNewSpend', () => {
     expect(inboxItemToNewSpend({ ...tap, categoryId: 'drinks' }, ruled).categoryId).toBe('drinks');
   });
 
+  it('keeps a priced foreign amount beside its đồng, and none without a rate', () => {
+    const foreign = { currency: 'SGD', amount: '68.80', rate: '19500.5' };
+    expect(
+      inboxItemToNewSpend({ ...tap, amount: 1_341_634, foreign }, filing).foreignAmount,
+    ).toEqual({ currency: 'SGD', amount: 68.8, rate: 19_500.5 });
+    const unpriced = { ...tap, amount: null, foreign: { currency: 'SGD', amount: '68.80' } };
+    expect(inboxItemToNewSpend(unpriced, filing)).toMatchObject({ amount: 0, foreignAmount: null });
+    expect(inboxItemToNewSpend(tap, filing).foreignAmount).toBeNull();
+  });
+
   it('ignores a category archived since the extension last read the context', () => {
     expect(inboxItemToNewSpend({ ...tap, categoryId: 'gone' }, filing).categoryId).toBe('food');
   });

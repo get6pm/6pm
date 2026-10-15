@@ -12,7 +12,7 @@ final class DomainBridge {
   }
 
   /// The `NATIVE_API_VERSION` this Swift was written against.
-  static let apiVersion: Int32 = 1
+  static let apiVersion: Int32 = 2
 
   private let context: JSContext
   private let domain: JSValue

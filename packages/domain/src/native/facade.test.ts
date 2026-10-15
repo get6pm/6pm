@@ -10,8 +10,7 @@ import {
 import mbbank from '../capture/fixtures/receipts/synthetic-mbbank.json';
 import momo from '../capture/fixtures/receipts/synthetic-momo.json';
 import textShare from '../capture/fixtures/receipts/synthetic-text-share.json';
-import { NATIVE_API_VERSION, logSpend, readAmount, shareCard, shareItem } from './entry';
-import { randomUuid } from './uuid';
+import { NATIVE_API_VERSION, logSpend, shareCard, shareItem } from './entry';
 
 const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
@@ -51,7 +50,7 @@ const logged = (amount: string, merchant: string | null, ctx = contextJson) =>
 
 describe('the native entry', () => {
   it('is the version the extensions were written against', () => {
-    expect(NATIVE_API_VERSION).toBe(1);
+    expect(NATIVE_API_VERSION).toBe(2);
   });
 });
 
@@ -70,6 +69,19 @@ describe('shareCard', () => {
       categoryName: 'Groceries',
       whenText: 'Today · 16:40',
       namingLines: expect.arrayContaining(['MBBank', 'Tên người nhận CIRCLE K VN']) as string[],
+      atRead: true,
+      kind: 'transfer',
+      currency: 'VND',
+      currencySure: true,
+      totalSure: true,
+      totalLine: null,
+      printed: '120000',
+      foreign: null,
+      inDongText: null,
+      editText: '120.000',
+      decimalEntry: false,
+      currencies: [],
+      needsCheck: false,
     });
   });
 
@@ -275,29 +287,5 @@ describe('logSpend', () => {
         logSpendResultSchema.parse(JSON.parse(logSpend(amount, merchant, ctx, now)));
       }),
     );
-  });
-});
-
-describe('readAmount', () => {
-  it('reads a typed amount for the Edit state', () => {
-    expect(JSON.parse(readAmount('45'))).toEqual({ amount: 45_000, amountText: '45.000₫' });
-    expect(JSON.parse(readAmount('1tr2'))).toEqual({ amount: 1_200_000, amountText: '1.200.000₫' });
-    expect(JSON.parse(readAmount(''))).toEqual({ amount: null, amountText: '' });
-    expect(JSON.parse(readAmount('0'))).toEqual({ amount: null, amountText: '' });
-  });
-});
-
-describe('randomUuid', () => {
-  it('is a lower-case UUID v4 for any draw', () => {
-    fc.assert(
-      fc.property(
-        fc.array(fc.double({ min: 0, max: 0.9999, noNaN: true }), { minLength: 40, maxLength: 40 }),
-        (draws) => {
-          let i = 0;
-          expect(randomUuid(() => draws[i++ % draws.length] ?? 0)).toMatch(UUID_V4);
-        },
-      ),
-    );
-    expect(randomUuid()).not.toBe(randomUuid());
   });
 });

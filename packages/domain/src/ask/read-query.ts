@@ -1,13 +1,36 @@
 import { foldWords } from '../capture/spoken-spend';
 import { parseAmount } from '../money/parse-amount';
-import { readIntent } from './ask-intent';
 import type { AskQuery, AskRange, AskRangePreset } from './ask-query';
-import { categoryIn, goalWhatIn, merchantIn, overIn, potIn, rangesIn } from './read-query-parts';
+import { chatTopicIn, urgentTopicIn } from './read-chat';
+import {
+  ACTION,
+  BUY,
+  CAN_SPEND,
+  FULLNESS,
+  HOW_MUCH,
+  MONTH_NAMES,
+  MORE,
+  NOT_YET,
+  PAST_WEEKEND,
+  POT_WORDS,
+  SAVE,
+  SAVE_FOR,
+  WEEKEND,
+  WHAT_IF,
+} from './read-query-guards';
+import {
+  categoryIn,
+  goalWhatIn,
+  merchantIn,
+  moneyIn,
+  overIn,
+  potIn,
+  rangesIn,
+} from './read-query-parts';
 import {
   BILLS,
   BREAKDOWN,
   CAN,
-  CHAT,
   COMPARE,
   GOAL_WHEN,
   HOW,
@@ -68,49 +91,90 @@ function followUp(
   return null;
 }
 
+/** Plans ahead: a goal, the weekend, a price, saving more, a pot. Null when it is none of them. */
+function readPlan(
+  question: string,
+  f: string,
+  amount: number | null,
+  pots: readonly string[],
+): AskQuery | null {
+  const pot = potIn(f, pots);
+  const lastTime = has(f, LIST) && has(f, words('lan cuoi', 'last time', 'when did i last'));
+  if ((has(f, GOAL_WHEN) || has(f, SAVE_FOR)) && !lastTime) {
+    if (pot !== undefined) return { kind: 'potFull', pot } as const;
+    const what = goalWhatIn(question, f);
+    if (what !== undefined) return { kind: 'goal', what, ...(amount === null ? {} : { amount }) };
+  }
+  if (has(f, PAST_WEEKEND)) return UNKNOWN;
+  if (has(f, WEEKEND) && amount === null && !has(f, COMPARE)) return { kind: 'weekend' } as const;
+  if (has(f, NOT_YET)) return UNKNOWN;
+  const saving = has(f, SAVE);
+  if (saving && has(f, WHAT_IF) && (amount !== null || has(f, MORE))) {
+    return { kind: 'saveMore', amount: amount ?? 500_000 } as const;
+  }
+  if (saving && amount !== null && has(f, MORE)) return { kind: 'saveMore', amount } as const;
+  if (amount !== null && !saving && (has(f, CAN) || has(f, BUY))) {
+    return { kind: 'afford', amount } as const;
+  }
+  if (pot !== undefined && (has(f, FULLNESS) || has(f, POT_WORDS) || saving)) {
+    return { kind: 'potFull', pot } as const;
+  }
+  if (has(f, POT_WORDS) && has(f, FULLNESS)) return { kind: 'potFull' } as const;
+  if (
+    amount === null &&
+    (has(f, CAN_SPEND) || (has(f, CAN) && has(f, words('today', 'hom nay'))))
+  ) {
+    return { kind: 'today' } as const;
+  }
+  // A change the rules cannot work out ("nếu tăng lương 2tr thì sao"): better unknown than a guess.
+  if (has(f, WHAT_IF) || has(f, CAN) || amount !== null) return UNKNOWN;
+  return null;
+}
+
+const UNKNOWN = { kind: 'unknown' } as const;
+
 export function readQuery(
   question: string,
   names: ReadNames = {},
   previous: AskQuery | null = null,
 ): AskQuery {
   const f = foldWords(question);
-  const pots = names.pots ?? [];
   const spoken = f.trim().split(' ');
-  const amount = parseAmount(question);
+  const amount = moneyIn(question);
   const ranges = rangesIn(f);
 
-  if (spoken.length <= 4 && has(f, CHAT) && amount === null) return { kind: 'chat' };
+  const urgent = urgentTopicIn(f, amount !== null);
+  if (urgent !== undefined) return { kind: 'chat', topic: urgent };
+  const topic = amount === null ? chatTopicIn(f, spoken.length) : undefined;
+  if (topic !== undefined) return { kind: 'chat', topic };
   if (previous !== null) {
     const changed = followUp(question, f, previous, ranges);
     if (changed !== null) return changed;
   }
-
-  // A goal months or years away: "khi nào mua được nhà", "how long to save for a car".
-  const pot = potIn(f, pots);
-  if (has(f, GOAL_WHEN)) {
-    const what = goalWhatIn(question, f);
-    if (pot !== undefined) return { kind: 'potFull', pot };
-    if (what !== undefined) {
-      return { kind: 'goal', what, ...(amount === null ? {} : { amount }) };
-    }
-  }
-
-  // Pots, the weekend, saving and "can I" questions keep their original reading.
-  const legacy = readIntent(question, pots);
-  // A price with "can I" is about spending it, even when a pot's name is in the question.
-  if (legacy.kind === 'potFull' && amount !== null && has(f, CAN)) {
-    return { kind: 'afford', amount };
-  }
-  if (legacy.kind === 'potFull') {
-    return legacy.pot === undefined && pot !== undefined ? { kind: 'potFull', pot } : legacy;
-  }
-  if (legacy.kind === 'weekend' || legacy.kind === 'saveMore') return legacy;
-  if (has(f, BILLS) && !has(f, PAST) && amount === null) return { kind: 'bills' };
-  if (has(f, CAN)) return legacy;
+  // Logging a spend, making a pot or setting a budget is not something Ask does yet.
+  if (has(f, ACTION)) return UNKNOWN;
   if (has(f, HOW)) return { kind: 'howAmIDoing' };
+  if (has(f, BILLS) && !has(f, PAST) && amount === null) {
+    return { kind: 'bills' };
+  }
+  // "Spends over 500k this month": a list with a floor, not a price.
+  if (overIn(question) !== undefined) return readLookup(question, f, spoken.length, ranges, names);
+  const plan = readPlan(question, f, amount, names.pots ?? []);
+  if (plan !== null) return plan;
+  return readLookup(question, f, spoken.length, ranges, names);
+}
 
+/** Lookups in the user's records: a span, a category or place, a list, a comparison. */
+function readLookup(
+  question: string,
+  f: string,
+  spoken: number,
+  ranges: readonly AskRangePreset[],
+  names: ReadNames,
+): AskQuery {
   const category = categoryIn(f, names.categories ?? []);
   const merchant = merchantIn(question, f, names.merchants ?? []);
+  const named = category !== undefined || merchant !== undefined;
   const filters = {
     ...(category === undefined ? {} : { category }),
     ...(merchant === undefined ? {} : { merchant }),
@@ -118,9 +182,11 @@ export function readQuery(
 
   // "Spends over 500k this month": a list with a floor, read before "more than" compares.
   const over = overIn(question);
-  if (over !== undefined && !has(f, CAN)) {
+  if (over !== undefined) {
     return { kind: 'list', range: range(ranges[0], 'thisWeek'), ...filters, minAmount: over };
   }
+  // A month by name needs its year, which the model works out from the date: not the rules.
+  if (has(f, MONTH_NAMES) && ranges.length === 0) return UNKNOWN;
   if (has(f, COMPARE)) {
     const [first, second] = ranges;
     // "More than last month?" names only the span to compare against: the other is this one.
@@ -142,10 +208,12 @@ export function readQuery(
   }
   if (has(f, BREAKDOWN)) return { kind: 'breakdown', range: range(ranges[0], 'thisCycle') };
   if (has(f, LIST)) return { kind: 'list', range: range(ranges[0], 'thisWeek'), ...filters };
-  const asksHowMuch = has(f, words('how much', 'bao nhieu'));
-  if (has(f, PAST) || (asksHowMuch && (category !== undefined || merchant !== undefined))) {
+  const short = spoken <= 6 && ranges.length > 0;
+  if (has(f, PAST) || (named && (has(f, HOW_MUCH) || short))) {
     return { kind: 'spend', range: range(ranges[0], 'thisCycle'), ...filters };
   }
-  if (legacy.kind === 'unknown' && has(f, HOW_LOOSE)) return { kind: 'howAmIDoing' };
-  return legacy;
+  if (has(f, HOW_LOOSE)) return { kind: 'howAmIDoing' };
+  // "Hôm nay?" on its own asks about today's number.
+  if (ranges.length === 1 && ranges[0] === 'today') return { kind: 'today' };
+  return UNKNOWN;
 }

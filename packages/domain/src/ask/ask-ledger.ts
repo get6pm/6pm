@@ -128,8 +128,8 @@ export function dueBills(ledger: AskLedger, today: LocalDate, payday: LocalDate)
   };
 }
 
-/** The few facts most worth knowing right now, one of each kind. */
-export function topFacts(ledger: AskLedger, ctx: AskContext): Fact[] {
+/** Every fact true today, most worth saying first, one of each kind. */
+export function rankedFacts(ledger: AskLedger, ctx: AskContext): Fact[] {
   const facts = collectFacts({
     today: ctx.today,
     day: ctx.day,
@@ -142,9 +142,12 @@ export function topFacts(ledger: AskLedger, ctx: AskContext): Fact[] {
     pots: ledger.pots,
   });
   const seen = new Set<string>();
-  const top = [...facts]
+  return [...facts]
     .sort((a, b) => b.salience - a.salience || a.key.localeCompare(b.key))
-    .filter((f) => (seen.has(f.kind) ? false : (seen.add(f.kind), true)))
-    .slice(0, HOW_LIMIT);
-  return top;
+    .filter((f) => (seen.has(f.kind) ? false : (seen.add(f.kind), true)));
+}
+
+/** The few facts most worth knowing right now, one of each kind. */
+export function topFacts(ledger: AskLedger, ctx: AskContext): Fact[] {
+  return rankedFacts(ledger, ctx).slice(0, HOW_LIMIT);
 }

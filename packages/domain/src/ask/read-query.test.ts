@@ -68,8 +68,8 @@ const golden: readonly (readonly [string, AskQuery])[] = [
   ['hoá đơn nào sắp đến hạn', { kind: 'bills' }],
   ['How am I doing?', { kind: 'howAmIDoing' }],
   ['tháng này mình ổn không', { kind: 'howAmIDoing' }],
-  ['thanks!', { kind: 'chat' }],
-  ['cảm ơn nha', { kind: 'chat' }],
+  ['thanks!', { kind: 'chat', topic: 'thanks' }],
+  ['cảm ơn nha', { kind: 'chat', topic: 'thanks' }],
   // Not understood.
   ['What is the meaning of life?', { kind: 'unknown' }],
 ];

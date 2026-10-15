@@ -9,6 +9,7 @@ import {
 } from '@6pm/domain';
 
 import { catalogueLine, slotValues, type SlotWords, type Voice } from '../wording/fact-words';
+import { describeChat } from './ask-chat-words';
 import type { AskCard, AskWordsEnv } from './ask-words';
 
 /** The answers read from the user's records, as opposed to the original six. */
@@ -259,6 +260,6 @@ export function describeLedgerAnswer(answer: LedgerAnswer, env: LedgerWordsEnv):
     case 'noRange':
       return { card: card(say('ask.answer.noRange'), 'think'), wording: null };
     case 'chat':
-      return { card: card(say('ask.answer.chat'), 'wave'), wording: null };
+      return describeChat(answer, env);
   }
 }

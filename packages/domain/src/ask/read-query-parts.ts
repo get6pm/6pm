@@ -66,7 +66,7 @@ export function merchantIn(
   f: string,
   merchants: readonly string[],
 ): string | undefined {
-  const known = longestNamed(f, merchants);
+  const known = longestNamed(f, merchants) ?? knownByPrefix(f, merchants);
   if (known !== undefined) return known;
   const match = AT.exec(f);
   if (match?.[1] === undefined) return undefined;
@@ -76,6 +76,31 @@ export function merchantIn(
     kept.push(word);
   }
   return kept.length === 0 ? undefined : asWritten(question, kept);
+}
+
+/** One of the user's places typed short ("highland" for "Highlands"), five letters or more. */
+function knownByPrefix(f: string, merchants: readonly string[]): string | undefined {
+  const typed = f
+    .trim()
+    .split(' ')
+    .filter((w) => w.length >= 5);
+  return merchants.find((name) => {
+    const first = foldWords(name).trim().split(' ')[0] ?? '';
+    return typed.some((w) => first.startsWith(w));
+  });
+}
+
+/** Numbers that count something else: "3 tháng", "1 ly", "tháng 4", "0%", "50/30/20". */
+const NOT_MONEY = [
+  /\d+\s*(?:tháng|thang|ngày|ngay|tuần|tuan|năm|nam|lần|lan|ly|cái|cai|giờ|gio|months?|days?|weeks?|years?|times|%)(?!\p{L})/giu,
+  /(?:tháng|thang|month)\s*\d+/giu,
+  /\d+(?:\/\d+)+/g,
+];
+
+/** The amount a question names, once numbers of days, months, cups and shares are left out. */
+export function moneyIn(question: string): number | null {
+  const money = NOT_MONEY.reduce((text, pattern) => text.replace(pattern, ' '), question);
+  return parseAmount(money);
 }
 
 /** The pot a question means by a telling word of its name ("nhà" for "Mua nhà"). */

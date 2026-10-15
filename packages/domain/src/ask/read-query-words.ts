@@ -8,35 +8,28 @@ export const has = (f: string, list: readonly string[]) => list.some((w) => f.in
 
 /** Spans in the order they are tried: "last" before "this", so "last week" is not "this week". */
 export const RANGE_WORDS: readonly (readonly [AskRangePreset, readonly string[]])[] = [
-  ['yesterday', words('yesterday', 'hom qua')],
-  ['today', words('today', 'hom nay')],
+  ['yesterday', words('yesterday', 'hom qua', 'hqua')],
+  ['today', words('today', 'hom nay', 'hnay')],
   ['lastWeek', words('last week', 'tuan truoc', 'tuan roi')],
   ['thisWeek', words('this week', 'tuan nay')],
   ['lastMonth', words('last month', 'thang truoc', 'thang roi')],
   ['thisMonth', words('this month', 'thang nay')],
   ['last7Days', words('last 7 days', 'past 7 days', '7 ngay qua', '7 ngay')],
   ['last30Days', words('last 30 days', 'past 30 days', '30 ngay qua', '30 ngay')],
-  ['lastCycle', words('last cycle', 'last pay cycle', 'ky luong truoc')],
+  ['lastCycle', words('last cycle', 'last pay cycle', 'ky luong truoc', 'ky truoc')],
   [
     'thisCycle',
-    words('this cycle', 'this pay cycle', 'ky luong nay', 'since payday', 'tu luc nhan luong'),
+    words(
+      'this cycle',
+      'this pay cycle',
+      'ky luong nay',
+      'since payday',
+      'tu luc nhan luong',
+      'dau ky luong',
+    ),
   ],
 ];
 
-export const CHAT = words(
-  'thanks',
-  'thank you',
-  'thx',
-  'ty',
-  'cam on',
-  'hi',
-  'hello',
-  'hey',
-  'chao',
-  'xin chao',
-  'ok',
-  'oke',
-);
 export const CAN = words(
   'can i',
   'could i',
@@ -48,8 +41,23 @@ export const CAN = words(
   'con bao nhieu',
   'con lai',
   'nen',
+  'co sao khong',
+  'co sao ko',
+  'okay to',
+  'is it ok',
 );
-export const BILLS = words('bill', 'bills', 'hoa don', 'tien dien', 'tien nuoc', 'den han', 'due');
+export const BILLS = words(
+  'bill',
+  'bills',
+  'hoa don',
+  'tien dien',
+  'tien nuoc',
+  'den han',
+  'due',
+  'tien nha',
+  'rent',
+  'han ngay',
+);
 export const HOW = words(
   'how am i doing',
   'how s my',
@@ -60,6 +68,11 @@ export const HOW = words(
   'sao roi',
   'on ko',
   'tinh hinh',
+  'on track',
+  'summary',
+  'tom tat',
+  'make it to payday',
+  'song noi den luong',
 );
 export const COMPARE = words(
   'compare',
@@ -74,6 +87,8 @@ export const COMPARE = words(
   'less than',
   'nhieu hon',
   'it hon',
+  'do hon',
+  'tiet kiem hon',
 );
 export const BREAKDOWN = words(
   'where did',
@@ -85,6 +100,19 @@ export const BREAKDOWN = words(
   'vao gi',
   'on what',
   'gom nhung gi',
+  'spend the most',
+  'tieu nhieu nhat',
+  'biggest category',
+  'share of',
+  'danh muc nao',
+  'quan nao',
+  'which shop',
+  'hay an nhat',
+  'so expensive',
+  'tieu gi',
+  'tieu nhieu the',
+  'what did i spend',
+  'spend money on',
 );
 export const LIST = words(
   'show me',
@@ -100,6 +128,11 @@ export const LIST = words(
   'xem lai',
   'nhung khoan',
   'cac khoan',
+  'how many',
+  'lan cuoi',
+  'last time',
+  'when did i last',
+  'last buy',
 );
 export const PAST = words(
   'did i spend',
@@ -117,6 +150,13 @@ export const PAST = words(
   'xai bao nhieu',
   'chi bao nhieu',
   'bao nhieu tien',
+  'total spending',
+  'spending',
+  'tong chi',
+  'dot het',
+  'het may',
+  'ton may',
+  'ton bao nhieu',
 );
 /** Words a merchant name never runs into: where it stops after "at" / "ở". */
 export const STOP = new Set([

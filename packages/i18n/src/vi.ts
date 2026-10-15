@@ -10,6 +10,7 @@ import { viReceiptEmail } from './vi-receipt-email';
 import { viBackup } from './vi-backup';
 import { viExport } from './vi-export';
 import { viAsk } from './vi-ask';
+import { viAskChat } from './vi-ask-chat';
 import { viAskLedger } from './vi-ask-ledger';
 import { viScan } from './vi-scan';
 import { viBanks } from './vi-banks';
@@ -45,6 +46,7 @@ export const vi: Catalogue = {
   ...viExport,
   ...viAsk,
   ...viAskLedger,
+  ...viAskChat,
   ...viNative,
   ...viSharing,
   ...viShareExt,

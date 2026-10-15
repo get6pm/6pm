@@ -1,0 +1,46 @@
+/** Ask's small talk, by topic and the companion's voice. Serious topics have one line for all. */
+export const enAskChat = {
+  'ask.chat.greeting.soft': 'Hi! I’m here whenever you want to check on your money.',
+  'ask.chat.greeting.cheeky': 'Hey hey. Ask me anything money-ish, I’ve got your numbers.',
+  'ask.chat.greeting.roast': 'Oh, it’s you. Come to ask how bad it is?',
+  'ask.chat.greeting.plain': 'Hello. Ask me about your spending, bills or pots.',
+  'ask.chat.thanks.soft': 'Anytime. Take care of yourself today.',
+  'ask.chat.thanks.cheeky': 'Anytime! I accept payment in days closed on time.',
+  'ask.chat.thanks.roast': 'Don’t thank me. Thank the budget you almost kept.',
+  'ask.chat.thanks.plain': 'You’re welcome.',
+  'ask.chat.offTopic.soft': 'That one’s outside my corner. Money things, though? I’m all yours.',
+  'ask.chat.offTopic.cheeky': 'Not my department. Ask me where your money went instead 👀',
+  'ask.chat.offTopic.roast': 'I’m a budget, not a search engine. Ask me about your spending.',
+  'ask.chat.offTopic.plain': 'I can only help with your money in 6pm.',
+  'ask.chat.identity':
+    'I’m your companion in 6pm. Every number I give you is worked out on your phone, from your own spends. I’m a program, not a person.',
+  'ask.chat.privacy':
+    'I can’t see your bank account. I only know what’s in 6pm, and that stays on your phone. To read a question, our server sees the question and your category and pot names; to word a line, only the few facts in it.',
+  'ask.chat.venting.soft': 'That sounds heavy. You’re not carrying it alone.',
+  'ask.chat.venting.cheeky': 'Rough one. Breathe: it’s a number, not a verdict.',
+  'ask.chat.venting.plain': 'Money stress is real.',
+  'ask.chat.goingRight': 'One thing going right:',
+  'ask.chat.freshStart': 'Tomorrow starts with a fresh line.',
+  'ask.chat.roast.soft': 'A gentle one, then:',
+  'ask.chat.roast.cheeky': 'Okay, you asked for it.',
+  'ask.chat.roast.roast': 'Brace yourself.',
+  'ask.chat.roast.plain': 'The one that stands out:',
+  'ask.chat.roastNothing.soft': 'Nothing to tease. You’re doing well.',
+  'ask.chat.roastNothing.cheeky': 'I looked. Honestly? Nothing to roast. Annoying.',
+  'ask.chat.roastNothing.roast': 'I wanted to roast you. You gave me nothing. Rude.',
+  'ask.chat.roastNothing.plain': 'Nothing stands out right now.',
+  'ask.chat.hype.soft': 'You deserve to hear this:',
+  'ask.chat.hype.cheeky': 'Hype mode on:',
+  'ask.chat.hype.roast': 'Fine. Credit where it’s due:',
+  'ask.chat.hype.plain': 'Something going well:',
+  'ask.chat.hypeNothing.soft': 'You showed up and checked. That counts.',
+  'ask.chat.hypeNothing.cheeky': 'You opened a budgeting app on purpose. Legend.',
+  'ask.chat.hypeNothing.roast': 'You’re here, which is more than most. Proud-ish.',
+  'ask.chat.hypeNothing.plain': 'Keep going. It adds up.',
+  'ask.chat.distress':
+    'I’m really sorry you’re feeling this way. You don’t have to carry it alone: talk to someone you trust, or call the Ngày Mai hotline on 096 306 1414 (1pm to 8:30pm, Wednesday to Sunday). If you’re in danger right now, call 115.',
+  'ask.chat.investing':
+    'I can’t tell you what to invest in or when; that needs a licensed adviser. I can show what you have spare each month, or how fast a pot is filling.',
+  'ask.chat.unsafe':
+    'I won’t help with that one. If money is tight, I can show what’s left until payday or what your pots could cover. If an illegal lender is threatening you, call the police on 113.',
+} as const;

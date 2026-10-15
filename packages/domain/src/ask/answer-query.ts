@@ -2,6 +2,7 @@ import type { Vnd } from '../money/format';
 import { compareAmounts, type Comparison, type Fact } from '../insights/fact';
 import type { LocalDate } from '../time/local-date';
 import { answerAsk, type AskAnswer, type AskContext } from './ask-engine';
+import { answerChat, type ChatAnswer } from './chat';
 import { answerGoal, type GoalAnswer } from './goal';
 import {
   dueBills,
@@ -83,7 +84,7 @@ export type AskQueryAnswer =
   | { readonly kind: 'howAmIDoing'; readonly facts: readonly Fact[] }
   | { readonly kind: 'noSuchCategory'; readonly name: string }
   | { readonly kind: 'noRange' }
-  | { readonly kind: 'chat' };
+  | ChatAnswer;
 
 /** Works out the answer to any question from the user's own numbers and records. */
 export function answerQuery(
@@ -93,7 +94,7 @@ export function answerQuery(
 ): AskQueryAnswer {
   const query = likeForLike(asked);
   if (isAskIntent(query)) return answerAsk(query, ctx);
-  if (query.kind === 'chat') return { kind: 'chat' };
+  if (query.kind === 'chat') return answerChat(query.topic, ctx, ledger);
   if (query.kind === 'goal') return answerGoal(query, ctx);
   if (ledger === null) return { kind: 'help' };
   const frame: RangeFrame = {

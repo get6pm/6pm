@@ -8,3 +8,5 @@ export * from './ask-ledger';
 export * from './read-prompt';
 export * from './flat-query';
 export * from './goal';
+export * from './chat';
+export * from './chat-topics';

@@ -170,6 +170,10 @@ describe('answerQuery', () => {
     expect(answerQuery({ kind: 'breakdown', range: { preset: 'today' } }, ctx, null)).toEqual({
       kind: 'help',
     });
-    expect(answerQuery({ kind: 'chat' }, ctx, null)).toEqual({ kind: 'chat' });
+    expect(answerQuery({ kind: 'chat' }, ctx, null)).toEqual({
+      kind: 'chat',
+      topic: null,
+      fact: null,
+    });
   });
 });

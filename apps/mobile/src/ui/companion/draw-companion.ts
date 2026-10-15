@@ -4,9 +4,11 @@ import { drawArmsBehind, drawArmsInFront, drawBody, drawFeet, drawGroundShadow }
 import { drawExtras, type SleepFonts } from './draw-extras';
 import { drawFace } from './draw-face';
 import { degrees, type Frame } from './draw-kit';
-import { drawBanhBao, drawSteamBurst } from './draw-banhbao';
-import { drawGiot, drawRipples, drawSplash } from './draw-giot';
+import { drawBanhBao } from './draw-banhbao';
+import { drawSteamBurst } from './draw-banhbao-steam';
+import { drawGiot, drawRainCloud, drawRipples, drawSplash } from './draw-giot';
 import { drawHac } from './draw-hac';
+import { drawCraneBurst, drawPlane } from './draw-hac-paper';
 import { drawBurst, drawRing } from './draw-max';
 import { drawNhang, drawSmokeRing } from './draw-nhang';
 import { drawRays } from './draw-rays';
@@ -57,6 +59,11 @@ export function drawCompanion(canvas: SkCanvas, fr: Frame, fonts: SleepFonts): v
   drawExtras(canvas, fr, fonts);
   if (fr.form === 'nhang') drawSmokeRing(canvas, fr);
   if (fr.form === 'banhbao') drawSteamBurst(canvas, fr);
-  if (fr.form === 'giot') drawSplash(canvas, fr);
+  if (fr.form === 'giot') {
+    drawSplash(canvas, fr);
+    drawRainCloud(canvas, fr);
+  }
+  drawPlane(canvas, fr);
+  drawCraneBurst(canvas, fr);
   drawBurst(canvas, fr);
 }

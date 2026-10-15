@@ -3,23 +3,23 @@ import { ClipOp, type SkCanvas, type SkPath } from '@shopify/react-native-skia';
 import { drawArmsBehind, drawArmsInFront, fillGradient } from './draw-body';
 import { drawFace } from './draw-face';
 import { INK, ellipse, fill, jitter, pathBuilder, stroke, type Frame } from './draw-kit';
+import { drawSnore, drawSteam, knotY } from './draw-banhbao-steam';
 import { jiggle } from './companion-shape';
 
 /**
- * Bánh Bao: a soft steamed bun on its paper square, pleated into a top knot with a red dot. It
- * squashes when it lands and jiggles as it settles, puffs up and settles as it breathes, lets
- * little clouds of steam out of its knot, and twists its pleats when it waves.
+ * Bánh Bao: a soft steamed bun sitting in a bamboo steamer, pleated into a top knot with a red
+ * dot. It squashes when it lands and jiggles as it settles, puffs up and settles as it breathes,
+ * lets little clouds of steam out of its knot, and twists its pleats when it waves.
  */
 
 const DOUGH = ['#fffbf2', '#fbeedb', '#efd3ae'];
 const DOUGH_STOPS = [0, 0.55, 1];
+const BAMBOO = ['#efc27e', '#d29a52', '#b47a38'];
+const BAMBOO_STOPS = [0, 0.5, 1];
+const SLAT = '#9b6630';
 const PLEAT = '#d2a578';
-const STEAM_EDGE = '#cfc3b8';
 const POINTS = 24;
-const PLEATS = 6;
-const STEAM_PUFFS = 3;
-const STEAM_CYCLE = 2.8;
-const BURST_SECONDS = 1.3;
+const PLEATS = 7;
 
 /** A point on the bun's edge: a tall soft dome over a flat, slightly spread bottom. */
 function edgeX(fr: Frame, i: number): number {
@@ -52,20 +52,18 @@ function bunPath(fr: Frame): SkPath {
   return path.build();
 }
 
-/** Where the knot sits: the top of the dome. */
-function knotY(fr: Frame): number {
-  'worklet';
-  return fr.cy - fr.ry * 1.1;
-}
-
-/** How far the pleats twist about the knot: a wave winds them, a landing shakes them. */
+/**
+ * How far the pleats twist about the knot: a wave winds them, a landing shakes them, a thought
+ * turns them slowly, a happy hop shakes them quickly.
+ */
 function twistOf(fr: Frame): number {
   'worklet';
   const { mood, el, since, sinceF } = fr;
   let twist = jiggle(since, 14) * 0.25 + jiggle(sinceF, 12) * 0.35;
   if (mood === 'wave') twist += Math.sin(el * 9) * 0.32;
-  if (mood === 'think') twist += 0.18;
+  if (mood === 'think') twist += 0.18 + Math.sin(el * 0.9) * 0.08;
   if (mood === 'calm') twist += Math.sin(el * 1.1) * 0.05;
+  if (mood === 'happy') twist += Math.sin(el * 10.4) * 0.12;
   return twist;
 }
 
@@ -77,13 +75,13 @@ function drawPleats(canvas: SkCanvas, fr: Frame): void {
   const ky = knotY(fr) + s * 0.012;
   const line = stroke(fr, PLEAT, Math.max(0.8, lw * 0.6));
   for (let n = 0; n < PLEATS; n++) {
-    const a = Math.PI * (1.12 + (n / (PLEATS - 1)) * 0.76);
-    const fx = cx + Math.cos(a) * rx * 0.62;
-    const fy = cy + Math.sin(a) * ry * 0.5;
-    const bend = (fx - cx) * 0.35 + twist * s * 0.08;
+    const a = Math.PI * (1.1 + (n / (PLEATS - 1)) * 0.8);
+    const fx = cx + Math.cos(a) * rx * 0.66;
+    const fy = cy + Math.sin(a) * ry * 0.48;
+    const bend = (fx - cx) * 0.4 + twist * s * 0.09;
     const path = pathBuilder(fr);
     path.moveTo(fx, fy);
-    path.quadTo((fx + cx) / 2 + bend, (fy + ky) / 2 - ry * 0.12, cx + twist * s * 0.01, ky);
+    path.quadTo((fx + cx) / 2 + bend, (fy + ky) / 2 - ry * 0.14, cx + twist * s * 0.012, ky);
     canvas.drawPath(path.build(), line);
   }
 }
@@ -94,70 +92,76 @@ function drawKnot(canvas: SkCanvas, fr: Frame): void {
   const { s, cx, lw } = fr;
   const twist = twistOf(fr);
   const ky = knotY(fr);
-  const x = cx + twist * s * 0.01;
+  const x = cx + twist * s * 0.012;
   ellipse(
     canvas,
     fr,
     x,
     ky,
-    s * 0.04,
+    s * 0.042,
     s * 0.03,
-    twist * 0.5,
+    twist * 0.6,
     fill(fr, '#fff6e8'),
     stroke(fr, INK, lw * 0.8),
   );
   canvas.drawCircle(x, ky - s * 0.004, s * 0.012, fill(fr, '#e0473e'));
 }
 
-/**
- * Steam from the knot: three small clouds that rise, swell and thin away. They breathe out with
- * the bun; asleep they come slowly.
- */
-function drawSteam(canvas: SkCanvas, fr: Frame): void {
+/** The bamboo steamer's rim: fixed to the ground, so the bun squashes and hops inside it. */
+function steamerBox(fr: Frame) {
   'worklet';
-  const { s, cx, el, lw, mood } = fr;
-  const ky = knotY(fr);
-  const pace = mood === 'sleepy' ? 0.5 : 1;
-  const breath = 0.6 + 0.4 * Math.sin(el * 2.2);
-  const edge = Math.max(0.6, lw * 0.4);
-  for (let n = 0; n < STEAM_PUFFS; n++) {
-    const p = ((el * pace) / STEAM_CYCLE + n / STEAM_PUFFS) % 1;
-    const alpha = Math.min(1, Math.sin(p * Math.PI) * 1.6) * breath;
-    const x = cx + (n - 1) * s * 0.05 + Math.sin(p * Math.PI * 2 + n * 2) * s * 0.025;
-    const y = ky - s * 0.05 - p * s * 0.2;
-    const r = s * (0.022 + 0.03 * p);
-    const puff = fill(fr, '#ffffff', alpha);
-    const rim = stroke(fr, STEAM_EDGE, edge, alpha);
-    canvas.drawCircle(x, y, r, rim);
-    canvas.drawCircle(x + r * 0.8, y + r * 0.3, r * 0.7, rim);
-    canvas.drawCircle(x, y, r, puff);
-    canvas.drawCircle(x + r * 0.8, y + r * 0.3, r * 0.7, puff);
-  }
+  const { s, cx } = fr;
+  const ground = s * 0.865;
+  const restingRy = s * 0.235;
+  const half = s * 0.335 * 1.12;
+  return {
+    top: ground - restingRy * 0.6,
+    bottom: ground + s * 0.012,
+    left: cx - half,
+    right: cx + half,
+  };
 }
 
-/** The bun: its paper square, the dough with its pleats, shine and outline, then the knot. */
+/** The dark inside of the steamer, seen past the bun's sides. */
+function drawSteamerBack(canvas: SkCanvas, fr: Frame): void {
+  'worklet';
+  const { s, cx } = fr;
+  const { top, left, right } = steamerBox(fr);
+  const rx = (right - left) / 2 - s * 0.01;
+  ellipse(canvas, fr, cx, top + s * 0.006, rx, s * 0.026, 0, fill(fr, '#7d5126'));
+}
+
+/** The steamer's front wall: woven bamboo slats under a pale lip, over the bun's lower half. */
+function drawSteamerFront(canvas: SkCanvas, fr: Frame): void {
+  'worklet';
+  const { s, lw } = fr;
+  const { top, bottom, left, right } = steamerBox(fr);
+  const corner = s * 0.03;
+  const shape = pathBuilder(fr);
+  shape.moveTo(left, top);
+  shape.lineTo(right, top);
+  shape.lineTo(right, bottom - corner);
+  shape.quadTo(right, bottom, right - corner, bottom);
+  shape.lineTo(left + corner, bottom);
+  shape.quadTo(left, bottom, left, bottom - corner);
+  const wall = shape.close().build();
+  canvas.save();
+  canvas.clipPath(wall, ClipOp.Intersect, true);
+  fillGradient(canvas, fr, 'bamboo', BAMBOO, BAMBOO_STOPS, top, bottom);
+  const slat = stroke(fr, SLAT, lw * 0.42, 0.75);
+  for (let x = left + s * 0.03; x < right; x += s * 0.042) {
+    canvas.drawLine(x, top + s * 0.03, x, bottom, slat);
+  }
+  canvas.drawLine(left, top + s * 0.024, right, top + s * 0.024, stroke(fr, SLAT, lw * 0.55));
+  canvas.drawLine(left, top + s * 0.01, right, top + s * 0.01, stroke(fr, '#fbe0a8', lw * 0.6));
+  canvas.restore();
+  canvas.drawPath(wall, stroke(fr, INK, lw * 0.85));
+}
+
+/** The bun: the dough with its pleats, shine and outline, then the knot. */
 function drawBun(canvas: SkCanvas, fr: Frame): void {
   'worklet';
   const { s, cx, cy, rx, ry, lw } = fr;
-  const paperTop = cy + ry * 0.7;
-  const paperBottom = cy + ry * 1.04;
-  const left = cx - rx * 1.02;
-  const right = cx + rx * 1.02;
-  const corner = s * 0.014;
-  const paper = pathBuilder(fr);
-  paper.moveTo(left + corner, paperTop);
-  paper.lineTo(right - corner, paperTop);
-  paper.quadTo(right, paperTop, right, paperTop + corner);
-  paper.lineTo(right, paperBottom - corner);
-  paper.quadTo(right, paperBottom, right - corner, paperBottom);
-  paper.lineTo(left + corner, paperBottom);
-  paper.quadTo(left, paperBottom, left, paperBottom - corner);
-  paper.lineTo(left, paperTop + corner);
-  paper.quadTo(left, paperTop, left + corner, paperTop);
-  const square = paper.close().build();
-  canvas.drawPath(square, fill(fr, '#f3e1bd'));
-  canvas.drawPath(square, stroke(fr, INK, lw * 0.75));
-
   const bun = bunPath(fr);
   canvas.save();
   canvas.clipPath(bun, ClipOp.Intersect, true);
@@ -170,31 +174,15 @@ function drawBun(canvas: SkCanvas, fr: Frame): void {
   drawKnot(canvas, fr);
 }
 
-/** A big breath of steam when Bánh Bao is chosen. */
-export function drawSteamBurst(canvas: SkCanvas, fr: Frame): void {
-  'worklet';
-  if (fr.sinceF < 0 || fr.sinceF >= BURST_SECONDS) return;
-  const { s, cx, lw } = fr;
-  const p = fr.sinceF / BURST_SECONDS;
-  const fade = 1 - p;
-  const ky = knotY(fr);
-  for (let n = 0; n < 5; n++) {
-    const a = -Math.PI / 2 + (n - 2) * 0.45;
-    const d = s * (0.06 + 0.22 * p);
-    const x = cx + Math.cos(a) * d;
-    const y = ky + Math.sin(a) * d;
-    const r = s * (0.03 + 0.04 * p);
-    canvas.drawCircle(x, y, r, fill(fr, '#ffffff', 0.9 * fade));
-    canvas.drawCircle(x, y, r, stroke(fr, STEAM_EDGE, lw * 0.5, fade));
-  }
-}
-
-/** Bánh Bao inside the tilted group: arms, the bun, its steam, then the face. */
+/** Bánh Bao inside the tilted group: the steamer round the bun, its steam, arms, face, snore. */
 export function drawBanhBao(canvas: SkCanvas, fr: Frame): void {
   'worklet';
+  drawSteamerBack(canvas, fr);
   drawArmsBehind(canvas, fr);
   drawBun(canvas, fr);
+  drawSteamerFront(canvas, fr);
   drawSteam(canvas, fr);
   drawArmsInFront(canvas, fr);
   drawFace(canvas, fr);
+  drawSnore(canvas, fr);
 }

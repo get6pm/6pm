@@ -11,6 +11,9 @@ import { curves, durations } from '@6pm/theme';
 
 const ease = Easing.bezier(...curves.enter);
 
+/** Wider than any amount at any size. */
+const STAGE = 4096;
+
 /**
  * Draws its child at its natural size and scales it down, from the left, when it is wider than
  * the space it has, as a long amount does in a hero number. The scale is a transform, so the
@@ -75,11 +78,24 @@ export function FitWidth({
   return (
     <Animated.View style={[centred ? { alignSelf: 'stretch' } : null, box]}>
       <View onLayout={onRoom} style={{ position: 'absolute', left: 0, right: 0, height: 0 }} />
+      {/* A stage far wider than any screen, so the child (a plain Text too) lays out on one line at
+          its own width instead of wrapping to the room it has. */}
       <Animated.View
-        onLayout={onNatural}
-        style={[{ position: 'absolute', left: 0, top: 0, transformOrigin: 'left top' }, content]}
+        pointerEvents="box-none"
+        style={[
+          {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: STAGE,
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            transformOrigin: 'left top',
+          },
+          content,
+        ]}
       >
-        {children}
+        <View onLayout={onNatural}>{children}</View>
       </Animated.View>
     </Animated.View>
   );

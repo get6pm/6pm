@@ -22,8 +22,18 @@ const engine: Engine = Object.assign(Object.create(prototypeLooks) as PrototypeL
   props: {},
 });
 
-function select(look: LookId, config: Partial<LookConfig> | undefined): Engine {
-  engine.state = { theme: look, tryOn: null, tcfg: config ? { [look]: config } : {} };
+function select(
+  look: LookId,
+  config: Partial<LookConfig> | undefined,
+  scene: { readonly tab?: string; readonly closed?: boolean } = {},
+): Engine {
+  engine.state = {
+    theme: look,
+    tryOn: null,
+    tcfg: config ? { [look]: config } : {},
+    tab: scene.tab ?? 'today',
+    closed: scene.closed ?? false,
+  };
   return engine;
 }
 
@@ -35,6 +45,10 @@ export interface FrameInput {
   readonly hour: number;
   /** Serious mode: slate palette, no atmosphere. */
   readonly serious: boolean;
+  /** The tab on show (default Today): a scene can draw on Today only. */
+  readonly tab?: string;
+  /** Whether today is closed (default not): a scene can mark the close. */
+  readonly closed?: boolean;
 }
 
 /** The colour tokens of one frame. */
@@ -68,7 +82,12 @@ export function swatchesFor(look: LookId, variantIndex: number): readonly string
  * `sunOpacity` is the sun's visibility at this hour (see the sky layer).
  */
 export function atmosphereFor(input: FrameInput, palette: Palette, sunOpacity: number) {
-  return select(input.look, input.config).atm(palette, input.hour, input.serious, sunOpacity);
+  return select(input.look, input.config, input).atm(
+    palette,
+    input.hour,
+    input.serious,
+    sunOpacity,
+  );
 }
 
 /**
@@ -81,7 +100,7 @@ export function sunFor<S extends object>(
   sun: S,
 ): S & Record<string, unknown> {
   const styled = { ...sun } as S & Record<string, unknown>;
-  select(input.look, input.config).sunFx(styled, palette, input.hour, input.serious);
+  select(input.look, input.config, input).sunFx(styled, palette, input.hour, input.serious);
   return styled;
 }
 

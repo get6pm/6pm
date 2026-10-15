@@ -6,7 +6,7 @@ import { LOOK_IDS } from './look-types';
 describe('paletteFor', () => {
   it('reproduces Golden Hour at 18:07, the designed Friday', () => {
     const p = paletteFor({ look: 'golden', hour: 18.12, serious: false });
-    expect(p.st).toEqual(['#1c275a', '#bc376c', '#ff7237', '#ffc63d', '#ff4180']);
+    expect(p.st).toEqual(['#1c275a', '#7a254c', '#733424', '#ffc63d', '#ff4180']);
     expect(p.dark).toBe(true);
     expect(p.accent).toBe('#ff8552');
     expect(p.sheet).toBe('#3a1b1f');
@@ -56,6 +56,37 @@ describe('catalogue', () => {
   });
 
   it('gives three swatches per variant', () => {
-    expect(swatchesFor('riso', 0)).toEqual(['#f5efe3', '#ff48b0', '#3a5bd9']);
+    expect(swatchesFor('riso', 0)).toEqual(['#f3eee3', '#ff4fa8', '#2f4cb0']);
+  });
+
+  it('lists every look the prototype sells, in its order', () => {
+    expect(Object.keys(looks()).filter((id) => id !== 'v1')).toEqual([...LOOK_IDS]);
+  });
+});
+
+describe('type and accent ink', () => {
+  it('pairs each look with a display face and an interface face', () => {
+    const lacquer = paletteFor({ look: 'lacquer', hour: 13, serious: false });
+    expect(lacquer.dispFont).toContain('Bodoni Moda');
+    expect(lacquer.uiFont).toContain('Literata');
+    expect(paletteFor({ look: 'glaze', hour: 13, serious: false }).uiFont).toContain('Epilogue');
+  });
+
+  it('keeps the system face for Basic, Golden Hour and serious mode', () => {
+    for (const look of ['basic', 'golden'] as const) {
+      expect(paletteFor({ look, hour: 13, serious: false }).uiFont).toContain('-apple-system');
+    }
+    expect(paletteFor({ look: 'riso', hour: 13, serious: true }).uiFont).toContain('-apple-system');
+  });
+
+  it('gives each look its own ink on the accent', () => {
+    expect(paletteFor({ look: 'golden', hour: 18.12, serious: false }).accentFg).toBe('#2a1424');
+    expect(paletteFor({ look: 'lacquer', hour: 18.12, serious: false }).accentFg).toBe('#1c1006');
+  });
+
+  it('shrinks Riso Club’s wide numbers', () => {
+    const riso = paletteFor({ look: 'riso', hour: 13, serious: false });
+    expect(riso.heroSize).toBe('76px');
+    expect(riso.numK).toBe(0.8);
   });
 });

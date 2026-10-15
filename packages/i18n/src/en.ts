@@ -23,6 +23,7 @@ import { enPlan } from './en-plan';
 import { enClose } from './en-close';
 import { enCompanion } from './en-companion';
 import { enInsights } from './en-insights';
+import { enInsightsHabits } from './en-insights-habits';
 import { enToday } from './en-today';
 import { enCategories } from './en-categories';
 import { enTravel } from './en-travel';
@@ -43,6 +44,7 @@ export const en = {
   ...enLooks,
   ...enCompanion,
   ...enInsights,
+  ...enInsightsHabits,
   ...enBackup,
   ...enExport,
   ...enAsk,

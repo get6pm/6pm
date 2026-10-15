@@ -13,37 +13,43 @@ export const viInsights: { readonly [Key in keyof typeof enInsights]: Entry } = 
   'insight.todayOver.soft.1': 'Hôm nay lố {over}. Không sao đâu, mai còn {tomorrow}.',
   'insight.todayOver.soft.2':
     'Hôm nay hơi nhiều, lố {over}. Kế hoạch tự cân lại: mai còn {tomorrow}.',
-  'insight.todayOver.cheeky.1': 'Lố {over} rồi nè. Mai còn {tomorrow}. Mình làm lại.',
-  'insight.todayOver.cheeky.2': 'Hôm nay vượt vạch {over}. Mai: {tomorrow}. Hít thở sâu nha.',
-  'insight.todayOver.roast.1': 'Lố {over}. Gan ghê. Mai còn {tomorrow}, nhẹ tay thôi nha.',
-  'insight.todayOver.roast.2': 'Vạch nói không, hôm nay nói thêm {over}. Mai còn {tomorrow}.',
+  'insight.todayOver.cheeky.1': 'Lố {over} rồi nè. Mai còn {tomorrow}, làm lại từ đầu.',
+  'insight.todayOver.cheeky.2': 'Hôm nay vượt vạch {over}. Bước ngoặt thôi, mai còn {tomorrow}.',
+  'insight.todayOver.roast.1':
+    'Lố {over}. Cái vạch cố lắm rồi đó. Mai còn {tomorrow}, nhẹ tay nha.',
+  'insight.todayOver.roast.2':
+    'Vạch nói không, hôm nay nói thêm {over}. Mai còn {tomorrow}, hiệp hai nha.',
   'insight.todayOver.plain': 'Hôm nay vượt mức {over}. Mức ngày mai là {tomorrow}.',
 
   'insight.todayUnder.soft.1': 'Mới tiêu {spent}, vẫn còn {safe} an toàn. Đều đều vậy là đẹp.',
   'insight.todayUnder.soft.2': 'Hôm nay vẫn còn {safe} nè. Bạn đang ổn lắm.',
-  'insight.todayUnder.cheeky.1': 'Còn {safe} hôm nay. Xài khôn nha. Hoặc không, tùy bạn.',
+  'insight.todayUnder.cheeky.1': 'Còn {safe} hôm nay. Xài khéo nha, hoặc để dành, tùy bạn.',
   'insight.todayUnder.cheeky.2': 'Đã {spent}, còn {safe}. Mượt ghê.',
-  'insight.todayUnder.roast.1': 'Mới {spent} thôi hả? Hôm nay ai nhập vậy ta.',
-  'insight.todayUnder.roast.2': 'Còn {safe} an toàn. Mình suýt tự hào rồi đó.',
+  'insight.todayUnder.roast.1': 'Mới {spent} thôi hả? Ví cũng bất ngờ luôn. Còn {safe} an toàn nè.',
+  'insight.todayUnder.roast.2': 'Còn {safe} an toàn. Hơi đáng nghi, nhưng cứ vậy nha.',
   'insight.todayUnder.plain': 'Hôm nay đã tiêu {spent}, còn {safe} an toàn.',
 
   'insight.noSpendYet.soft.1': 'Chưa tiêu gì hết. Cả {line} hôm nay vẫn là của bạn.',
   'insight.noSpendYet.soft.2': 'Trang mới tinh: {line} cho hôm nay.',
   'insight.noSpendYet.cheeky.1': 'Chưa đồng nào. {line} có ngứa tay chưa?',
   'insight.noSpendYet.cheeky.2': 'Nguyên {line} hôm nay, chưa đụng tới. Tạm thời thôi.',
-  'insight.noSpendYet.roast.1': 'Chưa tiêu gì. Ngày còn dài mà.',
-  'insight.noSpendYet.roast.2': '{line} nằm im chưa ai đụng. Đáng nghi ghê.',
+  'insight.noSpendYet.roast.1': 'Chưa tiêu gì. {line} đang chờ coi bạn tính sao.',
+  'insight.noSpendYet.roast.2': '{line} nằm im chưa ai đụng. Đáng nghi ghê, cứ giữ vậy nha.',
   'insight.noSpendYet.plain': 'Chưa tiêu gì. Mức hôm nay là {line}.',
 
   'insight.waitingTonight.soft.1': {
     other: '{count} khoản ({amount}) chờ tối nay chốt. Một phút là xong.',
   },
   'insight.waitingTonight.soft.2': { other: 'Tối nay xem lại {count} khoản, tổng {amount} nha.' },
-  'insight.waitingTonight.cheeky.1': { other: '{count} khoản đang chờ bạn phán xử tối nay.' },
+  'insight.waitingTonight.cheeky.1': {
+    other: '{count} khoản ({amount}) đang chờ bạn phán xử tối nay.',
+  },
   'insight.waitingTonight.cheeky.2': {
     other: 'Chốt ngày tối nay: {count} khoản, {amount}. Dễ ợt.',
   },
-  'insight.waitingTonight.roast.1': { other: '{count} khoản đang chờ. Tụi nó không tự chốt đâu.' },
+  'insight.waitingTonight.roast.1': {
+    other: '{count} khoản, {amount}, đang chờ. Tụi nó không tự chốt đâu, một phút là xong.',
+  },
   'insight.waitingTonight.roast.2': {
     other: '{count} khoản, {amount}, đang chờ bạn nói “ừ, của mình đó”.',
   },
@@ -81,8 +87,10 @@ export const viInsights: { readonly [Key in keyof typeof enInsights]: Entry } = 
   'insight.categoryPaceUp.cheeky.1':
     '{category}: đã {now} rồi. Kỳ trước lúc này mới {before}. Hừm.',
   'insight.categoryPaceUp.cheeky.2': '{category} đang lên hương: {now} so với {before}.',
-  'insight.categoryPaceUp.roast.1': '{category} đã {now}. Kỳ trước: {before}. Mình thấy hết nha.',
-  'insight.categoryPaceUp.roast.2': 'Đã {now} cho {category}. Kỳ trước {before}. Nói vậy thôi.',
+  'insight.categoryPaceUp.roast.1':
+    '{category} đã {now}. Kỳ trước: {before}. Mình thấy hết nha, tuần sau nhẹ lại là cân.',
+  'insight.categoryPaceUp.roast.2':
+    'Đã {now} cho {category}, kỳ trước {before}. Nói vậy thôi, thương mới nói.',
   'insight.categoryPaceUp.plain': '{category}: kỳ này {now}, cùng lúc kỳ trước {before}.',
 
   'insight.categoryPaceDown.soft.1': '{category} giảm còn {now}, kỳ trước {before}. Dễ thương ghê.',
@@ -90,7 +98,7 @@ export const viInsights: { readonly [Key in keyof typeof enInsights]: Entry } = 
   'insight.categoryPaceDown.cheeky.1': '{category}: {now}, giảm từ {before}. Giỏi dữ ta.',
   'insight.categoryPaceDown.cheeky.2': '{category} đi ăn kiêng rồi: {now} so với {before}.',
   'insight.categoryPaceDown.roast.1':
-    '{category} chỉ {now}? Kỳ trước {before} lận. Ai thay bạn vậy?',
+    '{category} chỉ {now}? Kỳ trước {before} lận. Giữ phong độ này nha.',
   'insight.categoryPaceDown.roast.2': '{now} cho {category}, giảm từ {before}. Trưởng thành rồi.',
   'insight.categoryPaceDown.plain': '{category}: kỳ này {now}, cùng lúc kỳ trước {before}.',
 
@@ -119,14 +127,16 @@ export const viInsights: { readonly [Key in keyof typeof enInsights]: Entry } = 
   'insight.biggestSpend.cheeky.1': 'Tâm điểm tuần này: {merchant}, {amount}.',
   'insight.biggestSpend.cheeky.2': '{amount} ở {merchant}. Tự thưởng hả, hiểu rồi.',
   'insight.biggestSpend.roast.1': '{amount} ở {merchant}. Nhân vật chính của tuần.',
-  'insight.biggestSpend.roast.2': '{merchant} lấy {amount} tuần này. Đáng không? Khỏi trả lời.',
+  'insight.biggestSpend.roast.2':
+    '{merchant} lấy {amount} tuần này. Đáng không? Khỏi trả lời, kế hoạch lo được.',
   'insight.biggestSpend.plain': 'Khoản lớn nhất tuần này: {amount} ở {merchant}.',
 
   'insight.underStreak.soft.1': '{days} ngày liền dưới mức. Bạn vững ghê.',
   'insight.underStreak.soft.2': '{days} ngày êm ả liên tiếp.',
   'insight.underStreak.cheeky.1': '{days} ngày dưới mức. Thời kỳ chuỗi đẹp.',
   'insight.underStreak.cheeky.2': 'Dưới mức {days} ngày liền. Đừng nói gở nha.',
-  'insight.underStreak.roast.1': '{days} ngày dưới mức. Ai dạy bạn vậy?',
+  'insight.underStreak.roast.1':
+    '{days} ngày dưới mức. Mình soạn sẵn câu chọc rồi mà không dùng được.',
   'insight.underStreak.roast.2': '{days} ngày liền. Mình sắp hết chuyện để chọc rồi.',
   'insight.underStreak.plain': '{days} ngày đã chốt liên tiếp ở mức hoặc dưới mức.',
 
@@ -134,7 +144,7 @@ export const viInsights: { readonly [Key in keyof typeof enInsights]: Entry } = 
   'insight.closeStreak.soft.2': 'Chuỗi chốt ngày {days} ngày. Cảm ơn bạn đã ghé mỗi tối.',
   'insight.closeStreak.cheeky.1': 'Chốt {days} ngày liền. Mở khóa thói quen.',
   'insight.closeStreak.cheeky.2': 'Chuỗi: {days}. Tối nay thêm một nữa.',
-  'insight.closeStreak.roast.1': '{days} ngày liền. Kiên trì? Bạn hả?',
+  'insight.closeStreak.roast.1': 'Chốt liền {days} ngày không sót buổi nào. Giữ chuỗi nha.',
   'insight.closeStreak.roast.2': 'Chốt liền {days} ngày. Giờ mà đứt là tiếc lắm.',
   'insight.closeStreak.plain': 'Đã chốt {days} ngày liên tiếp.',
 
@@ -147,14 +157,14 @@ export const viInsights: { readonly [Key in keyof typeof enInsights]: Entry } = 
   'insight.weekSpare.roast.1': {
     other: '{count} ngày dưới mức, dư {spare}. Đừng xài một lần hết nha.',
   },
-  'insight.weekSpare.roast.2': { other: 'Tuần này bạn dư {spare}. Ai đây ta.' },
+  'insight.weekSpare.roast.2': { other: 'Tuần này dư {spare}. Thôi được, cho qua.' },
   'insight.weekSpare.plain': { other: 'Các ngày đã chốt tuần này dư {spare}.' },
 
   'insight.weekOver.soft.1': 'Tuần này lố {over}. Mấy ngày tới nhỏ lại chút, vậy cũng ổn mà.',
   'insight.weekOver.soft.2': 'Tuần này lố {over}. Mình cùng cân lại nha.',
   'insight.weekOver.cheeky.1': 'Tuần lố {over}. Phần còn lại của tháng tự chỉnh.',
   'insight.weekOver.cheeky.2': 'Lố {over} tới giờ. Bước ngoặt thôi, chưa phải kết.',
-  'insight.weekOver.roast.1': 'Tuần này: lố {over}. Tháng nhớ dai lắm đó.',
+  'insight.weekOver.roast.1': 'Tuần này lố {over}. Tuần sau nhẹ lại là tháng vẫn ổn.',
   'insight.weekOver.roast.2': 'Lố {over}. Tuần để quên, tháng để sửa.',
   'insight.weekOver.plain': 'Các ngày đã chốt tuần này vượt mức {over}.',
 
@@ -162,7 +172,7 @@ export const viInsights: { readonly [Key in keyof typeof enInsights]: Entry } = 
   'insight.potMilestone.soft.2': 'Đã được {percent}% đường tới hũ {pot}.',
   'insight.potMilestone.cheeky.1': 'Hũ {pot}: {percent}% rồi. Sắp thành thật rồi.',
   'insight.potMilestone.cheeky.2': 'Xong {percent}% hũ {pot}. Cho nó ăn tiếp nha.',
-  'insight.potMilestone.roast.1': 'Hũ {pot} {percent}%. Tiết kiệm? Bạn á?',
+  'insight.potMilestone.roast.1': 'Hũ {pot} {percent}% rồi. Hũ đang thắng, cứ để nó thắng.',
   'insight.potMilestone.roast.2': '{percent}% tới hũ {pot}. Đừng có cạy nha.',
   'insight.potMilestone.plain': 'Hũ {pot} đã qua {percent}% mục tiêu.',
 
@@ -170,8 +180,8 @@ export const viInsights: { readonly [Key in keyof typeof enInsights]: Entry } = 
   'insight.potFull.soft.2': 'Hũ {pot}: xong. Tận hưởng thật trọn nha.',
   'insight.potFull.cheeky.1': 'Hũ {pot} đầy rồi! Tung hoa, nhưng nhỏ nhỏ thôi.',
   'insight.potFull.cheeky.2': 'Hũ {pot}, đầy tới miệng.',
-  'insight.potFull.roast.1': 'Hũ {pot} đầy rồi. Mình tưởng không nổi. Vậy mà nổi.',
-  'insight.potFull.roast.2': 'Hũ đầy: {pot}. Giờ đừng xài vào chuyện tào lao nha.',
+  'insight.potFull.roast.1': 'Hũ {pot} đầy rồi. Mình soạn sẵn câu chọc mà bạn không cần tới.',
+  'insight.potFull.roast.2': 'Hũ đầy: {pot}. Giờ dùng đúng cho việc đã định nha.',
   'insight.potFull.plain': 'Hũ {pot} đã đạt mục tiêu.',
 
   'insight.workToClaim.soft.1': { other: '{count} khoản công việc ({amount}) chờ bạn đòi lại.' },

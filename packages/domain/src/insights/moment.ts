@@ -15,10 +15,30 @@ import {
   repeatMerchantFacts,
 } from './pattern-facts';
 import { closeStreakFacts, potFacts, underStreakFacts, weekFacts } from './streak-facts';
+import { cycleHalfwayFacts, firstWeekPaceFacts, paceFacts } from './cycle-facts';
+import {
+  lateNightFacts,
+  likelySubscriptionFacts,
+  recordDayFacts,
+  weekendHeavyFacts,
+} from './habit-facts';
+import { backUnderFacts, logGapFacts, noSpendFacts } from './quiet-facts';
 
-/** Every fact true right now, in no particular order. */
+/** Good news that does not rest on what was logged: still true when the log has gone quiet. */
+const PRAISE_WITHOUT_LOG: ReadonlySet<FactKind> = new Set([
+  'closeStreak',
+  'paydaySoon',
+  'potMilestone',
+  'potFull',
+]);
+
+/**
+ * Every fact true right now, in no particular order. While nothing has been logged for days, good
+ * news read from spending is left out: a quiet log is more likely forgotten than frugal.
+ */
 export function collectFacts(input: InsightInput): Fact[] {
-  return [
+  const gap = logGapFacts(input);
+  const facts = [
     ...todayFacts(input),
     ...waitingFacts(input),
     ...paydayFacts(input),
@@ -32,7 +52,18 @@ export function collectFacts(input: InsightInput): Fact[] {
     ...underStreakFacts(input),
     ...weekFacts(input),
     ...potFacts(input),
+    ...noSpendFacts(input),
+    ...backUnderFacts(input),
+    ...weekendHeavyFacts(input),
+    ...recordDayFacts(input),
+    ...likelySubscriptionFacts(input),
+    ...lateNightFacts(input),
+    ...cycleHalfwayFacts(input),
+    ...firstWeekPaceFacts(input),
+    ...paceFacts(input),
   ];
+  if (gap.length === 0) return facts;
+  return [...gap, ...facts.filter((f) => f.tone !== 'good' || PRAISE_WITHOUT_LOG.has(f.kind))];
 }
 
 /**
@@ -59,6 +90,17 @@ const MOMENT_KINDS: Readonly<Record<Moment, ReadonlySet<FactKind>>> = {
     'potMilestone',
     'potFull',
     'workToClaim',
+    'noSpendDay',
+    'noSpendStreak',
+    'backUnder',
+    'logGap',
+    'weekendHeavy',
+    'likelySubscription',
+    'lateNight',
+    'cycleHalfway',
+    'firstWeekPace',
+    'paceSpare',
+    'paceShort',
   ]),
   capture: new Set<FactKind>([
     'repeatMerchant',
@@ -66,6 +108,9 @@ const MOMENT_KINDS: Readonly<Record<Moment, ReadonlySet<FactKind>>> = {
     'biggestSpend',
     'categoryPace',
     'todayOver',
+    'recordDay',
+    'likelySubscription',
+    'lateNight',
   ]),
   close: new Set<FactKind>([
     'todayUnder',
@@ -77,6 +122,10 @@ const MOMENT_KINDS: Readonly<Record<Moment, ReadonlySet<FactKind>>> = {
     'biggestSpend',
     'potMilestone',
     'potFull',
+    'noSpendDay',
+    'noSpendStreak',
+    'backUnder',
+    'recordDay',
   ]),
   week: new Set<FactKind>([
     'weekSpare',
@@ -84,8 +133,14 @@ const MOMENT_KINDS: Readonly<Record<Moment, ReadonlySet<FactKind>>> = {
     'repeatMerchant',
     'categoryPace',
     'biggestSpend',
+    'noSpendStreak',
+    'weekendHeavy',
+    'likelySubscription',
+    'paceSpare',
+    'paceShort',
   ]),
   reminder: new Set<FactKind>([
+    'logGap',
     'waitingTonight',
     'todayOver',
     'todayUnder',

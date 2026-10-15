@@ -1,8 +1,8 @@
 import { designAmount, VND } from '../money/currency';
-import { countsTowardDay } from '../spend/spend';
 import { addDays, diffDays, startOfWeek } from '../time/local-date';
 import {
   compareAmounts,
+  countedSpends,
   countSlot,
   merchantKey,
   moneySlot,
@@ -22,12 +22,6 @@ const REPEAT_VISITS = 3;
 const BIG_LINE_TIMES = 2;
 const BIG_FLOOR_DONG = 150_000;
 
-function counted(input: InsightInput, from: string, to: string): InsightSpend[] {
-  return input.spends.filter(
-    (s) => s.day >= from && s.day <= to && countsTowardDay(s, input.notDaily),
-  );
-}
-
 function byCategory(spends: readonly InsightSpend[]): Map<string, number> {
   const totals = new Map<string, number>();
   for (const s of spends) totals.set(s.category, (totals.get(s.category) ?? 0) + s.amount);
@@ -45,8 +39,8 @@ export function categoryPaceFacts(input: InsightInput): Fact[] {
   const previousEnd = addDays(previousCycleStart, elapsed);
   if (previousEnd >= cycle.start) return [];
 
-  const now = byCategory(counted(input, cycle.start, today));
-  const before = byCategory(counted(input, previousCycleStart, previousEnd));
+  const now = byCategory(countedSpends(input, cycle.start, today));
+  const before = byCategory(countedSpends(input, previousCycleStart, previousEnd));
   const minimum = designAmount(MIN_PACE_DONG, input.currency ?? VND);
   const facts: { fact: Fact; change: number }[] = [];
   for (const category of new Set([...now.keys(), ...before.keys()])) {
@@ -84,12 +78,21 @@ export function categoryPaceFacts(input: InsightInput): Fact[] {
 
 /** Places visited again and again this week: "the 4th Highlands since Monday". */
 export function repeatMerchantFacts(input: InsightInput): Fact[] {
-  const groups = new Map<string, { merchant: string; visits: number; amount: number }>();
-  for (const s of counted(input, startOfWeek(input.today), input.today)) {
+  const groups = new Map<
+    string,
+    { merchant: string; visits: number; amount: number; categories: Set<string> }
+  >();
+  for (const s of countedSpends(input, startOfWeek(input.today), input.today)) {
     const key = merchantKey(s.merchant);
     if (key === '') continue;
-    const group = groups.get(key) ?? { merchant: s.merchant.trim(), visits: 0, amount: 0 };
+    const group = groups.get(key) ?? {
+      merchant: s.merchant.trim(),
+      visits: 0,
+      amount: 0,
+      categories: new Set<string>(),
+    };
     group.visits += 1;
+    group.categories.add(s.category);
     group.amount += s.amount;
     groups.set(key, group);
   }
@@ -107,6 +110,7 @@ export function repeatMerchantFacts(input: InsightInput): Fact[] {
         visits: countSlot(g.visits),
         amount: moneySlot(g.amount),
       },
+      about: [...g.categories],
     }));
 }
 
@@ -118,7 +122,7 @@ export function firstTimeFacts(input: InsightInput): Fact[] {
   // Without an earlier span to look at, everything would be "new".
   if (seen.size === 0) return [];
   const firsts = new Map<string, InsightSpend>();
-  for (const s of counted(input, input.today, input.today)) {
+  for (const s of countedSpends(input, input.today, input.today)) {
     const key = merchantKey(s.merchant);
     if (key !== '' && !seen.has(key) && !firsts.has(key)) firsts.set(key, s);
   }
@@ -132,6 +136,7 @@ export function firstTimeFacts(input: InsightInput): Fact[] {
       merchant: { type: 'merchant', value: s.merchant.trim() },
       amount: moneySlot(s.amount),
     },
+    about: [s.category],
   }));
 }
 
@@ -139,7 +144,7 @@ export function firstTimeFacts(input: InsightInput): Fact[] {
 export function biggestSpendFacts(input: InsightInput): Fact[] {
   const bigFloor = designAmount(BIG_FLOOR_DONG, input.currency ?? VND);
   const floor = Math.max(bigFloor, input.day.line * BIG_LINE_TIMES);
-  const biggest = counted(input, startOfWeek(input.today), input.today)
+  const biggest = countedSpends(input, startOfWeek(input.today), input.today)
     .filter((s) => s.amount >= floor)
     .sort((a, b) => b.amount - a.amount || a.id.localeCompare(b.id))[0];
   if (biggest === undefined) return [];

@@ -1,6 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { FACT_KINDS, moneyFormat, vndLocale, type Fact } from '@6pm/domain';
+import {
+  FACT_KINDS,
+  FACT_SLOTS,
+  moneyFormat,
+  vndLocale,
+  type Fact,
+  type FactKind,
+} from '@6pm/domain';
 import { t, type Language } from '@6pm/i18n';
 
 /** The catalogue looked up by keys built at run time. */
@@ -46,6 +53,21 @@ const billDue = (days: number): Fact => ({
   },
 });
 
+/** Each catalogue name with the kind of fact whose slots its lines use. */
+const catalogueKinds: [string, FactKind][] = FACT_KINDS.flatMap((kind): [string, FactKind][] =>
+  kind === 'categoryPace' || kind === 'firstWeekPace'
+    ? [
+        [`${kind}Up`, kind],
+        [`${kind}Down`, kind],
+      ]
+    : kind === 'billDue'
+      ? [
+          ['billDue', kind],
+          ['billDueToday', kind],
+        ]
+      : [[kind, kind]],
+);
+
 describe('slotValues', () => {
   it('formats each slot in the user’s language', () => {
     expect(slotValues(repeat, words('en'))).toEqual({
@@ -75,21 +97,29 @@ describe('catalogueLine', () => {
   });
 
   it('has a line for every kind of fact in every voice and variant, in both languages', () => {
-    const kinds = FACT_KINDS.flatMap((kind) =>
-      kind === 'categoryPace'
-        ? ['categoryPaceUp', 'categoryPaceDown']
-        : kind === 'billDue'
-          ? ['billDue', 'billDueToday']
-          : [kind],
-    );
     // A missing key has no entry to read, so looking it up throws.
     const line = (language: Language, key: string) => lookUp(language, key, { count: 2 });
     for (const language of ['en', 'vi'] as const) {
-      for (const kind of kinds) {
+      for (const [kind] of catalogueKinds) {
         expect(line(language, `insight.${kind}.plain`)).not.toBe('');
         for (const voice of ['soft', 'cheeky', 'roast']) {
           for (const variant of [1, 2]) {
             expect(line(language, `insight.${kind}.${voice}.${String(variant)}`)).not.toBe('');
+          }
+        }
+      }
+    }
+  });
+
+  it('fills every placeholder of every line from its kind’s slots', () => {
+    for (const language of ['en', 'vi'] as const) {
+      for (const [kind, factKind] of catalogueKinds) {
+        const params = Object.fromEntries(FACT_SLOTS[factKind].map((slot) => [slot, 'x']));
+        const keys = ['plain', 'soft.1', 'soft.2', 'cheeky.1', 'cheeky.2', 'roast.1', 'roast.2'];
+        for (const variant of keys) {
+          for (const count of [1, 2]) {
+            const filled = lookUp(language, `insight.${kind}.${variant}`, { ...params, count });
+            expect([kind, variant, filled]).toEqual([kind, variant, filled.replace(/[{}]/g, '')]);
           }
         }
       }

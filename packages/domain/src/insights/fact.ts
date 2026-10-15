@@ -4,7 +4,7 @@ import type { DailyNumber } from '../plan/daily-number';
 import type { PayCycle } from '../plan/pay-cycle';
 import type { DiarySpend } from '../diary/week-recap';
 import type { ClosedDayTotal } from '../diary/calendar';
-import type { SpendSource } from '../spend/spend';
+import { countsTowardDay, type SpendSource } from '../spend/spend';
 import type { LocalDate } from '../time/local-date';
 
 /**
@@ -43,6 +43,18 @@ export const FACT_SLOTS = {
   potMilestone: ['pot', 'percent'],
   potFull: ['pot'],
   workToClaim: ['count', 'amount'],
+  noSpendDay: ['kept'],
+  noSpendStreak: ['days', 'kept'],
+  backUnder: ['spare'],
+  logGap: ['days', 'since'],
+  weekendHeavy: ['weekend', 'weekday'],
+  recordDay: ['amount', 'days'],
+  likelySubscription: ['merchant', 'amount', 'months'],
+  lateNight: ['merchant', 'amount'],
+  cycleHalfway: ['percent', 'left'],
+  firstWeekPace: ['percent', 'even', 'compare'],
+  paceSpare: ['spare', 'payday'],
+  paceShort: ['runsOut', 'payday'],
 } as const satisfies Record<string, readonly string[]>;
 
 export type FactKind = keyof typeof FACT_SLOTS;
@@ -63,6 +75,8 @@ export interface FactOf<K extends FactKind> {
   readonly salience: number;
   readonly repeatAfterDays: number;
   readonly slots: { readonly [S in (typeof FACT_SLOTS)[K][number]]: FactSlot };
+  /** Categories the fact is about beyond its slots, such as the spends at a merchant it names. */
+  readonly about?: readonly string[];
 }
 
 export type Fact = { [K in FactKind]: FactOf<K> }[FactKind];
@@ -76,6 +90,11 @@ export function slotsOf(fact: Fact): Readonly<Record<string, FactSlot | undefine
 export interface InsightSpend extends DiarySpend {
   readonly id: string;
   readonly source: SpendSource;
+  /**
+   * The hour on the phone's clock the spend was made (18.5 is half past six), when its time is
+   * known and falls on its money day. Only sources that record the moment of payment are read.
+   */
+  readonly hour?: number;
 }
 
 export interface InsightBill {
@@ -103,7 +122,10 @@ export interface InsightInput {
   readonly cycle: PayCycle;
   /** Where the cycle before this one started, when there was one; patterns compare against it. */
   readonly previousCycleStart: LocalDate | null;
-  /** Spends from `previousCycleStart` (or this cycle's start) through today, any status. */
+  /**
+   * Spends through today, any status, from `previousCycleStart` (or this cycle's start) at least;
+   * the phone reads a cycle further back so monthly habits can be seen.
+   */
   readonly spends: readonly InsightSpend[];
   /** Closed days over the same span. */
   readonly closed: readonly ClosedDayTotal[];
@@ -112,6 +134,13 @@ export interface InsightInput {
   readonly pots: readonly InsightPot[];
   /** The home currency, for what counts as worth a word; đồng when not given. */
   readonly currency?: Currency;
+}
+
+/** Spends counted toward the daily number, from `from` through `to`. */
+export function countedSpends(input: InsightInput, from: LocalDate, to: LocalDate): InsightSpend[] {
+  return input.spends.filter(
+    (s) => s.day >= from && s.day <= to && countsTowardDay(s, input.notDaily),
+  );
 }
 
 /** `now` against `before`. Below 20% either way is `about`. */
@@ -132,3 +161,4 @@ export function merchantKey(merchant: string): string {
 
 export const moneySlot = (value: Vnd): FactSlot => ({ type: 'money', value });
 export const countSlot = (value: number): FactSlot => ({ type: 'count', value });
+export const dateSlot = (value: LocalDate): FactSlot => ({ type: 'date', value });

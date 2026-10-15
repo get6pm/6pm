@@ -1,10 +1,8 @@
 import { slotsOf, type Fact } from '../insights/fact';
+import { touchesNeverRoast } from '../insights/voice';
 import type { AskContext } from './ask-engine';
 import { rankedFacts, type AskLedger } from './ask-ledger';
 import type { ChatTopic } from './chat-topics';
-
-/** Categories a roast never touches: health, rent and the home, family, and gifts. */
-export const NEVER_ROAST: ReadonlySet<string> = new Set(['health', 'home', 'family', 'gifts']);
 
 /** Facts a roast is built on: spending worth a tease. */
 const ROASTABLE: ReadonlySet<Fact['kind']> = new Set([
@@ -14,6 +12,11 @@ const ROASTABLE: ReadonlySet<Fact['kind']> = new Set([
   'todayOver',
   'weekOver',
   'firstTimeMerchant',
+  'recordDay',
+  'lateNight',
+  'weekendHeavy',
+  'likelySubscription',
+  'firstWeekPace',
 ]);
 
 /** Facts that lift someone: what is going right. */
@@ -26,6 +29,10 @@ const UPLIFTING: ReadonlySet<Fact['kind']> = new Set([
   'potFull',
   'paydaySoon',
   'noSpendYet',
+  'noSpendDay',
+  'noSpendStreak',
+  'backUnder',
+  'paceSpare',
 ]);
 
 export interface ChatAnswer {
@@ -35,18 +42,8 @@ export interface ChatAnswer {
   readonly fact: Fact | null;
 }
 
-/** A spend at this place was in a category a roast never touches. */
-function touchesNeverRoast(fact: Fact, ledger: AskLedger): boolean {
-  const slots = slotsOf(fact);
-  const category = slots['category'];
-  if (category?.type === 'category' && NEVER_ROAST.has(category.id)) return true;
-  const merchant = slots['merchant'];
-  if (merchant?.type !== 'merchant') return false;
-  return ledger.spends.some((s) => s.merchant === merchant.value && NEVER_ROAST.has(s.category));
-}
-
 function roastable(fact: Fact, ledger: AskLedger): boolean {
-  if (!ROASTABLE.has(fact.kind) || touchesNeverRoast(fact, ledger)) return false;
+  if (!ROASTABLE.has(fact.kind) || touchesNeverRoast(fact, ledger.spends)) return false;
   // A category spending less is no roast.
   const compare = slotsOf(fact)['compare'];
   return compare?.type !== 'compare' || compare.value === 'more' || compare.value === 'muchMore';

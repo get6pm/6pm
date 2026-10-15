@@ -1,5 +1,7 @@
 import {
   addDays,
+  hourOf,
+  moneyDayOf,
   payCycleOn,
   type DailyNumber,
   type InsightInput,
@@ -14,6 +16,9 @@ import { homeCurrencyOf } from '../../money/use-money-format';
 import type { SqlDatabase } from '../../data/table';
 
 export function insightSpendOf(row: SpendRow): InsightSpend {
+  // The hour it was made, when its time falls on the day it was filed under.
+  const at = new Date(row.at);
+  const hour = moneyDayOf(at) === row.day ? { hour: hourOf(at) } : {};
   return {
     id: row.id,
     day: row.day,
@@ -23,6 +28,7 @@ export function insightSpendOf(row: SpendRow): InsightSpend {
     status: row.status,
     source: row.source,
     forWork: row.forWork,
+    ...hour,
   };
 }
 
@@ -37,7 +43,17 @@ export function previousCycleStartOf(snap: MoneySnapshot): LocalDate | null {
   return started !== null && started > previous ? null : previous;
 }
 
-/** The previous cycle's spends, which the store does not hold: patterns compare against them. */
+/**
+ * Where the companion's look back starts: the cycle before the previous one, so habits a month
+ * apart can be seen. Spends from before the user started simply are not there.
+ */
+export function historyStartOf(snap: MoneySnapshot): LocalDate | null {
+  if (snap.plan === null) return null;
+  const previous = payCycleOn(addDays(snap.cycle.start, -1), snap.plan.payday).start;
+  return payCycleOn(addDays(previous, -1), snap.plan.payday).start;
+}
+
+/** Spends from before this cycle, which the store does not hold: patterns compare against them. */
 export async function readEarlierSpends(
   db: SqlDatabase,
   from: LocalDate,

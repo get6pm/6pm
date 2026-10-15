@@ -24,6 +24,7 @@ import { viClose } from './vi-close';
 import type { Catalogue } from './catalogue-types';
 import { viCompanion } from './vi-companion';
 import { viInsights } from './vi-insights';
+import { viInsightsHabits } from './vi-insights-habits';
 import { viToday } from './vi-today';
 import { viCategories } from './vi-categories';
 import { viTravel } from './vi-travel';
@@ -43,6 +44,7 @@ export const vi: Catalogue = {
   ...viLooks,
   ...viCompanion,
   ...viInsights,
+  ...viInsightsHabits,
   ...viBackup,
   ...viExport,
   ...viAsk,

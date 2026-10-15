@@ -22,7 +22,7 @@ import { PurchasesProvider } from '../features/purchases/purchases-provider';
 import { TogetherProvider } from '../features/together/together-provider';
 import { TravelProvider } from '../features/travel/travel-provider';
 import { I18nProvider } from '../i18n/i18n';
-import { drawnSheet, sheet, takeover } from '../ui/navigation/presentations';
+import { drawnSheet, pageSheet, sheet, takeover } from '../ui/navigation/presentations';
 import { ClockProvider } from '../ui/theme/clock';
 import { ThemeProvider, useTheme } from '../ui/theme/theme';
 import { StartupError } from '../ui/startup-error';
@@ -69,7 +69,7 @@ function Screens() {
         <Stack.Screen name="category/[id]" options={sheet} />
         <Stack.Screen name="quick-add" options={sheet} />
         <Stack.Screen name="scan" options={takeover} />
-        <Stack.Screen name="ask" options={sheet} />
+        <Stack.Screen name="ask" options={pageSheet} />
         <Stack.Screen name="inbox" options={sheet} />
         <Stack.Screen name="close" options={takeover} />
         <Stack.Screen name="spend/[id]" options={sheet} />

@@ -171,7 +171,7 @@ export function Walkthrough({ steps }: { readonly steps: readonly WalkthroughSte
         </Animated.View>
       </GestureDetector>
 
-      <View style={{ flexDirection: 'row', gap: 10, paddingHorizontal: 16, paddingTop: 4 }}>
+      <View style={{ flexDirection: 'row', gap: 10, paddingHorizontal: 16, paddingTop: 22 }}>
         <StepButton
           label={t('capture.walk.back')}
           disabled={index === 0}

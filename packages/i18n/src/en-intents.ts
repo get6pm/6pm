@@ -29,7 +29,7 @@ export const enIntents = {
   'capture.share.tip':
     'Drag 6pm to the front of your share row. Then it’s one tap from any receipt.',
   'capture.share.action': 'Pin 6pm in Share',
-  'capture.share.pinText': 'Pin 6pm in your share row: tap More, then Edit, then add 6pm.',
+  'capture.share.pinText': 'Tap More, then Edit, then add 6pm.',
 
   'capture.email.name': 'Receipt email',
   'capture.email.sub': 'No forwarding address on this iPhone',

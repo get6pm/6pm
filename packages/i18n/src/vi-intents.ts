@@ -30,7 +30,7 @@ export const viIntents: { readonly [Key in keyof typeof enIntents]: Entry } = {
   'capture.share.step3Chip': 'Inbox',
   'capture.share.tip': 'Kéo 6pm lên đầu hàng chia sẻ. Từ đó mọi biên lai chỉ cách một chạm.',
   'capture.share.action': 'Ghim 6pm vào Chia sẻ',
-  'capture.share.pinText': 'Ghim 6pm vào hàng chia sẻ: bấm Thêm, rồi Sửa, rồi thêm 6pm.',
+  'capture.share.pinText': 'Bấm Thêm, rồi Sửa, rồi thêm 6pm.',
 
   'capture.email.name': 'Email biên lai',
   'capture.email.sub': 'iPhone này chưa có địa chỉ chuyển tiếp',

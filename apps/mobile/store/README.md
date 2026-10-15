@@ -18,7 +18,7 @@ captions.
 ## Screenshots
 
 `screenshots/en-US` (International storefronts: captions in English, $, Apple Pay, cards) and
-`screenshots/vi` (Vietnam: captions in Vietnamese, ₫, VietQR, local merchants). Eleven each, 1320 × 2868,
+`screenshots/vi` (Vietnam: captions and the app in Vietnamese, ₫, VietQR, local merchants). Eleven each, 1320 × 2868,
 for the 6.9″ iPhone slot; App Store Connect scales them down for smaller iPhones. Upload them in order:
 
 | # | Caption keyword |

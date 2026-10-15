@@ -22,6 +22,7 @@ import { enToday } from './en-today';
 import { enCategories } from './en-categories';
 import { enTravel } from './en-travel';
 import { enCompanions } from './en-companions';
+import { enWidgetsGuide } from './en-widgets-guide';
 
 /** The source catalogue: every key the app uses, in English. */
 export const en = {
@@ -49,4 +50,5 @@ export const en = {
   ...enReceiptEmail,
   ...enTravel,
   ...enCompanions,
+  ...enWidgetsGuide,
 } as const;

@@ -23,6 +23,7 @@ import { viToday } from './vi-today';
 import { viCategories } from './vi-categories';
 import { viTravel } from './vi-travel';
 import { viCompanions } from './vi-companions';
+import { viWidgetsGuide } from './vi-widgets-guide';
 
 export const vi: Catalogue = {
   ...viOnboarding,
@@ -49,4 +50,5 @@ export const vi: Catalogue = {
   ...viReceiptEmail,
   ...viTravel,
   ...viCompanions,
+  ...viWidgetsGuide,
 };

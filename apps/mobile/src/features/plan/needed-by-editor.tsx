@@ -1,7 +1,13 @@
 import { Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
-import { addMonthsTo, NEEDED_BY_QUICK_PICKS, neededByAt, neededByYears } from '@6pm/domain';
+import {
+  addMonthsTo,
+  NEEDED_BY_QUICK_PICKS,
+  neededByAt,
+  neededByMonths,
+  neededByYears,
+} from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
@@ -13,7 +19,6 @@ import { wheelRowHeight } from '../../ui/wheel/wheel-maths';
 import type { PlanFormat } from './plan-format';
 
 const SIZE = 24;
-const MONTHS = Array.from({ length: 12 }, (_, k) => k);
 
 /** "3 months", "1 year", "2 years 3 months". */
 export function useSpan() {
@@ -62,8 +67,9 @@ function Chip({
 
 /**
  * "Needed by", opened: quick picks from three months to five years and "No date", over a month and
- * a year wheel that reach any month up to ten years out. With no date the wheels rest, faded, on
- * the pay cycle's month; turning one sets the date.
+ * a year wheel that reach any month up to ten years out (the month wheel offers only the year's
+ * months inside that reach). With no date the wheels rest, faded, on the pay cycle's month;
+ * turning one sets the date.
  */
 export function NeededByEditor({
   month,
@@ -85,6 +91,9 @@ export function NeededByEditor({
   const year = Number(shown.slice(0, 4));
   const monthIndex = Number(shown.slice(5, 7)) - 1;
   const yearIndex = Math.max(0, years.indexOf(year));
+  // Only the year's months inside the reach, so a spin can never land on one that is not allowed.
+  const range = neededByMonths(year, from);
+  const months = Array.from({ length: range.last - range.first + 1 }, (_, k) => range.first + k);
   const rowHeight = wheelRowHeight(SIZE);
 
   return (
@@ -124,9 +133,9 @@ export function NeededByEditor({
         />
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <Wheel
-            items={MONTHS.map((k) => format.monthOfYear(k))}
-            index={monthIndex}
-            onChange={(k) => onChange(neededByAt(year, k, from))}
+            items={months.map((k) => format.monthOfYear(k))}
+            index={Math.max(0, monthIndex - range.first)}
+            onChange={(k) => onChange(neededByAt(year, range.first + k, from))}
             size={SIZE}
             rows={5}
             ink={palette.ink}

@@ -30,6 +30,17 @@ export function neededByAt(year: number, monthIndex: number, from: string): stri
   return clampNeededBy(month, from);
 }
 
+/**
+ * The months the month wheel offers in a year, as 0-based indexes (0 for January): only those
+ * inside the reach, so the wheel can never rest on a month that is not allowed.
+ */
+export function neededByMonths(year: number, from: string): { first: number; last: number } {
+  const latest = latestNeededBy(from);
+  const first = year === Number(from.slice(0, 4)) ? Number(from.slice(5, 7)) - 1 : 0;
+  const last = year === Number(latest.slice(0, 4)) ? Number(latest.slice(5, 7)) - 1 : 11;
+  return { first, last };
+}
+
 /** The years the year wheel offers: the pay cycle's year through the reach's. */
 export function neededByYears(from: string): number[] {
   const first = Number(from.slice(0, 4));

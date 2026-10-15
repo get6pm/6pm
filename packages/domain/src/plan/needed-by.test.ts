@@ -5,6 +5,7 @@ import {
   latestNeededBy,
   neededByAt,
   neededByHorizon,
+  neededByMonths,
   neededByYears,
   potRoom,
   soonestNeededBy,
@@ -29,6 +30,13 @@ describe('needed by', () => {
     expect(neededByAt(2028, 9, '2026-10')).toBe('2028-10');
     expect(neededByAt(2026, 0, '2026-10')).toBe('2026-10');
     expect(neededByAt(2036, 11, '2026-10')).toBe('2036-10');
+  });
+
+  it('offers only the months inside the reach in the first and last year', () => {
+    expect(neededByMonths(2026, '2026-10')).toEqual({ first: 9, last: 11 });
+    expect(neededByMonths(2030, '2026-10')).toEqual({ first: 0, last: 11 });
+    expect(neededByMonths(2036, '2026-10')).toEqual({ first: 0, last: 9 });
+    expect(neededByMonths(2027, '2027-01')).toEqual({ first: 0, last: 11 });
   });
 
   it('says how far a month is in years and months', () => {

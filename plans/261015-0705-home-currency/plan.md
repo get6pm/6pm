@@ -23,7 +23,7 @@ VietQR and Vietnamese bank receipts read đồng; on another home they are forei
 |---|---|---|
 | 1 | Domain money core: currency table, step, formatter, parser, keypad, amount editing, home FX, plan/ask/diary maths | done |
 | 2 | App money context: plan currency, device detection, `useMoneyFormat`, odometer symbol and glyph fallback | done |
-| 3 | Lanes: Today/close/quick add/scan · Plan · Ask/diary/insights/export · Native/capture/receipts · Travel/FX · Onboarding/banks · Budget together | in progress |
+| 3 | Lanes: Today/close/quick add/scan · Plan · Ask/diary/insights/export · Native/capture/receipts · Travel/FX · Onboarding/banks · Budget together | done |
 | 4 | Docs, simulator check in VND, USD, EUR, JPY, IDR | todo |
 
 ## Acceptance

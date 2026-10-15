@@ -4,7 +4,7 @@ import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
-import { body, display, mono } from '../../ui/type/fonts';
+import { body, display, leading, mono } from '../../ui/type/fonts';
 import { box, ring, SAMPLE, TapRing, useSampleMoney } from './catch-demo-kit';
 import { useLoop } from './onboarding-motion';
 import { DEMO, type OnboardingPalette } from './onboarding-palette';
@@ -120,7 +120,7 @@ export function LockDemo({
       ]}
     >
       <Text style={{ ...body(11, 600), opacity: 0.85, color: ink }}>{date}</Text>
-      <Text style={{ ...display(50, 500, -0.03), lineHeight: 50, color: ink }}>{time}</Text>
+      <Text style={{ ...leading(display(50, 500, -0.03), 50), color: ink }}>{time}</Text>
       <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
         <TapRing size={44} radius={22}>
           <View style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}>
@@ -156,7 +156,7 @@ export function LockDemo({
           <Text style={{ ...body(9, 600), opacity: 0.75, color: ink }}>
             {t('onboarding.catch.lock.safe')}
           </Text>
-          <Text style={{ ...display(17, 500), lineHeight: 17, color: ink }}>{safe}</Text>
+          <Text style={{ ...leading(display(17, 500), 17), color: ink }}>{safe}</Text>
         </View>
       </View>
       <View style={[round, { left: 18, backgroundColor: DEMO.lockButton }]}>

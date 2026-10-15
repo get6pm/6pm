@@ -22,7 +22,7 @@ import { FitWidth } from '../../ui/layout/fit-width';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { useTravel } from '../travel/travel-provider';
-import { body, display, tabular } from '../../ui/type/fonts';
+import { body, display, leading, tabular } from '../../ui/type/fonts';
 import type { PayOptions } from './pay-options';
 import { dongInHome } from './priced-spend';
 import { CardButton, ScanCard } from './scan-card';
@@ -158,9 +158,8 @@ export function ScanPreview({
           >
             <Text
               style={{
-                ...display(64 * palette.numK, 500, -0.02),
+                ...leading(display(64 * palette.numK, 500, -0.02), 64 * palette.numK, true),
                 ...tabular,
-                lineHeight: 64 * palette.numK,
                 color: c.cardInk,
               }}
             >

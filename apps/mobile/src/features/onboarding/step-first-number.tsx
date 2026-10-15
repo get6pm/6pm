@@ -8,7 +8,7 @@ import { Companion } from '../../ui/companion/companion';
 import { haptics } from '../../ui/haptics';
 import { FitWidth } from '../../ui/layout/fit-width';
 import { Odometer } from '../../ui/odometer';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import type { FirstDay } from './onboarding-maths';
 import {
   ease,
@@ -109,8 +109,7 @@ export function StepFirstNumber({
       </Animated.View>
       <Text
         style={{
-          ...display(21, 500),
-          lineHeight: 25.2,
+          ...leading(display(21, 500), 25.2),
           maxWidth: 300,
           textAlign: 'center',
           color: pal.ink,

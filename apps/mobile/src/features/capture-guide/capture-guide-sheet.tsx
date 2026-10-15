@@ -13,7 +13,7 @@ import { Symbol } from '../../ui/icons/symbol';
 import { SheetFrame } from '../../ui/navigation/sheet-frame';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { captureColours } from './capture-colours';
 import { HowItWorks } from './guide-how';
 import { GuideSample, GuideSection, GuideTip, type LiveChip } from './guide-sections';
@@ -140,7 +140,7 @@ export function CaptureGuideSheet({ source }: { readonly source: CaptureSource }
                 </Text>
               </View>
             </View>
-            <Text style={{ ...display(31, 500, -0.015), lineHeight: 33.5, color: palette.ink }}>
+            <Text style={{ ...leading(display(31, 500, -0.015), 33.5), color: palette.ink }}>
               {t(guide.headline)}
             </Text>
           </View>

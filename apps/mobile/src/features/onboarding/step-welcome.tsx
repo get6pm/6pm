@@ -8,7 +8,7 @@ import type { SymbolName } from '../../ui/icons/symbols.generated';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { RestoreFromBackupLink } from '../backup/restore-link';
 import { BalancedText } from '../../ui/type/balanced-text';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { ease, popEntering, riseEntering, useLoop } from './onboarding-motion';
 import { HORIZON, tileOf, type OnboardingPalette } from './onboarding-palette';
 
@@ -68,7 +68,7 @@ export function StepWelcome({
       </View>
       <BalancedText
         accessibilityRole="header"
-        style={{ ...display(52, 600, -0.035), lineHeight: 49.4, color: pal.ink }}
+        style={{ ...leading(display(52, 600, -0.035), 49.4), color: pal.ink }}
       >
         {t('onboarding.welcome.title')}
       </BalancedText>

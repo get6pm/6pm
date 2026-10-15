@@ -6,7 +6,7 @@ import { formatVnd } from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
-import { body, display, mono } from '../../ui/type/fonts';
+import { body, display, leading, mono } from '../../ui/type/fonts';
 import { AppIconImage } from '../../ui/app-icon-image';
 import {
   box,
@@ -111,7 +111,7 @@ export function ShareDemo() {
           <Text style={{ ...mono(9, 400, 0.1), opacity: 0.5, color: DEMO.paperInk }}>
             {t('onboarding.catch.share.receipt')}
           </Text>
-          <Text style={{ ...display(20, 600), lineHeight: 20, color: DEMO.paperInk }}>
+          <Text style={{ ...leading(display(20, 600), 20), color: DEMO.paperInk }}>
             {sample.full(SAMPLE.transfer)}
           </Text>
           <View style={{ height: 5, width: '80%', borderRadius: 3, backgroundColor: DEMO.rule }} />

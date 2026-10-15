@@ -7,7 +7,7 @@ import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { anyTrialDays, fromPerMonthText } from '../purchases/max-pricing';
 import { useMaxStatusLine } from '../purchases/use-max-status-line';
 import { CLASSIC_LOOKS, PAID_LOOKS } from '../purchases/products';
@@ -106,7 +106,7 @@ export function ShopMaxCard({
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Text style={{ ...display(26, 700, -0.02, MAX_FONT), lineHeight: 26, color: '#ffffff' }}>
+          <Text style={{ ...leading(display(26, 700, -0.02, MAX_FONT), 26), color: '#ffffff' }}>
             6pm
           </Text>
           <View

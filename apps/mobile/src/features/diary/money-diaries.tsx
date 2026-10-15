@@ -7,7 +7,7 @@ import { useI18n } from '../../i18n/i18n';
 import { useMoneyFormat } from '../../money/use-money-format';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, mono } from '../../ui/type/fonts';
+import { body, display, leading, mono } from '../../ui/type/fonts';
 import { coverTint, inkWash, zineInk } from './diary-colours';
 import { useDiaryDates } from './diary-dates';
 
@@ -50,7 +50,7 @@ function DiaryCover({
         <Text
           numberOfLines={1}
           adjustsFontSizeToFit
-          style={{ ...display(32, 500, -0.03), lineHeight: 30.4, color: fg }}
+          style={{ ...leading(display(32, 500, -0.03), 30.4, true), color: fg }}
         >
           {dates.monthShort(diary.month)}
         </Text>

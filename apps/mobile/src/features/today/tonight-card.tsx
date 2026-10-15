@@ -8,7 +8,7 @@ import { useMoneyFormat } from '../../money/use-money-format';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, mono } from '../../ui/type/fonts';
+import { body, display, leading, mono } from '../../ui/type/fonts';
 import type { WeekDay } from './today-view';
 
 /** The CLOSED stamp lands the way the receipt's does: big and tilted, then down with a thump. */
@@ -126,7 +126,7 @@ export function TonightCard({
           <Symbol name={icon} size={26} fill={1} color={lit ? palette.accentFg : palette.ink} />
         </View>
         <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
-          <Text style={{ ...display(21, 500, -0.01), lineHeight: 24, color: palette.ink }}>
+          <Text style={{ ...leading(display(21, 500, -0.01), 24), color: palette.ink }}>
             {title}
           </Text>
           <Text style={{ ...body(14), lineHeight: 19, color: palette.inkSoft }}>{sub}</Text>

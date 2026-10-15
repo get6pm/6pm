@@ -4,7 +4,7 @@ import { CategoryTile } from '../../../ui/category-tile';
 import { Companion } from '../../../ui/companion/companion';
 import type { SymbolName } from '../../../ui/icons/symbols.generated';
 import { PaperEdge } from '../../../ui/paper-edge';
-import { body, display, families, mono } from '../../../ui/type/fonts';
+import { body, display, families, leading, mono } from '../../../ui/type/fonts';
 import { paper, zineInk } from '../diary-colours';
 
 const label = { ...mono(11, 400, 0.16), color: zineInk.ink, opacity: 0.6 } as const;
@@ -98,7 +98,7 @@ function Ticket({ ticket, tilt }: { readonly ticket: ZineTicket; readonly tilt: 
           {ticket.label}
         </Text>
         <Text style={{ ...mono(11, 600), color: paper.ink }}>{ticket.date}</Text>
-        <Text style={{ ...display(26, 500), lineHeight: 26, paddingTop: 2, color: paper.ink }}>
+        <Text style={{ ...leading({ ...display(26, 500), paddingTop: 2 }, 26), color: paper.ink }}>
           {ticket.amount}
         </Text>
         {ticket.note ? (
@@ -187,9 +187,7 @@ export function ZineDays({
                 <Text style={{ ...mono(7.5, 400, 0.06), color: paper.ink, opacity: 0.55 }}>
                   {d.dow}
                 </Text>
-                <Text style={{ ...display(18, 500), lineHeight: 18, color: paper.ink }}>
-                  {d.day}
-                </Text>
+                <Text style={{ ...leading(display(18, 500), 18), color: paper.ink }}>{d.day}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
                   <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: d.dot }} />
                   <Text style={{ ...mono(8.5, 600), color: paper.ink }}>{d.total}</Text>

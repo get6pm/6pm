@@ -8,7 +8,7 @@ import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { useLookSettings } from '../looks/look-settings-provider';
 import { MAX_CREAM, MAX_FONT, MAX_INK } from '../purchases/max-colours';
 import { PAID_LOOKS } from '../purchases/products';
@@ -107,9 +107,7 @@ export function SettingsMaxCard({ onPress }: { readonly onPress: () => void }) {
           style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Text
-              style={{ ...display(24, 700, -0.02, MAX_FONT), lineHeight: 24, color: '#ffffff' }}
-            >
+            <Text style={{ ...leading(display(24, 700, -0.02, MAX_FONT), 24), color: '#ffffff' }}>
               6pm
             </Text>
             <MaxBadge size="card" />

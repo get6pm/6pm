@@ -21,7 +21,7 @@ import { PressScale } from '../../ui/primitives/press-scale';
 import { Sky } from '../../ui/sky/sky';
 import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import type { Handoff } from './bank-handoff';
 import { sheetUp } from './scan-card';
 import { scanColours as c } from './scan-colours';
@@ -200,7 +200,7 @@ export function ScanReturn({
           }}
         >
           {!serious ? <Companion size={56} mood="calm" /> : null}
-          <Text style={{ ...display(38, 500, -0.01), lineHeight: 40, color: palette.ink }}>
+          <Text style={{ ...leading(display(38, 500, -0.01), 40), color: palette.ink }}>
             {t('scan.return.title')}
           </Text>
           <Text style={{ ...body(15), color: palette.inkSoft }}>

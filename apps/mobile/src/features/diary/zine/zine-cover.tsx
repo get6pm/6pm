@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 
-import { body, display, mono } from '../../../ui/type/fonts';
+import { body, display, leading, mono } from '../../../ui/type/fonts';
 import { paper, zineInk } from '../diary-colours';
 
 export interface ZineStat {
@@ -30,7 +30,7 @@ export function ZineCover({
         <Text
           numberOfLines={1}
           adjustsFontSizeToFit
-          style={{ ...display(68, 500, -0.045), lineHeight: 61.2, color: zineInk.ink }}
+          style={{ ...leading(display(68, 500, -0.045), 61.2, true), color: zineInk.ink }}
         >
           {title}
         </Text>
@@ -44,8 +44,7 @@ export function ZineCover({
         >
           <Text
             style={{
-              ...display(27, 500, -0.015),
-              lineHeight: 29.7,
+              ...leading(display(27, 500, -0.015), 29.7),
               maxWidth: 230,
               color: zineInk.ink,
             }}
@@ -106,7 +105,7 @@ export function ZineCover({
             >
               {s.key}
             </Text>
-            <Text style={{ ...display(30, 500, -0.02), lineHeight: 30, color: paper.ink }}>
+            <Text style={{ ...leading(display(30, 500, -0.02), 30), color: paper.ink }}>
               {s.value}
             </Text>
             <Text style={{ ...body(12.5), color: paper.ink, opacity: 0.65 }}>{s.sub}</Text>

@@ -10,7 +10,7 @@ import { Companion } from '../../ui/companion/companion';
 import { Symbol } from '../../ui/icons/symbol';
 import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, mono } from '../../ui/type/fonts';
+import { body, display, leading, mono } from '../../ui/type/fonts';
 import { PAID_LOOKS } from './products';
 import type { MaxFrom } from './max-context';
 import { MAX_CREAM, MAX_FONT, MAX_INK, MAX_WELL } from './max-colours';
@@ -91,9 +91,7 @@ export function TileArt({
     case 'ask':
       return (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Text style={{ ...display(40, 500, 0, MAX_FONT), lineHeight: 32, color: MAX_CREAM }}>
-            ∞
-          </Text>
+          <Text style={{ ...leading(display(40, 500, 0, MAX_FONT), 32), color: MAX_CREAM }}>∞</Text>
           <View
             style={{
               height: 24,
@@ -208,8 +206,7 @@ export function TileArt({
         >
           <Text
             style={{
-              ...display(15, 600),
-              lineHeight: 15,
+              ...leading(display(15, 600), 15),
               color: '#ffffff',
               textShadowColor: 'rgba(0,0,0,.4)',
               textShadowOffset: { width: 0, height: 1 },

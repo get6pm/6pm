@@ -6,7 +6,7 @@ import { Symbol } from '../../ui/icons/symbol';
 import type { SymbolName } from '../../ui/icons/symbols.generated';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { BalancedText } from '../../ui/type/balanced-text';
-import { body, display, mono } from '../../ui/type/fonts';
+import { body, display, leading, mono } from '../../ui/type/fonts';
 import { Wheel } from '../../ui/wheel/wheel';
 import { BILL_CARDS, type DeckItem } from './bill-deck';
 import {
@@ -115,7 +115,7 @@ export function Question({
   return (
     <>
       <BalancedText
-        style={{ ...display(26, 600, -0.025), lineHeight: 27.3, paddingTop: 4, color: pal.ink }}
+        style={{ ...leading({ ...display(26, 600, -0.025), paddingTop: 4 }, 27.3), color: pal.ink }}
       >
         {q}
       </BalancedText>

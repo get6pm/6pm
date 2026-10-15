@@ -11,7 +11,7 @@ import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
 import { useToast } from '../../ui/toast/toast-host';
 import { BalancedText } from '../../ui/type/balanced-text';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { useCompanionSettingsStore } from '../companion/companion-settings-provider';
 import { useCompanionToast } from '../companion/use-companion-toast';
 import { useLookSettings, useLookSettingsStore } from '../looks/look-settings-provider';
@@ -161,8 +161,7 @@ export function MaxSheet() {
               <BalancedText
                 accessibilityRole="header"
                 style={{
-                  ...display(28, 500, -0.01, MAX_FONT),
-                  lineHeight: 30.2,
+                  ...leading(display(28, 500, -0.01, MAX_FONT), 30.2),
                   textAlign: 'center',
                   color: MAX_CREAM,
                 }}

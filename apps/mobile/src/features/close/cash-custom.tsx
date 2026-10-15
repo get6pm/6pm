@@ -23,7 +23,7 @@ import { easeOut } from '../../ui/motion/curves';
 import { useDragDismiss } from '../../ui/motion/use-drag-dismiss';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, tabular } from '../../ui/type/fonts';
+import { body, display, leading, tabular } from '../../ui/type/fonts';
 
 /**
  * A cash amount that is none of the quick chips: type it on the money keypad, pick what it was
@@ -104,9 +104,8 @@ export function CashCustom({
                 parts={typedParts(keys.digits, money)}
                 numberOfLines={1}
                 style={{
-                  ...display(48, 500, -0.02),
+                  ...leading(display(48, 500, -0.02), 52, true),
                   ...tabular,
-                  lineHeight: 52,
                   textAlign: 'center',
                   color: palette.ink,
                   opacity: amount > 0 ? 1 : 0.35,

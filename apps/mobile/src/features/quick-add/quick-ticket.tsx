@@ -9,7 +9,7 @@ import { DashedRule } from '../../ui/dashed-rule';
 import { FitWidth } from '../../ui/layout/fit-width';
 import { PaperEdge } from '../../ui/paper-edge';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, mono, tabular } from '../../ui/type/fonts';
+import { body, display, leading, mono, tabular } from '../../ui/type/fonts';
 import { AmountText } from './amount-text';
 
 const PAPER = '#fbf7ef';
@@ -78,9 +78,8 @@ export function QuickTicket({
               parts={typed}
               numberOfLines={1}
               style={{
-                ...display(60 * palette.numK, 500, -0.02),
+                ...leading(display(60 * palette.numK, 500, -0.02), 60, true),
                 ...tabular,
-                lineHeight: 60,
                 color: INK,
                 opacity: amount > 0 ? 1 : 0.35,
               }}

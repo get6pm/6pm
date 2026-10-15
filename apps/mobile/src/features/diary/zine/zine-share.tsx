@@ -4,7 +4,7 @@ import Animated, { Easing, useAnimatedStyle, withTiming } from 'react-native-rea
 
 import { Symbol } from '../../../ui/icons/symbol';
 import { PressScale } from '../../../ui/primitives/press-scale';
-import { body, display, mono } from '../../../ui/type/fonts';
+import { body, display, leading, mono } from '../../../ui/type/fonts';
 import { zineInk } from '../diary-colours';
 
 const knobEase = Easing.bezier(0.3, 1.4, 0.5, 1);
@@ -104,11 +104,11 @@ export function ZineShare(props: {
           <Text style={{ ...mono(9, 400, 0.16), color: zineInk.light, opacity: 0.6 }}>
             {props.brand}
           </Text>
-          <Text style={{ ...display(52, 500, -0.04), lineHeight: 47.8, color: props.tint }}>
+          <Text style={{ ...leading(display(52, 500, -0.04), 47.8), color: props.tint }}>
             {props.month}
           </Text>
           <View style={{ flex: 1 }} />
-          <Text style={{ ...display(54, 500, -0.03), lineHeight: 54, color: zineInk.light }}>
+          <Text style={{ ...leading(display(54, 500, -0.03), 54), color: zineInk.light }}>
             {props.closed}
           </Text>
           <Text style={{ ...body(12.5), marginTop: -2, color: zineInk.light, opacity: 0.7 }}>

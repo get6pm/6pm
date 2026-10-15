@@ -6,7 +6,7 @@ import { DashedRule } from '../../ui/dashed-rule';
 import { FitWidth } from '../../ui/layout/fit-width';
 import { PaperEdge } from '../../ui/paper-edge';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, mono, tabular } from '../../ui/type/fonts';
+import { body, display, leading, mono, tabular } from '../../ui/type/fonts';
 import { AmountText } from '../quick-add/amount-text';
 import type { SpendRowView } from '../today/spend-row';
 import { useMoneyFormat } from '../../money/use-money-format';
@@ -157,9 +157,8 @@ export function CloseCard({
             numberOfLines={1}
             gap={'\u2006'}
             style={{
-              ...display(72 * numK, 500, -0.02),
+              ...leading(display(72 * numK, 500, -0.02), 72 * numK, true),
               ...tabular,
-              lineHeight: 72 * numK,
               color: INK,
             }}
             symbol={{ ...display(30, 500), opacity: 0.55 }}

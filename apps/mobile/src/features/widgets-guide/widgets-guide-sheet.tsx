@@ -10,7 +10,7 @@ import { Symbol } from '../../ui/icons/symbol';
 import { SheetFrame } from '../../ui/navigation/sheet-frame';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { ActionStage } from './action-stage';
 import { ControlStage } from './control-stage';
 import { HomeStage } from './home-stage';
@@ -93,7 +93,7 @@ export function WidgetsGuideSheet() {
             style={{ gap: 12, paddingTop: 6, paddingHorizontal: 4, paddingBottom: 8 }}
           >
             <CategoryTile icon="widgets" hue={200} size={60} radius={20} glyph={32} />
-            <Text style={{ ...display(31, 500, -0.015), lineHeight: 33.5, color: palette.ink }}>
+            <Text style={{ ...leading(display(31, 500, -0.015), 33.5), color: palette.ink }}>
               {t('widgetsGuide.headline')}
             </Text>
             <Text style={{ ...body(16), lineHeight: 22, color: palette.inkSoft }}>

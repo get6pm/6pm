@@ -5,7 +5,7 @@ import { lookById, type LookConfig, type LookId } from '@6pm/theme';
 import { useI18n } from '../../i18n/i18n';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import type { LookOffer } from '../purchases/purchases-port';
 import { useLookPreview, LookPreview, SHOP_PREVIEW } from './look-preview';
 import { isScene, type CardBadge } from './look-catalogue';
@@ -99,7 +99,7 @@ export function LookCard({
       <View style={{ paddingTop: 11, paddingHorizontal: 12, paddingBottom: 13, gap: 3 }}>
         <Text
           numberOfLines={1}
-          style={{ ...display(18, 500, 0, def.font), lineHeight: 20.7, color: palette.ink }}
+          style={{ ...leading(display(18, 500, 0, def.font), 20.7, true), color: palette.ink }}
         >
           {name}
         </Text>

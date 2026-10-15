@@ -5,7 +5,7 @@ import { Companion } from '../../ui/companion/companion';
 import { PaperEdge } from '../../ui/paper-edge';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, mono } from '../../ui/type/fonts';
+import { body, display, leading, mono } from '../../ui/type/fonts';
 import { useMoneyFormat } from '../../money/use-money-format';
 
 export function WorkQuestionStep({
@@ -74,9 +74,7 @@ export function WorkQuestionStep({
         </View>
         <PaperEdge color="#f7f2e8" height={7} step={10} radius={4.75} />
       </View>
-      <Text style={{ ...display(44, 500, -0.01), lineHeight: 45.8, color: palette.ink }}>
-        {title}
-      </Text>
+      <Text style={{ ...leading(display(44, 500, -0.01), 45.8), color: palette.ink }}>{title}</Text>
       <Text style={{ ...body(16), lineHeight: 23.2, color: palette.inkSoft }}>{sub}</Text>
       <View style={{ flex: 1 }} />
       <PressScale

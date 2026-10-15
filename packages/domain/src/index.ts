@@ -49,5 +49,6 @@ export * from './contracts/category-icon';
 export * from './insights';
 export * from './contracts/word';
 export * from './contracts/word-prompt';
+export * from './contracts/voice';
 export * from './money/currency';
 export * from './money/money-format';

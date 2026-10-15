@@ -29,5 +29,6 @@ export * from './together-pot-create';
 export * from './together-pot-delete';
 export * from './together-pot-edit';
 export * from './together-sign-in';
+export * from './voice-token';
 export * from './waitlist';
 export * from './word';

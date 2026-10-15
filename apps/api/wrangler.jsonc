@@ -24,7 +24,15 @@
         { "pattern": "6pm-dev.oddeggs.studio/api/*", "zone_name": "oddeggs.studio" },
       ],
       // COMMIT_SHA is overridden at deploy time (`--var COMMIT_SHA:<sha>`).
-      "vars": { "ENVIRONMENT": "dev", "COMMIT_SHA": "local" },
+      // VOICE_PROVIDER picks the realtime transcriber (`deepgram` or `elevenlabs`); its key is a
+      // secret. ELEVENLABS_ZERO_RETENTION is `true` only once the ElevenLabs account has zero
+      // retention, which turns its logging off.
+      "vars": {
+        "ENVIRONMENT": "dev",
+        "COMMIT_SHA": "local",
+        "VOICE_PROVIDER": "deepgram",
+        "ELEVENLABS_ZERO_RETENTION": "false",
+      },
       // Exchange rates in đồng, four times a day: the travel currencies every run, the rest of the
       // currency table in turns (`currenciesForRun`). The ingest is idempotent.
       "triggers": { "crons": ["20 */6 * * *"] },
@@ -88,7 +96,15 @@
         { "pattern": "at6pm.app/api/*", "zone_name": "at6pm.app" },
         { "pattern": "6pm.oddeggs.studio/api/*", "zone_name": "oddeggs.studio" },
       ],
-      "vars": { "ENVIRONMENT": "prd", "COMMIT_SHA": "local" },
+      // VOICE_PROVIDER picks the realtime transcriber (`deepgram` or `elevenlabs`); its key is a
+      // secret. ELEVENLABS_ZERO_RETENTION is `true` only once the ElevenLabs account has zero
+      // retention, which turns its logging off.
+      "vars": {
+        "ENVIRONMENT": "prd",
+        "COMMIT_SHA": "local",
+        "VOICE_PROVIDER": "deepgram",
+        "ELEVENLABS_ZERO_RETENTION": "false",
+      },
       "triggers": { "crons": ["20 */6 * * *"] },
       "d1_databases": [
         {

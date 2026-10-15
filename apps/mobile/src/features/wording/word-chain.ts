@@ -62,24 +62,28 @@ async function fromDevice(request: WordRequest): Promise<ModelLine> {
 }
 
 /**
- * A model's line for the facts in `request`, from the chosen model first and the other second,
- * checked like the server checks it (no digit, only its placeholders, the right language, no
- * put-downs). Null when neither gives a line that passes: the caller says the catalogue line.
+ * A model's line for the facts in `request`, checked like the server checks it (no digit, only
+ * its placeholders, every fact, a whole sentence, the right language, no put-downs). Null when no
+ * model gives a line that passes: the caller says the catalogue line.
+ *
+ * The on-device model words a line only when it is chosen, and the server answers after it. It
+ * never stands in for the server: its lines are too often fragments or untrue ("already overdue"
+ * for a bill due tomorrow), so offline the catalogue answers.
  */
 export async function wordWithModel(
   request: WordRequest,
   deps: WordChainDeps,
 ): Promise<ModelLine | null> {
-  const allowed = request.facts.flatMap((f) => f.slots.map((s) => s.name));
+  const facts = request.facts.map((f) => f.slots.map((s) => s.name));
   const tiers =
     deps.choice === 'device'
       ? [() => fromDevice(request), () => fromServer(deps, request)]
-      : [() => fromServer(deps, request), () => fromDevice(request)];
+      : [() => fromServer(deps, request)];
   for (const tier of tiers) {
     try {
       const line = await tier();
       const check = validateLine(line.text, {
-        allowed,
+        facts,
         language: request.language,
         surface: request.surface,
       });

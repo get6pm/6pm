@@ -112,9 +112,12 @@ describe('POST /v1/word', () => {
 
   it('uses the second line when it passes', async () => {
     const token = await registerDevice();
-    modelSaying('That’s 4 since Monday', 'Another {merchant} run 👀');
+    modelSaying('That’s 4 since Monday', 'Another {merchant} run this week 👀');
     const response = await word(token, request);
-    expect(await response.json()).toEqual({ text: 'Another {merchant} run 👀', mood: 'think' });
+    expect(await response.json()).toEqual({
+      text: 'Another {merchant} run this week 👀',
+      mood: 'think',
+    });
   });
 
   it('stops a device that has worded its day of lines, without calling the model', async () => {

@@ -265,6 +265,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ...config.extra,
     appVariant,
     apiBase: `https://${variant.host}/api`,
+    // The device token is kept in the App Group's keychain group so the share extension can read it.
+    appGroup: variant.appGroup,
     eas: { projectId: EAS_PROJECT_ID },
   },
 });

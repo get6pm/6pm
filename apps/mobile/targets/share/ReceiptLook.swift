@@ -43,8 +43,8 @@ enum ReceiptLook {
 }
 
 /// The anonymous token the app registered this device with, where the app keeps it (the
-/// keychain item `expo-secure-store` writes). The extension can read it only once the app keeps
-/// it in a keychain group the two share; until then there is none, and no photo leaves the phone.
+/// keychain item `expo-secure-store` writes into the App Group's keychain group, which the
+/// extension shares). Before the app has opened once there is none, and no photo leaves the phone.
 enum DeviceCredential {
   private static let key = Data("sixpm.device-token".utf8)
 

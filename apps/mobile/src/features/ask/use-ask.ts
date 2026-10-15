@@ -6,65 +6,45 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   FREE_ASKS_PER_WEEK,
   answerQuery,
-  fillLine,
   freeAsksLeft,
   isAskIntent,
-  localDateOf,
-  type AskAnswer,
   type AskQuery,
-  type AskQueryAnswer,
   type LocalDate,
-  type WordRequest,
 } from '@6pm/domain';
 
-import { useMoneySelector, useMoneyStore } from '../../data/money-provider';
-import { useI18n } from '../../i18n/i18n';
+import { useMoneyActions, useMoneySelector, useMoneyStore } from '../../data/money-provider';
 import { useMoneyFormat } from '../../money/use-money-format';
+import { useI18n } from '../../i18n/i18n';
 import type { CompanionMood } from '../../ui/companion/companion-mood';
+import { useCompanionForm } from '../../ui/companion/companion-form';
 import { haptics } from '../../ui/haptics';
 import { useClock } from '../../ui/theme/clock';
-import { useApi } from '../api/native-api';
-import { useCompanionForm } from '../../ui/companion/companion-form';
 import { useTheme } from '../../ui/theme/theme';
-import type { SlotWords } from '../wording/fact-words';
-import { previousCycleStartOf, readEarlierSpends } from '../wording/insight-input';
-import { readModelChoice } from '../wording/model-choice';
-import { wordWithModel } from '../wording/word-chain';
-import { describeLedgerAnswer } from './ask-ledger-words';
+import { useApi } from '../api/native-api';
 import { usePlanFormat } from '../plan/plan-format';
 import { useEntitlement } from '../purchases/purchases-provider';
+import { previousCycleStartOf, readEarlierSpends } from '../wording/insight-input';
+import { readModelChoice } from '../wording/model-choice';
+import type { PendingAction } from './ask-action-words';
+import { cardOf, type AskWordsNow } from './ask-card';
 import { askContextOf, askLedgerOf } from './ask-context';
 import { readAskedOn, recordAsk } from './ask-quota-store';
 import { readQuestion } from './ask-reader';
 import { askSuggestions } from './ask-suggestions';
-import { describeAnswer, type AskCard } from './ask-words';
-
-const ORIGINAL_ANSWERS: ReadonlySet<string> = new Set([
-  'fitsToday',
-  'notThisMonth',
-  'tight',
-  'fits',
-  'weekend',
-  'saveMore',
-  'potFull',
-  'noPots',
-  'noSuchPot',
-  'today',
-  'help',
-]);
-
-/** One of the original engine's answers, which keep their original words. */
-function isOriginalAnswer(answer: AskQueryAnswer): answer is AskAnswer {
-  return ORIGINAL_ANSWERS.has(answer.kind);
-}
+import { readTurns, turnKey, writeTurn } from './ask-turns-store';
+import { plainCard, useAskAct } from './use-ask-act';
+import type { AskCard } from './ask-words';
 
 export type AskMessage =
-  | { readonly id: number; readonly kind: 'me'; readonly text: string }
-  | { readonly id: number; readonly kind: 'answer'; readonly card: AskCard };
-
-type NewMessage =
-  | { readonly kind: 'me'; readonly text: string }
-  | { readonly kind: 'answer'; readonly card: AskCard };
+  | { readonly id: string; readonly kind: 'me'; readonly text: string }
+  | {
+      readonly id: string;
+      readonly kind: 'answer';
+      readonly card: AskCard;
+      readonly query: AskQuery | null;
+      /** What the card's first button does, until it is answered. */
+      readonly pending: PendingAction | null;
+    };
 
 export interface AskChat {
   readonly messages: readonly AskMessage[];
@@ -79,8 +59,13 @@ export interface AskChat {
   readonly suggestions: readonly string[];
   /** Sends a question; opens Max instead when the week's free questions are used. */
   readonly send: (question: string) => Promise<void>;
+  /** Answers an answer's buttons: `go` does what it offers, `cancel` leaves things as they are. */
+  readonly act: (messageId: string, choice: 'go' | 'cancel') => Promise<void>;
   readonly openMax: () => void;
 }
+
+/** Readings sent with a question for follow-ups: the one before, and up to three before that. */
+const HISTORY = 4;
 
 /** The mood of the latest answer; the companion waves before anything has been asked. */
 function lastMood(messages: readonly AskMessage[]): CompanionMood {
@@ -93,14 +78,16 @@ function lastMood(messages: readonly AskMessage[]): CompanionMood {
 
 /**
  * The Ask conversation: the free-question count (kept on this phone), reading each question
- * (server first, then the phone's rules), working the answer out from the user's real numbers and
- * putting it in words. Nothing the user's money says leaves the phone.
+ * (server first, then the phone's rules) with the readings before it, working the answer out
+ * from the user's real numbers, putting it in words, and doing what an answer offers once the
+ * user taps it. The conversation is kept on the phone; nothing the user's money says leaves it.
  */
 export function useAsk(): AskChat {
   const router = useRouter();
   const { t, language, weekday } = useI18n();
   const { today } = useClock();
   const store = useMoneyStore();
+  const actions = useMoneyActions();
   const api = useApi();
   const { max } = useEntitlement();
   const format = usePlanFormat(today);
@@ -110,14 +97,13 @@ export function useAsk(): AskChat {
   const { serious } = useTheme();
   const form = useCompanionForm();
   const persona = useMoneySelector((snap) => snap.plan?.persona ?? 'cheeky');
-  // The query before, so "and last month?" reads as a follow-up.
-  const previous = useRef<AskQuery | null>(null);
+  // The readings so far, newest last, so "and last month?" reads as a follow-up.
+  const history = useRef<AskQuery[]>([]);
 
   const [messages, setMessages] = useState<readonly AskMessage[]>([]);
   const [typing, setTyping] = useState(false);
   const [askedOn, setAskedOn] = useState<readonly LocalDate[] | null>(null);
   const busy = useRef(false);
-  const nextId = useRef(0);
 
   useEffect(() => {
     let live = true;
@@ -129,6 +115,24 @@ export function useAsk(): AskChat {
         Sentry.captureException(error);
       },
     );
+    // The conversation so far, as it was left; its cards' buttons have had their moment.
+    readTurns(store.db).then(
+      (turns) => {
+        if (!live) return;
+        history.current = turns
+          .flatMap((turn) => (turn.kind === 'answer' && turn.query !== null ? [turn.query] : []))
+          .slice(-HISTORY);
+        setMessages((now) => [
+          ...turns.map((turn): AskMessage =>
+            turn.kind === 'me'
+              ? { id: turn.key, kind: 'me', text: turn.text }
+              : { id: turn.key, kind: 'answer', card: turn.card, query: turn.query, pending: null },
+          ),
+          ...now,
+        ]);
+      },
+      (error: unknown) => Sentry.captureException(error),
+    );
     return () => {
       live = false;
     };
@@ -139,79 +143,30 @@ export function useAsk(): AskChat {
   }, [router]);
 
   // The latest words and clock, so a question asked a moment ago is answered in today's terms.
-  const words = useRef({ t, language, weekday, format, money, today, serious, persona, form });
+  const words = useRef<AskWordsNow & { today: LocalDate }>({
+    t,
+    language,
+    weekday,
+    format,
+    money,
+    today,
+    serious,
+    persona,
+    form,
+  });
   words.current = { t, language, weekday, format, money, today, serious, persona, form };
 
-  const push = useCallback((message: NewMessage) => {
-    nextId.current += 1;
-    const id = nextId.current;
-    setMessages((all) => [...all, { ...message, id }]);
-  }, []);
-
-  /** The answer's card: catalogue words, or a model's when one answers in time. */
-  const cardFor = useCallback(
-    async (
-      answer: AskQueryAnswer,
-      reading: { readonly offline: boolean },
-      categories: readonly { readonly id: string; readonly name: string }[],
-      question: string,
-    ): Promise<AskCard> => {
-      const now = words.current;
-      const env = {
-        t: now.t,
-        language: now.language,
-        money: now.money,
-        monthLong: now.format.monthLong,
-        dayLongMonth: now.format.dayLongMonth,
-        weekday: (d: string) => now.weekday(new Date(`${d}T12:00:00`)),
-      };
-      const ctx = askContextOf(store.getSnapshot());
-      if (isOriginalAnswer(answer)) {
-        if (ctx === null) throw new Error('Ask was opened before the month was set up');
-        return describeAnswer(answer, ctx, reading, env);
-      }
-      const say = now.t as unknown as SlotWords['say'];
-      const categoryName = (id: string) => categories.find((c) => c.id === id)?.name ?? '';
-      const voice = now.serious ? 'plain' : now.persona;
-      const described = describeLedgerAnswer(answer, {
-        ...env,
-        categoryName,
-        voice,
-        slotWords: {
-          ...env,
-          say,
-          categoryName,
-          dayMonth: (date) => env.dayLongMonth(localDateOf(date)),
-        },
-      });
-      if (described.wording === null || reading.offline) return described.card;
-      const request: WordRequest = {
-        surface: 'answer',
-        language: now.language,
-        persona: voice,
-        companion: {
-          name: say(`companions.name.${now.form}`),
-          personality: say(`companions.line.${now.form}`),
-        },
-        facts: described.wording.facts.slice(0, 3).map((f) => ({
-          kind: f.kind,
-          slots: f.slots.slice(0, 8).map((s) => ({ name: s.name, value: s.value.slice(0, 40) })),
-        })),
-        question: question.slice(0, 300),
-      };
-      const line = await wordWithModel(request, {
-        request: (r) => api.request(r),
-        choice: readModelChoice(db),
-      }).catch(() => null);
-      return line === null
-        ? described.card
-        : {
-            ...described.card,
-            text: fillLine(line.text, described.wording.values),
-            mood: line.mood,
-          };
+  /** Shows a message and keeps it on the phone. */
+  const push = useCallback(
+    (message: AskMessage) => {
+      setMessages((all) => [...all, message]);
+      const saved =
+        message.kind === 'me'
+          ? { key: message.id, kind: 'me' as const, text: message.text }
+          : { key: message.id, kind: 'answer' as const, card: message.card, query: message.query };
+      writeTurn(store.db, saved).catch((error: unknown) => Sentry.captureException(error));
     },
-    [api, db, store],
+    [store],
   );
 
   const send = useCallback(
@@ -229,7 +184,7 @@ export function useAsk(): AskChat {
             return;
           }
         }
-        push({ kind: 'me', text: question });
+        push({ id: turnKey(), kind: 'me', text: question });
         setTyping(true);
         if (!max) {
           try {
@@ -240,15 +195,17 @@ export function useAsk(): AskChat {
           }
         }
         const snapshot = store.getSnapshot();
+        const before = history.current;
         const reading = await readQuestion(api, question, {
           today: snapshot.today,
           categories: snapshot.categories.map((c) => c.name),
           pots: snapshot.pots.map((pot) => pot.name),
-          previous: previous.current,
-          currency: words.current.money.currency,
+          previous: before[before.length - 1] ?? null,
+          earlier: before.slice(0, -1),
           merchants: [...new Set(snapshot.cycleSpends.map((spend) => spend.merchant))],
+          currency: words.current.money.currency,
         });
-        previous.current = reading.query;
+        history.current = [...before, reading.query].slice(-HISTORY);
         // Worked out from the store as it is now, after the wait, with the cycle before it.
         const now = store.getSnapshot();
         const ctx = askContextOf(now);
@@ -259,28 +216,29 @@ export function useAsk(): AskChat {
             ? []
             : await readEarlierSpends(store.db, earlierFrom, now.cycle.start);
         const answer = answerQuery(reading.query, ctx, askLedgerOf(now, earlier));
-        const card = await cardFor(answer, reading, now.categories, question);
+        const { card, pending } = await cardOf(answer, reading, question, {
+          words: words.current,
+          store,
+          api,
+          modelChoice: readModelChoice(db),
+          max,
+          learnedCategory: (name) => actions.ruleCategory(name),
+        });
         haptics.tap();
-        push({ kind: 'answer', card });
+        push({ id: turnKey(), kind: 'answer', card, query: reading.query, pending });
       } catch (error) {
         Sentry.captureException(error);
-        push({
-          kind: 'answer',
-          card: {
-            text: words.current.t('ask.error'),
-            mood: 'think',
-            bars: null,
-            rows: [],
-            note: null,
-          },
-        });
+        const card = plainCard(words.current.t('ask.error'), 'think');
+        push({ id: turnKey(), kind: 'answer', card, query: null, pending: null });
       } finally {
         setTyping(false);
         busy.current = false;
       }
     },
-    [api, cardFor, max, openMax, push, store],
+    [actions, api, db, max, openMax, push, store],
   );
+
+  const act = useAskAct({ messages, setMessages, words, actions });
 
   const freeLeft = max || askedOn === null ? null : freeAsksLeft(askedOn, today);
   const mood: CompanionMood = typing ? 'think' : lastMood(messages);
@@ -295,6 +253,7 @@ export function useAsk(): AskChat {
     locked: freeLeft === 0,
     suggestions,
     send,
+    act,
     openMax,
   };
 }

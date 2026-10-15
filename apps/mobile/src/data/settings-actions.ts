@@ -5,6 +5,7 @@ import { forgetVoice } from '../features/wording/voice-store';
 
 /** Children before parents, so the foreign keys never see an orphan mid-wipe. */
 const EVERY_TABLE = [
+  'ask_turns',
   'spend_sightings',
   'pot_moves',
   'together_moves',

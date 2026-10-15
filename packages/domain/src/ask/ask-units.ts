@@ -27,7 +27,7 @@ function scaled(
   by: (n: number) => number,
 ): Record<string, unknown> {
   const out = { ...query };
-  for (const key of ['amount', 'minAmount'] as const) {
+  for (const key of ['amount', 'minAmount', 'goal'] as const) {
     const value = out[key];
     if (typeof value === 'number') out[key] = by(value);
   }

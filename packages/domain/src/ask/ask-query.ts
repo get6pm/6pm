@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { daysInMonth, diffDays, makeDate, parts, addDays, startOfWeek } from '../time/local-date';
 import type { LocalDate } from '../time/local-date';
+import { HOW_TO_TOPICS } from './ask-actions';
 import { askIntentOptions, askIntentSchema, type AskIntent } from './ask-intent';
 import { CHAT_TOPICS } from './chat-topics';
 
@@ -64,6 +65,8 @@ export function askQueryOptions<Amount extends z.ZodNumber>(amount: Amount) {
       category: name.optional(),
       merchant: name.optional(),
       minAmount: amount.optional(),
+      /** "Which was the biggest?": the largest first instead of the newest. */
+      sort: z.enum(['amount']).optional(),
     }),
     /** "What bills are left before payday?" */
     z.object({ kind: z.literal('bills') }),
@@ -75,6 +78,25 @@ export function askQueryOptions<Amount extends z.ZodNumber>(amount: Amount) {
       what: name,
       amount: amount.optional(),
     }),
+    /** "vừa ăn phở 50k": log a spend, once the user confirms it. */
+    z.object({
+      kind: z.literal('logSpend'),
+      amount,
+      name,
+      category: name.optional(),
+    }),
+    /** "tạo hũ du lịch 10tr": make a pot, once the user confirms it. */
+    z.object({
+      kind: z.literal('makePot'),
+      name,
+      goal: amount.optional(),
+      by: z
+        .string()
+        .regex(/^\d{4}-\d{2}$/)
+        .optional(),
+    }),
+    /** "How do I add spends from email?", "what's a pot?": how 6pm works. */
+    z.object({ kind: z.literal('howTo'), topic: z.enum(HOW_TO_TOPICS) }),
     /** "Thanks!", "Hi", "roast me", "hết tiền rồi": a companion line, no lookup. */
     z.object({ kind: z.literal('chat'), topic: z.enum(CHAT_TOPICS).optional() }),
   ] as const;
@@ -223,6 +245,8 @@ export const askRequestSchema = z.object({
   categories: z.array(askName).max(50).optional(),
   pots: z.array(askName).max(30).optional(),
   previous: askQuerySchema.optional(),
+  /** The readings before `previous`, oldest first, for a follow-up further back. */
+  earlier: z.array(askQuerySchema).max(3).optional(),
   /** The home currency's ISO code, so amounts are read in it; đồng when absent. */
   currency: z
     .string()

@@ -38,6 +38,10 @@ const ANSWER_KINDS_SET = {
   goalPace: true,
   goalNoPace: true,
   goalAmount: true,
+  confirmSpend: true,
+  confirmPot: true,
+  potGoal: true,
+  howTo: true,
 } as const satisfies Record<AskQueryAnswer['kind'], true>;
 export const ANSWER_KINDS = Object.keys(ANSWER_KINDS_SET) as AskQueryAnswer['kind'][];
 

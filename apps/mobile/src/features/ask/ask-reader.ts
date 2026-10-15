@@ -27,6 +27,8 @@ export interface ReadingHelp {
   readonly previous: AskQuery | null;
   /** The home currency: its code goes to the server, so amounts are read in it. */
   readonly currency: Currency;
+  /** The readings before `previous`, oldest first, for follow-ups further back. */
+  readonly earlier?: readonly AskQuery[];
   /** The user's own places, for the rules alone: they never leave the phone. */
   readonly merchants?: readonly string[];
 }
@@ -84,6 +86,9 @@ export async function readQuestion(
     ...(help.previous === null ? {} : { previous: help.previous }),
     // Đồng is what a server that predates the field reads anyway.
     ...(help.currency.code === 'VND' ? {} : { currency: help.currency.code }),
+    ...(help.earlier === undefined || help.earlier.length === 0
+      ? {}
+      : { earlier: help.earlier.slice(-3) }),
   });
   if (request.success) {
     try {

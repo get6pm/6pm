@@ -73,7 +73,6 @@ export const NOT_YET = words(
   'day of the week',
   'late at night',
   'ngay thuong',
-  'biggest purchase',
   'vuot',
   'over on',
   'nen de danh bao nhieu',
@@ -132,3 +131,15 @@ export const MONTH_NAMES = words(
 );
 /** Buying words that make a bare price a question about affording it. */
 export const BUY = words('mua', 'buy', 'if i buy', 'di', 'order', 'dat');
+
+/** "The biggest one": a list with the largest first. */
+export const BIGGEST = words(
+  'biggest purchase',
+  'biggest spend',
+  'biggest one',
+  'nhieu nhat',
+  'lon nhat',
+  'dat nhat',
+  'most expensive',
+  'which was the biggest',
+);

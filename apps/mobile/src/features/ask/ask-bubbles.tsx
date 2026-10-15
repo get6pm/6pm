@@ -12,6 +12,8 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { useI18n } from '../../i18n/i18n';
+import { haptics } from '../../ui/haptics';
+import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, tabular } from '../../ui/type/fonts';
 import { answerBubbleIn, growEase, meBubbleIn, riseIn } from './ask-motion';
@@ -137,8 +139,54 @@ function Bars({ bars }: { readonly bars: AskBarsView }) {
   );
 }
 
-/** 6pm's answer: the sentence in the display face, the bars, the working and a note. */
-export function AnswerBubble({ card }: { readonly card: AskCard }) {
+/** An answer's buttons: the first does what the answer offers, filled; the other is outlined. */
+function AnswerActions({
+  actions,
+  onAction,
+}: {
+  readonly actions: NonNullable<AskCard['actions']>;
+  readonly onAction: (choice: 'go' | 'cancel') => void;
+}) {
+  const { palette } = useTheme();
+  return (
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingTop: 2 }}>
+      {actions.map((action) => (
+        <PressScale
+          key={action.id}
+          accessibilityRole="button"
+          scaleTo={0.95}
+          onPress={() => {
+            haptics.tap();
+            onAction(action.id);
+          }}
+          style={{
+            minHeight: 44,
+            paddingVertical: 10,
+            paddingHorizontal: 18,
+            borderRadius: 18,
+            justifyContent: 'center',
+            ...(action.primary
+              ? { backgroundColor: palette.btnBg }
+              : { borderWidth: 1, borderColor: palette.hair }),
+          }}
+        >
+          <Text style={{ ...body(15, 600), color: action.primary ? palette.btnFg : palette.ink }}>
+            {action.label}
+          </Text>
+        </PressScale>
+      ))}
+    </View>
+  );
+}
+
+/** 6pm's answer: the sentence in the display face, the bars, the working, a note, any buttons. */
+export function AnswerBubble({
+  card,
+  onAction,
+}: {
+  readonly card: AskCard;
+  readonly onAction?: (choice: 'go' | 'cancel') => void;
+}) {
   const { palette } = useTheme();
   return (
     <Animated.View
@@ -184,6 +232,9 @@ export function AnswerBubble({ card }: { readonly card: AskCard }) {
       )}
       {card.note === null ? null : (
         <Text style={{ ...body(13.5), color: palette.inkSoft }}>{card.note}</Text>
+      )}
+      {card.actions === undefined || card.actions.length === 0 || onAction === undefined ? null : (
+        <AnswerActions actions={card.actions} onAction={onAction} />
       )}
     </Animated.View>
   );

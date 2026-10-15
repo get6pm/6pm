@@ -2,9 +2,11 @@ import { foldWords } from '../capture/spoken-spend';
 import { designAmount, VND, type Currency } from '../money/currency';
 import { parseAmount } from '../money/parse-amount';
 import type { AskQuery, AskRange, AskRangePreset } from './ask-query';
+import { actionIn } from './read-actions';
 import { chatTopicIn, urgentTopicIn } from './read-chat';
 import {
   ACTION,
+  BIGGEST,
   BUY,
   CAN_SPEND,
   FULLNESS,
@@ -79,6 +81,13 @@ function followUp(
   const amount = parseAmount(question, currency);
   if (previous.kind === 'goal' && previous.amount === undefined && amount !== null) {
     return spoken.length <= 4 ? { ...previous, amount } : null;
+  }
+  if (previous.kind === 'makePot' && previous.goal === undefined && amount !== null) {
+    return spoken.length <= 4 ? { ...previous, goal: amount } : null;
+  }
+  // "Cái nào nhiều nhất?" after a list: the same spends, largest first.
+  if (previous.kind === 'list' && has(f, BIGGEST) && spoken.length <= 6) {
+    return { ...previous, sort: 'amount' };
   }
   const cued = [PAST, LIST, COMPARE, BREAKDOWN, CAN, BILLS, HOW].some((list) => has(f, list));
   const [first] = ranges;
@@ -155,7 +164,9 @@ export function readQuery(
     const changed = followUp(question, f, previous, ranges, currency);
     if (changed !== null) return changed;
   }
-  // Logging a spend, making a pot or setting a budget is not something Ask does yet.
+  // Logging a spend, making a pot, how 6pm works: asked before anything is saved.
+  const action = actionIn(question, f, amount, names.categories ?? [], currency);
+  if (action !== undefined) return action;
   if (has(f, ACTION)) return UNKNOWN;
   if (has(f, HOW)) return { kind: 'howAmIDoing' };
   if (has(f, BILLS) && !has(f, PAST) && amount === null) {
@@ -211,6 +222,9 @@ function readLookup(
       ...(second === undefined ? {} : { against: { preset: second } }),
       ...filters,
     };
+  }
+  if (has(f, words('biggest purchase', 'biggest spend', 'khoan lon nhat', 'mua gi dat nhat'))) {
+    return { kind: 'list', range: range(ranges[0], 'thisCycle'), ...filters, sort: 'amount' };
   }
   if (has(f, BREAKDOWN)) return { kind: 'breakdown', range: range(ranges[0], 'thisCycle') };
   if (has(f, LIST)) return { kind: 'list', range: range(ranges[0], 'thisWeek'), ...filters };

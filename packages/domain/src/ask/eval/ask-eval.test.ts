@@ -11,7 +11,7 @@ import {
 } from './ask-eval-score';
 
 /** Where the rules stand. Raise these when the rules read more; never lower them. */
-const RULES_RIGHT_AT_LEAST = 158;
+const RULES_RIGHT_AT_LEAST = 164;
 const RULES_WRONG_AT_MOST = 0;
 
 const readings = EVAL_CASES.map((c) => {

@@ -11,3 +11,4 @@ export * from './flat-query';
 export * from './goal';
 export * from './chat';
 export * from './chat-topics';
+export * from './ask-actions';

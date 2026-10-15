@@ -1,5 +1,6 @@
 import {
   slotsOf,
+  type ActionAnswer,
   type AskAnswer,
   type AskQueryAnswer,
   type ResolvedRange,
@@ -12,7 +13,7 @@ import { goalPriceExample } from './ask-suggestions';
 import type { AskCard, AskWordsEnv } from './ask-words';
 
 /** The answers read from the user's records, as opposed to the original six. */
-export type LedgerAnswer = Exclude<AskQueryAnswer, AskAnswer>;
+export type LedgerAnswer = Exclude<AskQueryAnswer, AskAnswer | ActionAnswer>;
 
 export interface LedgerWordsEnv extends AskWordsEnv {
   readonly categoryName: (id: string) => string;

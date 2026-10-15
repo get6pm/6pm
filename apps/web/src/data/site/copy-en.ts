@@ -134,8 +134,8 @@ export const siteCopyEn: SiteCopy = {
       '3 Ask questions a week',
     ],
     trial: '7 DAYS FREE',
-    priceMonth: '$2.99',
-    priceYear: '$22.99',
+    priceMonth: '$4.99',
+    priceYear: '$34.99',
     perMonth: '/ month',
     perYear: '/ year',
     max: [

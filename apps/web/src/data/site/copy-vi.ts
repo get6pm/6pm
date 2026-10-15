@@ -139,8 +139,8 @@ export const siteCopyVi: SiteCopy = {
       '3 câu hỏi mỗi tuần',
     ],
     trial: '7 NGÀY MIỄN PHÍ',
-    priceMonth: '78.000₫',
-    priceYear: '598.000₫',
+    priceMonth: '99.000₫',
+    priceYear: '799.000₫',
     perMonth: '/ tháng',
     perYear: '/ năm',
     max: [

@@ -108,7 +108,6 @@ fakes behaviour the app cannot fake. Founder review.
 | Max sheet | Terms / Privacy links | Terms = `https://6pm.oddeggs.studio/terms`; Privacy = `https://6pm.oddeggs.studio/privacy` | The site serves both, in English and Vietnamese |
 | Look detail | Intensity slider | Own Gesture Handler slider (4 pt track in the accent, 28 pt white thumb) | The render set has no try-on frame; the prototype used a browser range input |
 | Max | Development app (`ai.sixpm.app.dev`) | Purchases unavailable: no price, buy disabled | Products and RevenueCat exist for `ai.sixpm.app` only; purchases are tested on TestFlight builds |
-| Max | Yearly price | 599.000₫ (49.900₫ a month) | App Store has no 598.000₫ price point in Vietnam; the app reads the price from the store |
 | Every screen | iPad | The phone layout, stretched to the iPad's width | v1 shipped on iPad and an update may not drop it; there is no iPad design |
 | Settings | Backup row | Cloud tile, label, the MAX lock badge when not on Max (opens the Max sheet at the backup tile), the state on the right: "iCloud, 2 minutes ago" / "Off" / "Found a backup" / "Deleting…" | The prototype's row flips a flag and says "iCloud · just now"; backup is real here, so tapping opens a sheet |
 | Backup sheet | Whole sheet | The capture guide's edge card (cloud tile, "Backed up 2 minutes ago.", "iCloud · 284 items · encrypted. 6pm still works without it."), Back up now, Delete backup (tap twice, like Delete all data), and a note on iCloud Keychain | No sheet is designed; built from the Settings cards and buttons |

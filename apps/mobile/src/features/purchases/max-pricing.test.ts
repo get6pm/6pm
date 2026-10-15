@@ -13,42 +13,42 @@ import type { MaxOffer, Offerings } from './purchases-port';
 const monthly: MaxOffer = {
   plan: 'monthly',
   productId: 'ai.sixpm.app.max.monthly',
-  priceText: '78.000₫',
-  price: 78_000,
-  perMonthText: '78.000₫',
-  perMonth: 78_000,
+  priceText: '99.000₫',
+  price: 99_000,
+  perMonthText: '99.000₫',
+  perMonth: 99_000,
   trialDays: 7,
 };
 const yearly: MaxOffer = {
   plan: 'yearly',
   productId: 'ai.sixpm.app.max.yearly',
-  priceText: '598.000₫',
-  price: 598_000,
-  perMonthText: '49.833₫',
-  perMonth: 49_833,
+  priceText: '799.000₫',
+  price: 799_000,
+  perMonthText: '66.583₫',
+  perMonth: 66_583,
   trialDays: 7,
 };
 const both: Offerings = { looks: {}, max: { monthly, yearly } };
 
 describe('Max pricing from the store’s prices', () => {
   it('works the yearly saving out of the two prices', () => {
-    expect(yearlySavingPercent(both)).toBe(36);
+    expect(yearlySavingPercent(both)).toBe(33);
   });
 
   it('claims no saving without both plans, or when the yearly plan is not cheaper', () => {
     expect(yearlySavingPercent({ looks: {}, max: { yearly } })).toBeNull();
     expect(
-      yearlySavingPercent({ looks: {}, max: { monthly, yearly: { ...yearly, price: 936_000 } } }),
+      yearlySavingPercent({ looks: {}, max: { monthly, yearly: { ...yearly, price: 1_188_000 } } }),
     ).toBeNull();
   });
 
   it('shows the store’s per-month text, and none when the store gave none', () => {
-    expect(perMonthText(yearly)).toBe('49.833₫');
-    expect(perMonthText(monthly)).toBe('78.000₫');
+    expect(perMonthText(yearly)).toBe('66.583₫');
+    expect(perMonthText(monthly)).toBe('99.000₫');
     expect(perMonthText({ ...yearly, perMonthText: null })).toBeNull();
     expect(perMonthText(undefined)).toBeNull();
-    expect(fromPerMonthText(both)).toBe('49.833₫');
-    expect(fromPerMonthText({ looks: {}, max: { monthly } })).toBe('78.000₫');
+    expect(fromPerMonthText(both)).toBe('66.583₫');
+    expect(fromPerMonthText({ looks: {}, max: { monthly } })).toBe('99.000₫');
     expect(fromPerMonthText({ looks: {}, max: {} })).toBeNull();
   });
 

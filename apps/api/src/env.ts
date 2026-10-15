@@ -17,6 +17,9 @@ export const secretNames = [
   /** Budget together: the Sign in with Apple key (`.p8` text) and its key id, for revoking. */
   'APPLE_SIGN_IN_KEY',
   'APPLE_SIGN_IN_KEY_ID',
+  /** The realtime transcribers voice streams to in server mode; `VOICE_PROVIDER` picks one. */
+  'DEEPGRAM_API_KEY',
+  'ELEVENLABS_API_KEY',
 ] as const;
 export type SecretName = (typeof secretNames)[number];
 
@@ -37,6 +40,10 @@ export type Bindings = Secrets & {
   readonly ICON_PICK_RATE_LIMIT: RateLimit;
   readonly ENVIRONMENT: EnvironmentName;
   readonly COMMIT_SHA: string;
+  /** `deepgram` (the default) or `elevenlabs`. */
+  readonly VOICE_PROVIDER?: string;
+  /** `true` once the ElevenLabs account has zero retention: its logging is then turned off. */
+  readonly ELEVENLABS_ZERO_RETENTION?: string;
 };
 
 /** The device behind a request, set once its bearer token has been recognised. */

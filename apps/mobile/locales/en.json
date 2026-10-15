@@ -1,6 +1,6 @@
 {
   "NSCameraUsageDescription": "6pm uses the camera to read VietQR codes when you scan to pay.",
-  "NSMicrophoneUsageDescription": "6pm listens while you hold to say a spend. What you say is understood on this iPhone.",
+  "NSMicrophoneUsageDescription": "6pm listens while you say a spend. Your voice goes to a speech-to-text service to be written down, or stays on this iPhone in on-device mode.",
   "NSSpeechRecognitionUsageDescription": "6pm turns what you say into an amount and a name, on this iPhone. Nothing is sent anywhere.",
   "NSPhotoLibraryUsageDescription": "6pm only saves your close receipt and money diary to Photos. It never looks through your library.",
   "NSPhotoLibraryAddUsageDescription": "6pm saves your close receipt and money diary to Photos when you ask it to.",

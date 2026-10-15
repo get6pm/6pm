@@ -35,6 +35,9 @@ const ANSWER_KINDS_SET = {
   noSuchCategory: true,
   noRange: true,
   chat: true,
+  goalPace: true,
+  goalNoPace: true,
+  goalAmount: true,
 } as const satisfies Record<AskQueryAnswer['kind'], true>;
 export const ANSWER_KINDS = Object.keys(ANSWER_KINDS_SET) as AskQueryAnswer['kind'][];
 

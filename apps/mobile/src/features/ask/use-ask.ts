@@ -242,6 +242,7 @@ export function useAsk(): AskChat {
           categories: snapshot.categories.map((c) => c.name),
           pots: snapshot.pots.map((pot) => pot.name),
           previous: previous.current,
+          merchants: [...new Set(snapshot.cycleSpends.map((spend) => spend.merchant))],
         });
         previous.current = reading.query;
         // Worked out from the store as it is now, after the wait, with the cycle before it.

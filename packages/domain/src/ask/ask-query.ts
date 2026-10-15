@@ -66,6 +66,12 @@ export const askQuerySchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('bills') }),
   /** "How am I doing this month?" */
   z.object({ kind: z.literal('howAmIDoing') }),
+  /** "When can I buy a house?" — what, as the user wrote it, and its price if they said one. */
+  z.object({
+    kind: z.literal('goal'),
+    what: name,
+    amount: z.number().int().positive().optional(),
+  }),
   /** "Thanks!", "Hi" — a companion line, no numbers. */
   z.object({ kind: z.literal('chat') }),
 ]);

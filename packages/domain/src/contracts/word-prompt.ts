@@ -36,6 +36,8 @@ export const WORD_KIND_MEANINGS: Readonly<Record<string, string>> = {
   compared: 'the span against the one before it.',
   listed: 'the spends that match, newest first.',
   bills: 'the bills left before payday.',
+  goalPace:
+    'a big goal ({what}, {amount}) at what goes to Future you each month ({monthly}): about {count} {unit}, around {month}. Encouraging, never discouraging, however long it is.',
   howAmIDoing: 'the few things most worth knowing right now.',
   noSuchCategory: 'no category by that name.',
   noRange: 'there is nothing to look at for that span yet.',

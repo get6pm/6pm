@@ -24,6 +24,17 @@ export interface ReadingHelp {
   readonly pots: readonly string[];
   /** The query before this one, for a follow-up ("what about last month?"). */
   readonly previous: AskQuery | null;
+  /** The user's own places, for the rules alone: they never leave the phone. */
+  readonly merchants?: readonly string[];
+}
+
+/** The phone's own reading, with the names it keeps and the question before. */
+function readHere(question: string, help: ReadingHelp): AskQuery {
+  return readQuery(
+    question,
+    { pots: help.pots, categories: help.categories, merchants: help.merchants ?? [] },
+    help.previous,
+  );
 }
 
 /** Rejects after `ms`, so a slow registration or a hung connection never holds the chat. */
@@ -83,14 +94,11 @@ export async function readQuestion(
       if (answer.query !== undefined) return { query: answer.query, offline: false };
       // A server that only knows the original six says "unknown" to the rest; the rules may know.
       if (answer.intent.kind !== 'unknown') return { query: answer.intent, offline: false };
-      const ruled = readQuery(question, { pots: help.pots, categories: help.categories });
+      const ruled = readHere(question, help);
       return { query: ruled, offline: ruled.kind === 'unknown' };
     } catch {
       // Falls through: any failure of the server means the rules read it.
     }
   }
-  return {
-    query: readQuery(question, { pots: help.pots, categories: help.categories }),
-    offline: true,
-  };
+  return { query: readHere(question, help), offline: true };
 }

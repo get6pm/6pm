@@ -7,3 +7,4 @@ export * from './read-query';
 export * from './ask-ledger';
 export * from './read-prompt';
 export * from './flat-query';
+export * from './goal';

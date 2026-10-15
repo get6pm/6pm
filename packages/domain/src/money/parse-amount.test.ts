@@ -25,6 +25,12 @@ describe('parseAmount', () => {
     ['1.4M', 1_400_000],
     ['What if I buy a 450k jacket?', 450_000],
     ['1 củ', 1_000_000],
+    ['nhà 3 tỷ', 3_000_000_000],
+    ['3 tỉ', 3_000_000_000],
+    ['1ty2', 1_200_000_000],
+    ['2 tỷ rưỡi', 2_500_000_000],
+    ['a 1.5bn flat', 1_500_000_000],
+    ['35 tiền', 35_000],
   ])('%s → %d', (text, expected) => {
     expect(parseAmount(text)).toBe(expected);
   });

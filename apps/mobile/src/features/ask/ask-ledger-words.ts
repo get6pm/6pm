@@ -213,6 +213,44 @@ export function describeLedgerAnswer(answer: LedgerAnswer, env: LedgerWordsEnv):
         wording: { facts, values },
       };
     }
+    case 'goalPace': {
+      const values = {
+        monthly: short(answer.monthly),
+        amount: short(answer.amount),
+        what: answer.what,
+        month: env.monthLong(answer.reachedIn),
+      };
+      const text =
+        answer.years === null
+          ? say('ask.answer.goalPace.months', { ...values, count: answer.months })
+          : say('ask.answer.goalPace.years', { ...values, count: answer.years });
+      const rows = [
+        { key: say('ask.row.goal'), value: formatVnd(answer.amount) },
+        { key: say('ask.row.perMonth'), value: formatVnd(answer.monthly) },
+        { key: say('ask.row.reachedBy'), value: values.month },
+      ];
+      return {
+        card: card(text, 'think', rows, say('ask.answer.goalPace.note')),
+        wording: single('goalPace', {
+          ...values,
+          count: String(answer.years ?? answer.months),
+          unit: answer.years === null ? 'months' : 'years',
+        }),
+      };
+    }
+    case 'goalNoPace':
+      return {
+        card: card(
+          say('ask.answer.goalNoPace', { amount: short(answer.amount), what: answer.what }),
+          'calm',
+        ),
+        wording: null,
+      };
+    case 'goalAmount':
+      return {
+        card: card(say('ask.answer.goalAmount', { what: answer.what }), 'think'),
+        wording: null,
+      };
     case 'noSuchCategory':
       return {
         card: card(say('ask.answer.noSuchCategory', { category: answer.name }), 'think'),

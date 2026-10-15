@@ -7,9 +7,11 @@ import { ApiError } from '../errors';
 /**
  * The vision model: Claude, through Anthropic's own SDK. It reads photos the phone could not read
  * itself. Every call asks for structured output (a JSON schema), opts into Anthropic's server-side
- * fallback when a safety classifier declines, and checks the stop reason before reading anything.
+ * fallback when the model has one, and checks the stop reason before reading anything. Haiku read
+ * every total of the real receipts Opus did and one more, at a fortieth of the price; the shop
+ * names it makes up are dropped on the phone unless the photo's own text shows them.
  */
-export const anthropicModel = 'claude-opus-5-5';
+export const anthropicModel: VisionModel = 'claude-haiku-5-5';
 
 /**
  * The models a read may run on. Only those Anthropic offers a server-side fallback for opt into

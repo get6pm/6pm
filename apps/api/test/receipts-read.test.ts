@@ -31,7 +31,7 @@ const grabReceipt: ReceiptModelOutput = {
 /** A recorded Messages API answer. */
 function modelAnswer(
   output: unknown,
-  { stopReason = 'end_turn', model = 'claude-opus-5-5' } = {},
+  { stopReason = 'end_turn', model = 'claude-haiku-5-5' } = {},
 ): Response {
   return Response.json({
     id: 'msg_test',
@@ -142,7 +142,11 @@ describe('POST /v1/receipts/read', () => {
       },
     });
     expect(await ledgerRows(token)).toEqual([
-      expect.objectContaining({ model: 'claude-opus-5-5', input_tokens: 3_700, output_tokens: 75 }),
+      expect.objectContaining({
+        model: 'claude-haiku-5-5',
+        input_tokens: 3_700,
+        output_tokens: 75,
+      }),
     ]);
   });
 
@@ -188,23 +192,21 @@ describe('POST /v1/receipts/read', () => {
 });
 
 describe('the request to the model', () => {
-  it('sends the photo first, asks for the schema at low effort, and opts into the fallback', async () => {
+  it('sends the photo first and asks for the schema at low effort, on Haiku', async () => {
     const send = vi.fn<typeof fetch>(() => Promise.resolve(modelAnswer(grabReceipt)));
     await readReceipt({ apiKey: 'test', fetch: send }, { ...body, language: 'en' });
     const [url, init] = send.mock.calls[0] ?? [];
     expect(url).toBe('https://api.anthropic.com/v1/messages?beta=true');
-    expect(new Headers(init?.headers).get('anthropic-beta')).toBe(
-      'server-side-fallback-2026-07-01',
-    );
+    expect(new Headers(init?.headers).get('anthropic-beta')).toBeNull();
     const sent = JSON.parse(typeof init?.body === 'string' ? init.body : 'null') as Record<
       string,
       unknown
     > & { messages: { content: { type: string; source?: unknown }[] }[] };
     expect(sent).toMatchObject({
-      model: 'claude-opus-5-5',
-      fallbacks: 'default',
+      model: 'claude-haiku-5-5',
       output_config: { effort: 'low', format: { type: 'json_schema' } },
     });
+    expect(sent).not.toHaveProperty('fallbacks');
     expect(sent).not.toHaveProperty('thinking');
     expect(sent).not.toHaveProperty('tool_choice');
     expect(sent.messages[0]?.content.map((block) => block.type)).toEqual(['image', 'text']);
@@ -213,6 +215,17 @@ describe('the request to the model', () => {
       media_type: 'image/jpeg',
       data: jpeg,
     });
+  });
+
+  it('opts into the server-side fallback on a model that has one', async () => {
+    const send = vi.fn<typeof fetch>(() => Promise.resolve(modelAnswer(grabReceipt)));
+    await readReceipt({ apiKey: 'test', fetch: send }, body, 'claude-opus-5-5');
+    const [, init] = send.mock.calls[0] ?? [];
+    expect(new Headers(init?.headers).get('anthropic-beta')).toBe(
+      'server-side-fallback-2026-07-01',
+    );
+    const sent = JSON.parse(typeof init?.body === 'string' ? init.body : 'null') as unknown;
+    expect(sent).toMatchObject({ model: 'claude-opus-5-5', fallbacks: 'default' });
   });
 
   it('tries once more when the provider is busy', async () => {

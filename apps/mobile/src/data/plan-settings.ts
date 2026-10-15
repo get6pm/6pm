@@ -22,6 +22,14 @@ export const planSettingsSchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .optional(),
+  /**
+   * The home currency (ISO 4217), from the phone when the month was first set up. A plan saved
+   * before 6pm counted other currencies has none, and is in đồng.
+   */
+  currency: z
+    .string()
+    .regex(/^[A-Z]{3}$/)
+    .optional(),
 });
 export type PlanSettings = z.infer<typeof planSettingsSchema>;
 
@@ -35,6 +43,22 @@ export const DEFAULT_PLAN: PlanSettings = {
 };
 
 const KEY = 'plan';
+
+/** A plan from before 6pm counted other currencies was set up in đồng. */
+const PLAN_CURRENCY_BEFORE = 'VND';
+
+/**
+ * What the app counts in: the plan's currency, đồng for a plan that has none, and the phone's
+ * own before there is a plan (onboarding).
+ */
+export function homeCurrencyCode(plan: PlanSettings | null, deviceCode: string): string {
+  return plan === null ? deviceCode : planCurrencyCode(plan);
+}
+
+/** The currency a plan was set up in. */
+export function planCurrencyCode(plan: PlanSettings): string {
+  return plan.currency ?? PLAN_CURRENCY_BEFORE;
+}
 
 export async function readPlan(db: SqlDatabase): Promise<PlanSettings | null> {
   const rows = await db.getAllAsync<{ value: string }>('SELECT value FROM settings WHERE key = ?', [

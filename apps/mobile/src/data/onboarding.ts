@@ -4,7 +4,8 @@ import { billDueIn, payCycleOn, type LocalDate, type Payday } from '@6pm/domain'
 import { t, type Language } from '@6pm/i18n';
 
 import type { MoneyStore } from './money-store';
-import { DEFAULT_PLAN, readPlan, writePlan } from './plan-settings';
+import { deviceCurrencyCode } from '../money/device-money';
+import { DEFAULT_PLAN, planCurrencyCode, readPlan, writePlan } from './plan-settings';
 
 /** Everything onboarding asks, ready to store. Amounts are integer đồng a month. */
 export interface OnboardingAnswers {
@@ -78,6 +79,8 @@ async function setUp(
       futureYou: Math.max(0, Math.round(answers.futureYou)),
       closeAt: answers.closeAt,
       startedOn: existing?.startedOn ?? today,
+      // The phone's currency, once: a month set up again keeps the one it was first set up in.
+      currency: existing ? planCurrencyCode(existing) : deviceCurrencyCode(),
     });
 
     const categories = await tables.categories.all();

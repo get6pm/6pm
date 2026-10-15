@@ -1,4 +1,5 @@
 import {
+  currencyOf,
   dailyNumber,
   joinedShare,
   occasionsOf,
@@ -20,7 +21,7 @@ import {
 
 import { createQueue } from './store-queue';
 import { openMoneyTables, type MoneyTables } from './money-tables';
-import { readPlan, type PlanSettings } from './plan-settings';
+import { planCurrencyCode, readPlan, type PlanSettings } from './plan-settings';
 import { readPotMoves, recordDueSetAsides } from './pot-moves';
 import type { SqlDatabase } from './table';
 import { togetherTopUps } from './together-moves';
@@ -98,6 +99,7 @@ export function dailyInputOf(snapshot: MoneySnapshot): DailyNumberInput | null {
     notDaily,
     daysLeft: snapshot.cycle.daysLeft,
     share: joinedShare(snapshot.cycle, plan.startedOn ?? null),
+    currency: currencyOf(planCurrencyCode(plan)),
   };
 }
 
@@ -184,6 +186,7 @@ export function createMoneyStore(db: SqlDatabase, today: LocalDate): MoneyStore 
           futureYou: plan.futureYou,
           payday: plan.payday,
           today: day,
+          currency: currencyOf(planCurrencyCode(plan)),
         })
       : [];
     const {

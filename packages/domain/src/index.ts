@@ -46,3 +46,4 @@ export * from './together';
 export * from './contracts/together';
 export * from './categories/icon-suggest';
 export * from './contracts/category-icon';
+export * from './insights';

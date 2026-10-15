@@ -77,6 +77,7 @@ export function SharedPotEditor() {
 
   return (
     <PotSheet
+      currency={currency.code}
       title={existing === undefined ? t('together.newPot') : t('together.pot.edit')}
       placeholder={t('plan.pot.placeholder')}
       fields={fields}

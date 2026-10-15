@@ -1,9 +1,16 @@
 import { useEffect } from 'react';
 
-import { currencyOfForeignQr, formatForeign, isRate, type FxRate } from '@6pm/domain';
+import {
+  currencyOf,
+  currencyOfForeignQr,
+  formatForeign,
+  isRate,
+  tripCurrencyOf,
+  type FxRate,
+} from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
-import { useHomeCurrency } from '../../money/use-money-format';
+import { moneyFormatFor, useHomeCurrency } from '../../money/use-money-format';
 import { rateFor } from '../travel/trip';
 import { useTravel } from '../travel/travel-provider';
 import { foreignAmountLabel } from './pay-options';
@@ -12,8 +19,9 @@ import type { ScanPhase } from './use-scan';
 
 /**
  * A QR from another country's scheme: named, not payable from 6pm, and loggable by hand. With
- * Travel mode on and a rate for its currency, it is paid in the bank app (Vietnamese banks take
- * the region's QRs) and kept here in that currency with home underneath.
+ * Travel mode on and a rate for its currency, it is paid the way people pay there (from a đồng
+ * home, Vietnamese banks take the region's QRs) and kept here in that currency with home
+ * underneath.
  */
 export function ForeignAlert({
   phase,
@@ -27,14 +35,17 @@ export function ForeignAlert({
   /** Keeps the QR's amount, priced at `rate`; `payee` names it when the QR has no name. */
   readonly onKeep: (rate: FxRate, payee: string) => void;
 }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const home = useHomeCurrency();
   const { on, locked, rates, refreshRates } = useTravel();
   const { failure } = phase;
   const scheme = t(`scan.scheme.${failure.scheme ?? 'other'}`);
-  const currency = currencyOfForeignQr(failure);
+  const qrCurrency = currencyOfForeignQr(failure);
+  // Named apart from home's own symbol ("USD" for a Canadian, not a second "$").
+  const currency =
+    qrCurrency === null ? null : (tripCurrencyOf(qrCurrency.code, home) ?? qrCurrency);
   const travelling = on && !locked;
-  const rate = travelling && currency !== null ? rateFor(rates, currency.code) : null;
+  const rate = travelling && currency !== null ? rateFor(rates, currency.code, home) : null;
   useEffect(() => {
     if (travelling) refreshRates();
   }, [travelling, refreshRates]);
@@ -48,13 +59,22 @@ export function ForeignAlert({
       <ScanAlert
         icon="public"
         title={t('scan.abroad.title', { scheme })}
-        body={t('travel.scan.body', { symbol: currency.symbol })}
+        body={
+          home.code === 'VND'
+            ? t('travel.scan.body', { symbol: currency.symbol })
+            : t('travel.scan.bodyAway', { symbol: currency.symbol, home: home.symbol })
+        }
         secondary={{ label: t('scan.tryAgain'), onPress: onRetry }}
         primary={
           minor === null
             ? { label: t('travel.scan.logIn', { symbol: currency.symbol }), onPress: onLog }
             : {
-                label: t('travel.scan.keep', { amount: formatForeign(minor, currency) }),
+                label: t('travel.scan.keep', {
+                  amount:
+                    home.code === 'VND'
+                      ? formatForeign(minor, currency)
+                      : moneyFormatFor(currencyOf(currency.code), language).full(minor),
+                }),
                 onPress: () => onKeep(rate, scheme),
               }
         }

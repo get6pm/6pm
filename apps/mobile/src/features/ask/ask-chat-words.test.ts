@@ -19,6 +19,7 @@ function env(language: Language, voice: Voice): LedgerWordsEnv {
   return {
     t: say,
     language,
+    money: moneyFormat(vndLocale(language)),
     monthLong: (m) => m,
     dayLongMonth: (d) => d.slice(5),
     weekday: (d) => d,

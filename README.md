@@ -9,7 +9,7 @@
 A daily money ritual for iPhone. 6pm catches what you spend all day, you swipe once at six to close
 the day, and tomorrow morning you get one number: what's safe to spend today.
 
-[at6pm.app](https://at6pm.app) · [Tiếng Việt](https://at6pm.app/vi) · On the App Store 6 Nov 2026, 18:00
+[at6pm.app](https://at6pm.app) · [Tiếng Việt](https://at6pm.app/vi) · [hello@at6pm.app](mailto:hello@at6pm.app) · On the App Store 6 Nov 2026, 18:00
 
 </div>
 
@@ -97,6 +97,8 @@ Read [CLAUDE.md](CLAUDE.md) first: it is the working contract for anyone, human 
 this code. [docs/product-decisions.md](docs/product-decisions.md) says what 6pm does,
 [docs/tech-decisions.md](docs/tech-decisions.md) how, and
 [docs/design-system.md](docs/design-system.md) how it looks.
+
+Questions, ideas or a bug to report: [hello@at6pm.app](mailto:hello@at6pm.app).
 
 ## License
 

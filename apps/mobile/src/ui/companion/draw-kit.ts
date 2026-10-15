@@ -200,6 +200,32 @@ export function unitGradient(
   return linear(fr, key, 0, 0, 0, 1, colors, stops);
 }
 
+/**
+ * A radial gradient over the unit circle about the origin, built once: draw it under a canvas
+ * moved to its centre and scaled to its radius.
+ */
+export function unitRadial(
+  fr: Frame,
+  key: string,
+  colors: readonly string[],
+  stops: readonly number[],
+): SkShader {
+  'worklet';
+  const { kit } = fr;
+  let shader = kit.shaders.get(key);
+  if (!shader) {
+    shader = Skia.Shader.MakeRadialGradient(
+      { x: 0, y: 0 },
+      1,
+      colors.map((c) => colorOf(kit, c)),
+      [...stops],
+      TileMode.Clamp,
+    );
+    kit.shaders.set(key, shader);
+  }
+  return shader;
+}
+
 /** A new, empty path builder from the pool: valid until the frame ends. */
 export function pathBuilder(fr: Frame): SkPathBuilder {
   'worklet';

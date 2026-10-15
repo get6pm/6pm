@@ -71,7 +71,9 @@ export function squashOf(
       const lift = hopLift(el);
       q += 0.1 * (1 - Math.min(1, lift * 4)) - 0.05 * lift;
     }
-    if (mood === 'sleepy') q += 0.05;
+    // Asleep it sinks and swells with each slow breath; nodding, it squishes down with each nod.
+    if (mood === 'sleepy') q += 0.05 + Math.sin(el * 1.4) * 0.04;
+    if (mood === 'nod') q += Math.max(0, Math.sin(el * 2.6)) * 0.09;
     return q;
   }
   if (form === 'giot') {

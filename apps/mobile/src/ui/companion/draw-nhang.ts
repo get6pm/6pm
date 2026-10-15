@@ -2,33 +2,27 @@ import { ClipOp, type SkCanvas } from '@shopify/react-native-skia';
 
 import { drawArmsBehind, drawArmsInFront, drawFeet, fillGradient } from './draw-body';
 import { drawFace } from './draw-face';
-import {
-  INK,
-  ellipse,
-  fill,
-  linear,
-  pathBuilder,
-  stroke,
-  strokeShader,
-  type Frame,
-} from './draw-kit';
+import { INK, ellipse, fill, pathBuilder, stroke, type Frame } from './draw-kit';
+import { SMOKE, drawHeart, drawQuestion, drawRibbon, drawSleepZ } from './draw-nhang-smoke';
 
 /**
- * Nhang: a celadon incense urn whose three hairs are incense sticks. Their embers glow brighter
- * with each slow breath and their smoke braids lazily upward; happy, the smoke curls into a heart,
- * thinking into a question mark, asleep it drifts off sideways in Zs.
+ * Nhang: a celadon incense urn with gold handles, a band of lotus petals and three incense sticks
+ * for hair. Their embers glow brighter with each slow breath and their smoke braids lazily upward;
+ * calm, a fleck of ash drifts down now and then. Happy, the embers blaze and spark and the smoke
+ * curls into a heart; thinking, into a question mark; asleep it drifts off sideways in Zs. Waving,
+ * the right stick waves; nodding, all three bow together.
  */
 
-const SMOKE = '#a99cbc';
-const SMOKE_FADE = ['rgba(169,156,188,0.95)', 'rgba(169,156,188,0)'];
-const FADE_STOPS = [0, 1];
-const URN = ['#d4f0e2', '#97d3b9', '#5b9f8b'];
+const URN = ['#dcf5e8', '#97d3b9', '#4f9481'];
 const URN_STOPS = [0, 0.5, 1];
 const GOLD = '#f2c45a';
 const STICKS = [-0.34, 0, 0.34];
-const RIBBON_STEPS = 12;
-/** How high the smoke rises from an ember, as a share of the size. */
-const SMOKE_RISE = 0.2;
+const PETALS = 3;
+const ASH = [
+  [-0.45, 0.004],
+  [0.5, -0.004],
+  [0.15, 0.008],
+];
 const RING_SECONDS = 1.8;
 
 function rimY(fr: Frame): number {
@@ -41,109 +35,55 @@ function rimHalf(fr: Frame): number {
   return fr.rx * 0.86;
 }
 
-/** The ribbon's sideways drift at height `t` (0 at the ember, 1 at the top). */
-function ribbonX(fr: Frame, n: number, t: number, tipX: number): number {
+/** How far stick `n` leans from upright for this moment, in radians. */
+function leanOf(fr: Frame, n: number): number {
   'worklet';
-  const { s, cx, el, mood } = fr;
-  if (mood === 'sleepy') return t * t * s * 0.13 + Math.sin(t * 4 - el * 0.8 + n) * s * 0.01 * t;
-  // The outer ribbons lean in as they rise, so the three braid above the middle stick.
-  const braid = (cx - tipX) * 0.7 * t * t;
-  return braid + Math.sin(t * 6.5 - el * 1.7 + n * 2.1) * s * 0.022 * (0.3 + t);
+  const { el, mood } = fr;
+  let a = (STICKS[n] ?? 0) * (mood === 'sleepy' ? 1.4 : 1) + Math.sin(el * 1.1 + n * 1.7) * 0.035;
+  if (mood === 'wave' && n === 2) a = 0.55 + Math.sin(el * 8) * 0.45;
+  if (mood === 'nod') a += Math.max(0, Math.sin(el * 2.6)) * 0.28;
+  if (mood === 'happy') a += Math.sin(el * 5.2 + n) * 0.08;
+  return a;
 }
 
-/** One smoke ribbon from an ember, fading as it rises, `rise` of its full height. */
-function drawRibbon(canvas: SkCanvas, fr: Frame, n: number, x: number, y: number, rise: number) {
+/** One ember: its halo, the coal and its bright heart, with happy sparks rising from it. */
+function drawEmber(canvas: SkCanvas, fr: Frame, n: number, tx: number, ty: number) {
   'worklet';
-  const height = fr.s * SMOKE_RISE;
-  const path = pathBuilder(fr);
-  path.moveTo(0, 0);
-  let px = ribbonX(fr, n, 0, x);
-  let py = 0;
-  for (let i = 1; i <= RIBBON_STEPS; i++) {
-    const t = (i / RIBBON_STEPS) * rise;
-    const nx = ribbonX(fr, n, t, x);
-    const ny = -t * height;
-    if (i === 1) path.lineTo((px + nx) / 2, (py + ny) / 2);
-    else path.quadTo(px, py, (px + nx) / 2, (py + ny) / 2);
-    px = nx;
-    py = ny;
+  const { s, el, mood } = fr;
+  const breath = 0.5 + 0.5 * Math.sin(el * 1.3 + n * 0.4);
+  const glow = mood === 'sleepy' ? 0.15 + breath * 0.3 : mood === 'happy' ? 1 : breath;
+  canvas.drawCircle(tx, ty, s * (0.026 + 0.012 * glow), fill(fr, '#ffb36b', 0.2 + 0.3 * glow));
+  canvas.drawCircle(tx, ty, s * 0.013, fill(fr, '#ff7a2f'));
+  canvas.drawCircle(tx, ty, s * 0.006, fill(fr, '#ffe2b8', 0.3 + 0.7 * glow));
+  if (mood !== 'happy') return;
+  for (let k = 0; k < 3; k++) {
+    const p = (el * 1.1 + k / 3 + n * 0.21) % 1;
+    const x = tx + Math.sin(p * 9 + k * 2 + n) * s * 0.022;
+    const y = ty - s * 0.01 - p * s * 0.13;
+    canvas.drawCircle(x, y, s * 0.009 * (1 - p) + 0.4, fill(fr, '#ffd27a', 1 - p));
   }
-  path.lineTo(px, py);
-  canvas.save();
-  canvas.translate(x, y);
-  const shader = linear(fr, `smoke-${fr.s}`, 0, 0, 0, -height, SMOKE_FADE, FADE_STOPS);
-  canvas.drawPath(path.build(), strokeShader(fr, shader, Math.max(0.9, fr.lw * 0.6)));
-  canvas.restore();
 }
 
-/** The happy heart of smoke over the middle stick, rising and thinning away. */
-function drawHeart(canvas: SkCanvas, fr: Frame, x: number, y: number) {
+/** A fleck of ash falling from the left ember to the rim, once every five and a half seconds. */
+function drawAshFleck(canvas: SkCanvas, fr: Frame, tx: number, ty: number) {
   'worklet';
-  const { s, el, lw } = fr;
-  const p = (el % 2.2) / 2.2;
-  const r = s * 0.042 * (0.75 + 0.45 * p);
-  const cx = x + Math.sin(p * 6) * s * 0.01;
-  const cy = y - s * 0.09 - p * s * 0.06;
-  const alpha = Math.min(1, p * 5) * Math.pow(1 - p, 1.2);
-  const heart = pathBuilder(fr);
-  heart.moveTo(cx, cy + r);
-  heart.cubicTo(cx - r * 1.1, cy + r * 0.25, cx - r * 0.75, cy - r * 0.75, cx, cy - r * 0.2);
-  heart.cubicTo(cx + r * 0.75, cy - r * 0.75, cx + r * 1.1, cy + r * 0.25, cx, cy + r);
-  canvas.drawPath(heart.build(), stroke(fr, SMOKE, lw * 0.7 * (1 - 0.5 * p), alpha));
-}
-
-/** The thinking question mark of smoke, swaying over the middle stick. */
-function drawQuestion(canvas: SkCanvas, fr: Frame, x: number, y: number) {
-  'worklet';
-  const { s, el, lw } = fr;
-  const r = s * 0.045;
-  const sway = Math.sin(el * 1.5) * r * 0.25;
-  const cx = x + s * 0.015;
-  const cy = y - s * 0.1;
-  const mark = pathBuilder(fr);
-  mark.moveTo(cx - r * 0.55, cy - r * 0.45);
-  mark.cubicTo(
-    cx - r * 0.55,
-    cy - r * 1.15,
-    cx + r * 0.65,
-    cy - r * 1.2,
-    cx + r * 0.6,
-    cy - r * 0.45,
-  );
-  mark.cubicTo(cx + r * 0.55 + sway, cy, cx + sway, cy - r * 0.05, cx, cy + r * 0.45);
-  const alpha = 0.7 + 0.25 * Math.sin(el * 2);
-  canvas.drawPath(mark.build(), stroke(fr, SMOKE, lw * 0.75, alpha));
-  canvas.drawCircle(cx, cy + r * 0.95, r * 0.13, fill(fr, SMOKE, alpha));
-}
-
-/** Two Zs of smoke drifting off to the side while it sleeps. */
-function drawSleepZ(canvas: SkCanvas, fr: Frame, x: number, y: number) {
-  'worklet';
-  const { s, el, lw } = fr;
-  for (let k = 0; k < 2; k++) {
-    const p = (el * 0.33 + k * 0.5) % 1;
-    const z = s * (0.03 + 0.022 * p);
-    const zx = x + s * (0.1 + p * 0.22);
-    const zy = y - s * 0.02 - p * s * 0.16;
-    const path = pathBuilder(fr);
-    path.moveTo(zx - z, zy - z);
-    path.lineTo(zx + z, zy - z);
-    path.lineTo(zx - z, zy + z);
-    path.lineTo(zx + z, zy + z);
-    canvas.drawPath(path.build(), stroke(fr, SMOKE, lw * 0.6, Math.sin(p * Math.PI) * 0.9));
-  }
+  const p = (fr.el % 5.5) / 1.1;
+  if (p >= 1) return;
+  const { s } = fr;
+  const x = tx + Math.sin(p * 7) * s * 0.012;
+  const y = ty + p * (rimY(fr) - ty);
+  ellipse(canvas, fr, x, y, s * 0.008, s * 0.005, p * 3, fill(fr, '#cfc6c0', 1 - p * 0.3));
 }
 
 /** The sticks, their embers and their smoke. */
 function drawSticks(canvas: SkCanvas, fr: Frame) {
   'worklet';
-  const { s, cx, el, lw, mood } = fr;
+  const { s, cx, lw, mood } = fr;
   const top = rimY(fr);
   const half = rimHalf(fr);
   for (let n = 0; n < STICKS.length; n++) {
     const mid = n === 1;
-    const lean = (STICKS[n] ?? 0) * (mood === 'sleepy' ? 1.4 : 1);
-    const a = lean + Math.sin(el * 1.1 + n * 1.7) * 0.035;
+    const a = leanOf(fr, n);
     const length = s * (mid ? 0.2 : 0.165);
     const bx = cx + (n - 1) * half * 0.32;
     const by = top + s * 0.008;
@@ -157,11 +97,8 @@ function drawSticks(canvas: SkCanvas, fr: Frame) {
     const hy = by + (ty - by) * 0.35;
     canvas.drawLine(bx, by, hx, hy, stroke(fr, '#c23b32', width));
     canvas.drawLine(hx, hy, tx, ty, stroke(fr, '#7a4a33', width));
-    const breath = 0.5 + 0.5 * Math.sin(el * 1.3 + n * 0.4);
-    const glow = mood === 'sleepy' ? 0.15 + breath * 0.3 : breath;
-    canvas.drawCircle(tx, ty, s * (0.026 + 0.012 * glow), fill(fr, '#ffb36b', 0.2 + 0.3 * glow));
-    canvas.drawCircle(tx, ty, s * 0.013, fill(fr, '#ff7a2f'));
-    canvas.drawCircle(tx, ty, s * 0.006, fill(fr, '#ffe2b8', 0.3 + 0.7 * glow));
+    drawEmber(canvas, fr, n, tx, ty);
+    if (mood === 'calm' && n === 0) drawAshFleck(canvas, fr, tx, ty);
     if (!mid) continue;
     if (mood === 'happy') drawHeart(canvas, fr, tx, ty);
     if (mood === 'think') drawQuestion(canvas, fr, tx, ty);
@@ -169,7 +106,40 @@ function drawSticks(canvas: SkCanvas, fr: Frame) {
   }
 }
 
-/** The urn: celadon, a gold band, a gold rim holding the ash the sticks stand in. */
+/** The two ring handles on the urn's shoulders: ink with a gold inlay. */
+function drawHandles(canvas: SkCanvas, fr: Frame) {
+  'worklet';
+  const { s, cx, cy, rx, ry, lw } = fr;
+  for (let k = -1; k <= 1; k += 2) {
+    const x = cx + k * rx * 1.04;
+    const y = cy - ry * 0.32;
+    const r = s * 0.034;
+    canvas.drawCircle(x, y, r, stroke(fr, INK, lw * 1.7));
+    canvas.drawCircle(x, y, r, stroke(fr, GOLD, lw * 0.75));
+  }
+}
+
+/** The gold band round the urn's belly, with its row of lotus petals. */
+function drawBand(canvas: SkCanvas, fr: Frame) {
+  'worklet';
+  const { s, cx, cy, rx, ry, lw } = fr;
+  const band = cy + ry * 0.5;
+  for (let i = -PETALS; i <= PETALS; i++) {
+    const x = cx + i * rx * 0.3;
+    const w = rx * 0.15;
+    const shape = pathBuilder(fr);
+    shape.moveTo(x - w, band);
+    shape.quadTo(x, band - s * 0.065, x + w, band);
+    const petal = shape.close().build();
+    canvas.drawPath(petal, fill(fr, GOLD, 0.35));
+    canvas.drawPath(petal, stroke(fr, GOLD, lw * 0.55));
+  }
+  canvas.drawLine(cx - rx * 1.2, band, cx + rx * 1.2, band, stroke(fr, GOLD, lw * 1.05));
+  const under = band + lw * 1.5;
+  canvas.drawLine(cx - rx * 1.2, under, cx + rx * 1.2, under, stroke(fr, GOLD, lw * 0.4));
+}
+
+/** The urn: celadon, a band of petals, a gold rim holding the ash the sticks stand in. */
 function drawUrn(canvas: SkCanvas, fr: Frame) {
   'worklet';
   const { s, cx, cy, rx, ry, lw } = fr;
@@ -192,17 +162,10 @@ function drawUrn(canvas: SkCanvas, fr: Frame) {
   canvas.save();
   canvas.clipPath(urn, ClipOp.Intersect, true);
   fillGradient(canvas, fr, 'urn', URN, URN_STOPS, top, cy + ry);
-  const band = cy + ry * 0.48;
-  canvas.drawLine(cx - rx * 1.2, band, cx + rx * 1.2, band, stroke(fr, GOLD, lw * 1.1));
-  canvas.drawLine(
-    cx - rx * 1.2,
-    band + lw * 1.4,
-    cx + rx * 1.2,
-    band + lw * 1.4,
-    stroke(fr, GOLD, lw * 0.4),
-  );
-  const shine = fill(fr, 'rgba(255,255,255,0.5)');
+  drawBand(canvas, fr);
+  const shine = fill(fr, 'rgba(255,255,255,0.55)');
   ellipse(canvas, fr, cx - rx * 0.55, cy - ry * 0.3, s * 0.045, s * 0.022, -0.7, shine);
+  canvas.drawCircle(cx - rx * 0.32, cy - ry * 0.52, s * 0.009, fill(fr, 'rgba(255,255,255,0.6)'));
   canvas.restore();
   canvas.drawPath(urn, stroke(fr, INK, lw));
   ellipse(
@@ -217,6 +180,10 @@ function drawUrn(canvas: SkCanvas, fr: Frame) {
     stroke(fr, INK, lw * 0.85),
   );
   ellipse(canvas, fr, cx, top - s * 0.003, half * 0.86, s * 0.022, 0, fill(fr, '#ddd5cc'));
+  const speck = fill(fr, '#9a9096');
+  for (const [ox = 0, oy = 0] of ASH) {
+    canvas.drawCircle(cx + ox * half, top + oy * s, s * 0.0045, speck);
+  }
 }
 
 /** A ring of smoke rising from the rim when Nhang is chosen. */
@@ -234,11 +201,12 @@ export function drawSmokeRing(canvas: SkCanvas, fr: Frame): void {
   }
 }
 
-/** Nhang inside the tilted group: feet, arms, the urn, its sticks and smoke, then the face. */
+/** Nhang inside the tilted group: feet, arms, handles, the urn, its sticks and smoke, the face. */
 export function drawNhang(canvas: SkCanvas, fr: Frame): void {
   'worklet';
   drawFeet(canvas, fr);
   drawArmsBehind(canvas, fr);
+  drawHandles(canvas, fr);
   drawUrn(canvas, fr);
   drawSticks(canvas, fr);
   drawArmsInFront(canvas, fr);

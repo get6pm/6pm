@@ -20,7 +20,7 @@ const THOUGHTS = [
   [0.86, 0.18, 0.04],
 ];
 
-/** Four-point sparkles that swell and vanish around a happy or Max companion. */
+/** Four-point sparkles that swell and vanish around a happy or Max companion, or a wakeful crane. */
 function drawSparkles(canvas: SkCanvas, fr: Frame): void {
   'worklet';
   const { s, lw, el } = fr;
@@ -78,9 +78,11 @@ function drawThoughts(canvas: SkCanvas, fr: Frame): void {
 /** What floats around the body: sparkles, sleep or thoughts. */
 export function drawExtras(canvas: SkCanvas, fr: Frame, fonts: SleepFonts): void {
   'worklet';
-  if (fr.mood === 'happy' || fr.mx) drawSparkles(canvas, fr);
+  const crane = fr.form === 'hac' && fr.mood !== 'sleepy';
+  if (fr.mood === 'happy' || fr.mx || crane) drawSparkles(canvas, fr);
   // Nhang sleeps and thinks in its own smoke.
   if (fr.form === 'nhang') return;
   if (fr.mood === 'sleepy') drawSleep(canvas, fr, fonts);
-  if (fr.mood === 'think') drawThoughts(canvas, fr);
+  // The drop thinks under its rain cloud, the crane after its paper plane.
+  if (fr.mood === 'think' && fr.form !== 'giot' && fr.form !== 'hac') drawThoughts(canvas, fr);
 }

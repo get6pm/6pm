@@ -14,6 +14,6 @@ export function captureColours(palette: Palette) {
     warnText: palette.dark ? planInk.recapWord.dark : planInk.recapWord.light,
     /** The "Catch Apple Pay taps too" banner: the house orange, washed. */
     fixBg: palette.dark ? 'rgba(255,133,82,.14)' : 'rgba(255,133,82,.2)',
-    onAccent: planInk.onAccent,
+    onAccent: palette.accentFg,
   };
 }

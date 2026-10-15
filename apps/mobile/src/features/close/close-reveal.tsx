@@ -68,10 +68,10 @@ export function CloseReveal(props: {
       <Text style={{ ...mono(11, 400, 0.16), color: palette.inkSoft }}>{props.kicker}</Text>
       {/* A long amount scales down to the screen's width instead of running off its edges. */}
       <View style={{ alignSelf: 'stretch', paddingHorizontal: 20 }}>
-        <FitWidth height={Math.round(96 * 1.04)} align="center">
+        <FitWidth height={Math.round(96 * palette.numK * 1.04)} align="center">
           <Odometer
             value={value}
-            size={96}
+            size={96 * palette.numK}
             weight={500}
             letterSpacingEm={-0.02}
             color={palette.ink}

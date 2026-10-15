@@ -210,7 +210,7 @@ function Input({
             justifyContent: 'center',
           }}
         >
-          <Symbol name="arrow_upward" size={22} color="#2a1424" />
+          <Symbol name="arrow_upward" size={22} color={palette.accentFg} />
         </PressScale>
       </Animated.View>
     </View>

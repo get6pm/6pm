@@ -9,9 +9,6 @@ export function withAlpha(hex: string, alpha: number): string {
   return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${Math.round(alpha * 1000) / 1000})`;
 }
 
-/** Ink on the accent (the payday marker), as on the scan button. */
-export const ON_ACCENT = planInk.onAccent;
-
 /**
  * The Plan tab's colours, exactly as the prototype's `pd()` sets them for the frame's palette:
  * the river, the day bars, the ok / behind chips and the dashed "New pot" outline.

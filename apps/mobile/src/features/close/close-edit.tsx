@@ -182,7 +182,7 @@ export function CloseEdit({
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ ...body(17, 650), color: '#2a1424' }}>{saveLabel}</Text>
+              <Text style={{ ...body(17, 650), color: palette.accentFg }}>{saveLabel}</Text>
             </PressScale>
           </Animated.View>
         </GestureDetector>

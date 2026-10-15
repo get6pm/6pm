@@ -2,8 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Text } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
-import { planInk } from '@6pm/theme';
-
 import { useMoneyStore } from '../data/money-provider';
 import { readWallets, writeWallets } from '../data/onboarding';
 import { BankPicker } from '../features/banks/bank-picker';
@@ -46,7 +44,7 @@ export default function Banks() {
       hair: palette.hair,
       accent: palette.accent,
       accentClear: `${palette.accent}00`,
-      onAccent: planInk.onAccent,
+      onAccent: palette.accentFg,
     }),
     [palette],
   );

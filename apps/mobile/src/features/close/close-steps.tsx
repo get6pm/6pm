@@ -45,12 +45,12 @@ export function SortedStep({
           height: 104,
           borderRadius: 52,
           backgroundColor: palette.accent,
-          boxShadow: '0 18px 40px rgba(255,120,70,.4), inset 0 1px 0 rgba(255,255,255,.5)',
+          boxShadow: `0 18px 40px ${palette.accentGlow}, inset 0 1px 0 rgba(255,255,255,.5)`,
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        <Symbol name="check" size={56} weight={600} color="#2a1424" />
+        <Symbol name="check" size={56} weight={600} color={palette.accentFg} />
       </Animated.View>
       <Animated.Text
         entering={FadeInDown.delay(150).duration(400)}

@@ -2,8 +2,6 @@ import { useRouter } from 'expo-router';
 import { Text } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
-import { planInk } from '@6pm/theme';
-
 import { useI18n } from '../../i18n/i18n';
 import { useHomeCurrency } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
@@ -47,8 +45,8 @@ export function TravelPill() {
           gap: 4,
         }}
       >
-        <Symbol name="flight" size={15} color={planInk.onAccent} />
-        <Text style={{ ...body(12, 700), color: planInk.onAccent }}>
+        <Symbol name="flight" size={15} color={palette.accentFg} />
+        <Text style={{ ...body(12, 700), color: palette.accentFg }}>
           {t('travel.pill', {
             place: trip.place.name,
             symbol: trip.currency.symbol,

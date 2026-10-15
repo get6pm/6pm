@@ -110,7 +110,7 @@ export function DailyCard({
           numberOfLines={1}
           adjustsFontSizeToFit
           style={{
-            ...display(64, 500, -0.03),
+            ...display(64 * palette.numK, 500, -0.03),
             lineHeight: 64,
             ...tabular,
             color: palette.ink,

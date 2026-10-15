@@ -111,7 +111,7 @@ export const ScanFab = memo(function ScanFab({
                 backgroundColor: palette.accent,
                 borderWidth: 0.5,
                 borderColor: 'rgba(255,255,255,.45)',
-                boxShadow: '0 10px 28px rgba(255,120,70,.38), inset 0 1px 0 rgba(255,255,255,.5)',
+                boxShadow: `0 10px 28px ${palette.accentGlow}, inset 0 1px 0 rgba(255,255,255,.5)`,
               },
               disc,
             ]}
@@ -120,7 +120,7 @@ export const ScanFab = memo(function ScanFab({
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
             pointerEvents="none"
           >
-            <Symbol name="qr_code_scanner" size={30} color="#2a1424" />
+            <Symbol name="qr_code_scanner" size={30} color={palette.accentFg} />
           </View>
         </Animated.View>
       </View>

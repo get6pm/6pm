@@ -116,6 +116,16 @@ export function body(
   return { ...setIn(face, size, weight), fontSize: size, letterSpacing: letterSpacingEm * size };
 }
 
+/**
+ * A display style with its optical size pinned (a look's `heroVar: 'opsz' 22`, so a hairline
+ * serif keeps its weight at hero size). Faces without the axis, and `null`, are left alone.
+ */
+export function withOpticalSize(style: TextStyle, opsz: number | null): TextStyle {
+  const axes = style.fontVariationSettings;
+  if (opsz === null || typeof axes !== 'string' || !axes.includes("'opsz'")) return style;
+  return { ...style, fontVariationSettings: axes.replace(/'opsz' [\d.]+/, `'opsz' ${opsz}`) };
+}
+
 /** IBM Plex Mono for kickers, receipts and stamps, usually uppercase and letter-spaced. */
 export function mono(size: number, weight: 400 | 500 | 600 = 500, letterSpacingEm = 0): TextStyle {
   return {

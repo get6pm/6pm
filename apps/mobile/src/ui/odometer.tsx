@@ -4,46 +4,79 @@ import Animated, {
   Easing,
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
   withTiming,
 } from 'react-native-reanimated';
 
 import { curves, durations } from '@6pm/theme';
 
 import { useMoneyFormat } from '../money/use-money-format';
-import { display, tabular } from './type/fonts';
+import { display, tabular, withOpticalSize } from './type/fonts';
 import { symbolStyle } from './type/symbol-face';
 
 const ease = Easing.bezier(...curves.enter);
 const DIGITS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+const NO_GLOWS: readonly TextStyle[] = [];
+
+/** How fast a resting digit's glow comes back once its column stops rolling. */
+const GLOW_IN_MS = 300;
 
 function DigitColumn({
   digit,
   height,
   position,
   textStyle,
+  glows,
 }: {
   readonly digit: number;
   readonly height: number;
   readonly position: number;
   readonly textStyle: TextStyle;
+  readonly glows: readonly TextStyle[];
 }) {
   const offset = useSharedValue(-digit * height);
+  const lit = useSharedValue(1);
   useEffect(() => {
-    offset.value = withTiming(-digit * height, {
-      duration: durations.odometerBase + position * durations.odometerStep,
-      easing: ease,
-    });
-  }, [digit, height, position, offset]);
+    const duration = durations.odometerBase + position * durations.odometerStep;
+    if (offset.value === -digit * height) return;
+    offset.value = withTiming(-digit * height, { duration, easing: ease });
+    // A glow would be cut off at the column's edges while it rolls: it rests with the digit.
+    lit.value = 0;
+    lit.value = withDelay(duration, withTiming(1, { duration: GLOW_IN_MS }));
+  }, [digit, height, position, offset, lit]);
   const rolling = useAnimatedStyle(() => ({ transform: [{ translateY: offset.value }] }));
+  const glowing = useAnimatedStyle(() => ({ opacity: lit.value }));
   return (
-    <View style={{ height, overflow: 'hidden' }}>
-      <Animated.View style={[{ alignItems: 'center' }, rolling]}>
-        {DIGITS.map((d) => (
-          <Text key={d} style={[textStyle, { height, lineHeight: height }]}>
-            {d}
-          </Text>
-        ))}
-      </Animated.View>
+    <View>
+      {glows.map((glow, i) => (
+        <Animated.Text
+          key={i}
+          style={[
+            textStyle,
+            glow,
+            {
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              textAlign: 'center',
+              height,
+              lineHeight: height,
+            },
+            glowing,
+          ]}
+        >
+          {digit}
+        </Animated.Text>
+      ))}
+      <View style={{ height, overflow: 'hidden' }}>
+        <Animated.View style={[{ alignItems: 'center' }, rolling]}>
+          {DIGITS.map((d) => (
+            <Text key={d} style={[textStyle, { height, lineHeight: height }]}>
+              {d}
+            </Text>
+          ))}
+        </Animated.View>
+      </View>
     </View>
   );
 }
@@ -61,6 +94,8 @@ export function Odometer({
   weight = 400,
   letterSpacingEm = 0,
   color,
+  glows = NO_GLOWS,
+  opsz = null,
 }: {
   /** In minor units of the home currency. */
   readonly value: number;
@@ -69,10 +104,18 @@ export function Odometer({
   readonly weight?: number;
   readonly letterSpacingEm?: number;
   readonly color: string;
+  /** Text shadows the look gives its hero number (`heroGlow`), one per layer. */
+  readonly glows?: readonly TextStyle[];
+  /** An optical size the look pins its hero number to (`heroVar`), else the font size's. */
+  readonly opsz?: number | null;
 }) {
   const money = useMoneyFormat();
   const height = Math.round(size * 1.04);
-  const textStyle: TextStyle = { ...display(size, weight, letterSpacingEm), ...tabular, color };
+  const textStyle: TextStyle = {
+    ...withOpticalSize(display(size, weight, letterSpacingEm), opsz),
+    ...tabular,
+    color,
+  };
   const parts = money.parts(Math.abs(value));
   const before = parts.prefix.trim();
   const after = parts.suffix.trim();
@@ -104,11 +147,20 @@ export function Odometer({
             height={height}
             position={position}
             textStyle={textStyle}
+            glows={glows}
           />
         ) : (
-          <Text key={`p${position}sep`} style={[textStyle, { height, lineHeight: height }]}>
-            {c}
-          </Text>
+          <View key={`p${position}sep`}>
+            {glows.map((glow, g) => (
+              <Text
+                key={g}
+                style={[textStyle, glow, { position: 'absolute', height, lineHeight: height }]}
+              >
+                {c}
+              </Text>
+            ))}
+            <Text style={[textStyle, { height, lineHeight: height }]}>{c}</Text>
+          </View>
         );
       })}
       {after ? <Text style={[symbol, { marginLeft: size * 0.05 }]}>{after}</Text> : null}

@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { ScrollView, Text, TextInput, View } from 'react-native';
+import { ScrollView, Text, TextInput, View, type TextInputInstance } from 'react-native';
 
 import { oklchSrgbHex } from '@6pm/theme';
 
@@ -8,6 +8,7 @@ import { useI18n } from '../../i18n/i18n';
 import { CategoryTile } from '../../ui/category-tile';
 import { isSymbolName } from '../../ui/icons/symbol';
 import { SheetFrame } from '../../ui/navigation/sheet-frame';
+import { useFocusOnPresent } from '../../ui/navigation/use-focus-on-present';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { Switch } from '../../ui/primitives/switch';
 import { useTheme } from '../../ui/theme/theme';
@@ -32,8 +33,11 @@ export function CategoryEditor({
   onSave,
   onDelete,
   onClose,
+  focusName = false,
 }: {
   readonly initial: CategoryInput;
+  /** A new category: the keyboard comes up for its name once the sheet has presented. */
+  readonly focusName?: boolean;
   readonly title: string;
   /** "Delete · its spends move to Food"; null when this one cannot be deleted. */
   readonly deleteLabel: string | null;
@@ -44,6 +48,8 @@ export function CategoryEditor({
   const { palette } = useTheme();
   const { t } = useI18n();
   const [draft, setDraft] = useState(initial);
+  const nameInput = useRef<TextInputInstance>(null);
+  useFocusOnPresent(nameInput, focusName);
   // Set once the sheet starts to leave, so a second tap cannot save or delete twice.
   const leaving = useRef(false);
   const dismiss = useCallback(() => {
@@ -138,6 +144,7 @@ export function CategoryEditor({
             glyph={36}
           />
           <TextInput
+            ref={nameInput}
             value={draft.name}
             onChangeText={(name) => setDraft((d) => ({ ...d, name }))}
             placeholder={t('categories.edit.placeholder')}

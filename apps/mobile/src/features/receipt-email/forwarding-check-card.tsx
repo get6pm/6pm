@@ -36,16 +36,22 @@ export function ForwardingCheckCard() {
     check.confirmUrl !== null && isForwardingConfirmUrl(check.provider, check.confirmUrl)
       ? check.confirmUrl
       : null;
+  const code = check.code;
   const copy = () => {
+    if (code === null) return;
     haptics.tap();
-    void Clipboard.setStringAsync(check.code)
+    void Clipboard.setStringAsync(code)
       .then(() => toast(t('receiptEmail.check.copied')))
       .catch(() => undefined);
   };
   const open = () => {
     if (confirmUrl === null) return;
     haptics.tap();
-    Linking.openURL(confirmUrl).catch(() => toast(t('receiptEmail.check.openFailed')));
+    Linking.openURL(confirmUrl).catch(() =>
+      toast(
+        t(code !== null ? 'receiptEmail.check.openFailed' : 'receiptEmail.check.openFailedNoCode'),
+      ),
+    );
   };
   const done = () => {
     haptics.tap();
@@ -88,47 +94,51 @@ export function ForwardingCheckCard() {
         </Text>
       </View>
 
-      <View style={{ gap: 6 }}>
-        <Text
-          style={{ ...mono(11.5, 500, 0.08), textTransform: 'uppercase', color: palette.inkSoft }}
-        >
-          {t('receiptEmail.check.code')}
-        </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+      {code !== null ? (
+        <View style={{ gap: 6 }}>
           <Text
-            selectable
-            style={{ flex: 1, ...mono(30, 600, 0.06), ...tabular, color: palette.ink }}
+            style={{ ...mono(11.5, 500, 0.08), textTransform: 'uppercase', color: palette.inkSoft }}
           >
-            {check.code}
+            {t('receiptEmail.check.code')}
           </Text>
-          <PressScale
-            accessibilityRole="button"
-            accessibilityLabel={t('receiptEmail.check.copyLabel')}
-            onPress={copy}
-            hitSlop={6}
-            style={{
-              height: 32,
-              paddingLeft: 9,
-              paddingRight: 12,
-              borderRadius: 10,
-              backgroundColor: palette.chipBg,
-              borderWidth: 0.5,
-              borderColor: palette.hair,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 5,
-            }}
-          >
-            <Symbol name="content_copy" size={16} color={palette.ink} />
-            <Text style={{ ...body(13.5, 600), color: palette.ink }}>
-              {t('receiptEmail.check.copy')}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Text
+              selectable
+              style={{ flex: 1, ...mono(30, 600, 0.06), ...tabular, color: palette.ink }}
+            >
+              {code}
             </Text>
-          </PressScale>
+            <PressScale
+              accessibilityRole="button"
+              accessibilityLabel={t('receiptEmail.check.copyLabel')}
+              onPress={copy}
+              hitSlop={6}
+              style={{
+                height: 32,
+                paddingLeft: 9,
+                paddingRight: 12,
+                borderRadius: 10,
+                backgroundColor: palette.chipBg,
+                borderWidth: 0.5,
+                borderColor: palette.hair,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 5,
+              }}
+            >
+              <Symbol name="content_copy" size={16} color={palette.ink} />
+              <Text style={{ ...body(13.5, 600), color: palette.ink }}>
+                {t('receiptEmail.check.copy')}
+              </Text>
+            </PressScale>
+          </View>
         </View>
-      </View>
+      ) : null}
 
       <Text style={{ ...body(13.5), lineHeight: 18.5, color: palette.inkSoft }}>
-        {t('receiptEmail.check.hint', { provider })}
+        {t(code !== null ? 'receiptEmail.check.hint' : 'receiptEmail.check.hintNoCode', {
+          provider,
+        })}
       </Text>
 
       <View style={{ gap: 8 }}>

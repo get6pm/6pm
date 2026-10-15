@@ -140,8 +140,30 @@ describe('reading a forwarding confirmation', () => {
     }
   });
 
-  it('is not a confirmation without a code', () => {
-    const plain = email({ subject: 'Your Gmail settings', text: 'Something changed.' });
+  it('reads Gmail’s link-only confirmation, which has no code', () => {
+    const linkOnly = email({
+      subject: '(Gmail Forwarding Confirmation - Receive Mail from lan.example@gmail.com',
+      text: [
+        `lan.example@gmail.com has requested to automatically forward mail to your email`,
+        `address ${TO}.`,
+        'To allow lan.example@gmail.com to automatically forward mail to your address,',
+        'please click the link below to confirm the request:',
+        CONFIRM,
+        'click this link to cancel this verification:',
+        CANCEL,
+      ].join('\n'),
+    });
+    expect(parseForwardingConfirmation(linkOnly, { receivedAt })).toEqual({
+      provider: 'gmail',
+      code: null,
+      confirmUrl: CONFIRM,
+      address: 'lan.example@gmail.com',
+      receivedAt,
+    });
+  });
+
+  it('is not a confirmation with neither a code nor a confirm link', () => {
+    const plain = email({ subject: 'Your Gmail settings', text: `Something changed.\n${CANCEL}` });
     expect(parseForwardingConfirmation(plain, { receivedAt })).toBeNull();
   });
 });
@@ -168,5 +190,8 @@ describe('the confirm link check', () => {
     expect(forwardingCheckSchema.safeParse(check).success).toBe(true);
     const bad = { ...check, confirmUrl: 'https://evil.example/vf-abcdefghij' };
     expect(forwardingCheckSchema.safeParse(bad).success).toBe(false);
+    expect(forwardingCheckSchema.safeParse({ ...check, code: null }).success).toBe(true);
+    const empty = { ...check, code: null, confirmUrl: null };
+    expect(forwardingCheckSchema.safeParse(empty).success).toBe(false);
   });
 });

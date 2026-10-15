@@ -16,5 +16,8 @@ export const viReceiptEmail: { readonly [Key in keyof typeof enReceiptEmail]: En
     'Mở trang xác nhận, hoặc dán mã vào phần cài đặt {provider}. Sau đó biên lai chuyển tiếp sẽ về đây.',
   'receiptEmail.check.open': 'Mở trang xác nhận',
   'receiptEmail.check.openFailed': 'Không mở được trang. Hãy sao chép mã nhé.',
+  'receiptEmail.check.hintNoCode':
+    'Mở trang xác nhận rồi bấm Xác nhận. Sau đó biên lai chuyển tiếp sẽ về đây.',
+  'receiptEmail.check.openFailedNoCode': 'Không mở được trang. Thử lại sau chút nhé.',
   'receiptEmail.check.done': 'Xong',
 };

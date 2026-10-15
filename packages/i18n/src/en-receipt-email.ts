@@ -17,5 +17,8 @@ export const enReceiptEmail = {
     'Open the confirm page, or paste the code in {provider} settings. Then forwarded receipts land here.',
   'receiptEmail.check.open': 'Open confirm page',
   'receiptEmail.check.openFailed': 'Couldn’t open the page. Copy the code instead.',
+  'receiptEmail.check.hintNoCode':
+    'Open the confirm page and tap Confirm. Then forwarded receipts land here.',
+  'receiptEmail.check.openFailedNoCode': 'Couldn’t open the page. Try again in a moment.',
   'receiptEmail.check.done': 'Done',
 } as const;

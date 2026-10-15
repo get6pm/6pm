@@ -112,8 +112,11 @@ export const forwardingCheckSchema = z
   .object({
     id: captureId,
     provider: z.enum(FORWARDING_PROVIDERS),
-    /** The digits the provider asks for ("99427480"). */
-    code: z.string().regex(/^\d{5,12}$/),
+    /** The digits the provider asks for ("99427480"); null when it sent only a link. */
+    code: z
+      .string()
+      .regex(/^\d{5,12}$/)
+      .nullable(),
     /** The provider's confirm link, or null when the email had none that passed the check. */
     confirmUrl: z.string().max(1000).nullable(),
     /** The address that asked to forward ("lan@gmail.com"), when the email named it. */
@@ -128,7 +131,11 @@ export const forwardingCheckSchema = z
       message: 'Not the provider’s confirm link',
       path: ['confirmUrl'],
     },
-  );
+  )
+  .refine((check) => check.code !== null || check.confirmUrl !== null, {
+    message: 'Neither a code nor a confirm link',
+    path: ['code'],
+  });
 export type ForwardingCheck = z.infer<typeof forwardingCheckSchema>;
 
 export const forwardingCheckResponseSchema = z.object({

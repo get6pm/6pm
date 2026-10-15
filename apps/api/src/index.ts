@@ -9,8 +9,9 @@ const app = createApp(Object.values(routes));
 export default {
   fetch: app.fetch,
   // Receipt email: Email Routing hands every message to `receipts+<handle>@<host>` to this.
+  // Only the outcome is logged, never anything from the email.
   email: async (message, env) => {
-    await receiveEmail(message, env);
+    console.log('receipt email', { outcome: await receiveEmail(message, env) });
   },
   // The cron in `wrangler.jsonc`: the day's exchange rates for Travel mode. Counts only are logged.
   scheduled: (_controller, env, ctx) => {

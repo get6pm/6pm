@@ -178,8 +178,9 @@ export function MaxWelcome() {
   };
   const go = () => {
     if (!action.href) return done();
-    haptics.tap();
     const { href } = action;
+    // Ask gives its own tap as its sheet rises; a second one here would land on top of it.
+    if (href !== '/ask') haptics.tap();
     router.dismissTo('/');
     router.push(href);
   };

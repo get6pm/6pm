@@ -9,6 +9,7 @@ import {
 
 import { useI18n } from '../../i18n/i18n';
 import { Companion } from '../../ui/companion/companion';
+import { haptics } from '../../ui/haptics';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
@@ -35,6 +36,14 @@ export function AskScreen({ question }: { readonly question: string | null }) {
   // with the composer and its contents move back down by as much, so only the bottom edge rises.
   const clip = useAnimatedStyle(() => ({ transform: [{ translateY: lift.get() }] }));
   const unclip = useAnimatedStyle(() => ({ transform: [{ translateY: -lift.get() }] }));
+
+  // A light tap as the sheet starts to rise, once per opening (the ways in leave it to the sheet).
+  const tapped = useRef(false);
+  useEffect(() => {
+    if (tapped.current) return;
+    tapped.current = true;
+    haptics.tap();
+  }, []);
 
   // Sent once, a moment after the screen opens; closing the screen first cancels it.
   const send = useRef(chat.send);

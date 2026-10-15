@@ -135,7 +135,12 @@ fakes behaviour the app cannot fake. Founder review.
 | Any sheet | A write fails | Island toast "That didn’t save. Try again." and the sheet stays open | No failure state is drawn |
 | Plan · header | Edit income and payday | An edit icon beside "Plan" opens the Money-in sheet (onboarding’s wheels) | The design has no way to change them |
 | Plan · Bills | Add, edit or delete a bill | Row tap opens a sheet: name, amount wheels, due-day wheel, delete with Undo; new bills get the receipt icon | Nothing drawn |
-| Plan · Occasions | Edit, pause or delete a pot | Jar tap or long-press opens the pot sheet; the date steps a month at a time, "No date" first | Nothing drawn |
+| Plan · Occasions | Edit, pause or delete a pot | Jar tap or long-press opens the pot sheet; under the name, what it holds of its goal with a thin bar in its colour | Nothing drawn |
+| Pot sheet (own, goal, shared) | Goal | The Goal row opens an amount keypad in the card: five goal chips that suit the icon (a home 500tr–5 tỷ, a car 300tr–1,5 tỷ, a trip 5tr–100tr), the typed number with its unit and the exact đồng under it, a đồng / nghìn / triệu / tỷ switch and a 3×4 keypad with a decimal comma. Up to 100 tỷ | The drawn ±500k stepper could not reach a house or a car (founder, 2026-10-14) |
+| Pot sheet (own, goal, shared) | Needed by | The row shows the month and "in 2 years"; it opens quick picks (3 and 6 months, 1, 2 and 5 years, No date) over month and year wheels reaching ten years past the pay cycle's month | The drawn month chevrons stopped at eight months ahead (founder, 2026-10-14) |
+| Pot sheet (own) | Set-aside more than the month has free | Under the summary: "That's more than your month has free (…). March 2029 or later fits." and a "Make it March 2029" chip that sets the date; past ten years it suggests a smaller goal | The daily number would go below zero with nothing said |
+| New pot | Templates | Home (2 tỷ, two years) and Car (800tr, a year) join the drawn five | Big goals had no starting point |
+| Plan · Occasions | Quick top-up on a big pot | The jar's +100k scales with its goal: the largest of 100k, 500k, 1tr, 5tr, 10tr, 50tr, 100tr that is at most a twentieth of it (a 2 tỷ home adds 100tr a tap); shared jars the same | The drawn +100k is a rounding error on a home or a car |
 | Plan · Occasions | Second pot without Max | "New pot" shows the MAX lock and "More pots come with Max." and opens the Max sheet | The locked tile is not drawn |
 | Plan · Occasions | Paused pot | Pill reads "Paused" | Nothing drawn |
 | Plan · Future you | Create, edit or delete a goal; share between goals | A dashed "New goal" row; the goal sheet reuses the pot sheet with a Share row | Nothing drawn |

@@ -45,6 +45,8 @@ export const POT_TEMPLATES = [
   { key: 'plan.pot.tpl.phone', icon: 'smartphone', hue: 260, goal: 8_000_000, ahead: 8 },
   { key: 'plan.pot.tpl.wedding', icon: 'favorite', hue: 350, goal: 1_000_000, ahead: 1 },
   { key: 'plan.pot.tpl.course', icon: 'school', hue: 140, goal: 3_000_000, ahead: 3 },
+  { key: 'plan.pot.tpl.home', icon: 'home', hue: 25, goal: 2_000_000_000, ahead: 24 },
+  { key: 'plan.pot.tpl.car', icon: 'directions_car', hue: 245, goal: 800_000_000, ahead: 12 },
 ] as const satisfies readonly {
   key: string;
   icon: SymbolName;

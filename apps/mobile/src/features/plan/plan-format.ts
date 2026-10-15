@@ -51,6 +51,8 @@ export function usePlanFormat(today: LocalDate) {
       /** "Fri 9" */
       weekdayDay: (day: LocalDate) => `${weekday.format(dateOf(day))} ${parts(day).day}`,
       dayNumber: (day: LocalDate) => String(parts(day).day),
+      /** "Oct", for a month wheel: `index` 0 is January */
+      monthOfYear: (index: number) => shortMonth.format(new Date(Date.UTC(2000, index, 1))),
     };
   }, [language, today]);
 }

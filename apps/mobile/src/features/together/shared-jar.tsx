@@ -12,6 +12,7 @@ import Animated, {
 
 import {
   formatShort,
+  potTopUpStep,
   sharedPotMonthly,
   sharedPotProgress,
   sharedTopUp,
@@ -31,7 +32,6 @@ import { body, display } from '../../ui/type/fonts';
 import { useCompanionToast } from '../companion/use-companion-toast';
 import { jarTint, type PlanColours } from '../plan/plan-colours';
 import { Pill } from '../plan/plan-parts';
-import { TOP_UP } from '../plan/plan-view';
 import { useTogetherRun } from './together-provider';
 
 const ease = Easing.bezier(...curves.enter);
@@ -77,11 +77,12 @@ export function SharedJar({
   const jar = jarTint(pot.hue, palette.dark);
   const { full } = progress;
   const short = (n: number) => formatShort(n, language);
+  const step = potTopUpStep(pot.goal);
   const mine = progress.byMember[me.id] ?? 0;
   const theirs = partner === null ? 0 : (progress.byMember[partner.id] ?? 0);
 
   const add = () => {
-    const amount = sharedTopUp(pot.goal, progress.saved, TOP_UP);
+    const amount = sharedTopUp(pot.goal, progress.saved, step);
     if (amount === 0) return;
     haptics.tap();
     void run({
@@ -149,7 +150,7 @@ export function SharedJar({
               accessibilityLabel={
                 full
                   ? t('plan.occasions.full')
-                  : t('together.jar.add', { amount: short(TOP_UP), name: pot.name })
+                  : t('together.jar.add', { amount: short(step), name: pot.name })
               }
               onPress={add}
               style={{
@@ -169,7 +170,7 @@ export function SharedJar({
                 color={full ? colours.ok : palette.ink}
               />
               <Text style={{ ...body(12.5, 700), color: full ? colours.ok : palette.ink }}>
-                {full ? t('plan.occasions.full') : short(TOP_UP)}
+                {full ? t('plan.occasions.full') : short(step)}
               </Text>
             </PressScale>
           </View>

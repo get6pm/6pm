@@ -15,10 +15,9 @@ import { useMoney, useMoneyStore } from '../../data/money-provider';
 import { usePlanActions, type PotPatch } from '../../data/plan-actions';
 import { readPotMoves } from '../../data/pot-moves';
 import { useRunAction } from '../../features/companion/use-run-action';
-import { usePlanFormat } from '../../features/plan/plan-format';
-import { canStepNeededBy, stepNeededBy } from '../../features/plan/plan-view';
 import { potRow, StepperRow } from '../../features/plan/pot-rows';
 import { PotSheet, type PotFields } from '../../features/plan/pot-sheet';
+import { usePotWarn } from '../../features/plan/use-pot-warn';
 import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
 import { isSymbolName } from '../../ui/icons/symbol';
@@ -31,8 +30,9 @@ import { useOfferUndo } from '../../ui/undo/undo-host';
 const SHARE_STEP = 5;
 
 /**
- * A saved pot or goal: change its name, look, goal and month, give a goal a different share of
- * Future you, pause it (it sets nothing aside until it is turned back on) or delete it.
+ * A saved pot or goal: what it holds so far; change its name, look, goal and month, give a goal
+ * a different share of Future you, pause it (it sets nothing aside until it is turned back on) or
+ * delete it.
  */
 export default function EditPot() {
   const router = useRouter();
@@ -44,7 +44,6 @@ export default function EditPot() {
   const snap = useMoney();
   const store = useMoneyStore();
   const actions = usePlanActions();
-  const format = usePlanFormat(snap.today);
   const pot = snap.pots.find((p) => p.id === id);
   const [fields, setFields] = useState<PotFields | null>(null);
   const [month, setMonth] = useState<string | null>(null);
@@ -92,18 +91,28 @@ export default function EditPot() {
     }
   }, [pot, router]);
 
-  if (!pot || !fields) return null;
-  const goalKind = pot.kind === 'goal';
+  const goalKind = pot?.kind === 'goal';
   const goals = snap.pots.filter((p) => p.kind === 'goal').length;
   const futureYou = snap.plan?.futureYou ?? 0;
   const from = cycleMonth(snap.cycle);
   const share = goalKind ? (goals > 1 ? percent / 100 : 1) : null;
+  const goal = fields?.goal ?? 0;
   const monthly = potSetAside({
-    pot: { kind: pot.kind, goal: fields.goal, neededBy: month, share, paused },
+    pot: { kind: pot?.kind ?? 'occasion', goal, neededBy: month, share, paused },
     savedBefore: held ?? 0,
     futureYou,
     cycle: snap.cycle,
   });
+  const warn = usePotWarn({
+    potId: pot?.id ?? null,
+    goal,
+    saved: held ?? 0,
+    monthly: goalKind ? 0 : monthly,
+    from,
+    onMonth: setMonth,
+  });
+
+  if (!pot || !fields) return null;
   const perDay = aboutPerDay(
     monthly,
     snap.cycle.daysLeft,
@@ -122,6 +131,7 @@ export default function EditPot() {
         ? {
             title: t('plan.pot.sumMonthly', { amount: formatShort(monthly, language) }),
             sub: t('plan.pot.sumMonthlySub', { amount: formatShort(perDay, language) }),
+            warn,
           }
         : { title: t('plan.pot.sumNone'), sub: t('plan.pot.sumNoneSub') };
 
@@ -172,10 +182,9 @@ export default function EditPot() {
       fields={fields}
       onChange={(patch) => setFields((f) => (f ? { ...f, ...patch } : f))}
       month={month}
-      monthLabel={month ? format.monthLong(month) : t('plan.pot.noDate')}
-      canEarlier={canStepNeededBy(month, -1, from)}
-      canLater={canStepNeededBy(month, 1, from)}
-      onStepMonth={(by) => setMonth((m) => stepNeededBy(m, by, from))}
+      onMonth={setMonth}
+      from={from}
+      saved={snap.potSaved[pot.id] ?? 0}
       rows={
         <>
           {goalKind && goals > 1 ? (

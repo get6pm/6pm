@@ -183,3 +183,18 @@ export function rebalanceShares(
   if (last !== null) out[last] = Math.round(((out[last] ?? 0) + (1 - sum)) * 100) / 100;
   return out;
 }
+
+/** The quick top-up's steps, smallest first: 100k for an everyday pot up to 100tr for a home. */
+const TOP_UP_STEPS: readonly Vnd[] = [
+  100_000, 500_000, 1_000_000, 5_000_000, 10_000_000, 50_000_000, 100_000_000,
+];
+
+/**
+ * A jar's quick top-up, scaled to its goal: the largest round step that is at most a twentieth of
+ * it, never below 100k. A 2tr birthday adds 100k a tap, a 20tr trip 1tr, an 800tr car 10tr and a
+ * 2 tỷ home 100tr.
+ */
+export function potTopUpStep(goal: Vnd): Vnd {
+  const most = goal / 20;
+  return TOP_UP_STEPS.reduce((best, step) => (step <= most ? step : best), TOP_UP_STEPS[0] ?? 0);
+}

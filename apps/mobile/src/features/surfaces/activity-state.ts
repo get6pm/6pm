@@ -26,13 +26,23 @@ export interface PendingPayState {
   readonly caption: string;
   /** "45.000₫ to Phở Hòa". */
   readonly title: string;
+  /** The amount in pieces, so the Lock Screen sets the symbol smaller: "45.000" and "₫". */
+  readonly amount: { readonly prefix: string; readonly number: string; readonly suffix: string };
+  /** Under the amount: "to Phở Hòa · opened MB Bank", or "to Phở Hòa" without a bank. */
+  readonly detail: string;
+  /** The expanded island's caption: "Waiting · MB Bank", or `caption` without a bank. */
+  readonly bankCaption: string;
+  /** When the bank app was asked to open, for "2 min ago". */
+  readonly since: string;
   /** "45k", beside the companion in the compact island. */
   readonly short: string;
   readonly paid: string;
+  /** The tick drawn before "Paid", as its Material Symbols character. */
+  readonly paidIcon: string;
   /** Where a tap outside the Paid button goes: the spend's details. */
   readonly path: string;
-  /** The companion's picture in the App Group, or null in serious mode (no companion). */
-  readonly companion: 'calm' | null;
+  /** The companion's mood (its pictures are in the App Group), or null in serious mode. */
+  readonly companion: 'think' | null;
   readonly accent: string;
   readonly onAccent: string;
 }
@@ -53,10 +63,22 @@ export interface TravelState {
   readonly fraction: number;
   readonly path: string;
   readonly accent: string;
+  /** What is left of the day (or how far over), large on the Lock Screen: "฿560". */
+  readonly leftAmount: string;
+  /** "left of ฿1.200 · ≈ 410.000₫", beside `leftAmount` on the Lock Screen. */
+  readonly leftDetail: string;
+  /** "left · ≈ 410.000₫", beside `leftAmount` in the expanded island. */
+  readonly leftHome: string;
+  /** "Log ฿": Quick add, which opens in the trip's currency. */
+  readonly log: string;
+  readonly logIcon: string;
+  /** Ink on the accent, for Log. */
+  readonly onAccent: string;
+  readonly logPath: string;
 }
 
 export function pendingPayState(
-  spend: Pick<SpendRow, 'id' | 'amount' | 'merchant'>,
+  spend: Pick<SpendRow, 'id' | 'amount' | 'merchant' | 'at' | 'wallet'>,
   context: {
     readonly t: I18n['t'];
     /** Money in the home currency. */
@@ -66,6 +88,8 @@ export function pendingPayState(
   },
 ): PendingPayState {
   const { t, format, palette, serious } = context;
+  const { prefix, number, suffix } = format.parts(spend.amount);
+  const bank = spend.wallet;
   return {
     v: SURFACES_VERSION,
     spendId: spend.id,
@@ -74,10 +98,19 @@ export function pendingPayState(
       amount: format.full(spend.amount),
       merchant: spend.merchant,
     }),
+    amount: { prefix, number, suffix: suffix.trim() },
+    detail:
+      bank === null
+        ? t('surfaces.activity.toMerchant', { merchant: spend.merchant })
+        : t('surfaces.activity.toMerchantBank', { merchant: spend.merchant, bank }),
+    bankCaption:
+      bank === null ? t('surfaces.activity.waiting') : t('surfaces.activity.waitingBank', { bank }),
+    since: spend.at,
     short: format.short(spend.amount),
     paid: t('surfaces.activity.paid'),
+    paidIcon: glyphOf('check'),
     path: `/app/spend/${encodeURIComponent(spend.id)}`,
-    companion: serious ? null : 'calm',
+    companion: serious ? null : 'think',
     accent: palette.accent,
     onAccent: planInk.onAccent,
   };
@@ -90,7 +123,7 @@ export function pendingPayState(
  */
 export function travelState(
   trip: Trip,
-  day: Pick<DailyNumber, 'line' | 'spent'>,
+  day: Pick<DailyNumber, 'line' | 'spent' | 'safe'>,
   context: {
     readonly t: I18n['t'];
     readonly palette: Palette;
@@ -107,6 +140,8 @@ export function travelState(
   const style = { home, language: format.locale.language, phone: context.phone ?? {} };
   const money = (whole: number) =>
     foreignAmountText({ currency: trip.currency.code, amount: whole }, style);
+  const over = today.left < 0;
+  const leftHome = format.full(Math.abs(day.safe));
   return {
     v: SURFACES_VERSION,
     icon: glyphOf('flight'),
@@ -120,5 +155,16 @@ export function travelState(
     fraction: today.fraction,
     path: '/',
     accent: palette.accent,
+    leftAmount: money(Math.abs(today.left)),
+    leftDetail: over
+      ? t('travel.activity.overOf', { line: money(today.line), home: leftHome })
+      : t('travel.activity.leftOf', { line: money(today.line), home: leftHome }),
+    leftHome: over
+      ? t('travel.activity.overHome', { home: leftHome })
+      : t('travel.activity.leftHome', { home: leftHome }),
+    log: t('travel.activity.log', { symbol: trip.currency.symbol }),
+    logIcon: glyphOf('add'),
+    onAccent: planInk.onAccent,
+    logPath: '/app/quick-add',
   };
 }

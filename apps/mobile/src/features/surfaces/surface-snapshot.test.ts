@@ -147,7 +147,29 @@ describe('surfaceSnapshot', () => {
     ]);
     expect(entry?.list.map((r) => r.pending)).toEqual([false, true, false]);
     expect(entry?.moreText).toBe('+2 more');
+    expect(entry?.moreAmountText).toBe('45.000₫');
     expect(entry?.pendingText).toBe('1 pending');
+  });
+
+  it('carries the day’s spend against its line for the large widget’s bar', () => {
+    const m = money(today, spends);
+    const day = dayOf(m);
+    if (day === null) throw new Error('no day');
+    const [now, next] = snapshotOf(m).entries;
+    expect(now?.spentText).toBe(`${formatShort(day.spent, 'en')} spent`);
+    expect(now?.lineText).toBe(`of ${formatShort(day.line, 'en')}`);
+    expect(now?.spentFraction).toBeCloseTo(day.spent / day.line);
+    expect(next?.spentFraction).toBe(0);
+    expect(next?.moreAmountText).toBe('');
+  });
+
+  it('gives the companion the mood of each hour: waving in the morning, sleepy late', () => {
+    const snap = snapshotOf(money(today, spends));
+    expect(snap.palettes[7]?.tokens['mood']).toBe('wave');
+    expect(snap.palettes[13]?.tokens['mood']).toBe('calm');
+    expect(snap.palettes[23]?.tokens['mood']).toBe('sleepy');
+    const over = snapshotOf(money(today, [spend(today, 5_000_000)]));
+    expect(over.palettes[13]?.tokens['mood']).toBe('nod');
   });
 
   it('carries the tile colours of every listed hue', () => {
@@ -185,7 +207,7 @@ describe('surfaceSnapshot', () => {
     const free = snapshotOf(money(today, spends));
     expect(free.maxLook).toBeNull();
     expect(free.palettes).toHaveLength(24);
-    expect(free.palettes[18]?.tokens).toEqual(
+    expect(free.palettes[18]?.tokens).toMatchObject(
       widgetTokens(paletteFor({ look: 'golden', hour: 18, serious: false })),
     );
     const paper = widgetLook({ max: true, look: 'paper', serious: false });
@@ -198,7 +220,7 @@ describe('surfaceSnapshot', () => {
       writtenAt,
     });
     expect(max.maxLook).toBe('paper');
-    expect(max.palettes[18]?.tokens).toEqual(
+    expect(max.palettes[18]?.tokens).toMatchObject(
       widgetTokens(paletteFor({ look: 'paper', hour: 18, serious: false })),
     );
     expect(max.strings['font.display']).toBe('Baloo2');
@@ -216,7 +238,7 @@ describe('surfaceSnapshot', () => {
       writtenAt,
     });
     expect(snap.serious).toBe(true);
-    expect(snap.palettes[12]?.tokens).toEqual(
+    expect(snap.palettes[12]?.tokens).toMatchObject(
       widgetTokens(paletteFor({ look: 'neon', hour: 12, serious: true })),
     );
   });

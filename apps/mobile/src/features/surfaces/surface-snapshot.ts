@@ -15,6 +15,7 @@ import {
 
 import { dayOf, waitingOf, type MoneySnapshot } from '../../data/money-store';
 import type { I18n } from '../../i18n/i18n';
+import { companionMood } from '../../ui/companion/companion-mood';
 import { isSymbolName } from '../../ui/icons/symbol';
 import { symbolCodepoints, type SymbolName } from '../../ui/icons/symbols.generated';
 import { merchantIcon } from '../today/merchant-icon';
@@ -60,7 +61,7 @@ export function nextMoneyDay(money: MoneySnapshot): MoneySnapshot {
 function rowsOf(
   money: MoneySnapshot,
   format: MoneyFormat,
-): { rows: Row[]; hues: number[]; total: number } {
+): { rows: Row[]; hues: number[]; total: number; restText: string } {
   const categories = new Map(money.categories.map((c) => [c.id, c]));
   const todays = money.cycleSpends.filter(
     (s) => s.day === money.today && s.status !== 'skipped' && s.status !== 'deleted',
@@ -76,7 +77,13 @@ function rowsOf(
       pending: s.status === 'pending',
     };
   });
-  return { rows, hues: rows.map((r) => r.hue), total: todays.length };
+  const rest = todays.slice(LIST_ROWS).reduce((sum, s) => sum + s.amount, 0);
+  return {
+    rows,
+    hues: rows.map((r) => r.hue),
+    total: todays.length,
+    restText: rest > 0 ? format.full(rest) : '',
+  };
 }
 
 /** QR payments handed to a bank and not yet confirmed: the "2 pending" on the widgets. */
@@ -87,7 +94,7 @@ export function pendingCount(money: MoneySnapshot): number {
 function entryOf(
   day: DailyNumber,
   from: Date,
-  list: { rows: Row[]; total: number },
+  list: { rows: Row[]; total: number; restText: string },
   pending: number,
   t: I18n['t'],
   format: MoneyFormat,
@@ -103,6 +110,10 @@ function entryOf(
     ringFraction: day.safe < 0 ? 0 : 1 - lineUsed(day),
     list: list.rows,
     moreText: more > 0 ? t('surfaces.more', { count: more }) : '',
+    spentText: t('surfaces.spent', { amount: format.short(day.spent) }),
+    lineText: t('surfaces.ofLine', { amount: format.short(day.line) }),
+    spentFraction: lineUsed(day),
+    moreAmountText: more > 0 ? list.restText : '',
   };
 }
 
@@ -121,8 +132,8 @@ export interface SnapshotInput {
 
 /**
  * What the widgets draw, worked out by the app: an entry for the rest of this money day and one
- * from the next 04:00 (so the number turns over without the app), the look's colours for every
- * hour, and every word in the app's language. Before the month is set up there are no entries
+ * from the next 04:00 (so the number turns over without the app), the look's colours and the
+ * companion's mood for every hour, and every word in the app's language. Before the month is set up there are no entries
  * and the widgets ask to open 6pm.
  */
 export function surfaceSnapshot(input: SnapshotInput): SurfaceSnapshot {
@@ -138,7 +149,14 @@ export function surfaceSnapshot(input: SnapshotInput): SurfaceSnapshot {
     const tomorrow = dayOf(next);
     if (tomorrow !== null) {
       entries.push(
-        entryOf(tomorrow, moneyDayStart(next.today), { rows: [], total: 0 }, pending, t, format),
+        entryOf(
+          tomorrow,
+          moneyDayStart(next.today),
+          { rows: [], total: 0, restText: '' },
+          pending,
+          t,
+          format,
+        ),
       );
     }
   }
@@ -148,7 +166,19 @@ export function surfaceSnapshot(input: SnapshotInput): SurfaceSnapshot {
     maxLook: input.maxLook,
     serious: look.serious,
     entries,
-    palettes: hourlyPalettes(look),
+    palettes: hourlyPalettes(look).map(({ hour, tokens }) => ({
+      hour,
+      tokens: {
+        ...tokens,
+        mood: companionMood({
+          hour,
+          serious: look.serious,
+          safe: today?.safe ?? 0,
+          toast: false,
+          closed: money.closedDays.some((d) => d.day === money.today),
+        }),
+      },
+    })),
     strings: {
       safeToSpend: t('today.safeToSpend'),
       safeTodayShort: t('surfaces.safeTodayShort'),

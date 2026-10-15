@@ -35,7 +35,8 @@ export function widgetLook(input: {
  * - `card*`: the small and large widgets' card, always a light sheet as the prototype draws it
  *   (the cream bubble once the sky is dark, the look's own cell while it is light),
  * - `accent`/`onAccent`: the Scan QR tile and the Paid button,
- * - `pendingInk`: the PENDING tag on a light card.
+ * - `pendingInk`: the PENDING tag on a light card, `pendingInkDark` on the night card a dark Home
+ *   Screen gets.
  */
 export function widgetTokens(palette: Palette): Record<string, string> {
   const [skyTop, skyMid, skyBottom] = palette.st;
@@ -50,6 +51,7 @@ export function widgetTokens(palette: Palette): Record<string, string> {
     accent: palette.accent,
     onAccent: planInk.onAccent,
     pendingInk: planInk.recapWord.light,
+    pendingInkDark: planInk.recapWord.dark,
   };
 }
 

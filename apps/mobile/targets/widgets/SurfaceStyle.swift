@@ -54,12 +54,34 @@ enum SurfaceFont {
   /// The display face used when the snapshot names none (Golden Hour's).
   static let defaultDisplay = "BricolageGrotesque"
 
-  private static func font(_ name: String, size: CGFloat, axes: [Int: CGFloat]) -> Font {
+  private static func uiFont(_ name: String, size: CGFloat, axes: [Int: CGFloat]) -> UIFont {
     let base =
       UIFont(name: name, size: size)
       ?? UIFont(descriptor: UIFontDescriptor(fontAttributes: [.family: name]), size: size)
     let descriptor = base.fontDescriptor.addingAttributes([variation: axes])
-    return Font(UIFont(descriptor: descriptor, size: size))
+    return UIFont(descriptor: descriptor, size: size)
+  }
+
+  private static func font(_ name: String, size: CGFloat, axes: [Int: CGFloat]) -> Font {
+    Font(uiFont(name, size: size, axes: axes))
+  }
+
+  /// A filled Material Symbols glyph drawn to a template image. WidgetKit cannot archive the font
+  /// with its FILL axis set (the widget then never draws), so filled glyphs travel as pictures and
+  /// take their colour from `foregroundStyle`.
+  static func filledGlyph(_ glyph: String, size: CGFloat, weight: CGFloat = 400) -> UIImage? {
+    let font = uiFont(
+      "MaterialSymbolsRounded", size: size,
+      axes: [fill: 1, wght: weight, opsz: min(48, max(20, size))])
+    let text = NSAttributedString(
+      string: glyph, attributes: [.font: font, .foregroundColor: UIColor.black])
+    let bounds = text.size()
+    guard bounds.width > 0, bounds.height > 0 else { return nil }
+    let format = UIGraphicsImageRendererFormat()
+    format.scale = 3
+    return UIGraphicsImageRenderer(size: bounds, format: format)
+      .image { _ in text.draw(at: .zero) }
+      .withRenderingMode(.alwaysTemplate)
   }
 
   /// The look's display face at a size, set as the app sets it: weight 500, optical size following

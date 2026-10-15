@@ -19,8 +19,9 @@ export const DECK_START: DeckNav = { index: 0, from: null, direction: 1, moves: 
 
 const DECK_HEIGHT = 340;
 /**
- * An amount card holds a two-line question and three wheel rows (126 pt) above its buttons: 372 pt
- * fits them, where the design's 340 pt let the wheels run into the buttons.
+ * An amount card holds its question and three wheel rows (126 pt) above its buttons: 372 pt fits a
+ * two-line question, where the design's 340 pt let the wheels run into the buttons. A longer
+ * question or subline (a narrower phone, a longer bill name) grows it to what the card measures.
  */
 const AMOUNT_DECK_HEIGHT = 372;
 
@@ -127,14 +128,20 @@ export function BillDeckView({
   const left = deck.length - nav.index;
   const reduceMotion = useReducedMotion();
   const tall = deck[nav.index]?.type === 'amount';
+  const [amountHeight, setAmountHeight] = useState(AMOUNT_DECK_HEIGHT);
   const height = useAnimatedStyle(() => {
-    const target = tall ? AMOUNT_DECK_HEIGHT : DECK_HEIGHT;
+    const target = tall ? Math.max(AMOUNT_DECK_HEIGHT, amountHeight) : DECK_HEIGHT;
     return {
       height: reduceMotion ? target : withTiming(target, { duration: 420, easing: ease.card }),
     };
   });
-  const face = (index: number) => (
-    <BillCardFace {...card} item={deck[index] ?? null} deckIndex={index} />
+  const face = (index: number, top: boolean) => (
+    <BillCardFace
+      {...card}
+      item={deck[index] ?? null}
+      deckIndex={index}
+      {...(top ? { onHeight: setAmountHeight } : {})}
+    />
   );
   return (
     <Animated.View
@@ -143,10 +150,10 @@ export function BillDeckView({
     >
       <Peek shown={left > 2} inset={28} top={24} opacity={0.35} shadow={false} pal={card.pal} />
       <Peek shown={left > 1} inset={14} top={12} opacity={0.6} shadow pal={card.pal} />
-      <DealtCard key={`in-${nav.moves}`}>{face(nav.index)}</DealtCard>
+      <DealtCard key={`in-${nav.moves}`}>{face(nav.index, true)}</DealtCard>
       {nav.from !== null ? (
         <FlungCard key={`out-${nav.moves}`} direction={nav.direction} width={width}>
-          {face(nav.from)}
+          {face(nav.from, false)}
         </FlungCard>
       ) : null}
     </Animated.View>

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
 
@@ -22,7 +23,14 @@ export interface BillCardProps {
   readonly endTitle: string;
   readonly onAnswers: (next: BillAnswers) => void;
   readonly onGo: (index: number, direction: 1 | -1) => void;
+  /** The height an amount card needs for its question, wheels and buttons, once laid out. */
+  readonly onHeight?: (height: number) => void;
 }
+
+/** The card's padding and the gap between its rows. */
+const PAD = 18;
+const GAP = 10;
+const BUTTON_HEIGHT = 44;
 
 /** One card of the bills deck: a yes/no question, a pick-several, an amount, or the end. */
 export function BillCardFace({
@@ -33,18 +41,26 @@ export function BillCardFace({
   endTitle,
   onAnswers,
   onGo,
+  onHeight,
 }: BillCardProps) {
   const i18n = useI18n();
   const { t } = i18n;
   const money = useMoneyFormat();
   const reduceMotion = useReducedMotion();
+  const [questionBottom, setQuestionBottom] = useState(0);
+  const [wheelsHeight, setWheelsHeight] = useState(0);
+  useEffect(() => {
+    if (questionBottom === 0 || wheelsHeight === 0) return;
+    // Below the subline: the spacer between two gaps, the wheels, a gap, the buttons, the padding.
+    onHeight?.(questionBottom + GAP * 3 + wheelsHeight + BUTTON_HEIGHT + PAD);
+  }, [questionBottom, wheelsHeight, onHeight]);
   const face = {
     flex: 1,
     borderRadius: 30,
     backgroundColor: pal.cell,
     boxShadow: pal.cardShadow,
-    padding: 18,
-    gap: 10,
+    padding: PAD,
+    gap: GAP,
   } as const;
 
   if (item === null) {
@@ -213,8 +229,10 @@ export function BillCardFace({
         q={t('onboarding.bills.amountQ', { name })}
         sub={t('onboarding.bills.amountSub')}
         pal={pal}
+        onBottom={setQuestionBottom}
       />
       <View
+        onLayout={(e) => setWheelsHeight(e.nativeEvent.layout.height)}
         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}
       >
         <AmountWheels value={value} ink={pal.ink} band={pal.chipBg} onValue={setValue} />
@@ -251,7 +269,7 @@ export function BillCardFace({
           bg={value ? pal.btnBg : pal.chipBg}
           fg={value ? pal.btnFg : pal.inkSoft}
           flex={2}
-          height={44}
+          height={BUTTON_HEIGHT}
           onPress={() => {
             if (value) onGo(deckIndex + 1, 1);
           }}

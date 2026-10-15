@@ -104,10 +104,13 @@ export function Question({
   q,
   sub,
   pal,
+  onBottom,
 }: {
   readonly q: string;
   readonly sub: string;
   readonly pal: OnboardingPalette;
+  /** Where the subline ends, from the card's top: what the card needs above its own controls. */
+  readonly onBottom?: (y: number) => void;
 }) {
   return (
     <>
@@ -116,7 +119,12 @@ export function Question({
       >
         {q}
       </BalancedText>
-      <Text style={{ ...body(13.5), lineHeight: 18.9, color: pal.inkSoft }}>{sub}</Text>
+      <Text
+        onLayout={(e) => onBottom?.(e.nativeEvent.layout.y + e.nativeEvent.layout.height)}
+        style={{ ...body(13.5), lineHeight: 18.9, color: pal.inkSoft }}
+      >
+        {sub}
+      </Text>
       <View style={{ flex: 1 }} />
     </>
   );

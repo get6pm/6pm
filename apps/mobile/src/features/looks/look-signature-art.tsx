@@ -66,6 +66,7 @@ export function SweepAndRings({
                 start={conic.from - 90}
                 end={conic.from + 270}
                 colors={[...conic.colors]}
+                {...(conic.positions ? { positions: [...conic.positions] } : {})}
               />
             </Rect>
           ) : null}
@@ -101,6 +102,13 @@ export function PreviewSun({
   readonly top: number;
 }) {
   if (!sun.image && !sun.color && !sun.conic) return null;
+  const image = sun.image
+    ? {
+        backgroundImage: sun.image,
+        ...(sun.size ? { backgroundSize: sun.size } : {}),
+        ...(sun.position ? { backgroundPosition: sun.position } : {}),
+      }
+    : {};
   return (
     <View
       pointerEvents="none"
@@ -112,13 +120,15 @@ export function PreviewSun({
         height: size,
         borderRadius: size / 2,
         ...(sun.glow === 'none' ? {} : { boxShadow: sun.glow }),
-        ...(sun.image ? { backgroundImage: sun.image } : {}),
+        ...(sun.conic ? {} : image),
         ...(sun.color ? { backgroundColor: sun.color } : {}),
       }}
     >
       {sun.conic ? (
+        // The sweep lies under the image (Cà Phê's glass: coffee and milk under the rim).
         <View style={[StyleSheet.absoluteFill, { borderRadius: size / 2, overflow: 'hidden' }]}>
           <SweepAndRings rings={null} conic={sun.conic} />
+          <View style={[StyleSheet.absoluteFill, image]} />
         </View>
       ) : null}
     </View>

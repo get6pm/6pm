@@ -112,7 +112,7 @@ describe('the customer kept between launches', () => {
       endsAt: null,
       willRenew: true,
     },
-    ownedLooks: ['holo', 'paper'],
+    ownedLooks: ['cafe', 'paper'],
   };
 
   it('round-trips', () => {

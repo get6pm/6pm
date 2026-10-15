@@ -1,97 +1,18 @@
 import { lookById, mixHex, type LookId, type Palette } from '@6pm/theme';
 
-/** Slanted hairlines the card draws over its sky (CSS repeating gradients have no native twin). */
-export interface Hatch {
-  /** The CSS gradient angle: the lines run perpendicular to it. */
-  readonly angle: number;
-  readonly every: number;
-  readonly color: string;
-}
+import {
+  band,
+  leafSun,
+  NONE,
+  paperColours,
+  plain,
+  text,
+  texts,
+  type LookSignature,
+  type Variant,
+} from './look-signature-parts';
 
-/** Concentric rings around a point, as a repeating radial gradient draws them. */
-export interface Rings {
-  /** The centre, in percent of the card. */
-  readonly x: number;
-  readonly y: number;
-  readonly every: number;
-  readonly color: string;
-}
-
-/** A conic gradient (CSS `conic-gradient`), drawn with a sweep. */
-export interface Conic {
-  /** CSS angle the sweep starts from, in degrees clockwise from the top. */
-  readonly from: number;
-  /** The centre in percent of the box. */
-  readonly x: number;
-  readonly y: number;
-  readonly colors: readonly string[];
-}
-
-/** The sun of a look card: a gradient or colour, an optional sweep, and its glow. */
-export interface SigSun {
-  readonly image: string | null;
-  readonly color: string | null;
-  readonly conic: Conic | null;
-  /** A CSS box-shadow. */
-  readonly glow: string;
-}
-
-/** What a look card draws over its sky to say which look it is: the prototype's `sig()`. */
-export interface LookSignature {
-  /** Gradients React Native draws, as one `backgroundImage`; empty for none. */
-  readonly image: string;
-  /** The matching `backgroundSize`, one entry per layer. */
-  readonly size: string;
-  readonly hatch: Hatch | null;
-  readonly rings: Rings | null;
-  readonly conic: Conic | null;
-  readonly sun: SigSun;
-}
-
-const HOLO_SWEEP = ['#ffc6e8', '#fff1b8', '#c4ffd6', '#bfefff', '#d9c8ff', '#ffc6e8'];
-
-const spot = (x: number, y: number, c: string, r: number) =>
-  `radial-gradient(circle at ${x}% ${y}%, ${c} 0px, ${c}00 ${r}px)`;
-
-/** CSS `color from to` as two stops: React Native's gradients take one position per stop. */
-const band = (color: string, from: string, to: string) => `${color} ${from}, ${color} ${to}`;
-
-type Variant = Readonly<Record<string, unknown>>;
-
-const text = (v: Variant, key: string, fallback: string): string => {
-  const value = v[key];
-  return typeof value === 'string' ? value : fallback;
-};
-
-const texts = (v: Variant, key: string): readonly string[] => {
-  const value = v[key];
-  return Array.isArray(value) ? value.filter((c): c is string => typeof c === 'string') : [];
-};
-
-/** The paper hills' colours at an hour (`paperCols`): dusk warms them, night sinks them. */
-function paperColours(v: Variant, st: Palette['st'], hour: number): string[] {
-  const clamp = (n: number) => Math.max(0, Math.min(1, n));
-  const night = clamp((hour - 18.5) / 1.5);
-  const dusk = clamp((hour - 16) / 2.2) * (1 - night);
-  return texts(v, 'L').map((c, i) =>
-    mixHex(mixHex(c, st[2], 0.1 + dusk * 0.32 * (1 - i / 6)), '#141a38', night * (0.66 - i * 0.05)),
-  );
-}
-
-const plain = (sun: Partial<SigSun> & Pick<SigSun, 'glow'>): SigSun => ({
-  image: null,
-  color: null,
-  conic: null,
-  ...sun,
-});
-
-const NONE: Omit<LookSignature, 'sun'> = {
-  image: '',
-  size: 'auto',
-  hatch: null,
-  rings: null,
-  conic: null,
-};
+export type { Conic, Hatch, LookSignature, Rings, SigSun } from './look-signature-parts';
 
 /**
  * The prototype's `sig()` for one look and variant at an hour: the card's signature pattern and
@@ -105,22 +26,58 @@ export function lookSignature(
 ): LookSignature {
   const def = lookById(look);
   const v: Variant = def.variants[variantIndex] ?? def.variants[0] ?? {};
+  const flip = typeof v.dark === 'number' ? v.dark : def.dark;
+  const dark = hour >= flip;
   switch (look) {
-    case 'neon':
+    case 'lacquer': {
+      const metal = text(v, 'metal', st[3]);
+      const flecks = [
+        [16, 44, 1.6],
+        [30, 40, 2.4],
+        [62, 38, 1.4],
+        [84, 42, 2],
+        [46, 30, 1.2],
+      ] as const;
       return {
         ...NONE,
         image: [
-          spot(22, 74, st[3], 12),
-          spot(46, 84, '#ffd27a', 7),
-          spot(74, 70, st[4], 14),
-          spot(88, 80, st[3], 6),
+          `linear-gradient(177deg, ${band('transparent', '0%', '51%')}, ${band(`${metal}ee`, '51%', '52.6%')}, transparent 52.6%)`,
+          ...flecks.map(
+            ([x, y, r]) =>
+              `radial-gradient(circle at ${x}% ${y}%, ${band(metal, '0px', `${r}px`)}, transparent ${r + 0.6}px)`,
+          ),
+          `radial-gradient(circle at 20% 80%, ${st[3]}66 0px, ${st[3]}00 70px)`,
+          `radial-gradient(circle at 80% 70%, ${st[4]}55 0px, ${st[4]}00 60px)`,
         ].join(', '),
-        hatch: { angle: 104, every: 12, color: 'rgba(255,255,255,.18)' },
-        sun: plain({
-          image: `radial-gradient(circle, ${st[3]} 0%, ${st[3]}99 50%, ${st[3]}00 72%)`,
-          glow: `0 0 30px 10px ${st[3]}55`,
-        }),
+        sun: leafSun(metal, 7, `0 0 20px 4px ${metal}44`),
       };
+    }
+    case 'glaze': {
+      const cob = text(v, 'cob', st[3]);
+      const c = dark ? '#eef2fa' : cob;
+      const rim = [
+        band('transparent', '0%', '56%'),
+        band(c, '56%', '57.2%'),
+        band('transparent', '57.2%', '59%'),
+        band(`${c}cc`, '59%', '59.7%'),
+        band('transparent', '59.7%', '64%'),
+        band(`${c}cc`, '64%', '64.7%'),
+        band('transparent', '64.7%', '66.4%'),
+        band(c, '66.4%', '67.6%'),
+        'transparent 67.6%',
+      ].join(', ');
+      const sun = dark
+        ? `radial-gradient(closest-side, ${band(cob, '0%', '28%')}, ${band('#f7f8fb', '31%', '57%')}, ${band(cob, '60%', '67%')}, ${band('#f7f8fb', '70%', '100%')})`
+        : `radial-gradient(closest-side, ${band(c, '0%', '49%')}, ${band(`${c}00`, '53%', '63%')}, ${band(c, '66%', '72%')}, ${c}00 75%)`;
+      return {
+        ...NONE,
+        image: [
+          `linear-gradient(180deg, ${rim})`,
+          `radial-gradient(60% 40% at 18% 8%, rgba(255,255,255,${dark ? 0.12 : 0.6}), transparent 70%)`,
+        ].join(', '),
+        sun: plain({ image: sun, glow: 'none' }),
+      };
+    }
     case 'riso': {
       const i1 = text(v, 'i1', st[3]);
       const i2 = text(v, 'i2', st[4]);
@@ -128,32 +85,7 @@ export function lookSignature(
         ...NONE,
         image: `radial-gradient(${i2} 1px, transparent 1.6px), radial-gradient(circle at 18% 112%, ${band(`${i1}99`, '0%', '42%')}, transparent 42.5%)`,
         size: '6px 6px, auto',
-        sun: plain({ color: i1, glow: `7px -5px 0 ${i2}b0` }),
-      };
-    }
-    case 'lacquer': {
-      const metal = text(v, 'metal', st[3]);
-      const flecks = [
-        [18, 30, 2],
-        [34, 72, 3],
-        [78, 58, 2.5],
-        [58, 18, 1.5],
-        [88, 86, 2],
-        [10, 60, 1.5],
-      ] as const;
-      return {
-        ...NONE,
-        image: [
-          `linear-gradient(115deg, transparent 38%, ${metal}44 50%, transparent 62%)`,
-          ...flecks.map(
-            ([x, y, r]) =>
-              `radial-gradient(circle at ${x}% ${y}%, ${band(metal, '0px', `${r}px`)}, transparent ${r + 0.6}px)`,
-          ),
-        ].join(', '),
-        sun: plain({
-          image: `radial-gradient(circle at 36% 30%, #fff8dc 0%, ${metal} 40%, ${mixHex(metal, '#000000', 0.45)} 100%)`,
-          glow: `0 0 24px 4px ${metal}55`,
-        }),
+        sun: plain({ color: i1, glow: `6px -4px 0 ${i2}b0` }),
       };
     }
     case 'monsoon': {
@@ -171,75 +103,76 @@ export function lookSignature(
             ([x, y]) =>
               `radial-gradient(circle at ${x}% ${y}%, ${band('rgba(255,255,255,.75)', '0px', '1.5px')}, ${band('rgba(255,255,255,.18)', '2.5px', '4.5px')}, transparent 5.5px)`,
           ),
-          'linear-gradient(180deg, transparent 45%, rgba(255,255,255,.3) 68%, transparent 90%)',
+          'linear-gradient(180deg, transparent 45%, rgba(255,255,255,.22) 68%, transparent 90%)',
         ].join(', '),
-        hatch: { angle: 100, every: 14, color: 'rgba(255,255,255,.14)' },
+        hatch: { angle: 98, every: 14, color: 'rgba(255,255,255,.12)' },
         sun: plain({
           image: 'radial-gradient(circle, rgba(255,250,240,.95), rgba(255,250,240,0) 70%)',
-          glow: '0 0 30px 14px rgba(255,255,255,.25)',
+          glow: '0 0 30px 14px rgba(255,255,255,.2)',
         }),
       };
     }
-    case 'holo': {
-      const sparks = [
-        [20, 24],
-        [82, 40],
-        [40, 70],
-        [66, 82],
-      ] as const;
+    case 'cafe': {
+      const coffee = text(v, 'coffee', st[3]);
+      const milk = text(v, 'milk', st[4]);
+      const cof = dark ? '#1a0d07' : coffee;
+      const mk = dark ? '#3a2214' : milk;
       return {
         ...NONE,
-        image: sparks
-          .map(
-            ([x, y]) =>
-              `radial-gradient(circle at ${x}% ${y}%, ${band('#ffffff', '0px', '1.5px')}, #ffffff00 4px)`,
-          )
-          .join(', '),
-        conic: {
-          from: 40,
-          x: 70,
-          y: 30,
-          colors: ['#ff9ad577', '#ffd59a77', '#b6ff9a77', '#9af2ff77', '#b29aff77', '#ff9ad577'],
-        },
+        image: `radial-gradient(circle at 20% 42%, ${band('transparent', '0px', '17px')}, ${band(`${mixHex(coffee, milk, 0.35)}30`, '17px', '19px')}, transparent 19.5px)`,
         sun: plain({
-          conic: { from: 210, x: 50, y: 50, colors: HOLO_SWEEP },
-          glow: `0 0 0 5px #ffffff55, 0 0 30px 8px ${st[4]}88`,
+          image: `radial-gradient(closest-side, ${band('transparent', '0%', '84%')}, ${band('rgba(255,255,255,.55)', '88%', '94%')}, transparent 97%)`,
+          conic: {
+            from: 20,
+            x: 50,
+            y: 50,
+            colors: [cof, mk, cof, mk, cof, mk, cof],
+            positions: [0, 0.18, 0.36, 0.58, 0.76, 0.9, 1],
+          },
+          glow: '0 6px 12px rgba(50,25,10,.3)',
         }),
       };
     }
-    case 'arcade':
+    case 'neon': {
+      const t1 = text(v, 't1', st[3]);
+      const t2 = text(v, 't2', st[4]);
+      const tube = dark ? '#ffffff' : 'rgba(255,255,255,.8)';
       return {
         ...NONE,
-        image: `linear-gradient(180deg, ${band('rgba(0,0,0,.45)', '0px', '1px')}, ${band('transparent', '1px', '3px')})`,
-        size: '100% 3px',
+        image: [
+          `linear-gradient(180deg, ${band('transparent', '0%', '40%')}, ${band(tube, '40%', '42%')}, transparent 42%)`,
+          ...(dark
+            ? [
+                `radial-gradient(70% 24% at 40% 41%, ${t1}66, transparent 70%)`,
+                `radial-gradient(40% 40% at 70% 22%, ${t2}40, transparent 70%)`,
+              ]
+            : []),
+        ].join(', '),
         sun: plain({
-          image: `linear-gradient(180deg, ${st[3]}, ${st[4]})`,
-          glow: `0 0 26px 4px ${st[3]}66`,
+          image: `radial-gradient(closest-side, ${band('transparent', '0%', '74%')}, ${band(dark ? '#ffffff' : 'rgba(255,255,255,.85)', '78%', '90%')}, transparent 94%)`,
+          glow: dark
+            ? `0 0 8px 1px ${t2}, inset 0 0 8px 1px ${t2}`
+            : '0 3px 3px -1px rgba(0,0,0,.2)',
         }),
       };
+    }
     case 'basic':
-      return {
-        ...NONE,
-        sun: plain({
-          image: 'radial-gradient(circle, #fffaf0, #fff3dc 70%)',
-          glow: '0 0 24px 6px rgba(255,255,255,.4)',
-        }),
-      };
+      return { ...NONE, sun: plain({ color: dark ? '#ffffff' : '#000000', glow: 'none' }) };
     case 'expo':
       return {
         ...NONE,
         image: [
-          `linear-gradient(173deg, ${band('transparent', '0%', '74%')}, ${band(`${st[3]}cc`, '74.4%', '75%')}, ${band('transparent', '75.4%', '77%')}, ${band(`${st[3]}88`, '77.3%', '77.8%')}, ${band('transparent', '78.2%', '80.5%')}, ${band(`${st[4]}cc`, '80.8%', '81.4%')}, ${band('transparent', '81.8%', '83.5%')}, ${band(`${st[4]}88`, '83.8%', '84.3%')}, transparent 84.7%)`,
-          `radial-gradient(80% 30% at 50% 80%, ${st[3]}40, transparent 70%)`,
+          `linear-gradient(175deg, ${band('transparent', '0%', '62%')}, ${band('#fff4e0cc', '62.3%', '62.8%')}, ${band('transparent', '63.1%', '64.2%')}, ${band(`${st[3]}cc`, '64.4%', '64.9%')}, ${band('transparent', '65.2%', '67%')}, ${band(`${st[4]}cc`, '67.2%', '67.8%')}, ${band('transparent', '68.1%', '69.2%')}, ${band(`${st[4]}99`, '69.4%', '69.8%')}, transparent 70.1%)`,
+          `radial-gradient(80% 30% at 50% 70%, ${st[3]}33, transparent 70%)`,
         ].join(', '),
-        rings: { x: 82, y: 8, every: 8, color: 'rgba(255,255,255,.2)' },
+        rings: { x: 82, y: 10, every: 7, color: 'rgba(255,255,255,.2)' },
         sun: plain({ glow: 'none' }),
       };
     case 'paper': {
       const cols = paperColours(v, st, hour);
       const layers: string[] = [];
-      for (let i = 4; i >= 0; i--) {
-        const top = 44 + i * 10;
+      for (let i = cols.length - 1; i >= 0; i--) {
+        const top = 50 + i * 10;
         const c = cols[i] ?? st[2];
         layers.push(
           `radial-gradient(${34 + (i % 2) * 8}% 22% at ${18 + (i % 2) * 30}% ${top + 20}%, ${band(c, '0%', '98%')}, transparent 100%)`,

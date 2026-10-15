@@ -129,7 +129,7 @@ export function LookPreview({
         >
           <Text
             style={{
-              ...body(metrics.labelSize, 700, 0.06),
+              ...body(metrics.labelSize, 700, 0.06, palette.uiFont),
               textTransform: 'uppercase',
               color: palette.inkSoft,
             }}

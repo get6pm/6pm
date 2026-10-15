@@ -12,7 +12,13 @@ import {
  */
 
 export type TogetherOp =
-  | { readonly kind: 'createPot'; readonly id: string; readonly fields: SharedPotFields }
+  | {
+      readonly kind: 'createPot';
+      readonly id: string;
+      readonly fields: SharedPotFields;
+      /** The maker's home currency (ISO 4217): the pot keeps it for good. */
+      readonly currency: string;
+    }
   | { readonly kind: 'editPot'; readonly id: string; readonly fields: SharedPotFields }
   | { readonly kind: 'deletePot'; readonly id: string }
   | {
@@ -48,6 +54,7 @@ export function applyOp(state: TogetherState, op: TogetherOp): TogetherState {
               {
                 ...op.fields,
                 id: op.id,
+                currency: op.currency,
                 createdBy: me.id,
                 createdAt: new Date(0).toISOString(),
                 contributions: [],
@@ -106,7 +113,7 @@ export function endedByPartner(before: TogetherState, after: TogetherState): boo
   return partnerOf(before) !== null && after.me !== null && after.pair === null;
 }
 
-/** The person's own contributions, with the name of the pot each went into. */
+/** The person's own contributions, with the name and currency of the pot each went into. */
 export function ownContributions(state: TogetherState) {
   const { me, pair } = state;
   if (me === null || pair === null) return [];
@@ -118,6 +125,7 @@ export function ownContributions(state: TogetherState) {
         potId: pot.id,
         potName: pot.name,
         amount: c.amount,
+        currency: pot.currency,
         at: c.addedAt,
       })),
   );

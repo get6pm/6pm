@@ -166,7 +166,42 @@ describe('money', () => {
     },
   );
 
-  it('refuses a goal that is not whole đồng', async () => {
+  it('keeps a pot in its maker’s currency, and in đồng when a phone names none', async () => {
+    const a = await signedIn();
+    const inDong = await newPot(a);
+    const inDollars = await newPot(a, { goal: 300_000, currency: 'USD' });
+    await contribute(a, inDollars, 2_500);
+    const edit = await as(a, `/pots/${inDollars}`, {
+      method: 'PUT',
+      body: { name: 'Hawaii', icon: 'flight', hue: 200, goal: 400_000, neededBy: null },
+    });
+    expect(edit.status).toBe(200);
+    const pots = (await stateOf(a)).pair?.pots ?? [];
+    expect(pots.find((p) => p.id === inDong)?.currency).toBe('VND');
+    expect(pots.find((p) => p.id === inDollars)).toMatchObject({
+      currency: 'USD',
+      goal: 400_000,
+      contributions: [{ amount: 2_500 }],
+    });
+  });
+
+  it.each(['usd', 'US', 'DOLLAR', 840])('refuses %s as a currency', async (currency) => {
+    const a = await signedIn();
+    const response = await as(a, '/pots', { method: 'POST', body: potBody({ currency }) });
+    expect(response.status).toBe(400);
+  });
+
+  it('never moves a pot to another currency on an edit', async () => {
+    const a = await signedIn();
+    const potId = await newPot(a);
+    const { id, ...fields } = potBody({ currency: 'USD' });
+    expect(id).not.toBe(potId);
+    const edit = await as(a, `/pots/${potId}`, { method: 'PUT', body: fields });
+    expect(edit.status).toBe(400);
+    expect((await stateOf(a)).pair?.pots[0]?.currency).toBe('VND');
+  });
+
+  it('refuses a goal that is not whole minor units', async () => {
     const a = await signedIn();
     const response = await as(a, '/pots', { method: 'POST', body: potBody({ goal: 2_500_000.5 }) });
     expect(response.status).toBe(400);

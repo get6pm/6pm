@@ -4,10 +4,11 @@ import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import {
-  formatShort,
+  minStepAmount,
   moneyDayOf,
   sharedPotProgress,
   sharedTopUp,
+  startStepAmount,
   stepContribution,
   type SharedContribution,
   type TogetherState,
@@ -26,7 +27,7 @@ import { body, display } from '../../ui/type/fonts';
 import { BackupButton, BackupNote } from '../backup/backup-parts';
 import { usePlanFormat } from '../plan/plan-format';
 import { PotCard, StepperRow } from '../plan/pot-rows';
-import { TOP_UP } from '../plan/plan-view';
+import { usePotMoney } from './pot-money';
 import { ActionRow, RowCard } from './together-parts';
 import { useTogether, useTogetherRun } from './together-provider';
 import { partnerOf } from './together-state';
@@ -38,7 +39,7 @@ import { useArmed } from './use-armed';
  */
 export function SharedPotSheet() {
   const { id = '' } = useLocalSearchParams<{ id?: string }>();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
   const { palette } = useTheme();
   const router = useRouter();
   const toast = useToast();
@@ -46,8 +47,11 @@ export function SharedPotSheet() {
   const { state } = useTogether();
   const { armed, confirm } = useArmed<'delete'>();
   const pot = state.pair?.pots.find((p) => p.id === id);
-  const [amount, setAmount] = useState(TOP_UP);
-  const short = (n: number) => formatShort(n, language);
+  // Amounts are typed in the pot's currency, whatever this phone's home currency is.
+  const { currency, money } = usePotMoney(pot?.currency ?? 'VND');
+  const [chosen, setAmount] = useState<number | null>(null);
+  const amount = chosen ?? startStepAmount(currency);
+  const short = (n: number) => money.short(n);
 
   if (pot === undefined || state.me === null) {
     return (
@@ -109,10 +113,10 @@ export function SharedPotSheet() {
               value={short(amount)}
               lessLabel={t('plan.pot.less')}
               moreLabel={t('plan.pot.more')}
-              dimLess={amount <= TOP_UP / 2}
+              dimLess={amount <= minStepAmount(currency)}
               dimMore={amount >= progress.left}
               width={72}
-              onStep={(by) => setAmount((a) => stepContribution(a, by))}
+              onStep={(by) => setAmount(stepContribution(amount, by, currency))}
             />
           </PotCard>
           <BackupButton
@@ -125,6 +129,7 @@ export function SharedPotSheet() {
 
       <Entries
         state={state}
+        short={short}
         contributions={pot.contributions}
         onTakeBack={(c) => void run({ kind: 'removeContribution', id: c.id })}
         meId={me.id}
@@ -153,16 +158,18 @@ export function SharedPotSheet() {
 /** "Who put in what": newest first, each with who and the day; the person's own can be taken back. */
 function Entries({
   state,
+  short,
   contributions,
   meId,
   onTakeBack,
 }: {
   readonly state: TogetherState;
+  readonly short: (amount: number) => string;
   readonly contributions: readonly SharedContribution[];
   readonly meId: string;
   readonly onTakeBack: (c: SharedContribution) => void;
 }) {
-  const { t, language } = useI18n();
+  const { t } = useI18n();
   const { palette } = useTheme();
   const format = usePlanFormat(useMoney().today);
   const partner = partnerOf(state);
@@ -210,13 +217,13 @@ function Entries({
                 })}
               </Text>
               <Text style={{ ...body(15, 650), color: palette.ink, fontVariant: ['tabular-nums'] }}>
-                {formatShort(c.amount, language)}
+                {short(c.amount)}
               </Text>
               {c.memberId === meId ? (
                 <PressScale
                   accessibilityRole="button"
                   accessibilityLabel={t('together.pot.takeBackLabel', {
-                    amount: formatShort(c.amount, language),
+                    amount: short(c.amount),
                   })}
                   onPress={() => {
                     haptics.tap();

@@ -18,9 +18,11 @@ import { useMoneyStore } from '../../data/money-provider';
 import { reconcileTogetherMoves } from '../../data/together-moves';
 import { useI18n } from '../../i18n/i18n';
 import { useToast } from '../../ui/toast/toast-host';
+import { homeCurrencyOf } from '../../money/use-money-format';
 import { useApi } from '../api/native-api';
 import { sha256Hex, signInWithApple } from './apple-sign-in';
 import { createTogetherApi, type TogetherApi } from './together-api';
+import { inHomeFor } from './together-home';
 import {
   parseTogetherCache,
   SIGNED_OUT,
@@ -87,6 +89,7 @@ export function TogetherProvider({ children }: { readonly children: ReactNode })
                 entries,
                 livePotIds,
                 store.getSnapshot().plan?.payday ?? { kind: 'lastDay' },
+                inHomeFor(store.db, client, homeCurrencyOf(store.getSnapshot().plan)),
               ),
             ),
         },

@@ -6,7 +6,8 @@ import { answerState, ensurePair, requirePot, requireUser } from '../together/st
 
 /**
  * A new shared pot in the person's pair (made for them if they have none yet). The phone picks
- * the id, so sending the same pot again changes nothing.
+ * the id, so sending the same pot again changes nothing. The pot is in the currency the phone
+ * names, its maker's home currency; a phone that names none makes it in đồng.
  */
 export const togetherPotCreateRoute: RouteDefinition = {
   method: 'POST',
@@ -28,11 +29,23 @@ export const togetherPotCreateRoute: RouteDefinition = {
     await db
       .prepare(
         `INSERT INTO together_pots
-           (id, pair_id, name, icon, hue, goal, needed_by, created_by, created_at, updated_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?9)
+           (id, pair_id, name, icon, hue, goal, currency, needed_by, created_by, created_at,
+            updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?10)
          ON CONFLICT (id) DO NOTHING`,
       )
-      .bind(pot.id, pairId, pot.name, pot.icon, pot.hue, pot.goal, pot.neededBy, user.id, now)
+      .bind(
+        pot.id,
+        pairId,
+        pot.name,
+        pot.icon,
+        pot.hue,
+        pot.goal,
+        pot.currency,
+        pot.neededBy,
+        user.id,
+        now,
+      )
       .run();
     // An id another pair already holds is not this pair's to see.
     await requirePot(db, pairId, pot.id);

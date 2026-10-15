@@ -7,7 +7,13 @@ import { useI18n } from '../../i18n/i18n';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { body, display } from '../../ui/type/fonts';
 import { Wheel } from '../../ui/wheel/wheel';
-import { DIGITS, INCOME_MILLIONS, incomeDigits, incomeOf } from './onboarding-maths';
+import {
+  DIGITS,
+  INCOME_LEADS,
+  incomeDigits,
+  incomeMillionsItems,
+  incomeOf,
+} from './onboarding-maths';
 import { ordinalDay, WheelBand } from './step-parts';
 
 /** The colours these controls draw with: onboarding's sky palette, or a sheet's own. */
@@ -21,6 +27,8 @@ export interface PickerInk {
   readonly segShadow: string;
 }
 
+/** Money in's type size: three wheels and the zeros fit a sheet's card at this size. */
+const SIZE = 34;
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 const MODES = [
   ['sameDay', 'onboarding.payday.sameDay'],
@@ -28,7 +36,10 @@ const MODES = [
   ['varies', 'onboarding.payday.varies'],
 ] as const;
 
-/** Money in: millions and hundred thousands on two wheels. */
+/**
+ * Money in on three wheels, read as the amount itself: hundreds of millions, millions, and hundred
+ * thousands, up to 1.000.000.000₫ a month.
+ */
 export function IncomeWheels({
   income,
   onIncome,
@@ -39,43 +50,54 @@ export function IncomeWheels({
   readonly colours: Pick<PickerInk, 'ink' | 'chipBg'>;
 }) {
   const { t } = useI18n();
-  const { millions, hundreds } = incomeDigits(income);
-  const number = { ...display(38, 600, -0.03), color: colours.ink };
+  const { lead, millions, hundreds } = incomeDigits(income);
+  const number = { ...display(SIZE, 600, -0.03), color: colours.ink };
   return (
     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-      <WheelBand height={54} radius={16} color={colours.chipBg} />
+      <WheelBand height={48} radius={15} color={colours.chipBg} />
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Wheel
-          items={INCOME_MILLIONS}
-          index={millions - 1}
-          onChange={(k) => onIncome(incomeOf(k + 1, hundreds))}
-          size={38}
+          items={INCOME_LEADS}
+          index={lead}
+          onChange={(k) => onIncome(incomeOf(k, millions, hundreds))}
+          size={SIZE}
           padX={0}
           align="flex-end"
           ink={colours.ink}
-          width={72}
+          width={52}
+          label={t('onboarding.income.hundredMillions')}
+        />
+        <Wheel
+          items={incomeMillionsItems(lead)}
+          index={millions}
+          onChange={(k) => onIncome(incomeOf(lead, k, hundreds))}
+          size={SIZE}
+          padX={0}
+          align={lead > 0 ? 'flex-start' : 'flex-end'}
+          ink={colours.ink}
+          width={44}
           label={t('onboarding.income.millions')}
         />
         <Text style={number}>.</Text>
         <Wheel
           items={DIGITS}
           index={hundreds}
-          onChange={(k) => onIncome(incomeOf(millions, k))}
-          size={38}
+          onChange={(k) => onIncome(incomeOf(lead, millions, k))}
+          size={SIZE}
           padX={0}
           ink={colours.ink}
-          width={24}
+          width={22}
           label={t('onboarding.income.hundreds')}
         />
         <Text style={number}>00.000</Text>
         <Text
           style={{
-            ...display(19, 600),
+            ...display(18, 600),
             color: colours.ink,
             marginLeft: 4,
             opacity: 0.55,
             alignSelf: 'flex-start',
-            marginTop: 58,
+            marginTop: 52,
           }}
         >
           ₫

@@ -14,6 +14,7 @@ export const enOnboarding = {
   'onboarding.income.title': 'Money in',
   'onboarding.income.sub': 'Roughly what lands each month, after tax. Spin to set it.',
   'onboarding.income.daily': 'About {amount} a day, before bills',
+  'onboarding.income.hundredMillions': 'Hundreds of millions of đồng',
   'onboarding.income.millions': 'Millions of đồng',
   'onboarding.income.hundreds': 'Hundred thousands',
   'onboarding.payday.title': 'Payday',

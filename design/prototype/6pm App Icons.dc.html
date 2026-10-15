@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="./icons.js"></script>
+<style>body{margin:0;background:#0f0d12;} a{color:#f6a46a;} a:hover{color:#ffc79a;}</style>
+</helmet>
+<div style="min-height:100vh; background:#0f0d12; color:#f6efe6; font-family:'Be Vietnam Pro', system-ui, sans-serif; padding:64px 56px 96px; box-sizing:border-box; display:flex; flex-direction:column; gap:64px;">
+
+  <header style="display:flex; flex-direction:column; gap:10px; max-width:760px;">
+    <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; color:#f6a46a;">6PM · APP ICONS · V2</span>
+    <h1 style="margin:0; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:60px; line-height:.95; letter-spacing:-.02em;">Every companion meets the horizon</h1>
+    <p style="margin:0; font-size:17px; line-height:1.5; color:rgba(246,239,230,.68); text-wrap:pretty;">Sunset worked because it is a moment, not a sticker: a dusk sky, a horizon, four bars of reflection, and a face sinking into it. The other five now share that grammar, each in its own light.</p>
+  </header>
+
+  <section data-screen-label="Icon set" style="display:flex; flex-wrap:wrap; gap:36px 32px; max-width:1300px;">
+    <sc-for list="{{ icons }}" as="i" hint-placeholder-count="6">
+      <div style="display:flex; flex-direction:column; gap:14px; width:184px;">
+        <div style="width:184px; height:184px; border-radius:{{ radius }}; overflow:hidden; box-shadow:0 18px 40px rgba(0,0,0,.45);"><app-icon form="{{ i.id }}" size="184"></app-icon></div>
+        <div style="display:flex; flex-direction:column; gap:3px;"><div style="display:flex; align-items:center; gap:8px;"><span style="font-size:17px; font-weight:650;">{{ i.name }}</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:10px; letter-spacing:.12em; padding:3px 7px; border-radius:99px; background:{{ i.tierBg }}; color:{{ i.tierFg }};">{{ i.tier }}</span></div><span style="font-size:13px; line-height:1.4; color:rgba(246,239,230,.58); text-wrap:pretty;">{{ i.note }}</span></div>
+      </div>
+    </sc-for>
+  </section>
+
+  <section data-screen-label="Before and after" style="display:flex; flex-direction:column; gap:22px; max-width:1300px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">02</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Before and after</span></div>
+    <div style="display:grid; grid-template-columns:80px repeat(6, 96px); gap:14px 18px; align-items:center; padding:24px 28px; border-radius:28px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.08); width:max-content; max-width:100%; overflow-x:auto; box-sizing:border-box;">
+      <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; color:rgba(246,239,230,.55);">V1</span>
+      <sc-for list="{{ icons }}" as="i" hint-placeholder-count="6"><div role="img" aria-label="{{ i.name }} v1" style="width:96px; height:96px; border-radius:22px; background:center / cover no-repeat url({{ i.v1 }});"></div></sc-for>
+      <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; color:#f6a46a;">V2</span>
+      <sc-for list="{{ icons }}" as="i" hint-placeholder-count="6"><div style="width:96px; height:96px; border-radius:22px; overflow:hidden;"><app-icon form="{{ i.id }}" size="96"></app-icon></div></sc-for>
+    </div>
+  </section>
+
+  <section data-screen-label="Home Screen and small sizes" style="display:flex; flex-wrap:wrap; gap:40px; align-items:flex-start; max-width:1300px;">
+    <div style="display:flex; flex-direction:column; gap:22px;">
+      <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">03</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">On the Home Screen</span></div>
+      <div style="width:390px; border-radius:44px; background:{{ wall }}; padding:44px 26px; box-sizing:border-box; display:grid; grid-template-columns:repeat(4, 1fr); gap:26px 0; justify-items:center;">
+        <sc-for list="{{ home }}" as="h" hint-placeholder-count="8">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+            <div style="width:64px; height:64px; border-radius:15px; overflow:hidden; background:{{ h.bg }}; box-shadow:0 4px 12px rgba(0,0,0,.25);"><sc-if value="{{ h.is6 }}" hint-placeholder-val="{{ false }}"><app-icon form="{{ h.id }}" size="64"></app-icon></sc-if></div>
+            <span style="font-size:11.5px; font-weight:500; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35);">{{ h.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:22px;">
+      <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">04</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Small sizes</span></div>
+      <div style="display:flex; flex-direction:column; gap:14px; padding:24px 28px; border-radius:28px; background:#f2f2f7;">
+        <sc-for list="{{ icons }}" as="i" hint-placeholder-count="6">
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div style="width:60px; height:60px; border-radius:14px; overflow:hidden;"><app-icon form="{{ i.id }}" size="60"></app-icon></div>
+            <div style="width:40px; height:40px; border-radius:9px; overflow:hidden;"><app-icon form="{{ i.id }}" size="40"></app-icon></div>
+            <div style="width:29px; height:29px; border-radius:7px; overflow:hidden;"><app-icon form="{{ i.id }}" size="29"></app-icon></div>
+            <span style="font-size:14px; font-weight:600; color:#1c1c1e;">{{ i.name }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;homeIcon&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;sun&quot;,&quot;max&quot;,&quot;nhang&quot;,&quot;banhbao&quot;,&quot;giot&quot;,&quot;hac&quot;],&quot;default&quot;:&quot;sun&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;mask&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const I = 'apps/mobile/assets/icon/';
+    const icons = [
+      ['sun', 'Sunset', 'Free', 'The original, untouched. The grammar the others follow.', 'icon.png'],
+      ['max', 'Midnight Sun', 'Max', 'Night sky, the ringed sun sinking into a violet sea, five rays tipped with stars.', 'max/light.png'],
+      ['nhang', 'Nhang', 'Free', 'The celadon urn rests on the horizon, incense smoke curling up into a temple dusk.', 'nhang/light.png'],
+      ['banhbao', 'Bánh Bao', 'Free', 'The bun rises like the sun itself; steam puffs where the rays would be.', 'banhbao/light.png'],
+      ['giot', 'Giọt', 'Free', 'A raindrop landing in the monsoon sea at dusk, with a ripple at its base.', 'giot/light.png'],
+      ['hac', 'Hạc Giấy', 'Max', 'Gold-edged crane in full flight across the setting sun.', 'hac/light.png'],
+    ].map(([id, name, tier, note, v1]) => ({ id, name, tier, note, v1: I + v1, tierBg: tier === 'Max' ? '#f6a46a' : 'rgba(255,255,255,.1)', tierFg: tier === 'Max' ? '#2a1424' : '#f6efe6' }));
+    const pick = this.props.homeIcon ?? 'sun';
+    const other = ['#6fbf73', '#4a8ef0', '#f2b03a', '#ef5a5a', '#9b6bf0', '#3cc2c9', '#f07ab8'];
+    const labels = ['Maps', 'Mail', 'Notes', 'Photos', 'Podcasts', 'Weather', 'Music'];
+    const home = labels.slice(0, 5).map((l, k) => ({ label: l, bg: other[k], is6: false, id: '' }));
+    home.splice(5, 0, { label: '6pm', bg: 'transparent', is6: true, id: pick });
+    home.push({ label: labels[5], bg: other[5], is6: false, id: '' }, { label: labels[6], bg: other[6], is6: false, id: '' });
+    return {
+      icons, home,
+      radius: (this.props.mask ?? true) ? '22.37%' : '0',
+      wall: 'linear-gradient(180deg,#2c2758 0%,#7a3f72 52%,#e0855a 100%)',
+    };
+  }
+}
+</script>
+</body>
+</html>

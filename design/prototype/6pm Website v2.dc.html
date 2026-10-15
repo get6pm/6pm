@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..700&family=Be+Vietnam+Pro:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;background:#0d0b10}
+a{color:#f3eee7}
+a:hover{color:#ffb08a}
+::selection{background:#ff8552;color:#1a0f0a}
+input::placeholder{color:rgba(243,238,231,.42)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes breathe{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.025);filter:brightness(1.08)}}
+@keyframes shimmer{0%,100%{opacity:.12;transform:scaleX(.6)}50%{opacity:.55;transform:scaleX(1)}}
+@keyframes phItem{0%{opacity:0;transform:translateY(-16px) scale(.96)}5%,48%{opacity:1;transform:none}56%,100%{opacity:0;transform:translateX(115%)}}
+@keyframes thumb{0%,40%{transform:translateX(0)}50%,90%{transform:translateX(200px)}97%,100%{transform:translateX(0)}}
+@keyframes fill{0%,40%{width:52px}50%,90%{width:100%}97%,100%{width:52px}}
+@keyframes swipeLbl{0%,38%{opacity:1}44%,92%{opacity:0}98%,100%{opacity:1}}
+@keyframes closedIn{0%,74%{opacity:0;transform:rotate(-14deg) scale(2.2)}78%{opacity:1;transform:rotate(-7deg) scale(.94)}80%,91%{opacity:1;transform:rotate(-7deg) scale(1)}96%,100%{opacity:0;transform:rotate(-7deg) scale(1)}}
+@keyframes play{0%{left:4%;opacity:0}4%{opacity:1}60%,90%{left:88%;opacity:1}96%,100%{left:88%;opacity:0}}
+@keyframes reveal{0%{clip-path:inset(-40% 96% -40% 0)}60%,100%{clip-path:inset(-40% 12% -40% 0)}}
+@keyframes chipGo{0%,64%{left:var(--x);top:var(--y);opacity:1;transform:translate(-50%,-50%) scale(1)}76%,100%{left:88%;top:62%;opacity:0;transform:translate(-50%,-50%) scale(.3)}}
+@keyframes sunHit{0%,60%{transform:translate(-50%,-50%) scale(1);box-shadow:0 0 0 6px rgba(255,133,82,.12),0 0 20px rgba(255,133,82,.5)}68%{transform:translate(-50%,-50%) scale(1.7);box-shadow:0 0 0 18px rgba(255,133,82,.14),0 0 60px rgba(255,133,82,.9)}80%,100%{transform:translate(-50%,-50%) scale(1);box-shadow:0 0 0 6px rgba(255,133,82,.12),0 0 20px rgba(255,133,82,.5)}}
+@keyframes numIn{0%,72%{opacity:0;transform:translateY(14px)}78%,92%{opacity:1;transform:none}98%,100%{opacity:0;transform:none}}
+@keyframes travel{0%{left:100%;opacity:0}12%{opacity:1}85%{opacity:1}100%{left:18%;opacity:0}}
+@keyframes ripple{0%{transform:scale(1);opacity:.55}100%{transform:scale(1.9);opacity:0}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes c1{0%,8%{opacity:0}14%,92%{opacity:1}98%,100%{opacity:0}}
+@keyframes c2{0%,20%{opacity:0}26%,92%{opacity:1}98%,100%{opacity:0}}
+@keyframes c3{0%,32%{opacity:0}38%,92%{opacity:1}98%,100%{opacity:0}}
+@keyframes c4{0%,46%{opacity:0}52%,92%{opacity:1}98%,100%{opacity:0}}
+@keyframes splits{0%,54%{clip-path:inset(0 100% 0 0)}64%,92%{clip-path:inset(0 0 0 0)}98%,100%{clip-path:inset(0 100% 0 0)}}
+@keyframes slice{0%,66%{opacity:0;transform:translateY(0)}72%,92%{opacity:1;transform:translateY(-14px)}98%,100%{opacity:0;transform:translateY(0)}}
+@keyframes callIn{0%,70%{opacity:0;transform:translate(-50%,8px) scale(.9)}76%,92%{opacity:1;transform:translate(-50%,0) scale(1)}98%,100%{opacity:0;transform:translate(-50%,0) scale(1)}}
+@keyframes lit{0%,100%{color:rgba(243,238,231,.16)}5%,22%{color:#f3eee7}32%{color:rgba(243,238,231,.16)}}
+@keyframes litA{0%,100%{color:rgba(255,133,82,.22)}5%,22%{color:#ff8552}32%{color:rgba(255,133,82,.22)}}
+@keyframes bubQ{0%{opacity:0;transform:translateY(10px) scale(.96)}6%,90%{opacity:1;transform:none}96%,100%{opacity:0;transform:none}}
+@keyframes bubDots{0%,10%{opacity:0}14%,30%{opacity:1}33%,100%{opacity:0}}
+@keyframes bubA{0%,32%{opacity:0;transform:translateY(10px) scale(.96)}38%,90%{opacity:1;transform:none}96%,100%{opacity:0;transform:none}}
+@keyframes numNew{0%,46%{opacity:0;transform:translateX(-8px)}52%,90%{opacity:1;transform:none}96%,100%{opacity:0;transform:none}}
+@keyframes numOld{0%,46%{opacity:1;text-decoration-color:transparent}52%,100%{opacity:.4;text-decoration-color:currentColor}}
+@keyframes dot{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(-4px);opacity:1}}
+@keyframes scan{0%{top:4%;opacity:0}6%{opacity:1}60%{top:96%;opacity:1}66%,100%{top:96%;opacity:0}}
+@keyframes r1{0%,18%{transform:scaleX(0)}22%,88%{transform:scaleX(1)}95%,100%{transform:scaleX(0)}}
+@keyframes r2{0%,32%{transform:scaleX(0)}36%,88%{transform:scaleX(1)}95%,100%{transform:scaleX(0)}}
+@keyframes r3{0%,46%{transform:scaleX(0)}50%,88%{transform:scaleX(1)}95%,100%{transform:scaleX(0)}}
+@keyframes tagIn{0%,62%{opacity:0;transform:translateX(-10px)}68%,88%{opacity:1;transform:none}95%,100%{opacity:0;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes marquee{to{transform:translateX(calc(-50% - 9px))}}
+@keyframes probe{0%{transform:translateX(min(250px,40vw));opacity:0}25%{opacity:.9}52%{transform:translateX(min(158px,26vw));opacity:.9}58%{transform:translateX(min(170px,28vw));opacity:.35}80%,100%{transform:translateX(min(230px,38vw));opacity:0}}
+@keyframes flash{0%,50%{opacity:0;transform:scale(.4)}54%{opacity:1;transform:scale(1.4)}70%,100%{opacity:0;transform:scale(1.8)}}
+@keyframes coinX{0%{transform:translateX(var(--from));opacity:0}6%{opacity:1}45%{transform:translateX(0);opacity:1}48%,100%{transform:translateX(0);opacity:0}}
+@keyframes coinY{0%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.7,.4,1)}20%{transform:translateY(-60px);animation-timing-function:cubic-bezier(.6,0,.9,.5)}45%,100%{transform:translateY(150px)}}
+@keyframes jar{0%{height:16%}88%{height:76%}94%{height:76%}100%{height:16%}}
+@keyframes type{0%{width:0}40%,88%{width:var(--w)}96%,100%{width:0}}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes lineIn{0%,44%{opacity:0;transform:translateY(6px)}50%,88%{opacity:1;transform:none}96%,100%{opacity:0;transform:none}}
+@keyframes sink{0%{transform:translate(-50%,18%);opacity:0}8%{opacity:1}82%{transform:translate(-50%,72%);opacity:1}100%{transform:translate(-50%,86%);opacity:0}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:0s !important;animation-iteration-count:1 !important}}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="position:relative; background:#0d0b10; color:#f3eee7; font-family:'Be Vietnam Pro', -apple-system, system-ui, sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip; min-height:100vh;">
+
+  <header data-screen-label="Nav" style="position:fixed; z-index:50; top:0; left:0; right:0; background:rgba(13,11,16,.74); backdrop-filter:saturate(1.3) blur(20px); -webkit-backdrop-filter:saturate(1.3) blur(20px); border-bottom:0.5px solid rgba(243,238,231,.08);">
+    <div style="max-width:1200px; margin:0 auto; height:64px; box-sizing:border-box; padding:0 clamp(20px,4vw,40px); display:flex; align-items:center; gap:clamp(14px,3vw,32px);">
+      <a href="#top" style="color:#f3eee7; text-decoration:none; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-size:24px; letter-spacing:-.05em; line-height:1;">6pm</a>
+      <nav style="flex:1; min-width:0; height:20px; overflow:hidden; display:flex; flex-wrap:wrap; justify-content:center; gap:0 28px; font-size:14px; line-height:20px;">
+        <a href="#ritual" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.navRitual }}</a>
+        <a href="#capture" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.navCapture }}</a>
+        <a href="#privacy" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.navPrivacy }}</a>
+        <a href="#pricing" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.navPricing }}</a>
+        <a href="https://github.com/get6pm/6pm" target="_blank" rel="noopener" style="color:rgba(243,238,231,.7); text-decoration:none;">GitHub</a>
+      </nav>
+      <div style="display:flex; padding:3px; border-radius:99px; border:0.5px solid rgba(243,238,231,.16); font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px; letter-spacing:.06em;">
+        <button onClick="{{ setEn }}" style="height:28px; min-width:36px; padding:0 8px; border:none; border-radius:99px; cursor:pointer; font:inherit; background: {{ enBg }}; color: {{ enFg }};">EN</button>
+        <button onClick="{{ setVi }}" style="height:28px; min-width:36px; padding:0 8px; border:none; border-radius:99px; cursor:pointer; font:inherit; background: {{ viBg }}; color: {{ viFg }};">VI</button>
+      </div>
+      <a href="#join" style-hover="background:#ff9a6e; color:#1a0f0a;" style="flex-shrink:0; height:36px; padding:0 16px; border-radius:99px; background:#ff8552; color:#1a0f0a; text-decoration:none; font-size:14px; font-weight:600; display:flex; align-items:center; white-space:nowrap; transition:background .2s;">{{ navCta }}</a>
+    </div>
+  </header>
+
+  <section id="top" data-screen-label="01 Hero" style="position:relative; isolation:isolate; box-sizing:border-box; padding:clamp(120px,15vh,160px) clamp(20px,4vw,40px) 0; display:flex; flex-direction:column; align-items:center; text-align:center; overflow:hidden;">
+    <div style="display:flex; flex-direction:column; align-items:center; gap:26px; max-width:900px;">
+      <div style="display:flex; align-items:center; gap:10px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:rgba(243,238,231,.62);">
+        <span style="width:6px; height:6px; border-radius:50%; background:#ff8552; animation:pulse 2.4s ease-in-out infinite;"></span><span>{{ heroKicker }}</span>
+      </div>
+      <h1 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(60px,9vw,136px); line-height:.9; letter-spacing:-.055em; text-wrap:balance;">{{ t.heroA }} <span style="color:#ff8552;">{{ t.heroB }}</span></h1>
+      <p style="margin:0; max-width:520px; font-size:clamp(17px,1.4vw,20px); line-height:1.5; color:rgba(243,238,231,.7); text-wrap:balance;">{{ t.heroSub }}</p>
+      <sc-if value="{{ isWaitlist }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ submit }}" style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; width:100%; max-width:460px;">
+            <input type="email" autocomplete="email" placeholder="{{ t.emailPh }}" value="{{ email }}" onChange="{{ setEmail }}" style="flex:1 1 220px; min-width:0; height:52px; box-sizing:border-box; padding:0 20px; border-radius:99px; border:0.5px solid rgba(243,238,231,.2); background:rgba(243,238,231,.05); color:#f3eee7; font-family:inherit; font-size:16px; outline:none;">
+            <button type="submit" style-hover="background:#ff9a6e;" style="flex:0 0 auto; height:52px; padding:0 24px; border:none; border-radius:99px; background:#ff8552; color:#1a0f0a; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; transition:background .2s;">{{ t.ctaWait }}</button>
+          </form>
+        </sc-if>
+        <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; gap:12px; height:52px; font-size:16px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px; color:#ff8552;">check_circle</span>{{ t.sentMsg }}</div>
+        </sc-if>
+        <span style="font-size:13.5px; color: {{ msgColor }};">{{ formNote }}</span>
+      </sc-if>
+      <sc-if value="{{ isStore }}" hint-placeholder-val="{{ false }}">
+        <a href="#" style-hover="background:#ff9a6e; color:#1a0f0a;" style="height:56px; padding:0 26px 0 20px; border-radius:99px; background:#ff8552; color:#1a0f0a; text-decoration:none; font-size:16px; font-weight:600; display:flex; align-items:center; gap:10px; transition:background .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px;">phone_iphone</span>{{ t.ctaStore }}</a>
+      </sc-if>
+      <sc-if value="{{ showClock }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; color:rgba(243,238,231,.55);"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:16px;">schedule</span><span>{{ clockLine }}</span></div>
+      </sc-if>
+    </div>
+
+    <div style="position:relative; width:100%; max-width:1200px; height:680px; margin-top:clamp(48px,7vh,80px);">
+      <div aria-hidden="true" style="position:absolute; left:-20vw; right:-20vw; top:0; height:420px; overflow:hidden; pointer-events:none;">
+        <div style="position:absolute; left:50%; bottom:0; width:min(1100px,160vw); height:min(700px,110vw); transform:translate(-50%,50%); background:radial-gradient(closest-side, rgba(255,133,82,.28), rgba(255,133,82,.08) 55%, transparent);"></div>
+        <div style="position:absolute; left:50%; bottom:0; width:min(560px,96vw); aspect-ratio:1; margin-left:calc(min(560px,96vw) / -2); transform:translateY(46%);">
+          <div style="position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle at 50% 35%, #ffe2bf 0%, #ffa06a 34%, #e45f3e 66%, #a43d4c 100%); box-shadow:0 0 120px 30px rgba(255,120,80,.35); animation:breathe 7s ease-in-out infinite;"></div>
+        </div>
+      </div>
+      <div aria-hidden="true" style="position:absolute; left:-20vw; right:-20vw; top:420px; height:1px; background:linear-gradient(90deg, transparent 10%, rgba(255,196,160,.75) 50%, transparent 90%);"></div>
+      <div aria-hidden="true" style="position:absolute; left:-20vw; right:-20vw; top:421px; bottom:0; overflow:hidden; pointer-events:none; background:linear-gradient(180deg, rgba(255,133,82,.08), transparent 70%);">
+        <div style="position:absolute; left:50%; top:-60px; width:min(520px,90vw); height:200px; transform:translateX(-50%); border-radius:50%; background:radial-gradient(closest-side, rgba(255,150,100,.35), transparent); filter:blur(10px);"></div>
+        <sc-for list="{{ waves }}" as="w" hint-placeholder-count="6">
+          <div style="position:absolute; left:50%; top: {{ w.top }}; width: {{ w.w }}; margin-left: {{ w.ml }}; height:2px; border-radius:2px; background:rgba(255,190,150,.8); animation:shimmer {{ w.d }} ease-in-out infinite; animation-delay: {{ w.delay }};"></div>
+        </sc-for>
+      </div>
+
+      <div style="position:absolute; left:50%; top:0; width:300px; margin-left:-150px;">
+        <div style="position:relative; box-sizing:border-box; padding:10px; border-radius:56px; background:linear-gradient(160deg, #2c2930, #16141a 40%, #0f0e12); box-shadow:0 0 0 0.5px rgba(243,238,231,.16), 0 60px 120px -30px rgba(0,0,0,.85);">
+          <div style="position:relative; overflow:hidden; border-radius:46px; background:#0f0d12; height:604px; display:flex; flex-direction:column; text-align:left;">
+            <div style="position:absolute; left:0; right:0; top:0; height:56%; background:linear-gradient(180deg, #1c2350 0%, #5a2a55 46%, #a8483c 80%, #0f0d12 100%); opacity:.92;"></div>
+            <div style="position:absolute; left:50%; top:36%; width:170px; height:170px; margin-left:-85px; border-radius:50%; background:radial-gradient(circle, rgba(255,214,170,.7), rgba(255,140,90,.25) 45%, transparent 70%); animation:breathe 7s ease-in-out infinite;"></div>
+            <div style="position:relative; display:flex; justify-content:space-between; align-items:center; height:44px; padding:0 26px; font-size:13px; font-weight:600;">
+              <span>18:00</span>
+              <span style="position:absolute; left:50%; top:10px; width:90px; height:26px; margin-left:-45px; border-radius:20px; background:#000;"></span>
+              <span style="width:22px; height:11px; border-radius:3.5px; border:1px solid rgba(243,238,231,.6); box-sizing:border-box; padding:1px;"><span style="display:block; width:70%; height:100%; border-radius:1.5px; background:#f3eee7;"></span></span>
+            </div>
+            <div style="position:relative; padding:20px 22px 0; display:flex; flex-direction:column; gap:6px;">
+              <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:10px; letter-spacing:.14em; color:rgba(243,238,231,.75);">{{ t.phDate }}</span>
+              <span style="font-size:13px; color:rgba(243,238,231,.85);">{{ t.phSafe }}</span>
+              <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:50px; line-height:1; letter-spacing:-.045em;">{{ t.phNum }}</span>
+              <div style="margin-top:10px; height:4px; border-radius:4px; background:rgba(243,238,231,.18); overflow:hidden;"><div style="width:42%; height:100%; background:#f3eee7; border-radius:4px;"></div></div>
+            </div>
+            <div style="position:relative; flex:1; margin-top:30px; padding:0 14px; display:flex; flex-direction:column; gap:8px; overflow:hidden;">
+              <span style="padding:0 6px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:10px; letter-spacing:.14em; color:rgba(243,238,231,.55);">{{ t.phInbox }}</span>
+              <sc-for list="{{ phoneItems }}" as="p" hint-placeholder-count="3">
+                <div style="display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:16px; background:rgba(243,238,231,.07); border:0.5px solid rgba(243,238,231,.08); animation:phItem 10s cubic-bezier(.2,.8,.2,1) infinite both; animation-delay: {{ p.delay }};">
+                  <span style="width:32px; height:32px; flex-shrink:0; border-radius:10px; background: {{ p.tile }}; color: {{ p.glyph }}; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:18px; font-variation-settings:'FILL' 1;">{{ p.icon }}</span></span>
+                  <span style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;"><span style="font-size:12.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ p.name }}</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:8.5px; letter-spacing:.1em; color:rgba(243,238,231,.5);">{{ p.src }} · {{ p.time }}</span></span>
+                  <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px;">−{{ p.amt }}</span>
+                </div>
+              </sc-for>
+              <div style="position:absolute; left:50%; top:46%; margin-left:-78px; width:156px; box-sizing:border-box; padding:10px 0 8px; border:3px solid #ff8f7a; border-radius:10px; color:#ff8f7a; text-align:center; font-family:'IBM Plex Mono', ui-monospace, monospace; font-weight:500; font-size:20px; letter-spacing:.14em; line-height:1.15; animation:closedIn 10s infinite both;">CLOSED<br>18:00</div>
+            </div>
+            <div style="position:relative; margin:0 14px 26px; height:52px; border-radius:99px; background:rgba(243,238,231,.08); border:0.5px solid rgba(243,238,231,.12); overflow:hidden;">
+              <div style="position:absolute; left:0; top:0; bottom:0; border-radius:99px; background:rgba(255,133,82,.9); animation:fill 10s cubic-bezier(.5,0,.2,1) infinite both;"></div>
+              <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding-left:40px; font-size:12.5px; font-weight:600; animation:swipeLbl 10s infinite both;">{{ t.phSwipe }}</span>
+              <span style="position:absolute; left:5px; top:5px; width:42px; height:42px; border-radius:50%; background:#f3eee7; color:#1a0f0a; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,.35); animation:thumb 10s cubic-bezier(.5,0,.2,1) infinite both;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:20px;">arrow_forward</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ritual" data-screen-label="02 The ritual" style="scroll-margin-top:64px; max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:flex; flex-direction:column; gap:clamp(40px,5vw,64px);">
+    <div data-reveal="0" style="display:flex; flex-direction:column; gap:18px;">
+      <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.ritKicker }}</span>
+      <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(44px,6vw,88px); line-height:.95; letter-spacing:-.05em;">{{ t.ritTitle }}</h2>
+    </div>
+    <div data-reveal="80" style="position:relative; height:clamp(260px,30vw,340px); border-radius:32px; background:#110f14; border:0.5px solid rgba(243,238,231,.08); overflow:hidden;">
+      <div style="position:absolute; left:4%; right:4%; top:62%; height:1px; background:rgba(243,238,231,.16);"></div>
+      <sc-for list="{{ hours }}" as="h" hint-placeholder-count="6">
+        <div style="position:absolute; left: {{ h.x }}; top:62%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:10px;">
+          <span style="width:1px; height:8px; background:rgba(243,238,231,.3);"></span>
+          <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; color: {{ h.c }};">{{ h.l }}</span>
+        </div>
+      </sc-for>
+      <div style="position:absolute; inset:0; animation:reveal 9s cubic-bezier(.45,0,.55,1) infinite;">
+        <sc-for list="{{ dayChips }}" as="c" hint-placeholder-count="5">
+          <div style="--x: {{ c.x }}; --y: {{ c.y }}; position:absolute; left:var(--x); top:var(--y); transform:translate(-50%,-50%); display:flex; align-items:center; gap:8px; padding:6px 12px 6px 6px; border-radius:14px; background:#1c1a20; border:0.5px solid rgba(243,238,231,.1); box-shadow:0 10px 24px rgba(0,0,0,.4); white-space:nowrap; animation:chipGo 9s cubic-bezier(.5,0,.3,1) infinite;">
+            <span style="width:26px; height:26px; border-radius:8px; background: {{ c.tile }}; color: {{ c.glyph }}; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:15px; font-variation-settings:'FILL' 1;">{{ c.icon }}</span></span>
+            <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px;">−{{ c.amt }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="position:absolute; top:14%; bottom:30%; width:1px; background:linear-gradient(180deg, transparent, rgba(243,238,231,.5)); animation:play 9s cubic-bezier(.45,0,.55,1) infinite;"></div>
+      <div style="position:absolute; left:88%; top:62%; width:16px; height:16px; border-radius:50%; background:#ff8552; transform:translate(-50%,-50%); animation:sunHit 9s infinite;"></div>
+      <div style="position:absolute; right:4%; top:12%; display:flex; flex-direction:column; align-items:flex-end; gap:4px; animation:numIn 9s infinite both;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(243,238,231,.6);">{{ t.ritTomorrow }}</span>
+        <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:clamp(36px,4.4vw,60px); line-height:1; letter-spacing:-.05em; color:#ff8552;">{{ t.tmrNum }}</span>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:24px;">
+      <sc-for list="{{ ritCaps }}" as="r" hint-placeholder-count="3">
+        <div data-reveal="{{ r.delay }}" style="display:flex; align-items:baseline; gap:14px;">
+          <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.08em; color: {{ r.c }}; min-width:72px;">{{ r.time }}</span>
+          <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:24px; letter-spacing:-.03em;">{{ r.txt }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="capture" data-screen-label="03 Capture" style="scroll-margin-top:64px; border-top:0.5px solid rgba(243,238,231,.08);">
+    <div style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr)); align-items:center; gap:clamp(40px,6vw,80px);">
+      <div data-reveal="0" style="display:flex; flex-direction:column; gap:20px; min-width:0;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.capKicker }}</span>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(44px,6vw,88px); line-height:.95; letter-spacing:-.05em; text-wrap:balance;">{{ t.capTitle }}</h2>
+        <p style="margin:0; font-size:17px; line-height:1.5; color:rgba(243,238,231,.62);">{{ t.capSub }}</p>
+      </div>
+      <div data-reveal="100" style="--S:min(520px,88vw); position:relative; width:var(--S); height:var(--S); justify-self:center;">
+        <div style="position:absolute; inset:9%; border-radius:50%; border:0.5px dashed rgba(243,238,231,.14); animation:spin 80s linear infinite;"></div>
+        <sc-for list="{{ spokes }}" as="s" hint-placeholder-count="6">
+          <div style="position:absolute; left:50%; top:50%; width:calc(var(--S) * .4); height:0; transform-origin:0 0; transform:rotate({{ s.a }});">
+            <div style="position:absolute; left:calc(var(--S) * .1); right:0; top:0; height:1px; background:linear-gradient(90deg, rgba(255,133,82,.4), rgba(243,238,231,.06));"></div>
+            <div style="position:absolute; top:-3.5px; width:7px; height:7px; margin-left:-3.5px; border-radius:50%; background:#ff8552; box-shadow:0 0 12px #ff8552; animation:travel 3.6s cubic-bezier(.55,0,.75,.4) infinite both; animation-delay: {{ s.delay }};"></div>
+            <div style="position:absolute; left:100%; top:0; transform:translate(-50%,-50%) rotate({{ s.inv }});">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:8px; animation:bob 4s ease-in-out infinite; animation-delay: {{ s.delay }};">
+                <span style="width:calc(var(--S) * .11); height:calc(var(--S) * .11); border-radius:50%; background:#16141a; border:0.5px solid rgba(243,238,231,.16); display:flex; align-items:center; justify-content:center; color:#ffb08a;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:calc(var(--S) * .05);">{{ s.icon }}</span></span>
+                <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:10.5px; letter-spacing:.06em; color:rgba(243,238,231,.7); white-space:nowrap;">{{ s.label }}</span>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+        <div style="position:absolute; left:50%; top:50%; width:calc(var(--S) * .24); height:calc(var(--S) * .24); transform:translate(-50%,-50%);">
+          <div style="position:absolute; inset:0; border-radius:50%; border:1px solid rgba(255,133,82,.6); animation:ripple 1.8s ease-out infinite;"></div>
+          <div style="position:absolute; inset:0; border-radius:50%; border:1px solid rgba(255,133,82,.6); animation:ripple 1.8s .9s ease-out infinite;"></div>
+          <div style="position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle at 50% 35%, #ffd2ae, #ff8552 55%, #c4503a); box-shadow:0 0 60px rgba(255,133,82,.45); display:flex; align-items:center; justify-content:center; color:#1a0f0a; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-size:calc(var(--S) * .06); letter-spacing:-.05em;">6pm</div>
+        </div>
+      </div>
+    </div>
+    <sc-if value="{{ isVi }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:0 0 clamp(80px,10vw,128px); display:flex; flex-direction:column; align-items:center; gap:22px;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px; letter-spacing:.14em; color:rgba(243,238,231,.55);">{{ t.bankStrip }}</span>
+        <div style="width:100%; overflow:hidden; -webkit-mask-image:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);">
+          <div style="display:flex; gap:18px; width:max-content; animation:marquee 36s linear infinite;">
+            <sc-for list="{{ banks }}" as="b" hint-placeholder-count="24">
+              <span role="img" aria-label="{{ b.name }}" style="width:60px; height:60px; flex-shrink:0; border-radius:18px; background-color:#fff; background-image: {{ b.bg }}; background-size:cover; background-position:center; box-shadow:0 0 0 0.5px rgba(243,238,231,.16);"></span>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </section>
+
+  <section data-screen-label="04 One number" style="border-top:0.5px solid rgba(243,238,231,.08); background:#100e13;">
+    <div style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:flex; flex-direction:column; gap:clamp(48px,6vw,72px);">
+      <div data-reveal="0" style="display:flex; flex-direction:column; gap:18px; max-width:860px;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.numKicker }}</span>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(44px,6vw,88px); line-height:.95; letter-spacing:-.05em; text-wrap:balance;">{{ t.numTitle }}</h2>
+      </div>
+      <div data-reveal="100" style="display:flex; flex-direction:column; gap:16px; padding-top:90px;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px; letter-spacing:.14em; color:rgba(243,238,231,.6);">{{ t.barIn }}</span>
+        <div style="position:relative; height:clamp(56px,7vw,80px);">
+          <div style="position:absolute; inset:0; display:flex; gap:3px;">
+            <div style="position:relative; width:37%; border-radius:16px 4px 4px 16px; background:rgba(243,238,231,.1); overflow:hidden;"><div style="position:absolute; inset:0; background:rgba(243,238,231,.38); animation:c1 10s infinite both;"></div></div>
+            <div style="position:relative; width:15%; border-radius:4px; background:rgba(243,238,231,.1); overflow:hidden;"><div style="position:absolute; inset:0; background:#c9b8f0; animation:c2 10s infinite both;"></div></div>
+            <div style="position:relative; width:11%; border-radius:4px; background:rgba(243,238,231,.1); overflow:hidden;"><div style="position:absolute; inset:0; background:#a8dcb8; animation:c3 10s infinite both;"></div></div>
+            <div style="position:relative; flex:1; border-radius:4px 16px 16px 4px; background:rgba(243,238,231,.1); overflow:hidden;">
+              <div style="position:absolute; inset:0; background:#ff8552; animation:c4 10s infinite both;"></div>
+              <div style="position:absolute; inset:0; background:repeating-linear-gradient(90deg, transparent 0 calc(100% / 22 - 2px), #100e13 calc(100% / 22 - 2px) calc(100% / 22)); animation:splits 10s cubic-bezier(.5,0,.3,1) infinite both;"></div>
+            </div>
+          </div>
+          <div style="position:absolute; left:63.2%; top:0; bottom:0; width:calc(37% / 22 - 2px); border-radius:4px; background:#ffe2cf; box-shadow:0 0 24px rgba(255,180,140,.9); animation:slice 10s cubic-bezier(.3,1.4,.5,1) infinite both;"></div>
+          <div style="position:absolute; left:64%; bottom:calc(100% + 26px); display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 16px; border-radius:16px; background:#f3eee7; color:#16131a; white-space:nowrap; box-shadow:0 20px 40px rgba(0,0,0,.4); animation:callIn 10s cubic-bezier(.3,1.4,.5,1) infinite both;">
+            <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-size:24px; line-height:1; letter-spacing:-.04em;">{{ t.tmrNum }}</span>
+            <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:10px; letter-spacing:.12em;">{{ t.barToday }}</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:3px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:clamp(9.5px,1vw,11.5px); letter-spacing:.06em; text-transform:uppercase; line-height:1.4;">
+          <span style="width:37%; color:rgba(243,238,231,.7); animation:c1 10s infinite both;">{{ t.bar0 }}</span>
+          <span style="width:15%; color:#c9b8f0; animation:c2 10s infinite both;">{{ t.bar1 }}</span>
+          <span style="width:11%; color:#a8dcb8; animation:c3 10s infinite both;">{{ t.bar2 }}</span>
+          <span style="flex:1; color:#ff8552; animation:c4 10s infinite both;">{{ t.bar3 }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="05 Philosophy" style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(120px,14vw,200px) clamp(20px,4vw,40px); display:flex; flex-direction:column; gap:32px;">
+    <span data-reveal="0" style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.philKicker }}</span>
+    <p data-reveal="60" style="margin:0; display:flex; flex-wrap:wrap; gap:0 .28em; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(44px,7vw,108px); line-height:1.02; letter-spacing:-.05em;">
+      <sc-for list="{{ phrases }}" as="p" hint-placeholder-count="6">
+        <span style="color:rgba(243,238,231,.16); animation: {{ p.anim }};">{{ p.t }}</span>
+      </sc-for>
+    </p>
+  </section>
+
+  <section id="intelligence" data-screen-label="06 Intelligence" style="scroll-margin-top:64px; border-top:0.5px solid rgba(243,238,231,.08);">
+    <div style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:flex; flex-direction:column; gap:clamp(40px,5vw,64px);">
+      <div data-reveal="0" style="display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:20px 64px;">
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.aiKicker }}</span>
+          <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(44px,6vw,88px); line-height:.95; letter-spacing:-.05em;">{{ t.aiTitle }}</h2>
+        </div>
+        <p style="margin:0; max-width:340px; font-size:17px; line-height:1.5; color:rgba(243,238,231,.62);">{{ t.aiSub }}</p>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr)); gap:20px;">
+        <div data-reveal="0" style="position:relative; min-height:380px; border-radius:32px; background:#131117; border:0.5px solid rgba(243,238,231,.08); padding:28px; box-sizing:border-box; display:flex; flex-direction:column; gap:14px; overflow:hidden;">
+          <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(243,238,231,.55);"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:16px; color:#ffb08a;">auto_awesome</span>{{ t.askLbl }}</div>
+          <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:14px;">
+            <div style="align-self:flex-end; max-width:80%; padding:13px 18px; border-radius:22px 22px 6px 22px; background:#f3eee7; color:#16131a; font-size:17px; line-height:1.35; animation:bubQ 8s infinite both;">{{ t.aiQ }}</div>
+            <div style="position:relative; min-height:96px;">
+              <div style="position:absolute; left:0; top:0; display:flex; gap:5px; padding:16px 18px; border-radius:22px 22px 22px 6px; background:rgba(243,238,231,.07); animation:bubDots 8s infinite both;">
+                <span style="width:7px; height:7px; border-radius:50%; background:#f3eee7; animation:dot .9s ease-in-out infinite;"></span>
+                <span style="width:7px; height:7px; border-radius:50%; background:#f3eee7; animation:dot .9s .15s ease-in-out infinite;"></span>
+                <span style="width:7px; height:7px; border-radius:50%; background:#f3eee7; animation:dot .9s .3s ease-in-out infinite;"></span>
+              </div>
+              <div style="position:absolute; left:0; top:0; max-width:88%; padding:14px 18px; border-radius:22px 22px 22px 6px; background:rgba(243,238,231,.07); border:0.5px solid rgba(243,238,231,.08); display:flex; flex-direction:column; gap:10px; animation:bubA 8s infinite both;">
+                <span style="font-size:16px; line-height:1.4;">{{ t.aiA }}</span>
+                <div style="display:flex; align-items:baseline; gap:10px; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; letter-spacing:-.04em;">
+                  <span style="font-size:22px; text-decoration:line-through; animation:numOld 8s infinite both;">{{ t.askOld }}</span>
+                  <span style="font-size:34px; color:#ff8552; animation:numNew 8s infinite both;">{{ t.askNew }}</span>
+                  <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:0; color:rgba(243,238,231,.55);">{{ t.perDay }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-reveal="100" style="position:relative; min-height:380px; border-radius:32px; background:#131117; border:0.5px solid rgba(243,238,231,.08); padding:28px; box-sizing:border-box; display:flex; flex-direction:column; gap:14px; overflow:hidden;">
+          <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(243,238,231,.55);"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:16px; color:#ffb08a;">document_scanner</span>{{ t.scanLbl }}</div>
+          <div style="flex:1; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:24px;">
+            <div style="position:relative; width:170px; transform:rotate(-3deg); filter:drop-shadow(0 24px 30px rgba(0,0,0,.5));">
+              <div style="height:8px; background:radial-gradient(circle at 5px 0, transparent 4.5px, #f4efe6 5px) 0 0 / 10px 8px repeat-x;"></div>
+              <div style="position:relative; background:#f4efe6; padding:14px 16px 16px; display:flex; flex-direction:column; gap:9px; overflow:hidden;">
+                <span style="height:9px; width:60%; border-radius:2px; background:#2b2530; align-self:center;"></span>
+                <span style="height:5px; width:44%; border-radius:2px; background:rgba(43,37,48,.3); align-self:center;"></span>
+                <span style="height:0; border-top:1px dashed rgba(43,37,48,.3); margin:4px 0;"></span>
+                <sc-for list="{{ receiptRows }}" as="r" hint-placeholder-count="3">
+                  <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                    <span style="height:5px; width: {{ r.w }}; border-radius:2px; background:rgba(43,37,48,.4);"></span>
+                    <span style="position:relative; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:10px; color:#2b2530;">{{ r.v }}<span style="position:absolute; left:-3px; right:-3px; top:-1px; bottom:-1px; background:#2b2530; border-radius:2px; transform-origin:0 50%; animation: {{ r.anim }};"></span></span>
+                  </div>
+                </sc-for>
+                <span style="height:0; border-top:1px dashed rgba(43,37,48,.3); margin:4px 0;"></span>
+                <div style="display:flex; justify-content:space-between; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; font-weight:500; color:#2b2530;"><span>TOTAL</span><span>{{ t.rcptTotal }}</span></div>
+                <div style="position:absolute; left:0; right:0; height:2px; background:#ff8552; box-shadow:0 0 14px 3px rgba(255,133,82,.7); animation:scan 6s cubic-bezier(.45,0,.55,1) infinite both;"></div>
+              </div>
+              <div style="height:8px; background:radial-gradient(circle at 5px 8px, transparent 4.5px, #f4efe6 5px) 0 0 / 10px 8px repeat-x;"></div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; align-items:center; gap:10px; padding:10px 14px 10px 10px; border-radius:14px; background:rgba(243,238,231,.07); border:0.5px solid rgba(243,238,231,.1); animation:tagIn 6s infinite both;"><span style="width:28px; height:28px; border-radius:9px; background:linear-gradient(155deg, oklch(0.9 0.07 25), oklch(0.78 0.12 25)); color:oklch(0.34 0.09 25); display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:16px; font-variation-settings:'FILL' 1;">local_cafe</span></span><span style="font-size:14px; font-weight:600;">{{ t.tagShop }}</span></div>
+              <div style="display:flex; align-items:center; gap:10px; padding:10px 14px 10px 10px; border-radius:14px; background:rgba(243,238,231,.07); border:0.5px solid rgba(243,238,231,.1); animation:tagIn 6s .25s infinite both;"><span style="width:28px; height:28px; border-radius:9px; border:0.5px solid rgba(243,238,231,.2); display:flex; align-items:center; justify-content:center; color:#ffb08a;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:16px;">sell</span></span><span style="font-size:14px; font-weight:600;">{{ t.tagCat }}</span></div>
+            </div>
+          </div>
+          <span style="font-size:13px; color:rgba(243,238,231,.55);">{{ t.scanNote }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="privacy" data-screen-label="07 Privacy" style="scroll-margin-top:64px; border-top:0.5px solid rgba(243,238,231,.08); background:#100e13; overflow:hidden;">
+    <div style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:flex; flex-direction:column; align-items:center; text-align:center; gap:clamp(32px,4vw,48px);">
+      <div data-reveal="0" style="display:flex; flex-direction:column; align-items:center; gap:18px; max-width:860px;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.privKicker }}</span>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(44px,6.4vw,96px); line-height:.94; letter-spacing:-.05em; text-wrap:balance;">{{ t.privTitle }}</h2>
+      </div>
+      <div data-reveal="80" style="--R:min(160px,26vw); position:relative; width:min(560px,92vw); height:min(480px,80vw);">
+        <div style="position:absolute; left:50%; top:50%; width:calc(var(--R) * 2); height:calc(var(--R) * 2); margin:calc(var(--R) * -1) 0 0 calc(var(--R) * -1); border-radius:50%; border:1px dashed rgba(255,133,82,.4); animation:spin 50s linear infinite;"></div>
+        <div style="position:absolute; left:50%; top:50%; width:calc(var(--R) * 2); height:calc(var(--R) * 2); margin:calc(var(--R) * -1) 0 0 calc(var(--R) * -1); border-radius:50%; background:radial-gradient(closest-side, rgba(255,133,82,.1), transparent);"></div>
+        <sc-for list="{{ probes }}" as="p" hint-placeholder-count="8">
+          <div style="position:absolute; left:50%; top:50%; width:0; height:0; transform:rotate({{ p.a }});">
+            <div style="position:absolute; left:calc(var(--R) - 6px); top:-6px; width:12px; height:12px; border-radius:50%; background:#ff8552; filter:blur(3px); animation:flash 4s infinite both; animation-delay: {{ p.delay }};"></div>
+            <div style="position:absolute; left:0; top:-14px; animation:probe 4s cubic-bezier(.4,0,.4,1) infinite both; animation-delay: {{ p.delay }};">
+              <span style="display:flex; width:28px; height:28px; margin-left:-14px; border-radius:50%; background:#1e1b22; border:0.5px solid rgba(243,238,231,.16); align-items:center; justify-content:center; color:rgba(243,238,231,.6); transform:rotate({{ p.inv }});"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:15px;">{{ p.icon }}</span></span>
+            </div>
+          </div>
+        </sc-for>
+        <div style="position:absolute; left:50%; top:50%; width:calc(var(--R) * .78); height:calc(var(--R) * 1.5); transform:translate(-50%,-50%); box-sizing:border-box; border-radius:calc(var(--R) * .16); background:#16141a; border:1px solid rgba(243,238,231,.22); box-shadow:0 30px 60px rgba(0,0,0,.5); overflow:hidden;">
+          <div style="position:absolute; left:50%; top:50%; width:0; height:0; animation:spin 6s linear infinite;"><span style="position:absolute; left:calc(var(--R) * .24); top:-3px; width:6px; height:6px; border-radius:50%; background:#a8dcb8;"></span></div>
+          <div style="position:absolute; left:50%; top:50%; width:0; height:0; animation:spin 9s linear infinite reverse;"><span style="position:absolute; left:calc(var(--R) * .18); top:-3px; width:6px; height:6px; border-radius:50%; background:#c9b8f0;"></span></div>
+          <div style="position:absolute; left:50%; top:50%; width:0; height:0; animation:spin 4.5s linear infinite;"><span style="position:absolute; left:calc(var(--R) * .3); top:-2.5px; width:5px; height:5px; border-radius:50%; background:#ffb08a;"></span></div>
+          <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#f3eee7;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:calc(var(--R) * .26); font-variation-settings:'FILL' 1;">lock</span></div>
+        </div>
+      </div>
+      <div data-reveal="0" style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; max-width:820px;">
+        <sc-for list="{{ privChips }}" as="c" hint-placeholder-count="4">
+          <span style="height:44px; padding:0 18px 0 14px; border-radius:99px; border:0.5px solid rgba(243,238,231,.14); display:flex; align-items:center; gap:10px; font-size:15px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:19px; color:#ffb08a;">{{ c.icon }}</span>{{ c.t }}</span>
+        </sc-for>
+      </div>
+      <a href="#" style-hover="color:#ffb08a;" style="display:flex; align-items:center; gap:6px; font-size:15px; color:rgba(243,238,231,.75); text-decoration:none; transition:color .2s;">{{ t.privLink }}<span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:18px;">arrow_outward</span></a>
+    </div>
+  </section>
+
+  <section id="opensource" data-screen-label="08 Open source" style="scroll-margin-top:64px; border-top:0.5px solid rgba(243,238,231,.08);">
+    <div style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr)); align-items:center; gap:clamp(40px,6vw,80px);">
+      <div data-reveal="0" style="display:flex; flex-direction:column; gap:20px; min-width:0;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.osKicker }}</span>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(44px,6vw,88px); line-height:.95; letter-spacing:-.05em; text-wrap:balance;">{{ t.osTitle }}</h2>
+        <p style="margin:0; max-width:420px; font-size:17px; line-height:1.5; color:rgba(243,238,231,.62);">{{ t.osSub }}</p>
+        <a href="https://github.com/get6pm/6pm" target="_blank" rel="noopener" style-hover="background:#f3eee7; color:#16131a;" style="align-self:flex-start; height:50px; padding:0 22px 0 18px; border-radius:99px; border:0.5px solid rgba(243,238,231,.3); color:#f3eee7; text-decoration:none; font-size:15px; font-weight:600; display:flex; align-items:center; gap:10px; margin-top:6px; transition:background .2s, color .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:20px;">code</span>get6pm/6pm<span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:18px;">arrow_outward</span></a>
+      </div>
+      <div data-reveal="100" style="min-width:0; border-radius:24px; background:#131117; border:0.5px solid rgba(243,238,231,.1); overflow:hidden; box-shadow:0 40px 80px -30px rgba(0,0,0,.7);">
+        <div style="height:44px; padding:0 18px; display:flex; align-items:center; gap:8px; border-bottom:0.5px solid rgba(243,238,231,.08);">
+          <span style="width:11px; height:11px; border-radius:50%; background:rgba(243,238,231,.16);"></span><span style="width:11px; height:11px; border-radius:50%; background:rgba(243,238,231,.16);"></span><span style="width:11px; height:11px; border-radius:50%; background:rgba(243,238,231,.16);"></span>
+          <span style="flex:1; text-align:center; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; color:rgba(243,238,231,.45); margin-right:50px;">~/code</span>
+        </div>
+        <div style="padding:24px 22px 28px; display:flex; flex-direction:column; gap:12px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:clamp(12px,1.2vw,14px); line-height:1.5;">
+          <div style="display:flex; align-items:center; gap:10px; white-space:nowrap;"><span style="color:#ff8552;">$</span><span style="--w:30ch; display:inline-block; overflow:hidden; white-space:nowrap; animation:type 7s steps(30) infinite both;">git clone github.com/get6pm/6pm</span><span style="width:8px; height:1.2em; background:#f3eee7; animation:blink 1s steps(1) infinite;"></span></div>
+          <div style="display:flex; flex-direction:column; gap:6px; color:rgba(243,238,231,.6); animation:lineIn 7s infinite both;">
+            <span>Cloning into '6pm'…</span>
+            <span><span style="color:#a8dcb8;">✓</span> apps/mobile <span style="color:rgba(243,238,231,.35);">· the iPhone app</span></span>
+            <span><span style="color:#a8dcb8;">✓</span> packages/domain <span style="color:rgba(243,238,231,.35);">· every money rule, tested</span></span>
+            <span><span style="color:#a8dcb8;">✓</span> legal/privacy <span style="color:rgba(243,238,231,.35);">· what we promise</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="09 Budget together" style="border-top:0.5px solid rgba(243,238,231,.08); background:#100e13;">
+    <div style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr)); align-items:center; gap:clamp(40px,6vw,80px);">
+      <div data-reveal="0" style="display:flex; flex-direction:column; gap:20px; min-width:0;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.togKicker }}</span>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(44px,6vw,88px); line-height:.95; letter-spacing:-.05em; text-wrap:balance;">{{ t.togTitle }}</h2>
+        <p style="margin:0; max-width:400px; font-size:17px; line-height:1.5; color:rgba(243,238,231,.62);">{{ t.togSub }}</p>
+      </div>
+      <div data-reveal="100" style="position:relative; justify-self:center; width:min(440px,90vw); height:380px;">
+        <div style="position:absolute; left:4%; top:40px; display:flex; flex-direction:column; align-items:center; gap:8px;"><span style="width:56px; height:56px; border-radius:50%; background:#ff8552; color:#1a0f0a; font-weight:600; font-size:20px; display:flex; align-items:center; justify-content:center; animation:bob 3s ease-in-out infinite;">{{ t.youI }}</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; color:rgba(243,238,231,.6);">{{ t.you }}</span></div>
+        <div style="position:absolute; right:4%; top:40px; display:flex; flex-direction:column; align-items:center; gap:8px;"><span style="width:56px; height:56px; border-radius:50%; background:#c9b8f0; color:#1f1830; font-weight:600; font-size:20px; display:flex; align-items:center; justify-content:center; animation:bob 3s 1.5s ease-in-out infinite;">{{ t.partnerI }}</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; color:rgba(243,238,231,.6);">{{ t.partner }}</span></div>
+        <div style="--from:calc(min(440px,90vw) * -.38); position:absolute; left:50%; top:52px; margin-left:-11px; animation:coinX 3s linear infinite both;"><div style="width:22px; height:22px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #ffe2bf, #ff8552 70%); box-shadow:inset 0 0 0 2px rgba(26,15,10,.15); animation:coinY 3s infinite both;"></div></div>
+        <div style="--from:calc(min(440px,90vw) * .38); position:absolute; left:50%; top:52px; margin-left:-11px; animation:coinX 3s 1.5s linear infinite both;"><div style="width:22px; height:22px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #f1eaff, #c9b8f0 70%); box-shadow:inset 0 0 0 2px rgba(31,24,48,.15); animation:coinY 3s 1.5s infinite both;"></div></div>
+        <div style="position:absolute; left:50%; bottom:20px; width:170px; height:200px; margin-left:-85px;">
+          <div style="position:absolute; left:16px; right:16px; top:0; height:14px; border-radius:6px; background:#1e1b22; border:1px solid rgba(243,238,231,.24);"></div>
+          <div style="position:absolute; left:0; right:0; top:12px; bottom:0; box-sizing:border-box; border-radius:30px 30px 44px 44px; border:1px solid rgba(243,238,231,.24); background:rgba(243,238,231,.03); overflow:hidden;">
+            <div style="position:absolute; left:0; right:0; bottom:0; background:linear-gradient(180deg, #ffb08a, #ff8552 40%, #c9b8f0); opacity:.85; animation:jar 12s cubic-bezier(.4,0,.6,1) infinite both;"></div>
+            <div style="position:absolute; left:14px; top:14px; width:10px; bottom:30px; border-radius:6px; background:rgba(255,255,255,.08);"></div>
+            <div style="position:absolute; left:0; right:0; top:44%; text-align:center; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.16em; color:#f3eee7; mix-blend-mode:difference;">{{ t.jar }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" data-screen-label="10 Pricing" style="scroll-margin-top:64px; border-top:0.5px solid rgba(243,238,231,.08);">
+    <div style="max-width:1000px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:flex; flex-direction:column; align-items:center; gap:clamp(36px,4vw,48px);">
+      <div data-reveal="0" style="display:flex; flex-direction:column; align-items:center; text-align:center; gap:20px;">
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(44px,6vw,88px); line-height:.95; letter-spacing:-.05em; text-wrap:balance;">{{ t.priceTitle }}</h2>
+        <div style="display:flex; padding:4px; border-radius:99px; border:0.5px solid rgba(243,238,231,.16);">
+          <button onClick="{{ setMonthly }}" style="height:38px; padding:0 18px; border:none; border-radius:99px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:500; background: {{ moBg }}; color: {{ moFg }}; transition:background .2s;">{{ t.monthly }}</button>
+          <button onClick="{{ setYearly }}" style="height:38px; padding:0 18px; border:none; border-radius:99px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:500; background: {{ yrBg }}; color: {{ yrFg }}; display:flex; align-items:center; gap:8px; transition:background .2s;">{{ t.yearly }}<span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; color: {{ saveFg }};">−36%</span></button>
+        </div>
+      </div>
+      <div style="width:100%; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr)); gap:20px;">
+        <div data-reveal="0" style="border-radius:28px; border:0.5px solid rgba(243,238,231,.12); padding:clamp(28px,3.4vw,36px); display:flex; flex-direction:column; gap:24px;">
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <span style="font-size:17px; font-weight:600;">{{ t.freeName }}</span>
+            <span style="display:flex; align-items:baseline; gap:8px;"><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:52px; line-height:1; letter-spacing:-.045em;">{{ t.zero }}</span><span style="font-size:15px; color:rgba(243,238,231,.55);">{{ t.freeFor }}</span></span>
+          </div>
+          <div style="height:0.5px; background:rgba(243,238,231,.12);"></div>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <sc-for list="{{ t.free }}" as="f" hint-placeholder-count="4">
+              <div style="display:flex; gap:12px; font-size:15px; line-height:1.45;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1.45; letter-spacing:normal; font-size:18px; color:rgba(243,238,231,.55);">check</span><span>{{ f }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+        <div data-reveal="100" style="border-radius:28px; background:linear-gradient(180deg, #1a1416, #131117 60%); border:0.5px solid rgba(255,133,82,.45); padding:clamp(28px,3.4vw,36px); display:flex; flex-direction:column; gap:24px; box-shadow:0 40px 100px -40px rgba(255,133,82,.3);">
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <span style="display:flex; align-items:center; justify-content:space-between; gap:12px;"><span style="font-size:17px; font-weight:600;">6pm Max</span><span style="height:26px; padding:0 10px; border-radius:99px; background:rgba(255,133,82,.14); color:#ffb08a; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.08em; display:flex; align-items:center;">{{ t.trial }}</span></span>
+            <span style="display:flex; align-items:baseline; gap:8px;"><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:52px; line-height:1; letter-spacing:-.045em;">{{ maxPrice }}</span><span style="font-size:15px; color:rgba(243,238,231,.55);">{{ maxPer }}</span></span>
+          </div>
+          <div style="height:0.5px; background:rgba(255,133,82,.25);"></div>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <sc-for list="{{ t.max }}" as="f" hint-placeholder-count="5">
+              <div style="display:flex; gap:12px; font-size:15px; line-height:1.45;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1.45; letter-spacing:normal; font-size:18px; color:#ff8552;">check</span><span>{{ f }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" data-screen-label="11 FAQ" style="scroll-margin-top:64px; border-top:0.5px solid rgba(243,238,231,.08);">
+    <div style="max-width:820px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:flex; flex-direction:column; gap:clamp(32px,4vw,48px);">
+      <h2 data-reveal="0" style="margin:0; text-align:center; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(40px,5vw,72px); line-height:.95; letter-spacing:-.05em;">{{ t.faqTitle }}</h2>
+      <div data-reveal="80" style="display:flex; flex-direction:column; border-top:0.5px solid rgba(243,238,231,.12);">
+        <sc-for list="{{ faq }}" as="f" hint-placeholder-count="4">
+          <div style="border-bottom:0.5px solid rgba(243,238,231,.12);">
+            <button onClick="{{ f.toggle }}" style-hover="color:#ffb08a;" style="width:100%; min-height:68px; padding:18px 0; border:none; background:transparent; color:#f3eee7; font-family:inherit; font-size:18px; font-weight:500; text-align:left; display:flex; align-items:center; justify-content:space-between; gap:24px; cursor:pointer; transition:color .2s;">
+              <span>{{ f.q }}</span>
+              <span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px; flex-shrink:0; transform: {{ f.rot }}; transition:transform .3s cubic-bezier(.2,.7,.2,1);">add</span>
+            </button>
+            <sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:0; padding:0 48px 24px 0; font-size:16px; line-height:1.6; color:rgba(243,238,231,.66); text-wrap:pretty;">{{ f.a }}</p>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="join" data-screen-label="12 Final CTA" style="scroll-margin-top:64px; position:relative; isolation:isolate; overflow:hidden; border-top:0.5px solid rgba(243,238,231,.08); box-sizing:border-box; padding:clamp(120px,15vw,180px) clamp(20px,4vw,40px) clamp(200px,24vw,300px); display:flex; flex-direction:column; align-items:center; text-align:center; gap:26px;">
+    <div aria-hidden="true" style="position:absolute; z-index:-1; left:50%; bottom:0; width:min(1100px,170vw); height:min(600px,100vw); transform:translate(-50%,50%); background:radial-gradient(closest-side, rgba(255,133,82,.3), rgba(255,133,82,.06) 60%, transparent); pointer-events:none;"></div>
+    <div aria-hidden="true" style="position:absolute; z-index:-1; left:0; right:0; bottom:0; height:clamp(200px,24vw,300px); overflow:hidden; pointer-events:none;">
+      <div style="position:absolute; left:50%; bottom:0; width:min(280px,56vw); aspect-ratio:1; border-radius:50%; background:radial-gradient(circle at 50% 35%, #ffe2bf 0%, #ffa06a 34%, #e45f3e 66%, #a43d4c 100%); box-shadow:0 0 100px 24px rgba(255,120,80,.35); animation:sink 16s cubic-bezier(.4,0,.6,1) infinite both;"></div>
+    </div>
+    <div aria-hidden="true" style="position:absolute; z-index:-1; left:0; right:0; bottom:0; height:1px; background:linear-gradient(90deg, transparent 5%, rgba(255,196,160,.7) 50%, transparent 95%);"></div>
+    <span data-reveal="0" style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:rgba(243,238,231,.62);">{{ finalKicker }}</span>
+    <h2 data-reveal="60" style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(60px,10vw,160px); line-height:.88; letter-spacing:-.06em; text-wrap:balance;">{{ t.finalA }} <span style="color:#ff8552;">{{ t.finalB }}</span></h2>
+    <div data-reveal="120" style="width:100%; max-width:460px; display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:8px;">
+      <sc-if value="{{ isWaitlist }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ submit }}" style="width:100%; display:flex; flex-wrap:wrap; gap:10px;">
+            <input type="email" autocomplete="email" placeholder="{{ t.emailPh }}" value="{{ email }}" onChange="{{ setEmail }}" style="flex:1 1 220px; min-width:0; height:56px; box-sizing:border-box; padding:0 22px; border-radius:99px; border:0.5px solid rgba(243,238,231,.2); background:rgba(13,11,16,.6); color:#f3eee7; font-family:inherit; font-size:16px; outline:none;">
+            <button type="submit" style-hover="background:#ff9a6e;" style="flex:0 0 auto; height:56px; padding:0 26px; border:none; border-radius:99px; background:#ff8552; color:#1a0f0a; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; transition:background .2s;">{{ t.ctaWait }}</button>
+          </form>
+        </sc-if>
+        <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; gap:12px; height:56px; font-size:17px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px; color:#ff8552;">check_circle</span>{{ t.sentMsg }}</div>
+        </sc-if>
+        <span style="font-size:13.5px; color: {{ msgColor }};">{{ formNote }}</span>
+      </sc-if>
+      <sc-if value="{{ isStore }}" hint-placeholder-val="{{ false }}">
+        <a href="#" style-hover="background:#ff9a6e; color:#1a0f0a;" style="height:58px; padding:0 28px 0 22px; border-radius:99px; background:#ff8552; color:#1a0f0a; text-decoration:none; font-size:16px; font-weight:600; display:flex; align-items:center; gap:10px; transition:background .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px;">phone_iphone</span>{{ t.ctaStore }}</a>
+      </sc-if>
+    </div>
+  </section>
+
+  <footer data-screen-label="Footer" style="border-top:0.5px solid rgba(243,238,231,.08);">
+    <div style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:36px clamp(20px,4vw,40px) 44px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px;">
+      <div style="display:flex; align-items:baseline; gap:14px;">
+        <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-size:22px; letter-spacing:-.05em;">6pm</span>
+        <span style="font-size:14px; color:rgba(243,238,231,.55);">{{ t.footTag }}</span>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; align-items:center; gap:24px; font-size:14px;">
+        <a href="https://github.com/get6pm/6pm" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:6px; color:rgba(243,238,231,.7); text-decoration:none;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:17px;">code</span>{{ t.footOs }}</a>
+        <a href="#" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.footPrivacy }}</a>
+        <a href="#" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.footTerms }}</a>
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; color:rgba(243,238,231,.45);">© 2026 · {{ t.madeBy }} <a href="https://oddeggs.studio" target="_blank" rel="noopener" style-hover="color:#ffb08a;" style="color:rgba(243,238,231,.75); text-decoration:none; transition:color .2s;">oddeggs.studio</a></span>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;ctaMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Waitlist&quot;,&quot;App Store&quot;],&quot;default&quot;:&quot;Waitlist&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Launch&quot;},&quot;launch&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2026-11-06T18:00:00+07:00&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Launch&quot;},&quot;liveClock&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hero&quot;}}">
+const T = {
+  en: {
+    navRitual: 'How it works', navCapture: 'Capture', navPrivacy: 'Privacy', navPricing: 'Pricing',
+    navWait: 'Join the waitlist', navStore: 'Download',
+    kickWait: 'For iPhone · Arrives 6 Nov, 18:00', kickStore: 'For iPhone · Free on the App Store',
+    heroA: 'Close your day', heroB: 'at six.',
+    heroSub: 'Catch every spend. Swipe once at six. Wake up to one number.',
+    ctaWait: 'Join the waitlist', ctaStore: 'Download for iPhone', emailPh: 'you@example.com',
+    waitNote: 'One email on launch day.', storeNote: 'Free. No account. No bank login.',
+    sentMsg: 'You’re on the list. See you at six.', errMsg: 'That doesn’t look like an email yet.',
+    clock: (t, d) => `${t} where you are · next close in ${d}`, clockNow: 'It’s six. Time to close the day.',
+    dur: (h, m) => h ? `${h}h ${m}m` : `${m}m`,
+    phDate: 'FRIDAY 9 OCT', phSafe: 'Safe to spend today', phInbox: 'INBOX · CAUGHT TODAY', phSwipe: 'Swipe to close Friday',
+    phItems: [['Oat latte', 'APPLE PAY', '$4.50'], ['Ramen', 'BANK RECEIPT', '$13.00'], ['Uber', 'EMAIL', '$11.40']],
+    phNum: '$54', tmrNum: '$54', dayAmts: ['$4.50', '$11', '$13', '$26', '$8'], askOld: '$54', askNew: '$37',
+    rcpt: ['5.50', '3.25', '1.00'], rcptTotal: '9.75', tagShop: 'Corner Café', zero: '$0', priceM: '$2.99', priceY: '$22.99',
+    partner: 'Alex', partnerI: 'A', capIcons: ['contactless', 'receipt_long', 'alternate_email', 'bolt', 'mic', 'dialpad'], bankStrip: '',
+    ritKicker: 'The ritual', ritTitle: 'One minute a day.', ritTomorrow: 'SAFE TO SPEND TOMORROW',
+    ritCaps: [['ALL DAY', 'It catches.'], ['18:00', 'You swipe.'], ['TOMORROW', 'One number.']],
+    capKicker: 'Capture', capTitle: 'Six ways in. Almost no typing.', capSub: 'Apple Pay, receipts, email or your voice. Whichever is closest.',
+    capLabels: ['Apple Pay', 'Receipt photo', 'Email forward', 'Shortcuts', 'Voice', 'Keypad'],
+    numKicker: 'One number', numTitle: 'Pay future you first. Spend the rest freely.',
+    barIn: 'OCTOBER · $3,200 IN', bar0: 'Bills', bar1: 'Pots', bar2: 'Future you', bar3: 'Free ÷ 22 days', barToday: 'TODAY',
+    philKicker: 'What we believe', phrases: ['Count it,', 'never move it.', 'One number,', 'not twenty charts.', 'No shame.', 'Every day at six.'],
+    aiKicker: 'Intelligence', aiTitle: 'Smart where it helps.', aiSub: 'Your phone does the maths. AI only finds the words.',
+    askLbl: 'ASK 6PM', aiQ: 'Can I afford $350 on Saturday?', aiA: 'Yes. Until payday, your day becomes', perDay: '/ day',
+    scanLbl: 'RECEIPT READER', tagCat: 'Drinks', scanNote: 'Read on your phone. Numbers are stripped before anything leaves.',
+    privKicker: 'Privacy', privTitle: 'Your money stays on your phone.',
+    privChips: ['Encrypted on device', 'No account', 'No ads, no trackers', 'Backup only you can open'], privLink: 'See exactly what leaves your phone',
+    osKicker: 'Open source', osTitle: 'Proudly open. Read every line.', osSub: 'Don’t take our word for privacy. The app, the money maths and the server are all on GitHub.',
+    togKicker: 'Budget together', togTitle: 'Save together. Spend apart.', togSub: 'Shared pots with one person. Free for everyone.', you: 'You', youI: 'Y', jar: 'TOKYO',
+    priceTitle: 'Free for the ritual.', monthly: 'Monthly', yearly: 'Yearly', freeName: 'Free', freeFor: 'forever',
+    free: ['The close and every way to capture', 'Today, Plan and Diary', 'Budget together', '10 Ask questions a day'],
+    trial: '7 DAYS FREE', perMonth: '/ month', perYear: '/ year',
+    max: ['Every look, including living scenes', 'Unlimited Ask and pots', 'Travel mode', 'Encrypted backup and export', 'Year book and widgets in your look'],
+    faqTitle: 'Questions.',
+    faq: [
+      ['Does 6pm connect to my bank?', 'No. It never asks for your bank login. It reads the receipts you share, the QR codes you scan and the emails your bank sends to your 6pm address.'],
+      ['Can 6pm move my money?', 'Never. 6pm only counts. Payments happen in your own bank app.'],
+      ['What if I miss a close?', 'Nothing breaks. Missed days wait for you, and what you spent already counts.'],
+      ['Is it on Android?', 'iPhone first, from 6 November. Android follows.']
+    ],
+    finalA: 'See you', finalB: 'at six.',
+    cd: (d, h, m) => `${d}d ${h}h ${m}m to launch`, out: 'Out now',
+    footTag: 'Close your day at six.', footOs: 'Open source', madeBy: 'Made by', footPrivacy: 'Privacy', footTerms: 'Terms'
+  },
+  vi: {
+    navRitual: 'Cách dùng', navCapture: 'Ghi chi tiêu', navPrivacy: 'Quyền riêng tư', navPricing: 'Bảng giá',
+    navWait: 'Đăng ký sớm', navStore: 'Tải về',
+    kickWait: 'Cho iPhone · Ra mắt 18:00, 6/11', kickStore: 'Cho iPhone · Miễn phí trên App Store',
+    heroA: 'Chốt ngày', heroB: 'lúc sáu giờ.',
+    heroSub: 'Ghi mọi khoản chi. Vuốt một lần lúc sáu giờ. Sáng mai, chỉ một con số.',
+    ctaWait: 'Đăng ký sớm', ctaStore: 'Tải cho iPhone', emailPh: 'email@cuaban.com',
+    waitNote: 'Một email vào ngày ra mắt.', storeNote: 'Miễn phí. Không tài khoản. Không đăng nhập ngân hàng.',
+    sentMsg: 'Bạn đã có tên. Hẹn lúc sáu giờ.', errMsg: 'Email này có vẻ chưa đúng.',
+    clock: (t, d) => `Chỗ bạn đang là ${t} · còn ${d} đến giờ chốt`, clockNow: 'Sáu giờ rồi. Chốt ngày thôi.',
+    dur: (h, m) => h ? `${h} giờ ${m} phút` : `${m} phút`,
+    phDate: 'THỨ SÁU 9/10', phSafe: 'Hôm nay tiêu được', phInbox: 'HỘP THƯ · HÔM NAY', phSwipe: 'Vuốt để chốt thứ Sáu',
+    phItems: [['Cà phê sữa đá', 'BIÊN LAI', '29.000'], ['Phở bò', 'VIETQR', '65.000'], ['Grab bike', 'EMAIL', '38.000']],
+    phNum: '312.000₫', tmrNum: '312.000₫', dayAmts: ['29k', '38k', '65k', '120k', '42k'], askOld: '312k', askNew: '217k',
+    rcpt: ['29.000', '12.000', '4.000'], rcptTotal: '45.000', tagShop: 'Highlands Coffee', zero: '0₫', priceM: '78.000₫', priceY: '598.000₫',
+    partner: 'Minh', partnerI: 'M', capIcons: ['ios_share', 'qr_code_scanner', 'alternate_email', 'contactless', 'mic', 'dialpad'], bankStrip: 'HỖ TRỢ 31 APP NGÂN HÀNG VÀ VÍ ĐIỆN TỬ',
+    ritKicker: 'Nghi thức', ritTitle: 'Một phút mỗi ngày.', ritTomorrow: 'NGÀY MAI TIÊU ĐƯỢC',
+    ritCaps: [['CẢ NGÀY', 'Tự ghi.'], ['18:00', 'Bạn vuốt.'], ['NGÀY MAI', 'Một con số.']],
+    capKicker: 'Ghi chi tiêu', capTitle: 'Sáu cách ghi. Gần như không phải gõ.', capSub: 'Hỗ trợ 31 app ngân hàng Việt Nam.',
+    capLabels: ['Biên lai', 'VietQR', 'Email ngân hàng', 'Apple Pay', 'Giọng nói', 'Bàn phím'],
+    numKicker: 'Một con số', numTitle: 'Trả cho bạn tương lai trước. Phần còn lại cứ tiêu.',
+    barIn: 'THÁNG 10 · THU 18.500.000₫', bar0: 'Hoá đơn', bar1: 'Hũ', bar2: 'Tương lai', bar3: 'Tự do ÷ 22 ngày', barToday: 'HÔM NAY',
+    philKicker: 'Điều chúng tôi tin', phrases: ['Chỉ đếm,', 'không đụng.', 'Một con số,', 'không phải hai mươi biểu đồ.', 'Không trách móc.', 'Mỗi ngày, lúc sáu giờ.'],
+    aiKicker: 'Trí tuệ tích hợp', aiTitle: 'Thông minh khi cần.', aiSub: 'Điện thoại tự tính. AI chỉ giúp tìm lời.',
+    askLbl: 'HỎI 6PM', aiQ: 'Thứ Bảy tiêu 2tr được không?', aiA: 'Được. Đến kỳ lương, mỗi ngày còn', perDay: '/ ngày',
+    scanLbl: 'ĐỌC BIÊN LAI', tagCat: 'Đồ uống', scanNote: 'Đọc ngay trên máy. Mọi con số được gỡ trước khi gửi đi.',
+    privKicker: 'Quyền riêng tư', privTitle: 'Tiền của bạn ở lại trên điện thoại của bạn.',
+    privChips: ['Mã hoá trên máy', 'Không tài khoản', 'Không quảng cáo, không theo dõi', 'Sao lưu chỉ bạn mở được'], privLink: 'Xem chính xác những gì rời máy',
+    osKicker: 'Mã nguồn mở', osTitle: 'Mở hoàn toàn. Đọc từng dòng.', osSub: 'Đừng chỉ tin lời chúng tôi. App, phần tính tiền và máy chủ đều trên GitHub.',
+    togKicker: 'Cùng nhau', togTitle: 'Cùng để dành. Ai tiêu nấy giữ.', togSub: 'Hũ chung với một người. Miễn phí cho mọi người.', you: 'Bạn', youI: 'B', jar: 'ĐÀ LẠT',
+    priceTitle: 'Miễn phí cho nghi thức.', monthly: 'Theo tháng', yearly: 'Theo năm', freeName: 'Miễn phí', freeFor: 'mãi mãi',
+    free: ['Chốt ngày và mọi cách ghi', 'Hôm nay, Kế hoạch và Nhật ký', 'Cùng nhau', '10 câu hỏi mỗi ngày'],
+    trial: '7 NGÀY MIỄN PHÍ', perMonth: '/ tháng', perYear: '/ năm',
+    max: ['Mọi giao diện, kể cả cảnh động', 'Hỏi và tạo hũ không giới hạn', 'Chế độ du lịch', 'Sao lưu mã hoá và xuất dữ liệu', 'Sổ kỷ niệm và widget theo giao diện'],
+    faqTitle: 'Hỏi đáp.',
+    faq: [
+      ['6pm có kết nối ngân hàng của tôi không?', 'Không. 6pm không bao giờ hỏi thông tin đăng nhập ngân hàng. Nó đọc biên lai bạn chia sẻ, mã QR bạn quét và email ngân hàng gửi đến địa chỉ 6pm của bạn.'],
+      ['6pm có chuyển tiền của tôi không?', 'Không bao giờ. 6pm chỉ đếm. Thanh toán diễn ra trong app ngân hàng của bạn.'],
+      ['Quên chốt ngày thì sao?', 'Không sao. Ngày bị lỡ sẽ chờ bạn, và những gì đã tiêu vẫn được tính.'],
+      ['Có bản Android không?', 'iPhone trước, từ 6 tháng 11. Android sẽ đến sau.']
+    ],
+    finalA: 'Hẹn bạn', finalB: 'lúc sáu giờ.',
+    cd: (d, h, m) => `Còn ${d} ngày ${h} giờ ${m} phút`, out: 'Đã ra mắt',
+    footTag: 'Chốt ngày lúc sáu giờ.', footOs: 'Mã nguồn mở', madeBy: 'Thực hiện bởi', footPrivacy: 'Quyền riêng tư', footTerms: 'Điều khoản'
+  }
+};
+const BANKS = ['vcb', 'tcb', 'mb', 'bidv', 'icb', 'acb', 'vpb', 'tpb', 'shbvn', 'cake', 'momo', 'zalopay'];
+const PRIV_ICONS = ['lock', 'person_off', 'visibility_off', 'cloud_lock'];
+const PROBE_ICONS = ['ads_click', 'cookie', 'visibility', 'track_changes', 'campaign', 'person_search', 'ads_click', 'cookie'];
+const PHONE = [['local_cafe', 25, '08:15'], ['ramen_dining', 60, '12:40'], ['two_wheeler', 220, '17:22']];
+const DAY = [['local_cafe', 25, '29k', '14%', '36%'], ['two_wheeler', 220, '38k', '27%', '20%'], ['ramen_dining', 60, '65k', '41%', '38%'], ['shopping_bag', 300, '120k', '56%', '18%'], ['storefront', 150, '42k', '71%', '36%']];
+const tile = h => `linear-gradient(155deg, oklch(0.9 0.07 ${h}), oklch(0.78 0.12 ${h}))`, glyph = h => `oklch(0.34 0.09 ${h})`;
+
+class Component extends DCLogic {
+  state = { lang: 'en', now: Date.now(), email: '', sent: false, err: '', yearly: true, faq: 0 };
+  rootRef = React.createRef();
+  waves = [0, 1, 2, 3, 4, 5].map(i => { const w = 70 - i * 10; return { top: (18 + i * 26) + 'px', w: w + '%', ml: (-w / 2) + '%', d: (2.4 + i * .3) + 's', delay: (i * .35) + 's' }; }).map((x, i) => ({ ...x, w: `min(${520 - i * 70}px, ${88 - i * 12}vw)`, ml: `calc(min(${520 - i * 70}px, ${88 - i * 12}vw) / -2)` }));
+  hours = ['08', '10', '12', '14', '16', '18'].map((l, i) => ({ l: l + ':00', x: (4 + i * 16.8) + '%', c: i === 5 ? '#ff8552' : 'rgba(243,238,231,.45)' }));
+  dayChips = DAY.map(d => ({ icon: d[0], tile: tile(d[1]), glyph: glyph(d[1]), amt: d[2], x: d[3], y: d[4] }));
+  receiptRows = [['54%', '29.000', 'r1 6s infinite both'], ['40%', '12.000', 'r2 6s infinite both'], ['48%', '4.000', 'r3 6s infinite both']].map(r => ({ w: r[0], v: r[1], anim: r[2] }));
+  banks = BANKS.concat(BANKS).map(b => ({ name: b, bg: "url('./apps/mobile/assets/banks/" + b + ".png')" }));
+  probes = PROBE_ICONS.map((icon, i) => { const a = i * 45 + 20; return { icon, a: a + 'deg', inv: (-a) + 'deg', delay: (i * .5) + 's' }; });
+  componentDidMount() {
+    try {
+      const saved = localStorage.getItem('6pm-site-lang');
+      const l = saved || ((navigator.language || '').toLowerCase().startsWith('vi') ? 'vi' : 'en');
+      if (l !== this.state.lang) this.setState({ lang: l });
+    } catch (e) {}
+    this.tm = setInterval(() => this.setState({ now: Date.now() }), 15000);
+    requestAnimationFrame(() => this.setupReveal());
+  }
+  componentWillUnmount() { clearInterval(this.tm); this.io && this.io.disconnect(); }
+  setupReveal() {
+    const r = this.rootRef.current; if (!r || !('IntersectionObserver' in window)) return;
+    const ease = 'cubic-bezier(.2,.7,.2,1)';
+    this.io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.style.opacity = '1'; e.target.style.translate = '0 0'; this.io.unobserve(e.target);
+    }), { rootMargin: '0px 0px -6% 0px' });
+    const vh = innerHeight;
+    r.querySelectorAll('[data-reveal]').forEach(el => {
+      if (el.getBoundingClientRect().top < vh * .94) return;
+      const d = +el.dataset.reveal || 0;
+      el.style.opacity = '0'; el.style.translate = '0 28px';
+      el.style.transition = `opacity 1s ${ease} ${d}ms, translate 1s ${ease} ${d}ms`;
+      this.io.observe(el);
+    });
+  }
+  setLang(l) { try { localStorage.setItem('6pm-site-lang', l); } catch (e) {} this.setState({ lang: l }); }
+  renderVals() {
+    const s = this.state, t = T[s.lang] || T.en;
+    const store = (this.props.ctaMode ?? 'Waitlist') === 'App Store';
+    const pad = n => String(n).padStart(2, '0');
+    const d = new Date(s.now), hh = d.getHours(), mm = d.getMinutes();
+    let mins = 18 * 60 - (hh * 60 + mm);
+    const closeNow = mins <= 0 && mins > -20;
+    if (mins <= 0) mins += 1440;
+    const clockLine = closeNow ? t.clockNow : t.clock(pad(hh) + ':' + pad(mm), t.dur(Math.floor(mins / 60), mins % 60));
+    let L = Date.parse(this.props.launch ?? '2026-11-06T18:00:00+07:00'); if (isNaN(L)) L = Date.parse('2026-11-06T18:00:00+07:00');
+    const diff = L - s.now;
+    const cd = diff <= 0 ? t.out : t.cd(Math.floor(diff / 864e5), pad(Math.floor(diff / 36e5) % 24), pad(Math.floor(diff / 6e4) % 60));
+    const valid = /^\S+@\S+\.\S+$/.test(s.email.trim());
+    const on = a => a ? '#f3eee7' : 'transparent', onFg = a => a ? '#16131a' : 'rgba(243,238,231,.7)';
+    return {
+      rootRef: this.rootRef, t,
+      setEn: () => this.setLang('en'), setVi: () => this.setLang('vi'),
+      enBg: on(s.lang === 'en'), enFg: onFg(s.lang === 'en'), viBg: on(s.lang === 'vi'), viFg: onFg(s.lang === 'vi'),
+      isWaitlist: !store, isStore: store, navCta: store ? t.navStore : t.navWait,
+      heroKicker: store ? t.kickStore : t.kickWait,
+      showClock: this.props.liveClock ?? true, clockLine,
+      finalKicker: store ? '6pm 2.0 · iPhone' : cd,
+      email: s.email, sent: s.sent, notSent: !s.sent,
+      formNote: s.err || (s.sent ? '' : t.waitNote), msgColor: s.err ? '#ffb4a3' : 'rgba(243,238,231,.55)',
+      setEmail: e => this.setState({ email: e.target.value, err: '' }),
+      submit: e => { e.preventDefault(); if (!valid) return this.setState({ err: t.errMsg }); this.setState({ sent: true, err: '' }); },
+      waves: this.waves, hours: this.hours, probes: this.probes, isVi: s.lang === 'vi', banks: this.banks,
+      dayChips: this.dayChips.map((c, i) => ({ ...c, amt: t.dayAmts[i] })),
+      receiptRows: this.receiptRows.map((r, i) => ({ ...r, v: t.rcpt[i] })),
+      phoneItems: PHONE.map((p, i) => ({ icon: p[0], tile: tile(p[1]), glyph: glyph(p[1]), time: p[2], name: t.phItems[i][0], src: t.phItems[i][1], amt: t.phItems[i][2], delay: (0.3 + i * 0.8) + 's' })),
+      ritCaps: t.ritCaps.map((x, i) => ({ time: x[0], txt: x[1], delay: i * 90, c: i === 1 ? '#ff8552' : 'rgba(243,238,231,.55)' })),
+      spokes: t.capLabels.map((label, i) => { const a = i * 60 - 90; return { label, icon: t.capIcons[i], a: a + 'deg', inv: (-a) + 'deg', delay: (i * 0.6) + 's' }; }),
+      phrases: t.phrases.map((p, i) => ({ t: p, anim: `${i === t.phrases.length - 1 ? 'litA' : 'lit'} 12s ${i * 2}s ease-in-out infinite` })),
+      privChips: t.privChips.map((x, i) => ({ t: x, icon: PRIV_ICONS[i] })),
+      setMonthly: () => this.setState({ yearly: false }), setYearly: () => this.setState({ yearly: true }),
+      moBg: on(!s.yearly), moFg: onFg(!s.yearly), yrBg: on(s.yearly), yrFg: onFg(s.yearly), saveFg: s.yearly ? '#c4502a' : '#ffb08a',
+      maxPrice: s.yearly ? t.priceY : t.priceM, maxPer: s.yearly ? t.perYear : t.perMonth,
+      faq: t.faq.map((x, i) => ({ q: x[0], a: x[1], open: s.faq === i, rot: s.faq === i ? 'rotate(45deg)' : 'none', toggle: () => this.setState({ faq: s.faq === i ? -1 : i }) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="./companion.js"></script>
+<style>body{margin:0;background:#0f0d12;} a{color:#f6a46a;} a:hover{color:#ffc79a;}</style>
+</helmet>
+<div style="min-height:100vh; background:#0f0d12; color:#f6efe6; font-family:'Be Vietnam Pro', system-ui, sans-serif; padding:64px 56px 96px; box-sizing:border-box; display:flex; flex-direction:column; gap:64px;">
+
+  <header style="display:flex; flex-direction:column; gap:10px; max-width:720px;">
+    <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; color:#f6a46a;">6PM · COMPANIONS</span>
+    <h1 style="margin:0; font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:64px; line-height:.95; letter-spacing:-.02em;">Who keeps you company</h1>
+    <p style="margin:0; font-size:17px; line-height:1.5; color:rgba(246,239,230,.68); text-wrap:pretty;">Six companions, seven moods. They all keep the same promise. Pick one to watch it arrive.</p>
+  </header>
+
+  <section data-screen-label="Stage" style="display:flex; flex-wrap:wrap; gap:40px; align-items:stretch; max-width:1240px;">
+    <div style="flex:1 1 420px; min-height:440px; border-radius:40px; background:{{ ground }}; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; box-shadow:0 30px 80px rgba(0,0,0,.35);">
+      <dusk-buddy size="260" mood="{{ mood }}" form="{{ form }}"></dusk-buddy>
+      <span style="position:absolute; left:24px; bottom:20px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:{{ groundInk }};">{{ stageTag }}</span>
+    </div>
+    <div style="flex:1 1 360px; display:flex; flex-direction:column; gap:28px; padding:8px 0;">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; align-items:center; gap:12px;"><span style="font-family:'Bricolage Grotesque', ui-rounded, system-ui, sans-serif; font-weight:500; font-size:44px; line-height:1; letter-spacing:-.01em;">{{ cur.name }}</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; padding:5px 9px; border-radius:99px; background:{{ cur.tierBg }}; color:{{ cur.tierFg }};">{{ cur.tier }}</span></div>
+        <span style="font-size:15px; color:rgba(246,239,230,.55);">{{ cur.gloss }}</span>
+        <p style="margin:6px 0 0; font-size:19px; line-height:1.45; text-wrap:pretty;">{{ cur.line }}</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55);">COMPANION</span>
+        <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px;">
+          <sc-for list="{{ forms }}" as="f" hint-placeholder-count="6">
+            <button onClick="{{ f.pick }}" style-active="transform:scale(.97);" style="display:flex; align-items:center; gap:10px; padding:8px 12px 8px 8px; border-radius:18px; border:1px solid {{ f.border }}; background:{{ f.bg }}; color:#f6efe6; font:inherit; font-size:14px; font-weight:600; cursor:pointer; text-align:left;">
+              <dusk-buddy size="40" mood="calm" form="{{ f.id }}"></dusk-buddy><span style="min-width:0;">{{ f.name }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(246,239,230,.55);">MOOD</span>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <sc-for list="{{ moods }}" as="m" hint-placeholder-count="7">
+            <button onClick="{{ m.pick }}" style-active="transform:scale(.96);" style="height:40px; padding:0 16px; border-radius:99px; border:1px solid {{ m.border }}; background:{{ m.bg }}; color:{{ m.fg }}; font:inherit; font-size:14px; font-weight:600; cursor:pointer;">{{ m.label }}</button>
+          </sc-for>
+        </div>
+        <span style="font-size:13px; line-height:1.45; color:rgba(246,239,230,.55); text-wrap:pretty;">{{ moodNote }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Every mood" style="display:flex; flex-direction:column; gap:24px; max-width:1240px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:#f6a46a;">02</span><span style="font-size:24px; font-weight:700; letter-spacing:-.02em;">Every companion, every mood</span></div>
+    <div style="border-radius:32px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.08); padding:24px 28px; overflow-x:auto;">
+      <div style="display:grid; grid-template-columns:170px repeat(7, minmax(88px,1fr)); align-items:center; gap:6px 4px; min-width:820px;">
+        <span></span>
+        <sc-for list="{{ moodHeads }}" as="h" hint-placeholder-count="7"><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; color:rgba(246,239,230,.55); text-align:center; padding-bottom:6px;">{{ h }}</span></sc-for>
+        <sc-for list="{{ matrix }}" as="r" hint-placeholder-count="6">
+          <div style="display:flex; flex-direction:column; gap:2px; padding:10px 0; border-top:1px solid rgba(255,255,255,.06);"><span style="font-size:16px; font-weight:650;">{{ r.name }}</span><span style="font-size:12px; color:rgba(246,239,230,.5);">{{ r.gloss }} · {{ r.tier }}</span></div>
+          <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="7"><button onClick="{{ c.pick }}" title="{{ c.title }}" style-hover="background:rgba(255,255,255,.06);" style="display:flex; justify-content:center; padding:6px 0; border:none; border-top:1px solid rgba(255,255,255,.06); background:transparent; cursor:pointer; border-radius:0;"><dusk-buddy size="{{ cellSize }}" mood="{{ c.mood }}" form="{{ r.id }}"></dusk-buddy></button></sc-for>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;ground&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dusk&quot;,&quot;day&quot;,&quot;paper&quot;],&quot;default&quot;:&quot;dusk&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;cellSize&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:48,&quot;max&quot;:96,&quot;step&quot;:4,&quot;unit&quot;:&quot;px&quot;,&quot;default&quot;:72,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  state = { form: 'sun', mood: 'calm' };
+  renderVals() {
+    const { form, mood } = this.state;
+    const C = [
+      ['sun', 'Sunset', 'the setting sun', 'Warm and steady. Sets with you at six.', 'Free'],
+      ['max', 'Midnight Sun', 'the Max sun', 'The sun after dark, with a ring and two moons.', 'Max'],
+      ['nhang', 'Nhang', 'incense', 'Calm, a little wise, never in a hurry.', 'Free'],
+      ['banhbao', 'Bánh Bao', 'steamed bun', 'Cozy, squishy, always thinking about dinner.', 'Free'],
+      ['giot', 'Giọt', 'raindrop', 'Cheeky and wobbly. Splashes when happy.', 'Free'],
+      ['hac', 'Hạc Giấy', 'paper crane', 'Elegant and quietly proud. Folded with care.', 'Max'],
+    ].map(([id, name, gloss, line, tier]) => ({ id, name, gloss, line, tier }));
+    const M = [['calm', 'Calm', 'The everyday default.'], ['happy', 'Happy', 'A toast is on screen, or the day just closed.'], ['wave', 'Wave', 'Mornings, before 9:00.'], ['nod', 'Nod', 'The day is overspent and still open.'], ['think', 'Think', 'Ask 6pm is working on an answer.'], ['sleepy', 'Sleepy', 'Late evening, after 21:30.'], ['plain', 'Plain', 'Serious mode: always the plain grey sun, whatever the companion.']];
+    const G = {
+      dusk: ['linear-gradient(180deg,#2c2758 0%,#7a3f72 55%,#e0855a 100%)', 'rgba(255,255,255,.75)'],
+      day: ['linear-gradient(180deg,#abbdd5 0%,#ded1d2 100%)', 'rgba(27,30,46,.6)'],
+      paper: ['#fbf4ec', 'rgba(42,29,48,.55)'],
+    }[this.props.ground ?? 'dusk'] || ['#2c2758', '#fff'];
+    const cur = C.find(c => c.id === form);
+    const set = (o) => () => this.setState(o);
+    return {
+      form, mood, ground: G[0], groundInk: G[1],
+      stageTag: (cur.name + ' · ' + mood).toUpperCase(),
+      cur: Object.assign({}, cur, { tierBg: cur.tier === 'Max' ? '#f6a46a' : 'rgba(255,255,255,.1)', tierFg: cur.tier === 'Max' ? '#2a1424' : '#f6efe6' }),
+      forms: C.map(c => ({ id: c.id, name: c.name, pick: set({ form: c.id }), bg: c.id === form ? 'rgba(246,164,106,.14)' : 'rgba(255,255,255,.04)', border: c.id === form ? '#f6a46a' : 'rgba(255,255,255,.08)' })),
+      moods: M.map(([id, label]) => ({ label, pick: set({ mood: id }), bg: id === mood ? '#f6efe6' : 'transparent', fg: id === mood ? '#1b1724' : '#f6efe6', border: id === mood ? '#f6efe6' : 'rgba(255,255,255,.18)' })),
+      moodNote: (M.find(m => m[0] === mood) || [])[2],
+      moodHeads: M.map(m => m[1].toUpperCase()),
+      cellSize: this.props.cellSize ?? 72,
+      matrix: C.map(c => ({ id: c.id, name: c.name, gloss: c.gloss, tier: c.tier, cells: M.map(([id, label]) => ({ mood: id, title: c.name + ' · ' + label, pick: set({ form: c.id, mood: id }) })) })),
+    };
+  }
+}
+</script>
+</body>
+</html>

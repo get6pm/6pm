@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..700&family=Be+Vietnam+Pro:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;background:#0d0b10}
+a{color:#f3eee7}
+a:hover{color:#ffb08a}
+::selection{background:#ff8552;color:#1a0f0a}
+input::placeholder{color:rgba(243,238,231,.42)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="position:relative; background:#0d0b10; color:#f3eee7; font-family:'Be Vietnam Pro', -apple-system, system-ui, sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip; min-height:100vh;">
+
+  <header data-screen-label="Nav" style="position:fixed; z-index:50; top:0; left:0; right:0; background:rgba(13,11,16,.74); backdrop-filter:saturate(1.3) blur(20px); -webkit-backdrop-filter:saturate(1.3) blur(20px); border-bottom:0.5px solid rgba(243,238,231,.08);">
+    <div style="max-width:1200px; margin:0 auto; height:64px; box-sizing:border-box; padding:0 clamp(20px,4vw,40px); display:flex; align-items:center; gap:clamp(16px,3vw,32px);">
+      <a href="#top" style="color:#f3eee7; text-decoration:none; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-size:24px; letter-spacing:-.05em; line-height:1;">6pm</a>
+      <nav style="flex:1; min-width:0; height:20px; overflow:hidden; display:flex; flex-wrap:wrap; justify-content:center; gap:0 28px; font-size:14px; line-height:20px;">
+        <a href="#ritual" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.navRitual }}</a>
+        <a href="#capture" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.navCapture }}</a>
+        <a href="#intelligence" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.navAi }}</a>
+        <a href="#privacy" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.navPrivacy }}</a>
+        <a href="#pricing" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.navPricing }}</a>
+        <a href="#faq" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.navFaq }}</a>
+      </nav>
+      <div style="display:flex; padding:3px; border-radius:99px; border:0.5px solid rgba(243,238,231,.16); font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px; letter-spacing:.06em;">
+        <button onClick="{{ setEn }}" style="height:28px; min-width:36px; padding:0 8px; border:none; border-radius:99px; cursor:pointer; font:inherit; background: {{ enBg }}; color: {{ enFg }};">EN</button>
+        <button onClick="{{ setVi }}" style="height:28px; min-width:36px; padding:0 8px; border:none; border-radius:99px; cursor:pointer; font:inherit; background: {{ viBg }}; color: {{ viFg }};">VI</button>
+      </div>
+      <a href="{{ navHref }}" style-hover="background:#ff9a6e; color:#1a0f0a;" style="flex-shrink:0; height:36px; padding:0 16px; border-radius:99px; background:#ff8552; color:#1a0f0a; text-decoration:none; font-size:14px; font-weight:600; display:flex; align-items:center; white-space:nowrap; transition:background .2s;">{{ navCta }}</a>
+    </div>
+  </header>
+
+  <section id="top" data-screen-label="01 Hero" style="position:relative; isolation:isolate; min-height:100vh; box-sizing:border-box; padding:clamp(120px,16vh,168px) clamp(20px,4vw,40px) clamp(64px,10vh,112px);">
+    <div aria-hidden="true" style="position:absolute; z-index:-1; left:50%; bottom:18%; width:min(1400px,180vw); height:min(900px,120vw); transform:translate(-50%,50%); background:radial-gradient(closest-side, rgba(255,133,82,.2), rgba(255,133,82,.06) 55%, transparent 100%); pointer-events:none;"></div>
+    <div aria-hidden="true" style="position:absolute; z-index:-1; left:0; right:0; bottom:18%; height:1px; background:linear-gradient(90deg, transparent 5%, rgba(255,176,138,.38) 50%, transparent 95%); pointer-events:none;"></div>
+    <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr)); align-items:center; gap:clamp(56px,7vw,96px);">
+      <div style="display:flex; flex-direction:column; gap:28px; min-width:0;">
+        <div style="display:flex; align-items:center; gap:10px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:rgba(243,238,231,.62);">
+          <span style="width:6px; height:6px; border-radius:50%; background:#ff8552; animation:pulse 2.4s ease-in-out infinite;"></span>
+          <span>{{ heroKicker }}</span>
+        </div>
+        <h1 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(60px,8.6vw,128px); line-height:.9; letter-spacing:-.05em; text-wrap:balance;">{{ t.heroA }} <span style="color:#ff8552;">{{ t.heroB }}</span></h1>
+        <p style="margin:0; max-width:500px; font-size:clamp(17px,1.4vw,20px); line-height:1.55; color:rgba(243,238,231,.7); text-wrap:pretty;">{{ t.heroSub }}</p>
+        <sc-if value="{{ isWaitlist }}" hint-placeholder-val="{{ true }}">
+          <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+            <form onSubmit="{{ submit }}" style="display:flex; flex-wrap:wrap; gap:10px; max-width:480px;">
+              <input type="email" autocomplete="email" placeholder="{{ t.emailPh }}" value="{{ email }}" onChange="{{ setEmail }}" style="flex:1 1 220px; min-width:0; height:52px; box-sizing:border-box; padding:0 20px; border-radius:99px; border:0.5px solid rgba(243,238,231,.2); background:rgba(243,238,231,.05); color:#f3eee7; font-family:inherit; font-size:16px; outline:none;">
+              <button type="submit" style-hover="background:#ff9a6e;" style="flex:0 0 auto; height:52px; padding:0 24px; border:none; border-radius:99px; background:#ff8552; color:#1a0f0a; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; transition:background .2s;">{{ t.ctaWait }}</button>
+            </form>
+          </sc-if>
+          <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:center; gap:12px; height:52px; font-size:16px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px; color:#ff8552;">check_circle</span>{{ t.sentMsg }}</div>
+          </sc-if>
+          <span style="font-size:13.5px; color: {{ msgColor }};">{{ formNote }}</span>
+        </sc-if>
+        <sc-if value="{{ isStore }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:18px;">
+            <a href="#" style-hover="background:#ff9a6e; color:#1a0f0a;" style="height:56px; padding:0 26px 0 20px; border-radius:99px; background:#ff8552; color:#1a0f0a; text-decoration:none; font-size:16px; font-weight:600; display:flex; align-items:center; gap:10px; transition:background .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px;">phone_iphone</span>{{ t.ctaStore }}</a>
+            <span style="font-size:14px; color:rgba(243,238,231,.62);">{{ t.storeNote }}</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ showClock }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; align-items:center; gap:10px; padding-top:12px; border-top:0.5px solid rgba(243,238,231,.1); max-width:480px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12.5px; color:rgba(243,238,231,.6);">
+            <span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:17px;">schedule</span>
+            <span>{{ clockLine }}</span>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="justify-self:center; position:relative; width:min(312px,84vw);">
+        <div style="position:relative; box-sizing:border-box; padding:10px; border-radius:56px; background:linear-gradient(160deg, #2a272e, #16141a 40%, #0f0e12); box-shadow:0 0 0 0.5px rgba(243,238,231,.14), 0 50px 100px -20px rgba(0,0,0,.7), 0 30px 120px -40px rgba(255,133,82,.35);">
+          <div style="position:relative; overflow:hidden; border-radius:46px; background:#0f0d12; aspect-ratio:402 / 874; display:flex; flex-direction:column;">
+            <div style="position:absolute; left:0; right:0; top:0; height:58%; background:linear-gradient(180deg, #1c2350 0%, #5a2a55 46%, #a8483c 78%, #0f0d12 100%); opacity:.9;"></div>
+            <div style="position:absolute; left:50%; top:40%; width:180px; height:180px; margin-left:-90px; border-radius:50%; background:radial-gradient(circle, rgba(255,214,170,.7), rgba(255,140,90,.25) 45%, transparent 70%);"></div>
+            <div style="position:relative; display:flex; justify-content:space-between; align-items:center; height:44px; padding:0 26px; font-size:13px; font-weight:600;">
+              <span>18:00</span>
+              <span style="position:absolute; left:50%; top:10px; width:92px; height:27px; margin-left:-46px; border-radius:20px; background:#000;"></span>
+              <span style="display:flex; gap:5px; align-items:center;"><span style="width:16px; height:9px; border-radius:2px; background:#f3eee7;"></span><span style="width:22px; height:11px; border-radius:3.5px; border:1px solid rgba(243,238,231,.6); box-sizing:border-box; padding:1px;"><span style="display:block; width:70%; height:100%; border-radius:1.5px; background:#f3eee7;"></span></span></span>
+            </div>
+            <div style="position:relative; padding:22px 22px 0; display:flex; flex-direction:column; gap:6px;">
+              <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:10px; letter-spacing:.14em; color:rgba(243,238,231,.75);">{{ t.phDate }}</span>
+              <span style="font-size:13px; color:rgba(243,238,231,.85);">{{ t.phSafe }}</span>
+              <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:50px; line-height:1; letter-spacing:-.045em;">312.000<span style="font-size:.5em; vertical-align:.6em; margin-left:2px;">₫</span></span>
+              <div style="margin-top:10px; height:4px; border-radius:4px; background:rgba(243,238,231,.18); overflow:hidden;"><div style="width:42%; height:100%; background:#f3eee7; border-radius:4px;"></div></div>
+              <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:10px; color:rgba(243,238,231,.75);">{{ t.phSpent }}</span>
+            </div>
+            <div style="position:relative; flex:1; margin-top:26px; padding:16px 14px 0; display:flex; flex-direction:column; gap:8px;">
+              <span style="padding:0 6px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:10px; letter-spacing:.14em; color:rgba(243,238,231,.55);">{{ t.phInbox }}</span>
+              <sc-for list="{{ phoneItems }}" as="p" hint-placeholder-count="3">
+                <div style="display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:16px; background:rgba(243,238,231,.06); border:0.5px solid rgba(243,238,231,.07);">
+                  <span style="width:32px; height:32px; flex-shrink:0; border-radius:10px; background: {{ p.tile }}; color: {{ p.glyph }}; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:18px; font-variation-settings:'FILL' 1;">{{ p.icon }}</span></span>
+                  <span style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;"><span style="font-size:12.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ p.name }}</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:8.5px; letter-spacing:.1em; color:rgba(243,238,231,.5);">{{ p.src }} · {{ p.time }}</span></span>
+                  <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px;">−{{ p.amt }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="position:relative; margin:0 14px 28px; height:52px; border-radius:99px; background:rgba(243,238,231,.08); border:0.5px solid rgba(243,238,231,.12); display:flex; align-items:center;">
+              <span style="position:absolute; left:5px; top:5px; width:42px; height:42px; border-radius:50%; background:#ff8552; color:#1a0f0a; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:20px;">arrow_forward</span></span>
+              <span style="flex:1; text-align:center; padding-left:40px; font-size:12.5px; font-weight:600;">{{ t.phSwipe }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ritual" data-screen-label="02 The ritual" style="scroll-margin-top:64px; max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:flex; flex-direction:column; gap:clamp(48px,6vw,80px);">
+    <div data-reveal="0" style="display:flex; flex-direction:column; gap:20px; max-width:760px;">
+      <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.ritKicker }}</span>
+      <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(40px,5.4vw,76px); line-height:.98; letter-spacing:-.045em; text-wrap:balance;">{{ t.ritTitle }}</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); gap:clamp(32px,4vw,56px);">
+      <sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+        <div data-reveal="{{ s.delay }}" style="display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span style="width:9px; height:9px; border-radius:50%; flex-shrink:0; background: {{ s.dot }}; box-shadow: {{ s.glow }};"></span>
+            <span style="flex:1; height:0.5px; background:rgba(243,238,231,.16);"></span>
+          </div>
+          <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.08em; color:rgba(243,238,231,.62);">{{ s.time }}</span>
+          <h3 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:28px; line-height:1.1; letter-spacing:-.03em;">{{ s.title }}</h3>
+          <p style="margin:0; font-size:16.5px; line-height:1.6; color:rgba(243,238,231,.66); text-wrap:pretty;">{{ s.body }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="capture" data-screen-label="03 Capture" style="scroll-margin-top:64px; max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(48px,6vw,80px) clamp(20px,4vw,40px) clamp(96px,12vw,160px); display:flex; flex-direction:column; gap:clamp(40px,5vw,64px);">
+    <div data-reveal="0" style="display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:24px 64px;">
+      <div style="display:flex; flex-direction:column; gap:20px; max-width:680px;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.capKicker }}</span>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(40px,5.4vw,76px); line-height:.98; letter-spacing:-.045em; text-wrap:balance;">{{ t.capTitle }}</h2>
+      </div>
+      <p style="margin:0; max-width:400px; font-size:17px; line-height:1.6; color:rgba(243,238,231,.66); text-wrap:pretty;">{{ t.capSub }}</p>
+    </div>
+    <div data-reveal="80" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr)); gap:0.5px; background:rgba(243,238,231,.1); border:0.5px solid rgba(243,238,231,.1); border-radius:28px; overflow:hidden;">
+      <sc-for list="{{ capture }}" as="c" hint-placeholder-count="6">
+        <div style-hover="background:#131117;" style="background:#0d0b10; padding:clamp(28px,3vw,40px); display:flex; flex-direction:column; gap:14px; min-height:220px; box-sizing:border-box; transition:background .3s;">
+          <span style="width:44px; height:44px; border-radius:14px; border:0.5px solid rgba(243,238,231,.14); display:flex; align-items:center; justify-content:center; color:#ffb08a;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px;">{{ c.icon }}</span></span>
+          <h3 style="margin:12px 0 0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:23px; line-height:1.15; letter-spacing:-.025em;">{{ c.title }}</h3>
+          <p style="margin:0; font-size:15.5px; line-height:1.6; color:rgba(243,238,231,.64); text-wrap:pretty;">{{ c.body }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section data-screen-label="04 One number" style="border-top:0.5px solid rgba(243,238,231,.08); border-bottom:0.5px solid rgba(243,238,231,.08); background:#100e13;">
+    <div style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr)); align-items:center; gap:clamp(48px,7vw,104px);">
+      <div data-reveal="0" style="display:flex; flex-direction:column; gap:22px; min-width:0;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.numKicker }}</span>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(40px,5.4vw,76px); line-height:.98; letter-spacing:-.045em; text-wrap:balance;">{{ t.numTitle }}</h2>
+        <p style="margin:0; max-width:460px; font-size:17px; line-height:1.6; color:rgba(243,238,231,.66); text-wrap:pretty;">{{ t.numBody }}</p>
+      </div>
+      <div data-reveal="120" style="min-width:0; border-radius:28px; background:#0d0b10; border:0.5px solid rgba(243,238,231,.1); padding:clamp(24px,3vw,36px); display:flex; flex-direction:column;">
+        <sc-for list="{{ ledger }}" as="l" hint-placeholder-count="6">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:15px 0; border-bottom:0.5px solid rgba(243,238,231,.09);">
+            <span style="font-size:15px; color: {{ l.lc }};">{{ l.l }}</span>
+            <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:14.5px; font-variant-numeric:tabular-nums; color: {{ l.vc }}; white-space:nowrap;">{{ l.v }}</span>
+          </div>
+        </sc-for>
+        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:12px; padding-top:26px;">
+          <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:rgba(243,238,231,.62); padding-bottom:8px;">{{ t.numResult }}</span>
+          <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:clamp(52px,6vw,76px); line-height:.9; letter-spacing:-.05em; color:#ff8552; font-variant-numeric:tabular-nums;">312.000<span style="font-size:.5em; vertical-align:.6em; margin-left:2px;">₫</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="05 Philosophy" style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:flex; flex-direction:column; gap:clamp(40px,5vw,64px);">
+    <div data-reveal="0" style="display:flex; flex-direction:column; gap:20px; max-width:760px;">
+      <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.philKicker }}</span>
+      <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(40px,5.4vw,76px); line-height:.98; letter-spacing:-.045em; text-wrap:balance;">{{ t.philTitle }}</h2>
+    </div>
+    <div style="display:flex; flex-direction:column; border-top:0.5px solid rgba(243,238,231,.12);">
+      <sc-for list="{{ principles }}" as="p" hint-placeholder-count="5">
+        <div data-reveal="0" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr)); gap:12px clamp(24px,5vw,80px); padding:clamp(24px,3vw,36px) 0; border-bottom:0.5px solid rgba(243,238,231,.12); align-items:baseline;">
+          <div style="display:flex; gap:clamp(16px,2.4vw,32px); align-items:baseline;">
+            <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; color:rgba(243,238,231,.45); flex-shrink:0;">{{ p.n }}</span>
+            <h3 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:clamp(26px,2.6vw,36px); line-height:1.1; letter-spacing:-.035em; text-wrap:balance;">{{ p.title }}</h3>
+          </div>
+          <p style="margin:0; max-width:520px; font-size:16.5px; line-height:1.6; color:rgba(243,238,231,.66); text-wrap:pretty;">{{ p.body }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="intelligence" data-screen-label="06 Intelligence" style="scroll-margin-top:64px; max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(48px,6vw,80px) clamp(20px,4vw,40px) clamp(96px,12vw,160px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr)); align-items:start; gap:clamp(48px,7vw,104px);">
+    <div style="display:flex; flex-direction:column; gap:40px; min-width:0;">
+      <div data-reveal="0" style="display:flex; flex-direction:column; gap:22px;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.aiKicker }}</span>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(40px,5.4vw,76px); line-height:.98; letter-spacing:-.045em; text-wrap:balance;">{{ t.aiTitle }}</h2>
+        <p style="margin:0; max-width:460px; font-size:17px; line-height:1.6; color:rgba(243,238,231,.66); text-wrap:pretty;">{{ t.aiBody }}</p>
+      </div>
+      <div data-reveal="100" style="border-radius:28px; background:#131117; border:0.5px solid rgba(243,238,231,.1); padding:clamp(20px,2.6vw,28px); display:flex; flex-direction:column; gap:14px;">
+        <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(243,238,231,.55);"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:16px; color:#ffb08a;">auto_awesome</span>ASK 6PM</div>
+        <div style="align-self:flex-end; max-width:82%; padding:12px 16px; border-radius:20px 20px 6px 20px; background:#f3eee7; color:#16131a; font-size:15.5px; line-height:1.4;">{{ t.aiQ }}</div>
+        <div style="align-self:flex-start; max-width:88%; padding:14px 16px; border-radius:20px 20px 20px 6px; background:rgba(243,238,231,.07); border:0.5px solid rgba(243,238,231,.08); font-size:15.5px; line-height:1.5; display:flex; flex-direction:column; gap:12px;">
+          <span>{{ t.aiA }}</span>
+          <div style="display:flex; align-items:center; gap:10px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px;"><span style="color:rgba(243,238,231,.55); text-decoration:line-through;">312.000₫</span><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:16px; color:rgba(243,238,231,.45);">arrow_forward</span><span style="color:#ff8552;">217.000₫</span><span style="color:rgba(243,238,231,.55);">{{ t.aiPerDay }}</span></div>
+        </div>
+        <span style="font-size:12.5px; line-height:1.5; color:rgba(243,238,231,.5);">{{ t.aiFoot }}</span>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:clamp(32px,3vw,44px) 32px; padding-top:clamp(0px,8vw,128px);">
+      <sc-for list="{{ ai }}" as="a" hint-placeholder-count="4">
+        <div data-reveal="{{ a.delay }}" style="display:flex; flex-direction:column; gap:12px; padding-top:20px; border-top:0.5px solid rgba(243,238,231,.14);">
+          <span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:24px; color:#ffb08a;">{{ a.icon }}</span>
+          <h3 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:22px; line-height:1.15; letter-spacing:-.025em;">{{ a.title }}</h3>
+          <p style="margin:0; font-size:15.5px; line-height:1.6; color:rgba(243,238,231,.64); text-wrap:pretty;">{{ a.body }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="privacy" data-screen-label="07 Privacy" style="scroll-margin-top:64px; border-top:0.5px solid rgba(243,238,231,.08); background:#100e13;">
+    <div style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:flex; flex-direction:column; gap:clamp(48px,6vw,72px);">
+      <div data-reveal="0" style="display:flex; flex-direction:column; align-items:center; text-align:center; gap:22px; max-width:820px; margin:0 auto;">
+        <span style="width:56px; height:56px; border-radius:18px; border:0.5px solid rgba(243,238,231,.16); display:flex; align-items:center; justify-content:center; color:#ffb08a;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:28px;">encrypted</span></span>
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.privKicker }}</span>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(44px,6.4vw,96px); line-height:.94; letter-spacing:-.05em; text-wrap:balance;">{{ t.privTitle }}</h2>
+        <p style="margin:0; max-width:560px; font-size:18px; line-height:1.6; color:rgba(243,238,231,.68); text-wrap:pretty;">{{ t.privBody }}</p>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:16px;">
+        <sc-for list="{{ privCards }}" as="p" hint-placeholder-count="4">
+          <div data-reveal="{{ p.delay }}" style="border-radius:24px; background:#0d0b10; border:0.5px solid rgba(243,238,231,.1); padding:28px 26px 30px; display:flex; flex-direction:column; gap:12px;">
+            <span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:24px; color:#ffb08a;">{{ p.icon }}</span>
+            <h3 style="margin:10px 0 0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:21px; line-height:1.15; letter-spacing:-.025em;">{{ p.title }}</h3>
+            <p style="margin:0; font-size:15px; line-height:1.6; color:rgba(243,238,231,.64); text-wrap:pretty;">{{ p.body }}</p>
+          </div>
+        </sc-for>
+      </div>
+      <div data-reveal="0" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:24px clamp(32px,6vw,96px); padding-top:clamp(16px,3vw,40px);">
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <h3 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:28px; line-height:1.1; letter-spacing:-.03em;">{{ t.leaveTitle }}</h3>
+          <p style="margin:0; max-width:340px; font-size:15.5px; line-height:1.6; color:rgba(243,238,231,.64); text-wrap:pretty;">{{ t.leaveBody }}</p>
+          <a href="#" style-hover="color:#ffb08a;" style="display:flex; align-items:center; gap:6px; font-size:15px; font-weight:500; color:#f3eee7; text-decoration:none; transition:color .2s;">{{ t.leaveLink }}<span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:18px;">arrow_outward</span></a>
+        </div>
+        <div style="display:flex; flex-direction:column; border-top:0.5px solid rgba(243,238,231,.12);">
+          <sc-for list="{{ leaves }}" as="l" hint-placeholder-count="6">
+            <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 24px; padding:14px 0; border-bottom:0.5px solid rgba(243,238,231,.12); font-size:15px;">
+              <span>{{ l.what }}</span>
+              <span style="color:rgba(243,238,231,.55);">{{ l.why }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="08 Budget together" style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr)); align-items:center; gap:clamp(48px,7vw,104px);">
+    <div data-reveal="0" style="display:flex; flex-direction:column; gap:22px; min-width:0;">
+      <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.togKicker }}</span>
+      <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(40px,5.4vw,76px); line-height:.98; letter-spacing:-.045em; text-wrap:balance;">{{ t.togTitle }}</h2>
+      <p style="margin:0; max-width:460px; font-size:17px; line-height:1.6; color:rgba(243,238,231,.66); text-wrap:pretty;">{{ t.togBody }}</p>
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:6px;">
+        <sc-for list="{{ t.togPts }}" as="pt" hint-placeholder-count="3">
+          <div style="display:flex; align-items:center; gap:12px; font-size:15.5px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:19px; color:#ffb08a;">check</span>{{ pt }}</div>
+        </sc-for>
+      </div>
+    </div>
+    <div data-reveal="120" style="justify-self:center; width:100%; max-width:440px; display:flex; flex-direction:column; gap:14px;">
+      <div style="border-radius:28px; background:#131117; border:0.5px solid rgba(243,238,231,.1); padding:28px; display:flex; flex-direction:column; gap:22px; box-shadow:0 40px 80px -30px rgba(0,0,0,.6);">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <span style="width:48px; height:48px; border-radius:15px; background:linear-gradient(155deg, oklch(0.9 0.07 150), oklch(0.78 0.12 150)); color:oklch(0.34 0.09 150); display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:26px; font-variation-settings:'FILL' 1;">landscape</span></span>
+          <div style="flex:1; display:flex; flex-direction:column; gap:3px;"><span style="font-size:17px; font-weight:600;">{{ t.potName }}</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.1em; color:rgba(243,238,231,.55);">{{ t.potWhen }}</span></div>
+          <div style="display:flex;"><span style="width:30px; height:30px; border-radius:50%; background:#ff8552; color:#1a0f0a; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2px #131117;">{{ t.potYouI }}</span><span style="width:30px; height:30px; margin-left:-8px; border-radius:50%; background:#c9b8f0; color:#1f1830; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2px #131117;">M</span></div>
+        </div>
+        <div style="display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;"><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:44px; line-height:1; letter-spacing:-.045em;">6.500.000₫</span><span style="font-size:14px; color:rgba(243,238,231,.55);">{{ t.potOf }}</span></div>
+        <div style="display:flex; height:8px; border-radius:8px; background:rgba(243,238,231,.08); overflow:hidden; gap:2px;"><span style="width:35%; background:#ff8552;"></span><span style="width:30%; background:#c9b8f0;"></span></div>
+        <div style="display:flex; flex-direction:column;">
+          <div style="display:flex; justify-content:space-between; padding:12px 0; border-top:0.5px solid rgba(243,238,231,.09); font-size:14.5px;"><span style="display:flex; align-items:center; gap:10px;"><span style="width:8px; height:8px; border-radius:50%; background:#ff8552;"></span>{{ t.potYou }}</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace;">3.500.000</span></div>
+          <div style="display:flex; justify-content:space-between; padding:12px 0; border-top:0.5px solid rgba(243,238,231,.09); font-size:14.5px;"><span style="display:flex; align-items:center; gap:10px;"><span style="width:8px; height:8px; border-radius:50%; background:#c9b8f0;"></span>Minh</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace;">3.000.000</span></div>
+        </div>
+      </div>
+      <span style="text-align:center; font-size:13px; color:rgba(243,238,231,.5);">{{ t.potFoot }}</span>
+    </div>
+  </section>
+
+  <section id="pricing" data-screen-label="09 Pricing" style="scroll-margin-top:64px; border-top:0.5px solid rgba(243,238,231,.08);">
+    <div style="max-width:1080px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:flex; flex-direction:column; align-items:center; gap:clamp(40px,5vw,56px);">
+      <div data-reveal="0" style="display:flex; flex-direction:column; align-items:center; text-align:center; gap:22px; max-width:760px;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.priceKicker }}</span>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(40px,5.4vw,76px); line-height:.98; letter-spacing:-.045em; text-wrap:balance;">{{ t.priceTitle }}</h2>
+        <div style="display:flex; padding:4px; border-radius:99px; border:0.5px solid rgba(243,238,231,.16); margin-top:6px;">
+          <button onClick="{{ setMonthly }}" style="height:38px; padding:0 18px; border:none; border-radius:99px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:500; background: {{ moBg }}; color: {{ moFg }}; transition:background .2s;">{{ t.monthly }}</button>
+          <button onClick="{{ setYearly }}" style="height:38px; padding:0 18px; border:none; border-radius:99px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:500; background: {{ yrBg }}; color: {{ yrFg }}; display:flex; align-items:center; gap:8px; transition:background .2s;">{{ t.yearly }}<span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; color: {{ saveFg }};">−36%</span></button>
+        </div>
+      </div>
+      <div style="width:100%; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr)); gap:20px;">
+        <div data-reveal="0" style="border-radius:28px; border:0.5px solid rgba(243,238,231,.12); padding:clamp(28px,3.4vw,40px); display:flex; flex-direction:column; gap:26px;">
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <span style="font-size:17px; font-weight:600;">{{ t.freeName }}</span>
+            <span style="display:flex; align-items:baseline; gap:8px;"><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:52px; line-height:1; letter-spacing:-.045em;">0₫</span><span style="font-size:15px; color:rgba(243,238,231,.55);">{{ t.freeFor }}</span></span>
+            <span style="font-size:14.5px; color:rgba(243,238,231,.62);">{{ t.freeSub }}</span>
+          </div>
+          <div style="height:0.5px; background:rgba(243,238,231,.12);"></div>
+          <div style="display:flex; flex-direction:column; gap:13px;">
+            <sc-for list="{{ t.free }}" as="f" hint-placeholder-count="7">
+              <div style="display:flex; gap:12px; font-size:15px; line-height:1.45;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1.45; letter-spacing:normal; font-size:18px; color:rgba(243,238,231,.55);">check</span><span>{{ f }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+        <div data-reveal="100" style="position:relative; border-radius:28px; background:linear-gradient(180deg, #1a1416, #131117 60%); border:0.5px solid rgba(255,133,82,.45); padding:clamp(28px,3.4vw,40px); display:flex; flex-direction:column; gap:26px; box-shadow:0 40px 100px -40px rgba(255,133,82,.3);">
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <span style="display:flex; align-items:center; justify-content:space-between; gap:12px;"><span style="font-size:17px; font-weight:600;">6pm Max</span><span style="height:26px; padding:0 10px; border-radius:99px; background:rgba(255,133,82,.14); color:#ffb08a; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.08em; display:flex; align-items:center;">{{ t.trial }}</span></span>
+            <span style="display:flex; align-items:baseline; gap:8px;"><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:52px; line-height:1; letter-spacing:-.045em;">{{ maxPrice }}</span><span style="font-size:15px; color:rgba(243,238,231,.55);">{{ maxPer }}</span></span>
+            <span style="font-size:14.5px; color:rgba(243,238,231,.62);">{{ maxSub }}</span>
+          </div>
+          <div style="height:0.5px; background:rgba(255,133,82,.25);"></div>
+          <div style="display:flex; flex-direction:column; gap:13px;">
+            <sc-for list="{{ t.max }}" as="f" hint-placeholder-count="8">
+              <div style="display:flex; gap:12px; font-size:15px; line-height:1.45;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1.45; letter-spacing:normal; font-size:18px; color:#ff8552;">check</span><span>{{ f }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <span style="font-size:13px; color:rgba(243,238,231,.5); text-align:center;">{{ t.priceNote }}</span>
+    </div>
+  </section>
+
+  <section id="faq" data-screen-label="10 FAQ" style="scroll-margin-top:64px; border-top:0.5px solid rgba(243,238,231,.08);">
+    <div style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:clamp(96px,12vw,160px) clamp(20px,4vw,40px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr)); align-items:start; gap:clamp(40px,6vw,96px);">
+      <div data-reveal="0" style="display:flex; flex-direction:column; gap:20px;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#ff8552;">{{ t.faqKicker }}</span>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(40px,5.4vw,76px); line-height:.98; letter-spacing:-.045em; text-wrap:balance;">{{ t.faqTitle }}</h2>
+      </div>
+      <div data-reveal="80" style="display:flex; flex-direction:column; border-top:0.5px solid rgba(243,238,231,.12);">
+        <sc-for list="{{ faq }}" as="f" hint-placeholder-count="6">
+          <div style="border-bottom:0.5px solid rgba(243,238,231,.12);">
+            <button onClick="{{ f.toggle }}" style-hover="color:#ffb08a;" style="width:100%; min-height:72px; padding:20px 0; border:none; background:transparent; color:#f3eee7; font-family:inherit; font-size:18px; font-weight:500; text-align:left; display:flex; align-items:center; justify-content:space-between; gap:24px; cursor:pointer; transition:color .2s;">
+              <span>{{ f.q }}</span>
+              <span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px; flex-shrink:0; transform: {{ f.rot }}; transition:transform .3s cubic-bezier(.2,.7,.2,1);">add</span>
+            </button>
+            <sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:0; padding:0 48px 26px 0; font-size:16px; line-height:1.65; color:rgba(243,238,231,.66); text-wrap:pretty;">{{ f.a }}</p>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="join" data-screen-label="11 Final CTA" style="scroll-margin-top:64px; position:relative; isolation:isolate; overflow:hidden; border-top:0.5px solid rgba(243,238,231,.08); box-sizing:border-box; padding:clamp(120px,16vw,200px) clamp(20px,4vw,40px) clamp(140px,18vw,220px); display:flex; flex-direction:column; align-items:center; text-align:center; gap:28px;">
+    <div aria-hidden="true" style="position:absolute; z-index:-1; left:50%; bottom:0; width:min(1200px,170vw); height:min(760px,110vw); transform:translate(-50%,50%); background:radial-gradient(closest-side, rgba(255,133,82,.26), rgba(255,133,82,.07) 55%, transparent 100%); pointer-events:none;"></div>
+    <div aria-hidden="true" style="position:absolute; z-index:-1; left:0; right:0; bottom:0; height:1px; background:linear-gradient(90deg, transparent 5%, rgba(255,176,138,.45) 50%, transparent 95%);"></div>
+    <span data-reveal="0" style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:rgba(243,238,231,.62);">{{ finalKicker }}</span>
+    <h2 data-reveal="60" style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(56px,9vw,144px); line-height:.9; letter-spacing:-.055em; text-wrap:balance;">{{ t.finalA }} <span style="color:#ff8552;">{{ t.finalB }}</span></h2>
+    <p data-reveal="120" style="margin:0; max-width:480px; font-size:18px; line-height:1.6; color:rgba(243,238,231,.68);">{{ finalSub }}</p>
+    <div data-reveal="160" style="width:100%; max-width:480px; display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:8px;">
+      <sc-if value="{{ isWaitlist }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ submit }}" style="width:100%; display:flex; flex-wrap:wrap; gap:10px;">
+            <input type="email" autocomplete="email" placeholder="{{ t.emailPh }}" value="{{ email }}" onChange="{{ setEmail }}" style="flex:1 1 220px; min-width:0; height:56px; box-sizing:border-box; padding:0 22px; border-radius:99px; border:0.5px solid rgba(243,238,231,.2); background:rgba(13,11,16,.6); color:#f3eee7; font-family:inherit; font-size:16px; outline:none;">
+            <button type="submit" style-hover="background:#ff9a6e;" style="flex:0 0 auto; height:56px; padding:0 26px; border:none; border-radius:99px; background:#ff8552; color:#1a0f0a; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; transition:background .2s;">{{ t.ctaWait }}</button>
+          </form>
+        </sc-if>
+        <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; gap:12px; height:56px; font-size:17px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px; color:#ff8552;">check_circle</span>{{ t.sentMsg }}</div>
+        </sc-if>
+        <span style="font-size:13.5px; color: {{ msgColor }};">{{ formNote }}</span>
+      </sc-if>
+      <sc-if value="{{ isStore }}" hint-placeholder-val="{{ false }}">
+        <a href="#" style-hover="background:#ff9a6e; color:#1a0f0a;" style="height:58px; padding:0 28px 0 22px; border-radius:99px; background:#ff8552; color:#1a0f0a; text-decoration:none; font-size:16px; font-weight:600; display:flex; align-items:center; gap:10px; transition:background .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px;">phone_iphone</span>{{ t.ctaStore }}</a>
+        <span style="font-size:13.5px; color:rgba(243,238,231,.6);">{{ t.storeNote }}</span>
+      </sc-if>
+    </div>
+  </section>
+
+  <footer data-screen-label="Footer" style="border-top:0.5px solid rgba(243,238,231,.08);">
+    <div style="max-width:1200px; margin:0 auto; box-sizing:border-box; padding:36px clamp(20px,4vw,40px) 44px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px;">
+      <div style="display:flex; align-items:baseline; gap:14px;">
+        <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-size:22px; letter-spacing:-.05em;">6pm</span>
+        <span style="font-size:14px; color:rgba(243,238,231,.55);">{{ t.footTag }}</span>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; align-items:center; gap:24px; font-size:14px;">
+        <a href="#" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.footPrivacy }}</a>
+        <a href="#" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.footTerms }}</a>
+        <a href="#" style="color:rgba(243,238,231,.7); text-decoration:none;">{{ t.footContact }}</a>
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; color:rgba(243,238,231,.45);">© 2026 · at6pm.app</span>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;ctaMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Waitlist&quot;,&quot;App Store&quot;],&quot;default&quot;:&quot;Waitlist&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Launch&quot;},&quot;launch&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2026-11-06T18:00:00+07:00&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Launch&quot;},&quot;liveClock&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hero&quot;}}">
+const T = {
+  en: {
+    navRitual: 'How it works', navCapture: 'Capture', navAi: 'Intelligence', navPrivacy: 'Privacy', navPricing: 'Pricing', navFaq: 'FAQ',
+    navWait: 'Join the waitlist', navStore: 'Download',
+    kickWait: 'For iPhone · Arrives 6 Nov, 18:00', kickStore: 'For iPhone · Free on the App Store',
+    heroA: 'Close your day', heroB: 'at six.',
+    heroSub: '6pm catches what you spend all day. At six, one swipe closes it. Tomorrow you wake up to one number: what’s safe to spend.',
+    ctaWait: 'Join the waitlist', ctaStore: 'Download for iPhone', emailPh: 'you@example.com',
+    waitNote: 'One email on launch day. Nothing else.', storeNote: 'Free. No account. No bank login.',
+    sentMsg: 'You’re on the list. See you at six.', errMsg: 'That doesn’t look like an email yet.',
+    clock: (t, d) => `It’s ${t} where you are · next close in ${d}`, clockNow: 'It’s six. Time to close the day.',
+    dur: (h, m) => h ? `${h}h ${m}m` : `${m}m`,
+    phDate: 'FRIDAY 9 OCT', phSafe: 'Safe to spend today', phSpent: 'SPENT 132K · 180K LEFT', phInbox: 'INBOX · 3 TO LOOK AT', phSwipe: 'Swipe to close Friday',
+    phItems: [['Cà phê sữa đá', 'BANK RECEIPT'], ['Phở bò', 'VIETQR'], ['Grab bike', 'EMAIL']],
+    ritKicker: 'The ritual', ritTitle: 'One minute a day. That’s the whole system.',
+    steps: [
+      ['All day', 'Spending gets caught', 'Bank receipts, QR payments and emails land in your Inbox, already named and priced.'],
+      ['18:00', 'Swipe to close', 'Go through the day in about a minute. Keep, fix or skip. One swipe and it’s done.'],
+      ['Tomorrow', 'Wake up to one number', 'Safe to spend today. Not a dashboard, not a pie chart. One number you can trust.']
+    ],
+    capKicker: 'Capture', capTitle: 'Six ways in. Almost no typing.',
+    capSub: '6pm meets your money where it already moves: Vietnamese banks, VietQR and the phone in your hand.',
+    capture: [
+      ['Share a bank receipt', 'Screenshot from any bank app, shared to 6pm. Read on your phone in a second.'],
+      ['Scan VietQR', 'Scan, then pay in your own bank app with the amount ready. Works with 31 bank apps.'],
+      ['Forward bank emails', 'Your own address, like k7m2qx@at6pm.app. Receipts arrive by themselves.'],
+      ['Tap with Apple Pay', 'A Wallet automation logs every tap the moment it happens.'],
+      ['Just say it', '“Ba mươi lăm k cà phê.” Understood in Vietnamese and English, on your phone.'],
+      ['Quick add', 'A keypad for cash and everything else. Three taps and done.']
+    ],
+    numKicker: 'One number', numTitle: 'Pay future you first. Spend the rest freely.',
+    numBody: '6pm takes what comes in, sets aside your bills, your pots and future you, then splits what’s left across the days to payday. Spend under it, and tomorrow gets roomier.',
+    ledger: ['Money in · October', 'Fixed bills', 'Pots · Tết, Lan’s birthday', 'Future you', 'Free money', '÷ 22 days to payday'],
+    numResult: 'Safe to spend today',
+    philKicker: 'What we believe', philTitle: 'Calm beats clever.',
+    principles: [
+      ['Count, never move.', '6pm never touches your money. It only counts it, so the decisions stay yours.'],
+      ['One number, not twenty charts.', 'Every screen serves the daily number or the close. If it doesn’t, it isn’t there.'],
+      ['Nothing is final until you say so.', 'Caught spends count right away so the number stays honest. You still have the last word.'],
+      ['No shame. Ever.', 'The companion cheers and teases a little. It never scolds. Serious mode turns the jokes off.'],
+      ['A ritual, not a chore.', 'Same time every day. A minute, then you get your evening back.']
+    ],
+    aiKicker: 'Intelligence', aiTitle: 'Smart where it helps. Quiet everywhere else.',
+    aiBody: 'Ask about your money in plain words, in either language. Your phone does the maths. A model only helps find the words.',
+    aiQ: 'Can I afford 2tr on Saturday?', aiA: 'Yes. Your daily number goes down until payday:', aiPerDay: '/ day',
+    aiFoot: 'Your spends, plan and balance never leave the phone. Only the question does.',
+    ai: [
+      ['Reads receipts', 'Text is read on your phone. A receipt it can’t read is sent once, read, and never stored.'],
+      ['Names the shop', 'Merchant and category filled in for you. Every number is stripped out before anything leaves.'],
+      ['Learns your rules', 'Fix a category once and every future capture follows it.'],
+      ['Catches doubles', 'Paid by QR and got the bank receipt too? Within three minutes, they merge into one.']
+    ],
+    privKicker: 'Privacy', privTitle: 'Your money stays on your phone.',
+    privBody: 'No account. No bank login. No ads, analytics or tracking, in the app or on this website.',
+    privCards: [
+      ['Encrypted on device', 'Spends, plan and diary live in an encrypted database. Its key never leaves your iPhone.'],
+      ['No account needed', 'We never ask for your email, your phone number or your bank login.'],
+      ['Nothing to sell', 'No ads. No trackers. No cookies. We don’t profile you, and we never will.'],
+      ['A backup only you can open', 'End-to-end encrypted. The key lives in your iCloud Keychain, not with us.']
+    ],
+    leaveTitle: 'The little that leaves, and why', leaveBody: 'We’d rather tell you exactly than promise “nothing”. This is the whole list.', leaveLink: 'Read the privacy policy',
+    leaves: [
+      ['An anonymous device ID', 'to keep the service honest'], ['Purchase status', 'so Max stays unlocked'], ['Crash reports', 'never with your money in them'],
+      ['Questions you ask', 'without your spends or balance'], ['A receipt photo the phone can’t read', 'read once, never stored'], ['Bank emails you forward', 'deleted once your phone collects them']
+    ],
+    togKicker: 'Budget together', togTitle: 'Save for the same thing. Keep your own day.',
+    togBody: 'Invite one person by link and share pots for the trip, the wedding, the new sofa. You both add to them. Your spending, plan and daily number stay yours.',
+    togPts: ['Free for everyone', 'Sign in with Apple, first name only', 'Leave anytime, and the shared copy is deleted'],
+    potName: 'Đà Lạt trip', potWhen: 'DECEMBER · 2 OF YOU', potOf: 'of 10.000.000₫', potYou: 'You', potYouI: 'Y', potFoot: 'Shared pots only. Nothing else crosses over.',
+    priceKicker: 'Pricing', priceTitle: 'Free for the ritual. Max for the rest.', monthly: 'Monthly', yearly: 'Yearly',
+    freeName: 'Free', freeFor: 'forever', freeSub: 'Everything you need to close the day.',
+    free: ['The daily close and every way to capture', 'Today, Plan and Diary', 'Budget together', '10 questions to Ask 6pm a day', 'One pot of your own', 'Basic and Golden Hour looks', 'Four companions to pick from'],
+    trial: '7 DAYS FREE', perMonth: '/ month', perYear: '/ year', subMonth: 'Cancel anytime in Settings.', subYear: 'About 49.800₫ a month.',
+    max: ['Everything in Free', 'Every look, including living scenes', 'Unlimited Ask and pots', 'Travel mode with daily rates', 'A year book of your year', 'Encrypted backup and export', 'Widgets drawn in your look', 'The Max companion and Hạc Giấy'],
+    priceNote: 'Prices in VND, set by the App Store. Single looks can also be bought one at a time.',
+    faqKicker: 'FAQ', faqTitle: 'Good questions.',
+    faq: [
+      ['Does 6pm connect to my bank?', 'No. 6pm never asks for your bank login. It reads the receipts you share, the QR codes you scan and the emails your bank sends to your 6pm address.'],
+      ['Can 6pm move or spend my money?', 'Never. 6pm only counts. Every payment happens in your own bank app.'],
+      ['What if I miss a close?', 'Nothing breaks. Missed days wait for you, and what you spent already counts toward your number.'],
+      ['Is it on Android?', 'iPhone comes first, from 6 November. Android is built and will follow.'],
+      ['Which languages and currencies?', 'English and Vietnamese, switchable anytime. Đồng by default, with Travel mode for other currencies.'],
+      ['What happens to my data if I delete the app?', 'It’s gone. Your data lives only on your phone, unless you turn on encrypted backup.']
+    ],
+    finalA: 'See you', finalB: 'at six.', finalWait: '6pm 2.0 arrives Friday 6 November at 18:00. One email when it does.', finalStore: 'Free on the App Store, for iPhone.',
+    cd: (d, h, m) => `${d}d ${h}h ${m}m to go`, out: 'Out now',
+    footTag: 'Close your day at six.', footPrivacy: 'Privacy', footTerms: 'Terms', footContact: 'Contact'
+  },
+  vi: {
+    navRitual: 'Cách dùng', navCapture: 'Ghi chi tiêu', navAi: 'Trí tuệ', navPrivacy: 'Quyền riêng tư', navPricing: 'Bảng giá', navFaq: 'Hỏi đáp',
+    navWait: 'Đăng ký sớm', navStore: 'Tải về',
+    kickWait: 'Cho iPhone · Ra mắt 18:00, 6/11', kickStore: 'Cho iPhone · Miễn phí trên App Store',
+    heroA: 'Chốt ngày', heroB: 'lúc sáu giờ.',
+    heroSub: '6pm ghi lại mọi khoản chi trong ngày. Sáu giờ, vuốt một lần là chốt sổ. Sáng mai bạn chỉ cần nhìn một con số: hôm nay tiêu được bao nhiêu.',
+    ctaWait: 'Đăng ký sớm', ctaStore: 'Tải cho iPhone', emailPh: 'email@cuaban.com',
+    waitNote: 'Một email vào ngày ra mắt. Không gì khác.', storeNote: 'Miễn phí. Không tài khoản. Không đăng nhập ngân hàng.',
+    sentMsg: 'Bạn đã có tên trong danh sách. Hẹn lúc sáu giờ.', errMsg: 'Email này có vẻ chưa đúng.',
+    clock: (t, d) => `Chỗ bạn đang là ${t} · còn ${d} đến giờ chốt`, clockNow: 'Sáu giờ rồi. Chốt ngày thôi.',
+    dur: (h, m) => h ? `${h} giờ ${m} phút` : `${m} phút`,
+    phDate: 'THỨ SÁU 9/10', phSafe: 'Hôm nay tiêu được', phSpent: 'ĐÃ TIÊU 132K · CÒN 180K', phInbox: 'HỘP THƯ · 3 KHOẢN CẦN XEM', phSwipe: 'Vuốt để chốt thứ Sáu',
+    phItems: [['Cà phê sữa đá', 'BIÊN LAI'], ['Phở bò', 'VIETQR'], ['Grab bike', 'EMAIL']],
+    ritKicker: 'Nghi thức', ritTitle: 'Một phút mỗi ngày. Chỉ vậy thôi.',
+    steps: [
+      ['Cả ngày', 'Chi tiêu tự được ghi', 'Biên lai ngân hàng, thanh toán QR và email về thẳng Hộp thư, đã có tên và số tiền.'],
+      ['18:00', 'Vuốt để chốt', 'Lướt lại cả ngày trong khoảng một phút. Giữ, sửa hoặc bỏ. Vuốt một lần là xong.'],
+      ['Ngày mai', 'Thức dậy với một con số', 'Hôm nay tiêu được bao nhiêu. Không bảng biểu, không biểu đồ tròn. Một con số bạn tin được.']
+    ],
+    capKicker: 'Ghi chi tiêu', capTitle: 'Sáu cách ghi. Gần như không phải gõ.',
+    capSub: '6pm bắt kịp tiền của bạn ở đúng nơi nó đi qua: ngân hàng Việt, VietQR và chiếc điện thoại trên tay.',
+    capture: [
+      ['Chia sẻ biên lai', 'Chụp màn hình từ app ngân hàng bất kỳ rồi chia sẻ sang 6pm. Đọc ngay trên máy trong một giây.'],
+      ['Quét VietQR', 'Quét xong, thanh toán trong app ngân hàng của bạn với số tiền có sẵn. Hỗ trợ 31 app ngân hàng.'],
+      ['Chuyển tiếp email ngân hàng', 'Địa chỉ riêng của bạn, như k7m2qx@at6pm.app. Biên lai tự về.'],
+      ['Chạm Apple Pay', 'Một phím tắt tự động trong Wallet ghi lại mỗi lần chạm, ngay lập tức.'],
+      ['Nói ra là được', '“Ba mươi lăm k cà phê.” Hiểu cả tiếng Việt lẫn tiếng Anh, ngay trên máy.'],
+      ['Nhập nhanh', 'Bàn phím cho tiền mặt và mọi thứ khác. Ba lần chạm là xong.']
+    ],
+    numKicker: 'Một con số', numTitle: 'Trả cho bạn tương lai trước. Phần còn lại cứ tiêu.',
+    numBody: '6pm lấy khoản thu, để riêng hoá đơn, các hũ và phần cho bạn tương lai, rồi chia đều phần còn lại cho những ngày đến kỳ lương. Tiêu dưới mức đó, ngày mai sẽ rộng rãi hơn.',
+    ledger: ['Thu nhập · Tháng 10', 'Hoá đơn cố định', 'Hũ · Tết, sinh nhật Lan', 'Bạn tương lai', 'Tiền tự do', '÷ 22 ngày đến kỳ lương'],
+    numResult: 'Hôm nay tiêu được',
+    philKicker: 'Điều chúng tôi tin', philTitle: 'Nhẹ nhàng thắng phức tạp.',
+    principles: [
+      ['Chỉ đếm, không đụng.', '6pm không bao giờ chạm vào tiền của bạn. Nó chỉ đếm, để quyết định luôn là của bạn.'],
+      ['Một con số, không phải hai mươi biểu đồ.', 'Mọi màn hình đều phục vụ con số mỗi ngày hoặc giờ chốt. Không thì không có mặt.'],
+      ['Chưa gì là chốt khi bạn chưa đồng ý.', 'Khoản vừa ghi được tính ngay để con số luôn trung thực. Lời cuối vẫn là của bạn.'],
+      ['Không bao giờ trách móc.', 'Bạn đồng hành cổ vũ, trêu nhẹ, không bao giờ mắng. Chế độ nghiêm túc tắt hết trò đùa.'],
+      ['Một nghi thức, không phải việc nhà.', 'Cùng một giờ mỗi ngày. Một phút, rồi buổi tối là của bạn.']
+    ],
+    aiKicker: 'Trí tuệ tích hợp', aiTitle: 'Thông minh khi cần. Im lặng những lúc khác.',
+    aiBody: 'Hỏi về tiền bằng lời bình thường, tiếng Việt hay tiếng Anh đều được. Điện thoại tự tính. Mô hình AI chỉ giúp tìm lời.',
+    aiQ: 'Thứ Bảy tiêu 2tr được không?', aiA: 'Được. Con số mỗi ngày sẽ giảm đến kỳ lương:', aiPerDay: '/ ngày',
+    aiFoot: 'Chi tiêu, kế hoạch và số dư không bao giờ rời máy. Chỉ câu hỏi được gửi đi.',
+    ai: [
+      ['Đọc biên lai', 'Chữ được đọc ngay trên máy. Biên lai máy không đọc được mới gửi đi một lần, đọc xong là thôi, không lưu.'],
+      ['Đặt tên cửa hàng', 'Tên cửa hàng và danh mục tự điền. Mọi con số được gỡ bỏ trước khi gửi đi.'],
+      ['Nhớ quy tắc của bạn', 'Sửa danh mục một lần, mọi lần ghi sau đều làm theo.'],
+      ['Gộp khoản trùng', 'Trả bằng QR rồi nhận thêm biên lai ngân hàng? Trong ba phút, hai khoản gộp làm một.']
+    ],
+    privKicker: 'Quyền riêng tư', privTitle: 'Tiền của bạn ở lại trên điện thoại của bạn.',
+    privBody: 'Không tài khoản. Không đăng nhập ngân hàng. Không quảng cáo, không phân tích, không theo dõi, trong app lẫn trên trang này.',
+    privCards: [
+      ['Mã hoá trên máy', 'Chi tiêu, kế hoạch và nhật ký nằm trong một cơ sở dữ liệu mã hoá. Khoá không bao giờ rời iPhone.'],
+      ['Không cần tài khoản', 'Chúng tôi không bao giờ hỏi email, số điện thoại hay thông tin đăng nhập ngân hàng.'],
+      ['Không có gì để bán', 'Không quảng cáo. Không trình theo dõi. Không cookie. Không lập hồ sơ về bạn.'],
+      ['Sao lưu chỉ bạn mở được', 'Mã hoá đầu cuối. Khoá nằm trong iCloud Keychain của bạn, không ở chỗ chúng tôi.']
+    ],
+    leaveTitle: 'Một chút rời máy, và vì sao', leaveBody: 'Chúng tôi muốn nói rõ từng thứ hơn là hứa “không có gì”. Đây là toàn bộ danh sách.', leaveLink: 'Đọc chính sách quyền riêng tư',
+    leaves: [
+      ['Mã thiết bị ẩn danh', 'để chống lạm dụng'], ['Trạng thái mua hàng', 'để Max luôn được mở khoá'], ['Báo cáo lỗi', 'không bao giờ kèm dữ liệu tiền'],
+      ['Câu bạn hỏi', 'không kèm chi tiêu hay số dư'], ['Ảnh biên lai máy không đọc được', 'đọc một lần, không lưu'], ['Email ngân hàng bạn chuyển tiếp', 'xoá ngay khi máy nhận']
+    ],
+    togKicker: 'Cùng nhau', togTitle: 'Cùng để dành một thứ. Ngày của ai nấy giữ.',
+    togBody: 'Mời một người qua đường link, cùng góp vào những hũ chung cho chuyến đi, đám cưới, bộ sofa mới. Chi tiêu, kế hoạch và con số mỗi ngày vẫn là của riêng bạn.',
+    togPts: ['Miễn phí cho mọi người', 'Đăng nhập bằng Apple, chỉ cần tên', 'Rời đi lúc nào cũng được, bản chia sẻ bị xoá'],
+    potName: 'Chuyến Đà Lạt', potWhen: 'THÁNG 12 · HAI NGƯỜI', potOf: 'trên 10.000.000₫', potYou: 'Bạn', potYouI: 'B', potFoot: 'Chỉ hũ chung được chia sẻ. Ngoài ra không gì cả.',
+    priceKicker: 'Bảng giá', priceTitle: 'Miễn phí cho nghi thức. Max cho phần còn lại.', monthly: 'Theo tháng', yearly: 'Theo năm',
+    freeName: 'Miễn phí', freeFor: 'mãi mãi', freeSub: 'Đủ mọi thứ để chốt ngày.',
+    free: ['Chốt ngày và mọi cách ghi chi tiêu', 'Hôm nay, Kế hoạch và Nhật ký', 'Cùng nhau', '10 câu hỏi Ask 6pm mỗi ngày', 'Một hũ của riêng bạn', 'Giao diện Basic và Golden Hour', 'Bốn bạn đồng hành để chọn'],
+    trial: '7 NGÀY MIỄN PHÍ', perMonth: '/ tháng', perYear: '/ năm', subMonth: 'Huỷ bất cứ lúc nào trong Cài đặt.', subYear: 'Khoảng 49.800₫ mỗi tháng.',
+    max: ['Mọi thứ trong bản Miễn phí', 'Mọi giao diện, kể cả cảnh động', 'Hỏi và tạo hũ không giới hạn', 'Chế độ du lịch với tỷ giá mỗi ngày', 'Sổ kỷ niệm cả năm', 'Sao lưu mã hoá và xuất dữ liệu', 'Widget theo giao diện của bạn', 'Dạng Max và Hạc Giấy'],
+    priceNote: 'Giá bằng VND, theo App Store. Từng giao diện cũng có thể mua lẻ.',
+    faqKicker: 'Hỏi đáp', faqTitle: 'Những câu hay được hỏi.',
+    faq: [
+      ['6pm có kết nối với ngân hàng của tôi không?', 'Không. 6pm không bao giờ hỏi thông tin đăng nhập ngân hàng. Nó đọc biên lai bạn chia sẻ, mã QR bạn quét và email ngân hàng gửi đến địa chỉ 6pm của bạn.'],
+      ['6pm có thể chuyển hay tiêu tiền của tôi không?', 'Không bao giờ. 6pm chỉ đếm. Mọi thanh toán diễn ra trong app ngân hàng của bạn.'],
+      ['Nếu tôi quên chốt ngày thì sao?', 'Không sao cả. Những ngày bị lỡ sẽ chờ bạn, và những gì đã tiêu vẫn được tính vào con số.'],
+      ['Có bản Android không?', 'iPhone trước, từ ngày 6 tháng 11. Bản Android đã sẵn sàng và sẽ đến sau.'],
+      ['Hỗ trợ ngôn ngữ và tiền tệ nào?', 'Tiếng Việt và tiếng Anh, đổi lúc nào cũng được. Mặc định là đồng, có chế độ du lịch cho tiền tệ khác.'],
+      ['Xoá app thì dữ liệu của tôi đi đâu?', 'Mất hẳn. Dữ liệu chỉ nằm trên điện thoại của bạn, trừ khi bạn bật sao lưu mã hoá.']
+    ],
+    finalA: 'Hẹn bạn', finalB: 'lúc sáu giờ.', finalWait: '6pm 2.0 ra mắt 18:00 thứ Sáu, 6 tháng 11. Một email khi app lên kệ.', finalStore: 'Miễn phí trên App Store, cho iPhone.',
+    cd: (d, h, m) => `Còn ${d} ngày ${h} giờ ${m} phút`, out: 'Đã ra mắt',
+    footTag: 'Chốt ngày lúc sáu giờ.', footPrivacy: 'Quyền riêng tư', footTerms: 'Điều khoản', footContact: 'Liên hệ'
+  }
+};
+const CAP_ICONS = ['ios_share', 'qr_code_scanner', 'alternate_email', 'contactless', 'mic', 'dialpad'];
+const AI_ICONS = ['document_scanner', 'storefront', 'rule', 'merge'];
+const PRIV_ICONS = ['lock', 'person_off', 'visibility_off', 'cloud_lock'];
+const LEDGER_V = [['18.500.000', 'n'], ['− 6.836.000', 'o'], ['− 2.800.000', 'o'], ['− 2.000.000', 'g'], ['6.864.000', 'n'], ['', 'n']];
+const PHONE = [['local_cafe', 25, '29.000', '08:15'], ['ramen_dining', 60, '65.000', '12:40'], ['two_wheeler', 220, '38.000', '17:22']];
+
+class Component extends DCLogic {
+  state = { lang: 'en', now: Date.now(), email: '', sent: false, err: '', yearly: true, faq: 0 };
+  rootRef = React.createRef();
+  componentDidMount() {
+    try {
+      const saved = localStorage.getItem('6pm-site-lang');
+      const l = saved || ((navigator.language || '').toLowerCase().startsWith('vi') ? 'vi' : 'en');
+      if (l !== this.state.lang) this.setState({ lang: l });
+    } catch (e) {}
+    this.tm = setInterval(() => this.setState({ now: Date.now() }), 15000);
+    requestAnimationFrame(() => this.setupReveal());
+  }
+  componentWillUnmount() { clearInterval(this.tm); this.io && this.io.disconnect(); }
+  setupReveal() {
+    const r = this.rootRef.current; if (!r || !('IntersectionObserver' in window)) return;
+    const ease = 'cubic-bezier(.2,.7,.2,1)';
+    this.io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.style.opacity = '1'; e.target.style.transform = 'none'; this.io.unobserve(e.target);
+    }), { rootMargin: '0px 0px -6% 0px' });
+    const vh = innerHeight;
+    r.querySelectorAll('[data-reveal]').forEach(el => {
+      if (el.getBoundingClientRect().top < vh * .94) return;
+      const d = +el.dataset.reveal || 0;
+      el.style.opacity = '0'; el.style.transform = 'translateY(28px)';
+      el.style.transition = `opacity 1s ${ease} ${d}ms, transform 1s ${ease} ${d}ms`;
+      this.io.observe(el);
+    });
+  }
+  setLang(l) { try { localStorage.setItem('6pm-site-lang', l); } catch (e) {} this.setState({ lang: l }); }
+  renderVals() {
+    const s = this.state, t = T[s.lang] || T.en;
+    const store = (this.props.ctaMode ?? 'Waitlist') === 'App Store';
+    const pad = n => String(n).padStart(2, '0');
+    const d = new Date(s.now), hh = d.getHours(), mm = d.getMinutes();
+    let mins = 18 * 60 - (hh * 60 + mm);
+    const closeNow = mins <= 0 && mins > -20;
+    if (mins <= 0) mins += 1440;
+    const clockLine = closeNow ? t.clockNow : t.clock(pad(hh) + ':' + pad(mm), t.dur(Math.floor(mins / 60), mins % 60));
+    let L = Date.parse(this.props.launch ?? '2026-11-06T18:00:00+07:00'); if (isNaN(L)) L = Date.parse('2026-11-06T18:00:00+07:00');
+    const diff = L - s.now;
+    const cd = diff <= 0 ? t.out : t.cd(Math.floor(diff / 864e5), pad(Math.floor(diff / 36e5) % 24), pad(Math.floor(diff / 6e4) % 60));
+    const valid = /^\S+@\S+\.\S+$/.test(s.email.trim());
+    const on = (a) => a ? '#f3eee7' : 'transparent', onFg = (a) => a ? '#16131a' : 'rgba(243,238,231,.7)';
+    const lc = { n: '#f3eee7', o: '#ffb4a3', g: '#a8dcb8' };
+    return {
+      rootRef: this.rootRef, t,
+      setEn: () => this.setLang('en'), setVi: () => this.setLang('vi'),
+      enBg: on(s.lang === 'en'), enFg: onFg(s.lang === 'en'), viBg: on(s.lang === 'vi'), viFg: onFg(s.lang === 'vi'),
+      isWaitlist: !store, isStore: store, navCta: store ? t.navStore : t.navWait, navHref: store ? '#join' : '#join',
+      heroKicker: store ? t.kickStore : t.kickWait,
+      showClock: this.props.liveClock ?? true, clockLine,
+      finalKicker: store ? '6pm 2.0' : cd, finalSub: store ? t.finalStore : t.finalWait,
+      email: s.email, sent: s.sent, notSent: !s.sent,
+      formNote: s.err || (s.sent ? '' : t.waitNote), msgColor: s.err ? '#ffb4a3' : 'rgba(243,238,231,.55)',
+      setEmail: e => this.setState({ email: e.target.value, err: '' }),
+      submit: e => { e.preventDefault(); if (!valid) return this.setState({ err: t.errMsg }); this.setState({ sent: true, err: '' }); },
+      phoneItems: PHONE.map((p, i) => ({ icon: p[0], tile: `linear-gradient(155deg, oklch(0.9 0.07 ${p[1]}), oklch(0.78 0.12 ${p[1]}))`, glyph: `oklch(0.34 0.09 ${p[1]})`, amt: p[2], time: p[3], name: t.phItems[i][0], src: t.phItems[i][1] })),
+      steps: t.steps.map((x, i) => ({ time: x[0], title: x[1], body: x[2], delay: i * 90, dot: i === 1 ? '#ff8552' : 'rgba(243,238,231,.35)', glow: i === 1 ? '0 0 0 5px rgba(255,133,82,.16), 0 0 18px rgba(255,133,82,.6)' : 'none' })),
+      capture: t.capture.map((x, i) => ({ icon: CAP_ICONS[i], title: x[0], body: x[1] })),
+      ledger: t.ledger.map((l, i) => ({ l, v: LEDGER_V[i][0], vc: lc[LEDGER_V[i][1]], lc: i === 4 ? '#f3eee7' : 'rgba(243,238,231,.68)' })),
+      principles: t.principles.map((x, i) => ({ n: pad(i + 1), title: x[0], body: x[1] })),
+      ai: t.ai.map((x, i) => ({ icon: AI_ICONS[i], title: x[0], body: x[1], delay: i * 80 })),
+      privCards: t.privCards.map((x, i) => ({ icon: PRIV_ICONS[i], title: x[0], body: x[1], delay: i * 80 })),
+      leaves: t.leaves.map(x => ({ what: x[0], why: x[1] })),
+      setMonthly: () => this.setState({ yearly: false }), setYearly: () => this.setState({ yearly: true }),
+      moBg: on(!s.yearly), moFg: onFg(!s.yearly), yrBg: on(s.yearly), yrFg: onFg(s.yearly), saveFg: s.yearly ? '#c4502a' : '#ffb08a',
+      maxPrice: s.yearly ? '598.000₫' : '78.000₫', maxPer: s.yearly ? t.perYear : t.perMonth, maxSub: s.yearly ? t.subYear : t.subMonth,
+      faq: t.faq.map((x, i) => ({ q: x[0], a: x[1], open: s.faq === i, rot: s.faq === i ? 'rotate(45deg)' : 'none', toggle: () => this.setState({ faq: s.faq === i ? -1 : i }) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&display=block" rel="stylesheet">
+<style>body{margin:0;background:#0d0b10}a{color:#ffb08a}a:hover{color:#ffd2a8}</style>
+</helmet>
+<div style="min-height:100vh; background:#0d0b10; color:#f3eee7; font-family:'Be Vietnam Pro', -apple-system, system-ui, sans-serif; -webkit-font-smoothing:antialiased; padding:64px clamp(20px,4vw,56px) 96px; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; gap:88px;">
+
+  <header data-screen-label="Header" style="width:100%; max-width:1440px; display:flex; flex-direction:column; gap:36px;">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:24px;">
+      <div style="display:flex; align-items:center; gap:22px;">
+        <img src="apps/mobile/assets/icon/icon.png" alt="6pm icon" style="width:92px; height:92px; border-radius:22px; box-shadow:0 0 0 0.5px rgba(255,255,255,.12), 0 20px 40px rgba(0,0,0,.4);">
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.16em; color:#ff8552;">APP STORE · PRODUCT PAGE · v1.0</div>
+          <h1 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:clamp(44px,5.5vw,76px); line-height:.92; letter-spacing:-.05em;">6pm on the App Store</h1>
+        </div>
+      </div>
+      <p style="margin:0; max-width:420px; font-size:15px; line-height:1.55; color:rgba(243,238,231,.66); text-wrap:pretty;">Launch listing for 6 Nov, 18:00. Ten 6.9″ screenshots built around the live app: a panorama sunset across the search set, real screens tilted in frame, and the key moment lifted out of each one.</p>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+      <div style="display:flex; padding:4px; border-radius:99px; border:0.5px solid rgba(243,238,231,.18); background:#141118;">
+        <button onClick="{{ setIntl }}" style="height:38px; padding:0 18px; border:none; border-radius:99px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:600; background:{{ intlBg }}; color:{{ intlFg }}; display:flex; align-items:center; gap:7px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:18px;">public</span>International</button>
+        <button onClick="{{ setVn }}" style="height:38px; padding:0 18px; border:none; border-radius:99px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:600; background:{{ vnBg }}; color:{{ vnFg }}; display:flex; align-items:center; gap:7px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:600; letter-spacing:.06em;">VN</span>Vietnam</button>
+      </div>
+      <span style="font-size:13.5px; color:rgba(243,238,231,.6);">{{ marketNote }}</span>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+      <sc-for list="{{ notes }}" as="n" hint-placeholder-count="4">
+        <div style="background:#141118; border:0.5px solid rgba(243,238,231,.1); border-radius:20px; padding:22px 22px 24px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; gap:8px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:20px; color:#ff8552;">{{ n.i }}</span><span style="font-size:15px; font-weight:600;">{{ n.h }}</span></div>
+          <div style="font-size:13.5px; line-height:1.5; color:rgba(243,238,231,.62); text-wrap:pretty;">{{ n.b }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </header>
+
+  <section data-screen-label="Store front" style="width:100%; max-width:1440px; display:flex; flex-direction:column; gap:32px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.14em; color:#ff8552;">01</span><span style="font-family:'Bricolage Grotesque', sans-serif; font-size:36px; font-weight:600; letter-spacing:-.03em;">Store front</span></div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:02" hint-size="402px,874px">
+          <div data-screen-label="Search result" style="height:100%; background:#000; color:#f5f5f7; font-family:-apple-system, 'SF Pro Text', 'Be Vietnam Pro', system-ui, sans-serif; padding:62px 16px 0; box-sizing:border-box; display:flex; flex-direction:column; gap:16px; overflow:hidden;">
+            <div style="height:38px; border-radius:12px; background:#1c1c1e; display:flex; align-items:center; gap:8px; padding:0 10px; font-size:16px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:20px; color:#8e8e93;">search</span><span>{{ query }}</span></div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <img src="apps/mobile/assets/icon/icon.png" alt="" style="width:62px; height:62px; border-radius:14px;">
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;">
+                <div style="font-size:16px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ m.name }}</div>
+                <div style="font-size:13px; color:#8e8e93; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ m.sub }}</div>
+              </div>
+              <div style="height:30px; padding:0 18px; border-radius:99px; background:#2c2c2e; color:#ff9a6e; font-size:15px; font-weight:700; display:flex; align-items:center;">{{ getLbl }}</div>
+            </div>
+            <div style="display:flex; gap:0;">
+              <div style="zoom:.3455; border-radius:40px 0 0 40px; overflow:hidden;"><dc-import name="StoreShot" shot="{{ 1 }}" market="{{ market }}" hint-size="330px,717px"></dc-import></div>
+              <div style="zoom:.3455; border-radius:0; overflow:hidden;"><dc-import name="StoreShot" shot="{{ 2 }}" market="{{ market }}" hint-size="330px,717px"></dc-import></div>
+              <div style="zoom:.3455; border-radius:0 40px 40px 0; overflow:hidden;"><dc-import name="StoreShot" shot="{{ 3 }}" market="{{ market }}" hint-size="330px,717px"></dc-import></div>
+            </div>
+            <div style="height:0.5px; background:#2c2c2e;"></div>
+            <div style="display:flex; align-items:center; gap:12px; opacity:.35;">
+              <div style="width:62px; height:62px; border-radius:14px; background:#2c2c2e;"></div>
+              <div style="flex:1; display:flex; flex-direction:column; gap:7px;"><div style="width:60%; height:11px; border-radius:6px; background:#2c2c2e;"></div><div style="width:40%; height:9px; border-radius:6px; background:#2c2c2e;"></div></div>
+            </div>
+            <div style="display:flex; gap:6px; opacity:.35;"><div style="flex:1; height:200px; border-radius:14px; background:#1c1c1e;"></div><div style="flex:1; height:200px; border-radius:14px; background:#1c1c1e;"></div><div style="flex:1; height:200px; border-radius:14px; background:#1c1c1e;"></div></div>
+          </div>
+        </x-import>
+        <div style="font-family:'IBM Plex Mono', monospace; font-size:11.5px; letter-spacing:.06em; color:rgba(243,238,231,.55);">SEARCH · 01–03 SHARE ONE SUNSET</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" time="18:02" hint-size="402px,874px">
+          <div data-screen-label="Product page" style="height:100%; background:#000; color:#f5f5f7; font-family:-apple-system, 'SF Pro Text', 'Be Vietnam Pro', system-ui, sans-serif; padding:66px 0 0; box-sizing:border-box; display:flex; flex-direction:column; gap:16px; overflow:hidden;">
+            <div style="flex-shrink:0; display:flex; gap:16px; padding:0 18px;">
+              <img src="apps/mobile/assets/icon/icon.png" alt="" style="width:112px; height:112px; border-radius:25px; box-shadow:0 0 0 0.5px rgba(255,255,255,.12);">
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; padding-top:4px;">
+                <div style="font-size:21px; font-weight:700; line-height:1.15; letter-spacing:-.01em;">{{ m.name }}</div>
+                <div style="font-size:14px; color:#8e8e93;">{{ m.sub }}</div>
+                <div style="margin-top:auto; display:flex; align-items:center; justify-content:space-between;">
+                  <div style="height:30px; padding:0 20px; border-radius:99px; background:#ff8552; color:#1a0f0a; font-size:15px; font-weight:700; display:flex; align-items:center;">{{ getLbl }}</div>
+                  <span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px; color:#ff9a6e;">ios_share</span>
+                </div>
+              </div>
+            </div>
+            <div style="flex-shrink:0; display:grid; grid-template-columns:repeat(4, 1fr); margin:0 18px; padding:10px 0; border-top:0.5px solid #2c2c2e; border-bottom:0.5px solid #2c2c2e;">
+              <sc-for list="{{ infoRow }}" as="r" hint-placeholder-count="4">
+                <div style="display:flex; flex-direction:column; align-items:center; gap:3px; border-left:0.5px solid #2c2c2e;"><span style="font-size:10px; font-weight:600; letter-spacing:.04em; color:#8e8e93; text-transform:uppercase;">{{ r.a }}</span><span style="font-size:16px; font-weight:700; color:#aeaeb2;">{{ r.b }}</span><span style="font-size:10px; color:#8e8e93;">{{ r.c }}</span></div>
+              </sc-for>
+            </div>
+            <div style="flex-shrink:0; margin:0 18px; border-radius:18px; overflow:hidden; background:#1c1c1e;">
+              <div style="position:relative; height:96px; background:linear-gradient(90deg,#de7d5c 0%,#b5506a 35%,#713b72 65%,#2e2859 100%); overflow:hidden;">
+                <div style="position:absolute; left:50%; top:-14px; width:220px; height:220px; margin-left:-110px; border-radius:50%; background:radial-gradient(circle, rgba(255,150,95,.6) 0%, rgba(255,140,90,.22) 40%, transparent 70%);"></div><div style="position:absolute; left:50%; top:40px; width:110px; height:56px; margin-left:-55px; overflow:hidden;"><div style="width:110px; height:110px; border-radius:50%; background:linear-gradient(180deg,#fff0c4,#ffb070 70%,#ff8a5a);"></div></div>
+                <div style="position:absolute; left:0; right:0; top:95px; height:1px; background:rgba(255,200,160,.5);"></div>
+                <div style="position:absolute; left:12px; top:10px; height:20px; padding:0 8px; border-radius:6px; background:rgba(0,0,0,.4); font-size:10px; font-weight:700; letter-spacing:.06em; display:flex; align-items:center;">{{ ev.badge }}</div>
+              </div>
+              <div style="padding:10px 14px 13px; display:flex; flex-direction:column; gap:2px;">
+                <div style="font-size:11px; font-weight:600; color:#ff9a6e; letter-spacing:.04em; text-transform:uppercase;">{{ ev.kind }}</div>
+                <div style="font-size:16px; font-weight:700;">{{ ev.name }}</div>
+                <div style="font-size:13px; color:#8e8e93;">{{ ev.short }}</div>
+              </div>
+            </div>
+            <div style="flex-shrink:0; display:flex; padding:0 18px;">
+              <div style="font-size:14px; line-height:1.45; color:#d1d1d6; text-wrap:pretty;">{{ m.promo }}</div>
+            </div>
+          </div>
+        </x-import>
+        <div style="font-family:'IBM Plex Mono', monospace; font-size:11.5px; letter-spacing:.06em; color:rgba(243,238,231,.55);">PRODUCT PAGE · LAUNCH EVENT ABOVE THE FOLD</div>
+      </div>
+
+      <div style="flex:1 1 360px; min-width:0; max-width:520px; display:flex; flex-direction:column; gap:12px;">
+        <sc-for list="{{ fields }}" as="f" hint-placeholder-count="5">
+          <div style="border-radius:18px; background:#141118; border:0.5px solid rgba(243,238,231,.08); padding:16px 18px; display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+              <div style="display:flex; align-items:center; gap:8px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.12em; color:rgba(243,238,231,.55);">{{ f.label }}</span><sc-if value="{{ f.idx }}" hint-placeholder-val="{{ false }}"><span style="height:18px; padding:0 6px; border-radius:5px; background:rgba(94,224,255,.14); color:#7fe7ff; font-family:'IBM Plex Mono', monospace; font-size:9.5px; letter-spacing:.08em; display:flex; align-items:center;">INDEXED</span></sc-if></div>
+              <span style="font-family:'IBM Plex Mono', monospace; font-size:11px; color: {{ f.countC }};">{{ f.count }}</span>
+            </div>
+            <div style="font-size:{{ f.size }}; line-height:1.5; font-weight:{{ f.weight }}; word-break:break-word; text-wrap:pretty;">{{ f.value }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Screenshots" style="width:100%; max-width:1440px; display:flex; flex-direction:column; gap:32px;">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+      <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.14em; color:#ff8552;">02</span><span style="font-family:'Bricolage Grotesque', sans-serif; font-size:36px; font-weight:600; letter-spacing:-.03em;">Screenshots</span></div>
+      <div style="font-family:'IBM Plex Mono', monospace; font-size:11.5px; letter-spacing:.06em; color:rgba(243,238,231,.55);">6.9″ · 330×717 FRAMES · EXPORT AT 4× = 1320×2868</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-size:13px; color:rgba(243,238,231,.6);">Search set: one sunset across three frames. The sun on its thread straddles 01 and 02 and sets as the day closes.</div>
+      <div style="display:flex; gap:0; overflow-x:auto; padding-bottom:8px; scrollbar-width:thin;">
+        <sc-for list="{{ pano }}" as="s" hint-placeholder-count="3">
+          <div id="{{ s.id }}" style="flex-shrink:0; display:flex; flex-direction:column; gap:12px;">
+            <div style="overflow:hidden; border-radius: {{ s.r }};"><dc-import name="StoreShot" shot="{{ s.n }}" market="{{ market }}" guides="{{ guides }}" hint-size="330px,717px"></dc-import></div>
+            <div style="display:flex; flex-direction:column; gap:3px; padding:0 14px; max-width:302px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.1em; color:#ff8552;">{{ s.num }}</span><span style="font-size:12.5px; color:rgba(243,238,231,.6);">{{ s.kw }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="font-size:13px; color:rgba(243,238,231,.6);">Feature tour: the live screen, with its key moment enlarged out of the phone.</div>
+      <div style="display:flex; flex-wrap:wrap; gap:28px;">
+        <sc-for list="{{ tour }}" as="s" hint-placeholder-count="8">
+          <div id="{{ s.id }}" style="display:flex; flex-direction:column; gap:12px;">
+            <div style="overflow:hidden; border-radius:24px;"><dc-import name="StoreShot" shot="{{ s.n }}" market="{{ market }}" guides="{{ guides }}" hint-size="330px,717px"></dc-import></div>
+            <div style="display:flex; flex-direction:column; gap:3px; max-width:330px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.1em; color:#ff8552;">{{ s.num }}</span><span style="font-size:12.5px; color:rgba(243,238,231,.6);">{{ s.kw }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Custom pages and events" style="width:100%; max-width:1440px; display:flex; flex-direction:column; gap:32px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.14em; color:#ff8552;">03</span><span style="font-family:'Bricolage Grotesque', sans-serif; font-size:36px; font-weight:600; letter-spacing:-.03em;">Custom product pages</span></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+      <sc-for list="{{ cpps }}" as="c" hint-placeholder-count="3">
+        <div style="border-radius:26px; background:#141118; border:0.5px solid rgba(243,238,231,.08); padding:22px; display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; flex-direction:column; gap:4px;"><span style="font-size:19px; font-weight:600;">{{ c.name }}</span><span style="font-size:13px; line-height:1.45; color:rgba(243,238,231,.6);">{{ c.who }}</span></div>
+          <div style="display:flex; gap:16px; align-items:flex-end;">
+            <div style="zoom:.42; border-radius:40px; overflow:hidden; flex-shrink:0;"><dc-import name="StoreShot" shot="{{ c.a }}" market="{{ market }}" hint-size="330px,717px"></dc-import></div>
+            <div style="display:flex; flex-direction:column; gap:6px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:.1em; color:rgba(243,238,231,.5);">ORDER</span><span style="font-family:'IBM Plex Mono', monospace; font-size:14px; color:#ff9a6e;">{{ c.order }}</span></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px; font-size:12.5px;">
+            <div style="display:flex; gap:8px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:.1em; color:rgba(243,238,231,.5); width:72px; flex-shrink:0; padding-top:2px;">KEYWORDS</span><span style="color:#7fe7ff;">{{ c.kw }}</span></div>
+            <div style="display:flex; gap:8px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:.1em; color:rgba(243,238,231,.5); width:72px; flex-shrink:0; padding-top:2px;">PROMO</span><span style="color:rgba(243,238,231,.8);">{{ c.promo }}</span></div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section data-screen-label="Preview and event" style="width:100%; max-width:1440px; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 520px), 1fr)); gap:40px;">
+    <div style="display:flex; flex-direction:column; gap:24px;">
+      <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.14em; color:#ff8552;">04</span><span style="font-family:'Bricolage Grotesque', sans-serif; font-size:36px; font-weight:600; letter-spacing:-.03em;">App preview · 30s</span></div>
+      <div style="display:flex; flex-direction:column; gap:1px; border-radius:22px; overflow:hidden; background:rgba(243,238,231,.08);">
+        <sc-for list="{{ beats }}" as="b" hint-placeholder-count="5">
+          <div style="display:flex; gap:18px; padding:16px 20px; background:#141118;">
+            <span style="font-family:'IBM Plex Mono', monospace; font-size:12px; color:#ff8552; width:58px; flex-shrink:0; padding-top:2px;">{{ b.t }}</span>
+            <div style="display:flex; flex-direction:column; gap:3px;"><span style="font-size:15px; font-weight:600;">{{ b.h }}</span><span style="font-size:13px; line-height:1.45; color:rgba(243,238,231,.6);">{{ b.d }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="font-size:13px; line-height:1.5; color:rgba(243,238,231,.55);">Autoplays muted before the screenshots, so every beat reads without sound. Poster frame: 00:14, the CLOSED stamp.</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:24px;">
+      <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.14em; color:#ff8552;">05</span><span style="font-family:'Bricolage Grotesque', sans-serif; font-size:36px; font-weight:600; letter-spacing:-.03em;">In-app event</span></div>
+      <div style="border-radius:26px; overflow:hidden; background:#141118; border:0.5px solid rgba(243,238,231,.08);">
+        <div style="position:relative; height:220px; background:linear-gradient(90deg,#eaa266 0%,#de7d5c 18%,#b5506a 40%,#713b72 62%,#2e2859 85%,#17153a 100%); overflow:hidden;">
+          <div style="position:absolute; left:50%; top:10px; width:400px; height:400px; margin-left:-200px; border-radius:50%; background:radial-gradient(circle, rgba(255,150,95,.6) 0%, rgba(255,140,90,.22) 40%, transparent 70%);"></div><div style="position:absolute; left:50%; top:110px; width:200px; height:100px; margin-left:-100px; overflow:hidden;"><div style="width:200px; height:200px; border-radius:50%; background:linear-gradient(180deg,#fff0c4,#ffb070 70%,#ff8a5a);"></div></div>
+          <div style="position:absolute; left:0; right:0; top:210px; bottom:0; background:rgba(30,14,40,.7);"></div>
+          <div style="position:absolute; left:22px; top:20px; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.14em; color:#fff4e6;">{{ ev.badge }}</div>
+          <div style="position:absolute; right:22px; top:16px; font-family:'Bricolage Grotesque', sans-serif; font-size:44px; font-weight:500; letter-spacing:-.04em; color:#fff4e6;">18:00</div>
+        </div>
+        <div style="padding:20px 22px 22px; display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; flex-direction:column; gap:3px;"><span style="font-size:11.5px; font-weight:600; letter-spacing:.06em; color:#ff9a6e; text-transform:uppercase;">{{ ev.kind }}</span><span style="font-size:22px; font-weight:700;">{{ ev.name }}</span><span style="font-size:14px; color:rgba(243,238,231,.65);">{{ ev.short }}</span></div>
+          <div style="font-size:13.5px; line-height:1.55; color:rgba(243,238,231,.6); text-wrap:pretty;">{{ ev.long }}</div>
+          <div style="display:flex; gap:16px; flex-wrap:wrap; font-family:'IBM Plex Mono', monospace; font-size:11px; color:rgba(243,238,231,.5);"><span>{{ ev.nameCount }}</span><span>{{ ev.shortCount }}</span><span>BADGE · PREMIERE</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;market&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;International&quot;,&quot;Vietnam&quot;],&quot;default&quot;:&quot;International&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;guides&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const META = {
+  en: {
+    query: 'daily budget', get: 'Get',
+    name: '6pm: Safe to Spend', sub: 'Daily budget & expense tracker',
+    keywords: 'money,planner,saving,finance,receipt,scanner,allowance,vietqr,couple,travel,wallet,diary,cash',
+    promo: 'Launching 6 Nov at 18:00. Catch every spend all day, swipe once at six, wake up to one number you can safely spend. Free, private, no bank login.',
+    desc: 'Most budget apps want an hour a week. 6pm wants one minute a day. All day it catches what you spend — Apple Pay, receipt photos, bank emails, your voice. At six, you swipe once to close the day. Tomorrow morning you get one number: what’s safe to spend today.',
+    info: [{ a: 'Price', b: 'Free', c: 'In-app' }, { a: 'Category', b: 'Finance', c: 'Budgeting' }, { a: 'Age', b: '4+', c: 'Years' }, { a: 'Language', b: 'EN', c: '+ Vietnamese' }],
+    ev: { badge: 'PREMIERE · 6 NOV', kind: 'Premiere', name: 'The first 6pm Close', short: 'Close your first day at six, together.', long: 'At 18:00 on launch day, everyone swipes their first close at the same moment. The sun sets on every Today screen at once, and the first morning number arrives at 6am.' },
+    kw: ['safe to spend · daily budget · Today', 'close your day · The 6pm Close', 'log a spend · Apple Pay · VietQR · Quick add', 'can I afford it · Ask 6pm', 'budget planner · Plan', 'money diary · Diary', 'budget app themes · 3 live looks', 'companion · alternate icons', 'living scenes · Lantern River', 'encrypted · open source · Settings', 'on-device AI · offline · Gemma · Qwen · Claude'],
+    cpps: [{ name: 'Vietnam · VietQR', who: 'Search traffic from Vietnamese bank and wallet users. Leads with six ways to capture.', a: 3, b: 1, c: 2, kw: 'vietqr, bank email, expense tracker vietnam', promo: 'Scan VietQR and it’s logged as you pay. Never asks for your bank login.' },
+      { name: 'Looks', who: 'Design and aesthetic searches. Leads with three live looks.', a: 7, b: 9, c: 8, kw: 'aesthetic budget app, cute finance app', promo: '11 looks, from Sơn Mài lacquer to Neon Alley. Three of them move with the hour.' },
+      { name: 'Privacy first', who: 'People who left bank-sync apps. Leads with Settings.', a: 10, b: 1, c: 2, kw: 'private budget app, no bank login', promo: 'Never asks for your bank password. Encrypted on your iPhone. Open source.' }]
+  },
+  vi: {
+    query: 'quản lý chi tiêu', get: 'Nhận',
+    name: '6pm: Safe to Spend', sub: 'Quản lý chi tiêu mỗi ngày',
+    keywords: 'ngân sách,tiết kiệm,thu chi,sổ,ghi chép,vietqr,hoá đơn,biên lai,ví,hũ,du lịch,cặp đôi,tài chính',
+    promo: 'Ra mắt 18:00 ngày 6/11. Tự ghi mọi khoản chi, vuốt một lần lúc sáu giờ, sáng mai chỉ một con số để tiêu. Miễn phí, riêng tư, không đăng nhập ngân hàng.',
+    desc: 'Phần lớn app chi tiêu cần một giờ mỗi tuần. 6pm chỉ cần một phút mỗi ngày. Cả ngày, app tự ghi: VietQR, biên lai, email từ 31 ngân hàng và ví, giọng nói. Sáu giờ tối, bạn vuốt một lần để chốt ngày. Sáng mai, chỉ một con số: hôm nay tiêu được bao nhiêu.',
+    info: [{ a: 'Giá', b: 'Miễn phí', c: 'Mua trong app' }, { a: 'Danh mục', b: 'Tài chính', c: 'Ngân sách' }, { a: 'Tuổi', b: '4+', c: 'Tuổi' }, { a: 'Ngôn ngữ', b: 'VI', c: '+ Tiếng Anh' }],
+    ev: { badge: 'RA MẮT · 6/11', kind: 'Ra mắt', name: 'Lần chốt ngày đầu tiên', short: 'Cùng chốt ngày đầu lúc sáu giờ.', long: '18:00 ngày ra mắt, mọi người cùng vuốt chốt ngày đầu tiên. Mặt trời lặn trên mọi màn hình Hôm nay cùng lúc, và con số buổi sáng đầu tiên đến lúc 6 giờ.' },
+    kw: ['tiêu được bao nhiêu · Today', 'chốt ngày · The 6pm Close', 'ghi chi tiêu · VietQR · Quick add', 'tiêu được không · Ask 6pm', 'kế hoạch chi tiêu · Plan', 'nhật ký chi tiêu · Diary', 'giao diện · 3 look thật', 'bạn đồng hành · icon', 'cảnh động · Lantern River', 'mã hoá · mã nguồn mở · Settings', 'AI trên máy · offline · Gemma · Qwen · Claude'],
+    cpps: [{ name: 'Ngân hàng Việt', who: 'Người dùng VietQR và app ngân hàng. Mở đầu bằng sáu cách ghi.', a: 3, b: 1, c: 2, kw: 'vietqr, email ngân hàng, sổ thu chi', promo: 'Quét VietQR là tự ghi. Không bao giờ hỏi mật khẩu ngân hàng.' },
+      { name: 'Giao diện', who: 'Tìm kiếm về app đẹp. Mở đầu bằng ba giao diện.', a: 7, b: 9, c: 8, kw: 'app chi tiêu đẹp, app tài chính dễ thương', promo: '11 giao diện, từ Sơn Mài đến Neon Alley. Ba cảnh động đổi theo giờ.' },
+      { name: 'Riêng tư', who: 'Người rời bỏ app liên kết ngân hàng. Mở đầu bằng Cài đặt.', a: 10, b: 1, c: 2, kw: 'app chi tiêu riêng tư, không liên kết ngân hàng', promo: 'Không bao giờ hỏi mật khẩu ngân hàng. Mã hoá trên iPhone. Mã nguồn mở.' }]
+  }
+};
+const NOTES = [
+  { i: 'text_fields', h: 'Captions are keywords', b: 'Apple now reads screenshot text and indexes it for search. Each caption is a phrase people type — 4 to 6 words, big, high contrast.' },
+  { i: 'view_carousel', h: 'The first three do the selling', b: 'Search shows three portrait frames. 01–03 share one sunset, so the ritual reads in a single glance: the number, the swipe, the capture.' },
+  { i: 'call_split', h: 'Custom pages rank too', b: 'Up to 70 custom product pages, now eligible in organic search. Three below, each with its own keywords and lead frame.' },
+  { i: 'verified', h: 'Real screens pass review', b: 'Guideline 2.3.3 wants screenshots that show the app in use. Every frame below renders the live 6pm build, not a mock-up.' },
+  { i: 'event', h: 'Launch as an event', b: 'In-app event cards show on the page and in search. The first 6pm Close is a natural premiere.' }
+];
+const BEATS = [
+  { t: '00–04', h: 'The sun drops', d: 'Today screen in Golden Hour. The sun slides down its thread toward the horizon.' },
+  { t: '04–12', h: 'Spends land on their own', d: 'Apple Pay tap, receipt photo, bank email, voice. Four cards drop in. No keyboard.' },
+  { t: '12–18', h: 'One swipe at 18:00', d: 'Thumb drags the close. The CLOSED stamp lands.' },
+  { t: '18–25', h: 'Tomorrow’s number', d: 'Cut to morning. Tomorrow’s safe-to-spend number counts up.' },
+  { t: '25–30', h: 'Close your day at six.', d: 'Icon, wordmark, line. Hold on the dusk.' }
+];
+class Component extends DCLogic {
+  state = { market: null };
+  renderVals() {
+    const market = this.state.market || this.props.market || 'International', vi = market === 'Vietnam';
+    const m = META[vi ? 'vi' : 'en'];
+    const cnt = (s, max) => ({ count: `${[...s].length} / ${max}`, countC: [...s].length > max ? '#ff6b6b' : 'rgba(243,238,231,.45)' });
+    const fields = [
+      { label: 'APP NAME', idx: true, value: m.name, size: '17px', weight: 600, ...cnt(m.name, 30) },
+      { label: 'SUBTITLE', idx: true, value: m.sub, size: '15px', weight: 500, ...cnt(m.sub, 30) },
+      { label: 'KEYWORDS', idx: true, value: m.keywords, size: '13px', weight: 400, ...cnt(m.keywords, 100) },
+      { label: 'PROMOTIONAL TEXT', idx: false, value: m.promo, size: '13.5px', weight: 400, ...cnt(m.promo, 170) },
+      { label: 'DESCRIPTION · OPENING', idx: false, value: m.desc, size: '13.5px', weight: 400, count: 'first 3 lines show', countC: 'rgba(243,238,231,.45)' }
+    ];
+    const mk = n => ({ n, id: 'shot-' + n, num: String(n).padStart(2, '0'), kw: m.kw[n - 1] });
+    const pano = [1, 2, 3].map(mk).map((s, i) => ({ ...s, r: ['24px 0 0 24px', '0', '0 24px 24px 0'][i] }));
+    return {
+      market, setIntl: () => this.setState({ market: 'International' }), setVn: () => this.setState({ market: 'Vietnam' }),
+      intlBg: vi ? 'transparent' : '#f3eee7', intlFg: vi ? 'rgba(243,238,231,.7)' : '#1a0f0a', vnBg: vi ? '#f3eee7' : 'transparent', vnFg: vi ? '#1a0f0a' : 'rgba(243,238,231,.7)',
+      marketNote: vi ? 'Vietnam storefront · captions in Vietnamese · ₫, VietQR, MoMo, local merchants' : 'All other storefronts · captions in English · $, Apple Pay, cards, generic merchants', guides: !!this.props.guides, m, query: m.query, getLbl: m.get,
+      infoRow: m.info, fields, notes: NOTES, pano, tour: [4, 5, 6, 7, 8, 9, 10, 11].map(mk), cpps: m.cpps.map(c => ({ ...c, order: [c.a, c.b, c.c].map(x => String(x).padStart(2, '0')).join(' · ') })), beats: BEATS,
+      ev: { ...m.ev, nameCount: `NAME ${[...m.ev.name].length} / 30`, shortCount: `SHORT ${[...m.ev.short].length} / 50` }
+    };
+  }
+}
+</script>
+</body>
+</html>

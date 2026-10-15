@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=IBM+Plex+Mono:wght@400;500;600&family=Be+Vietnam+Pro:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600&family=Baloo+2:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Literata:opsz,wght@7..72,400..700&family=Newsreader:opsz,wght@6..72,400..700&family=Epilogue:wght@400..700&family=Dela+Gothic+One&family=Archivo:wght@400..800&family=Darker+Grotesque:wght@400..800&family=Plus+Jakarta+Sans:wght@400..800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400..800&family=Alegreya+Sans:wght@400;500;700;800&family=Tilt+Neon&family=Bai+Jamjuree:wght@400;500;600;700&family=Barlow:wght@400;500;600;700&family=Nunito:wght@400..800&family=Spectral:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0f0d12}
+a{color:#f3b27a}
+a:hover{color:#ffd2a8}
+</style>
+</helmet>
+<div style="background:#0f0d12; color:#efe9e1; font-family:'Bricolage Grotesque', system-ui, sans-serif; padding:80px 72px 120px; display:flex; flex-direction:column; gap:72px; width:max-content; min-width:100%; box-sizing:border-box; -webkit-font-smoothing:antialiased;">
+
+  <header data-screen-label="Lookbook header" style="display:flex; justify-content:space-between; align-items:flex-end; gap:64px; flex-wrap:wrap;">
+    <div style="display:flex; flex-direction:column; gap:18px; max-width:760px;">
+      <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.16em; color:rgba(239,233,225,.6);">6PM · LOOKS 2.0 · LOOKBOOK</div>
+      <div style="font-size:112px; font-weight:600; line-height:.9; letter-spacing:-.035em;">Eleven six o’clocks.</div>
+      <div style="font-size:21px; line-height:1.45; color:rgba(239,233,225,.74); text-wrap:pretty; max-width:680px;">Each look is a whole world: its own type, palette, material and motion, following your real clock from dawn to midnight. Every line of text and every button stays at WCAG AA at every minute of the day.</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:18px; padding-bottom:6px;">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; color:rgba(239,233,225,.6);">TIME OF DAY</div>
+        <div style="display:flex; gap:6px;">
+          <sc-for list="{{ hours }}" as="h" hint-placeholder-count="4">
+            <button onClick="{{ h.go }}" style-active="transform:scale(.96);" style="height:40px; padding:0 16px; border-radius:99px; border:1px solid rgba(239,233,225,.22); background: {{ h.bg }}; color: {{ h.fg }}; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:14px; font-weight:500; cursor:pointer;">{{ h.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; color:rgba(239,233,225,.6);">SCREEN</div>
+        <div style="display:flex; gap:6px;">
+          <sc-for list="{{ views }}" as="v" hint-placeholder-count="3">
+            <button onClick="{{ v.go }}" style-active="transform:scale(.96);" style="height:40px; padding:0 16px; border-radius:99px; border:1px solid rgba(239,233,225,.22); background: {{ v.bg }}; color: {{ v.fg }}; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer;">{{ v.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+    <section data-screen-label="{{ g.label }}" style="display:flex; flex-direction:column; gap:32px;">
+      <div style="display:flex; align-items:baseline; gap:20px; border-top:1px solid rgba(239,233,225,.14); padding-top:22px;">
+        <div style="font-size:34px; font-weight:600; letter-spacing:-.015em;">{{ g.title }}</div>
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.12em; color:rgba(239,233,225,.6);">{{ g.sub }}</div>
+      </div>
+      <div style="display:flex; gap:56px; align-items:flex-start;">
+        <sc-for list="{{ g.looks }}" as="l" hint-placeholder-count="3">
+          <article style="width:402px; display:flex; flex-direction:column; gap:22px;">
+            <div style="display:flex; flex-direction:column; gap:10px; min-height:132px;">
+              <div style="display:flex; justify-content:space-between; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.12em; color:rgba(239,233,225,.6);"><span>{{ l.no }}</span><span>{{ l.price }}</span></div>
+              <div style="font-family: {{ l.font }}; font-size:46px; line-height:1.02;">{{ l.name }}</div>
+              <div style="font-size:16px; line-height:1.45; color:rgba(239,233,225,.72); text-wrap:pretty;">{{ l.tag }}</div>
+            </div>
+            <dc-import name="6pm App v2" bare="{{ true }}" unlock-all="{{ true }}" theme="{{ l.name }}" start-hour="{{ hour }}" view="{{ view }}" hint-size="402px,874px"></dc-import>
+            <div style="border-radius:26px; background:#18151c; box-shadow:inset 0 0 0 1px rgba(239,233,225,.07); padding:22px; display:flex; flex-direction:column; gap:22px;">
+              <div style="display:flex; flex-direction:column; gap:14px;">
+                <div style="display:flex; justify-content:space-between; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.12em; color:rgba(239,233,225,.6);"><span>DISPLAY</span><span>{{ l.fontName }}</span></div>
+                <div style="font-family: {{ l.font }}; font-size:52px; line-height:1;">49.000₫</div>
+                <div style="display:flex; justify-content:space-between; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.12em; color:rgba(239,233,225,.6); padding-top:4px;"><span>INTERFACE</span><span>{{ l.uiName }}</span></div>
+                <div style="font-family: {{ l.ui }}; font-size:18px; line-height:1.35;">Close your day in sixty seconds. Đóng sổ hôm nay.</div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; justify-content:space-between; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.12em; color:rgba(239,233,225,.6);"><span>THE DAY</span><span>{{ l.flipLbl }}</span></div>
+                <div style="display:flex; gap:4px;">
+                  <sc-for list="{{ l.strip }}" as="s" hint-placeholder-count="6">
+                    <div style="flex:1; height:58px; border-radius:10px; background: {{ s.bg }}; box-shadow:inset 0 0 0 1px rgba(255,255,255,.06); color: {{ s.fg }}; display:flex; align-items:flex-end; padding:0 0 7px 7px; box-sizing:border-box; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; font-weight:500;">{{ s.h }}</div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.12em; color:rgba(239,233,225,.6);">PALETTES</div>
+                <div style="display:flex; gap:8px;">
+                  <sc-for list="{{ l.vars }}" as="v" hint-placeholder-count="2">
+                    <div style="flex:1; height:46px; border-radius:99px; background:rgba(239,233,225,.06); display:flex; align-items:center; gap:10px; padding:0 14px 0 10px;">
+                      <span style="display:flex;"><span style="width:20px; height:20px; border-radius:50%; background: {{ v.c1 }}; box-shadow:0 0 0 2px #18151c;"></span><span style="width:20px; height:20px; margin-left:-6px; border-radius:50%; background: {{ v.c2 }}; box-shadow:0 0 0 2px #18151c;"></span><span style="width:20px; height:20px; margin-left:-6px; border-radius:50%; background: {{ v.c3 }}; box-shadow:0 0 0 2px #18151c;"></span></span>
+                      <span style="font-size:15px; font-weight:600;">{{ v.name }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; justify-content:space-between; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.12em; color:rgba(239,233,225,.6);"><span>LOWEST CONTRAST, 06:00–24:00</span><span style="color:#9fe0b4;">AA ✓</span></div>
+                <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px;">
+                  <sc-for list="{{ l.cr }}" as="c" hint-placeholder-count="3">
+                    <div style="border-radius:14px; background:rgba(239,233,225,.06); padding:10px 12px; display:flex; flex-direction:column; gap:2px;"><span style="font-size:22px; font-weight:600; font-variant-numeric:tabular-nums;">{{ c.v }}</span><span style="font-size:13px; color:rgba(239,233,225,.62);">{{ c.k }}</span></div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.12em; color:rgba(239,233,225,.6);">MOTION</div>
+                <div style="font-size:15.5px; line-height:1.45; color:rgba(239,233,225,.86); text-wrap:pretty;">{{ l.motion }}</div>
+              </div>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { hour: 18.12, view: 'Today', data: [] };
+  componentDidMount() {
+    fetch('./looks-data.json').then(r => r.json()).then(data => this.setState({ data })).catch(() => {});
+  }
+  renderVals() {
+    const s = this.state;
+    const MOTION = {
+      basic: 'None. Nothing moves, nothing glows. It switches to dark at 18:00 like a system app.',
+      golden: 'Soft. Lens flare and light leaks build towards sunset; bokeh rises after dark.',
+      lacquer: 'Calm. A slow sheen rolls across the lacquer; the gold leaf stays put.',
+      glaze: 'Still. Light slides over the glaze, and the sky turns cobalt at 19:12.',
+      riso: 'None, like print. The second ink just lands a few pixels off.',
+      monsoon: 'Rich. Rain on the glass, a downpour at 16:48, lightning after seven.',
+      cafe: 'Calm. The milk stirs itself. Sữa đá sets at six and đen đá rises.',
+      neon: 'Electric. Tubes hum on at 17:48 and one never quite works. The sign reads đóng cửa once you close.',
+      expo: 'Sensor: hold still to expose. Trails grow longer the steadier your phone is and shorten when you move. Tilting turns the sky over the skyline.',
+      paper: 'Sensor: tilt to look inside. Each paper layer shifts by its depth, shadows fall away from the light, and clouds swing on their threads.',
+      lantern: 'Sensor: lanterns hang true. Tilt or shake and each one swings back to plumb on its own cord while the river slides under them.'
+    };
+    const looks = s.data.map((d, i) => Object.assign({}, d, {
+      no: d.tier === 'Free' ? 'FREE' : String(s.data.filter(x => x.tier !== 'Free').indexOf(d) + 1).padStart(2, '0'),
+      flipLbl: /^\d/.test(d.flip) ? 'Turns dark at ' + d.flip : d.flip,
+      vars: d.vars.map(v => ({ name: v.name, c1: v.c[0], c2: v.c[1], c3: v.c[2] })),
+      cr: [['Text', d.cText], ['Buttons', d.cBtn], ['Accent', d.cAcc]].map(([k, v]) => ({ k, v: v + ':1' })),
+      motion: MOTION[d.id] || ''
+    }));
+    const sel = on => ({ bg: on ? '#efe9e1' : 'transparent', fg: on ? '#16131a' : '#efe9e1' });
+    return {
+      hour: s.hour, view: s.view,
+      hours: [['08:30', 8.5], ['13:00', 13], ['18:07', 18.12], ['21:30', 21.5]].map(([label, h]) => Object.assign({ label, go: () => this.setState({ hour: h }) }, sel(Math.abs(s.hour - h) < 0.01))),
+      views: ['Today', 'Try on', 'The Close'].map(label => Object.assign({ label, go: () => this.setState({ view: label }) }, sel(s.view === label))),
+      groups: [
+        { label: 'Free looks', title: 'Free', sub: 'INCLUDED FOR EVERYONE', looks: looks.filter(l => l.tier === 'Free') },
+        { label: 'Classic looks', title: 'Classic', sub: '49.000₫ EACH · ALL SIX WITH MAX', looks: looks.filter(l => l.tier === 'Classic') },
+        { label: 'Living scenes', title: 'Living scenes', sub: '99.000₫ EACH · INCLUDED IN MAX · MOVE YOUR POINTER OVER A PHONE TO TILT IT', looks: looks.filter(l => l.tier === 'Living scene') }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

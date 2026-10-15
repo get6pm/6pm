@@ -1,5 +1,5 @@
 /** What an image shared out of 6pm is of; it names the file the other app receives. */
-export type ShareKind = 'receipt' | 'money-diary';
+export type ShareKind = 'receipt' | 'money-diary' | 'payment-qr';
 
 const PREFIX = '6pm-';
 const SUFFIX = '.png';

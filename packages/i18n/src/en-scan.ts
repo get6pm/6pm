@@ -33,6 +33,8 @@ export const enScan = {
   'scan.handoff.manual': 'Open {wallet} yourself',
   'scan.handoff.bankApp': 'Open your bank app',
   'scan.handoff.copied': 'Amount copied. I’ll ask when you’re back.',
+  'scan.handoff.savedQr':
+    'QR saved to Photos: scan it from your photos in the bank app. I’ll ask when you’re back.',
   'scan.handoff.back': 'I’m back',
   'scan.return.title': 'Did it go through?',
   'scan.return.to': '{amount} to {payee}, via {wallet}',

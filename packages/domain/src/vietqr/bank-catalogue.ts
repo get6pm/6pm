@@ -1,11 +1,23 @@
 import { BANK_DIRECTORY } from './bank-directory';
 
-/** How to open a bank's iOS app for hand-off. The app is opened as is; no amount is passed. */
+/**
+ * The link a bank's app takes to open a transfer already filled in.
+ * - `qrPay`: `<scheme><path>?targetPage=QRPay&qrContent=<VietQR>`, the form most banks share.
+ * - `namABank`: `<scheme>ops.namabank.com.vn/?data=<base64 JSON of account, amount, note>`.
+ */
+export type HandoffLink =
+  { readonly kind: 'qrPay'; readonly path: string } | { readonly kind: 'namABank' };
+
+/** How to open a bank's iOS app for hand-off. */
 export interface IosApp {
-  /** Native URL scheme, e.g. "mbbank://". Must be listed in LSApplicationQueriesSchemes. */
+  /** Native URL scheme, e.g. "mbbank://". Opening it with nothing after shows the app's home. */
   scheme: string;
   /** App Store id, for the "not installed" fallback. */
   appStoreId: string;
+  /** The filled-in transfer link, when the bank's format is known; null opens the app as is. */
+  link: HandoffLink | null;
+  /** The bank was seen to open `link` filled in when 6pm sent it; only then is it sent. */
+  verified: boolean;
 }
 
 export interface BankInfo {
@@ -56,29 +68,60 @@ const COLORS: Readonly<Record<string, string>> = {
   VTLMONEY: '#EE0033',
 };
 
+const QR_PAY: HandoffLink = { kind: 'qrPay', path: 'applink' };
+
+/** An app 6pm opens as is: the bank takes no transfer link from outside its partners. */
+function plain(scheme: string, appStoreId: string): IosApp {
+  return { scheme, appStoreId, link: null, verified: false };
+}
+
+/** An app whose transfer link is known but not yet seen to open filled in from 6pm. */
+function untried(scheme: string, appStoreId: string, link: HandoffLink = QR_PAY): IosApp {
+  return { scheme, appStoreId, link, verified: false };
+}
+
 /**
- * iOS URL schemes and App Store ids, taken from the VietQR hand-off pages
- * (https://dl.vietqr.io/pay?app=<id>, listed by https://api.vietqr.io/v2/ios-app-deeplinks),
- * fetched 2026-10-10. VIB uses the current MyVIB 2.0 app. Sacombank, MSB, MoMo, ZaloPay and
- * ViettelMoney are not on that list, so they have no hand-off link here.
+ * iOS URL schemes, App Store ids and transfer links, from the bank list Zalo's "pay in a bank
+ * app" reads and the links Zalo sent each app when a VietQR was paid through it (2026-10-14).
+ * Zalo signs its links; MB opened 6pm's unsigned link filled in and a transfer completed, so MB is
+ * the one verified bank. Vietcombank and Agribank take only a token their partner issues, so they
+ * open as is. Apps outside that list keep their VietQR hand-off scheme
+ * (https://api.vietqr.io/v2/ios-app-deeplinks, 2026-10-10). MoMo, ZaloPay and ViettelMoney have
+ * no published link.
  */
 const IOS_APPS: Readonly<Record<string, IosApp>> = {
-  MB: { scheme: 'mbbank://', appStoreId: '1205807363' },
-  VCB: { scheme: 'vietcombankmobile://', appStoreId: '561433133' },
-  TCB: { scheme: 'tcb://', appStoreId: '1548623362' },
-  VPB: { scheme: 'vpbankneo://', appStoreId: '1209349510' },
-  ACB: { scheme: 'acbone://', appStoreId: '950141024' },
-  BIDV: { scheme: 'bidv.smartbanking.partner://', appStoreId: '1061867449' },
-  ICB: { scheme: 'vietinbankipay://', appStoreId: '689963454' },
-  VBA: { scheme: 'agribankmobile://', appStoreId: '935944952' },
-  TPB: { scheme: 'hydro://', appStoreId: '450464147' },
-  VIB: { scheme: 'myvib2://', appStoreId: '1626624790' },
-  SHB: { scheme: 'shbmobile://', appStoreId: '1661457183' },
-  OCB: { scheme: 'newomni-app://', appStoreId: '6472261202' },
-  SEAB: { scheme: 'seamobile://', appStoreId: '846407152' },
-  HDB: { scheme: 'hdbankmobile://', appStoreId: '1461658565' },
-  CAKE: { scheme: 'cake.vn://', appStoreId: '1551907051' },
-  TIMO: { scheme: 'plus://', appStoreId: '1521230347' },
+  MB: { scheme: 'mbbank://', appStoreId: '1205807363', link: QR_PAY, verified: true },
+  VCB: plain('vietcombankmobile://', '561433133'),
+  VBA: plain('agribankmobile://', '935944952'),
+  TCB: untried('tcb://', '1548623362'),
+  VPB: untried('vpbankneo://', '1209349510'),
+  ACB: untried('acbone://', '950141024'),
+  BIDV: untried('dl.bidvsmartbanking.vn://', '1061867449'),
+  ICB: untried('vietinbankipay://', '689963454', { kind: 'qrPay', path: 'host.qrTransfer' }),
+  STB: untried('sacombankpay://', '1436283663'),
+  TPB: untried('hydro://', '450464147'),
+  VIB: untried('myvib2://', '1626624790'),
+  SHB: untried('saha://', '1661457183'),
+  MSB: untried('msbdigibank://', '436134873'),
+  OCB: untried('newomni-app://', '6472261202'),
+  SEAB: untried('seamobile://', '846407152'),
+  HDB: untried('hdbankmobile://', '1461658565'),
+  EIB: untried('eximbankomnimobile://', '1571427361'),
+  LPB: untried('lv24h://', '1488794748'),
+  PVCB: untried('pvcapp://', '6467857410'),
+  ABB: untried('vn.abbank.retail://', '6636532294'),
+  VCCB: untried('bvb.digimi://', '1526444697'),
+  PGB: untried('pgbank.partner://', '1537765475'),
+  VAB: untried('zalo.vietaomni://', '6744814738'),
+  VIETBANK: untried('vietbankzalo://', '6746633957'),
+  MBV: untried('mbv://', '6742386787'),
+  WVN: untried('wvbs://', '1501785125'),
+  KBANK: untried('kbank.kplusvn://', '1586576195'),
+  NAB: untried('nabtransfermoney://', '1456997296', { kind: 'namABank' }),
+  CAKE: untried('cake.vn://', '1551907051'),
+  TIMO: untried('timo://', '1521230347'),
+  // Zalo lists Shinhan's app but no link to it was seen, so it opens as is.
+  SHBVN: plain('shinhanglbvnbank://', '1071033810'),
 };
 
 function readDirectory(): BankInfo[] {
@@ -114,7 +157,7 @@ export function findBank(id: string): BankInfo | null {
   return BY_ID.get(id.toUpperCase()) ?? null;
 }
 
-/** App Store page for a bank's app, for when its URL scheme cannot be opened. */
+/** App Store page for a bank's app, for when it is not on this phone. */
 export function appStoreUrl(app: IosApp): string {
   return `https://apps.apple.com/vn/app/id${app.appStoreId}`;
 }

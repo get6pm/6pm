@@ -114,29 +114,6 @@ const FONTS = [
   'Unbounded-Variable',
 ].map((name) => `./assets/fonts/${name}.ttf`);
 
-/**
- * The bank apps Scan hands a payment to, as `canOpenURL` must be told in advance. Mirrors the iOS
- * schemes in the VietQR bank catalogue (`@6pm/domain`), which this config cannot import.
- */
-const BANK_SCHEMES = [
-  'mbbank',
-  'vietcombankmobile',
-  'tcb',
-  'vpbankneo',
-  'acbone',
-  'bidv.smartbanking.partner',
-  'vietinbankipay',
-  'agribankmobile',
-  'hydro',
-  'myvib2',
-  'shbmobile',
-  'newomni-app',
-  'seamobile',
-  'hdbankmobile',
-  'cake.vn',
-  'plus',
-];
-
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: variant.name,
@@ -181,7 +158,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     config: { usesNonExemptEncryption: false },
     infoPlist: {
       CFBundleAllowMixedLocalizations: true,
-      LSApplicationQueriesSchemes: BANK_SCHEMES,
       NSSupportsLiveActivities: true,
     },
   },

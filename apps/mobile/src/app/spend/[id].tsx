@@ -1,9 +1,9 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Text, View } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';
 
-import { groupDigits, type SpendRow } from '@6pm/domain';
+import type { SpendRow } from '@6pm/domain';
 import { oklchSrgbHex } from '@6pm/theme';
 
 import { useMoney, useMoneyActions } from '../../data/money-provider';
@@ -14,19 +14,20 @@ import { useSpendLabels } from '../../features/today/use-spend-rows';
 import { useI18n } from '../../i18n/i18n';
 import { CategoryTile } from '../../ui/category-tile';
 import { haptics } from '../../ui/haptics';
-import { isSymbolName, Symbol } from '../../ui/icons/symbol';
+import { isSymbolName } from '../../ui/icons/symbol';
 import { SheetScreen } from '../../ui/navigation/sheet-screen';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
-import { body, display, tabular } from '../../ui/type/fonts';
+import { body } from '../../ui/type/fonts';
 import { CategoryChips } from '../../features/details/category-chips';
 import { RulePrompt } from '../../features/details/rule-prompt';
 import { SourceTrail } from '../../features/details/source-trail';
 import { useOfferUndo } from '../../ui/undo/undo-host';
 import { useCompanionToast } from '../../features/companion/use-companion-toast';
 import { useRunAction } from '../../features/companion/use-run-action';
-import { useAutosavedNote } from '../../features/details/use-autosaved-note';
-import { useWalletOptions } from '../../features/quick-add/use-wallet-options';
+import { AmountEditor } from '../../features/details/amount-editor';
+import { DetailsCard } from '../../features/details/details-card';
+import { useFocusOnPresent } from '../../ui/navigation/use-focus-on-present';
 import { easeInOut } from '../../ui/motion/curves';
 
 const DELETE_RED = oklchSrgbHex(0.64, 0.19, 25);
@@ -38,7 +39,7 @@ export default function SpendDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { palette } = useTheme();
-  const { t, language } = useI18n();
+  const { t, language, weekdayDate } = useI18n();
   const snap = useMoney();
   const actions = useMoneyActions();
   const labels = useSpendLabels();
@@ -47,9 +48,10 @@ export default function SpendDetails() {
   const run = useRunAction();
   const spend = findSpend(snap, id);
   const [askRule, setAskRule] = useState(false);
-  const [note, setNote] = useState(spend?.note ?? '');
-  const autosave = useAutosavedNote(spend?.id, spend?.note ?? null);
-  const wallets = useWalletOptions(spend?.wallet);
+  // A catch with no amount opens on the keypad, once the sheet has risen.
+  const [editingAmount, setEditingAmount] = useState(false);
+  const amountField = useRef({ focus: () => setEditingAmount(true) });
+  useFocusOnPresent(amountField, spend !== undefined && spend.amount <= 0);
   // Every way the spend was seen. A merge changes the row, so it is read again then.
   const [sightings, setSightings] = useState<readonly Sighting[]>([]);
   const sightingsOf = spend?.id;
@@ -78,34 +80,8 @@ export default function SpendDetails() {
     day: 'numeric',
     month: 'short',
   }).format(new Date(spend.at));
-  const statusLabel = (s: SpendRow['status']) =>
-    s === 'kept'
-      ? t('details.status.kept')
-      : s === 'pending'
-        ? t('details.status.pending')
-        : s === 'caught'
-          ? t('details.status.caught')
-          : t('details.status.skipped');
   const update = (patch: Partial<SpendRow>) => void run(() => actions.update(spend.id, patch));
 
-  const fields: { key: string; label: string; value: string; onPress?: () => void }[] = [
-    {
-      key: 'pot',
-      label: t('details.pot'),
-      value: spend.forWork ? t('details.claimBack') : t('details.freeMoney'),
-      onPress: () => update({ forWork: !spend.forWork }),
-    },
-    {
-      key: 'wallet',
-      label: t('details.paidWith'),
-      value: wallets.find((w) => w.value === (spend.wallet ?? 'Cash'))?.label ?? spend.wallet ?? '',
-      onPress: () => {
-        const at = wallets.findIndex((w) => w.value === (spend.wallet ?? 'Cash'));
-        update({ wallet: wallets[(at + 1) % wallets.length]?.value ?? null });
-      },
-    },
-    { key: 'status', label: t('details.status'), value: statusLabel(spend.status) },
-  ];
   // One line per way it was seen, headed "Seen 2 ways" when more than one source reported it.
   const trail =
     sightings.length > 1
@@ -136,103 +112,50 @@ export default function SpendDetails() {
         <Text style={{ ...body(14), color: palette.inkSoft }}>
           {when} · {labels.time(spend.at)}
         </Text>
-        <Text
-          style={{
-            ...display(72, 500, -0.02),
-            ...tabular,
-            lineHeight: 72,
-            color: palette.ink,
-            paddingTop: 8,
-          }}
-        >
-          {groupDigits(spend.amount)}
-          <Text style={{ ...display(29, 500), opacity: 0.55 }}>{' ₫'}</Text>
-        </Text>
-        <CategoryChips
-          categories={snap.categories}
-          selected={spend.categoryId}
-          onPick={(categoryId) => {
-            update({ categoryId });
-            setAskRule(true);
-          }}
+        <AmountEditor
+          spend={spend}
+          editing={editingAmount}
+          onEditing={setEditingAmount}
+          onSave={({ amount, foreignAmount }) => update({ amount, foreignAmount })}
         />
-        {askRule && category ? (
-          <RulePrompt
-            text={t('rule.ask', { merchant: spend.merchant, category: category.name })}
-            once={t('rule.once')}
-            always={t('rule.always')}
-            onOnce={() => setAskRule(false)}
-            onAlways={() => {
-              setAskRule(false);
-              void run(() => actions.rememberMerchant(spend.merchant, category.id)).then(
-                (saved) => {
-                  if (saved) say('ruleSaved');
-                },
-              );
+        <Animated.View
+          layout={reflow}
+          style={{ alignSelf: 'stretch', alignItems: 'center', gap: 6 }}
+        >
+          <CategoryChips
+            categories={snap.categories}
+            selected={spend.categoryId}
+            onPick={(categoryId) => {
+              update({ categoryId });
+              setAskRule(true);
             }}
           />
-        ) : null}
+          {askRule && category ? (
+            <RulePrompt
+              text={t('rule.ask', { merchant: spend.merchant, category: category.name })}
+              once={t('rule.once')}
+              always={t('rule.always')}
+              onOnce={() => setAskRule(false)}
+              onAlways={() => {
+                setAskRule(false);
+                void run(() => actions.rememberMerchant(spend.merchant, category.id)).then(
+                  (saved) => {
+                    if (saved) say('ruleSaved');
+                  },
+                );
+              }}
+            />
+          ) : null}
+        </Animated.View>
       </View>
 
       <Animated.View layout={reflow} style={{ gap: 22 }}>
-        <View
-          style={{
-            borderRadius: 26,
-            backgroundColor: palette.cell,
-            boxShadow: palette.cardShadow,
-            overflow: 'hidden',
-          }}
-        >
-          {fields.map((f, i) => (
-            <PressScale
-              key={f.key}
-              highlight
-              highlightBleed={16}
-              disabled={!f.onPress}
-              onPress={() => {
-                haptics.tick();
-                f.onPress?.();
-              }}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 8,
-                marginHorizontal: 16,
-                paddingVertical: 13,
-                borderTopWidth: 0.5,
-                borderTopColor: i === 0 ? 'transparent' : palette.hair,
-              }}
-            >
-              <Text style={{ ...body(16), color: palette.inkSoft, flex: 1 }}>{f.label}</Text>
-              <Text style={{ ...body(16, 550), color: palette.ink }}>{f.value}</Text>
-              {f.onPress ? <Symbol name="unfold_more" size={18} color={palette.inkSoft} /> : null}
-            </PressScale>
-          ))}
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              gap: 12,
-              marginHorizontal: 16,
-              paddingVertical: 13,
-              borderTopWidth: 0.5,
-              borderTopColor: palette.hair,
-            }}
-          >
-            <Text style={{ ...body(16), color: palette.inkSoft }}>{t('details.note')}</Text>
-            <TextInput
-              value={note}
-              onChangeText={(text) => {
-                setNote(text);
-                autosave.change(text);
-              }}
-              onEndEditing={autosave.flush}
-              placeholder={t('details.notePlaceholder')}
-              placeholderTextColor={palette.inkSoft}
-              style={{ flex: 1, textAlign: 'right', fontSize: 16, color: palette.ink, padding: 0 }}
-            />
-          </View>
-        </View>
+        <DetailsCard
+          key={spend.id}
+          spend={spend}
+          when={`${weekdayDate(new Date(`${spend.day}T12:00:00`))} · ${labels.time(spend.at)}`}
+          onUpdate={update}
+        />
 
         <SourceTrail title={t('details.sourceTrail')} lines={trail} />
 

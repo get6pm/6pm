@@ -100,4 +100,4 @@ this code. [docs/product-decisions.md](docs/product-decisions.md) says what 6pm 
 
 ---
 
-<p align="center">Made in Saigon by Odd Eggs Studio.</p>
+<p align="center">Made in Saigon by <a href="https://oddeggs.studio">Odd Eggs Studio</a>.</p>

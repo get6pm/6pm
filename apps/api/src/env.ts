@@ -8,8 +8,6 @@ import type { RequestIdVariables } from 'hono/request-id';
 export const secretNames = [
   /** Anthropic: the vision model that reads a receipt photo the phone could not read. */
   'ANTHROPIC_API_KEY',
-  /** TypeSafe's Jev: closed-label decisions, such as the icon for a category's name. */
-  'TYPESAFE_API_KEY',
   'REVENUECAT_API_V2_KEY',
   'REVENUECAT_WEBHOOK_AUTH',
   /** Seals receipts read from email while they wait for their phone: 32 characters or more. */

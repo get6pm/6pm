@@ -60,7 +60,7 @@ export function readReceipt(
     return {
       kind: 'shop',
       amount: inDong ? Number(shop.total) : null,
-      foreign: abroad ? { currency: shop.currency as string, amount: shop.total as string } : null,
+      foreign: abroad ? { currency: shop.currency, amount: shop.total } : null,
       currency: shop.currency,
       printed: shop.total,
       currencySure: shop.currencySure,

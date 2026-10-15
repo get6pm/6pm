@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 
 import { useI18n } from '../../i18n/i18n';
+import { ForwardingCheckCard } from '../receipt-email/forwarding-check-card';
 import type { GuideContent } from './guide-content';
 import { MistakesCard, OtherMailCard } from './guide-notes';
 import { GuideSection, GuideSteps, type LiveChip } from './guide-sections';
@@ -76,10 +77,8 @@ function Walked({
 
       {source === 'email' ? (
         <>
-          {/*
-            The forwarding check goes here: <ForwardingCheckCard /> from the receipt-email feature,
-            showing the confirmation code Gmail sent to 6pm (the walkthrough's fourth step).
-          */}
+          {/* The confirmation Gmail sent to 6pm, for the walkthrough's fourth step. */}
+          <ForwardingCheckCard />
           <GuideSection title={t('capture.walk.email.otherTitle')}>
             <View style={{ gap: 12 }}>
               <OtherMailCard

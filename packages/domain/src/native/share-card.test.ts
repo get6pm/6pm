@@ -71,7 +71,9 @@ describe('a receipt in another currency', () => {
   });
 
   it('reads an amount typed in Edit in that currency', () => {
-    const shown = JSON.parse(shareShown(JSON.stringify(card(coffeeBean)), '{"amountText":"70,5"}'));
+    const shown: unknown = JSON.parse(
+      shareShown(JSON.stringify(card(coffeeBean)), '{"amountText":"70,5"}'),
+    );
     expect(shown).toMatchObject({ amountText: 'S$70,50', amount: 1_374_785, canConfirm: true });
   });
 
@@ -148,7 +150,7 @@ describe('shareLook', () => {
 
   it('leaves the card as the phone read it when the server could not read the photo', () => {
     expect(look(null)).toMatchObject({ amount: 101_500, needsCheck: false });
-    const broken = JSON.parse(shareLook(JSON.stringify(grabfood), 'nope', withRates, now));
+    const broken: unknown = JSON.parse(shareLook(JSON.stringify(grabfood), 'nope', withRates, now));
     expect(shareCardSchema.parse(broken).amount).toBe(101_500);
   });
 });

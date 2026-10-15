@@ -84,10 +84,15 @@ enum SurfaceFont {
       .withRenderingMode(.alwaysTemplate)
   }
 
+  /// The name the snapshot gives a look whose display face is SF Pro (Basic, Original).
+  static let systemDisplay = "system"
+
   /// The look's display face at a size, set as the app sets it: weight 500, optical size following
-  /// the size where the face has that axis.
+  /// the size where the face has that axis; SF Pro at that weight for the looks that keep it.
   static func display(_ name: String?, size: CGFloat, weight: CGFloat = 500) -> Font {
-    font(name ?? defaultDisplay, size: size, axes: [wght: weight, opsz: min(96, max(12, size))])
+    if name == systemDisplay { return body(size: size, weight: weight) }
+    return font(
+      name ?? defaultDisplay, size: size, axes: [wght: weight, opsz: min(96, max(12, size))])
   }
 
   /// A Material Symbols glyph at a size, filled or outlined.

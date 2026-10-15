@@ -18,7 +18,7 @@ import { dayOf, type MoneySnapshot } from '../../data/money-store';
 import { DEFAULT_PLAN } from '../../data/plan-settings';
 import type { I18n } from '../../i18n/i18n';
 import { contextStrings, hostOf, surfaceContext } from './surface-context';
-import { widgetLook, widgetTokens } from './surface-palette';
+import { displayFamily, SYSTEM_DISPLAY, widgetLook, widgetTokens } from './surface-palette';
 import {
   glyphOf,
   moneyDayStart,
@@ -225,6 +225,8 @@ describe('surfaceSnapshot', () => {
     );
     expect(max.strings['font.display']).toBe('Baloo2');
     expect(free.strings['font.display']).toBe('BricolageGrotesque');
+    const face = (look: 'lacquer' | 'basic') => displayFamily({ look, serious: false });
+    expect([face('lacquer'), face('basic')]).toEqual(['BodoniModa', SYSTEM_DISPLAY]);
   });
 
   it('uses the serious palette in serious mode', () => {

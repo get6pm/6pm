@@ -1,21 +1,26 @@
 import { Asset } from 'expo-asset';
 import { File } from 'expo-file-system';
 
+import ALEGREYA from '../../../assets/fonts/Alegreya-Variable.ttf';
 import BALOO from '../../../assets/fonts/Baloo2-Variable.ttf';
 import BARLOW_MEDIUM from '../../../assets/fonts/BarlowCondensed-Medium.ttf';
 import BARLOW_SEMIBOLD from '../../../assets/fonts/BarlowCondensed-SemiBold.ttf';
 import VIET_MEDIUM from '../../../assets/fonts/BeVietnamPro-Medium.ttf';
 import VIET_SEMIBOLD from '../../../assets/fonts/BeVietnamPro-SemiBold.ttf';
+import BODONI from '../../../assets/fonts/BodoniModa-Variable.ttf';
 import BRICOLAGE from '../../../assets/fonts/BricolageGrotesque-Variable.ttf';
-import CORMORANT from '../../../assets/fonts/CormorantGaramond-Variable.ttf';
+import DARKER from '../../../assets/fonts/DarkerGrotesque-Variable.ttf';
+import DELA from '../../../assets/fonts/DelaGothicOne-Regular.ttf';
 import MONO_MEDIUM from '../../../assets/fonts/IBMPlexMono-Medium.ttf';
 import MONO from '../../../assets/fonts/IBMPlexMono-Regular.ttf';
 import MONO_SEMIBOLD from '../../../assets/fonts/IBMPlexMono-SemiBold.ttf';
-import LORA from '../../../assets/fonts/Lora-Variable.ttf';
 import SYMBOLS from '../../../assets/fonts/MaterialSymbolsRounded-Variable.ttf';
+import NEWSREADER from '../../../assets/fonts/Newsreader-Variable.ttf';
 import HAND from '../../../assets/fonts/PatrickHand-Regular.ttf';
-import PLAYFAIR from '../../../assets/fonts/PlayfairDisplay-Variable.ttf';
-import UNBOUNDED from '../../../assets/fonts/Unbounded-Variable.ttf';
+import SPECTRAL_MEDIUM from '../../../assets/fonts/Spectral-Medium.ttf';
+import SPECTRAL from '../../../assets/fonts/Spectral-Regular.ttf';
+import SPECTRAL_SEMIBOLD from '../../../assets/fonts/Spectral-SemiBold.ttf';
+import TILT from '../../../assets/fonts/TiltNeon.ttf';
 
 /** One `@font-face`: the CSS family, the weight (a range for a variable file) and the file. */
 interface Face {
@@ -49,11 +54,20 @@ const DISPLAY: Readonly<Record<string, readonly Face[]>> = {
     { family: 'Barlow Condensed', weight: '600', asset: BARLOW_SEMIBOLD },
   ],
   'Baloo 2': [{ family: 'Baloo 2', weight: '400 800', asset: BALOO }],
-  Lora: [{ family: 'Lora', weight: '400 700', asset: LORA }],
-  'Playfair Display': [{ family: 'Playfair Display', weight: '400 900', asset: PLAYFAIR }],
-  'Cormorant Garamond': [{ family: 'Cormorant Garamond', weight: '300 700', asset: CORMORANT }],
-  Unbounded: [{ family: 'Unbounded', weight: '200 900', asset: UNBOUNDED }],
+  'Bodoni Moda': [{ family: 'Bodoni Moda', weight: '400 700', asset: BODONI }],
+  Newsreader: [{ family: 'Newsreader', weight: '400 700', asset: NEWSREADER }],
+  'Dela Gothic One': [{ family: 'Dela Gothic One', weight: '400', asset: DELA }],
+  'Darker Grotesque': [{ family: 'Darker Grotesque', weight: '400 800', asset: DARKER }],
+  Alegreya: [{ family: 'Alegreya', weight: '400 800', asset: ALEGREYA }],
+  'Tilt Neon': [{ family: 'Tilt Neon', weight: '400', asset: TILT }],
+  Spectral: [
+    { family: 'Spectral', weight: '400', asset: SPECTRAL },
+    { family: 'Spectral', weight: '500', asset: SPECTRAL_MEDIUM },
+    { family: 'Spectral', weight: '600', asset: SPECTRAL_SEMIBOLD },
+  ],
   'IBM Plex Mono': [],
+  /** The system face (Basic, Original): the web view has SF Pro itself. */
+  '-apple-system': [],
 };
 
 function firstFamily(cssFont: string): string {

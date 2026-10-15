@@ -72,10 +72,16 @@ export function hourlyPalettes(
   }));
 }
 
-/** The look's display face as iOS names it (the widgets bundle the same font files). */
+/** What the widgets read as the system face (SF Pro): Basic and Original set display type in it. */
+export const SYSTEM_DISPLAY = 'system';
+
+/**
+ * The look's display face as iOS names it (the widgets bundle the same font files), or
+ * `SYSTEM_DISPLAY` for a look whose display face is SF Pro.
+ */
 export function displayFamily(look: WidgetLook): string {
   const palette = paletteFor({ look: look.look, hour: 12, serious: look.serious });
-  return display(44, 500, 0, palette.dispFont).fontFamily ?? 'BricolageGrotesque';
+  return display(44, 500, 0, palette.dispFont).fontFamily ?? SYSTEM_DISPLAY;
 }
 
 /** A category tile's colours by hue, as `tile.<hue>.from|to|glyph` entries Swift looks up. */

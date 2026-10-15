@@ -5,6 +5,7 @@ import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
 import { Companion } from '../../ui/companion/companion';
 import type { CompanionMood } from '../../ui/companion/companion-mood';
 import { haptics } from '../../ui/haptics';
+import { FitWidth } from '../../ui/layout/fit-width';
 import { Odometer } from '../../ui/odometer';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
@@ -65,7 +66,18 @@ export function CloseReveal(props: {
       <View style={{ flex: 1 }} />
       {props.line !== null ? <Companion size={112} mood={props.mood} /> : null}
       <Text style={{ ...mono(11, 400, 0.16), color: palette.inkSoft }}>{props.kicker}</Text>
-      <Odometer value={value} size={96} weight={500} letterSpacingEm={-0.02} color={palette.ink} />
+      {/* A long amount scales down to the screen's width instead of running off its edges. */}
+      <View style={{ alignSelf: 'stretch', paddingHorizontal: 20 }}>
+        <FitWidth height={Math.round(96 * 1.04)} align="center">
+          <Odometer
+            value={value}
+            size={96}
+            weight={500}
+            letterSpacingEm={-0.02}
+            color={palette.ink}
+          />
+        </FitWidth>
+      </View>
       {props.line !== null ? (
         <Text
           style={{

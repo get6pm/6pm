@@ -17,7 +17,7 @@ import { useMoney, useMoneyActions, useMoneyStore } from '../../data/money-provi
 import { readWallets } from '../../data/onboarding';
 import { haptics } from '../../ui/haptics';
 import { useClock } from '../../ui/theme/clock';
-import { handOff, type HandoffResult } from './bank-handoff';
+import { handOff, type Handoff } from './bank-handoff';
 import { payeeName, payOptions, titleCase } from './pay-options';
 
 /** A payment on its way out: saved as pending the moment the bank app is asked to open. */
@@ -42,7 +42,7 @@ export type ScanPhase =
       readonly payee: string;
       readonly categoryId: string;
     }
-  | { readonly kind: 'handoff'; readonly payment: Payment; readonly result: HandoffResult | null }
+  | { readonly kind: 'handoff'; readonly payment: Payment; readonly handoff: Handoff | null }
   | { readonly kind: 'return'; readonly payment: Payment };
 
 /**
@@ -155,9 +155,12 @@ export function useScan() {
           spendId: capture.row.id,
           capture,
         };
-        setPhase({ kind: 'handoff', payment, result: null });
-        const result = await handOff(bank, qr, amount).catch((): HandoffResult => 'manual');
-        setPhase((p) => (p.kind === 'handoff' ? { ...p, result } : p));
+        setPhase({ kind: 'handoff', payment, handoff: null });
+        const handoff = await handOff(bank, qr, amount).catch((): Handoff => ({
+          result: 'manual',
+          qrSaved: false,
+        }));
+        setPhase((p) => (p.kind === 'handoff' ? { ...p, handoff } : p));
       } finally {
         paying.current = false;
       }

@@ -21,7 +21,7 @@ import { Sky } from '../../ui/sky/sky';
 import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display } from '../../ui/type/fonts';
-import type { HandoffResult } from './bank-handoff';
+import type { Handoff } from './bank-handoff';
 import { sheetUp } from './scan-card';
 import { scanColours as c } from './scan-colours';
 import type { Payment } from './use-scan';
@@ -57,17 +57,19 @@ const BACK_AFTER_MS = 4000;
 /**
  * While the bank app takes over: "Opening MB Bank…" over the dimmed camera. When 6pm has no link
  * to the bank, or it is not installed, the line says so and an "I'm back" button waits instead.
+ * Below, what travels with the payment: the QR saved to Photos, or the copied amount.
  */
 export function ScanHandoff({
   payment,
-  result,
+  handoff,
   onBack,
 }: {
   readonly payment: Payment;
-  readonly result: HandoffResult | null;
+  readonly handoff: Handoff | null;
   readonly onBack: () => void;
 }) {
   const { t } = useI18n();
+  const result = handoff?.result ?? null;
   const wallet = payment.bank?.shortName;
   const line =
     wallet === undefined
@@ -112,7 +114,7 @@ export function ScanHandoff({
           {line}
         </Text>
         <Text style={{ ...body(14), color: c.sub, textAlign: 'center' }}>
-          {t('scan.handoff.copied')}
+          {t(handoff?.qrSaved ? 'scan.handoff.savedQr' : 'scan.handoff.copied')}
         </Text>
         {/* The slot is always there, so the text above never shifts when the button appears. */}
         <Animated.View

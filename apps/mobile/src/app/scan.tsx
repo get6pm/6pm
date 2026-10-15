@@ -129,7 +129,7 @@ export default function Scan() {
         />
       ) : null}
       {phase.kind === 'handoff' ? (
-        <ScanHandoff payment={phase.payment} result={phase.result} onBack={scan.back} />
+        <ScanHandoff payment={phase.payment} handoff={phase.handoff} onBack={scan.back} />
       ) : null}
       {phase.kind === 'return' ? (
         <ScanReturn

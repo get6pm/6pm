@@ -2,6 +2,7 @@ import type { Vnd } from '../money/format';
 import type { IosApp } from './bank-catalogue';
 import { encodeVietQR, type VietQRInput } from './encode-vietqr';
 import type { VietQR } from './parse-vietqr';
+import { utf8 } from './utf8';
 
 /**
  * The VietQR a bank app should open for this payment. The scanned code is passed on untouched when
@@ -53,21 +54,6 @@ export function handoffUrl(app: IosApp, qr: VietQR, amount: Vnd): string {
 }
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-/** A string's UTF-8 bytes, read from `encodeURIComponent` so no platform encoder is needed. */
-function utf8(text: string): number[] {
-  const escaped = encodeURIComponent(text);
-  const bytes: number[] = [];
-  for (let i = 0; i < escaped.length; i++) {
-    if (escaped[i] === '%') {
-      bytes.push(parseInt(escaped.slice(i + 1, i + 3), 16));
-      i += 2;
-    } else {
-      bytes.push(escaped.charCodeAt(i));
-    }
-  }
-  return bytes;
-}
 
 /** Standard base64 of a string's UTF-8 bytes (`btoa` takes Latin-1 only). */
 function base64(text: string): string {

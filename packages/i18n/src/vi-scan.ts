@@ -36,6 +36,8 @@ export const viScan: { readonly [Key in keyof typeof enScan]: Entry } = {
   'scan.handoff.manual': 'Bạn tự mở {wallet} nhé',
   'scan.handoff.bankApp': 'Mở app ngân hàng của bạn',
   'scan.handoff.copied': 'Đã chép số tiền. Quay lại mình hỏi nhé.',
+  'scan.handoff.savedQr':
+    'Đã lưu mã QR vào Ảnh: quét từ ảnh trong app ngân hàng nhé. Quay lại mình hỏi.',
   'scan.handoff.back': 'Xong rồi',
   'scan.return.title': 'Chuyển được chưa?',
   'scan.return.to': '{amount} cho {payee}, qua {wallet}',

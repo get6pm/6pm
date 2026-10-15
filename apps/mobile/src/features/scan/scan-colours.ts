@@ -28,6 +28,9 @@ export const scanColours = {
   keyBg: 'rgba(31,26,40,.06)',
   button: '#1f1a28',
   buttonText: '#fbf3ea',
+  // A saved payment code stays pure black on white: bank scanners are tuned for nothing else.
+  qrDark: '#000000',
+  qrLight: '#ffffff',
   alertTile: oklchSrgbHex(0.9, 0.06, 60),
   alertGlyph: oklchSrgbHex(0.42, 0.12, 50),
 } as const;

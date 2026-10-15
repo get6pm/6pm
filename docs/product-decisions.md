@@ -65,6 +65,7 @@ Rules that never bend:
 |---|---|
 | Free | Basic and Golden Hour looks, the close, all capture, Today/Plan/Diary, Budget together (shared pots; free since 2026-10-14), 10 Ask questions a day read by the server and unlimited in on-device mode, 10 cloud voice transcriptions a day *(decided 2026-10-15)*, 1 own pot, 36 icons, functional widgets and controls, the sun companion and three more to pick from (Nhang, Bánh Bao, Giọt) *(decided 2026-10-14)* |
 | Looks | 6 classic looks 49.000₫ each; 3 living scenes 99.000₫ each; one-time, via StoreKit (RevenueCat). The "all looks" bundle is dropped (Max replaces it) |
+| Look roster | The six classic looks are Sơn Mài, Bát Tràng, Riso Club, Monsoon, Cà Phê and Neon Alley; the living scenes are Long Exposure, Paper Diorama and Lantern River. Holo Foil and Arcade are dropped, and Neon Noir is renamed Neon Alley. Each look has its own display and interface face (Basic, Golden Hour and serious mode keep SF Pro for interface text). The looks come from the App v2 prototype. Decided 2026-10-15 |
 | 6pm Max | 78.000₫/month or 598.000₫/year, 7-day trial. Every look, unlimited Ask and pots, Travel mode, Year book, encrypted backup and export, widgets in your look, 180 icons, Max companion form and the Hạc Giấy companion *(decided 2026-10-14)* |
 | Widgets | Functional widgets and controls are free; widgets drawn in your look are Max *(default)* |
 | Prices | Read from the store at runtime; the design's prices are the App Store tiers to configure |

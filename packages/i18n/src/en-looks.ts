@@ -49,7 +49,7 @@ export const enLooks = {
   'max.head.looks': 'Every sky. Every scene.',
   'max.sub.looks': 'All {count} looks and the living scenes, plus each new one.',
   'max.head.ask': 'Ask as much as you like.',
-  'max.sub.ask': 'Free gets 3 questions a week. Max has no limit.',
+  'max.sub.ask': 'Free gets 10 questions a day. Max has no limit.',
   'max.head.pots': 'As many pots as plans.',
   'max.sub.pots': 'Free has one pot of your own. Max has no limit, plus auto-rules.',
   'max.head.travel': 'Travel mode, anywhere.',

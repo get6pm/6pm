@@ -30,9 +30,9 @@ describe('the free question count', () => {
     const asked = await recordAsk(db, '2026-10-13');
     expect(asked).toEqual(['2026-10-12', '2026-10-13', '2026-10-13']);
     expect(await readAskedOn(db)).toEqual(asked);
-    // Monday 12 October starts the week: three used, none left until the next Monday.
-    expect(freeAsksLeft(asked, '2026-10-15')).toBe(0);
-    expect(freeAsksLeft(asked, '2026-10-19')).toBe(3);
+    // Each day has its own ten: two used on the 13th, none counted the day after.
+    expect(freeAsksLeft(asked, '2026-10-13')).toBe(8);
+    expect(freeAsksLeft(asked, '2026-10-14')).toBe(10);
   });
 
   it('forgets questions older than a few weeks', async () => {

@@ -47,7 +47,7 @@ export const viLooks: { readonly [Key in keyof typeof enLooks]: Entry } = {
   'max.head.looks': 'Mọi bầu trời. Mọi khung cảnh.',
   'max.sub.looks': 'Cả {count} giao diện và các khung cảnh sống động, cùng mọi bản mới.',
   'max.head.ask': 'Hỏi bao nhiêu tuỳ thích.',
-  'max.sub.ask': 'Gói miễn phí được 3 câu hỏi mỗi tuần. Max không giới hạn.',
+  'max.sub.ask': 'Gói miễn phí được 10 câu hỏi mỗi ngày. Max không giới hạn.',
   'max.head.pots': 'Bao nhiêu kế hoạch, bấy nhiêu hũ.',
   'max.sub.pots': 'Gói miễn phí có một hũ riêng. Max không giới hạn, kèm quy tắc tự động.',
   'max.head.travel': 'Chế độ du lịch, đi đâu cũng được.',

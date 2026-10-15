@@ -4,7 +4,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
-  FREE_ASKS_PER_WEEK,
+  FREE_ASKS_PER_DAY,
   answerQuery,
   freeAsksLeft,
   isAskIntent,
@@ -25,6 +25,7 @@ import { usePlanFormat } from '../plan/plan-format';
 import { useEntitlement } from '../purchases/purchases-provider';
 import { previousCycleStartOf, readEarlierSpends } from '../wording/insight-input';
 import { readModelChoice } from '../wording/model-choice';
+import { readAiMode } from '../privacy/ai-mode';
 import type { PendingAction } from './ask-action-words';
 import { cardOf, type AskWordsNow } from './ask-card';
 import { askContextOf, askLedgerOf } from './ask-context';
@@ -175,8 +176,10 @@ export function useAsk(): AskChat {
       if (question === '' || busy.current) return;
       busy.current = true;
       const { today: day } = words.current;
+      // Only questions the server reads count: on-device mode has no limit.
+      const counted = !max && readAiMode(db) !== 'device';
       try {
-        if (!max) {
+        if (counted) {
           const asked = await readAskedOn(store.db);
           if (freeAsksLeft(asked, day) === 0) {
             setAskedOn(asked);
@@ -186,7 +189,7 @@ export function useAsk(): AskChat {
         }
         push({ id: turnKey(), kind: 'me', text: question });
         setTyping(true);
-        if (!max) {
+        if (counted) {
           try {
             setAskedOn(await recordAsk(store.db, day));
           } catch (error) {
@@ -240,7 +243,8 @@ export function useAsk(): AskChat {
 
   const act = useAskAct({ messages, setMessages, words, actions });
 
-  const freeLeft = max || askedOn === null ? null : freeAsksLeft(askedOn, today);
+  const freeLeft =
+    max || askedOn === null || readAiMode(db) === 'device' ? null : freeAsksLeft(askedOn, today);
   const mood: CompanionMood = typing ? 'think' : lastMood(messages);
   const suggestions = useMemo(() => askSuggestions(t, potName, money), [t, potName, money]);
 
@@ -249,7 +253,7 @@ export function useAsk(): AskChat {
     typing,
     mood,
     freeLeft,
-    freeTotal: FREE_ASKS_PER_WEEK,
+    freeTotal: FREE_ASKS_PER_DAY,
     locked: freeLeft === 0,
     suggestions,
     send,

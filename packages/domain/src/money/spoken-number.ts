@@ -1,4 +1,4 @@
-import type { Vnd } from './format';
+import { toMinor, VND, type Currency, type Money } from './currency';
 import { parseAmount } from './parse-amount';
 import { readPrintedNumber } from '../capture/wallet-amount';
 
@@ -273,8 +273,10 @@ export function readSpokenNumbers(text: string): SpokenNumber[] {
  * The amount a spoken number stands for. With a unit it is exact; without one it reads as typed
  * ("forty-five" is 45.000, like "45" on the keypad), through `parseAmount`.
  */
-export function spokenAmount(spoken: SpokenNumber): Vnd | null {
-  const amount = spoken.scaled ? Math.round(spoken.value) : parseAmount(String(spoken.value));
+export function spokenAmount(spoken: SpokenNumber, currency: Currency = VND): Money | null {
+  const amount = spoken.scaled
+    ? toMinor(spoken.value, currency)
+    : parseAmount(String(spoken.value), currency);
   return amount !== null && amount > 0 && Number.isSafeInteger(amount) ? amount : null;
 }
 

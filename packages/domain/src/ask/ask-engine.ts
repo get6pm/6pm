@@ -1,4 +1,10 @@
-import { floorToThousand, type Vnd } from '../money/format';
+import {
+  designAmount,
+  floorToStep,
+  VND,
+  type Currency,
+  type Money as Vnd,
+} from '../money/currency';
 import type { DailyNumber } from '../plan/daily-number';
 import { addMonthsTo } from '../plan/plan-river';
 import { addDays, weekdayMondayFirst, type LocalDate } from '../time/local-date';
@@ -28,6 +34,8 @@ export interface AskContext {
    */
   readonly share: number;
   readonly pots: readonly AskPot[];
+  /** The home currency; đồng when not given. */
+  readonly currency?: Currency;
 }
 
 /** The before/after bar under an answer: tomorrow's line now, and with the question's change. */
@@ -86,21 +94,22 @@ export type AskAnswer =
 /** Below this share of today's line, the days after a spend count as tight (the design's 0,6). */
 const TIGHT = 0.6;
 /** The most the "take it from Occasions" suggestion moves (the design's 1tr). */
-const POT_SUGGESTION = 1_000_000;
+const POT_SUGGESTION_DONG = 1_000_000;
 
 /** Tomorrow's line if `free` had to last the days left. */
-function lineFrom(free: Vnd, daysLeft: number): Vnd {
-  return daysLeft > 0 ? floorToThousand(free / daysLeft) : Math.max(0, free);
+function lineFrom(free: Vnd, daysLeft: number, currency: Currency): Vnd {
+  return daysLeft > 0 ? floorToStep(free / daysLeft, currency) : Math.max(0, free);
 }
 
 /** Works out the answer to a question from the user's own numbers. */
 export function answerAsk(intent: AskIntent, ctx: AskContext): AskAnswer {
   const { day, daysLeft } = ctx;
+  const currency = ctx.currency ?? VND;
   switch (intent.kind) {
     case 'afford': {
       const amount = intent.amount;
       const free = day.free;
-      const after = lineFrom(free - amount, daysLeft);
+      const after = lineFrom(free - amount, daysLeft, currency);
       const bars = { before: day.tomorrow, after: Math.max(0, after) };
       if (amount <= Math.max(0, day.safe)) {
         return {
@@ -113,9 +122,9 @@ export function answerAsk(intent: AskIntent, ctx: AskContext): AskAnswer {
       if (after <= 0) return { kind: 'notThisMonth', amount, free, payday: ctx.payday, bars };
       if (after < day.line * TIGHT) {
         const inPots = ctx.pots.reduce((sum, pot) => sum + pot.saved, 0);
-        const take = Math.min(POT_SUGGESTION, inPots);
+        const take = Math.min(designAmount(POT_SUGGESTION_DONG, currency), inPots);
         const fromPots =
-          take > 0 ? { take, withPots: lineFrom(free - amount + take, daysLeft) } : null;
+          take > 0 ? { take, withPots: lineFrom(free - amount + take, daysLeft, currency) } : null;
         return { kind: 'tight', amount, free, bars, fromPots };
       }
       return { kind: 'fits', amount, free, bars };
@@ -132,7 +141,7 @@ export function answerAsk(intent: AskIntent, ctx: AskContext): AskAnswer {
     }
     case 'saveMore': {
       const taken = Math.round(intent.amount * ctx.share);
-      const after = Math.max(0, lineFrom(day.free - taken, daysLeft));
+      const after = Math.max(0, lineFrom(day.free - taken, daysLeft, currency));
       return {
         kind: 'saveMore',
         amount: intent.amount,

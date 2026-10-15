@@ -1,3 +1,4 @@
+import { currencyOf } from '../money/currency';
 import { describe, expect, it } from 'vitest';
 
 import { payCycleOn, type Payday } from './pay-cycle';
@@ -287,5 +288,13 @@ describe('potTopUpStep', () => {
 
   it('never goes below 100k, even for a goal of nothing', () => {
     expect(potTopUpStep(0)).toBe(100_000);
+  });
+
+  it('climbs 1 and 5 times a power of ten in dollars, from $1', () => {
+    const usd = currencyOf('USD');
+    expect(potTopUpStep(0, usd)).toBe(100);
+    expect(potTopUpStep(4_000, usd)).toBe(100);
+    expect(potTopUpStep(40_000, usd)).toBe(1_000);
+    expect(potTopUpStep(200_000, usd)).toBe(10_000);
   });
 });

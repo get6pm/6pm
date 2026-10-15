@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { designAmount, VND, type Currency } from '../money/currency';
 import { parseAmount } from '../money/parse-amount';
 
 /**
@@ -31,16 +32,20 @@ const TODAY = /today|hôm nay|hom nay/;
  * Reads a question with rules alone, in English or Vietnamese: the offline fallback and the
  * shortcut for questions plain enough not to need the server.
  */
-export function readIntent(question: string, potNames: readonly string[] = []): AskIntent {
+export function readIntent(
+  question: string,
+  potNames: readonly string[] = [],
+  currency: Currency = VND,
+): AskIntent {
   const q = question.toLowerCase().normalize('NFC');
   const pot = potNames.find((name) => name.length > 0 && q.includes(name.toLowerCase()));
   if (pot !== undefined || (POT.test(q) && !/\d/.test(q))) {
     return pot === undefined ? { kind: 'potFull' } : { kind: 'potFull', pot };
   }
   if (WEEKEND.test(q)) return { kind: 'weekend' };
-  const amount = parseAmount(q);
+  const amount = parseAmount(q, currency);
   // "What if I saved more?" with no amount asks about the design's example step, 500k.
-  if (SAVE.test(q)) return { kind: 'saveMore', amount: amount ?? 500_000 };
+  if (SAVE.test(q)) return { kind: 'saveMore', amount: amount ?? designAmount(500_000, currency) };
   if (amount) return { kind: 'afford', amount };
   if (TODAY.test(q)) return { kind: 'today' };
   return { kind: 'unknown' };

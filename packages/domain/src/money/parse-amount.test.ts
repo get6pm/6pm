@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { currencyOf } from './currency';
 import { parseAmount } from './parse-amount';
 
 describe('parseAmount', () => {
@@ -42,5 +43,37 @@ describe('parseAmount', () => {
 
   it('returns null when there is no number', () => {
     expect(parseAmount('phở with extra beef')).toBeNull();
+  });
+});
+describe('parseAmount outside đồng', () => {
+  const usd = currencyOf('USD');
+  const eur = currencyOf('EUR');
+  const jpy = currencyOf('JPY');
+
+  it('takes a bare number as written, in minor units', () => {
+    expect(parseAmount('35', usd)).toBe(3_500);
+    expect(parseAmount('$3.50', usd)).toBe(350);
+    expect(parseAmount('1,250', usd)).toBe(125_000);
+    expect(parseAmount('1,250.75 USD', usd)).toBe(125_075);
+    expect(parseAmount('12,50 €', eur)).toBe(1_250);
+    expect(parseAmount('¥1200', jpy)).toBe(1_200);
+  });
+
+  it('reads k and m as thousands and millions', () => {
+    expect(parseAmount('45k', usd)).toBe(4_500_000);
+    expect(parseAmount('1.5k', usd)).toBe(150_000);
+    expect(parseAmount('2 million', usd)).toBe(200_000_000);
+    expect(parseAmount('1m2', usd)).toBe(120_000_000);
+  });
+
+  it('finds the amount in a question', () => {
+    expect(parseAmount('can I afford 120 on saturday?', usd)).toBe(12_000);
+    expect(parseAmount('nothing here', usd)).toBeNull();
+  });
+
+  it('keeps a symbol of letters from eating the units', () => {
+    expect(parseAmount('Rp 25.000', currencyOf('IDR'))).toBe(25_000);
+    expect(parseAmount('R45k', currencyOf('ZAR'))).toBe(4_500_000);
+    expect(parseAmount('120 kr', currencyOf('SEK'))).toBe(12_000);
   });
 });

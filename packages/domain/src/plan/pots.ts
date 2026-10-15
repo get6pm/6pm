@@ -1,3 +1,4 @@
+import { designAmount, VND, type Currency } from '../money/currency';
 import type { PotRow } from '../contracts/local-rows';
 import type { Vnd } from '../money/format';
 import type { LocalDate } from '../time/local-date';
@@ -41,13 +42,15 @@ export function potSetAside(input: {
   readonly savedBefore: Vnd;
   readonly futureYou: Vnd;
   readonly cycle: PayCycle;
+  /** The home currency; đồng when not given. */
+  readonly currency?: Currency;
 }): Vnd {
-  const { pot, savedBefore, futureYou, cycle } = input;
+  const { pot, savedBefore, futureYou, cycle, currency = VND } = input;
   const left = Math.max(0, pot.goal - savedBefore);
   if (pot.paused || left === 0) return 0;
   if (pot.kind === 'goal') return Math.min(left, goalMonthly(futureYou, pot.share ?? 0));
   if (pot.neededBy === null || cycleMonth(cycle) > pot.neededBy) return 0;
-  return potMonthlyNeed(pot.goal, savedBefore, potMonthsLeft(cycle, pot.neededBy));
+  return potMonthlyNeed(pot.goal, savedBefore, potMonthsLeft(cycle, pot.neededBy), currency);
 }
 
 /** What a pot held when a cycle began: every move filed in an earlier cycle. */
@@ -79,8 +82,10 @@ export function dueSetAsides(input: {
   readonly today: LocalDate;
   /** The phone's day an instant falls on; passed in so the domain holds no time zone. */
   readonly dayOf: (instant: string) => LocalDate;
+  /** The home currency; đồng when not given. */
+  readonly currency?: Currency;
 }): SetAsideRecord[] {
-  const { moves, payday, today, futureYou } = input;
+  const { moves, payday, today, futureYou, currency = VND } = input;
   const current = payCycleOn(today, payday);
   const out: SetAsideRecord[] = [];
   for (const pot of input.pots) {
@@ -105,6 +110,7 @@ export function dueSetAsides(input: {
         savedBefore: savedBefore(moves, pot.id, cycle.start) + added,
         futureYou,
         cycle,
+        currency,
       });
       out.push({ potId: pot.id, cycle: cycle.start, amount });
       added += amount;
@@ -192,9 +198,26 @@ const TOP_UP_STEPS: readonly Vnd[] = [
 /**
  * A jar's quick top-up, scaled to its goal: the largest round step that is at most a twentieth of
  * it, never below 100k. A 2tr birthday adds 100k a tap, a 20tr trip 1tr, an 800tr car 10tr and a
- * 2 tỷ home 100tr.
+ * 2 tỷ home 100tr. Outside đồng the ladder is 1 and 5 times a power of ten.
  */
-export function potTopUpStep(goal: Vnd): Vnd {
+export function potTopUpStep(goal: Vnd, currency: Currency = VND): Vnd {
   const most = goal / 20;
-  return TOP_UP_STEPS.reduce((best, step) => (step <= most ? step : best), TOP_UP_STEPS[0] ?? 0);
+  const steps = currency.code === 'VND' ? TOP_UP_STEPS : topUpStepsIn(currency);
+  return steps.reduce((best, step) => (step <= most ? step : best), steps[0] ?? 0);
+}
+
+/**
+ * The same ladder outside đồng: 1 and 5 times a power of ten, from the largest such amount no
+ * bigger than the design's 100k worth in the currency ($1, then $5, $10, $50 …), seven rungs.
+ */
+function topUpStepsIn(currency: Currency): Vnd[] {
+  const first = designAmount(100_000, currency);
+  const power = 10 ** Math.floor(Math.log10(first));
+  let step = first >= 5 * power ? 5 * power : power;
+  const steps: Vnd[] = [];
+  for (let i = 0; i < 7; i++) {
+    steps.push(step);
+    step = String(step).startsWith('1') ? step * 5 : step * 2;
+  }
+  return steps;
 }

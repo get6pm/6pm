@@ -1,3 +1,4 @@
+import { currencyOf } from '../money/currency';
 import { describe, expect, it } from 'vitest';
 
 import { dailyNumber } from './daily-number';
@@ -201,6 +202,7 @@ describe('pots and goals', () => {
   it('sets 450k a month aside for Tết: 1,8tr left over four months', () => {
     expect(monthsUntil(today, '2027-02')).toBe(4);
     expect(potMonthlyNeed(3_000_000, 1_200_000, 4)).toBe(450_000);
+    expect(potMonthlyNeed(300_000, 120_000, 4, currencyOf('USD'))).toBe(45_000);
   });
 
   it('rounds a new 2tr pot for January up to 700k a month', () => {

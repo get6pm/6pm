@@ -31,7 +31,13 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "apps/mobile/assets/fonts"
 ICON_MAP = ROOT / "apps/mobile/src/ui/icons/symbols.generated.ts"
 PROTOTYPE = ROOT / "design/prototype/6pm App.dc.html"
-EXTRA_PROTOTYPES = ["6pm Onboarding v2.dc.html", "6pm Surfaces and States.dc.html"]
+EXTRA_PROTOTYPES = [
+    "6pm App v2.dc.html",
+    "6pm Onboarding v2.dc.html",
+    "6pm Surfaces and States.dc.html",
+]
+# Icons the app draws that no prototype names as a word (the Edit pot keypad's cost line).
+EXTRA_ICONS = ["calendar_month"]
 
 # Latin, Latin-1, Latin Extended-A/B (đ, ơ, ư), combining marks, Vietnamese (Latin Extended
 # Additional), general punctuation (’ – — …), currency (₫), arrows and math (≈ −).
@@ -167,8 +173,8 @@ def build_look_faces(src: Path) -> None:
 
 
 def used_icon_names(codepoints: dict) -> list:
-    """Every Material Symbols name that appears as a word in the prototypes."""
-    words = set()
+    """Every Material Symbols name that appears as a word in the prototypes, and EXTRA_ICONS."""
+    words = set(EXTRA_ICONS)
     for path in [PROTOTYPE] + [PROTOTYPE.parent / p for p in EXTRA_PROTOTYPES]:
         words.update(re.findall(r"[a-z][a-z0-9_]{1,40}", path.read_text(encoding="utf-8")))
     return sorted(w for w in words if w in codepoints)

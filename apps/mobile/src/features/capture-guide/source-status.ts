@@ -28,15 +28,21 @@ export interface SourceStatus {
  *   it counts as on once a spend from Apple Pay has arrived.
  * - Receipt email works once the user forwards mail to the address, which the phone cannot see,
  *   so it counts as on once an emailed receipt has arrived.
+ *
+ * Scan reads VietQR, which only Vietnamese banks print: it is listed only for a đồng home.
  */
-export function sourceStatuses(spends: readonly SpendRow[]): readonly SourceStatus[] {
+export function sourceStatuses(
+  spends: readonly SpendRow[],
+  homeCode = 'VND',
+): readonly SourceStatus[] {
   const newest = new Map<SpendSource, SpendRow>();
   for (const spend of spends) {
     if (spend.status === 'deleted') continue;
     const seen = newest.get(spend.source);
     if (!seen || spend.at > seen.at) newest.set(spend.source, spend);
   }
-  return CAPTURE_SOURCES.map((source) => {
+  const listed = CAPTURE_SOURCES.filter((source) => source !== 'scan' || homeCode === 'VND');
+  return listed.map((source) => {
     const spendSource = SPEND_SOURCE[source];
     const last = spendSource ? (newest.get(spendSource) ?? null) : null;
     const on = source === 'wallet' || source === 'email' ? last !== null : true;

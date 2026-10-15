@@ -5,6 +5,7 @@ import { paletteFor, type Palette } from '@6pm/theme';
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { symbolCodepoints, type SymbolName } from '../../ui/icons/symbols.generated';
 import { useLookSettings } from '../looks/look-settings-provider';
 import { resolveLook } from '../purchases/entitlement';
@@ -53,7 +54,8 @@ function nameOfGlyph(glyph: string): SymbolName {
  */
 export function useWidgetPreview(): WidgetPreview {
   const money = useMoney();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const format = useMoneyFormat();
   const { look, config } = useLookSettings();
   const { customer, max } = useEntitlement();
   const serious = money.plan?.serious ?? false;
@@ -73,7 +75,7 @@ export function useWidgetPreview(): WidgetPreview {
       look: widget,
       maxLook: max ? worn : null,
       t,
-      language,
+      format,
       writtenAt: new Date(),
     });
     const palette = paletteFor({
@@ -96,5 +98,5 @@ export function useWidgetPreview(): WidgetPreview {
       ownLook: max,
       serious,
     };
-  }, [money, max, worn, ownConfig, serious, t, language, hour]);
+  }, [money, max, worn, ownConfig, serious, t, format, hour]);
 }

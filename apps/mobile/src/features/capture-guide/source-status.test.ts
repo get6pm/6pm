@@ -95,3 +95,14 @@ describe('captureSourceOf', () => {
     expect(captureSourceOf('fax')).toBe('share');
   });
 });
+
+describe('sourceStatuses away from đồng', () => {
+  it('leaves Scan out, since only Vietnamese banks print VietQR', () => {
+    expect(sourceStatuses([], 'USD').map((s) => s.source)).toEqual([
+      'share',
+      'email',
+      'wallet',
+      'widgets',
+    ]);
+  });
+});

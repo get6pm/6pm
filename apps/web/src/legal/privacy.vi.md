@@ -10,7 +10,7 @@ updated: '2026-10-15'
 - Chi tiêu, kế hoạch và nhật ký của bạn nằm trên iPhone, trong một cơ sở dữ liệu được mã hoá. Chúng tôi không đọc được.
 - 6pm không cần tài khoản. Chỉ khi dùng Cùng chia ngân sách bạn mới đăng nhập, bằng Apple. Chúng tôi không hỏi số điện thoại, email hay thông tin đăng nhập ngân hàng của bạn.
 - Chúng tôi không chạy quảng cáo, không bán dữ liệu, không dùng công cụ phân tích hay theo dõi, cả trong ứng dụng lẫn trên trang web này.
-- Có một vài thứ nhỏ rời khỏi điện thoại: mã thiết bị ẩn danh, trạng thái mua hàng, bản cập nhật ứng dụng, báo cáo lỗi, câu hỏi bạn hỏi 6pm, ảnh biên lai mà điện thoại không đọc được, email ngân hàng bạn chuyển tới địa chỉ nhận biên lai, các hũ chung bạn góp cùng ai đó trong Cùng chia ngân sách và, chỉ khi bạn bật, bản sao lưu đã mã hoá. Từng thứ được giải thích bên dưới.
+- Có một vài thứ nhỏ rời khỏi điện thoại: mã thiết bị ẩn danh, trạng thái mua hàng, bản cập nhật ứng dụng, báo cáo lỗi, câu hỏi bạn hỏi 6pm, vài thông tin về ngày của bạn để bạn đồng hành viết lời, ảnh biên lai mà điện thoại không đọc được, email ngân hàng bạn chuyển tới địa chỉ nhận biên lai, các hũ chung bạn góp cùng ai đó trong Cùng chia ngân sách và, chỉ khi bạn bật, bản sao lưu đã mã hoá. Từng thứ được giải thích bên dưới.
 
 ## Chúng tôi là ai
 
@@ -22,7 +22,7 @@ Chính sách này áp dụng cho ứng dụng 6pm trên iPhone và trang web at6
 
 Mọi thứ bạn nhập, và mọi thứ ứng dụng bắt giúp bạn, đều ở lại trên điện thoại. Đó là các khoản chi, số tiền, nơi chi tiêu, danh mục và ghi chú; ngày lĩnh lương và kế hoạch; các quỹ (pot); nhật ký; cùng cài đặt, giao diện và bạn đồng hành của bạn.
 
-Tất cả nằm trong một cơ sở dữ liệu trên điện thoại, được mã hoá bằng SQLCipher. Khoá được tạo ngay trên máy lần đầu bạn mở 6pm và được giữ trong Keychain của iOS, gắn với thiết bị này. Khoá không bao giờ rời khỏi máy, và chúng tôi không nhận khoá hay bất kỳ dữ liệu nào trong đó.
+Tất cả nằm trong một cơ sở dữ liệu trên điện thoại, được mã hoá bằng SQLCipher. Khoá được tạo ngay trên máy lần đầu bạn mở 6pm và được giữ trong Keychain của iOS, gắn với thiết bị này. Khoá không bao giờ rời khỏi máy, và chúng tôi không nhận khoá hay cơ sở dữ liệu. Chỉ vài thông tin được mô tả ở mục “Hỏi 6pm và lời của bạn đồng hành” được gửi đi, mỗi lần đủ cho một câu.
 
 Vì khoá ở lại trên máy này, dữ liệu sẽ không tự chuyển sang điện thoại mới. Nếu không sao lưu, dữ liệu chỉ tồn tại ở đây.
 
@@ -52,9 +52,11 @@ Chúng tôi gửi một số bản sửa lỗi qua mạng bằng dịch vụ c�
 
 Khi ứng dụng bị treo hoặc gặp lỗi, nó gửi một báo cáo tới Sentry để chúng tôi sửa: lỗi gì trong mã, xảy ra ở màn hình nào, phiên bản ứng dụng, đời iPhone, phiên bản iOS và một mã cài đặt ngẫu nhiên. Báo cáo không bao giờ chứa khoản chi, số tiền, ghi chú, kế hoạch hay tên của bạn, và chúng tôi không gắn kèm địa chỉ IP.
 
-### Hỏi 6pm, gọi tên nơi nhận tiền và đọc ảnh biên lai
+### Hỏi 6pm và lời của bạn đồng hành, gọi tên nơi nhận tiền và đọc ảnh biên lai
 
-Khi bạn hỏi 6pm một câu, ví dụ "Thứ Bảy tiêu 2tr được không?", ứng dụng gửi nội dung câu hỏi tới máy chủ của chúng tôi. Máy chủ hỏi Anthropic, một dịch vụ AI, xem đó là loại câu hỏi gì và nhắc tới số tiền nào. Câu trả lời được tính ngay trên điện thoại, từ dữ liệu không bao giờ rời khỏi máy. Câu hỏi được gửi đi mà không kèm khoản chi, kế hoạch hay số dư của bạn.
+Khi bạn hỏi 6pm một câu, ví dụ "Thứ Bảy tiêu 2tr được không?", ứng dụng gửi nội dung câu hỏi tới máy chủ của chúng tôi, kèm tên các danh mục và hũ của bạn để đọc câu hỏi cho đúng. Máy chủ hỏi Anthropic, một dịch vụ AI, xem câu hỏi muốn biết gì. Câu trả lời được tính ngay trên điện thoại, từ dữ liệu của chính bạn, không bao giờ được gửi đi.
+
+Để viết lời của bạn đồng hành và câu chữ của một câu trả lời, ứng dụng gửi tới máy chủ của chúng tôi, rồi tới Anthropic, vài thông tin mà câu đó nói tới, đã được tính sẵn trên điện thoại: ví dụ một số tiền, tên nơi chi, tên danh mục hay hũ, hoặc tuần này so với tuần trước ra sao. Ứng dụng không bao giờ gửi danh sách khoản chi, kế hoạch hay số dư của bạn. Khi không có mạng, ứng dụng dùng những câu viết sẵn bên trong.
 
 Khi bạn chia sẻ ảnh chụp biên lai cho 6pm, chữ trên ảnh được đọc ngay trên điện thoại. Nếu ứng dụng không chắc bạn đã trả tiền cho ai, và không quy tắc nào của bạn biết tên đó, nó gửi các dòng chữ của biên lai tới máy chủ, rồi tới Anthropic, để gọi tên nơi nhận tiền. Mọi con số đều được bỏ đi trước, nên số tiền, số tài khoản và mã giao dịch không bao giờ được gửi. Nếu có gì chứa chữ số được gửi tới, máy chủ từ chối mà không đọc.
 
@@ -130,7 +132,7 @@ Các công ty này vận hành những phần của dịch vụ đã nêu ở tr
 - **RevenueCat** ghi lại trạng thái mua hàng. [Chính sách quyền riêng tư của RevenueCat](https://www.revenuecat.com/privacy).
 - **Cloudflare** lưu trữ trang web và máy chủ của chúng tôi. [Chính sách quyền riêng tư của Cloudflare](https://www.cloudflare.com/privacypolicy/).
 - **Sentry** nhận báo cáo lỗi. [Chính sách quyền riêng tư của Sentry](https://sentry.io/privacy/).
-- **Anthropic** đọc câu hỏi bạn hỏi, gọi tên nơi nhận tiền từ các dòng biên lai đã bỏ số, và đọc ảnh biên lai mà điện thoại không đọc được. [Chính sách quyền riêng tư của Anthropic](https://www.anthropic.com/legal/privacy).
+- **Anthropic** đọc câu hỏi bạn hỏi, viết lời của bạn đồng hành từ những thông tin về ngày của bạn mô tả ở trên, gọi tên nơi nhận tiền từ các dòng biên lai đã bỏ số, và đọc ảnh biên lai mà điện thoại không đọc được. [Chính sách quyền riêng tư của Anthropic](https://www.anthropic.com/legal/privacy).
 - **Expo** gửi các bản cập nhật ứng dụng qua mạng. [Chính sách quyền riêng tư của Expo](https://expo.dev/privacy).
 
 Chúng tôi chỉ dùng họ cho những mục đích này.
@@ -141,7 +143,7 @@ Chúng tôi chỉ dùng họ cho những mục đích này.
 - **Mã thiết bị.** Chừng nào ứng dụng còn được dùng trên thiết bị đó.
 - **Báo cáo lỗi.** Tối đa 90 ngày, sau đó bị xoá.
 - **Biên lai qua email.** Cho đến khi điện thoại lấy biên lai về, và không bao giờ quá 30 ngày. Địa chỉ nhận biên lai tồn tại chừng nào mã thiết bị còn.
-- **Câu hỏi và dòng biên lai.** Chúng tôi không giữ. Anthropic xoá trong vòng 30 ngày, như mô tả ở trên.
+- **Câu hỏi, thông tin để viết lời và dòng biên lai.** Chúng tôi không giữ. Anthropic xoá trong vòng 30 ngày, như mô tả ở trên.
 - **Ảnh biên lai.** Chúng tôi không giữ. Anthropic xoá trong vòng 30 ngày, như mô tả ở trên.
 - **Sao lưu.** Cho đến khi bạn xoá. Khi bạn xoá, chúng tôi xoá dữ liệu mã hoá khỏi máy chủ.
 - **Cùng chia ngân sách.** Hũ chung cho đến khi một trong hai người rời đi; đăng nhập và tên của bạn cho đến khi bạn xoá tài khoản Cùng chia ngân sách. Cả hai việc đều xoá dữ liệu khỏi máy chủ ngay lập tức.

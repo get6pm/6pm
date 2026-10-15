@@ -10,7 +10,7 @@ updated: '2026-10-15'
 - Your spending, plan and diary live on your iPhone, in an encrypted database. We cannot read them.
 - 6pm needs no account. Only if you use Budget together do you sign in, with Apple. We never ask for your phone number, your email or your bank login.
 - We do not run ads, sell data, or use analytics or tracking tools, in the app or on this website.
-- A few small things do leave your phone: an anonymous device ID, your purchase status, app updates, crash reports, questions you ask 6pm, a receipt photo your phone cannot read, bank emails you forward to your receipt address, the shared pots you keep with someone in Budget together and, only if you turn it on, your encrypted backup. Each one is explained below.
+- A few small things do leave your phone: an anonymous device ID, your purchase status, app updates, crash reports, questions you ask 6pm, a few facts about your day for your companion’s lines, a receipt photo your phone cannot read, bank emails you forward to your receipt address, the shared pots you keep with someone in Budget together and, only if you turn it on, your encrypted backup. Each one is explained below.
 
 ## Who we are
 
@@ -22,7 +22,7 @@ This policy covers the 6pm app for iPhone and the website at at6pm.app.
 
 Everything you enter, and everything the app catches for you, stays on your phone. That means your spends, amounts, merchants, categories and notes, your payday and plan, your pots, your diary, and your settings, look and companion.
 
-All of it sits in a database on your phone, encrypted with SQLCipher. The key is made on your phone the first time you open 6pm and is kept in the iOS Keychain, tied to this device. It never leaves the phone, and we never receive it or any of the data.
+All of it sits in a database on your phone, encrypted with SQLCipher. The key is made on your phone the first time you open 6pm and is kept in the iOS Keychain, tied to this device. It never leaves the phone, and we never receive it or the database. Only the few facts described under “Ask 6pm and your companion’s lines” are sent, one line’s worth at a time.
 
 Because the key stays on this phone, your data does not move to a new phone on its own. Without a backup, it lives only here.
 
@@ -52,9 +52,11 @@ We send some fixes to the app over the air, using Expo's update service. Your ph
 
 When the app crashes or hits an error, it sends a report to Sentry so we can fix it: what went wrong in the code, the screen it happened on, the app version, the iPhone model and iOS version, and a random installation ID. Reports never include your spends, amounts, notes, plan or names, and we do not attach your IP address.
 
-### Ask 6pm, naming a payee and reading a receipt photo
+### Ask 6pm and your companion’s lines, naming a payee and reading a receipt photo
 
-When you ask 6pm a question, such as "Can I afford 2tr on Saturday?", the app sends the question's words to our server. Our server asks Anthropic, an AI service, what kind of question it is and which amount it mentions. The answer itself is worked out on your phone, from data that never leaves it. The question goes without your spends, plan or balance.
+When you ask 6pm a question, such as "Can I afford 2tr on Saturday?", the app sends the question's words to our server, with the names of your categories and pots so the question can be read well. Our server asks Anthropic, an AI service, what the question asks. The answer itself is worked out on your phone, from your own records, which are never sent.
+
+To write your companion's lines and the words of an answer, the app sends our server, and on to Anthropic, the few facts that one line is about, already worked out on your phone: for example an amount, a place, a category or pot name, or how this week compares with the last. It never sends your list of spends, your plan or your balance. Without a connection, the app uses lines written into it.
 
 When you share a receipt screenshot to 6pm, the text on it is read on your phone. If the app cannot tell who you paid, and none of your own rules knows the name, it sends the receipt's lines to our server, and on to Anthropic, to name the payee. Every number is taken out first, so amounts, account numbers and reference codes are never sent. If anything with a digit in it arrives, the server turns it away unread.
 
@@ -130,7 +132,7 @@ These companies run the parts of the service described above. They may handle yo
 - **RevenueCat** records purchase status. [RevenueCat's privacy policy](https://www.revenuecat.com/privacy).
 - **Cloudflare** hosts our website and server. [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/).
 - **Sentry** receives crash reports. [Sentry's privacy policy](https://sentry.io/privacy/).
-- **Anthropic** reads the questions you ask, names payees from number-free receipt lines, and reads a receipt photo your phone cannot read. [Anthropic's privacy policy](https://www.anthropic.com/legal/privacy).
+- **Anthropic** reads the questions you ask, writes your companion's lines from the facts about your day described above, names payees from number-free receipt lines, and reads a receipt photo your phone cannot read. [Anthropic's privacy policy](https://www.anthropic.com/legal/privacy).
 - **Expo** delivers over-the-air app updates. [Expo's privacy policy](https://expo.dev/privacy).
 
 We use them only for these purposes.
@@ -141,7 +143,7 @@ We use them only for these purposes.
 - **Device ID.** For as long as the app is used on that device.
 - **Crash reports.** Up to 90 days, then deleted.
 - **Receipt email.** Until your phone collects the receipt, and never more than 30 days. Your receipt address lasts as long as your device ID.
-- **Questions and receipt lines.** We do not keep them. Anthropic deletes them within 30 days, as described above.
+- **Questions, facts for lines and receipt lines.** We do not keep them. Anthropic deletes them within 30 days, as described above.
 - **Receipt photos.** We do not keep them. Anthropic deletes them within 30 days, as described above.
 - **Backup.** Until you delete it. When you do, we delete the encrypted data from our server.
 - **Budget together.** Shared pots until either of you leaves; your sign-in and name until you delete your Budget together account. Either one deletes the data from our server at once.

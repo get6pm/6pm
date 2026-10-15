@@ -27,6 +27,11 @@ import { seedDesignYear } from './design-year-seed';
  */
 const commandSchema = z.object({
   seed: z.enum(['friday', 'year']).optional(),
+  /** The friday seed's currency (ISO 4217); đồng when not given. */
+  currency: z
+    .string()
+    .regex(/^[A-Z]{3}$/)
+    .optional(),
   /** Pin the clock to today at HH:MM; "" unpins. */
   at: z
     .string()
@@ -73,7 +78,17 @@ export function DevCommands() {
       const parsed = commandSchema.safeParse(JSON.parse(await file.text()));
       file.delete();
       if (!parsed.success) return;
-      const { seed, at, route, toast: line, companion, look, max, yearBook } = parsed.data;
+      const {
+        seed,
+        currency,
+        at,
+        route,
+        toast: line,
+        companion,
+        look,
+        max,
+        yearBook,
+      } = parsed.data;
       if (look !== undefined) lookStore.setLook(look, () => true);
       if (companion !== undefined) pinCompanionForm(companion === '' ? null : companion);
       if (max !== undefined) {
@@ -89,7 +104,7 @@ export function DevCommands() {
         pin.setHours(h, m, 0, 0);
         pinClock(at === '' ? null : pin);
       }
-      if (seed === 'friday') await seedDesignFriday(store, today);
+      if (seed === 'friday') await seedDesignFriday(store, today, currency);
       if (seed === 'year') await seedDesignYear(store, today);
       // Over Home, so sheets present as sheets.
       if (route) {

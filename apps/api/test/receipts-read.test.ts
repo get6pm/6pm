@@ -118,6 +118,7 @@ describe('POST /v1/receipts/read', () => {
       { ...body, image: `${jpeg}!` },
       { ...body, language: 'fr' },
       { ...body, currencyHint: 'sgd' },
+      { ...body, homeCurrency: 'usd' },
       { image: jpeg, language: 'en' },
     ]) {
       const response = await read(token, payload);
@@ -281,7 +282,7 @@ describe('turning the printed total into minor units', () => {
 });
 
 describe('the reading from the model output', () => {
-  it('falls back to the hint, then to đồng, and is then not sure', () => {
+  it('falls back to the hint, then to the home currency (đồng unsaid), and is then not sure', () => {
     const noCurrency = { ...grabReceipt, total: '68.80', currency: null };
     expect(toReceiptReading(noCurrency, 'SGD')).toMatchObject({
       amount: 6_880,
@@ -293,6 +294,12 @@ describe('the reading from the model output', () => {
       currency: 'VND',
       sure: false,
     });
+    expect(toReceiptReading(noCurrency, null, 'USD')).toMatchObject({
+      amount: 6_880,
+      currency: 'USD',
+      sure: false,
+    });
+    expect(toReceiptReading(noCurrency, 'SGD', 'USD')).toMatchObject({ currency: 'SGD' });
     expect(
       toReceiptReading({ ...grabReceipt, currency: 'sgd', total: '68.80' }, null),
     ).toMatchObject({ amount: 6_880, currency: 'SGD', sure: true });

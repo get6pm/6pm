@@ -48,7 +48,7 @@ describe('a receipt in another currency', () => {
       currency: 'SGD',
       amount: 1_341_634,
       amountText: 'S$68,80',
-      inDongText: '1.341.634₫',
+      inHomeText: '1.341.634₫',
       editText: '68,80',
       decimalEntry: true,
       foreign: { currency: 'SGD', amount: '68.80', rate: '19500.5' },
@@ -65,7 +65,7 @@ describe('a receipt in another currency', () => {
 
   it('keeps its own amount, with no đồng until a rate arrives', () => {
     const unpriced = card(coffeeBean, noRates);
-    expect(unpriced).toMatchObject({ amount: null, amountText: 'S$68,80', inDongText: null });
+    expect(unpriced).toMatchObject({ amount: null, amountText: 'S$68,80', inHomeText: null });
     const saved = item(unpriced);
     expect(saved).toMatchObject({ amount: null });
     expect(saved.note).toBeUndefined();

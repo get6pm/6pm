@@ -8,6 +8,7 @@ import { surfaces } from '../../../modules/surfaces';
 import { priceWaitingForeign } from '../../data/foreign-pricing';
 import { importInbox } from '../../data/inbox-import';
 import { useMoneyActions, useMoneyStore } from '../../data/money-provider';
+import { useHomeCurrency } from '../../money/use-money-format';
 import { useApi } from '../api/native-api';
 import { createEnrichShared } from '../capture/enrich-shared';
 import { FX_CACHE_KEY, parseFxCache, rateFor } from '../travel/trip';
@@ -15,13 +16,14 @@ import { FX_CACHE_KEY, parseFxCache, rateFor } from '../travel/trip';
 /**
  * Brings in what the share extension, the shortcuts and the Live Activity left in the App Group:
  * once the money store has loaded, and every time the app comes back to the foreground. Then
- * prices any captured foreign amount still waiting for a rate, at the rate of the day it was
- * paid. One run at a time; a return to the foreground during one waits for it.
+ * prices any captured foreign amount still waiting for a rate, in the home currency, at the rate
+ * of the day it was paid. One run at a time; a return to the foreground during one waits for it.
  */
 export function useInboxImport() {
   const store = useMoneyStore();
   const actions = useMoneyActions();
   const api = useApi();
+  const home = useHomeCurrency();
   const running = useRef<Promise<unknown>>(Promise.resolve());
 
   useEffect(() => {
@@ -41,7 +43,8 @@ export function useInboxImport() {
       return priceWaitingForeign({
         store,
         actions,
-        lastRate: (currency) => rateFor(cache, currency)?.rate ?? null,
+        home,
+        lastRate: (currency) => rateFor(cache, currency, home)?.rate ?? null,
         ratesOn: async (day) =>
           (await api.request({ path: `/v1/fx?on=${day}`, schema: fxRatesResponseSchema })).rates,
       });
@@ -54,6 +57,7 @@ export function useInboxImport() {
             actions,
             inbox: native,
             enrich,
+            home: home.code,
             report: (message) => Sentry.captureMessage(message),
           }),
         )
@@ -66,5 +70,5 @@ export function useInboxImport() {
       if (state === 'active') run();
     });
     return () => sub.remove();
-  }, [store, actions, api]);
+  }, [store, actions, api, home]);
 }

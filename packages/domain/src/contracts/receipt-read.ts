@@ -14,7 +14,7 @@ import { languageSchema } from './wire';
 export const RECEIPT_READ_MAX_IMAGE_BYTES = 1_572_864;
 /** The same limit as base64 text: four characters for every three bytes. */
 export const RECEIPT_READ_MAX_IMAGE_CHARS = Math.ceil(RECEIPT_READ_MAX_IMAGE_BYTES / 3) * 4;
-/** The whole JSON body: the photo plus a language and a currency code. */
+/** The whole JSON body: the photo plus a language and two currency codes. */
 export const RECEIPT_READ_MAX_BODY_BYTES = RECEIPT_READ_MAX_IMAGE_CHARS + 1_024;
 
 /** ISO 4217 alphabetic code, upper case. */
@@ -33,6 +33,11 @@ export const receiptReadRequestSchema = z.object({
   language: languageSchema,
   /** Travel mode's currency or the phone's guess; only a tie-breaker for the model. */
   currencyHint: currencyCodeSchema.nullable(),
+  /**
+   * The currency the phone counts in, for a total whose currency neither the receipt nor the hint
+   * names; absent from phones that do not say (đồng).
+   */
+  homeCurrency: currencyCodeSchema.optional(),
 });
 export type ReceiptReadRequest = z.infer<typeof receiptReadRequestSchema>;
 

@@ -9,8 +9,9 @@ import {
   type ShareCard,
   type SurfaceContext,
 } from '../contracts/surfaces';
+import { contextMoney, homeEditText, type ContextMoney } from './context-money';
 import { fileCategory, safeAfterText, whenText } from './file-category';
-import { currencyOption, editTextOf, rateIn, shareAmount, toDecimal } from './share-amount';
+import { currencyOption, shareAmount, toDecimal } from './share-amount';
 
 /** Lines as the share extension hands them over: recognised text, a PDF's text or a text share. */
 export const receiptLinesSchema = z.array(
@@ -42,7 +43,10 @@ export function toReceiptLines(lines: z.infer<typeof receiptLinesSchema>): Recei
   }));
 }
 
-/** What a receipt from abroad is most likely in, offered when its currency is a guess. */
+/**
+ * What a receipt from abroad is most likely in, offered when its currency is a guess; đồng too on
+ * a phone counting another currency.
+ */
 export const LIKELY_CURRENCIES: readonly string[] = [
   'IDR',
   'THB',
@@ -62,16 +66,22 @@ function guessed(read: ReadReceipt | null): boolean {
 
 /**
  * Currencies the card offers: none when the receipt's own is certain; for a guess, the guess,
- * đồng, the trip's and the likely ones; else the one read, the trip's and đồng.
+ * home, the trip's and the likely ones; else the one read, the trip's and home.
  */
-function currenciesFor(read: ReadReceipt | null, context: SurfaceContext | null) {
-  if (read?.kind === 'transfer' || (read?.currency === 'VND' && read.currencySure)) return [];
+function currenciesFor(
+  read: ReadReceipt | null,
+  context: SurfaceContext | null,
+  money: ContextMoney,
+) {
+  const home = money.home.code;
+  if (read?.kind === 'transfer' || (read?.currency === home && read.currencySure)) return [];
   const trip = context?.travel?.currency;
+  const likely = home === 'VND' ? LIKELY_CURRENCIES : [...LIKELY_CURRENCIES, 'VND'];
   const codes = guessed(read)
-    ? [read?.currency, 'VND', trip, ...LIKELY_CURRENCIES]
-    : [read?.currency, trip, 'VND'];
+    ? [read?.currency, home, trip, ...likely]
+    : [read?.currency, trip, home];
   const unique = [...new Set(codes.filter((code): code is string => typeof code === 'string'))];
-  return unique.length > 1 ? unique.map((code) => currencyOption(context, code)) : [];
+  return unique.length > 1 ? unique.map((code) => currencyOption(money, code)) : [];
 }
 
 /** The card for what was read (null when nothing was), in the app's words and categories. */
@@ -81,14 +91,19 @@ export function cardOf(
   context: SurfaceContext | null,
   now: Date,
 ): ShareCard {
+  const money = contextMoney(context);
+  const { home } = money;
   const at = read?.at ? new Date(read.at) : now;
   const payee = read?.payee ?? '';
-  const currency = read ? read.currency : 'VND';
+  const currency = read ? read.currency : home.code;
   const printed =
-    read?.printed != null && currency !== null ? toDecimal(Number(read.printed), currency) : null;
-  const foreignRead = currency !== null && currency !== 'VND' && printed !== null;
+    read?.printed != null && currency !== null
+      ? toDecimal(Number(read.printed), currency, home)
+      : null;
+  const foreignRead = currency !== null && currency !== home.code && printed !== null;
   const base: ShareCard = {
     amount: read?.amount ?? null,
+    home: home.code,
     payee,
     payeeSure: read?.payeeSure ?? false,
     at: at.toISOString(),
@@ -97,6 +112,7 @@ export function cardOf(
     bank: read?.bank ?? null,
     categoryId: null,
     amountText: '',
+    amountParts: { prefix: '', number: '', suffix: '' },
     safeAfterText: null,
     categoryName: null,
     whenText: whenText(context, at, now),
@@ -108,14 +124,14 @@ export function cardOf(
     totalSure: read?.totalSure ?? false,
     totalLine: read?.totalLine ?? null,
     printed: printed ?? read?.printed ?? null,
-    foreign: foreignRead ? { currency, amount: printed, rate: rateIn(context, currency) } : null,
-    inDongText: null,
+    foreign: foreignRead ? { currency, amount: printed, rate: money.rate(currency) } : null,
+    inHomeText: null,
     editText: '',
     decimalEntry: false,
-    currencies: currenciesFor(read, context),
+    currencies: currenciesFor(read, context, money),
     needsCheck: read === null || (read.kind === 'shop' && !(read.totalSure && read.currencySure)),
   };
-  const shown = shareAmount(base, {});
+  const shown = shareAmount(base, {}, money);
   const category = fileCategory(context, payee, payee, at);
   return {
     ...base,
@@ -123,13 +139,15 @@ export function cardOf(
     categoryId: category?.id ?? null,
     categoryName: category?.name ?? null,
     amountText: shown.amountText,
-    inDongText: shown.inDongText,
+    amountParts: shown.amountParts,
+    inHomeText: shown.inHomeText,
     decimalEntry: shown.decimalEntry,
-    editText: editTextOf(
-      shown.foreign?.amount ?? (shown.amount === null ? null : String(shown.amount)),
-      currency ?? 'VND',
-    ),
-    safeAfterText: safeAfterText(context, category, shown.amount),
+    editText: shown.foreign
+      ? money.foreignEditText(shown.foreign.amount, shown.foreign.currency)
+      : shown.amount === null
+        ? ''
+        : homeEditText(money, shown.amount),
+    safeAfterText: safeAfterText(context, money.format, category, shown.amount),
   };
 }
 
@@ -137,7 +155,7 @@ export function cardOf(
  * The card for a shared receipt. Nothing readable still gives a card, with no amount, so the
  * extension can ask for one rather than fail. For a receipt that prints no currency, where the
  * photo was taken (`located`) is the first guess, and the trip's currency in Travel mode the last
- * before đồng.
+ * before the home currency.
  */
 export function buildShareCard(
   lines: readonly ReceiptLine[],
@@ -145,19 +163,26 @@ export function buildShareCard(
   now: Date,
   located: string | null = null,
 ): ShareCard {
-  const read = readReceipt(lines, context?.travel?.currency ?? null, located);
+  const home = contextMoney(context).home.code;
+  const read = readReceipt(lines, context?.travel?.currency ?? null, located, home);
   return cardOf(read, lines, context, now);
 }
 
 /**
  * The inbox item Confirm writes: the card with the user's edits, caught so the close shows it.
  * A currency the user picked on the card is no longer a guess.
- * Null while there is no amount (Confirm stays off until one is typed). An edited amount in đồng
- * is read like a typed one ("45" is 45.000₫). A foreign amount keeps its currency and the rate
- * it was priced at; with no rate yet its đồng is null and the app prices it when a rate arrives.
+ * Null while there is no amount (Confirm stays off until one is typed). An edited amount in the
+ * home currency is read like a typed one ("45" is 45.000₫ in Vietnam). A foreign amount keeps its
+ * currency and the rate it was priced at; with no rate yet its home amount is null and the app
+ * prices it when a rate arrives. An item counted in a home other than đồng says so.
  */
-export function buildShareItem(card: ShareCard, edits: ShareEdits, id: string): InboxSpend | null {
-  const shown = shareAmount(card, edits);
+export function buildShareItem(
+  card: ShareCard,
+  edits: ShareEdits,
+  id: string,
+  money: ContextMoney,
+): InboxSpend | null {
+  const shown = shareAmount(card, edits, money);
   if (shown.amount === null && shown.foreign === null) return null;
   const payee = (edits.payee ?? card.payee).trim();
   const foreign = shown.foreign;
@@ -169,6 +194,7 @@ export function buildShareItem(card: ShareCard, edits: ShareEdits, id: string): 
     status: 'caught',
     at: card.at,
     amount: shown.amount,
+    ...(money.home.code === 'VND' ? {} : { currency: money.home.code }),
     merchant: payee,
     categoryId: edits.categoryId ?? card.categoryId,
     ...(card.currencyGuessed && edits.currency === undefined ? { currencyGuessed: true } : {}),

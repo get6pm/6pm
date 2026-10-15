@@ -3,12 +3,14 @@ import { usePathname } from 'expo-router';
 import { useEffect, useMemo, useRef } from 'react';
 import { AppState } from 'react-native';
 
+import type { MoneyFormat } from '@6pm/domain';
 import { paletteFor } from '@6pm/theme';
 
 import { surfaces } from '../../../modules/surfaces';
 import { useMoney } from '../../data/money-provider';
 import { dayOf } from '../../data/money-store';
 import { useI18n } from '../../i18n/i18n';
+import { phoneNumberStyle } from '../../money/device-money';
 import { useClock } from '../../ui/theme/clock';
 import { useTravel } from '../travel/travel-provider';
 import { pendingPayState, travelState } from './activity-state';
@@ -25,9 +27,9 @@ const SCAN_ROUTE = '/scan';
  * answered, and a trip under way gets one of its own. One run at a time, each reading what iOS
  * has running at that moment.
  */
-export function useLiveActivity(look: WidgetLook) {
+export function useLiveActivity(look: WidgetLook, format: MoneyFormat) {
   const money = useMoney();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
   const hour = Math.floor(useClock().hour);
   const pathname = usePathname();
   const { trip } = useTravel();
@@ -42,8 +44,8 @@ export function useLiveActivity(look: WidgetLook) {
       }),
     [look, hour],
   );
-  const inputs = useRef({ money, t, language, palette, look, trip, held: pathname === SCAN_ROUTE });
-  inputs.current = { money, t, language, palette, look, trip, held: pathname === SCAN_ROUTE };
+  const inputs = useRef({ money, t, format, palette, look, trip, held: pathname === SCAN_ROUTE });
+  inputs.current = { money, t, format, palette, look, trip, held: pathname === SCAN_ROUTE };
   const running = useRef<Promise<unknown>>(Promise.resolve());
 
   useEffect(() => {
@@ -67,7 +69,7 @@ export function useLiveActivity(look: WidgetLook) {
               JSON.stringify(
                 pendingPayState(spend, {
                   t: now.t,
-                  language: now.language,
+                  format: now.format,
                   palette: now.palette,
                   serious: now.look.serious,
                 }),
@@ -77,7 +79,12 @@ export function useLiveActivity(look: WidgetLook) {
           const state =
             now.trip === null || day === null
               ? null
-              : travelState(now.trip, day, { t: now.t, palette: now.palette });
+              : travelState(now.trip, day, {
+                  t: now.t,
+                  palette: now.palette,
+                  format: now.format,
+                  phone: phoneNumberStyle(),
+                });
           const travel = travelActivityPlan({
             running,
             trip:
@@ -97,7 +104,7 @@ export function useLiveActivity(look: WidgetLook) {
       if (state === 'active') run();
     });
     return () => sub.remove();
-  }, [money, t, language, palette, look, trip, pathname]);
+  }, [money, t, format, palette, look, trip, pathname]);
 }
 
 async function apply(native: NonNullable<typeof surfaces>, plan: ActivityPlan) {

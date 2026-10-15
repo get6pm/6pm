@@ -1,20 +1,23 @@
+import { currencyOf } from '../money/currency';
+
 /**
- * Which currency a shop receipt is in. A receipt from abroad must never become đồng by default:
- * its own marks decide first (S$, Rp, ฿, "(IDR)"), then where the photo was taken (its GPS, read
- * on the phone), then what it says about where it was printed (a city, "GST REG", a +62 phone,
- * the language of its labels), then the trip Travel mode is on, and only then đồng, unless its
- * amounts carry cents, which đồng never does. Only a printed mark, or a bill written in
- * Vietnamese, is sure: everything after it is a guess the person is asked to check.
+ * Which currency a shop receipt is in. A receipt from abroad must never become the home currency
+ * by default: its own marks decide first (S$, Rp, ฿, "(IDR)"), then where the photo was taken
+ * (its GPS, read on the phone), then what it says about where it was printed (a city, "GST REG",
+ * a +62 phone, the language of its labels), then the trip Travel mode is on, and only then the
+ * home currency, unless its amounts carry cents and home has none (đồng never does). Only a
+ * printed mark, or a bill written in Vietnamese (đồng, wherever home is), is sure: everything
+ * after it is a guess the person is asked to check.
  */
 
 export interface ReceiptCurrency {
-  /** ISO 4217, or null when the amounts are clearly not đồng and nothing says what they are. */
+  /** ISO 4217, or null when the amounts clearly cannot be home's and nothing says what they are. */
   readonly currency: string | null;
   /** True only when the receipt printed the currency itself; false when it was inferred. */
   readonly sure: boolean;
   /**
    * What decided it: the receipt itself (a mark, or Vietnamese), where the photo was taken, the
-   * place or words in its text, the trip, or nothing (đồng by default).
+   * place or words in its text, the trip, or nothing (the home currency by default).
    */
   readonly from: CurrencySource;
 }
@@ -27,6 +30,8 @@ export interface CurrencyHints {
   readonly located: string | null;
   /** The trip's currency in Travel mode. */
   readonly prior: string | null;
+  /** The home currency, the last guess; đồng when not given. */
+  readonly home?: string;
 }
 
 /** Marks a receipt prints next to its amounts, by currency. Longer marks first. */
@@ -129,7 +134,7 @@ function countMarks(rows: readonly string[]): Map<string, number> {
 export function readReceiptCurrency(
   rows: readonly string[],
   centsPrinted: boolean,
-  { located, prior }: CurrencyHints,
+  { located, prior, home = 'VND' }: CurrencyHints,
 ): ReceiptCurrency {
   const marks = countMarks(rows);
   if (centsPrinted) marks.delete('VND');
@@ -155,5 +160,6 @@ export function readReceiptCurrency(
   if (prior !== null && (prior !== 'VND' || !centsPrinted)) {
     return { currency: prior, sure: false, from: 'trip' };
   }
-  return { currency: centsPrinted ? null : 'VND', sure: false, from: 'none' };
+  const homeWhole = currencyOf(home).minorDigits === 0;
+  return { currency: centsPrinted && homeWhole ? null : home, sure: false, from: 'none' };
 }

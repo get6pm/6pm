@@ -20,9 +20,9 @@ describe('where a photo was taken', () => {
     expect(currencyAt(latitude, longitude)).toBe(currency);
   });
 
-  it('knows a country 6pm has no rate for, and gives it no currency', () => {
+  it('knows a country outside the region Travel was designed around, and its currency', () => {
     expect(countryAt(47.38, 8.54)).toBe('CH');
-    expect(currencyAt(47.38, 8.54)).toBeNull();
+    expect(currencyAt(47.38, 8.54)).toBe('CHF');
   });
 
   it('says nothing out at sea or for a reading that is not a place', () => {

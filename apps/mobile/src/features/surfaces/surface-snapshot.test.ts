@@ -2,7 +2,10 @@ import { describe, expect, it } from '@jest/globals';
 
 import {
   formatShort,
+  moneyFormat,
+  moneyLocale,
   payCycleOn,
+  VND,
   surfaceContextSchema,
   surfaceSnapshotSchema,
   type CategoryRow,
@@ -88,7 +91,8 @@ const writtenAt = new Date('2026-10-09T11:07:00.000Z');
 
 function snapshotOf(m: MoneySnapshot, language: Language = 'en') {
   const t = language === 'vi' ? vi : en;
-  return surfaceSnapshot({ money: m, look: golden, maxLook: null, t, language, writtenAt });
+  const format = moneyFormat(moneyLocale(VND, language));
+  return surfaceSnapshot({ money: m, look: golden, maxLook: null, t, format, writtenAt });
 }
 
 describe('surfaceSnapshot', () => {
@@ -190,7 +194,7 @@ describe('surfaceSnapshot', () => {
       look: paper,
       maxLook: 'paper',
       t: en,
-      language: 'en',
+      format: moneyFormat(moneyLocale(VND, 'en')),
       writtenAt,
     });
     expect(max.maxLook).toBe('paper');
@@ -208,7 +212,7 @@ describe('surfaceSnapshot', () => {
       look,
       maxLook: 'neon',
       t: en,
-      language: 'en',
+      format: moneyFormat(moneyLocale(VND, 'en')),
       writtenAt,
     });
     expect(snap.serious).toBe(true);
@@ -225,7 +229,7 @@ describe('surfaceSnapshot', () => {
       look: golden,
       maxLook: null,
       t: en,
-      language: 'en',
+      format: moneyFormat(moneyLocale(VND, 'en')),
       writtenAt: new Date(writtenAt.getTime() + 60_000),
     });
     expect(snapshotKey(a)).toBe(snapshotKey(b));

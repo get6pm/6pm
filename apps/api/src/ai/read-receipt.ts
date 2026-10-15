@@ -61,16 +61,18 @@ export function receiptReadPrompt(request: Pick<ReceiptReadRequest, 'language' |
 const printedLocalTime = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
 
 /**
- * The model's words as the wire reading. The currency is the model's, else the hint, else đồng
- * (6pm's home currency) and not sure. No total that reads as a positive amount means no reading.
+ * The model's words as the wire reading. The currency is the model's, else the hint, else the
+ * currency the phone counts in (đồng when it does not say) and not sure. No total that reads as a
+ * positive amount means no reading.
  */
 export function toReceiptReading(
   output: ReceiptModelOutput,
   currencyHint: string | null,
+  homeCurrency = 'VND',
 ): ReceiptReading | null {
   if (!output.isReceipt || output.total === null) return null;
   const named = currencyCodeSchema.safeParse(output.currency?.trim().toUpperCase());
-  const currency = named.success ? named.data : (currencyHint ?? 'VND');
+  const currency = named.success ? named.data : (currencyHint ?? homeCurrency);
   const amount = receiptMinorUnits(output.total, currency);
   if (amount === null) return null;
   const merchant = output.merchant?.trim().slice(0, 120) ?? '';
@@ -103,6 +105,9 @@ export async function readReceipt(
   });
   return {
     ...read,
-    output: read.output === null ? null : toReceiptReading(read.output, request.currencyHint),
+    output:
+      read.output === null
+        ? null
+        : toReceiptReading(read.output, request.currencyHint, request.homeCurrency),
   };
 }

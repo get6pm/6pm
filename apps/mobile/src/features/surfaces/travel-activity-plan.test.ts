@@ -1,5 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
+import { currencyOf, moneyFormat, moneyLocale, VND } from '@6pm/domain';
 import { t as translate } from '@6pm/i18n';
 import { paletteFor } from '@6pm/theme';
 
@@ -72,11 +73,12 @@ describe('what the trip’s activity says', () => {
   const place = { country: 'TH', name: 'Bangkok', at: now.toISOString() };
   const palette = paletteFor({ look: 'basic', hour: 18, serious: false });
   const t: I18n['t'] = (key, ...params) => translate('en', key, ...params);
+  const format = moneyFormat(moneyLocale(VND, 'en'));
 
   it('reads like the design: place, what is left, spent of the line, đồng underneath', () => {
     const active = tripOf({ on: true, max: true, place, cache, now });
     expect(active).not.toBeNull();
-    const state = travelState(active!, { line: 924_000, spent: 493_000 }, { t, palette });
+    const state = travelState(active!, { line: 924_000, spent: 493_000 }, { t, palette, format });
     expect(state).toMatchObject({
       place: 'Bangkok · today',
       left: '฿559 left',
@@ -89,10 +91,37 @@ describe('what the trip’s activity says', () => {
 
   it('says how far over when the day went over, and nothing without a rate', () => {
     const active = tripOf({ on: true, max: true, place, cache, now })!;
-    expect(travelState(active, { line: 100_000, spent: 150_000 }, { t, palette })?.left).toBe(
-      '฿65 over',
-    );
+    expect(
+      travelState(active, { line: 100_000, spent: 150_000 }, { t, palette, format })?.left,
+    ).toBe('฿65 over');
     const noRate = tripOf({ on: true, max: true, place, cache: null, now })!;
-    expect(travelState(noRate, { line: 100_000, spent: 0 }, { t, palette })).toBeNull();
+    expect(travelState(noRate, { line: 100_000, spent: 0 }, { t, palette, format })).toBeNull();
+  });
+
+  it('shows the day in the home currency on a phone counting dollars', () => {
+    const usd = currencyOf('USD');
+    const phone = { languageTag: 'en-US', decimal: '.', group: ',' };
+    const dollars = moneyFormat(moneyLocale(usd, 'en', phone));
+    const quotes: FxCache = {
+      ...cache,
+      rates: {
+        ...cache.rates,
+        rates: [
+          ...cache.rates.rates,
+          { currency: 'USD', rate: '26000', asOf: '2026-10-12', source: 'frankfurter' },
+        ],
+      },
+    };
+    const active = tripOf({ on: true, max: true, place, cache: quotes, now, home: usd })!;
+    const state = travelState(
+      active,
+      { line: 3_000, spent: 1_500 },
+      { t, palette, format: dollars, phone },
+    );
+    expect(state).toMatchObject({
+      left: '฿506 left',
+      spent: '฿506',
+      of: 'of ฿1,012 · ≈ $15',
+    });
   });
 });

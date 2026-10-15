@@ -41,6 +41,7 @@ export const viNative: { readonly [Key in keyof typeof enNative]: Entry } = {
   'native.share.inDong': 'khoảng {amount}',
   'native.share.noRate': 'Chưa có tỉ giá. 6pm sẽ quy đổi theo tỉ giá của ngày đó khi có.',
   'native.share.unknownCurrency': 'Không rõ loại tiền. Nhập số tiền bằng đồng nhé.',
+  'native.share.unknownCurrencyIn': 'Không rõ loại tiền. Nhập số tiền bằng {currency} nhé.',
   'native.share.looking': 'Đang đọc kỹ hơn…',
   'native.share.step': '{n} trên {total}',
   'native.share.skip': 'Bỏ qua',

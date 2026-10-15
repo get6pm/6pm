@@ -43,6 +43,7 @@ export const enNative = {
   'native.share.inDong': '≈ {amount}',
   'native.share.noRate': 'No rate yet. 6pm prices it at that day’s rate once it has one.',
   'native.share.unknownCurrency': 'Couldn’t tell the currency. Type the amount in đồng.',
+  'native.share.unknownCurrencyIn': 'Couldn’t tell the currency. Type the amount in {currency}.',
   'native.share.looking': 'Reading it more closely…',
   'native.share.step': '{n} of {total}',
   'native.share.skip': 'Skip',

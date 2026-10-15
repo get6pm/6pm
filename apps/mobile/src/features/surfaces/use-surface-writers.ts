@@ -6,6 +6,8 @@ import { AppState } from 'react-native';
 import { surfaces } from '../../../modules/surfaces';
 import { useMoney, useMoneyStore } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { phoneNumberStyle } from '../../money/device-money';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { useLookSettings } from '../looks/look-settings-provider';
 import { resolveLook } from '../purchases/entitlement';
 import { useMemberCompanionForm } from '../purchases/member-companion-form';
@@ -36,6 +38,8 @@ export function useSurfaceWriters() {
   const money = useMoney();
   const store = useMoneyStore();
   const { t, language } = useI18n();
+  const format = useMoneyFormat();
+  const home = format.currency.code;
   const { look, config } = useLookSettings();
   const { customer, max } = useEntitlement();
   const { trip, rates } = useTravel();
@@ -55,16 +59,16 @@ export function useSurfaceWriters() {
         look: widget,
         maxLook: max ? worn : null,
         t,
-        language,
+        format,
         writtenAt: new Date(),
       }),
-    [money, widget, max, worn, t, language],
+    [money, widget, max, worn, t, format],
   );
   const key = snapshotKey(snapshot);
 
   // The latest values, read by a write that fires later.
-  const latest = useRef({ snapshot, money, language, t, tripCurrency, rates });
-  latest.current = { snapshot, money, language, t, tripCurrency, rates };
+  const latest = useRef({ snapshot, money, language, t, tripCurrency, rates, home });
+  latest.current = { snapshot, money, language, t, tripCurrency, rates, home };
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const writing = useRef<Promise<unknown>>(Promise.resolve());
 
@@ -89,6 +93,8 @@ export function useSurfaceWriters() {
           strings: contextStrings(now.t),
           tripCurrency: now.tripCurrency,
           rates: now.rates?.rates.rates ?? [],
+          currency: now.home,
+          numberStyle: phoneNumberStyle(),
         });
         await native.writeSurface('context', JSON.stringify(context));
       })
@@ -98,7 +104,7 @@ export function useSurfaceWriters() {
   useEffect(() => {
     if (timer.current !== null) clearTimeout(timer.current);
     timer.current = setTimeout(writeNow, DEBOUNCE_MS);
-  }, [key, language, t, tripCurrency, rates, writeNow]);
+  }, [key, language, t, tripCurrency, rates, home, writeNow]);
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => {
@@ -111,7 +117,7 @@ export function useSurfaceWriters() {
   }, [writeNow]);
 
   useCompanionImages(serious, writeNow);
-  useLiveActivity(widget);
+  useLiveActivity(widget, format);
 }
 
 /**

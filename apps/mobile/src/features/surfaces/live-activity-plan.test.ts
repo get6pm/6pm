@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { payCycleOn, type SpendRow } from '@6pm/domain';
+import { moneyFormat, moneyLocale, payCycleOn, VND, type SpendRow } from '@6pm/domain';
 import { t as translate } from '@6pm/i18n';
 import { paletteFor } from '@6pm/theme';
 
@@ -148,7 +148,7 @@ describe('pendingPayState', () => {
   it('words the waiting payment and links to its details', () => {
     const state = pendingPayState(newer, {
       t: (key, ...params) => translate('en', key, ...params),
-      language: 'en',
+      format: moneyFormat(moneyLocale(VND, 'en')),
       palette: paletteFor({ look: 'golden', hour: 18, serious: false }),
       serious: false,
     });
@@ -163,7 +163,7 @@ describe('pendingPayState', () => {
     });
     const serious = pendingPayState(newer, {
       t: (key, ...params) => translate('vi', key, ...params),
-      language: 'vi',
+      format: moneyFormat(moneyLocale(VND, 'vi')),
       palette: paletteFor({ look: 'golden', hour: 18, serious: true }),
       serious: true,
     });
@@ -176,13 +176,13 @@ describe('pendingPayState', () => {
     const palette = paletteFor({ look: 'golden', hour: 18, serious: false });
     const inEnglish = pendingPayState(big, {
       t: (key, ...params) => translate('en', key, ...params),
-      language: 'en',
+      format: moneyFormat(moneyLocale(VND, 'en')),
       palette,
       serious: false,
     });
     const inVietnamese = pendingPayState(big, {
       t: (key, ...params) => translate('vi', key, ...params),
-      language: 'vi',
+      format: moneyFormat(moneyLocale(VND, 'vi')),
       palette,
       serious: false,
     });

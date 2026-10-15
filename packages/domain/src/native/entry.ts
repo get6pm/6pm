@@ -8,6 +8,7 @@ import {
 import { receiptReadingOrder } from '../capture/bank-receipt';
 import { currencyAt } from '../capture/photo-place';
 import { readReceipt } from '../capture/read-receipt';
+import { contextMoney } from './context-money';
 import { buildLogSpend } from './log-spend';
 import { shareAmount } from './share-amount';
 import {
@@ -29,7 +30,7 @@ import { randomUuid } from './uuid';
  * version when a function's input or output changes shape: the extension checks it before calling
  * anything.
  */
-export const NATIVE_API_VERSION = 3;
+export const NATIVE_API_VERSION = 4;
 
 function json(text: unknown): unknown {
   if (typeof text !== 'string') return undefined;
@@ -114,9 +115,17 @@ export function shareLook(
     const parsed = receiptLinesSchema.safeParse(json(linesJson));
     const lines = parsed.success ? toReceiptLines(parsed.data) : [];
     const context = contextOf(contextJson);
-    const read = readReceipt(lines, context?.travel?.currency ?? null, locatedOf(placeJson));
+    const home = contextMoney(context).home;
+    const read = readReceipt(
+      lines,
+      context?.travel?.currency ?? null,
+      locatedOf(placeJson),
+      home.code,
+    );
     const look = receiptLookSchema.safeParse(json(lookJson));
-    const merged = look.success ? mergeLook(read, look.data, receiptReadingOrder(lines)) : read;
+    const merged = look.success
+      ? mergeLook(read, look.data, receiptReadingOrder(lines), home)
+      : read;
     return JSON.stringify({ ...cardOf(merged, lines, context, now), needsCheck: false });
   } catch {
     return JSON.stringify(emptyCard(now));
@@ -125,14 +134,16 @@ export function shareLook(
 
 /**
  * What the card shows with the user's edits (`{amountText?, currency?}`): `{amount, amountText,
- * inDongText, decimalEntry, canConfirm}`. The amount is in đồng, null while a foreign amount has
- * no rate; Confirm works once there is an amount in some currency.
+ * amountParts, inHomeText, decimalEntry, canConfirm}`, written as the context says. The amount
+ * is in the home currency, null while a foreign amount has no rate; Confirm works once there is
+ * an amount in some currency.
  */
-export function shareShown(cardJson: string, editsJson: string): string {
+export function shareShown(cardJson: string, editsJson: string, contextJson?: string): string {
   const nothing = {
     amount: null,
     amountText: '',
-    inDongText: null,
+    amountParts: { prefix: '', number: '', suffix: '' },
+    inHomeText: null,
     decimalEntry: false,
     canConfirm: false,
   };
@@ -140,11 +151,13 @@ export function shareShown(cardJson: string, editsJson: string): string {
     const card = shareCardSchema.safeParse(json(cardJson));
     const edits = shareEditsSchema.safeParse(json(editsJson) ?? {});
     if (!card.success) return JSON.stringify(nothing);
-    const shown = shareAmount(card.data, edits.success ? edits.data : {});
+    const money = contextMoney(contextOf(contextJson));
+    const shown = shareAmount(card.data, edits.success ? edits.data : {}, money);
     return JSON.stringify({
       amount: shown.amount,
       amountText: shown.amountText,
-      inDongText: shown.inDongText,
+      amountParts: shown.amountParts,
+      inHomeText: shown.inHomeText,
       decimalEntry: shown.decimalEntry,
       canConfirm: shown.amount !== null || shown.foreign !== null,
     });
@@ -155,15 +168,16 @@ export function shareShown(cardJson: string, editsJson: string): string {
 
 /**
  * The inbox item Confirm writes for a card (as `shareCard` returned it) and the user's edits
- * (`{amountText?, payee?, categoryId?, currency?}`, `{}` for none), with a fresh id. Returns `{item}`, the
- * item null while there is no amount.
+ * (`{amountText?, payee?, categoryId?, currency?}`, `{}` for none), with a fresh id, counted in
+ * the context's home currency. Returns `{item}`, the item null while there is no amount.
  */
-export function shareItem(cardJson: string, editsJson: string): string {
+export function shareItem(cardJson: string, editsJson: string, contextJson?: string): string {
   try {
     const card = shareCardSchema.safeParse(json(cardJson));
     const edits = shareEditsSchema.safeParse(json(editsJson) ?? {});
     if (!card.success) return JSON.stringify({ item: null });
-    const item = buildShareItem(card.data, edits.success ? edits.data : {}, randomUuid());
+    const money = contextMoney(contextOf(contextJson));
+    const item = buildShareItem(card.data, edits.success ? edits.data : {}, randomUuid(), money);
     return JSON.stringify({ item: item ?? null });
   } catch {
     return JSON.stringify({ item: null });

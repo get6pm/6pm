@@ -1,6 +1,6 @@
 /** The parts of a saved spend that say whether 6pm is unsure of it. */
 export interface NeedsALookInput {
-  /** In đồng; 0 when the capture could not read or price it. */
+  /** In the home currency; 0 when the capture could not read or price it. */
   readonly amount: number;
   /** A spend in another currency; a rate of 0 means it is still waiting for one. */
   readonly foreignAmount: {
@@ -13,7 +13,7 @@ export interface NeedsALookInput {
 }
 
 /**
- * A capture the person should look at before trusting it: its đồng amount is missing, its
+ * A capture the person should look at before trusting it: its home amount is missing, its
  * foreign amount has no rate yet, or its currency was a guess.
  */
 export function needsALook(spend: NeedsALookInput): boolean {

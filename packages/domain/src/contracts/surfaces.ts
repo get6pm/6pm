@@ -11,11 +11,16 @@ import { DECIMAL_PATTERN } from '../travel/fx';
 
 const id = z.string().min(1);
 const instant = z.string().min(20);
-const vnd = z.number().int().nonnegative();
+/** In minor units of the home currency (đồng in Vietnam, cents in the US). */
+const money = z.number().int().nonnegative();
 const version = z.literal(1);
 const currencyCode = z.string().regex(/^[A-Z]{3}$/);
 const decimal = z.string().regex(DECIMAL_PATTERN);
 
+/**
+ * Fields added after a version shipped are optional, so either side reads the other's older files:
+ * a context or an item without a home currency is in đồng.
+ */
 export const SURFACES_VERSION = 1;
 
 /** The receipt behind a shared capture: what the bank printed, with every number taken out. */
@@ -34,23 +39,25 @@ export const inboxSpendSchema = z.object({
   source: z.enum(['shared', 'applePay', 'voice']),
   status: z.enum(['caught', 'kept']),
   at: instant,
-  /** Null when the source gave no readable amount: the close asks for it. */
-  amount: vnd.nullable(),
+  /** Null when the source gave no readable amount, or none in the home currency yet. */
+  amount: money.nullable(),
+  /** The home currency `amount` is counted in; absent in files from before it was said (đồng). */
+  currency: currencyCode.optional(),
   merchant: z.string(),
   categoryId: id.nullable(),
   note: z.string().optional(),
   receipt: inboxReceiptSchema.optional(),
   /**
-   * A spend in another currency, as printed: `amount` in its own units. With `rate` (đồng for one
-   * unit) the item's `amount` is already in đồng at that rate; without one it is null and the
-   * close asks for it.
+   * A spend in another currency, as printed: `amount` in its own units. With `rate` (home units
+   * for one unit) the item's `amount` is already in the home currency at that rate; without one
+   * it is null and the app prices it when a rate arrives.
    */
   foreign: z
     .object({ currency: currencyCode, amount: decimal, rate: decimal.optional() })
     .optional(),
   /**
    * The receipt printed no currency and the one saved was guessed (from where the photo was
-   * taken, the place it names, the trip, or đồng by default); absent when it was printed, picked
+   * taken, the place it names, the trip, or the home currency by default); absent when it was printed, picked
    * by the user, or on older files.
    */
   currencyGuessed: z.boolean().optional(),
@@ -90,8 +97,21 @@ export const surfaceContextSchema = z.object({
   strings: z.record(z.string(), z.string()),
   /** The trip under way in Travel mode: its currency is the guess for a receipt that says none. */
   travel: z.object({ currency: currencyCode }).nullable().optional(),
-  /** The last rates the app has, đồng for one unit, so a foreign receipt is priced as Travel is. */
+  /**
+   * The last rates the app has, as the server quotes them (đồng for one unit), so a foreign
+   * receipt is priced as Travel is. A home other than đồng is priced through its own quote.
+   */
   rates: z.array(z.object({ currency: currencyCode, rate: decimal })).optional(),
+  /** The home currency; absent (đồng) in a context written before it was kept. */
+  currency: currencyCode.optional(),
+  /** How the phone writes numbers, so the extensions write money as the app does. */
+  numberStyle: z
+    .object({
+      languageTag: z.string().nullable().optional(),
+      decimal: z.string().nullable().optional(),
+      group: z.string().nullable().optional(),
+    })
+    .optional(),
 });
 export type SurfaceContext = z.infer<typeof surfaceContextSchema>;
 
@@ -132,14 +152,28 @@ export const shareCurrencySchema = z.object({
   code: currencyCode,
   /** "S$ · SGD", "₫ · VND". */
   label: z.string(),
+  /** Home units for one unit; null for the home currency, or without a rate. */
   rate: decimal.nullable(),
 });
 export type ShareCurrency = z.infer<typeof shareCurrencySchema>;
 
+/**
+ * An amount in pieces for Swift to draw: the home currency's symbol on its own side ("$" before,
+ * "₫" after), trimmed, so it can be set smaller. A foreign amount is all `number` ("S$68,80").
+ */
+export const amountPartsSchema = z.object({
+  prefix: z.string(),
+  number: z.string(),
+  suffix: z.string(),
+});
+export type AmountParts = z.infer<typeof amountPartsSchema>;
+
 /** The card the share extension shows for a receipt, as the domain bundle returns it to Swift. */
 export const shareCardSchema = z.object({
-  /** In đồng: as read, or a foreign amount at the app's rate. Null when unread or unpriced. */
-  amount: vnd.nullable(),
+  /** In the home currency: as read, or a foreign amount at the app's rate. Null when unread or unpriced. */
+  amount: money.nullable(),
+  /** The home currency the card was read for. */
+  home: currencyCode,
   payee: z.string(),
   payeeSure: z.boolean(),
   at: instant,
@@ -150,6 +184,8 @@ export const shareCardSchema = z.object({
   categoryId: id.nullable(),
   /** "120.000₫", or "S$68,80" for a receipt in another currency. */
   amountText: z.string(),
+  /** `amountText` in pieces. */
+  amountParts: amountPartsSchema,
   safeAfterText: z.string().nullable(),
   /** The category's name in the app's language, for the Category row. */
   categoryName: z.string().nullable(),
@@ -159,7 +195,7 @@ export const shareCardSchema = z.object({
   namingLines: z.array(z.string()),
   /** A bank or wallet transfer, or a shop's bill. */
   kind: z.enum(['transfer', 'shop']),
-  /** The receipt's currency; null when its amounts are not đồng and nothing says what they are. */
+  /** The receipt's currency; null when its amounts cannot be home's and nothing says what they are. */
   currency: currencyCode.nullable(),
   currencySure: z.boolean(),
   /** A shop receipt whose currency was not printed: the card offers it as a chip to switch. */
@@ -173,15 +209,15 @@ export const shareCardSchema = z.object({
   foreign: z
     .object({ currency: currencyCode, amount: decimal, rate: decimal.nullable() })
     .nullable(),
-  /** "1.747.000₫" under a foreign amount priced at a rate. */
-  inDongText: z.string().nullable(),
+  /** "1.747.000₫" (the home currency) under a foreign amount priced at a rate. */
+  inHomeText: z.string().nullable(),
   /** What the amount field opens with in Edit: "120.000", "68,80". */
   editText: z.string(),
   /** The amount is typed with decimals (a currency with cents). */
   decimalEntry: z.boolean(),
   /**
-   * Currencies the card can switch between: when the currency is a guess, the guess, đồng and
-   * the likely ones; else the one read, the trip's and đồng. Empty when the receipt's own is
+   * Currencies the card can switch between: when the currency is a guess, the guess, home and
+   * the likely ones; else the one read, the trip's and home. Empty when the receipt's own is
    * certain.
    */
   currencies: z.array(shareCurrencySchema),

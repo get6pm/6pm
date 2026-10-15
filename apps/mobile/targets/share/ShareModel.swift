@@ -167,7 +167,8 @@ final class ShareModel: ObservableObject {
         let card = receipts[at]?.card
         let hint = card?.currencyGuessed == true ? card?.currency : context.travel?.currency
         let answer = await ReceiptLook.ask(
-          photo: photo, language: context.language, currencyHint: hint, host: context.host)
+          photo: photo, language: context.language, currencyHint: hint,
+          homeCurrency: context.currency, host: context.host)
         looked(at, answer)
       }
     }
@@ -195,7 +196,10 @@ final class ShareModel: ObservableObject {
   var readLine: String {
     if looking { return text("looking") }
     if card?.amount == nil, card?.foreign == nil {
-      return text(card?.printed != nil && card?.currency == nil ? "unknownCurrency" : "unreadable")
+      guard card?.printed != nil, card?.currency == nil else { return text("unreadable") }
+      let home = context?.home ?? "VND"
+      return home == "VND"
+        ? text("unknownCurrency") : text("unknownCurrencyIn", ["currency": home])
     }
     if let bank = card?.bank { return text("readFromBank", ["bank": bank]) }
     return text("readHere")
@@ -208,11 +212,18 @@ final class ShareModel: ObservableObject {
 
   var amountText: String { shown?.amountText ?? card?.amountText ?? "" }
 
-  /// Under a foreign amount: its đồng at the app's rate, or that there is no rate yet.
+  /// The amount in pieces, the home currency's symbol on its own side.
+  var amountParts: ShareCardData.Parts {
+    shown?.amountParts ?? card?.amountParts
+      ?? ShareCardData.Parts(prefix: "", number: amountText, suffix: "")
+  }
+
+  /// Under a foreign amount: its home amount at the app's rate, or that there is no rate yet.
   var underLine: String? {
-    if let inDong = shown?.inDongText { return text("inDong", ["amount": inDong]) }
-    let chosen = currency ?? card?.currency ?? "VND"
-    return chosen != "VND" && !amountText.isEmpty ? text("noRate") : nil
+    if let inHome = shown?.inHomeText { return text("inDong", ["amount": inHome]) }
+    let home = card?.home ?? context?.home ?? "VND"
+    let chosen = currency ?? card?.currency ?? home
+    return chosen != home && !amountText.isEmpty ? text("noRate") : nil
   }
 
   var decimalEntry: Bool { shown?.decimalEntry ?? card?.decimalEntry ?? false }
@@ -255,7 +266,8 @@ final class ShareModel: ObservableObject {
 
   private func refreshShown() {
     guard let bridge, let cardJson = receipt?.cardJson,
-      let answer = try? bridge.call("shareShown", [cardJson, edits(includeName: false).json])
+      let answer = try? bridge.call(
+        "shareShown", [cardJson, edits(includeName: false).json, contextJson])
     else {
       shown = nil
       return
@@ -269,7 +281,8 @@ final class ShareModel: ObservableObject {
   func confirm() -> Step {
     guard
       let bridge, let cardJson = receipt?.cardJson,
-      let answer = try? bridge.call("shareItem", [cardJson, edits(includeName: true).json]),
+      let answer = try? bridge.call(
+        "shareItem", [cardJson, edits(includeName: true).json, contextJson]),
       let object = try? JSONSerialization.jsonObject(with: Data(answer.utf8)) as? [String: Any],
       let item = object["item"] as? [String: Any],
       let id = item["id"] as? String,

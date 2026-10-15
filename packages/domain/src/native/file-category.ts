@@ -1,7 +1,8 @@
 import { categoryHintOf, foldWords } from '../capture/spoken-spend';
 import { merchantKeyOf } from '../capture/merchant-rule';
 import type { SurfaceContext } from '../contracts/surfaces';
-import { formatShort, formatVnd, type Vnd } from '../money/format';
+import type { Money } from '../money/currency';
+import type { MoneyFormat } from '../money/money-format';
 import { likelyCategoriesAt } from '../spend/predict-category';
 
 export type SurfaceCategory = SurfaceContext['categories'][number];
@@ -50,18 +51,19 @@ export function fileCategory(
  */
 export function safeAfterText(
   context: SurfaceContext | null,
+  format: MoneyFormat,
   category: SurfaceCategory | null,
-  amount: Vnd | null,
+  amount: Money | null,
 ): string | null {
   if (!context || !category?.countsDaily || amount === null) return null;
-  const left = formatShort(context.safeToday - amount, context.language);
+  const left = format.short(context.safeToday - amount);
   const line = context.strings['safeAfter'];
   return line?.includes('{amount}') ? line.replace('{amount}', left) : left;
 }
 
-/** An amount as the card and the snippet print it: "45.000₫", or empty when unread. */
-export const amountText = (amount: Vnd | null): string =>
-  amount === null ? '' : formatVnd(amount);
+/** An amount as the card and the snippet print it: "45.000₫", "$45", or empty when unread. */
+export const amountText = (format: MoneyFormat, amount: Money | null): string =>
+  amount === null ? '' : format.full(amount);
 
 const pad = (n: number) => String(n).padStart(2, '0');
 const sameDay = (a: Date, b: Date) =>

@@ -1,7 +1,14 @@
-import { joinedShare, type AskContext, type AskPot } from '@6pm/domain';
+import {
+  joinedShare,
+  type AskContext,
+  type AskLedger,
+  type AskPot,
+  type SpendRow,
+} from '@6pm/domain';
 
 import { dayOf, type MoneySnapshot } from '../../data/money-store';
 import { goalViews, occasionViews } from '../plan/plan-view';
+import { insightInputOf, previousCycleStartOf } from '../wording/insight-input';
 
 /** Each pot with what it holds, what it needs and what goes in each month, as Ask reads it. */
 function askPots(snap: MoneySnapshot): AskPot[] {
@@ -33,3 +40,34 @@ export function askContextOf(snap: MoneySnapshot): AskContext | null {
     pots: askPots(snap),
   };
 }
+
+/**
+ * The user's own records an answer may read: this cycle's spends and the waiting ones from the
+ * store, plus the previous cycle's (`earlier`), which the store does not hold.
+ */
+export function askLedgerOf(snap: MoneySnapshot, earlier: readonly SpendRow[]): AskLedger {
+  const input = insightInputOf(snap, dayOf(snap) ?? ZERO_DAY, earlier);
+  const previousCycleStart = previousCycleStartOf(snap);
+  return {
+    cycleStart: snap.cycle.start,
+    previousCycleStart,
+    since: previousCycleStart ?? snap.cycle.start,
+    spends: input.spends,
+    closed: input.closed,
+    categories: snap.categories.map((c) => ({ id: c.id, name: c.name })),
+    notDaily: input.notDaily,
+    bills: input.bills,
+    pots: input.pots,
+  };
+}
+
+/** Only the ledger's spends and records are read; a day before set-up has nothing to count. */
+const ZERO_DAY = {
+  startFree: 0,
+  line: 0,
+  spent: 0,
+  free: 0,
+  safe: 0,
+  tomorrow: 0,
+  replan: false,
+} as const;

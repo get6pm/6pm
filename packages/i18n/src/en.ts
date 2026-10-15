@@ -10,6 +10,7 @@ import { enReceiptEmail } from './en-receipt-email';
 import { enBackup } from './en-backup';
 import { enExport } from './en-export';
 import { enAsk } from './en-ask';
+import { enAskLedger } from './en-ask-ledger';
 import { enScan } from './en-scan';
 import { enBanks } from './en-banks';
 import { enLooks } from './en-looks';
@@ -43,6 +44,7 @@ export const en = {
   ...enBackup,
   ...enExport,
   ...enAsk,
+  ...enAskLedger,
   ...enNative,
   ...enSharing,
   ...enShareExt,

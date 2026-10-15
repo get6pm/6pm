@@ -166,6 +166,11 @@ fakes behaviour the app cannot fake. Founder review.
 | Ask | Server unreachable, slow (> 4 s), rate limited or refusing | Answers with the phone’s rules, no error shown | Offline Ask is rules-only |
 | Ask | Offline and the rules cannot read the question | The help answer plus "I couldn’t reach the server, so I only read simple questions right now." | The prototype has only an online help line |
 | Ask | Answering throws | "Something went wrong, so I couldn’t answer that. Try again.", reported to Sentry | Never leave the typing dots hanging |
+| Ask | What was spent, where it went, a comparison, matching spends, bills left | The answer card's sentence and rows: a row per place, category, span or spend (merchant · date), amounts in full; no bars | The prototype answers only the original six; rows are the card's existing part for numbers |
+| Ask | A span reaching before the records the phone holds | A note under the card: "This counts what 6pm has kept since {date}." | The phone keeps this and the last pay cycle's spends in reach; older spans are partial |
+| Ask | Words from a model | Claude (or this iPhone's model, by the dev Model switch) words the sentence from the answer's numbers; the rows stay the phone's; offline or slow, the catalogue's words | The prototype fakes Ask's words; a model never writes a number |
+| Ask | Small talk ("thanks", "hi") | A short companion line, wave mood, nothing looked up | Undesigned |
+| Today | The companion bubble on a calm or closed day | A fact about the user's own days (a bill due, a repeat place, a streak, a pot milestone), worded by a model or the catalogue; the bubble enters once its words are ready (at most 1.5 s) and never changes once shown | The prototype's idle lines are fixed |
 | Ask | Weekend question with payday first, or one weekend day left | "Payday on {date} comes before the weekend…" / a single Sunday row | The prototype always has two days |
 | Ask | Fits inside today | Rows Safe today / This / Tomorrow | The answer leaves tomorrow unchanged |
 | Ask | Save more | Rows "Future you each month" and "Moving more"; no "After" total; "would barely change your days" when it rounds to nothing | A sum would be money maths outside the domain package |

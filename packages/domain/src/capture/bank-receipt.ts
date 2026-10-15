@@ -1,7 +1,10 @@
 import type { Vnd } from '../money/format';
 import { BANKS } from '../vietqr/bank-catalogue';
+import { readReceiptTime } from './receipt-time';
 import { foldWords } from './spoken-spend';
 import { parseWalletAmount } from './wallet-amount';
+
+export { readReceiptTime } from './receipt-time';
 
 /** Where a line sits, in Vision's normalised coordinates: 0…1, origin at the bottom left. */
 export interface ReceiptBox {
@@ -34,7 +37,7 @@ export interface BankReceipt {
   readonly bank: string | null;
 }
 
-type Field =
+export type Field =
   'amount' | 'payee' | 'time' | 'code' | 'toBank' | 'account' | 'note' | 'fee' | 'balance';
 
 /** Receipt labels in Vietnamese and English, folded (no accents, lower case), by field. */
@@ -75,14 +78,14 @@ function labelOf(text: string): Field | null {
   return null;
 }
 
-interface Row {
+export interface Row {
   readonly cells: string[];
   readonly confidence: number;
   readonly height: number;
 }
 
 /** Lines grouped into rows by their vertical centre, top first, each row left to right. */
-function toRows(lines: readonly ReceiptLine[]): Row[] {
+export function toRows(lines: readonly ReceiptLine[]): Row[] {
   const usable = lines.filter((line) => line.text.trim() !== '');
   if (!usable.every((line) => line.box)) {
     return usable.map((line) => ({
@@ -126,7 +129,7 @@ interface Found {
 }
 
 /** Each labelled value: on the label's row, or on the row under a label that stands alone. */
-function readFields(rows: readonly Row[]): {
+export function readFields(rows: readonly Row[]): {
   fields: Map<Field, Found>;
   rowFields: (Field | null)[];
 } {
@@ -194,38 +197,6 @@ function cleanPayee(value: string): string {
 /** "Chuyển tiền tới CIRCLE K VN lúc 16:40" in a text share with no labels. */
 const PAYEE_IN_SENTENCE =
   /(?:^|\s)(?:tới|toi|đến|den|to)\s+(.+?)(?=\s+(?:lúc|luc|at|vào|vao|ngày|ngay|stk|tk|số|so)(?:\s|$)|[.,;]|$)/iu;
-
-const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-
-/**
- * When a receipt says the transfer happened, as the phone's local time: "16:40 Thứ Sáu 09/10/2026",
- * "09/10/2026 16:40:12", "2026-10-09 16:40", "9 Oct 2026, 4:40 PM". A date with no time is taken at
- * noon, so it stays on its money day (which starts at 04:00).
- */
-export function readReceiptTime(text: string): string | null {
-  const t = text.toLowerCase();
-  let day: number | undefined, month: number | undefined, year: number | undefined;
-  const dmy = /(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})/.exec(t);
-  const ymd = /(\d{4})-(\d{1,2})-(\d{1,2})/.exec(t);
-  const named = /(\d{1,2})\s+([a-z]{3})[a-z]*\.?,?\s+(\d{4})/.exec(t);
-  if (ymd) [year, month, day] = [Number(ymd[1]), Number(ymd[2]), Number(ymd[3])];
-  else if (dmy) [day, month, year] = [Number(dmy[1]), Number(dmy[2]), Number(dmy[3])];
-  else if (named && MONTHS.includes(named[2] ?? '')) {
-    [day, month, year] = [Number(named[1]), MONTHS.indexOf(named[2] ?? '') + 1, Number(named[3])];
-  }
-  if (day === undefined || month === undefined || year === undefined) return null;
-  const clock = /(\d{1,2}):(\d{2})(?::(\d{2}))?(?:\s*(am|pm|sa|ch))?/.exec(t);
-  let hour = clock ? Number(clock[1]) : 12;
-  const minute = clock ? Number(clock[2]) : 0;
-  const second = clock?.[3] ? Number(clock[3]) : 0;
-  const half = clock?.[4];
-  if ((half === 'pm' || half === 'ch') && hour < 12) hour += 12;
-  if ((half === 'am' || half === 'sa') && hour === 12) hour = 0;
-  if (hour > 23 || minute > 59 || second > 59) return null;
-  const at = new Date(year, month - 1, day, hour, minute, second);
-  if (at.getFullYear() !== year || at.getMonth() !== month - 1 || at.getDate() !== day) return null;
-  return at.toISOString();
-}
 
 function readCode(value: string | undefined, allText: string): string | null {
   const code = value?.replace(/\s+/g, '');

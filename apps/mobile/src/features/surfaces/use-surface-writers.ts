@@ -10,6 +10,7 @@ import { useLookSettings } from '../looks/look-settings-provider';
 import { resolveLook } from '../purchases/entitlement';
 import { useMemberCompanionForm } from '../purchases/member-companion-form';
 import { useEntitlement } from '../purchases/purchases-provider';
+import { useTravel } from '../travel/travel-provider';
 import { renderCompanions } from './companion-images';
 import { contextStrings, hostOf, surfaceContext } from './surface-context';
 import { widgetLook } from './surface-palette';
@@ -37,6 +38,8 @@ export function useSurfaceWriters() {
   const { t, language } = useI18n();
   const { look, config } = useLookSettings();
   const { customer, max } = useEntitlement();
+  const { trip, rates } = useTravel();
+  const tripCurrency = trip?.currency.code ?? null;
   const serious = money.plan?.serious ?? false;
   const worn = resolveLook(look, customer);
   const ownConfig = config[worn];
@@ -60,8 +63,8 @@ export function useSurfaceWriters() {
   const key = snapshotKey(snapshot);
 
   // The latest values, read by a write that fires later.
-  const latest = useRef({ snapshot, money, language, t });
-  latest.current = { snapshot, money, language, t };
+  const latest = useRef({ snapshot, money, language, t, tripCurrency, rates });
+  latest.current = { snapshot, money, language, t, tripCurrency, rates };
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const writing = useRef<Promise<unknown>>(Promise.resolve());
 
@@ -84,6 +87,8 @@ export function useSurfaceWriters() {
           language: now.language,
           host,
           strings: contextStrings(now.t),
+          tripCurrency: now.tripCurrency,
+          rates: now.rates?.rates.rates ?? [],
         });
         await native.writeSurface('context', JSON.stringify(context));
       })
@@ -93,7 +98,7 @@ export function useSurfaceWriters() {
   useEffect(() => {
     if (timer.current !== null) clearTimeout(timer.current);
     timer.current = setTimeout(writeNow, DEBOUNCE_MS);
-  }, [key, language, t, writeNow]);
+  }, [key, language, t, tripCurrency, rates, writeNow]);
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => {

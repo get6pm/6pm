@@ -54,4 +54,19 @@ export const enAskLedger = {
   'ask.answer.partial': 'This counts what 6pm has kept since {since}.',
   'ask.row.total': 'Total',
   'ask.row.before': 'Before',
+  'ask.answer.goalPace.months': {
+    one: 'At {monthly} a month to Future you, {amount} for {what} takes about a month, around {month}.',
+    other:
+      'At {monthly} a month to Future you, {amount} for {what} takes about {count} months, around {month}.',
+  },
+  'ask.answer.goalPace.years': {
+    other:
+      'At {monthly} a month to Future you, {amount} for {what} takes about {count} years, around {month}.',
+  },
+  'ask.answer.goalPace.note': 'A pot just for it keeps that money apart from the rest.',
+  'ask.answer.goalNoPace':
+    'Nothing goes to Future you each month yet, so there’s no pace to count {amount} for {what} from. A little each month starts one.',
+  'ask.answer.goalAmount':
+    'Roughly how much is {what}? Tell me the price, like “3 tỷ”, and I’ll count it out.',
+  'ask.row.reachedBy': 'Around',
 } as const;

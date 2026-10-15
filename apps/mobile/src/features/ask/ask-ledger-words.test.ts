@@ -115,4 +115,25 @@ describe('describeLedgerAnswer', () => {
       'Có gì cứ hỏi mình nha, lúc nào cũng được.',
     );
   });
+
+  it('counts a big goal in years at what goes to Future you, and asks a price when none was said', () => {
+    const { card } = describeLedgerAnswer(
+      {
+        kind: 'goalPace',
+        what: 'nhà',
+        amount: 3_000_000_000,
+        monthly: 4_000_000,
+        months: 750,
+        years: 63,
+        reachedIn: '2089-04',
+      },
+      env('vi'),
+    );
+    expect(card.text).toContain('khoảng 63 năm');
+    expect(card.text).toContain('3 tỷ');
+    expect(card.rows.map((r) => r.key)).toEqual(['Mục tiêu', 'Mỗi tháng', 'Khoảng']);
+    expect(describeLedgerAnswer({ kind: 'goalAmount', what: 'a car' }, env('en')).card.text).toBe(
+      'Roughly how much is a car? Tell me the price, like “3 tỷ”, and I’ll count it out.',
+    );
+  });
 });

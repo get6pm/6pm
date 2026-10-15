@@ -2,6 +2,7 @@ import type { Vnd } from '../money/format';
 import { compareAmounts, type Comparison, type Fact } from '../insights/fact';
 import type { LocalDate } from '../time/local-date';
 import { answerAsk, type AskAnswer, type AskContext } from './ask-engine';
+import { answerGoal, type GoalAnswer } from './goal';
 import {
   dueBills,
   matchCategory,
@@ -32,6 +33,7 @@ const BREAKDOWN_LIMIT = 5;
 /** An answer to any question: the original answers, plus answers read from the ledger. */
 export type AskQueryAnswer =
   | AskAnswer
+  | GoalAnswer
   | {
       readonly kind: 'spent';
       readonly spent: AskTotal;
@@ -92,6 +94,7 @@ export function answerQuery(
   const query = likeForLike(asked);
   if (isAskIntent(query)) return answerAsk(query, ctx);
   if (query.kind === 'chat') return { kind: 'chat' };
+  if (query.kind === 'goal') return answerGoal(query, ctx);
   if (ledger === null) return { kind: 'help' };
   const frame: RangeFrame = {
     today: ctx.today,

@@ -19,8 +19,9 @@ interface VariantConfig {
   /** Over-the-air updates. Off for device runs, which swap in the commit's own bundle. */
   updates: boolean;
   /**
-   * The increased memory limit for on-device mode's larger models. Each App ID needs it turned on
-   * by hand on the Apple developer site first; a signed build with it on before that fails.
+   * The increased memory limit for on-device mode's larger models. Turned on for ai.sixpm.app and
+   * ai.sixpm.app.dev on the Apple developer site (16 Oct 2026); a new App ID needs it there first,
+   * and its profiles regenerated, or a signed build fails.
    */
   increasedMemory: boolean;
 }
@@ -38,7 +39,7 @@ const DEV: VariantConfig = {
   host: 'dev.at6pm.app',
   legacyHost: '6pm-dev.oddeggs.studio',
   updates: true,
-  increasedMemory: false,
+  increasedMemory: true,
 };
 
 const VARIANTS: Record<AppVariant, VariantConfig> = {
@@ -52,7 +53,7 @@ const VARIANTS: Record<AppVariant, VariantConfig> = {
     host: 'at6pm.app',
     legacyHost: '6pm.oddeggs.studio',
     updates: true,
-    increasedMemory: false,
+    increasedMemory: true,
   },
 };
 

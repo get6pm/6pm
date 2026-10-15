@@ -30,3 +30,4 @@ export * from './together-pot-delete';
 export * from './together-pot-edit';
 export * from './together-sign-in';
 export * from './waitlist';
+export * from './word';

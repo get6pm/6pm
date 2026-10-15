@@ -1,6 +1,7 @@
 {
   "configVersion": 0,
   "apple": {
+    "copyright": "2026 Odd Eggs Studio",
     "categories": ["FINANCE", "PRODUCTIVITY"],
     "info": {
       "en-US": {

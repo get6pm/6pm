@@ -2,14 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import {
-  aboutPerDay,
-  cycleMonth,
-  formatShort,
-  joinedShare,
-  potSetAside,
-  savedBefore,
-} from '@6pm/domain';
+import { aboutPerDay, cycleMonth, joinedShare, potSetAside, savedBefore } from '@6pm/domain';
 
 import { useMoney, useMoneyStore } from '../../data/money-provider';
 import { usePlanActions, type PotPatch } from '../../data/plan-actions';
@@ -19,6 +12,7 @@ import { potRow, StepperRow } from '../../features/plan/pot-rows';
 import { PotSheet, type PotFields } from '../../features/plan/pot-sheet';
 import { usePotWarn } from '../../features/plan/use-pot-warn';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
 import { isSymbolName } from '../../ui/icons/symbol';
 import { Switch } from '../../ui/primitives/switch';
@@ -37,7 +31,8 @@ const SHARE_STEP = 5;
 export default function EditPot() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const { palette } = useTheme();
   const run = useRunAction();
   const offerUndo = useOfferUndo();
@@ -102,6 +97,7 @@ export default function EditPot() {
     savedBefore: held ?? 0,
     futureYou,
     cycle: snap.cycle,
+    currency: money.currency,
   });
   const warn = usePotWarn({
     potId: pot?.id ?? null,
@@ -117,20 +113,21 @@ export default function EditPot() {
     monthly,
     snap.cycle.daysLeft,
     joinedShare(snap.cycle, snap.plan?.startedOn ?? null),
+    money.currency,
   );
   const summary = paused
     ? { title: t('plan.pot.sumPaused'), sub: t('plan.pot.sumPausedSub') }
     : goalKind
       ? futureYou > 0
         ? {
-            title: t('plan.goal.sumMonthly', { amount: formatShort(monthly, language) }),
+            title: t('plan.goal.sumMonthly', { amount: money.short(monthly) }),
             sub: t('plan.goal.sumSub'),
           }
         : { title: t('plan.goal.sumNone'), sub: t('plan.goal.sumNoneSub') }
       : month
         ? {
-            title: t('plan.pot.sumMonthly', { amount: formatShort(monthly, language) }),
-            sub: t('plan.pot.sumMonthlySub', { amount: formatShort(perDay, language) }),
+            title: t('plan.pot.sumMonthly', { amount: money.short(monthly) }),
+            sub: t('plan.pot.sumMonthlySub', { amount: money.short(perDay) }),
             warn,
           }
         : { title: t('plan.pot.sumNone'), sub: t('plan.pot.sumNoneSub') };

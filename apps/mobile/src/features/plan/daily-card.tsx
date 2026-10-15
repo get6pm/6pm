@@ -8,17 +8,12 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import {
-  dayBarFraction,
-  dayBarScale,
-  formatShort,
-  whatIfDaily,
-  type DailyNumberInput,
-} from '@6pm/domain';
+import { dayBarFraction, dayBarScale, whatIfDaily, type DailyNumberInput } from '@6pm/domain';
 import { curves } from '@6pm/theme';
 
 import { usePlanActions } from '../../data/plan-actions';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { useRunAction } from '../companion/use-run-action';
 import { haptics } from '../../ui/haptics';
 import { useTheme } from '../../ui/theme/theme';
@@ -26,12 +21,14 @@ import { body, display, mono, tabular } from '../../ui/type/fonts';
 import type { PlanColours } from './plan-colours';
 import type { PlanFormat } from './plan-format';
 import { PlanCard } from './plan-parts';
-import { barDays, sliderMax } from './plan-view';
+import { barDays, sliderMax, whatIfStep } from './plan-view';
 import { WhatIfSlider } from './what-if-slider';
 
 const enter = Easing.bezier(...curves.enter);
 const BAR_MS = 450;
 const ROW = 44;
+/** The narrowest "a day · N days left" gets beside a long daily number. */
+const LABEL_MIN = 96;
 
 function DayBar({ fraction, colour }: { readonly fraction: number; readonly colour: string }) {
   const reduceMotion = useReducedMotion();
@@ -71,7 +68,8 @@ export function DailyCard({
   readonly format: PlanFormat;
 }) {
   const { palette } = useTheme();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const actions = usePlanActions();
   const run = useRunAction();
   const [candidate, setCandidate] = useState(committed);
@@ -95,23 +93,33 @@ export function DailyCard({
       ? t('plan.whatIf.same')
       : delta > 0
         ? t('plan.whatIf.less', {
-            amount: formatShort(delta, language),
-            daily: formatShort(change, language),
+            amount: money.short(delta),
+            daily: money.short(change),
           })
         : t('plan.whatIf.more', {
-            amount: formatShort(-delta, language),
-            daily: formatShort(-change, language),
+            amount: money.short(-delta),
+            daily: money.short(-change),
           });
 
   return (
     <PlanCard padding={{ top: 18, side: 18, bottom: 18 }} gap={14}>
       <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 10 }}>
+        {/* A long amount shrinks to its room on one line. The label gives way first, down to its
+            minimum (wrapping as it always has), and only then does the number shrink. */}
         <Text
-          style={{ ...display(64, 500, -0.03), lineHeight: 64, ...tabular, color: palette.ink }}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          style={{
+            ...display(64, 500, -0.03),
+            lineHeight: 64,
+            ...tabular,
+            color: palette.ink,
+            flexShrink: 0.01,
+          }}
         >
-          {formatShort(daily, language)}
+          {money.short(daily)}
         </Text>
-        <Text style={{ ...body(15), color: palette.inkSoft, flexShrink: 1 }}>
+        <Text style={{ ...body(15), color: palette.inkSoft, flexShrink: 1, minWidth: LABEL_MIN }}>
           {t('plan.daily.perDay', { count: daysLeft })}
         </Text>
       </View>
@@ -144,12 +152,13 @@ export function DailyCard({
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Text style={{ ...body(15, 600), color: palette.ink }}>{t('plan.whatIf.title')}</Text>
         <Text style={{ ...display(22, 500), ...tabular, color: palette.ink }}>
-          {formatShort(candidate, language)}
+          {money.short(candidate)}
         </Text>
       </View>
       <WhatIfSlider
         value={candidate}
-        max={sliderMax(committed)}
+        max={sliderMax(committed, money.currency)}
+        step={whatIfStep(money.currency)}
         colours={colours}
         label={t('plan.whatIf.title')}
         onStep={(v) => {

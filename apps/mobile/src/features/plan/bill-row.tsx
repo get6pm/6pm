@@ -9,9 +9,9 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { formatVnd } from '@6pm/domain';
 import { curves } from '@6pm/theme';
 
+import { useMoneyFormat } from '../../money/use-money-format';
 import { CategoryTile } from '../../ui/category-tile';
 import { isSymbolName, Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
@@ -43,6 +43,7 @@ export function BillRowView({
   readonly onEdit: () => void;
 }) {
   const { palette } = useTheme();
+  const money = useMoneyFormat();
   const reduceMotion = useReducedMotion();
   const paid = useSharedValue(view.paid ? 1 : 0);
   const pressed = useSharedValue(0);
@@ -92,7 +93,7 @@ export function BillRowView({
           <Text style={{ ...body(13), color: subColour }}>{sub}</Text>
         </View>
         <Text style={{ ...body(15, 600), ...tabular, color: palette.ink }}>
-          {formatVnd(bill.amount)}
+          {money.full(bill.amount)}
         </Text>
       </PressScale>
       <Pressable

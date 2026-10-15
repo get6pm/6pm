@@ -14,7 +14,6 @@ import { curves } from '@6pm/theme';
 
 import { useTheme } from '../../ui/theme/theme';
 import type { PlanColours } from './plan-colours';
-import { WHAT_IF_STEP } from './plan-view';
 
 const settle = Easing.bezier(...curves.house);
 const SETTLE_MS = 260;
@@ -25,13 +24,15 @@ const TRACK = 4;
 const HIT = 32;
 
 /**
- * The what-if range: Future you from 0 to `max` in 250k steps. The thumb follows the finger on the
- * UI thread and ticks at every step; each new step goes to JS once (`onStep`, so the daily number
- * can show the real change), and letting go settles on the step and commits it (`onCommit`).
+ * The what-if range: Future you from 0 to `max` in `step`s (250k in đồng). The thumb follows the
+ * finger on the UI thread and ticks at every step; each new step goes to JS once (`onStep`, so
+ * the daily number can show the real change), and letting go settles on the step and commits it
+ * (`onCommit`).
  */
 export function WhatIfSlider({
   value,
   max,
+  step: stepSize,
   colours,
   label,
   onStep,
@@ -39,6 +40,8 @@ export function WhatIfSlider({
 }: {
   readonly value: number;
   readonly max: number;
+  /** One notch, in the home currency's minor units. */
+  readonly step: number;
   readonly colours: PlanColours;
   readonly label: string;
   readonly onStep: (value: number) => void;
@@ -48,18 +51,18 @@ export function WhatIfSlider({
   const reduceMotion = useReducedMotion();
   const width = useSharedValue(0);
   const pos = useSharedValue(max > 0 ? value / max : 0);
-  const step = useSharedValue(Math.round(value / WHAT_IF_STEP));
+  const step = useSharedValue(Math.round(value / stepSize));
   const dragging = useSharedValue(false);
-  const steps = Math.max(1, Math.round(max / WHAT_IF_STEP));
+  const steps = Math.max(1, Math.round(max / stepSize));
 
   useEffect(() => {
     if (dragging.value) return;
-    step.value = Math.round(value / WHAT_IF_STEP);
+    step.value = Math.round(value / stepSize);
     pos.value = withTiming(max > 0 ? value / max : 0, {
       duration: reduceMotion ? 0 : SETTLE_MS,
       easing: settle,
     });
-  }, [value, max, pos, step, dragging, reduceMotion]);
+  }, [value, max, stepSize, pos, step, dragging, reduceMotion]);
 
   const follow = (x: number) => {
     'worklet';
@@ -69,7 +72,7 @@ export function WhatIfSlider({
     const next = Math.round(pos.value * steps);
     if (next !== step.value) {
       step.value = next;
-      runOnJS(onStep)(next * WHAT_IF_STEP);
+      runOnJS(onStep)(next * stepSize);
     }
   };
   const land = () => {
@@ -79,7 +82,7 @@ export function WhatIfSlider({
       duration: reduceMotion ? 0 : SETTLE_MS,
       easing: settle,
     });
-    runOnJS(onCommit)(Math.min(max, step.value * WHAT_IF_STEP));
+    runOnJS(onCommit)(Math.min(max, step.value * stepSize));
   };
 
   const pan = Gesture.Pan()
@@ -114,7 +117,7 @@ export function WhatIfSlider({
         onAccessibilityAction={(e) => {
           const next = Math.min(
             max,
-            Math.max(0, value + (e.nativeEvent.actionName === 'increment' ? 1 : -1) * WHAT_IF_STEP),
+            Math.max(0, value + (e.nativeEvent.actionName === 'increment' ? 1 : -1) * stepSize),
           );
           onStep(next);
           onCommit(next);

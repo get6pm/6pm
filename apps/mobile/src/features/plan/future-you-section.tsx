@@ -4,11 +4,12 @@ import { useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { Easing, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { aboutPerDay, formatShort } from '@6pm/domain';
+import { aboutPerDay } from '@6pm/domain';
 import { curves } from '@6pm/theme';
 
 import { usePlanActions } from '../../data/plan-actions';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { useCompanionToast } from '../companion/use-companion-toast';
 import { useRunAction } from '../companion/use-run-action';
 import { haptics } from '../../ui/haptics';
@@ -20,7 +21,7 @@ import type { PlanColours } from './plan-colours';
 import type { PlanFormat } from './plan-format';
 import { ChipButton, Pill } from './plan-parts';
 import { planRoutes } from './plan-routes';
-import { shareSplit, TOP_UP, type GoalView } from './plan-view';
+import { shareSplit, topUpIn, type GoalView } from './plan-view';
 
 const ease = Easing.bezier(...curves.enter);
 const RING = 58;
@@ -92,13 +93,15 @@ export function FutureYouCard({
   readonly format: PlanFormat;
 }) {
   const { palette } = useTheme();
-  const { t, weekday, language } = useI18n();
+  const { t, weekday } = useI18n();
+  const money = useMoneyFormat();
+  const topUp = topUpIn(money.currency);
   const say = useCompanionToast();
   const actions = usePlanActions();
   const run = useRunAction();
   const router = useRouter();
   const split = shareSplit(goals);
-  const step = formatShort(TOP_UP, language);
+  const step = money.short(topUp);
   return (
     <View
       style={{
@@ -140,7 +143,7 @@ export function FutureYouCard({
         <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
           <Text style={{ ...body(15, 650), color: palette.ink }}>
             {futureYou
-              ? t('plan.future.autoTitle', { amount: formatShort(futureYou, language) })
+              ? t('plan.future.autoTitle', { amount: money.short(futureYou) })
               : t('plan.future.pausedTitle')}
           </Text>
           <Text style={{ ...body(13), lineHeight: 17.55, color: palette.inkSoft }}>
@@ -170,7 +173,7 @@ export function FutureYouCard({
                 ? t('plan.future.status.onTrack', { month: by })
                 : status === 'behind'
                   ? t('plan.future.status.behind', { month: by })
-                  : t('plan.future.status.steady', { amount: formatShort(monthly, language) });
+                  : t('plan.future.status.steady', { amount: money.short(monthly) });
         const ok = status !== 'behind' && status !== 'paused';
         return (
           <View
@@ -198,8 +201,8 @@ export function FutureYouCard({
                 </Text>
                 <Text style={{ ...body(13), ...tabular, color: palette.inkSoft }}>
                   {t('plan.future.progress', {
-                    have: formatShort(g.saved, language),
-                    goal: formatShort(g.pot.goal, language),
+                    have: money.short(g.saved),
+                    goal: money.short(g.pot.goal),
                     eta: etaText,
                   })}
                 </Text>
@@ -216,7 +219,7 @@ export function FutureYouCard({
               accessibilityLabel={t('plan.future.add', { amount: step, name: g.pot.name })}
               onPress={() => {
                 haptics.tap();
-                void run(() => actions.topUp(g.pot.id, TOP_UP));
+                void run(() => actions.topUp(g.pot.id, topUp));
                 say('save', { day: weekday(new Date()) });
               }}
             />
@@ -273,7 +276,7 @@ export function FutureYouCard({
       >
         {t('plan.future.note', {
           step,
-          amount: formatShort(aboutPerDay(TOP_UP, daysLeft), language),
+          amount: money.short(aboutPerDay(topUp, daysLeft, 1, money.currency)),
         })}
       </Text>
     </View>

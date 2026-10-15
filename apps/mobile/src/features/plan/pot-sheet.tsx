@@ -2,7 +2,7 @@ import { useRef, useState, type ReactNode } from 'react';
 import { Keyboard, ScrollView, Text, View, type ScrollViewInstance } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
-import { formatShort, neededByHorizon, POT_GOAL_MIN, type Vnd } from '@6pm/domain';
+import { neededByHorizon, potGoalMin, type Vnd } from '@6pm/domain';
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
@@ -18,6 +18,7 @@ import { usePlanFormat } from './plan-format';
 import { goalPresets } from './pot-presets';
 import { DisclosureRow, PotCard, potReflow, SheetHeader } from './pot-rows';
 import { PotHero, PotSummary, type PotSummaryContent } from './pot-sheet-parts';
+import { useSheetMoney } from './sheet-money';
 
 /** What a pot's sheet edits: how it looks and what it is saving for. */
 export interface PotFields {
@@ -53,25 +54,31 @@ export interface PotSheetProps {
   };
   /** Under the button: delete. */
   readonly footer?: ReactNode;
+  /**
+   * The pot's own currency (ISO code) when it is not the home currency, as a shared pot made
+   * elsewhere can be: the goal is shown and typed in it. The summary arrives already written.
+   */
+  readonly currency?: string | undefined;
 }
 
 /**
  * The sheet a pot or goal is made and edited on: name it, pick its icon and colour, then a card
- * of rows that open in place: the goal on an amount keypad (tens of thousands to billions) and
- * the month it is needed by (quick picks and wheels, up to ten years out). What it will set
- * aside, and what that does to a day, update live under the card.
+ * of rows that open in place: the goal on an amount keypad (10.000₫ to a hundred billion, or as
+ * much in the home currency) and the month it is needed by (quick picks and wheels, up to ten
+ * years out). What it will set aside, and what that does to a day, update live under the card.
  */
 export function PotSheet(props: PotSheetProps) {
   const { fields, onChange, cta, month } = props;
   const { palette } = useTheme();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useSheetMoney(props.currency);
   const format = usePlanFormat(useMoney().today);
   const span = useSpan();
   const scroll = useRef<ScrollViewInstance>(null);
   const cardY = useRef(0);
   const [open, setOpen] = useState<Open>(null);
   const named = fields.name.trim().length > 0;
-  const ready = named && fields.goal >= POT_GOAL_MIN && cta.enabled;
+  const ready = named && fields.goal >= potGoalMin(money.currency) && cta.enabled;
   const button = useAnimatedStyle(() => ({
     opacity: withTiming(ready ? 1 : 0.35, { duration: 200 }),
   }));
@@ -107,6 +114,7 @@ export function PotSheet(props: PotSheetProps) {
           placeholder={props.placeholder}
           picking={open === 'icon'}
           saved={props.saved}
+          currency={props.currency}
           onTogglePick={() => toggle('icon')}
           onName={(name) => onChange({ name })}
           onFocusName={() => setOpen(null)}
@@ -114,7 +122,7 @@ export function PotSheet(props: PotSheetProps) {
 
         {open === 'icon' ? <PotIconPicker draft={fields} onChange={onChange} /> : null}
         {open !== 'icon' && !named && props.onTemplate ? (
-          <PotTemplates onPick={props.onTemplate} />
+          <PotTemplates onPick={props.onTemplate} currency={props.currency} />
         ) : null}
 
         <View onLayout={(e) => (cardY.current = e.nativeEvent.layout.y)}>
@@ -122,7 +130,7 @@ export function PotSheet(props: PotSheetProps) {
             <DisclosureRow
               first
               label={t('plan.pot.goal')}
-              value={formatShort(fields.goal, language)}
+              value={money.short(fields.goal)}
               open={open === 'goal'}
               hint={t('plan.pot.editGoal')}
               onPress={() => toggle('goal')}
@@ -130,7 +138,8 @@ export function PotSheet(props: PotSheetProps) {
             {open === 'goal' ? (
               <GoalAmountEditor
                 goal={fields.goal}
-                presets={goalPresets(fields.icon)}
+                presets={goalPresets(fields.icon, money.currency)}
+                currency={props.currency}
                 onChange={(goal) => onChange({ goal })}
               />
             ) : null}

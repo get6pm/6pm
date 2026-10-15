@@ -10,6 +10,7 @@ import {
   potRoom,
   soonestNeededBy,
 } from './needed-by';
+import { currencyOf } from '../money/currency';
 import { potMonthlyNeed } from './plan-river';
 
 describe('needed by', () => {
@@ -48,6 +49,14 @@ describe('needed by', () => {
 });
 
 describe('soonestNeededBy', () => {
+  it('rounds set-asides to the home currency', () => {
+    // $1,000 with $90 free: set-asides round up to $50, so twenty months.
+    const input = { goal: 100_000, saved: 0, room: 9_000, from: '2026-10' };
+    expect(soonestNeededBy({ ...input, currency: currencyOf('USD') })).toBe('2028-06');
+    // The same numbers in đồng round up to 50.000₫, which never fits 9.000₫.
+    expect(soonestNeededBy(input)).toBeNull();
+  });
+
   it('finds the first month whose set-aside fits what the month has free', () => {
     // 2 tỷ with 10tr free a month: 200 months is past the reach.
     expect(

@@ -1,3 +1,4 @@
+import { VND, type Currency } from '../money/currency';
 import type { Vnd } from '../money/format';
 import { addMonthsTo, potMonthlyNeed } from './plan-river';
 
@@ -63,21 +64,23 @@ export function neededByHorizon(from: string, month: string): Horizon {
 
 /**
  * The soonest month a goal can be needed by when the month has `room` to set aside: the first
- * month whose set-aside (rounded up to 50.000₫, as every set-aside is) fits in it. Null when there
- * is no room, or it would not fit even ten years out.
+ * month whose set-aside (rounded up to fifty steps, 50.000₫ or $50, as every set-aside is) fits.
+ * Null when there is no room, or it would not fit even ten years out.
  */
 export function soonestNeededBy(input: {
   readonly goal: Vnd;
   readonly saved: Vnd;
   readonly room: Vnd;
   readonly from: string;
+  /** The home currency; đồng when not given. */
+  readonly currency?: Currency;
 }): string | null {
   const left = Math.max(0, input.goal - input.saved);
   if (left === 0) return input.from;
   if (input.room <= 0) return null;
   for (let months = Math.max(1, Math.ceil(left / input.room)); ; months++) {
     if (months > NEEDED_BY_REACH_MONTHS) return null;
-    if (potMonthlyNeed(input.goal, input.saved, months) <= input.room) {
+    if (potMonthlyNeed(input.goal, input.saved, months, input.currency ?? VND) <= input.room) {
       return addMonthsTo(input.from, months);
     }
   }

@@ -1,6 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { dailyNumber, joinedShare, payCycleOn, type BillRow, type PotRow } from '@6pm/domain';
+import {
+  currencyOf,
+  dailyNumber,
+  joinedShare,
+  payCycleOn,
+  type BillRow,
+  type PotRow,
+} from '@6pm/domain';
 
 import type { MoneySnapshot } from '../../data/money-store';
 import {
@@ -14,6 +21,9 @@ import {
   shareSplit,
   sliderMax,
   potMonthAt,
+  topUpIn,
+  whatIfMax,
+  whatIfStep,
 } from './plan-view';
 
 const today = '2026-10-09';
@@ -164,6 +174,22 @@ describe('plan view', () => {
   it('keeps the slider on 250k steps up to 4tr, or the plan if it is higher', () => {
     expect(sliderMax(2_000_000)).toBe(4_000_000);
     expect(sliderMax(5_100_000)).toBe(5_250_000);
+  });
+
+  it('scales the slider and the goal top-up to a dollar home by value', () => {
+    const usd = currencyOf('USD');
+    expect(whatIfStep(usd)).toBe(1_000);
+    expect(whatIfMax(usd)).toBe(15_000);
+    expect(sliderMax(20_000, usd)).toBe(20_000);
+    expect(sliderMax(15_050, usd)).toBe(16_000);
+    expect(topUpIn(usd)).toBe(100);
+    expect(topUpIn(currencyOf('JPY'))).toBe(500);
+  });
+
+  it('keeps the slider and the top-up in đồng as the design has them', () => {
+    expect(whatIfStep()).toBe(250_000);
+    expect(whatIfMax()).toBe(4_000_000);
+    expect(topUpIn()).toBe(100_000);
   });
 
   it('puts a template month the given months after the cycle, or no date', () => {

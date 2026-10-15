@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   aboutPerDay,
   cycleMonth,
-  formatShort,
+  designAmount,
   goalMonthly,
   joinedShare,
   potMonthlyNeed,
@@ -21,6 +21,7 @@ import { PotSheet, type PotFields } from '../features/plan/pot-sheet';
 import { usePotWarn } from '../features/plan/use-pot-warn';
 import { useEntitlement } from '../features/purchases/purchases-provider';
 import { useI18n } from '../i18n/i18n';
+import { useMoneyFormat } from '../money/use-money-format';
 import { haptics } from '../ui/haptics';
 
 const SHARE_STEP = 5;
@@ -35,7 +36,9 @@ export default function NewPot() {
   const router = useRouter();
   const params = useLocalSearchParams<{ kind?: string }>();
   const kind = params.kind === 'goal' ? 'goal' : 'occasion';
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
+  const currency = money.currency;
   const say = useCompanionToast();
   const run = useRunAction();
   const snap = useMoney();
@@ -46,7 +49,8 @@ export default function NewPot() {
     name: '',
     icon: kind === 'goal' ? 'savings' : 'celebration',
     hue: kind === 'goal' ? 150 : 85,
-    goal: kind === 'goal' ? 10_000_000 : 2_000_000,
+    // The design's 10tr goal and 2tr pot, worth as much in the home currency.
+    goal: designAmount(kind === 'goal' ? 10_000_000 : 2_000_000, currency),
   });
   const [month, setMonth] = useState<string | null>(() =>
     potMonthAt(from, kind === 'goal' ? 0 : 3),
@@ -73,11 +77,12 @@ export default function NewPot() {
   const monthly =
     kind === 'goal'
       ? Math.min(draft.goal, goalMonthly(futureYou, share))
-      : potMonthlyNeed(draft.goal, 0, potMonthsLeft(snap.cycle, month));
+      : potMonthlyNeed(draft.goal, 0, potMonthsLeft(snap.cycle, month), currency);
   const perDay = aboutPerDay(
     monthly,
     snap.cycle.daysLeft,
     joinedShare(snap.cycle, snap.plan?.startedOn ?? null),
+    currency,
   );
 
   const warn = usePotWarn({
@@ -92,14 +97,14 @@ export default function NewPot() {
     kind === 'goal'
       ? futureYou > 0
         ? {
-            title: t('plan.goal.sumMonthly', { amount: formatShort(monthly, language) }),
+            title: t('plan.goal.sumMonthly', { amount: money.short(monthly) }),
             sub: t('plan.goal.sumSub'),
           }
         : { title: t('plan.goal.sumNone'), sub: t('plan.goal.sumNoneSub') }
       : month
         ? {
-            title: t('plan.pot.sumMonthly', { amount: formatShort(monthly, language) }),
-            sub: t('plan.pot.sumMonthlySub', { amount: formatShort(perDay, language) }),
+            title: t('plan.pot.sumMonthly', { amount: money.short(monthly) }),
+            sub: t('plan.pot.sumMonthlySub', { amount: money.short(perDay) }),
             warn,
           }
         : { title: t('plan.pot.sumNone'), sub: t('plan.pot.sumNoneSub') };

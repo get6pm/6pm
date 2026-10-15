@@ -3,13 +3,17 @@ import {
   addMonthsTo,
   billDueIn,
   cyclePosition,
+  designAmount,
   diffDays,
   goalMonthly,
   goalPlan,
   joinedShare,
   moneyRiver,
   occasionsOf,
+  potTopUpStep,
+  VND,
   weekdayMondayFirst,
+  type Currency,
   type BillRow,
   type DailyNumber,
   type GoalPlan,
@@ -22,14 +26,33 @@ import {
 import type { CycleTopUps } from '../../data/plan-actions';
 import type { MoneySnapshot } from '../../data/money-store';
 
-/** The what-if slider: Future you from 0 to 4tr in 250k steps (further when the plan is above). */
-export const WHAT_IF_STEP = 250_000;
-export const WHAT_IF_MAX = 4_000_000;
-/** The +100k buttons on goals and pots. */
+/**
+ * The what-if slider: Future you from 0 to 4tr in 250k steps (further when the plan is above).
+ * Both scale to the home currency by value ($10 steps to $150 in the US), so the slider keeps the
+ * design's sixteen-odd notches in any currency.
+ */
+export function whatIfStep(currency: Currency = VND): Vnd {
+  return designAmount(250_000, currency);
+}
+
+export function whatIfMax(currency: Currency = VND): Vnd {
+  return designAmount(4_000_000, currency);
+}
+
+/** The +100k buttons on goals and pots, in đồng. */
 export const TOP_UP = 100_000;
 
-export function sliderMax(committed: Vnd): Vnd {
-  return Math.max(WHAT_IF_MAX, Math.ceil(committed / WHAT_IF_STEP) * WHAT_IF_STEP);
+/**
+ * The +100k on a goal in the home currency: the first rung of the jars' top-up ladder, the
+ * design's 100k worth rounded down to 1 or 5 times a power of ten ($1, ¥500, Rp50.000).
+ */
+export function topUpIn(currency: Currency = VND): Vnd {
+  return currency.code === 'VND' ? TOP_UP : potTopUpStep(0, currency);
+}
+
+export function sliderMax(committed: Vnd, currency: Currency = VND): Vnd {
+  const step = whatIfStep(currency);
+  return Math.max(whatIfMax(currency), Math.ceil(committed / step) * step);
 }
 
 /** Σ what the occasion pots set aside this pay cycle, as the daily number counts them. */

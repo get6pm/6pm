@@ -1,7 +1,8 @@
-import { formatShort, potRoom, soonestNeededBy, type Vnd } from '@6pm/domain';
+import { potRoom, soonestNeededBy, type Vnd } from '@6pm/domain';
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { usePlanFormat } from './plan-format';
 import type { PotSummaryContent } from './pot-sheet-parts';
 import { occasionsMonthly } from './plan-view';
@@ -21,7 +22,8 @@ export function usePotWarn(input: {
   readonly onMonth: (month: string) => void;
 }): PotSummaryContent['warn'] {
   const snap = useMoney();
-  const { t, language } = useI18n();
+  const { t } = useI18n();
+  const money = useMoneyFormat();
   const format = usePlanFormat(snap.today);
   const income = snap.plan?.income ?? 0;
   if (income <= 0 || input.monthly <= 0) return undefined;
@@ -33,12 +35,13 @@ export function usePotWarn(input: {
     otherOccasions: Math.max(0, occasionsMonthly(snap) - own),
   });
   if (input.monthly <= room) return undefined;
-  const roomText = formatShort(room, language);
+  const roomText = money.short(room);
   const soonest = soonestNeededBy({
     goal: input.goal,
     saved: input.saved,
     room,
     from: input.from,
+    currency: money.currency,
   });
   if (soonest === null) return { text: t('plan.pot.tooMuchNever', { room: roomText }) };
   const label = format.monthLong(soonest);

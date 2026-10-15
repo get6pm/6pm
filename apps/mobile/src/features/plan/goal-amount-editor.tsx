@@ -3,13 +3,11 @@ import { Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 import {
-  formatShort,
-  formatVnd,
-  GOAL_UNITS,
   goalEntryOf,
   goalEntryValue,
   goalUnitFits,
-  groupDigits,
+  goalUnitsFor,
+  goalUnitTakesDecimals,
   pressGoalKey,
   setGoalUnit,
   type GoalEntry,
@@ -24,53 +22,77 @@ import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, tabular } from '../../ui/type/fonts';
+import { useSheetMoney } from './sheet-money';
 
 const KEYS: readonly GoalKey[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'back'];
 
-/** "1.500" and "1.500,25": the whole part grouped with dots, the decimals after a comma. */
-function typed(digits: string): string {
+/** How typed digits are written: đồng the design's way ("1.500,25"), else the phone's way. */
+interface Marks {
+  readonly group: string;
+  readonly decimal: string;
+}
+
+const DONG_MARKS: Marks = { group: '.', decimal: ',' };
+
+/** "1.500" and "1.500,25": the whole part grouped, the decimals after the decimal mark. */
+function typed(digits: string, marks: Marks): string {
   const [whole = '', fraction] = digits.split('.');
-  const grouped = groupDigits(Number(whole || '0'));
-  return fraction === undefined ? grouped : `${grouped},${fraction}`;
+  const grouped = String(Number(whole || '0')).replace(/\B(?=(\d{3})+(?!\d))/g, marks.group);
+  return fraction === undefined ? grouped : `${grouped}${marks.decimal}${fraction}`;
 }
 
 /**
  * The goal's amount, typed: chips of goals that suit the pot, the number with its unit (nghìn,
- * triệu, tỷ) and the exact đồng under it, the unit row, and a keypad. The first key after opening
- * or after a chip starts over, so a new number never lands after the old one.
+ * triệu, tỷ; or the currency's own, thousand, million) and the exact amount under it, the unit
+ * row, and a keypad. The first key after opening or after a chip starts over, so a new number
+ * never lands after the old one.
  */
 export function GoalAmountEditor({
   goal,
   presets,
   onChange,
+  currency: code,
 }: {
   readonly goal: Vnd;
   readonly presets: readonly Vnd[];
   readonly onChange: (goal: Vnd) => void;
+  /** The pot's own currency (ISO code), when it is not the home currency. */
+  readonly currency?: string | undefined;
 }) {
   const { palette } = useTheme();
-  const { t, language } = useI18n();
-  const [entry, setEntry] = useState<GoalEntry>(() => goalEntryOf(goal));
+  const { t } = useI18n();
+  const money = useSheetMoney(code);
+  const currency = money.currency;
+  const dong = currency.code === 'VND';
+  const marks = dong ? DONG_MARKS : money.locale;
+  const [entry, setEntry] = useState<GoalEntry>(() => goalEntryOf(goal, currency));
   const [fresh, setFresh] = useState(true);
-  const value = goalEntryValue(entry);
+  const value = goalEntryValue(entry, currency);
 
   // A goal set from outside (a template) replaces what is shown; typing only ever echoes back.
   useEffect(() => {
-    setEntry((e) => (goalEntryValue(e) === goal ? e : goalEntryOf(goal)));
-  }, [goal]);
+    setEntry((e) => (goalEntryValue(e, currency) === goal ? e : goalEntryOf(goal, currency)));
+  }, [goal, currency]);
 
   const set = (next: GoalEntry) => {
     setEntry(next);
     setFresh(false);
-    onChange(goalEntryValue(next));
+    onChange(goalEntryValue(next, currency));
   };
   const pick = (amount: Vnd) => {
     haptics.tick();
-    setEntry(goalEntryOf(amount));
+    setEntry(goalEntryOf(amount, currency));
     setFresh(true);
     onChange(amount);
   };
-  const unitLabel = (unit: GoalUnit) => t(`plan.pot.unit.${unit}`);
+  // The first unit is đồng's own word, or the currency's symbol.
+  const unitLabel = (unit: GoalUnit) =>
+    unit !== 'whole'
+      ? t(`plan.pot.unit.${unit}`)
+      : dong
+        ? t('plan.pot.unit.dong')
+        : currency.symbol;
+  const noPoint = !goalUnitTakesDecimals(entry.unit, currency);
 
   return (
     <Animated.View
@@ -101,7 +123,7 @@ export function GoalAmountEditor({
                 adjustsFontSizeToFit
                 style={{ ...body(13, 650), color: on ? palette.btnFg : palette.ink }}
               >
-                {formatShort(amount, language)}
+                {money.short(amount)}
               </Text>
             </PressScale>
           );
@@ -121,11 +143,11 @@ export function GoalAmountEditor({
               opacity: fresh || entry.digits === '' ? 0.5 : 1,
             }}
           >
-            {typed(entry.digits)}
+            {typed(entry.digits, marks)}
           </Text>
           <Text style={{ ...body(20, 600), color: palette.inkSoft }}>{unitLabel(entry.unit)}</Text>
         </View>
-        <Text style={{ ...body(13), ...tabular, color: palette.inkSoft }}>{formatVnd(value)}</Text>
+        <Text style={{ ...body(13), ...tabular, color: palette.inkSoft }}>{money.full(value)}</Text>
       </View>
 
       <View
@@ -137,9 +159,9 @@ export function GoalAmountEditor({
           backgroundColor: palette.chipBg,
         }}
       >
-        {GOAL_UNITS.map((unit) => {
+        {goalUnitsFor(currency).map((unit) => {
           const on = unit === entry.unit;
-          const fits = goalUnitFits(entry, unit);
+          const fits = goalUnitFits(entry, unit, currency);
           return (
             <PressScale
               key={unit}
@@ -148,7 +170,7 @@ export function GoalAmountEditor({
               disabled={!fits}
               onPress={() => {
                 haptics.tick();
-                set(setGoalUnit(entry, unit));
+                set(setGoalUnit(entry, unit, currency));
               }}
               style={{
                 flex: 1,
@@ -182,7 +204,7 @@ export function GoalAmountEditor({
                 : {})}
             onPress={() => {
               haptics.tick();
-              set(pressGoalKey(entry, key, fresh));
+              set(pressGoalKey(entry, key, fresh, currency));
             }}
             {...(key === 'back'
               ? {
@@ -198,7 +220,7 @@ export function GoalAmountEditor({
               height: 48,
               borderRadius: 15,
               backgroundColor: palette.chipBg,
-              opacity: key === '.' && entry.unit === 'dong' ? 0.3 : 1,
+              opacity: key === '.' && noPoint ? 0.3 : 1,
               alignItems: 'center',
               justifyContent: 'center',
             }}
@@ -207,7 +229,7 @@ export function GoalAmountEditor({
               <Symbol name="backspace" size={22} color={palette.ink} />
             ) : (
               <Text style={{ ...display(24, 500), color: palette.ink }}>
-                {key === '.' ? ',' : key}
+                {key === '.' ? marks.decimal : key}
               </Text>
             )}
           </PressScale>

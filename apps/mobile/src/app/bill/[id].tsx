@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { ScrollView, Text, TextInput, View } from 'react-native';
+import { ScrollView, Text, TextInput, type TextInputInstance, View } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 import { useMoney } from '../../data/money-provider';
@@ -13,6 +13,7 @@ import { PotCard, SheetHeader } from '../../features/plan/pot-rows';
 import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
 import { SheetFrame } from '../../ui/navigation/sheet-frame';
+import { useFocusOnPresent } from '../../ui/navigation/use-focus-on-present';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, families } from '../../ui/type/fonts';
@@ -43,6 +44,10 @@ export default function BillSheet() {
   const [working, setWorking] = useState(false);
   const busy = useRef(false);
   const left = useRef(false);
+  const nameInput = useRef<TextInputInstance>(null);
+  // A new bill starts with its name, so the keyboard is up once the sheet is; an existing one
+  // opens to be looked over first.
+  useFocusOnPresent(nameInput, id === 'new');
 
   // The sheet edits a copy; it starts from the bill as saved, once.
   useEffect(() => {
@@ -121,6 +126,7 @@ export default function BillSheet() {
         }}
       >
         <TextInput
+          ref={nameInput}
           value={name}
           onChangeText={setName}
           placeholder={t('plan.bill.placeholder')}

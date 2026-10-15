@@ -5,16 +5,24 @@ import type { I18n } from '../../i18n/i18n';
 type Translate = I18n['t'];
 
 /** Looks whose name reads the same in Vietnamese: the engine's name is used as it is. */
-const NAME_AS_ENGINE: ReadonlySet<LookId> = new Set(['neon', 'riso', 'lacquer', 'holo', 'arcade']);
+const NAME_AS_ENGINE: ReadonlySet<LookId> = new Set(['lacquer', 'glaze', 'riso', 'cafe', 'neon']);
 
 /** Variants that read the same in Vietnamese (a place or a phrase of its own), as `look.index`. */
 const VARIANT_AS_ENGINE: ReadonlySet<string> = new Set([
   'golden.1',
   'golden.2',
+  'lacquer.0',
+  'lacquer.1',
+  'glaze.0',
+  'glaze.1',
+  'monsoon.1',
+  'cafe.0',
+  'cafe.1',
+  'neon.0',
+  'neon.1',
   'paper.1',
   'lantern.0',
   'lantern.1',
-  'lantern.2',
 ]);
 
 /**

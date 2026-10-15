@@ -25,7 +25,7 @@ describe('the sold looks match the catalogue', () => {
   it('names each look’s product after it', () => {
     expect(lookProductId('lantern')).toBe('ai.sixpm.app.look.lantern');
     expect(isPaidLook('golden')).toBe(false);
-    expect(isPaidLook('arcade')).toBe(true);
+    expect(isPaidLook('glaze')).toBe(true);
   });
 });
 

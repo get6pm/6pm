@@ -2,15 +2,15 @@
 export const LOOK_IDS = [
   'basic',
   'golden',
+  'lacquer',
+  'glaze',
+  'riso',
+  'monsoon',
+  'cafe',
+  'neon',
   'expo',
   'paper',
   'lantern',
-  'neon',
-  'riso',
-  'lacquer',
-  'monsoon',
-  'holo',
-  'arcade',
 ] as const;
 
 export type LookId = (typeof LOOK_IDS)[number];
@@ -45,6 +45,8 @@ export interface LookControl {
   readonly label: string;
   readonly sub: string;
   readonly def: boolean;
+  /** The switch drives the scene from the phone's motion (tilt, stillness). */
+  readonly sensor?: boolean;
 }
 
 export interface LookDefinition {
@@ -58,6 +60,8 @@ export interface LookDefinition {
   readonly dark: number;
   /** CSS font stack of the display face. */
   readonly font: string;
+  /** CSS font stack of the interface face; unset is the system face (SF Pro). */
+  readonly ui?: string;
   /** Name of the intensity slider ("Atmosphere", "Ink", …). */
   readonly kName: string;
   readonly accent?: string;
@@ -99,7 +103,19 @@ export interface Palette {
   readonly bubbleFg: string;
   readonly accent: string;
   readonly dispFont: string;
+  /** CSS font stack of the interface face. */
+  readonly uiFont: string;
   readonly textGlow: string;
+  /** Ink on an accent fill (the FAB, the lit close button, the inbox badge). */
+  readonly accentFg: string;
+  /** The coloured shadow under an accent fill. */
+  readonly accentGlow: string;
+  /** The hero number's text shadow, size (CSS px) and font variation settings. */
+  readonly heroGlow: string;
+  readonly heroSize: string;
+  readonly heroVar: string;
+  /** Scale for the display-face amounts, so a wide face fits where a narrow one was drawn. */
+  readonly numK: number;
   readonly [override: string]: unknown;
 }
 
@@ -109,8 +125,12 @@ export interface PrototypeLookState {
     theme?: LookId;
     tryOn?: LookId | null;
     tcfg?: Partial<Record<LookId, Partial<LookConfig>>>;
+    /** The tab on show: some scenes (Cà Phê's cup) draw on Today only. */
+    tab?: string;
+    /** Whether today is closed: Neon Alley's sign reads đóng cửa once it is. */
+    closed?: boolean;
   };
-  props: { theme?: string };
+  props: { theme?: string; bare?: boolean };
 }
 
 /** The prototype's methods, as extracted. `this` is a `PrototypeLookState` plus these methods. */

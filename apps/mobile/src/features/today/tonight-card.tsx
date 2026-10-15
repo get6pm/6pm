@@ -123,7 +123,7 @@ export function TonightCard({
             justifyContent: 'center',
           }}
         >
-          <Symbol name={icon} size={26} fill={1} color={lit ? '#2a1424' : palette.ink} />
+          <Symbol name={icon} size={26} fill={1} color={lit ? palette.accentFg : palette.ink} />
         </View>
         <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
           <Text style={{ ...display(21, 500, -0.01), lineHeight: 24, color: palette.ink }}>
@@ -144,7 +144,7 @@ export function TonightCard({
             borderRadius: 99,
             backgroundColor: lit ? palette.accent : palette.btnBg,
             boxShadow: lit
-              ? '0 8px 22px rgba(255,120,70,.38), inset 0 1px 0 rgba(255,255,255,.5)'
+              ? `0 8px 22px ${palette.accentGlow}, inset 0 1px 0 rgba(255,255,255,.5)`
               : 'none',
             flexDirection: 'row',
             alignItems: 'center',
@@ -152,10 +152,10 @@ export function TonightCard({
             gap: 6,
           }}
         >
-          <Text style={{ ...body(16, 650), color: lit ? '#2a1424' : palette.btnFg }}>
+          <Text style={{ ...body(16, 650), color: lit ? palette.accentFg : palette.btnFg }}>
             {resuming ? t('today.cta.resume') : due ? t('today.cta.start') : t('today.cta.early')}
           </Text>
-          <Symbol name="arrow_forward" size={20} color={lit ? '#2a1424' : palette.btnFg} />
+          <Symbol name="arrow_forward" size={20} color={lit ? palette.accentFg : palette.btnFg} />
         </PressScale>
       ) : (
         <PressScale
@@ -233,7 +233,9 @@ export function TonightCard({
                     justifyContent: 'center',
                   }}
                 >
-                  {w.closed ? <Symbol name="check" size={16} weight={600} color="#2a1424" /> : null}
+                  {w.closed ? (
+                    <Symbol name="check" size={16} weight={600} color={palette.accentFg} />
+                  ) : null}
                 </View>
                 <Text style={{ ...body(10.5, 600), color: palette.inkSoft }}>
                   {letters.format(date)}

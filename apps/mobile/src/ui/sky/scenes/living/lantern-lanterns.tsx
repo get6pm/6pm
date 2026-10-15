@@ -30,10 +30,12 @@ interface Props {
   /** The lanterns' hour-driven numbers (see `LANTERN_VALUES`). */
   readonly values: SharedValue<number[]>;
   readonly time: SharedValue<number>;
+  /** The phone's pendulum swing (`--pend`). */
+  readonly pend: SharedValue<number>;
 }
 
-function LanternShape({ lantern, index, values, time }: Props) {
-  const { x, y, w, h, cord, tassel, opacity, stops, rib, sway } = lantern;
+function LanternShape({ lantern, index, values, time, pend }: Props) {
+  const { x, y, w, h, cord, tassel, opacity, stops, rib, sway, pendDeg } = lantern;
   const at = index * LANTERN_VALUES;
   const bodyTop = cord + CAP_HEIGHT;
   const corners = parseBorderRadius('42% / 50%', w, h);
@@ -45,8 +47,14 @@ function LanternShape({ lantern, index, values, time }: Props) {
       ? ((2 * alternating(time.value - sway.delayMs, sway.durationMs) - 1) * SWAY_DEG * Math.PI) /
         180
       : 0;
+    const swing = turn + (pendDeg * pend.value * Math.PI) / 180;
     // Hangs from the top of its cord, swinging about it.
-    return [{ translateX: x + w / 2 }, { translateY: y }, { rotate: turn }, { translateX: -w / 2 }];
+    return [
+      { translateX: x + w / 2 },
+      { translateY: y },
+      { rotate: swing },
+      { translateX: -w / 2 },
+    ];
   });
   const silk = useDerivedValue(() => colorsAt(values.value, at, 3));
   const glowColor = useDerivedValue(() => colorsAt(values.value, at + 12, 1)[0] ?? [0, 0, 0, 0]);
@@ -124,14 +132,15 @@ interface LanternsProps {
   readonly lanterns: readonly Lantern[];
   readonly values: SharedValue<number[]>;
   readonly time: SharedValue<number>;
+  readonly pend: SharedValue<number>;
 }
 
-/** Silk lanterns hung from the strings, each swinging on its own period. */
-export function Lanterns({ lanterns, values, time }: LanternsProps) {
+/** Silk lanterns hung from the strings, each swinging on its own period and with the phone. */
+export function Lanterns({ lanterns, values, time, pend }: LanternsProps) {
   return (
     <>
       {lanterns.map((lantern, i) => (
-        <LanternShape key={i} lantern={lantern} index={i} values={values} time={time} />
+        <LanternShape key={i} lantern={lantern} index={i} values={values} time={time} pend={pend} />
       ))}
     </>
   );

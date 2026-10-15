@@ -42,7 +42,7 @@ describe('look signatures', () => {
         for (const hour of [8.5, 14, 18.1, 21.5]) {
           const { st } = paletteFor({ look, hour, serious: false, config: { v } });
           const sig = lookSignature(look, v, st, hour);
-          const all = [...layers(sig.image), ...(sig.sun.image ? [sig.sun.image] : [])];
+          const all = [...layers(sig.image), ...layers(sig.sun.image ?? '')];
           for (const layer of all) {
             if (processBackgroundImage(layer)?.length !== 1) unreadable.push(`${look} ${layer}`);
           }
@@ -69,8 +69,8 @@ describe('look signatures', () => {
       const { st } = paletteFor({ look, hour: 14, serious: false, config: { v } });
       return lookSignature(look, v, st, 14);
     };
-    expect(at('riso', 1).sun.color).toBe('#ff6c2f');
-    expect(at('lacquer', 1).sun.image).toContain('#d8dce4');
-    expect(at('lantern', 1).image).toContain('#e8322a');
+    expect(at('riso', 1).sun.color).toBe('#ff6a2c');
+    expect(at('lacquer', 1).sun.image).toContain('#e8c070');
+    expect(at('lantern', 1).image).toContain('#e33a26');
   });
 });

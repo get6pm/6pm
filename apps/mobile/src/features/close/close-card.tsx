@@ -5,6 +5,7 @@ import { CategoryTile } from '../../ui/category-tile';
 import { DashedRule } from '../../ui/dashed-rule';
 import { FitWidth } from '../../ui/layout/fit-width';
 import { PaperEdge } from '../../ui/paper-edge';
+import { useTheme } from '../../ui/theme/theme';
 import { body, display, mono, tabular } from '../../ui/type/fonts';
 import { AmountText } from '../quick-add/amount-text';
 import type { SpendRowView } from '../today/spend-row';
@@ -98,6 +99,7 @@ export function CloseCard({
 }) {
   const { row, labels } = content;
   const money = useMoneyFormat();
+  const { numK } = useTheme().palette;
   return (
     <View style={{ boxShadow: '0 22px 34px rgba(20,6,30,.32)' }}>
       <View
@@ -154,7 +156,12 @@ export function CloseCard({
             parts={money.parts(content.amount)}
             numberOfLines={1}
             gap={'\u2006'}
-            style={{ ...display(72, 500, -0.02), ...tabular, lineHeight: 72, color: INK }}
+            style={{
+              ...display(72 * numK, 500, -0.02),
+              ...tabular,
+              lineHeight: 72 * numK,
+              color: INK,
+            }}
             symbol={{ ...display(30, 500), opacity: 0.55 }}
           />
         </FitWidth>

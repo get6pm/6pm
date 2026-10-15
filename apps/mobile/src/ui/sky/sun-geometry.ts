@@ -1,4 +1,4 @@
-import { configFor, type FrameInput, type Palette } from '@6pm/theme';
+import { configFor, sunFor, type FrameInput, type Palette } from '@6pm/theme';
 
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
@@ -43,6 +43,49 @@ export function baseSun(
   };
 }
 
+/** The sun as a look draws it (`sunFx`), in points, with the look's extras as CSS. */
+export interface LookSun extends BaseSun {
+  readonly mask: string;
+  readonly ghost: string;
+  readonly ghostOp: number;
+  readonly gx: number;
+  readonly gy: number;
+  readonly thread: string;
+  readonly threadOp: number;
+  /** The thread's length, from the top of the screen to the sun's top edge. */
+  readonly threadH: number;
+}
+
+/**
+ * The look's sun for a frame: the base sun handed to the look engine in its CSS form (a look may
+ * move it to the safe height under the header, or resize it) and read back into points.
+ */
+export function lookSun(input: FrameInput, palette: Palette, visible: boolean): LookSun {
+  const base = baseSun(input.hour, palette, visible, input.serious);
+  const sun = sunFor(input, palette, { ...base, top: `${base.y}px` });
+  const num = (v: unknown, fallback: number) => {
+    const n = parseFloat(String(v));
+    return Number.isFinite(n) ? n : fallback;
+  };
+  const text = (v: unknown, fallback: string) => (typeof v === 'string' ? v : fallback);
+  return {
+    x: base.x,
+    y: num(sun.top, base.y),
+    size: num(sun.size, base.size),
+    color: text(sun.color, base.color),
+    glow: text(sun.glow, base.glow),
+    opacity: num(sun.opacity, 0),
+    mask: text(sun.mask, 'none'),
+    ghost: text(sun.ghost, 'transparent'),
+    ghostOp: num(sun.ghostOp, 0),
+    gx: num(sun.gx, 0),
+    gy: num(sun.gy, 0),
+    thread: text(sun.thread, 'transparent'),
+    threadOp: num(sun.threadOp, 0),
+    threadH: num(sun.threadH, 0),
+  };
+}
+
 /** The moon fades in from 19:00 to 20:00, except in serious mode or Basic with "Sun & moon" off. */
 export function moonOpacity(input: FrameInput): number {
   if (input.serious) return 0;
@@ -51,11 +94,4 @@ export function moonOpacity(input: FrameInput): number {
 }
 
 /** The moon: a 26 pt disc whose top-left corner sits at 78% across and 124 pt down. */
-export const MOON = {
-  left: 0.78,
-  top: 124,
-  size: 26,
-  color: '#f4ecda',
-  glow: '0 0 50px 14px rgba(244,236,218,.14)',
-  shade: 'inset -7px -3px 0 rgba(30,26,60,.35)',
-} as const;
+export const MOON = { left: 0.78, top: 124, size: 26 } as const;

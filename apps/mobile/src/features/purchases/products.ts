@@ -1,7 +1,7 @@
 import type { LookId } from '@6pm/theme';
 
 /** The six classic looks, 49.000₫ each, bought once. */
-export const CLASSIC_LOOKS = ['neon', 'riso', 'lacquer', 'monsoon', 'holo', 'arcade'] as const;
+export const CLASSIC_LOOKS = ['lacquer', 'glaze', 'riso', 'monsoon', 'cafe', 'neon'] as const;
 /** The three living scenes, 99.000₫ each, bought once. */
 export const SCENE_LOOKS = ['expo', 'paper', 'lantern'] as const;
 /** Every look that is sold: the rest of the catalogue (Basic, Golden Hour) is free. */

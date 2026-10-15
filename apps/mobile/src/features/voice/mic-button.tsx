@@ -22,8 +22,6 @@ const press = Easing.bezier(...curves.enter);
 /** The prototype's `ring 1.1s ease-out infinite`: scale 1 → 1.65 while fading from .5. */
 const RING_MS = 1100;
 const ringEase = Easing.out(Easing.ease);
-/** On the dark plum the design uses for text on the accent. */
-const ON_ACCENT = '#2a1424';
 
 /**
  * The round accent microphone. Its touches come straight from the gesture handler, so a hold
@@ -136,8 +134,8 @@ export function MicButton({
             button,
           ]}
         >
-          <Symbol name="mic" size={glyph} color={ON_ACCENT} />
-          <Text style={{ ...body(13, 650), color: ON_ACCENT }}>{label}</Text>
+          <Symbol name="mic" size={glyph} color={palette.accentFg} />
+          <Text style={{ ...body(13, 650), color: palette.accentFg }}>{label}</Text>
         </Animated.View>
       </GestureDetector>
     </View>

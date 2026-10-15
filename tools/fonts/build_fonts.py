@@ -4,13 +4,16 @@
 
 Sources (fetched once, outside the repo): google/fonts ofl/bricolagegrotesque (variable),
 ofl/bevietnampro, ofl/ibmplexmono, ofl/patrickhand, and google/material-design-icons
-variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf + .codepoints. The looks' display
-faces: ofl/barlowcondensed (Medium, SemiBold), and the variable ofl/baloo2, ofl/lora,
-ofl/playfairdisplay, ofl/cormorantgaramond and ofl/unbounded.
+variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf + .codepoints. The looks'
+faces, display and interface (`--only looks` builds just these): ofl/baloo2, ofl/bodonimoda,
+ofl/newsreader, ofl/darkergrotesque, ofl/alegreya, ofl/literata, ofl/epilogue, ofl/archivo,
+ofl/plusjakartasans, ofl/nunito and ofl/tiltneon (variable), and the static cuts of
+ofl/barlowcondensed, ofl/delagothicone, ofl/spectral, ofl/alegreyasans, ofl/baijamjuree and
+ofl/barlow named in LOOK_STATIC_FACES.
 
-Bricolage Grotesque and Material Symbols ship as variable fonts: React Native applies
+Bricolage Grotesque, Material Symbols and most look faces ship as variable fonts: React Native applies
 `fontVariationSettings` on iOS and Android, so the app sets the same axes the browser does
-(optical size = font size, the exact weight, the icon FILL axis). The other faces are static.
+(optical size = font size, the exact weight, the icon FILL axis). Static cuts stay static.
 Every face is subset to Latin + Vietnamese (icons: to the glyphs the prototype names) and
 renamed so each file registers under its own family name.
 """
@@ -103,32 +106,64 @@ def build_static(src: Path) -> None:
         save(font, f"{family}.ttf")
 
 
-# The looks' display faces, at the weights the prototype loads; the default instance is 500, the
-# weight display text uses most.
-LOOK_FACES = (
-    ("Baloo2[wght].ttf", "Baloo2", (500, 500, 700)),
-    ("Lora[wght].ttf", "Lora", (500, 500, 600)),
-    ("PlayfairDisplay[wght].ttf", "PlayfairDisplay", (500, 500, 600)),
-    ("CormorantGaramond[wght].ttf", "CormorantGaramond", (500, 500, 600)),
-    ("Unbounded[wght].ttf", "Unbounded", (400, 500, 600)),
+# Each look's display face (`font`) and interface face (`ui`), as `6pm App v2.dc.html` names them.
+# Variable files keep the axes the app sets: weight, and optical size where the face has it (the
+# browser's `font-optical-sizing: auto`); every other axis is pinned to the face's normal drawing.
+# The default instance is the weight the face is set at most (500 for display, 400 for text).
+LOOK_VARIABLE_FACES = (
+    # (source, family, axes)
+    ("Baloo2[wght].ttf", "Baloo2", {"wght": (500, 500, 700)}),
+    ("BodoniModa[opsz,wght].ttf", "BodoniModa", {"wght": (400, 500, 700), "opsz": (6, 28, 96)}),
+    ("Newsreader[opsz,wght].ttf", "Newsreader", {"wght": (400, 500, 700), "opsz": (6, 28, 72)}),
+    ("DarkerGrotesque[wght].ttf", "DarkerGrotesque", {"wght": (400, 500, 800)}),
+    ("Alegreya[wght].ttf", "Alegreya", {"wght": (400, 500, 800)}),
+    ("Literata[opsz,wght].ttf", "Literata", {"wght": (400, 400, 800), "opsz": (7, 12, 72)}),
+    ("Epilogue[wght].ttf", "Epilogue", {"wght": (400, 400, 800)}),
+    ("Archivo[wdth,wght].ttf", "Archivo", {"wght": (400, 400, 800), "wdth": 100}),
+    ("PlusJakartaSans[wght].ttf", "PlusJakartaSans", {"wght": (400, 400, 800)}),
+    ("Nunito[wght].ttf", "Nunito", {"wght": (400, 400, 800)}),
+    ("TiltNeon[XROT,YROT].ttf", "TiltNeon", {"XROT": 0, "YROT": 0}),
+)
+
+# Faces Google ships only as static cuts, one file per weight the app sets.
+LOOK_STATIC_FACES = (
+    "BarlowCondensed-Medium",
+    "BarlowCondensed-SemiBold",
+    "DelaGothicOne-Regular",
+    "Spectral-Regular",
+    "Spectral-Medium",
+    "Spectral-SemiBold",
+    "AlegreyaSans-Regular",
+    "AlegreyaSans-Medium",
+    "AlegreyaSans-Bold",
+    "AlegreyaSans-ExtraBold",
+    "BaiJamjuree-Regular",
+    "BaiJamjuree-Medium",
+    "BaiJamjuree-SemiBold",
+    "BaiJamjuree-Bold",
+    "Barlow-Regular",
+    "Barlow-Medium",
+    "Barlow-SemiBold",
+    "Barlow-Bold",
 )
 
 
 def build_look_faces(src: Path) -> None:
-    for file_name, family in (
-        ("BarlowCondensed-Medium.ttf", "BarlowCondensed-Medium"),
-        ("BarlowCondensed-SemiBold.ttf", "BarlowCondensed-SemiBold"),
-    ):
-        font = TTFont(src / file_name)
+    for family in LOOK_STATIC_FACES:
+        font = TTFont(src / f"{family}.ttf")
         subset_font(font, unicodes=TEXT_UNICODES)
         rename(font, family, family)
         save(font, f"{family}.ttf")
-    for file_name, family, weights in LOOK_FACES:
+    for file_name, family, axes in LOOK_VARIABLE_FACES:
         font = TTFont(src / file_name)
         subset_font(font, unicodes=TEXT_UNICODES)
-        font = instancer.instantiateVariableFont(font, {"wght": weights}, updateFontNames=False)
-        rename(font, family, f"{family}-Variable")
-        save(font, f"{family}-Variable.ttf")
+        font = instancer.instantiateVariableFont(font, axes, updateFontNames=False)
+        if "fvar" in font:
+            rename(font, family, f"{family}-Variable")
+            save(font, f"{family}-Variable.ttf")
+        else:
+            rename(font, family, family)
+            save(font, f"{family}.ttf")
 
 
 def used_icon_names(codepoints: dict) -> list:
@@ -169,11 +204,15 @@ def build_symbols(src: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--src", type=Path, required=True)
-    src = parser.parse_args().src
-    print("Bricolage Grotesque"); build_bricolage(src)
-    print("Static faces"); build_static(src)
+    parser.add_argument("--only", choices=["looks"], help="build just the looks' faces")
+    args = parser.parse_args()
+    src = args.src
+    if args.only != "looks":
+        print("Bricolage Grotesque"); build_bricolage(src)
+        print("Static faces"); build_static(src)
     print("Look faces"); build_look_faces(src)
-    print("Material Symbols Rounded"); build_symbols(src)
+    if args.only != "looks":
+        print("Material Symbols Rounded"); build_symbols(src)
     print(json.dumps({"out": str(OUT.relative_to(ROOT))}))
 
 

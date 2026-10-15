@@ -90,7 +90,7 @@ export function TodayList({
                 justifyContent: 'center',
               }}
             >
-              <Symbol name="inbox" size={21} color="#2a1424" />
+              <Symbol name="inbox" size={21} color={palette.accentFg} />
             </View>
             <View style={{ flex: 1, gap: 2 }}>
               <Text style={{ ...body(16, 600), color: palette.ink }}>

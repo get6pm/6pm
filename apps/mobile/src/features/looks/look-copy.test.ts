@@ -42,6 +42,6 @@ describe('look copy', () => {
       }
     }
     expect(copy.name('golden')).toBe('Giờ vàng');
-    expect(copy.name('neon')).toBe('Neon Noir');
+    expect(copy.name('neon')).toBe('Neon Alley');
   });
 });

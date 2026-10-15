@@ -75,8 +75,8 @@ export function SpendRowBackdrop({
           confirmLabelStyle,
         ]}
       >
-        <Symbol name="check_circle" size={22} fill={1} color="#2a1424" />
-        <Text style={{ ...body(11.5, 700), color: '#2a1424' }}>{confirmLabel}</Text>
+        <Symbol name="check_circle" size={22} fill={1} color={palette.accentFg} />
+        <Text style={{ ...body(11.5, 700), color: palette.accentFg }}>{confirmLabel}</Text>
       </Animated.View>
       <Animated.View
         pointerEvents="none"

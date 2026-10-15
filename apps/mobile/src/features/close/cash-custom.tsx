@@ -167,7 +167,7 @@ export function CashCustom({
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ ...body(17, 650), color: '#2a1424' }}>{addLabel}</Text>
+              <Text style={{ ...body(17, 650), color: palette.accentFg }}>{addLabel}</Text>
             </PressScale>
           </Animated.View>
         </GestureDetector>

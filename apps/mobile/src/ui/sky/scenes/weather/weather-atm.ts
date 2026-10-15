@@ -4,19 +4,28 @@ import { parseColor, type Rgba } from '../../css-values';
 export interface RainTile {
   readonly width: number;
   readonly height: number;
-  readonly strokeWidth: number;
   readonly color: Rgba;
-  /** Vertical strokes inside the tile: (x, y) to (x, y + length). */
-  readonly strokes: readonly { readonly x: number; readonly y: number; readonly length: number }[];
+  /** Vertical strokes inside the tile: (x, y) to (x, y + length), each its own weight and ink. */
+  readonly strokes: readonly RainStroke[];
+}
+
+export interface RainStroke {
+  readonly x: number;
+  readonly y: number;
+  readonly length: number;
+  readonly width: number;
+  readonly opacity: number;
 }
 
 const attr = (svg: string, name: string): string | null =>
   new RegExp(`${name}=['"]([^'"]+)['"]`).exec(svg)?.[1] ?? null;
 
 /**
- * Reads `atm.rainTile` (`url("data:image/svg+xml,<svg …><g stroke=… ><path d='M10 4v26M38 52v18…'/>`)
- * into numbers. Only the forms the prototype emits (absolute `M` moves and relative `v` lines) are
- * understood; anything else reads as `null` so the layer draws nothing rather than something wrong.
+ * Reads `atm.rainTile` into numbers: one path of strokes under the group's width
+ * (`<g stroke=… stroke-width=…><path d='M10 4v26M38 52v18…'/>`), or one path per stroke with its
+ * own `stroke-width` and `stroke-opacity`. Only the forms the prototype emits (absolute `M` moves
+ * and relative `v` lines) are understood; anything else reads as `null` so the layer draws nothing
+ * rather than something wrong.
  */
 export function parseRainTile(value: unknown): RainTile | null {
   if (typeof value !== 'string') return null;
@@ -28,16 +37,29 @@ export function parseRainTile(value: unknown): RainTile | null {
   }
   const width = Number(attr(svg, 'width'));
   const height = Number(attr(svg, 'height'));
-  const strokeWidth = Number(attr(svg, 'stroke-width'));
+  const groupWidth = Number(attr(svg, 'stroke-width') ?? 1);
   const color = parseColor(attr(svg, 'stroke') ?? '');
-  const d = attr(svg, 'd');
-  if (!color || !d || !(width > 0) || !(height > 0) || !(strokeWidth > 0)) return null;
-  const strokes: { x: number; y: number; length: number }[] = [];
-  for (const m of d.matchAll(/M\s*(-?[\d.]+)[\s,]+(-?[\d.]+)\s*v\s*(-?[\d.]+)/g)) {
-    const [, x, y, length] = m;
-    strokes.push({ x: Number(x), y: Number(y), length: Number(length) });
+  if (!color || !(width > 0) || !(height > 0)) return null;
+  const strokes: RainStroke[] = [];
+  for (const path of svg.matchAll(/<path ([^>]*)\/>/g)) {
+    const tag = path[1] ?? '';
+    const d = attr(tag, 'd') ?? '';
+    const strokeWidth = Number(attr(tag, 'stroke-width') ?? groupWidth);
+    const opacity = Number(attr(tag, 'stroke-opacity') ?? 1);
+    for (const m of d.matchAll(/M\s*(-?[\d.]+)[\s,]+(-?[\d.]+)\s*v\s*(-?[\d.]+)/g)) {
+      const [, x, y, length] = m;
+      strokes.push({
+        x: Number(x),
+        y: Number(y),
+        length: Number(length),
+        width: strokeWidth,
+        opacity,
+      });
+    }
   }
-  return strokes.length > 0 ? { width, height, strokeWidth, color, strokes } : null;
+  return strokes.length > 0 && strokes.every((s) => s.width > 0)
+    ? { width, height, color, strokes }
+    : null;
 }
 
 /** One raindrop on the glass, in the prototype's own units. */

@@ -12,7 +12,7 @@ import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, mono } from '../../ui/type/fonts';
 import { useRunAction } from '../companion/use-run-action';
-import { markerTint, ON_ACCENT, type PlanColours } from './plan-colours';
+import { markerTint, type PlanColours } from './plan-colours';
 import type { PlanFormat } from './plan-format';
 import { PlanCard } from './plan-parts';
 import { planRoutes } from './plan-routes';
@@ -131,7 +131,7 @@ export function BillsCard({
       position: 1,
       icon: 'payments',
       bg: palette.accent,
-      fg: ON_ACCENT,
+      fg: palette.accentFg,
       label: t('plan.bills.payday').toUpperCase(),
       labelColour: palette.ink,
     },

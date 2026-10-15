@@ -195,13 +195,13 @@ function CardStack({
           borderWidth: 0.5,
           borderColor: primary ? 'rgba(255,255,255,.45)' : palette.glassBorder,
           boxShadow: primary
-            ? '0 10px 26px rgba(255,120,70,.38), inset 0 1px 0 rgba(255,255,255,.5)'
+            ? `0 10px 26px ${palette.accentGlow}, inset 0 1px 0 rgba(255,255,255,.5)`
             : 'none',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        <Symbol name={icon} size={28} color={primary ? '#2a1424' : palette.ink} />
+        <Symbol name={icon} size={28} color={primary ? palette.accentFg : palette.ink} />
       </PressScale>
       <Text style={{ ...body(12, 600), color: palette.inkSoft }}>{label}</Text>
     </View>

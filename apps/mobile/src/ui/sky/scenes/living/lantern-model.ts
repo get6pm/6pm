@@ -53,6 +53,8 @@ export interface Lantern {
   /** The paper ribs: width of the clear gap, period, and ink; none when the silk is plain. */
   readonly rib: { readonly gap: number; readonly period: number; readonly ink: Rgba } | null;
   readonly sway: Sway | null;
+  /** Degrees it swings per unit of the phone's pendulum (`rotate: calc(var(--pend) * k)`). */
+  readonly pendDeg: number;
 }
 
 export interface LanternModel {
@@ -102,6 +104,7 @@ function lanternOf(row: Row): Lantern | null {
           }
         : null,
     sway: parseSway(textOf(row, 'anim')),
+    pendDeg: Number(/var\(--pend, 0\) \* (-?[\d.]+)deg/.exec(textOf(row, 'pk'))?.[1] ?? 0),
   };
 }
 

@@ -208,7 +208,11 @@ export function MoneyRiverCard({
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit
-            style={{ ...display(44, 500, -0.03), lineHeight: 44, color: palette.ink }}
+            style={{
+              ...display(44 * palette.numK, 500, -0.03),
+              lineHeight: 44 * palette.numK,
+              color: palette.ink,
+            }}
           >
             {value}
           </Text>

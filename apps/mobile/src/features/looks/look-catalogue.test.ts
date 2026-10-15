@@ -10,12 +10,12 @@ describe('the shop’s order', () => {
     expect(SHOP_ORDER).toEqual([
       'basic',
       'golden',
-      'neon',
-      'riso',
       'lacquer',
+      'glaze',
+      'riso',
       'monsoon',
-      'holo',
-      'arcade',
+      'cafe',
+      'neon',
       'expo',
       'paper',
       'lantern',
@@ -24,10 +24,10 @@ describe('the shop’s order', () => {
   });
 
   it('steps round the catalogue in both directions', () => {
-    expect(neighbour('basic', -1)).toBe('arcade');
-    expect(neighbour('arcade', 1)).toBe('basic');
-    expect(neighbour('golden', 1)).toBe('expo');
-    expect(positionOf('expo')).toEqual({ index: 3, total: 11 });
+    expect(neighbour('basic', -1)).toBe('lantern');
+    expect(neighbour('lantern', 1)).toBe('basic');
+    expect(neighbour('golden', 1)).toBe('lacquer');
+    expect(positionOf('expo')).toEqual({ index: 9, total: 11 });
   });
 });
 
@@ -61,12 +61,12 @@ describe('the Settings line under the Look card', () => {
       shopSub({
         ...FREE_CUSTOMER,
         ownedLooks: [
-          'neon',
-          'riso',
           'lacquer',
+          'glaze',
+          'riso',
           'monsoon',
-          'holo',
-          'arcade',
+          'cafe',
+          'neon',
           'expo',
           'paper',
           'lantern',

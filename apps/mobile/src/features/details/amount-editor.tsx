@@ -115,7 +115,7 @@ export function AmountEditor({
               // The design's " ₫" after the number; a symbol that comes first sits close.
               gap={homeParts.suffix ? ' ' : '\u2006'}
               style={{
-                ...display(72, 500, -0.02),
+                ...display(72 * palette.numK, 500, -0.02),
                 ...tabular,
                 lineHeight: 72,
                 color: palette.ink,

@@ -2,7 +2,7 @@ import { createContext, use, useMemo, useRef, type ReactNode } from 'react';
 
 import { DEFAULT_LOOK, paletteFor, type LookConfig, type LookId, type Palette } from '@6pm/theme';
 
-import { setDisplayFont } from '../type/fonts';
+import { setDisplayFont, setUiFont } from '../type/fonts';
 import { useClock } from './clock';
 import { samePalette } from './same-palette';
 
@@ -48,8 +48,9 @@ export function ThemeProvider({
     ) {
       return previous;
     }
-    // Before any child renders, so display text below is drawn in this look's face.
+    // Before any child renders, so the text below is drawn in this look's faces.
     setDisplayFont(palette.dispFont);
+    setUiFont(palette.uiFont);
     return { look, serious, palette };
   }, [look, config, serious, hour]);
   kept.current = theme;

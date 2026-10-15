@@ -20,6 +20,7 @@ import { isSymbolName } from '../../ui/icons/symbol';
 import { Keypad } from '../../ui/keypad';
 import { FitWidth } from '../../ui/layout/fit-width';
 import { PressScale } from '../../ui/primitives/press-scale';
+import { useTheme } from '../../ui/theme/theme';
 import { useTravel } from '../travel/travel-provider';
 import { body, display, tabular } from '../../ui/type/fonts';
 import type { PayOptions } from './pay-options';
@@ -92,6 +93,7 @@ export function ScanPreview({
   const { t, language } = useI18n();
   const { categories } = useMoney();
   const money = useMoneyFormat();
+  const { palette } = useTheme();
   const { dongQuote } = useTravel();
   // A VietQR is đồng, whatever the home currency: typed, shown and paid in đồng.
   const dong = moneyFormatFor(VND, language);
@@ -155,7 +157,12 @@ export function ScanPreview({
             style={{ flexDirection: 'row', alignItems: 'baseline' }}
           >
             <Text
-              style={{ ...display(64, 500, -0.02), ...tabular, lineHeight: 64, color: c.cardInk }}
+              style={{
+                ...display(64 * palette.numK, 500, -0.02),
+                ...tabular,
+                lineHeight: 64 * palette.numK,
+                color: c.cardInk,
+              }}
             >
               {parts.number}
             </Text>

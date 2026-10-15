@@ -62,11 +62,11 @@ describe('moonOpacity', () => {
     expect(moonOpacity({ look: 'golden', hour: 21.5, serious: false })).toBe(1);
   });
 
-  it('stays down in serious mode and in Basic with Sun & moon off', () => {
+  it('stays down in serious mode and in Basic unless Sun & moon is on', () => {
     expect(moonOpacity({ look: 'golden', hour: 21.5, serious: true })).toBe(0);
-    expect(moonOpacity({ look: 'basic', hour: 21.5, serious: false })).toBe(1);
-    expect(moonOpacity({ look: 'basic', config: { sun: false }, hour: 21.5, serious: false })).toBe(
-      0,
+    expect(moonOpacity({ look: 'basic', hour: 21.5, serious: false })).toBe(0);
+    expect(moonOpacity({ look: 'basic', config: { sun: true }, hour: 21.5, serious: false })).toBe(
+      1,
     );
   });
 });

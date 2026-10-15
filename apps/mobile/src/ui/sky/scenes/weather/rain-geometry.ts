@@ -1,4 +1,4 @@
-import type { RainTile } from './weather-atm';
+import type { RainStroke, RainTile } from './weather-atm';
 
 /** The prototype tilts both rain layers by 14° about the screen's centre. */
 export const RAIN_TILT_DEG = 14;
@@ -20,6 +20,35 @@ export const RAIN_LAYERS: readonly RainLayerSpec[] = [
   { tile: [150, 230], periodMs: 800, opacity: 0.55, blur: 0.8 },
 ];
 
+/** `84px 140px` → [84, 140]. */
+function sizeOf(css: unknown): [number, number] | null {
+  const m = typeof css === 'string' ? /^([\d.]+)px ([\d.]+)px$/.exec(css.trim()) : null;
+  return m?.[1] && m[2] ? [Number(m[1]), Number(m[2])] : null;
+}
+
+/** The two layers at the sizes the look gives its tile (`rainSize`, `rainSize2`). */
+export function rainLayersFor(atm: Readonly<Record<string, unknown>>): RainLayerSpec[] {
+  const [sharp, soft] = RAIN_LAYERS as [RainLayerSpec, RainLayerSpec];
+  return [
+    { ...sharp, tile: sizeOf(atm.rainSize) ?? sharp.tile },
+    { ...soft, tile: sizeOf(atm.rainSize2) ?? soft.tile },
+  ];
+}
+
+/** The tile's strokes grouped by weight and ink, so each group is one path. */
+export function strokeGroups(
+  tile: RainTile,
+): { width: number; opacity: number; strokes: RainStroke[] }[] {
+  const groups = new Map<string, { width: number; opacity: number; strokes: RainStroke[] }>();
+  for (const s of tile.strokes) {
+    const key = `${s.width}|${s.opacity}`;
+    const group = groups.get(key) ?? { width: s.width, opacity: s.opacity, strokes: [] };
+    group.strokes.push(s);
+    groups.set(key, group);
+  }
+  return [...groups.values()];
+}
+
 /** The cells (column and row ranges, inclusive) a tilted `width` × `height` screen can show. */
 export function rainCells(spec: RainLayerSpec, width: number, height: number) {
   const [tw, th] = spec.tile;
@@ -40,7 +69,8 @@ export function rainCells(spec: RainLayerSpec, width: number, height: number) {
 
 /** The visible tile cells (in tile units) as one SVG path of strokes. */
 export function rainPath(
-  tile: RainTile,
+  tile: Pick<RainTile, 'width' | 'height'>,
+  strokes: readonly RainStroke[],
   spec: RainLayerSpec,
   width: number,
   height: number,
@@ -49,7 +79,7 @@ export function rainPath(
   const parts: string[] = [];
   for (let r = r0; r <= r1; r++) {
     for (let c = c0; c <= c1; c++) {
-      for (const s of tile.strokes) {
+      for (const s of strokes) {
         parts.push(`M${c * tile.width + s.x} ${r * tile.height + s.y}v${s.length}`);
       }
     }

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Text, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
@@ -17,15 +18,15 @@ import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
 import { body, tabular } from '../../ui/type/fonts';
+import { pinnedOpticalSize, textShadows } from '../../ui/type/text-shadow';
 
 const meterEase = Easing.bezier(...curves.enter);
 
 /**
  * The top of Today: the date, the two glass buttons, and the one number with its meter. Measures
- * follow the prototype (`App:125-158`): a 400 pt band, 60/22/40 padding, a 92 pt display number.
+ * follow the prototype (`App:125-158`): a 400 pt band, 60/22/40 padding, a display number at the
+ * look's hero size (92 pt, smaller for a wide face) with the look's glow.
  */
-
-const HERO_SIZE = 92;
 export function TodayHero({
   day,
   onSettings,
@@ -36,6 +37,8 @@ export function TodayHero({
   readonly onQuickAdd: () => void;
 }) {
   const { palette } = useTheme();
+  const heroSize = parseFloat(palette.heroSize) || 92;
+  const heroGlows = useMemo(() => textShadows(palette.heroGlow), [palette.heroGlow]);
   const { dayDate } = useClock();
   const { t, weekday, dayMonth } = useI18n();
   const money = useMoneyFormat();
@@ -106,10 +109,12 @@ export function TodayHero({
         </View>
         {/* A long amount scales down to the width it has instead of running off the edge. */}
         <View style={{ marginLeft: -3 }}>
-          <FitWidth height={Math.round(HERO_SIZE * 1.04)}>
+          <FitWidth height={Math.round(heroSize * 1.04)}>
             <Odometer
               value={Math.max(0, day.safe)}
-              size={HERO_SIZE}
+              size={heroSize}
+              glows={heroGlows}
+              opsz={pinnedOpticalSize(palette.heroVar)}
               letterSpacingEm={-0.02}
               color={palette.ink}
             />

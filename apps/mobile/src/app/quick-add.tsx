@@ -175,8 +175,14 @@ export default function QuickAdd() {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={{ marginHorizontal: -16, flexGrow: 0 }}
-          contentContainerStyle={{ gap: 8, paddingHorizontal: 16, paddingTop: 6, paddingBottom: 2 }}
+          // The chosen tile lifts and rings itself: room above and below so neither is cut off.
+          style={{ marginHorizontal: -16, marginTop: -6, flexGrow: 0 }}
+          contentContainerStyle={{
+            gap: 8,
+            paddingHorizontal: 16,
+            paddingTop: 12,
+            paddingBottom: 4,
+          }}
         >
           {ordered.map((c) => {
             const on = c.id === categoryId;

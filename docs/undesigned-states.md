@@ -140,6 +140,7 @@ fakes behaviour the app cannot fake. Founder review.
 | Pot sheet (own, goal, shared) | Needed by | The row shows the month and "in 2 years"; it opens quick picks (3 and 6 months, 1, 2 and 5 years, No date) over month and year wheels reaching ten years past the pay cycle's month | The drawn month chevrons stopped at eight months ahead (founder, 2026-10-14) |
 | Pot sheet (own) | Set-aside more than the month has free | Under the summary: "That's more than your month has free (…). March 2029 or later fits." and a "Make it March 2029" chip that sets the date; past ten years it suggests a smaller goal | The daily number would go below zero with nothing said |
 | New pot | Templates | Home (2 tỷ, two years) and Car (800tr, a year) join the drawn five | Big goals had no starting point |
+| Plan · Occasions | Quick top-up on a big pot | The jar's +100k scales with its goal: the largest of 100k, 500k, 1tr, 5tr, 10tr, 50tr, 100tr that is at most a twentieth of it (a 2 tỷ home adds 100tr a tap); shared jars the same | The drawn +100k is a rounding error on a home or a car |
 | Plan · Occasions | Second pot without Max | "New pot" shows the MAX lock and "More pots come with Max." and opens the Max sheet | The locked tile is not drawn |
 | Plan · Occasions | Paused pot | Pill reads "Paused" | Nothing drawn |
 | Plan · Future you | Create, edit or delete a goal; share between goals | A dashed "New goal" row; the goal sheet reuses the pot sheet with a Share row | Nothing drawn |

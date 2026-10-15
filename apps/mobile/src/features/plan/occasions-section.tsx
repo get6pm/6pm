@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { formatShort } from '@6pm/domain';
+import { formatShort, potTopUpStep } from '@6pm/domain';
 import { curves } from '@6pm/theme';
 
 import { usePlanActions } from '../../data/plan-actions';
@@ -27,7 +27,7 @@ import { jarTint, type PlanColours } from './plan-colours';
 import type { PlanFormat } from './plan-format';
 import { Pill } from './plan-parts';
 import { planRoutes } from './plan-routes';
-import { TOP_UP, type OccasionView } from './plan-view';
+import type { OccasionView } from './plan-view';
 
 const ease = Easing.bezier(...curves.enter);
 const CARD_W = 150;
@@ -59,11 +59,12 @@ function Jar({
   const fillStyle = useAnimatedStyle(() => ({ height: fill.value * CARD_H }));
   const jar = jarTint(view.pot.hue, palette.dark);
   const { pot, full } = view;
+  const step = potTopUpStep(pot.goal);
   const add = () => {
     if (full) return;
     haptics.tap();
-    void run(() => actions.topUp(pot.id, TOP_UP));
-    if (view.saved + TOP_UP >= pot.goal) say('potFull');
+    void run(() => actions.topUp(pot.id, step));
+    if (view.saved + step >= pot.goal) say('potFull');
   };
   const edit = () => {
     haptics.tap();
@@ -126,7 +127,7 @@ function Jar({
             accessibilityLabel={
               full
                 ? t('plan.occasions.full')
-                : t('plan.future.add', { amount: formatShort(TOP_UP, language), name: pot.name })
+                : t('plan.future.add', { amount: formatShort(step, language), name: pot.name })
             }
             onPress={add}
             style={{
@@ -146,7 +147,7 @@ function Jar({
               color={full ? colours.ok : palette.ink}
             />
             <Text style={{ ...body(12.5, 700), color: full ? colours.ok : palette.ink }}>
-              {full ? t('plan.occasions.full') : formatShort(TOP_UP, language)}
+              {full ? t('plan.occasions.full') : formatShort(step, language)}
             </Text>
           </PressScale>
         </View>

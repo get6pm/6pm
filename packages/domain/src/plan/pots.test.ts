@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { payCycleOn, type Payday } from './pay-cycle';
 import {
   dueSetAsides,
+  potTopUpStep,
   occasionsOf,
   potSetAside,
   potTotals,
@@ -269,5 +270,22 @@ describe('rebalanceShares', () => {
     expect(rebalanceShares({ a: 0.3, b: 0.2 })).toEqual({ a: 0.6, b: 0.4 });
     const split = rebalanceShares({ a: 0.5, b: 0.5, c: 0.5 }, 'c');
     expect(Object.values(split).reduce((x, y) => x + y, 0)).toBeCloseTo(1, 10);
+  });
+});
+
+describe('potTopUpStep', () => {
+  it('scales the quick top-up to a round twentieth of the goal at most', () => {
+    expect(potTopUpStep(500_000)).toBe(100_000);
+    expect(potTopUpStep(2_000_000)).toBe(100_000);
+    expect(potTopUpStep(10_000_000)).toBe(500_000);
+    expect(potTopUpStep(20_000_000)).toBe(1_000_000);
+    expect(potTopUpStep(100_000_000)).toBe(5_000_000);
+    expect(potTopUpStep(800_000_000)).toBe(10_000_000);
+    expect(potTopUpStep(2_000_000_000)).toBe(100_000_000);
+    expect(potTopUpStep(50_000_000_000)).toBe(100_000_000);
+  });
+
+  it('never goes below 100k, even for a goal of nothing', () => {
+    expect(potTopUpStep(0)).toBe(100_000);
   });
 });

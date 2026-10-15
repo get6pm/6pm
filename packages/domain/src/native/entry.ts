@@ -5,15 +5,19 @@ import {
   type ShareCard,
   type SurfaceContext,
 } from '../contracts/surfaces';
+import { receiptReadingOrder } from '../capture/bank-receipt';
+import { readReceipt } from '../capture/read-receipt';
 import { buildLogSpend } from './log-spend';
 import { shareAmount } from './share-amount';
 import {
   buildShareCard,
   buildShareItem,
+  cardOf,
   receiptLinesSchema,
   shareEditsSchema,
   toReceiptLines,
 } from './share-card';
+import { mergeLook, receiptLookSchema } from './share-merge';
 import { randomUuid } from './uuid';
 
 /**
@@ -63,6 +67,32 @@ export function shareCard(linesJson: string, contextJson: string, nowIso: string
       ? buildShareCard(toReceiptLines(lines.data), contextOf(contextJson), now)
       : emptyCard(now);
     return JSON.stringify(card);
+  } catch {
+    return JSON.stringify(emptyCard(now));
+  }
+}
+
+/**
+ * The card again once the server has looked at the photo: `lookJson` is the answer of
+ * `POST /v1/receipts/read` (`{receipt: {amount, currency, merchant, at, sure} | null}`). Fields
+ * the phone read surely stay; anything unreadable gives the phone's card unchanged. Returns
+ * `ShareCard`.
+ */
+export function shareLook(
+  linesJson: string,
+  lookJson: string,
+  contextJson: string,
+  nowIso: string,
+): string {
+  const now = nowOf(nowIso);
+  try {
+    const parsed = receiptLinesSchema.safeParse(json(linesJson));
+    const lines = parsed.success ? toReceiptLines(parsed.data) : [];
+    const context = contextOf(contextJson);
+    const read = readReceipt(lines, context?.travel?.currency ?? null);
+    const look = receiptLookSchema.safeParse(json(lookJson));
+    const merged = look.success ? mergeLook(read, look.data, receiptReadingOrder(lines)) : read;
+    return JSON.stringify({ ...cardOf(merged, lines, context, now), needsCheck: false });
   } catch {
     return JSON.stringify(emptyCard(now));
   }

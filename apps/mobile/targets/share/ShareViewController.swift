@@ -1,8 +1,8 @@
 import SwiftUI
 import UIKit
 
-/// The share sheet's entry: reads the shared receipt on this iPhone, shows its card, and on
-/// Confirm leaves one inbox file for the app to import the next time it opens.
+/// The share sheet's entry: reads the shared receipts on this iPhone, shows a card for each in
+/// turn, and on each Confirm leaves one inbox file for the app to import the next time it opens.
 final class ShareViewController: UIViewController {
   private var model: ShareModel?
   private var finishing = false
@@ -15,6 +15,7 @@ final class ShareViewController: UIViewController {
     let sheet = ShareSheetView(
       model: model,
       onConfirm: { [weak self] in self?.confirm() },
+      onSkip: { [weak self] in self?.skip() },
       onCancel: { [weak self] in self?.cancel() })
     let host = UIHostingController(rootView: sheet)
     host.view.backgroundColor = .clear
@@ -29,8 +30,14 @@ final class ShareViewController: UIViewController {
   }
 
   private func confirm() {
-    guard !finishing, let model, model.confirm() else { return }
-    finish { $0.completeRequest(returningItems: nil) }
+    guard !finishing, let model else { return }
+    if model.confirm() == .done { finish { $0.completeRequest(returningItems: nil) } }
+  }
+
+  /// Skipping the last receipt ends the share; any confirmed before it are kept.
+  private func skip() {
+    guard !finishing, let model else { return }
+    if model.skip() == .done { finish { $0.completeRequest(returningItems: nil) } }
   }
 
   private func cancel() {

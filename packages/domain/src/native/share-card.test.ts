@@ -5,7 +5,7 @@ import grabfood from '../capture/fixtures/receipts/shop-grabfood-analy.json';
 import kelingking from '../capture/fixtures/receipts/shop-kelingking-bali-no-mark.json';
 import mbbank from '../capture/fixtures/receipts/synthetic-mbbank.json';
 import { inboxSpendSchema, shareCardSchema, type SurfaceContext } from '../contracts/surfaces';
-import { shareCard, shareItem, shareShown } from './entry';
+import { shareCard, shareItem, shareLook, shareShown } from './entry';
 
 const context: SurfaceContext = {
   v: 1,
@@ -86,5 +86,69 @@ describe('a receipt in another currency', () => {
 describe('a shop receipt in đồng', () => {
   it('is read from its total, not the discount', () => {
     expect(card(grabfood)).toMatchObject({ amount: 101_500, amountText: '101.500₫' });
+  });
+});
+
+describe('shareLook', () => {
+  const look = (receipt: object | null, lines: unknown = grabfood) =>
+    shareCardSchema.parse(
+      JSON.parse(shareLook(JSON.stringify(lines), JSON.stringify({ receipt }), withRates, now)),
+    );
+
+  it('takes what the server is sure of where the phone was not', () => {
+    const merged = look({
+      amount: 101_500,
+      currency: 'VND',
+      merchant: 'Cơm Gà Hải Nam',
+      at: null,
+      sure: true,
+    });
+    expect(merged).toMatchObject({
+      amount: 101_500,
+      payee: 'Cơm Gà Hải Nam',
+      totalSure: true,
+      needsCheck: false,
+    });
+  });
+
+  it('never takes a shop name the photo did not print', () => {
+    const merged = look({
+      amount: 101_500,
+      currency: 'VND',
+      merchant: 'Phở 24',
+      at: null,
+      sure: true,
+    });
+    expect(merged.payee).toBe('Cơm Gà Hải Nam Tam Kỳ 142 - Bình Chánh');
+  });
+
+  it('reads rupiah from the server as whole units', () => {
+    const merged = look(
+      { amount: 935_550, currency: 'IDR', merchant: 'Kelingking', at: null, sure: true },
+      kelingking,
+    );
+    expect(merged).toMatchObject({ printed: '935550', currencySure: true, payee: 'Kelingking' });
+  });
+
+  it('keeps what the phone read surely over a server that is unsure', () => {
+    const merged = look(
+      { amount: 999_000, currency: 'VND', merchant: null, at: null, sure: false },
+      mbbank,
+    );
+    expect(merged).toMatchObject({ amount: 120_000, payee: 'CIRCLE K VN' });
+  });
+
+  it('converts the server’s cents for a currency with them', () => {
+    const merged = look(
+      { amount: 6_880, currency: 'SGD', merchant: null, at: '2026-08-29T19:14:00', sure: true },
+      coffeeBean,
+    );
+    expect(merged).toMatchObject({ currency: 'SGD', printed: '68.80', currencySure: true });
+  });
+
+  it('leaves the card as the phone read it when the server could not read the photo', () => {
+    expect(look(null)).toMatchObject({ amount: 101_500, needsCheck: false });
+    const broken = JSON.parse(shareLook(JSON.stringify(grabfood), 'nope', withRates, now));
+    expect(shareCardSchema.parse(broken).amount).toBe(101_500);
   });
 });

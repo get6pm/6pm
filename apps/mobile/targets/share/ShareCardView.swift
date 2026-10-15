@@ -2,58 +2,10 @@ import SwiftUI
 
 private typealias Ink = ThemeTokens.ShareCard
 
-/// The share sheet's card (`SS:188-215`): a light sheet 8 pt in from the edges of the screen over
-/// the dimmed app that shared the receipt.
-struct ShareSheetView: View {
-  @ObservedObject var model: ShareModel
-  let onConfirm: () -> Void
-  let onCancel: () -> Void
-
-  @Environment(\.accessibilityReduceMotion) private var reduceMotion
-  @State private var shown = false
-  @State private var drag: CGFloat = 0
-
-  var body: some View {
-    ZStack(alignment: .bottom) {
-      Ink.scrim
-        .ignoresSafeArea()
-        .opacity(shown && !model.leaving ? 1 : 0)
-        .onTapGesture(perform: onCancel)
-      if shown, !model.leaving, model.phase == .ready {
-        ShareCardView(model: model, onConfirm: onConfirm)
-          .padding(.horizontal, 8)
-          .padding(.bottom, 8)
-          .offset(y: max(0, drag))
-          .gesture(dismissDrag)
-          .transition(reduceMotion ? .opacity : .move(edge: .bottom))
-      }
-    }
-    .ignoresSafeArea(.container, edges: .bottom)
-    .animation(ShareMotion.sheet(reduceMotion: reduceMotion), value: model.phase == .ready)
-    .animation(ShareMotion.sheet(reduceMotion: reduceMotion), value: model.leaving)
-    .onAppear {
-      withAnimation(ShareMotion.enter(reduceMotion: reduceMotion)) { shown = true }
-    }
-  }
-
-  /// Pulled down past 120 pt, or flicked, the sheet goes and nothing is added.
-  private var dismissDrag: some Gesture {
-    DragGesture()
-      .onChanged { drag = $0.translation.height }
-      .onEnded { value in
-        let flick = value.predictedEndTranslation.height - value.translation.height > 200
-        if value.translation.height > ShareMotion.dismissDistance || flick {
-          onCancel()
-        } else {
-          withAnimation(.spring(response: 0.42, dampingFraction: 0.82)) { drag = 0 }
-        }
-      }
-  }
-}
-
 struct ShareCardView: View {
   @ObservedObject var model: ShareModel
   let onConfirm: () -> Void
+  let onSkip: () -> Void
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @FocusState private var focus: Field?
@@ -68,6 +20,12 @@ struct ShareCardView: View {
       Capsule().fill(Ink.grabber).frame(width: 36, height: 5).frame(maxWidth: .infinity)
       header
       amount
+      if let under = model.underLine {
+        Text(under)
+          .font(ShareFont.body(15))
+          .foregroundStyle(Ink.soft)
+          .padding(.top, -10)
+      }
       rows
       if model.payeeUnsure && !model.editing {
         Text(model.text("unsure"))
@@ -103,6 +61,19 @@ struct ShareCardView: View {
         Text(model.readLine).font(ShareFont.body(13)).foregroundStyle(Ink.soft)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
+      if let step = model.stepText {
+        VStack(alignment: .trailing, spacing: 4) {
+          Text(step).font(ShareFont.body(13)).foregroundStyle(Ink.soft)
+          Button(action: onSkip) {
+            Text(model.text("skip"))
+              .font(ShareFont.body(13, weight: 600))
+              .padding(.horizontal, 12)
+              .frame(height: 28)
+              .background(Capsule().fill(Ink.editBg))
+          }
+          .buttonStyle(.plain)
+        }
+      }
     }
   }
 
@@ -114,7 +85,7 @@ struct ShareCardView: View {
           "", text: $model.typedAmount,
           prompt: Text(model.text("amountHint")).foregroundStyle(Ink.soft)
         )
-        .keyboardType(.numberPad)
+        .keyboardType(model.decimalEntry ? .decimalPad : .numberPad)
         .focused($focus, equals: .amount)
         .font(ShareFont.amount(64))
         .trackingEm(-0.02, size: 64)
@@ -122,7 +93,10 @@ struct ShareCardView: View {
         let text = model.amountText
         let number = text.hasSuffix("₫") ? String(text.dropLast()) : text
         HStack(alignment: .firstTextBaseline, spacing: 4) {
+          // A foreign amount carries its own sign in front ("S$68,80"); đồng keeps its small ₫.
           Text(number).font(ShareFont.amount(64)).trackingEm(-0.02, size: 64)
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
           if text.hasSuffix("₫") {
             Text("₫").font(ShareFont.amount(64 * 0.42)).opacity(0.55)
           }
@@ -141,6 +115,9 @@ struct ShareCardView: View {
       }
       if let code = model.card?.code {
         row(model.text("code")) { Text(code).font(ShareFont.mono(14)) }
+      }
+      if let label = model.currencyLabel, let options = model.card?.currencies {
+        row(model.text("currency")) { currency(label, options) }
       }
       if !model.categories.isEmpty || model.categoryName != nil {
         row(model.text("category")) { category }
@@ -198,6 +175,27 @@ struct ShareCardView: View {
       .accessibilityHint(model.text("checkName"))
     } else {
       Text(model.payee).font(ShareFont.body(15, weight: 600)).lineLimit(1)
+    }
+  }
+
+  @ViewBuilder private func currency(
+    _ label: String, _ options: [ShareCardData.Currency]
+  ) -> some View {
+    let name = Text(label).font(ShareFont.body(15, weight: 600))
+    if model.editing {
+      Menu {
+        Picker("", selection: $model.currency) {
+          ForEach(options) { Text($0.label).tag(Optional($0.code)) }
+        }
+      } label: {
+        HStack(spacing: 4) {
+          name
+          Text(Symbol.unfoldMore).font(ShareFont.symbol(16)).foregroundStyle(Ink.soft)
+        }
+      }
+      .tint(Ink.ink)
+    } else {
+      name
     }
   }
 

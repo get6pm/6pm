@@ -10,6 +10,7 @@ import { enReceiptEmail } from './en-receipt-email';
 import { enBackup } from './en-backup';
 import { enExport } from './en-export';
 import { enAsk } from './en-ask';
+import { enAskLedger } from './en-ask-ledger';
 import { enScan } from './en-scan';
 import { enBanks } from './en-banks';
 import { enLooks } from './en-looks';
@@ -19,6 +20,7 @@ import { enYearBook } from './en-year-book';
 import { enPlan } from './en-plan';
 import { enClose } from './en-close';
 import { enCompanion } from './en-companion';
+import { enInsights } from './en-insights';
 import { enToday } from './en-today';
 import { enCategories } from './en-categories';
 import { enTravel } from './en-travel';
@@ -38,9 +40,11 @@ export const en = {
   ...enBanks,
   ...enLooks,
   ...enCompanion,
+  ...enInsights,
   ...enBackup,
   ...enExport,
   ...enAsk,
+  ...enAskLedger,
   ...enNative,
   ...enSharing,
   ...enShareExt,

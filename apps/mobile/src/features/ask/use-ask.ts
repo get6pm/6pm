@@ -1,8 +1,21 @@
 import * as Sentry from '@sentry/react-native';
 import { useRouter } from 'expo-router';
+import { useSQLiteContext } from 'expo-sqlite';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { FREE_ASKS_PER_WEEK, answerAsk, freeAsksLeft, type LocalDate } from '@6pm/domain';
+import {
+  FREE_ASKS_PER_WEEK,
+  answerQuery,
+  fillLine,
+  freeAsksLeft,
+  isAskIntent,
+  localDateOf,
+  type AskAnswer,
+  type AskQuery,
+  type AskQueryAnswer,
+  type LocalDate,
+  type WordRequest,
+} from '@6pm/domain';
 
 import { useMoneySelector, useMoneyStore } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
@@ -10,13 +23,39 @@ import type { CompanionMood } from '../../ui/companion/companion-mood';
 import { haptics } from '../../ui/haptics';
 import { useClock } from '../../ui/theme/clock';
 import { useApi } from '../api/native-api';
+import { useCompanionForm } from '../../ui/companion/companion-form';
+import { useTheme } from '../../ui/theme/theme';
+import type { SlotWords } from '../wording/fact-words';
+import { previousCycleStartOf, readEarlierSpends } from '../wording/insight-input';
+import { readModelChoice } from '../wording/model-choice';
+import { wordWithModel } from '../wording/word-chain';
+import { describeLedgerAnswer } from './ask-ledger-words';
 import { usePlanFormat } from '../plan/plan-format';
 import { useEntitlement } from '../purchases/purchases-provider';
-import { askContextOf } from './ask-context';
+import { askContextOf, askLedgerOf } from './ask-context';
 import { readAskedOn, recordAsk } from './ask-quota-store';
 import { readQuestion } from './ask-reader';
 import { askSuggestions } from './ask-suggestions';
 import { describeAnswer, type AskCard } from './ask-words';
+
+const ORIGINAL_ANSWERS: ReadonlySet<string> = new Set([
+  'fitsToday',
+  'notThisMonth',
+  'tight',
+  'fits',
+  'weekend',
+  'saveMore',
+  'potFull',
+  'noPots',
+  'noSuchPot',
+  'today',
+  'help',
+]);
+
+/** One of the original engine's answers, which keep their original words. */
+function isOriginalAnswer(answer: AskQueryAnswer): answer is AskAnswer {
+  return ORIGINAL_ANSWERS.has(answer.kind);
+}
 
 export type AskMessage =
   | { readonly id: number; readonly kind: 'me'; readonly text: string }
@@ -65,6 +104,12 @@ export function useAsk(): AskChat {
   const { max } = useEntitlement();
   const format = usePlanFormat(today);
   const firstPotName = useMoneySelector((snap) => snap.pots[0]?.name ?? null);
+  const db = useSQLiteContext();
+  const { serious } = useTheme();
+  const form = useCompanionForm();
+  const persona = useMoneySelector((snap) => snap.plan?.persona ?? 'cheeky');
+  // The query before, so "and last month?" reads as a follow-up.
+  const previous = useRef<AskQuery | null>(null);
 
   const [messages, setMessages] = useState<readonly AskMessage[]>([]);
   const [typing, setTyping] = useState(false);
@@ -92,14 +137,79 @@ export function useAsk(): AskChat {
   }, [router]);
 
   // The latest words and clock, so a question asked a moment ago is answered in today's terms.
-  const words = useRef({ t, language, weekday, format, today });
-  words.current = { t, language, weekday, format, today };
+  const words = useRef({ t, language, weekday, format, today, serious, persona, form });
+  words.current = { t, language, weekday, format, today, serious, persona, form };
 
   const push = useCallback((message: NewMessage) => {
     nextId.current += 1;
     const id = nextId.current;
     setMessages((all) => [...all, { ...message, id }]);
   }, []);
+
+  /** The answer's card: catalogue words, or a model's when one answers in time. */
+  const cardFor = useCallback(
+    async (
+      answer: AskQueryAnswer,
+      reading: { readonly offline: boolean },
+      categories: readonly { readonly id: string; readonly name: string }[],
+      question: string,
+    ): Promise<AskCard> => {
+      const now = words.current;
+      const env = {
+        t: now.t,
+        language: now.language,
+        monthLong: now.format.monthLong,
+        dayLongMonth: now.format.dayLongMonth,
+        weekday: (d: string) => now.weekday(new Date(`${d}T12:00:00`)),
+      };
+      const ctx = askContextOf(store.getSnapshot());
+      if (isOriginalAnswer(answer)) {
+        if (ctx === null) throw new Error('Ask was opened before the month was set up');
+        return describeAnswer(answer, ctx, reading, env);
+      }
+      const say = now.t as unknown as SlotWords['say'];
+      const categoryName = (id: string) => categories.find((c) => c.id === id)?.name ?? '';
+      const voice = now.serious ? 'plain' : now.persona;
+      const described = describeLedgerAnswer(answer, {
+        ...env,
+        categoryName,
+        voice,
+        slotWords: {
+          language: now.language,
+          say,
+          categoryName,
+          dayMonth: (date) => env.dayLongMonth(localDateOf(date)),
+        },
+      });
+      if (described.wording === null || reading.offline) return described.card;
+      const request: WordRequest = {
+        surface: 'answer',
+        language: now.language,
+        persona: voice,
+        companion: {
+          name: say(`companions.name.${now.form}`),
+          personality: say(`companions.line.${now.form}`),
+        },
+        facts: described.wording.facts.slice(0, 3).map((f) => ({
+          kind: f.kind,
+          slots: f.slots.slice(0, 8).map((s) => ({ name: s.name, value: s.value.slice(0, 40) })),
+        })),
+        question: question.slice(0, 300),
+      };
+      const line = await wordWithModel(request, {
+        request: (r) => api.request(r),
+        choice: readModelChoice(db),
+      }).catch(() => null);
+      return line === null
+        ? described.card
+        : {
+            ...described.card,
+            text: fillLine(line.text, described.wording.values),
+            mood: line.mood,
+          };
+    },
+    [api, db, store],
+  );
 
   const send = useCallback(
     async (raw: string) => {
@@ -127,22 +237,24 @@ export function useAsk(): AskChat {
           }
         }
         const snapshot = store.getSnapshot();
-        const reading = await readQuestion(
-          api,
-          question,
-          snapshot.pots.map((pot) => pot.name),
-        );
-        // Worked out from the store as it is now, after the wait.
-        const ctx = askContextOf(store.getSnapshot());
-        if (ctx === null) throw new Error('Ask was opened before the month was set up');
-        const now = words.current;
-        const card = describeAnswer(answerAsk(reading.intent, ctx), ctx, reading, {
-          t: now.t,
-          language: now.language,
-          monthLong: now.format.monthLong,
-          dayLongMonth: now.format.dayLongMonth,
-          weekday: (d) => now.weekday(new Date(`${d}T12:00:00`)),
+        const reading = await readQuestion(api, question, {
+          today: snapshot.today,
+          categories: snapshot.categories.map((c) => c.name),
+          pots: snapshot.pots.map((pot) => pot.name),
+          previous: previous.current,
         });
+        previous.current = reading.query;
+        // Worked out from the store as it is now, after the wait, with the cycle before it.
+        const now = store.getSnapshot();
+        const ctx = askContextOf(now);
+        if (ctx === null) throw new Error('Ask was opened before the month was set up');
+        const earlierFrom = previousCycleStartOf(now);
+        const earlier =
+          isAskIntent(reading.query) || earlierFrom === null
+            ? []
+            : await readEarlierSpends(store.db, earlierFrom, now.cycle.start);
+        const answer = answerQuery(reading.query, ctx, askLedgerOf(now, earlier));
+        const card = await cardFor(answer, reading, now.categories, question);
         haptics.tap();
         push({ kind: 'answer', card });
       } catch (error) {
@@ -162,7 +274,7 @@ export function useAsk(): AskChat {
         busy.current = false;
       }
     },
-    [api, max, openMax, push, store],
+    [api, cardFor, max, openMax, push, store],
   );
 
   const freeLeft = max || askedOn === null ? null : freeAsksLeft(askedOn, today);

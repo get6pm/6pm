@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { generate, type DeepseekConfig, type Generated } from './deepseek';
+import { generate, type AnthropicConfig, type Generated } from './anthropic';
 
 /** Any decimal digit, in any script. A receipt's numbers never leave the phone. */
 const digit = /\p{Nd}/u;
@@ -56,17 +56,21 @@ export function nameMerchantPrompt(request: NameMerchantRequest): string {
   ].join('\n');
 }
 
-/** Names a shared receipt's payee with one forced tool call to the fast model. */
+/** The import waits on the phone for at most 3 s; the call gets a little less. */
+export const nameMerchantTimeoutMs = 2_800;
+/** A name and a category, plus the model's own thinking, which counts against this too. */
+export const nameMerchantMaxTokens = 1_024;
+
+/** Names a shared receipt's payee, choosing among the categories the phone sent. */
 export function nameMerchant(
-  config: DeepseekConfig,
+  config: AnthropicConfig,
   request: NameMerchantRequest,
 ): Promise<Generated<NameMerchantOutput>> {
   return generate(config, {
-    tier: 'fast',
     system: nameMerchantSystem,
     prompt: nameMerchantPrompt(request),
-    tool: { name: 'name_merchant', description: 'Who was paid, and the category it belongs in.' },
     schema: nameMerchantOutputSchema(request.categories),
-    maxTokens: 120,
+    maxTokens: nameMerchantMaxTokens,
+    timeoutMs: nameMerchantTimeoutMs,
   });
 }

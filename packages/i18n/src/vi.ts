@@ -10,6 +10,7 @@ import { viReceiptEmail } from './vi-receipt-email';
 import { viBackup } from './vi-backup';
 import { viExport } from './vi-export';
 import { viAsk } from './vi-ask';
+import { viAskLedger } from './vi-ask-ledger';
 import { viScan } from './vi-scan';
 import { viBanks } from './vi-banks';
 import { viLooks } from './vi-looks';
@@ -20,6 +21,7 @@ import { viPlan } from './vi-plan';
 import { viClose } from './vi-close';
 import type { Catalogue } from './catalogue-types';
 import { viCompanion } from './vi-companion';
+import { viInsights } from './vi-insights';
 import { viToday } from './vi-today';
 import { viCategories } from './vi-categories';
 import { viTravel } from './vi-travel';
@@ -38,9 +40,11 @@ export const vi: Catalogue = {
   ...viBanks,
   ...viLooks,
   ...viCompanion,
+  ...viInsights,
   ...viBackup,
   ...viExport,
   ...viAsk,
+  ...viAskLedger,
   ...viNative,
   ...viSharing,
   ...viShareExt,

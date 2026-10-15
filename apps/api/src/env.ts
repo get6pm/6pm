@@ -6,7 +6,6 @@ import type { RequestIdVariables } from 'hono/request-id';
  * (local, ignored by git); `.dev.vars.example` lists the same names.
  */
 export const secretNames = [
-  'DEEPSEEK_API_KEY',
   /** Anthropic: the vision model that reads a receipt photo the phone could not read. */
   'ANTHROPIC_API_KEY',
   /** TypeSafe's Jev: closed-label decisions, such as the icon for a category's name. */

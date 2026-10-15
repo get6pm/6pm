@@ -45,12 +45,3 @@ export function readIntent(question: string, potNames: readonly string[] = []): 
   if (TODAY.test(q)) return { kind: 'today' };
   return { kind: 'unknown' };
 }
-
-/** `POST /v1/ask`: the question only. No amounts from the user's plan ever leave the phone. */
-export const askRequestSchema = z.object({
-  question: z.string().trim().min(1).max(300),
-});
-export type AskRequest = z.infer<typeof askRequestSchema>;
-
-export const askResponseSchema = z.object({ intent: askIntentSchema });
-export type AskResponse = z.infer<typeof askResponseSchema>;

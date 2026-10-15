@@ -3,11 +3,11 @@ import { env } from 'cloudflare:workers';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createApp } from '../src/app';
-import { deepseekUrl } from '../src/ai/deepseek';
 import { jevModel, jevUrl } from '../src/ai/jev';
 import { hashDeviceToken } from '../src/device-auth';
 import * as routes from '../src/routes/index.generated';
 
+import { anthropicAnswer, anthropicMessagesUrl } from './anthropic-stand-in';
 import { call, freshIp, registerDevice, wireErrorOf } from './support';
 
 const icons = ['restaurant', 'local_cafe', 'pets'];
@@ -24,8 +24,8 @@ function jevReplying(probabilities: Record<string, number>, confidence: number):
 }
 
 /** Answers each provider by its address; anything else is a dropped connection. */
-function providers(replies: { jev?: () => Response; deepseek?: () => Response }) {
-  const sent: { jev: unknown[]; deepseek: unknown[] } = { jev: [], deepseek: [] };
+function providers(replies: { jev?: () => Response; claude?: () => Response }) {
+  const sent: { jev: unknown[]; claude: unknown[] } = { jev: [], claude: [] };
   vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) => {
     const url = input instanceof Request ? input.url : String(input);
     const json: unknown = JSON.parse(typeof init?.body === 'string' ? init.body : 'null');
@@ -33,9 +33,9 @@ function providers(replies: { jev?: () => Response; deepseek?: () => Response })
       sent.jev.push(json);
       return Promise.resolve(replies.jev());
     }
-    if (url === deepseekUrl && replies.deepseek) {
-      sent.deepseek.push(json);
-      return Promise.resolve(replies.deepseek());
+    if (url.startsWith(anthropicMessagesUrl) && replies.claude) {
+      sent.claude.push(json);
+      return Promise.resolve(replies.claude());
     }
     return Promise.reject(new TypeError('connection dropped'));
   });
@@ -56,7 +56,7 @@ async function callWithKeys(token: string, payload: unknown): Promise<Response> 
       },
       body: JSON.stringify(payload),
     }),
-    { ...env, TYPESAFE_API_KEY: 'jev-test', DEEPSEEK_API_KEY: 'deepseek-test' },
+    { ...env, TYPESAFE_API_KEY: 'jev-test', ANTHROPIC_API_KEY: 'anthropic-test' },
     ctx,
   );
   await waitOnExecutionContext(ctx);
@@ -123,27 +123,20 @@ describe('POST /v1/category-icon', () => {
     expect(await response.json()).toEqual({ icon: null });
   });
 
-  it('asks the fast DeepSeek tier in the same shape when Jev does not answer', async () => {
+  it('asks Claude in the same shape when Jev does not answer', async () => {
     const token = await registerDevice();
     const sent = providers({
-      deepseek: () =>
-        Response.json({
-          model: 'deepseek-flash',
-          content: [
-            {
-              type: 'tool_use',
-              name: 'answer',
-              input: { probabilities: { restaurant: 0.1, local_cafe: 0.8, pets: 0.1 } },
-            },
-          ],
-          usage: { input_tokens: 400, output_tokens: 30 },
-        }),
+      claude: () =>
+        anthropicAnswer(
+          { probabilities: { restaurant: 0.1, local_cafe: 0.8, pets: 0.1 } },
+          { inputTokens: 400, outputTokens: 30 },
+        ),
     });
     const response = await callWithKeys(token, { name: 'Cà phê', icons });
     expect(await response.json()).toEqual({ icon: 'local_cafe' });
-    expect(sent.deepseek).toHaveLength(1);
+    expect(sent.claude).toHaveLength(1);
     expect(await ledgerRows(token)).toEqual([
-      { model: 'deepseek-flash', input_tokens: 400, output_tokens: 30 },
+      { model: 'claude-haiku-5-5', input_tokens: 400, output_tokens: 30 },
     ]);
   });
 

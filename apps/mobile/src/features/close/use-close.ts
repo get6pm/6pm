@@ -3,16 +3,19 @@ import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'r
 import {
   closeQueue,
   closeReducer,
+  designAmount,
   receiptBankOf,
   remainingCards,
   startClose,
   type CardVerdict,
   type CloseState,
+  type Currency,
   type SpendRow,
 } from '@6pm/domain';
 
 import { useMoney, useMoneyActions } from '../../data/money-provider';
 import { findSpend } from '../../data/money-store';
+import { homeCurrencyOf } from '../../money/use-money-format';
 import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
 import { useRunAction } from '../companion/use-run-action';
@@ -23,7 +26,10 @@ import type { CashChip } from './close-steps';
 
 const UNDO_MS = 4500;
 const SORTED_MS = 1700;
-/** A spend worth asking about: big enough to plausibly be claimed back, read from a receipt. */
+/**
+ * A spend worth asking about: big enough to plausibly be claimed back, read from a receipt. The
+ * design's 100.000₫, worth the same in the home currency.
+ */
 const WORK_QUESTION_MIN = 100_000;
 
 interface Start {
@@ -37,7 +43,7 @@ interface Start {
  * cards step picks up at that step with the same queue and the cash already added. Waiting
  * spends from earlier days are part of the queue.
  */
-function startOf(spends: readonly SpendRow[], day: string): Start {
+function startOf(spends: readonly SpendRow[], day: string, home: Currency): Start {
   const parked = parkedClose(day);
   if (parked !== null && parked.state.step !== 'cards' && parked.state.step !== 'done') {
     const byId = new Map(spends.map((s) => [s.id, s]));
@@ -48,7 +54,7 @@ function startOf(spends: readonly SpendRow[], day: string): Start {
     };
   }
   const queue = closeQueue(spends, day);
-  const askWorkId = workCandidate(queue);
+  const askWorkId = workCandidate(queue, designAmount(WORK_QUESTION_MIN, home));
   return {
     queue,
     state: startClose(queue.map((s) => ({ id: s.id, askWork: s.id === askWorkId }))),
@@ -56,9 +62,9 @@ function startOf(spends: readonly SpendRow[], day: string): Start {
   };
 }
 
-function workCandidate(queue: readonly SpendRow[]): string | null {
+function workCandidate(queue: readonly SpendRow[], min: number): string | null {
   const candidates = queue.filter(
-    (s) => s.amount >= WORK_QUESTION_MIN && (s.source === 'shared' || s.source === 'email'),
+    (s) => s.amount >= min && (s.source === 'shared' || s.source === 'email'),
   );
   return [...candidates].sort((a, b) => b.amount - a.amount)[0]?.id ?? null;
 }
@@ -78,9 +84,13 @@ export function useClose() {
   const [day] = useState(snap.today);
 
   // Fixed when the close opens; its order never changes underneath the user.
-  const [start] = useState(() => startOf([...snap.cycleSpends, ...snap.waitingBefore], day));
+  const home = homeCurrencyOf(snap.plan);
+  const [start] = useState(() => startOf([...snap.cycleSpends, ...snap.waitingBefore], day, home));
   const { queue } = start;
-  const askWorkId = useMemo(() => workCandidate(queue), [queue]);
+  const askWorkId = useMemo(
+    () => workCandidate(queue, designAmount(WORK_QUESTION_MIN, home)),
+    [queue, home],
+  );
   const [state, dispatch] = useReducer(closeReducer, start.state);
   const [cash, setCash] = useState<readonly CashChip[]>(start.cash);
   const rows = useSpendRows(queue);

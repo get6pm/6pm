@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { View } from 'react-native';
 
-import { clockOf, formatShort, stepPosition, tally } from '@6pm/domain';
+import { clockOf, stepPosition, tally } from '@6pm/domain';
 
 import { readDayNumber } from '../data/diary-queries';
 import { useMoney, useMoneyActions, useMoneyStore } from '../data/money-provider';
@@ -21,6 +21,7 @@ import { useRuleOffer } from '../features/close/use-rule-offer';
 import { useCompanionToast } from '../features/companion/use-companion-toast';
 import { RulePrompt } from '../features/details/rule-prompt';
 import { useI18n } from '../i18n/i18n';
+import { useMoneyFormat } from '../money/use-money-format';
 import { haptics } from '../ui/haptics';
 import { useDesignInsets } from '../ui/layout/design-insets';
 import { useClock } from '../ui/theme/clock';
@@ -39,6 +40,7 @@ export default function Close() {
   const router = useRouter();
   const { palette } = useTheme();
   const { t, language } = useI18n();
+  const money = useMoneyFormat();
   const { now } = useClock();
   const { top, bottom } = useDesignInsets();
   const snap = useMoney();
@@ -133,7 +135,7 @@ export default function Close() {
                   date: shortDate(closingDate),
                   n: close.queue.length - close.cards.length + 1,
                   total: close.queue.length,
-                  kept: formatShort(close.keptBefore, language).toUpperCase(),
+                  kept: money.short(close.keptBefore).toUpperCase(),
                 })
               : t('close.kickerStart', {
                   date: shortDate(closingDate),

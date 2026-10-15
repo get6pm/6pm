@@ -7,8 +7,6 @@ import {
   editedAmount,
   foreignAmountText,
   formatTypedForeign,
-  formatVnd,
-  groupDigits,
   pressEditKey,
   travelCurrency,
   type KeypadState,
@@ -16,8 +14,12 @@ import {
 } from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
 import { Keypad, type KeypadCurrencyKey } from '../../ui/keypad';
+import { FitWidth } from '../../ui/layout/fit-width';
+import { AmountText } from '../quick-add/amount-text';
+import { homeDecimalMark, typedParts } from '../quick-add/typed-amount';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, tabular } from '../../ui/type/fonts';
@@ -31,7 +33,7 @@ function typedText(keys: KeypadState): string {
 /**
  * The detail's amount, and fixing it: tapped, Quick add's keypad opens under it and the number
  * follows the keys. A spend from abroad is typed in its own currency and re-priced at the rate it
- * was priced at, with the currency key to switch it to đồng. Done saves; Cancel leaves it as it was.
+ * was priced at, with the currency key to switch it to the home currency. Done saves; Cancel leaves it as it was.
  */
 export function AmountEditor({
   spend,
@@ -46,14 +48,17 @@ export function AmountEditor({
 }) {
   const { palette } = useTheme();
   const { t } = useI18n();
-  const [keys, setKeys] = useState<KeypadState>(() => editKeypadOf(spend));
+  const money = useMoneyFormat();
+  const home = money.currency;
+  const [keys, setKeys] = useState<KeypadState>(() => editKeypadOf(spend, home));
   // The first key types over the amount, as it does in a selected field.
   const [fresh, setFresh] = useState(true);
-  const shown = editing ? editedAmount(keys, spend) : spend;
-  const foreign = editing ? (keys.currency === 'VND' ? null : keys) : null;
+  const shown = editing ? editedAmount(keys, spend, home) : spend;
+  const inHome = keys.currency === home.code;
+  const foreign = editing ? (inHome ? null : keys) : null;
   const begin = () => {
     haptics.tick();
-    setKeys(editKeypadOf(spend));
+    setKeys(editKeypadOf(spend, home));
     setFresh(true);
     onEditing(true);
   };
@@ -64,14 +69,15 @@ export function AmountEditor({
   };
   const currencyKey: KeypadCurrencyKey | undefined = spend.foreignAmount
     ? {
-        label:
-          keys.currency === 'VND'
-            ? (travelCurrency(spend.foreignAmount.currency)?.symbol ?? spend.foreignAmount.currency)
-            : '₫',
+        label: inHome
+          ? (travelCurrency(spend.foreignAmount.currency)?.symbol ?? spend.foreignAmount.currency)
+          : home.symbol,
         accessibilityLabel: t('travel.quick.currency'),
-        decimal: keys.currency !== 'VND' && (keys.foreign?.decimals ?? 0) > 0,
+        decimal: !inHome && (keys.foreign?.decimals ?? 0) > 0,
       }
     : undefined;
+  // While typing at home the decimals show as typed ("$12."); otherwise the amount as kept.
+  const homeParts = editing && inHome ? typedParts(keys.digits, money) : money.parts(shown.amount);
 
   const big = foreign
     ? typedText(foreign)
@@ -80,7 +86,7 @@ export function AmountEditor({
       : null;
   const under = shown.foreignAmount
     ? shown.foreignAmount.rate > 0 && shown.amount > 0
-      ? t('inbox.inDong', { amount: formatVnd(shown.amount) })
+      ? t('inbox.inDong', { amount: money.full(shown.amount) })
       : t('inbox.ratePending')
     : null;
 
@@ -91,7 +97,7 @@ export function AmountEditor({
         accessibilityLabel={t('details.amount.edit')}
         disabled={editing}
         onPress={begin}
-        style={{ alignItems: 'center', gap: 4, paddingTop: 8 }}
+        style={{ alignSelf: 'stretch', alignItems: 'center', gap: 4, paddingTop: 8 }}
       >
         {big !== null ? (
           <Text
@@ -102,18 +108,22 @@ export function AmountEditor({
             {big}
           </Text>
         ) : (
-          <Text
-            style={{
-              ...display(72, 500, -0.02),
-              ...tabular,
-              lineHeight: 72,
-              color: palette.ink,
-              opacity: shown.amount > 0 ? 1 : 0.35,
-            }}
-          >
-            {groupDigits(shown.amount)}
-            <Text style={{ ...display(29, 500), opacity: 0.55 }}>{' ₫'}</Text>
-          </Text>
+          <FitWidth height={72} align="center">
+            <AmountText
+              parts={homeParts}
+              numberOfLines={1}
+              // The design's " ₫" after the number; a symbol that comes first sits close.
+              gap={homeParts.suffix ? ' ' : '\u2006'}
+              style={{
+                ...display(72, 500, -0.02),
+                ...tabular,
+                lineHeight: 72,
+                color: palette.ink,
+                opacity: shown.amount > 0 ? 1 : 0.35,
+              }}
+              symbol={{ ...display(29, 500), opacity: 0.55 }}
+            />
+          </FitWidth>
         )}
         {under !== null ? (
           <Text style={{ ...body(14), ...tabular, color: palette.inkSoft }}>{under}</Text>
@@ -131,6 +141,7 @@ export function AmountEditor({
               setFresh(false);
             }}
             {...(currencyKey ? { currency: currencyKey } : {})}
+            decimal={inHome ? homeDecimalMark(money) : undefined}
           />
           <View style={{ flexDirection: 'row', gap: 10 }}>
             <PressScale

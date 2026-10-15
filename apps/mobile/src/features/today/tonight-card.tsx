@@ -1,9 +1,10 @@
 import { Text, View } from 'react-native';
 import Animated, { Keyframe } from 'react-native-reanimated';
 
-import { formatShort, type CloseMoment, type DailyNumber } from '@6pm/domain';
+import { type CloseMoment, type DailyNumber } from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
+import { useMoneyFormat } from '../../money/use-money-format';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
@@ -56,6 +57,7 @@ export function TonightCard({
 }) {
   const { palette, serious } = useTheme();
   const { t, language } = useI18n();
+  const money = useMoneyFormat();
   const due = moment === 'due' || moment === 'open' || moment === 'late';
   const resuming = paused !== null && moment !== 'closed';
   const lit = (due || resuming) && !serious;
@@ -77,7 +79,7 @@ export function TonightCard({
               : t('today.tonight.before', { time: closeAt });
   const sub =
     moment === 'closed'
-      ? t('today.tonight.closedSub', { amount: formatShort(day.tomorrow, language), time: closeAt })
+      ? t('today.tonight.closedSub', { amount: money.short(day.tomorrow), time: closeAt })
       : resuming
         ? paused === 'cards'
           ? t('today.tonight.pausedCards', { count: toConfirm })

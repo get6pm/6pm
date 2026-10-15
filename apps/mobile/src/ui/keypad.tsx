@@ -27,7 +27,10 @@ const KEYS: (KeypadKey | null)[] = [
   null,
 ];
 
-/** Abroad: the key that flips between đồng and the local currency, and a decimal key if it has cents. */
+/**
+ * Abroad: the key that flips between home and the local currency, and a decimal key while the
+ * currency being typed has decimals.
+ */
 export interface KeypadCurrencyKey {
   /** The symbol of the currency the key switches to. */
   readonly label: string;
@@ -35,14 +38,20 @@ export interface KeypadCurrencyKey {
   readonly decimal: boolean;
 }
 
-function keysFor(currency: KeypadCurrencyKey | undefined): readonly (KeypadKey | null)[] {
-  if (currency === undefined) return KEYS;
-  return KEYS.map((key, i) => (i === 12 && currency.decimal ? '.' : i === 14 ? 'currency' : key));
+function keysFor(
+  currency: KeypadCurrencyKey | undefined,
+  decimal: boolean,
+): readonly (KeypadKey | null)[] {
+  if (currency === undefined && !decimal) return KEYS;
+  return KEYS.map((key, i) =>
+    i === 12 && (decimal || currency?.decimal) ? '.' : i === 14 && currency ? 'currency' : key,
+  );
 }
 
 /**
  * The money keypad: digits, "k" for thousands, "000", and delete, in four columns of 48 pt keys.
- * Abroad, the empty cells of the last row hold a decimal comma and the currency key.
+ * The empty cells of the last row hold a decimal key while the amount takes decimals (cents at a
+ * dollar home, or a local currency with them abroad) and, abroad, the currency key.
  * Scan draws it on its paper card, so the inks can be given; elsewhere they follow the look.
  */
 export function Keypad({
@@ -50,17 +59,20 @@ export function Keypad({
   ink,
   keyBg,
   currency,
+  decimal,
 }: {
   readonly onPress: (key: KeypadKey) => void;
   readonly ink?: string;
   readonly keyBg?: string;
   readonly currency?: KeypadCurrencyKey;
+  /** The decimal mark ("." or ","), when the amount being typed takes decimals. */
+  readonly decimal?: string | undefined;
 }) {
   const { palette } = useTheme();
   const color = ink ?? palette.ink;
   return (
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-      {keysFor(currency).map((key, i) =>
+      {keysFor(currency, decimal !== undefined).map((key, i) =>
         key === null ? (
           <View key={i} style={{ width: '23.5%', height: 48 }} />
         ) : (
@@ -93,7 +105,11 @@ export function Keypad({
                   color,
                 }}
               >
-                {key === 'currency' ? (currency?.label ?? '') : key === '.' ? ',' : key}
+                {key === 'currency'
+                  ? (currency?.label ?? '')
+                  : key === '.'
+                    ? (decimal ?? ',')
+                    : key}
               </Text>
             )}
           </PressScale>

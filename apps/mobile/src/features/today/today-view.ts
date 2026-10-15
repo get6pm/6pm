@@ -2,12 +2,12 @@ import {
   addDays,
   closeMoment,
   foreignAmountText,
-  formatVnd,
   needsReview,
   startOfWeek,
   type CategoryRow,
   type CloseMoment,
   type LocalDate,
+  type MoneyFormat,
   type SpendRow,
 } from '@6pm/domain';
 
@@ -42,6 +42,8 @@ export type Labels = {
   readonly source: (source: SpendRow['source']) => string;
   readonly tag: (row: SpendRow) => string | null;
   readonly time: (iso: string) => string;
+  /** Writes amounts in the home currency. */
+  readonly money: Pick<MoneyFormat, 'full'>;
 };
 
 /** Display rows for a list of spends: icon, tint, "08:15 · Drinks · Shared receipt", tag. */
@@ -65,11 +67,11 @@ export function toRowViews(
       ]
         .filter((part) => part !== null)
         .join(' · '),
-      amount: formatVnd(s.amount),
+      amount: labels.money.full(s.amount),
       foreign: s.foreignAmount
         ? {
             printed: foreignAmountText(s.foreignAmount),
-            inDong: s.foreignAmount.rate > 0 && s.amount > 0 ? formatVnd(s.amount) : null,
+            inHome: s.foreignAmount.rate > 0 && s.amount > 0 ? labels.money.full(s.amount) : null,
           }
         : null,
       icon: merchantIcon(s.merchant, categoryIcon),
@@ -122,7 +124,7 @@ export function todayView(
     queue: waitingOf(snap),
     closedAt: closedRow?.closedAt ?? null,
     rows,
-    spentLabel: formatVnd(spent),
+    spentLabel: labels.money.full(spent),
     week,
     closedThisMonth: snap.closedDays.filter((d) => d.day.startsWith(monthPrefix)).length,
     daysThisMonth: Math.max(1, elapsed),

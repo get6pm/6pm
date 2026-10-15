@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { currencyOfForeignQr, formatForeign, isRate, type FxRate } from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
+import { useHomeCurrency } from '../../money/use-money-format';
 import { rateFor } from '../travel/trip';
 import { useTravel } from '../travel/travel-provider';
 import { foreignAmountLabel } from './pay-options';
@@ -12,7 +13,7 @@ import type { ScanPhase } from './use-scan';
 /**
  * A QR from another country's scheme: named, not payable from 6pm, and loggable by hand. With
  * Travel mode on and a rate for its currency, it is paid in the bank app (Vietnamese banks take
- * the region's QRs) and kept here in that currency with đồng underneath.
+ * the region's QRs) and kept here in that currency with home underneath.
  */
 export function ForeignAlert({
   phase,
@@ -27,6 +28,7 @@ export function ForeignAlert({
   readonly onKeep: (rate: FxRate, payee: string) => void;
 }) {
   const { t } = useI18n();
+  const home = useHomeCurrency();
   const { on, locked, rates, refreshRates } = useTravel();
   const { failure } = phase;
   const scheme = t(`scan.scheme.${failure.scheme ?? 'other'}`);
@@ -64,7 +66,7 @@ export function ForeignAlert({
     <ScanAlert
       icon="public"
       title={t('scan.abroad.title', { scheme })}
-      body={t('scan.abroad.body')}
+      body={t('scan.abroad.body', { symbol: home.symbol })}
       secondary={{ label: t('scan.tryAgain'), onPress: onRetry }}
       primary={{
         label: amount ? t('scan.abroad.log', { amount }) : t('scan.abroad.logPlain'),

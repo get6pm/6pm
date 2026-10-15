@@ -16,7 +16,7 @@ export const viScan: { readonly [Key in keyof typeof enScan]: Entry } = {
   'scan.cameraOff.body': 'Bật camera để quét mã QR, hoặc nhập số tiền bằng tay.',
   'scan.cameraOff.settings': 'Mở Cài đặt',
   'scan.abroad.title': 'Đây là mã {scheme}.',
-  'scan.abroad.body': '6pm chưa trả được mã này. Ghi lại, mình sẽ hiện số ₫ bên dưới.',
+  'scan.abroad.body': '6pm chưa trả được mã này. Ghi lại, mình sẽ hiện số {symbol} bên dưới.',
   'scan.abroad.log': 'Ghi {amount} bằng tay',
   'scan.abroad.logPlain': 'Ghi bằng tay',
   'scan.scheme.promptpay': 'PromptPay của Thái Lan',

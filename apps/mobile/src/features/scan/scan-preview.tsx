@@ -2,24 +2,28 @@ import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
 import {
-  emptyKeypad,
-  formatVnd,
-  keypadVnd,
+  homeKeypad,
+  keypadHomeMinor,
   pressKey,
+  VND,
   type BankInfo,
   type VietQR,
 } from '@6pm/domain';
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { moneyFormatFor, useMoneyFormat } from '../../money/use-money-format';
 import { BankLogo } from '../../ui/bank-logo/bank-logo';
 import { CategoryTile } from '../../ui/category-tile';
 import { haptics } from '../../ui/haptics';
 import { isSymbolName } from '../../ui/icons/symbol';
 import { Keypad } from '../../ui/keypad';
+import { FitWidth } from '../../ui/layout/fit-width';
 import { PressScale } from '../../ui/primitives/press-scale';
+import { useTravel } from '../travel/travel-provider';
 import { body, display, tabular } from '../../ui/type/fonts';
 import type { PayOptions } from './pay-options';
+import { dongInHome } from './priced-spend';
 import { CardButton, ScanCard } from './scan-card';
 import { scanColours as c } from './scan-colours';
 
@@ -85,18 +89,27 @@ export function ScanPreview({
   readonly options: PayOptions;
   readonly onPay: (amount: number, bank: BankInfo | null) => void;
 }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { categories } = useMoney();
+  const money = useMoneyFormat();
+  const { dongQuote } = useTravel();
+  // A VietQR is đồng, whatever the home currency: typed, shown and paid in đồng.
+  const dong = moneyFormatFor(VND, language);
   const category = categories.find((x) => x.id === categoryId);
-  const [keys, setKeys] = useState(emptyKeypad);
+  const [keys, setKeys] = useState(() => homeKeypad(VND));
   const wallets = options.mode === 'wallets' ? options.wallets : [];
   const [picked, setPicked] = useState(wallets[0]?.id ?? null);
   const bank =
     options.mode === 'wallets'
       ? (wallets.find((w) => w.id === picked) ?? wallets[0] ?? null)
       : options.bank;
-  const amount = qr.amount ?? keypadVnd(keys, 0);
-  const digits = formatVnd(amount).slice(0, -1);
+  const amount = qr.amount ?? keypadHomeMinor(keys);
+  const parts = dong.parts(amount);
+  // Away from a đồng home, what it comes to at home, under the đồng.
+  const inHome =
+    money.currency.code === VND.code || amount <= 0
+      ? null
+      : dongInHome(amount, money.currency, dongQuote);
   const wide = wallets.length > 3;
   const walletName = bank?.shortName ?? '';
   // Three or fewer share the row equally, as designed; more scroll sideways at a fixed width.
@@ -135,20 +148,27 @@ export function ScanPreview({
         </View>
       </View>
       <View style={{ gap: 4 }}>
-        <View
-          accessible
-          accessibilityLabel={formatVnd(amount)}
-          style={{ flexDirection: 'row', alignItems: 'baseline' }}
-        >
-          <Text
-            style={{ ...display(64, 500, -0.02), ...tabular, lineHeight: 64, color: c.cardInk }}
+        <FitWidth height={64}>
+          <View
+            accessible
+            accessibilityLabel={dong.full(amount)}
+            style={{ flexDirection: 'row', alignItems: 'baseline' }}
           >
-            {digits}
+            <Text
+              style={{ ...display(64, 500, -0.02), ...tabular, lineHeight: 64, color: c.cardInk }}
+            >
+              {parts.number}
+            </Text>
+            <Text style={{ ...display(29, 500), marginLeft: 4, opacity: 0.6, color: c.cardInk }}>
+              {parts.suffix}
+            </Text>
+          </View>
+        </FitWidth>
+        {inHome !== null && inHome.amount > 0 ? (
+          <Text style={{ ...body(14), ...tabular, color: c.cardSoft }}>
+            {t('inbox.inDong', { amount: money.full(inHome.amount) })}
           </Text>
-          <Text style={{ ...display(29, 500), marginLeft: 4, opacity: 0.6, color: c.cardInk }}>
-            ₫
-          </Text>
-        </View>
+        ) : null}
         {qr.amount === null ? (
           <Text style={{ ...body(14), color: c.cardSoft }}>{t('scan.howMuch')}</Text>
         ) : null}

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import {
-  emptyKeypad,
+  editKeypadOf,
   ruleCategoryFor,
   ruleIndex,
   type KeypadState,
@@ -9,9 +9,10 @@ import {
 } from '@6pm/domain';
 import type { Language } from '@6pm/i18n';
 
+import { useMoneyFormat } from '../../money/use-money-format';
 import type { DictationState } from './dictation-state';
 import { useDictation, type Dictation } from './use-dictation';
-import { contextualStrings, spokenCategory, spokenChips } from './voice-support';
+import { contextualStrings, spendIn, spokenCategory, spokenChips } from './voice-support';
 
 interface Category {
   readonly id: string;
@@ -38,20 +39,21 @@ export function useVoiceEntry({
   readonly setPicked: (categoryId: string | null) => void;
 }): { readonly dictation: Dictation; readonly chips: readonly string[] } {
   const [chips, setChips] = useState<readonly string[]>([]);
+  const money = useMoneyFormat();
+  const home = money.currency;
 
   const onRead = (state: DictationState) => {
-    const spend = state.spend;
-    if (!spend) return;
+    if (!state.spend) return;
+    const spend = spendIn(state.spend, state.settled, home);
     const ids = new Set(categories.map((c) => c.id));
     const learned = spend.name ? ruleCategoryFor(ruleIndex(rules), spend.name, ids) : null;
     const categoryId = spokenCategory(spend, learned, ids);
-    setKeys(
-      spend.amount === null ? emptyKeypad : { digits: String(spend.amount), currency: 'VND' },
-    );
+    // The amount said, on the keypad in the home currency, as if typed.
+    setKeys(editKeypadOf({ amount: spend.amount ?? 0, foreignAmount: null }, home));
     setNote(spend.name);
     // A learned merchant is picked by the ticket itself from the name.
     setPicked(learned ? null : categoryId);
-    setChips(spokenChips(spend, categories.find((c) => c.id === categoryId)?.name ?? null));
+    setChips(spokenChips(spend, categories.find((c) => c.id === categoryId)?.name ?? null, money));
   };
 
   const dictation = useDictation({

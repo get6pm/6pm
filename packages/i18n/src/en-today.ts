@@ -78,7 +78,7 @@ export const enToday = {
   'inbox.noAmount': 'No amount',
   'quick.cancel': 'Cancel',
   'quick.ticket': '6pm · Nº {no}',
-  'quick.hint': 'Type 45 then k for 45.000₫',
+  'quick.hint': 'Type 45 then k for {amount}',
   'quick.what': 'What was it?',
   'quick.keep': 'Keep it',
   'details.title': 'Details',

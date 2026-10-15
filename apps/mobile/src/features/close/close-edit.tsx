@@ -3,21 +3,24 @@ import { Pressable, Text, useWindowDimensions, View } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from 'react-native-reanimated';
 
-import { groupDigits, type CategoryRow } from '@6pm/domain';
+import { steps, type CategoryRow } from '@6pm/domain';
+
+import { useMoneyFormat } from '../../money/use-money-format';
+import { AmountText } from '../quick-add/amount-text';
 
 import { haptics } from '../../ui/haptics';
 import { isSymbolName, Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useDesignInsets } from '../../ui/layout/design-insets';
+import { FitWidth } from '../../ui/layout/fit-width';
 import { easeOut } from '../../ui/motion/curves';
 import { useDragDismiss } from '../../ui/motion/use-drag-dismiss';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, tabular } from '../../ui/type/fonts';
 
-const STEP = 5_000;
-
 /**
- * Edit one caught spend without leaving the close: nudge the amount by 5k, pick the category,
+ * Edit one caught spend without leaving the close: nudge the amount by 5k (five steps of the home
+ * currency: 5.000₫, $5), pick the category,
  * then "Save and keep".
  */
 export function CloseEdit({
@@ -41,6 +44,9 @@ export function CloseEdit({
   const { bottom } = useDesignInsets();
   const { height } = useWindowDimensions();
   const sheet = useDragDismiss({ area: height, onDismissed: onCancel, enter: false });
+  const money = useMoneyFormat();
+  // The design's 5.000₫ a tap.
+  const nudge = steps(5, money.currency);
   const [value, setValue] = useState(amount);
   const [category, setCategory] = useState(categoryId);
   const step = (by: number) => {
@@ -116,11 +122,17 @@ export function CloseEdit({
                 justifyContent: 'space-between',
               }}
             >
-              {stepper('remove', -STEP)}
-              <Text style={{ ...display(44, 500, -0.02), ...tabular, color: palette.ink }}>
-                {groupDigits(value)}₫
-              </Text>
-              {stepper('add', STEP)}
+              {stepper('remove', -nudge)}
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <FitWidth height={53} align="center">
+                  <AmountText
+                    parts={money.parts(value)}
+                    numberOfLines={1}
+                    style={{ ...display(44, 500, -0.02), ...tabular, color: palette.ink }}
+                  />
+                </FitWidth>
+              </View>
+              {stepper('add', nudge)}
             </View>
             <View
               style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}

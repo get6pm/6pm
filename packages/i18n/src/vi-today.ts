@@ -74,7 +74,7 @@ export const viToday: { readonly [Key in keyof typeof enToday]: Entry } = {
   'inbox.noAmount': 'Chưa có số tiền',
   'quick.cancel': 'Huỷ',
   'quick.ticket': '6pm · Số {no}',
-  'quick.hint': 'Gõ 45 rồi k thành 45.000₫',
+  'quick.hint': 'Gõ 45 rồi k thành {amount}',
   'quick.what': 'Khoản gì vậy?',
   'quick.keep': 'Giữ lại',
   'details.title': 'Chi tiết',

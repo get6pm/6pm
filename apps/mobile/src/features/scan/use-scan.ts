@@ -2,10 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 
 import {
-  foreignToVnd,
   likelyCategoriesAt,
   parseVietQR,
-  rateNumber,
   type BankInfo,
   type FxRate,
   type VietQR,
@@ -15,16 +13,20 @@ import {
 import type { Capture } from '../../data/money-actions';
 import { useMoney, useMoneyActions, useMoneyStore } from '../../data/money-provider';
 import { readWallets } from '../../data/onboarding';
+import { useHomeCurrency } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
 import { useClock } from '../../ui/theme/clock';
+import { useTravel } from '../travel/travel-provider';
 import { handOff, type Handoff } from './bank-handoff';
 import { payeeName, payOptions, titleCase } from './pay-options';
+import { dongInHome, pricedInHome } from './priced-spend';
 
 /** A payment on its way out: saved as pending the moment the bank app is asked to open. */
 export interface Payment {
   readonly qr: VietQR;
   readonly payee: string;
   readonly categoryId: string;
+  /** In đồng, as the QR asks and the bank pays it. */
   readonly amount: number;
   readonly bank: BankInfo | null;
   readonly spendId: string;
@@ -56,6 +58,8 @@ export function useScan() {
   const snap = useMoney();
   const actions = useMoneyActions();
   const { hour } = useClock();
+  const home = useHomeCurrency();
+  const { dongQuote: quote } = useTravel();
   const [phase, setPhase] = useState<ScanPhase>({ kind: 'camera' });
   const [walletIds, setWalletIds] = useState<readonly string[]>([]);
   // The camera reports the same code many times a second; only the first read counts.
@@ -127,7 +131,11 @@ export function useScan() {
       reading.current = false;
       setPhase({ kind: 'camera' });
     },
-    /** Saves the spend as pending, then opens the bank. Rejects when the spend could not be saved. */
+    /**
+     * Saves the spend as pending, then opens the bank with the đồng the QR asks for. The spend is
+     * kept in the home currency, with the đồng paid beside it when home is not đồng. Rejects when
+     * the spend could not be saved.
+     */
     pay: async (
       { qr, payee, categoryId }: Pick<Payment, 'qr' | 'payee' | 'categoryId'>,
       amount: number,
@@ -137,7 +145,7 @@ export function useScan() {
       paying.current = true;
       try {
         const capture = await actions.captureSpend({
-          amount,
+          ...dongInHome(amount, home, quote),
           categoryId,
           merchant: payee,
           source: 'qr',
@@ -166,28 +174,29 @@ export function useScan() {
       }
     },
     /**
-     * Abroad, a foreign QR paid in the bank app: kept at once in đồng, with the QR's amount in its
-     * own currency and the rate beside it. Rejects when the amount cannot be priced or saved.
+     * Abroad, a foreign QR paid in the bank app: kept at once in the home currency, with the QR's
+     * amount in its own currency and the rate beside it (waiting for a rate when home has none
+     * yet). Rejects when the QR has no amount or it cannot be saved.
      */
     keepForeign: async (failure: VietQRFailure, rate: FxRate, fallbackPayee: string) => {
-      const vnd = failure.amount === undefined ? null : foreignToVnd(failure.amount, rate.rate);
-      if (vnd === null || vnd <= 0 || failure.amount === undefined) {
+      // `rate` is the alert's đồng quote for the QR's currency.
+      const local = (code: string) => quote(code) ?? (code === rate.currency ? rate.rate : null);
+      const priced =
+        failure.amount === undefined
+          ? null
+          : pricedInHome(rate.currency, failure.amount, home, local);
+      if (priced === null) {
         throw new Error('The QR has no amount that can be priced');
       }
       const named = failure.merchantName?.trim();
       const payee = named ? titleCase(named) : fallbackPayee;
       await actions.addSpend({
-        amount: vnd,
+        ...priced,
         categoryId: await categoryFor(payee),
         merchant: payee,
         source: 'qr',
         status: 'kept',
         wallet: null,
-        foreignAmount: {
-          currency: rate.currency,
-          amount: Number(failure.amount),
-          rate: rateNumber(rate.rate),
-        },
       });
     },
     /** For when the bank app never took over: the user says they are back. */

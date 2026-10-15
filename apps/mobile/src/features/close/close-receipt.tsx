@@ -10,8 +10,6 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { groupDigits } from '@6pm/domain';
-
 import { DashedRule } from '../../ui/dashed-rule';
 import { haptics } from '../../ui/haptics';
 import { barcode } from './barcode';
@@ -19,6 +17,7 @@ import { PaperEdge } from '../../ui/paper-edge';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, families, mono, tabular } from '../../ui/type/fonts';
+import { useMoneyFormat } from '../../money/use-money-format';
 
 const PAPER = '#f7f2e8';
 const INK = '#2b2530';
@@ -59,6 +58,7 @@ export function CloseReceipt(props: {
   /** The printed paper alone (no slot, no buttons), for sharing it as an image. */
   readonly paperRef: Ref<ComponentRef<typeof View>>;
 }) {
+  const money = useMoneyFormat();
   const { palette } = useTheme();
   const feed = useSharedValue(0);
   const stamp = useSharedValue(0);
@@ -161,7 +161,7 @@ export function CloseReceipt(props: {
                   {r.name}
                 </Text>
                 <Text style={{ ...mono(12.5), ...tabular, color: INK }}>
-                  {groupDigits(r.amount)}
+                  {money.number(r.amount)}
                 </Text>
               </View>
             ))}
@@ -171,7 +171,7 @@ export function CloseReceipt(props: {
                   {labels.claimBack}
                 </Text>
                 <Text style={{ ...mono(12.5), color: 'rgba(43,37,48,.55)' }}>
-                  {groupDigits(props.claimBack.amount)}
+                  {money.number(props.claimBack.amount)}
                 </Text>
               </View>
             ) : null}
@@ -179,7 +179,7 @@ export function CloseReceipt(props: {
             <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
               <Text style={{ ...mono(15, 600, 0.12), color: INK, flex: 1 }}>{labels.total}</Text>
               <Text style={{ ...mono(15, 600), ...tabular, color: INK }}>
-                {groupDigits(props.total)}₫
+                {money.full(props.total)}
               </Text>
             </View>
             <View style={{ flexDirection: 'row' }}>
@@ -187,7 +187,7 @@ export function CloseReceipt(props: {
                 {labels.tomorrow}
               </Text>
               <Text style={{ ...mono(11.5), color: 'rgba(43,37,48,.7)' }}>
-                {groupDigits(props.tomorrow)}₫
+                {money.full(props.tomorrow)}
               </Text>
             </View>
             <View

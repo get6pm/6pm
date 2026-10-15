@@ -8,6 +8,7 @@ import {
   pressKey,
   ruleCategoryFor,
   ruleIndex,
+  toMinor,
   type MerchantRuleRow,
 } from '@6pm/domain';
 
@@ -24,6 +25,7 @@ import { VoicePanel } from '../features/voice/voice-panel';
 import { useTravel } from '../features/travel/travel-provider';
 import { initialKeypad, useTravelEntry } from '../features/travel/use-travel-entry';
 import { useI18n } from '../i18n/i18n';
+import { useMoneyFormat } from '../money/use-money-format';
 import { CategoryTile } from '../ui/category-tile';
 import { haptics } from '../ui/haptics';
 import { Keypad } from '../ui/keypad';
@@ -45,9 +47,10 @@ export default function QuickAdd() {
   const store = useMoneyStore();
   const run = useRunAction();
   const say = useCompanionToast();
-  const { trip } = useTravel();
+  const { trip, dongQuote } = useTravel();
+  const money = useMoneyFormat();
   // Abroad the keypad opens in the local currency, settled once as the sheet opens.
-  const [keys, setKeys] = useState(() => initialKeypad(trip));
+  const [keys, setKeys] = useState(() => initialKeypad(trip, money.currency, dongQuote));
   const [note, setNote] = useState('');
   const [wallet, setWallet] = useState(CASH_WALLET);
   const wallets = useWalletOptions();
@@ -78,7 +81,7 @@ export default function QuickAdd() {
     language,
     categories: snap.categories,
     rules,
-    // Spoken amounts are đồng; the currency key still flips to the trip's currency after.
+    // Spoken amounts are in the home currency; the currency key still flips to the trip's after.
     setKeys: (next) => setKeys((k) => (k.foreign ? { ...next, foreign: k.foreign } : next)),
     setNote,
     setPicked,
@@ -156,8 +159,12 @@ export default function QuickAdd() {
           heading={t('quick.ticket', { no: String(snap.cycleSpends.length + 1).padStart(3, '0') })}
           stamp={stamp}
           amount={amount}
-          {...(entry.amountText === undefined ? {} : { amountText: entry.amountText })}
-          hint={amount ? (entry.underneath ?? '') : t('quick.hint')}
+          typed={entry.typed}
+          hint={
+            amount
+              ? (entry.underneath ?? '')
+              : t('quick.hint', { amount: money.full(toMinor(45_000, money.currency)) })
+          }
           note={note}
           placeholder={t('quick.what')}
           onNote={setNote}
@@ -233,6 +240,7 @@ export default function QuickAdd() {
             <Keypad
               onPress={(key) => setKeys((k) => pressKey(k, key))}
               {...(entry.currencyKey ? { currency: entry.currencyKey } : {})}
+              decimal={entry.decimal}
             />
             <PressScale
               scaleTo={0.97}

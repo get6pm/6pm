@@ -185,7 +185,7 @@ export function InboxRow({
   );
 }
 
-/** The amount as printed, with its đồng under it when it was spent in another currency. */
+/** The amount as printed, with its home amount under it when it was spent in another currency. */
 function InboxAmount({
   row,
   amountMissing,
@@ -202,9 +202,9 @@ function InboxAmount({
           {row.foreign.printed}
         </Text>
         <Text style={{ ...body(13), ...tabular, color: palette.inkSoft }}>
-          {row.foreign.inDong === null
+          {row.foreign.inHome === null
             ? t('inbox.ratePending')
-            : t('inbox.inDong', { amount: row.foreign.inDong })}
+            : t('inbox.inDong', { amount: row.foreign.inHome })}
         </Text>
       </View>
     );

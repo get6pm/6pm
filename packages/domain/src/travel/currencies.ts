@@ -1,4 +1,8 @@
+import { currencyOf, type Currency, VND } from '../money/currency';
 import type { ForeignScheme } from '../vietqr/foreign-scheme';
+import { COUNTRY_CURRENCY } from './countries';
+
+export { COUNTRY_CURRENCY } from './countries';
 
 /** A currency Travel mode can show and convert. */
 export interface TravelCurrency {
@@ -8,17 +12,25 @@ export interface TravelCurrency {
   readonly symbol: string;
   /**
    * Decimals as prices are written there. Cambodia, Indonesia and Laos have official cents nobody
-   * uses, so they are entered and shown in whole units, like đồng.
+   * uses, so they are entered and shown in whole units, like đồng. Three-decimal dinars are
+   * entered to two: a thousandth of a dinar is less than a cent.
    */
   readonly decimals: 0 | 2;
-  /** ISO 4217 numeric code, as an EMV QR carries it in tag 53: "764". */
+  /**
+   * ISO 4217 numeric code, as an EMV QR carries it in tag 53: "764". Empty for a currency whose
+   * QRs Scan does not read.
+   */
   readonly numeric: string;
 }
 
 const currency = (code: string, symbol: string, decimals: 0 | 2, numeric: string) =>
   ({ code, symbol, decimals, numeric }) satisfies TravelCurrency;
 
-/** Every currency 6pm fetches a rate for. The server's daily ingest asks for exactly these. */
+/**
+ * The currencies Travel mode was designed around, with the symbols a traveller from Vietnam
+ * tells apart ("S$", "CN¥") and the numeric codes their QRs carry. Any other currency travels too
+ * (`travelCurrency`), with its symbol from the currency table.
+ */
 export const TRAVEL_CURRENCIES: Readonly<Record<string, TravelCurrency>> = {
   THB: currency('THB', '฿', 2, '764'),
   SGD: currency('SGD', 'S$', 2, '702'),
@@ -40,27 +52,19 @@ export const TRAVEL_CURRENCIES: Readonly<Record<string, TravelCurrency>> = {
 
 export const TRAVEL_CURRENCY_CODES: readonly string[] = Object.keys(TRAVEL_CURRENCIES);
 
-const EURO_COUNTRIES = ['AT', 'BE', 'DE', 'ES', 'FI', 'FR', 'GR', 'IE', 'IT', 'NL', 'PT'];
-
-/** ISO 3166-1 alpha-2 country → the currency spent there. Vietnam is home, so it is absent. */
-export const COUNTRY_CURRENCY: Readonly<Record<string, string>> = {
-  TH: 'THB',
-  SG: 'SGD',
-  MY: 'MYR',
-  KH: 'KHR',
-  LA: 'LAK',
-  ID: 'IDR',
-  PH: 'PHP',
-  JP: 'JPY',
-  KR: 'KRW',
-  CN: 'CNY',
-  TW: 'TWD',
-  HK: 'HKD',
-  US: 'USD',
-  AU: 'AUD',
-  GB: 'GBP',
-  ...Object.fromEntries(EURO_COUNTRIES.map((country) => [country, 'EUR'])),
-};
+/**
+ * Every currency 6pm has a row for (`money/currency.ts`) except the đồng, which every rate is
+ * quoted in: the server's ingest asks for these, travel currencies first. A home can be any of
+ * them, and a trip can be to any of them.
+ */
+export const FX_CURRENCY_CODES: readonly string[] = [
+  ...TRAVEL_CURRENCY_CODES,
+  ...(
+    'CHF CAD NZD MMK INR PKR LKR NPR BDT AED SAR QAR KWD BHD OMR JOD ILS TRY EGP MAD TND ZAR ' +
+    'NGN KES GHS MXN BRL ARS CLP COP PEN UYU SEK NOK DKK ISK PLN CZK HUF RON BGN RSD UAH RUB ' +
+    'KZT UZS GEL IRR IQD'
+  ).split(' '),
+];
 
 /** The national QR schemes Scan recognises, by the currency their codes are paid in. */
 const SCHEME_CURRENCY: Readonly<Record<ForeignScheme, string>> = {
@@ -70,14 +74,55 @@ const SCHEME_CURRENCY: Readonly<Record<ForeignScheme, string>> = {
   khqr: 'KHR',
 };
 
+/** Symbols shared by several currencies, written the way travellers tell them apart. */
+const DISTINCT_SYMBOL: Readonly<Record<string, string>> = { CAD: 'CA$', NZD: 'NZ$', MXN: 'MX$' };
+const SHARED_SYMBOLS = new Set(['$', 'kr', 'Rs', '¥']);
+
+const built = new Map<string, TravelCurrency>();
+
+/** A currency in the travel table; null for any other (a caller then writes its code). */
 export function travelCurrency(code: string): TravelCurrency | null {
   return TRAVEL_CURRENCIES[code.toUpperCase()] ?? null;
 }
 
-/** The currency of a country abroad, or null for Vietnam and for places 6pm has no rate for. */
-export function currencyOfCountry(country: string): TravelCurrency | null {
+/**
+ * Any currency as Travel mode shows and converts it: the travel table's, else built from the
+ * currency table (a symbol several currencies share becomes "CA$" or the code; whole units when
+ * the currency has no minor unit in use, two decimals otherwise). Null only for a string that is
+ * not a currency code.
+ */
+export function travelCurrencyOf(code: string): TravelCurrency | null {
+  const upper = code.trim().toUpperCase();
+  const known = TRAVEL_CURRENCIES[upper];
+  if (known) return known;
+  if (!/^[A-Z]{3}$/.test(upper)) return null;
+  const kept = built.get(upper);
+  if (kept) return kept;
+  const row = currencyOf(upper);
+  const symbol = SHARED_SYMBOLS.has(row.symbol) ? (DISTINCT_SYMBOL[upper] ?? upper) : row.symbol;
+  const numeric = upper === 'VND' ? '704' : '';
+  const made = currency(upper, symbol, row.minorDigits === 0 ? 0 : 2, numeric);
+  built.set(upper, made);
+  return made;
+}
+
+/**
+ * A trip's currency as it is written beside home's: its own symbol, or its code when home writes
+ * the same symbol (a Canadian in New York sees "USD", not a second "$").
+ */
+export function tripCurrencyOf(code: string, home: Currency): TravelCurrency | null {
+  const found = travelCurrencyOf(code);
+  if (found === null || found.symbol !== home.symbol) return found;
+  return { ...found, symbol: found.code };
+}
+
+/**
+ * The currency of a place, or null at home (where the place spends the home currency, as Vietnam
+ * does for a Vietnamese phone) and for places 6pm has no currency for.
+ */
+export function currencyOfCountry(country: string, home: Currency = VND): TravelCurrency | null {
   const code = COUNTRY_CURRENCY[country.toUpperCase()];
-  return code === undefined ? null : travelCurrency(code);
+  return code === undefined || code === home.code ? null : tripCurrencyOf(code, home);
 }
 
 /** The currency of an EMV QR's tag 53 ("764" → THB). */

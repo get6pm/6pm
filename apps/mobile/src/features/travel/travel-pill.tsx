@@ -5,6 +5,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { planInk } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
+import { useHomeCurrency } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
@@ -13,11 +14,12 @@ import { body } from '../../ui/type/fonts';
 import { useTravel } from './travel-provider';
 
 /**
- * Under the date on Today while a trip is under way (`App:130`): "Bangkok · ฿ with ₫ underneath"
- * on the look's accent. It opens Settings, where the switch is.
+ * Under the date on Today while a trip is under way (`App:130`): "Bangkok · ฿ with ₫ underneath",
+ * home's symbol underneath, on the look's accent. It opens Settings, where the switch is.
  */
 export function TravelPill() {
   const { trip } = useTravel();
+  const home = useHomeCurrency();
   const { palette } = useTheme();
   const { t } = useI18n();
   const router = useRouter();
@@ -47,7 +49,11 @@ export function TravelPill() {
       >
         <Symbol name="flight" size={15} color={planInk.onAccent} />
         <Text style={{ ...body(12, 700), color: planInk.onAccent }}>
-          {t('travel.pill', { place: trip.place.name, symbol: trip.currency.symbol })}
+          {t('travel.pill', {
+            place: trip.place.name,
+            symbol: trip.currency.symbol,
+            home: home.symbol,
+          })}
         </Text>
       </PressScale>
     </Animated.View>

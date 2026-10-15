@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
+import { currencyOf } from '../money/currency';
 import {
   COUNTRY_CURRENCY,
   currencyOfCountry,
   currencyOfForeignQr,
   currencyOfNumeric,
-  TRAVEL_CURRENCY_CODES,
+  FX_CURRENCY_CODES,
 } from './currencies';
 import { isFxStale, tripDay } from './trip-day';
 
@@ -43,7 +44,7 @@ describe('the currency of a place', () => {
 
   it('maps every country to a currency it fetches a rate for', () => {
     for (const code of Object.values(COUNTRY_CURRENCY)) {
-      expect(TRAVEL_CURRENCY_CODES).toContain(code);
+      expect([...FX_CURRENCY_CODES, 'VND']).toContain(code);
     }
   });
 });
@@ -71,6 +72,7 @@ describe('a day abroad', () => {
       line: 1_199,
       spent: 640,
       left: 559,
+      spentHome: 493_000,
       spentVnd: 493_000,
       fraction: 493_000 / 924_000,
     });
@@ -90,6 +92,12 @@ describe('a day abroad', () => {
     expect(day?.left).toBe(-65);
     expect(day?.fraction).toBe(1);
     expect(tripDay({ line: 0, spent: 0 }, '770.17')?.fraction).toBe(1);
+  });
+
+  it('counts a dollar home in whole baht', () => {
+    // $35.54 line, $18.96 spent, at $0.029621923076 a baht.
+    const day = tripDay({ line: 3_554, spent: 1_896 }, '0.029621923076', currencyOf('USD'));
+    expect(day).toMatchObject({ line: 1_199, spent: 640, left: 559, spentHome: 1_896 });
   });
 
   it('has no day without a usable rate', () => {

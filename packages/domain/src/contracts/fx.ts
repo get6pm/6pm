@@ -3,8 +3,10 @@ import { z } from 'zod';
 import { DECIMAL_PATTERN } from '../travel/fx';
 
 /**
- * `GET /v1/fx`: the newest rate of each travel currency against the đồng, as the server's daily
- * ingest stored it. A rate is đồng for one unit of the currency, as an exact decimal string.
+ * `GET /v1/fx`: the newest rate of each currency against the đồng, as the server's daily
+ * ingest stored it. A rate is đồng for one unit of the currency, as an exact decimal string; a
+ * rate in any other home currency is two of them divided (`homeFxRate`). A currency the source
+ * has no rate for is absent.
  */
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 

@@ -1,10 +1,15 @@
 import { env } from 'cloudflare:workers';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { fxRatesResponseSchema } from '@6pm/domain';
+import { FX_CURRENCY_CODES, fxRatesResponseSchema, TRAVEL_CURRENCY_CODES } from '@6pm/domain';
 
 import { FrankfurterError, fetchRates, plainDecimal } from '../src/fx/frankfurter';
-import { createD1FxSnapshotWriter, ingestFxSnapshots } from '../src/fx/ingest';
+import {
+  createD1FxSnapshotWriter,
+  currenciesForRun,
+  FX_RUN_EVERY_MS,
+  ingestFxSnapshots,
+} from '../src/fx/ingest';
 import { readLatestRates } from '../src/fx/latest-rates';
 
 import { call, registerDevice, wireErrorOf } from './support';
@@ -127,10 +132,41 @@ describe('the scheduled ingest', () => {
   it('asks for every travel currency against the đồng by default', async () => {
     const { fetchImpl, calls } = frankfurter({});
     const result = await ingestFxSnapshots(writer(), { fetchImpl, now });
-    expect(calls).toEqual(
-      expect.arrayContaining(['THB', 'SGD', 'MYR', 'KHR', 'JPY', 'KRW', 'USD']),
-    );
+    expect(calls).toEqual(expect.arrayContaining([...TRAVEL_CURRENCY_CODES]));
+    expect(calls).toEqual(currenciesForRun(now));
     expect(result.stale).toBe(true);
+  });
+
+  it('asks for the rest of the currency table in turns, two runs covering all of it', () => {
+    const first = currenciesForRun(now);
+    const next = currenciesForRun(new Date(now.getTime() + FX_RUN_EVERY_MS));
+    for (const run of [first, next]) {
+      expect(run.slice(0, TRAVEL_CURRENCY_CODES.length)).toEqual(TRAVEL_CURRENCY_CODES);
+      expect(run.length).toBeLessThanOrEqual(45);
+    }
+    expect(new Set([...first, ...next])).toEqual(new Set(FX_CURRENCY_CODES));
+    expect(first.filter((code) => next.includes(code))).toEqual(TRAVEL_CURRENCY_CODES);
+    expect(first).not.toContain('VND');
+  });
+
+  it('stores a currency for a home outside Vietnam the way it stores the baht', async () => {
+    const { fetchImpl } = frankfurter({
+      CAD: body('CAD', '18712'),
+      IRR: body('IRR', '0.01469'),
+      KWD: body('KWD', '83494'),
+    });
+    const options = { fetchImpl, now, currencies: ['CAD', 'IRR', 'KWD', 'BGN'] };
+    const result = await ingestFxSnapshots(writer(), options);
+    expect(result).toMatchObject({
+      inserted: 3,
+      rejected: [{ base: 'BGN', reason: 'no_vnd_rate' }],
+    });
+    const answer = await readLatestRates(env.DB, now);
+    expect(answer.rates.map(({ currency, rate }) => [currency, rate])).toEqual([
+      ['CAD', '18712'],
+      ['IRR', '0.01469'],
+      ['KWD', '83494'],
+    ]);
   });
 });
 

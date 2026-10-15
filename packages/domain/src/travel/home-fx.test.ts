@@ -1,8 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
+import { priceWaiting } from '../capture/foreign-price';
 import { currencyOf, VND } from '../money/currency';
 import { foreignToVnd, vndToForeignMinor } from './fx';
-import { foreignToHome, homeRate, homeToForeignMinor } from './home-fx';
+import {
+  foreignToHome,
+  homeFxRate,
+  homeRate,
+  homeToForeignMinor,
+  priceWaitingInHome,
+} from './home-fx';
 
 const quotes: Record<string, string> = { THB: '770.17', USD: '26000', EUR: '30500' };
 const dong = (code: string) => quotes[code] ?? null;
@@ -49,5 +56,55 @@ describe('homeToForeignMinor', () => {
     const rate = homeRate('THB', usd, dong) ?? '';
     expect(homeToForeignMinor(355, usd, 2, rate)).toBe(11_984);
     expect(homeToForeignMinor(1_000, usd, 0, rate, 'floor')).toBe(337);
+  });
+});
+
+describe('homeFxRate', () => {
+  const rates = [
+    { currency: 'THB', rate: '770.17', asOf: '2026-10-12', source: 'frankfurter' },
+    { currency: 'USD', rate: '26000', asOf: '2026-10-11', source: 'frankfurter' },
+  ];
+
+  it('is the đồng quote itself when home is đồng', () => {
+    expect(homeFxRate(rates, 'THB', VND)).toBe(rates[0]);
+    expect(homeFxRate(rates, 'JPY', VND)).toBeNull();
+  });
+
+  it('divides by home’s quote, dated by the older of the two', () => {
+    expect(homeFxRate(rates, 'THB', usd)).toEqual({
+      currency: 'THB',
+      rate: '0.029621923076',
+      asOf: '2026-10-11',
+      source: 'frankfurter',
+    });
+    expect(homeFxRate(rates, 'VND', usd)?.rate).toBe('0.000038461538');
+  });
+
+  it('is null for home itself, and without either quote', () => {
+    expect(homeFxRate(rates, 'USD', usd)).toBeNull();
+    expect(homeFxRate(rates, 'VND', VND)).toBeNull();
+    expect(homeFxRate(rates, 'JPY', usd)).toBeNull();
+    expect(homeFxRate(rates, 'THB', currencyOf('EUR'))).toBeNull();
+  });
+});
+
+describe('priceWaitingInHome', () => {
+  const waiting = { currency: 'IDR', amount: 496_650, fromNote: false };
+
+  it('is priceWaiting when home is đồng', () => {
+    expect(priceWaitingInHome(waiting, '1.6', VND)).toEqual(priceWaiting(waiting, '1.6'));
+  });
+
+  it('prices in cents at a rate in dollars', () => {
+    // Rp496.650 at $0.0000615 = $30.54
+    expect(priceWaitingInHome(waiting, '0.0000615', usd)).toEqual({
+      amount: 3054,
+      foreignAmount: { currency: 'IDR', amount: 496_650, rate: 0.0000615 },
+    });
+  });
+
+  it('refuses a rate that is not one', () => {
+    expect(priceWaitingInHome(waiting, '0', usd)).toBeNull();
+    expect(priceWaitingInHome(waiting, 'abc', usd)).toBeNull();
   });
 });

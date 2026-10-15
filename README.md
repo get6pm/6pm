@@ -98,6 +98,10 @@ this code. [docs/product-decisions.md](docs/product-decisions.md) says what 6pm 
 [docs/tech-decisions.md](docs/tech-decisions.md) how, and
 [docs/design-system.md](docs/design-system.md) how it looks.
 
+## License
+
+6pm is open source under the [Apache License 2.0](LICENSE).
+
 ---
 
 <p align="center">Made in Saigon by <a href="https://oddeggs.studio">Odd Eggs Studio</a>.</p>

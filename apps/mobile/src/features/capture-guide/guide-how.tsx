@@ -63,15 +63,20 @@ function Walked({
               ]}
             />
           </GuideSection>
-          <OtherMailCard
-            name="capture.walk.wallet.olderTitle"
-            steps={[
-              'capture.walk.wallet.older1',
-              'capture.walk.wallet.older2',
-              'capture.walk.wallet.older3',
-              'capture.walk.wallet.older4',
-            ]}
-          />
+          <View style={{ gap: 12 }}>
+            <OtherMailCard
+              name="capture.walk.wallet.olderTitle"
+              steps={[
+                'capture.walk.wallet.older1',
+                'capture.walk.wallet.older2',
+                'capture.walk.wallet.older3',
+              ]}
+            />
+            <OtherMailCard
+              name="capture.walk.wallet.handTitle"
+              steps={['capture.walk.wallet.hand1', 'capture.walk.wallet.hand2']}
+            />
+          </View>
         </>
       ) : null}
 

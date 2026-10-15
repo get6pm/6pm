@@ -10,40 +10,39 @@ export const enCaptureWalk = {
   'capture.walk.again': 'Start again',
   'capture.walk.mistakes': 'Common mistakes',
 
-  'capture.walk.wallet.s1Title': 'Open Shortcuts, then Automation',
+  'capture.walk.wallet.s1Title': 'Add the 6pm shortcut',
   'capture.walk.wallet.s1Body':
-    'In Library, tap Automation. If Shortcuts opens on All Shortcuts, tap the back arrow first.',
-  'capture.walk.wallet.s2Title': 'Tap + to start a new one',
+    'Tap “Add the 6pm shortcut” below, then Add Shortcut. It’s called “Log to 6pm”.',
+  'capture.walk.wallet.s2Title': 'Open Automation and tap +',
   'capture.walk.wallet.s2Body':
-    'It opens a new shortcut. If you see “Describe a shortcut”, tap Edit at the top right.',
+    'In Shortcuts, tap Library, then Automation, then +. If you see “Describe a shortcut”, tap Edit.',
   'capture.walk.wallet.s3Title': 'Add the Wallet trigger',
   'capture.walk.wallet.s3Body':
     'In the panel at the bottom, tap Automation, then Wallet. The card “When Any Card is tapped” appears.',
-  'capture.walk.wallet.s4Title': 'Add “Log in 6pm”',
-  'capture.walk.wallet.s4Body': 'Tap Search, type “Log in 6pm” and tap it. It goes under Wallet.',
-  'capture.walk.wallet.s5Title': 'Fill Amount from the tap',
+  'capture.walk.wallet.s4Title': 'Run “Log to 6pm”',
+  'capture.walk.wallet.s4Body':
+    'Tap Search, type “Run Shortcut” and tap it. Then tap Shortcut and pick “Log to 6pm”.',
+  'capture.walk.wallet.s5Title': 'Turn off Show When Run, then go back',
   'capture.walk.wallet.s5Body':
-    'Tap the Amount field, then Transaction just above the keyboard. Tap the blue Transaction and pick Amount.',
-  'capture.walk.wallet.s6Title': 'Fill Where the same way',
-  'capture.walk.wallet.s6Body': 'Tap Where, then Transaction. Tap it again and pick Merchant.',
-  'capture.walk.wallet.s7Title': 'Turn off Show When Run, then go back',
-  'capture.walk.wallet.s7Body':
     'Leave Automation on. Going back saves it. To catch only some cards, tap Any Card and pick them.',
-  'capture.walk.wallet.s8Title': 'Test it',
-  'capture.walk.wallet.s8Body':
+  'capture.walk.wallet.s6Title': 'Test it',
+  'capture.walk.wallet.s6Body':
     'Pay for something with Apple Pay on this iPhone, then open 6pm. The tap is in your Inbox.',
   'capture.walk.wallet.mistake1':
     'A shortcut with no “When Any Card is tapped” card at the top. It only runs when you run it yourself.',
   'capture.walk.wallet.mistake2':
-    'Amount and Where left empty. They must hold the blue Amount and Merchant from Transaction.',
+    'Run Shortcut left without a shortcut. Tap Shortcut and pick “Log to 6pm”, or taps log nothing.',
   'capture.walk.wallet.mistake3':
     'Show When Run left on. Every tap stops to show you a card instead of logging quietly.',
   'capture.walk.wallet.olderTitle': 'On iOS 26',
   'capture.walk.wallet.older1': 'In Shortcuts, open the Automation tab and tap +.',
   'capture.walk.wallet.older2': 'Tap Wallet, choose your cards, pick Run Immediately, then Next.',
-  'capture.walk.wallet.older3': 'Tap Create New Shortcut and add “Log in 6pm”.',
-  'capture.walk.wallet.older4':
-    'Set Amount to Shortcut Input › Amount and Where to Shortcut Input › Merchant. Turn off Show When Run, then Done.',
+  'capture.walk.wallet.older3': 'Pick “Log to 6pm” from your shortcuts, then Done.',
+  'capture.walk.wallet.handTitle': 'Rather build it yourself?',
+  'capture.walk.wallet.hand1':
+    'Instead of Run Shortcut, add “Log in 6pm” and turn off Show When Run.',
+  'capture.walk.wallet.hand2':
+    'Set Amount to Transaction › Amount, and Where to Transaction › Merchant.',
 
   'capture.walk.email.s1Title': 'On a computer, open Gmail’s settings',
   'capture.walk.email.s1Body':
@@ -119,15 +118,13 @@ export const enCaptureWalk = {
   'capture.walk.ios.isTapped': 'is tapped',
   'capture.walk.ios.anyCard': 'Any Card',
   'capture.walk.ios.showWhenRun': 'Show When Run',
-  'capture.walk.ios.shortcutInput': 'Shortcut Input',
-  'capture.walk.ios.transaction': 'Transaction',
-  'capture.walk.ios.clearVariable': 'Clear Variable',
-  'capture.walk.ios.return': 'Return',
-  'capture.walk.ios.get': 'Get',
-  'capture.walk.ios.cardOrPass': 'Card or Pass',
-  'capture.walk.ios.merchant': 'Merchant',
-  'capture.walk.ios.amount': 'Amount',
-  'capture.walk.ios.name': 'Name',
+  'capture.walk.ios.addShortcut': 'Add Shortcut',
+  'capture.walk.ios.dontAdd': 'Don’t Add',
+  'capture.walk.ios.runShortcut': 'Run Shortcut',
+  'capture.walk.ios.run': 'Run',
+  'capture.walk.ios.shortcut': 'Shortcut',
+  'capture.walk.ios.shortcutA': 'Home ETA',
+  'capture.walk.ios.shortcutB': 'Laundry Timer',
   'capture.walk.ios.personal': 'Personal',
   'capture.walk.ios.walletSummary': 'When I tap a Wallet pass or payment card',
   'capture.walk.ios.messages': 'Messages',

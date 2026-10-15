@@ -10,10 +10,10 @@ import {
 import { GmailVerifyFrame } from './walkthrough/gmail-frames-verify';
 import { GmailFilterFrame, GmailForwardItFrame } from './walkthrough/gmail-frames-filter';
 import { ReceiptShareFrame, ShareCardFrame, ShareSheetFrame } from './walkthrough/share-frames';
-import { AddActionFrame, FillFieldFrame } from './walkthrough/wallet-frames-action';
+import { RunShortcutFrame } from './walkthrough/wallet-frames-action';
+import { AddShortcutFrame } from './walkthrough/wallet-frames-add';
 import { FinishFrame, TestFrame } from './walkthrough/wallet-frames-end';
-import { LibraryFrame } from './walkthrough/wallet-frames-library';
-import { NewShortcutFrame, WalletTriggerFrame } from './walkthrough/wallet-frames-start';
+import { AutomationFrame, WalletTriggerFrame } from './walkthrough/wallet-frames-start';
 import type { WalkthroughStep } from './walkthrough/walkthrough';
 
 type WalkKey = Exclude<Extract<StringKey, `capture.walk.${string}`>, 'capture.walk.stepOf'>;
@@ -35,21 +35,24 @@ export function isWalked(source: CaptureSource): source is WalkedSource {
   return source === 'wallet' || source === 'email' || source === 'share';
 }
 
-/** The Wallet automation as iOS 27 builds it: a shortcut with the Wallet trigger at its top. */
+/**
+ * The Wallet automation as iOS 27 builds it, around the published 6pm shortcut: add that shortcut,
+ * then a shortcut with the Wallet trigger at its top that runs it.
+ */
 const WALLET: readonly StepPlan[] = [
   {
     title: 'capture.walk.wallet.s1Title',
     detail: 'capture.walk.wallet.s1Body',
     loop: 4200,
-    still: 0.365,
-    frame: (t, s) => <LibraryFrame t={t} scale={s.phoneScale} />,
+    still: 0.44,
+    frame: (t, s) => <AddShortcutFrame t={t} scale={s.phoneScale} />,
   },
   {
     title: 'capture.walk.wallet.s2Title',
     detail: 'capture.walk.wallet.s2Body',
-    loop: 4600,
-    still: 0.625,
-    frame: (t, s) => <NewShortcutFrame t={t} scale={s.phoneScale} />,
+    loop: 6000,
+    still: 0.475,
+    frame: (t, s) => <AutomationFrame t={t} scale={s.phoneScale} />,
   },
   {
     title: 'capture.walk.wallet.s3Title',
@@ -61,34 +64,20 @@ const WALLET: readonly StepPlan[] = [
   {
     title: 'capture.walk.wallet.s4Title',
     detail: 'capture.walk.wallet.s4Body',
-    loop: 5600,
-    still: 0.525,
-    frame: (t, s) => <AddActionFrame t={t} scale={s.phoneScale} />,
+    loop: 7600,
+    still: 0.695,
+    frame: (t, s) => <RunShortcutFrame t={t} scale={s.phoneScale} />,
   },
   {
     title: 'capture.walk.wallet.s5Title',
     detail: 'capture.walk.wallet.s5Body',
-    loop: 7000,
-    still: 0.565,
-    frame: (t, s) => <FillFieldFrame t={t} scale={s.phoneScale} field="amount" />,
-  },
-  {
-    title: 'capture.walk.wallet.s6Title',
-    detail: 'capture.walk.wallet.s6Body',
-    loop: 7000,
-    still: 0.565,
-    frame: (t, s) => <FillFieldFrame t={t} scale={s.phoneScale} field="where" />,
-  },
-  {
-    title: 'capture.walk.wallet.s7Title',
-    detail: 'capture.walk.wallet.s7Body',
     loop: 5000,
     still: 0.465,
     frame: (t, s) => <FinishFrame t={t} scale={s.phoneScale} />,
   },
   {
-    title: 'capture.walk.wallet.s8Title',
-    detail: 'capture.walk.wallet.s8Body',
+    title: 'capture.walk.wallet.s6Title',
+    detail: 'capture.walk.wallet.s6Body',
     loop: 5200,
     still: 0.4,
     frame: (t, s) => <TestFrame t={t} scale={s.phoneScale} />,

@@ -130,3 +130,42 @@ export function DrawerChip({
     </View>
   );
 }
+
+/** Where a half-height sheet in the editor starts, such as the shortcut picker. */
+export const SHEET_TOP = 415;
+
+/** A plain keyboard: three rows of blank keys and the space bar, as the drawn screens need one. */
+export function Keyboard() {
+  const row = (n: number, inset: number) => (
+    <View style={{ flexDirection: 'row', gap: 6, paddingHorizontal: inset }}>
+      {Array.from({ length: n }, (_, k) => (
+        <View
+          key={k}
+          style={{ flex: 1, height: 44, borderRadius: 8, backgroundColor: iosInk.bg }}
+        />
+      ))}
+    </View>
+  );
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: 300,
+        backgroundColor: '#D5D7DD',
+        paddingTop: 10,
+        gap: 11,
+        paddingHorizontal: 4,
+      }}
+    >
+      {row(10, 0)}
+      {row(9, 18)}
+      {row(7, 50)}
+      <View
+        style={{ marginHorizontal: 100, height: 44, borderRadius: 8, backgroundColor: iosInk.bg }}
+      />
+    </View>
+  );
+}

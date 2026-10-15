@@ -25,7 +25,8 @@ const START = { payday: 25, percent: 12 } as const;
 const LEAVE_MS = 1100;
 export const LAST_STEP = STEP_COUNT - 1;
 export const BILLS_STEP = 2;
-export const CLOSE_STEP = 6;
+export const AI_STEP = 5;
+export const CLOSE_STEP = 7;
 
 /** Onboarding's answers and moves, and what follows from them. */
 export function useOnboarding(startStep = 0) {

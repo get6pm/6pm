@@ -127,7 +127,7 @@ export const viToday: { readonly [Key in keyof typeof enToday]: Entry } = {
   'settings.yourData': 'Dữ liệu của bạn',
   'settings.privacy': 'Quyền riêng tư',
   'settings.privacyBody':
-    'Tiền của bạn nằm trên iPhone này, được mã hoá. Để đọc câu hỏi Ask và viết lời của bạn đồng hành, 6pm gửi tới Anthropic, một dịch vụ AI, câu hỏi hoặc vài thông tin về ngày của bạn: số tiền, tên nơi chi và danh mục, không bao giờ cả danh sách khoản chi. Ảnh biên lai mà điện thoại không đọc được cũng gửi tới đó. Anthropic không dùng chúng để huấn luyện và xoá trong vòng 30 ngày. Bản sao lưu chỉ rời máy khi bạn bật, và được mã hoá đầu cuối. Báo cáo sự cố gửi đến Sentry, không kèm số tiền, tên hay ghi chú; RevenueCat xử lý việc mua.',
+    'Tiền của bạn nằm trên iPhone này, được mã hoá. Để đọc câu hỏi Ask và viết lời của bạn đồng hành, 6pm gửi tới Anthropic, một dịch vụ AI, câu hỏi hoặc vài thông tin về ngày của bạn: số tiền, tên nơi chi và danh mục, không bao giờ cả danh sách khoản chi. Ảnh biên lai mà điện thoại không đọc được cũng gửi tới đó. Anthropic không dùng chúng để huấn luyện và xoá trong vòng 30 ngày. Khi bạn đọc một khoản chi, giọng nói được gửi tới Deepgram để chuyển thành chữ. Ở mục AI phía trên, bạn có thể giữ tất cả những điều này trên iPhone. Bản sao lưu chỉ rời máy khi bạn bật, và được mã hoá đầu cuối. Báo cáo sự cố gửi đến Sentry, không kèm số tiền, tên hay ghi chú; RevenueCat xử lý việc mua.',
   'settings.deleteAll': 'Xoá toàn bộ dữ liệu',
   'settings.deleteAllConfirm': 'Chạm lần nữa để xoá hết',
   'settings.deleting': 'Đang xoá…',

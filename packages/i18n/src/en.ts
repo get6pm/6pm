@@ -11,6 +11,7 @@ import { enBackup } from './en-backup';
 import { enExport } from './en-export';
 import { enAsk } from './en-ask';
 import { enAskActions } from './en-ask-actions';
+import { enPrivacyAi } from './en-privacy-ai';
 import { enAskChat } from './en-ask-chat';
 import { enAskLedger } from './en-ask-ledger';
 import { enScan } from './en-scan';
@@ -51,6 +52,7 @@ export const en = {
   ...enAskLedger,
   ...enAskChat,
   ...enAskActions,
+  ...enPrivacyAi,
   ...enNative,
   ...enSharing,
   ...enShareExt,

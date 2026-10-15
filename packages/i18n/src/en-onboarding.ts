@@ -179,6 +179,8 @@ export const enOnboarding = {
     other: 'I’ll learn their receipts.',
   },
   'onboarding.line.walletsNone': 'Tap the ones you use.',
+  'onboarding.line.aiServer': 'Clever answers, from Claude.',
+  'onboarding.line.aiDevice': 'All yours. Nothing leaves.',
   'onboarding.line.catch': '{count} of {total} work already.',
   'onboarding.line.close': 'See you at {time}.',
 

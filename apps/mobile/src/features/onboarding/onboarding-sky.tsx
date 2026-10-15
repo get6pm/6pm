@@ -19,7 +19,7 @@ import {
 } from 'react-native-reanimated';
 
 import { parseColor } from '../../ui/sky/css-values';
-import { skyRgbaAt, stepProgress, SUN } from './onboarding-palette';
+import { skyRgbaAt, stepProgress, STEP_COUNT, SUN } from './onboarding-palette';
 
 /** The sky eases between steps over 1.2 s (CSS `ease`); the sun glides on its own curve. */
 const SKY_EASE = { duration: 1200, easing: Easing.bezier(0.25, 0.1, 0.25, 1) };
@@ -42,7 +42,7 @@ function sunTarget(step: number): number[] {
   const t = stepProgress(step);
   return [
     0.18 + t * 0.64,
-    step === 7 ? 700 : 150 + t * t * 470,
+    step === STEP_COUNT - 1 ? 700 : 150 + t * t * 470,
     80 + t * 70,
     step === 0 ? 0 : 1,
     t > 0.6 ? 1 : 0,

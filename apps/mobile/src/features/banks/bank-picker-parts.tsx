@@ -196,7 +196,7 @@ export function QuickTile({
 }
 
 /** A row's round check: an empty ring that fills with the accent when picked. */
-function RowCheck({ on, inks }: { readonly on: boolean; readonly inks: PickerInks }) {
+export function RowCheck({ on, inks }: { readonly on: boolean; readonly inks: PickerInks }) {
   const ring = useAnimatedStyle(() => ({
     backgroundColor: withTiming(on ? inks.accent : inks.accentClear, { duration: 180 }),
     borderColor: withTiming(on ? inks.accent : inks.hair, { duration: 180 }),

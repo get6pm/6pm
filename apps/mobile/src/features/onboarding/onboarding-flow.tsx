@@ -14,6 +14,7 @@ import { stepEntering } from './onboarding-motion';
 import { onboardingPalette } from './onboarding-palette';
 import { OnboardingSky } from './onboarding-sky';
 import { StepBills } from './step-bills';
+import { StepAi } from './step-ai';
 import { StepCatching } from './step-catching';
 import { StepCloseTime } from './step-close-time';
 import { LeavingOverlay, StepFirstNumber } from './step-first-number';
@@ -23,6 +24,7 @@ import { ordinalDay } from './step-parts';
 import { StepPayWith } from './step-pay-with';
 import { StepWelcome } from './step-welcome';
 import {
+  AI_STEP,
   BILLS_STEP,
   CLOSE_STEP,
   LAST_STEP,
@@ -56,7 +58,9 @@ function stepLine(o: Onboarding, i18n: I18n, mode: AiMode): string | null {
       return o.wallets.length === 0
         ? t('onboarding.line.walletsNone')
         : t('onboarding.line.wallets', { count: o.wallets.length });
-    case 5: {
+    case AI_STEP:
+      return t(mode === 'device' ? 'onboarding.line.aiDevice' : 'onboarding.line.aiServer');
+    case 6: {
       const ways = catchWaysFor(o.currency, mode);
       return t('onboarding.line.catch', { count: readyWays(ways), total: ways.length });
     }
@@ -144,7 +148,9 @@ export function OnboardingFlow({ startStep = 0 }: { readonly startStep?: number 
         );
       case 4:
         return <StepPayWith pal={pal} wallets={o.wallets} onToggle={o.toggleWallet} />;
-      case 5:
+      case AI_STEP:
+        return <StepAi pal={pal} />;
+      case 6:
         return (
           <StepCatching
             pal={pal}

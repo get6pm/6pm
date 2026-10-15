@@ -11,6 +11,7 @@ import {
 
 import { companionModel } from '../../../modules/companion-model';
 import type { ApiClient } from '../api/api-client';
+import { localLineTier } from '../local-model/local-tiers';
 import { readAiMode, requireServerAi, type AiModeSettings } from '../privacy/ai-mode';
 import type { ModelChoice } from './model-choice';
 
@@ -30,8 +31,8 @@ export interface WordChainDeps {
   /** Where 6pm's AI runs: in on-device mode the server is never asked. */
   readonly settings: AiModeSettings;
   /**
-   * The local model the person downloaded for on-device mode, once it is loaded. Without one,
-   * on-device mode says the catalogue's line.
+   * The local model the person downloaded for on-device mode; the chosen one by default. Without
+   * one ready, on-device mode says the catalogue's line.
    */
   readonly local?: LineTier;
 }
@@ -83,8 +84,8 @@ async function fromDevice(request: WordRequest): Promise<ModelLine> {
  */
 function tiersOf(request: WordRequest, deps: WordChainDeps): readonly (() => Promise<ModelLine>)[] {
   if (readAiMode(deps.settings) === 'device') {
-    const local = deps.local;
-    return local === undefined ? [] : [() => local(request)];
+    const local = deps.local ?? localLineTier(deps.settings);
+    return [() => local(request)];
   }
   return deps.choice === 'device'
     ? [() => fromDevice(request), () => fromServer(deps, request)]

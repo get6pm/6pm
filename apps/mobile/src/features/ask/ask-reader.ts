@@ -8,6 +8,7 @@ import {
 } from '@6pm/domain';
 
 import type { ApiClient } from '../api/api-client';
+import { localReading } from '../local-model/local-tiers';
 import { readAiMode, requireServerAi, type AiModeSettings } from '../privacy/ai-mode';
 
 /** How long the server gets to read a question before the phone reads it with rules. */
@@ -69,7 +70,8 @@ function deadline<T>(work: Promise<T>, ms: number): Promise<T> {
  * sees the question and the user's category and pot names, nothing of their money. When it cannot
  * answer in time, or at all, the phone's own rules read the question instead, so Ask still works
  * offline. A server that only knows the original intents still answers with one. In on-device
- * mode nothing is sent: the phone's rules read every question.
+ * mode nothing is sent: the phone's rules read the question, and the downloaded model reads what
+ * they cannot.
  */
 export async function readQuestion(
   api: Pick<ApiClient, 'request'>,
@@ -78,7 +80,23 @@ export async function readQuestion(
   help: ReadingHelp,
   timeoutMs: number = ASK_SERVER_TIMEOUT_MS,
 ): Promise<QueryReading> {
-  if (readAiMode(settings) === 'device') return { query: readHere(question, help), offline: false };
+  if (readAiMode(settings) === 'device') {
+    // The rules first; the downloaded model only for what they cannot read, and never sent.
+    const ruled = readHere(question, help);
+    if (ruled.kind !== 'unknown') return { query: ruled, offline: false };
+    const local = await localReading(
+      settings,
+      {
+        question,
+        today: help.today,
+        categories: [...help.categories],
+        pots: [...help.pots],
+        ...(help.previous === null ? {} : { previous: help.previous }),
+      },
+      help.currency,
+    );
+    return { query: local, offline: false };
+  }
   const request = askRequestSchema.safeParse({
     question,
     today: help.today,

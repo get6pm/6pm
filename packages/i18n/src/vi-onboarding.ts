@@ -177,6 +177,8 @@ export const viOnboarding: { readonly [Key in keyof typeof enOnboarding]: Entry 
   'onboarding.line.future': 'Bạn của tương lai cảm ơn nè.',
   'onboarding.line.wallets': { other: 'Mình sẽ học cách đọc biên lai.' },
   'onboarding.line.walletsNone': 'Chạm mấy cái bạn hay dùng nha.',
+  'onboarding.line.aiServer': 'Claude lo phần hiểu câu hỏi nha.',
+  'onboarding.line.aiDevice': 'Tất cả nằm trên máy bạn.',
   'onboarding.line.catch': '{count} / {total} cách xài được liền.',
   'onboarding.line.close': 'Hẹn bạn lúc {time}.',
 

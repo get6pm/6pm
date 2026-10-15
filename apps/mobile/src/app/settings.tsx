@@ -15,6 +15,7 @@ import {
   useReminderPermission,
 } from '../features/reminders/reminder-permission';
 import { BackupRow } from '../features/backup/backup-row';
+import { AiSettingsRow } from '../features/privacy/ai-settings-row';
 import { CaptureSettingsSection } from '../features/capture-guide/capture-settings-section';
 import { useDeleteBackup } from '../features/backup/use-backup';
 import { ExportRow } from '../features/export/export-row';
@@ -189,6 +190,7 @@ export default function Settings() {
       <View style={{ gap: 8 }}>
         <SettingsSection title={t('settings.yourData')}>
           <BackupRow first />
+          <AiSettingsRow />
           <SettingRow
             icon="lock"
             label={t('settings.privacy')}

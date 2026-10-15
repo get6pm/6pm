@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import bejana from '../capture/fixtures/receipts/shop-bejana-uluwatu-no-mark.json';
 import coffeeBean from '../capture/fixtures/receipts/shop-coffee-bean-singapore.json';
 import grabfood from '../capture/fixtures/receipts/shop-grabfood-analy.json';
 import kelingking from '../capture/fixtures/receipts/shop-kelingking-bali-no-mark.json';
@@ -82,6 +83,27 @@ describe('a receipt in another currency', () => {
     expect(guessed.currencies.map((c) => c.code)).toEqual(['IDR', 'VND']);
     expect(item(guessed, { currency: 'VND' })).toMatchObject({ amount: 935_550 });
     expect(item(guessed, { currency: 'VND' }).foreign).toBeUndefined();
+  });
+});
+
+describe('where the photo was taken', () => {
+  const uluwatu = JSON.stringify({ latitude: -8.83, longitude: 115.09 });
+  const saigon = JSON.stringify({ latitude: 10.78, longitude: 106.7 });
+  const at = (lines: unknown, place: string) =>
+    shareCardSchema.parse(JSON.parse(shareCard(JSON.stringify(lines), withRates, now, place)));
+
+  it('names the currency of a receipt that prints none', () => {
+    expect(at(bejana, uluwatu)).toMatchObject({ currency: 'IDR', amountText: 'Rp368.160' });
+    expect(at(kelingking, saigon)).toMatchObject({ currency: 'VND', currencySure: false });
+  });
+
+  it('never overrules a printed currency or a Vietnamese bill', () => {
+    expect(at([{ text: 'Kopi' }, { text: 'TOTAL S$12.50' }], uluwatu).currency).toBe('SGD');
+    expect(at(grabfood, uluwatu)).toMatchObject({ currency: 'VND', amount: 101_500 });
+  });
+
+  it('is ignored when it is not a place', () => {
+    expect(at(grabfood, '{"latitude":"x"}').amount).toBe(101_500);
   });
 });
 

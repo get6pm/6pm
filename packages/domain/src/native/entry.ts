@@ -6,6 +6,7 @@ import {
   type SurfaceContext,
 } from '../contracts/surfaces';
 import { receiptReadingOrder } from '../capture/bank-receipt';
+import { currencyAt } from '../capture/photo-place';
 import { readReceipt } from '../capture/read-receipt';
 import { buildLogSpend } from './log-spend';
 import { shareAmount } from './share-amount';
@@ -28,7 +29,7 @@ import { randomUuid } from './uuid';
  * version when a function's input or output changes shape: the extension checks it before calling
  * anything.
  */
-export const NATIVE_API_VERSION = 2;
+export const NATIVE_API_VERSION = 3;
 
 function json(text: unknown): unknown {
   if (typeof text !== 'string') return undefined;
@@ -50,6 +51,18 @@ function nowOf(nowIso: unknown): Date {
   return Number.isNaN(at.getTime()) ? new Date() : at;
 }
 
+/**
+ * The currency where a photo was taken, from `{latitude, longitude}` as its own GPS recorded
+ * them; null for "null", a photo without GPS, or anything unreadable.
+ */
+function locatedOf(placeJson: unknown): string | null {
+  const place = json(placeJson);
+  if (typeof place !== 'object' || place === null) return null;
+  const { latitude, longitude } = place as { latitude?: unknown; longitude?: unknown };
+  if (typeof latitude !== 'number' || typeof longitude !== 'number') return null;
+  return currencyAt(latitude, longitude);
+}
+
 function emptyCard(now: Date): ShareCard {
   return buildShareCard([], null, now);
 }
@@ -57,14 +70,25 @@ function emptyCard(now: Date): ShareCard {
 /**
  * The share card for a receipt. `linesJson` is `[{text, box?: {x, y, w, h}, confidence?}]` (boxes
  * in Vision's normalised coordinates, origin bottom left; no boxes for a PDF's or a text's lines).
+ * `placeJson` is where the photo was taken, `{latitude, longitude}` from its GPS, or "null".
  * Returns `ShareCard`.
  */
-export function shareCard(linesJson: string, contextJson: string, nowIso: string): string {
+export function shareCard(
+  linesJson: string,
+  contextJson: string,
+  nowIso: string,
+  placeJson?: string,
+): string {
   const now = nowOf(nowIso);
   try {
     const lines = receiptLinesSchema.safeParse(json(linesJson));
     const card = lines.success
-      ? buildShareCard(toReceiptLines(lines.data), contextOf(contextJson), now)
+      ? buildShareCard(
+          toReceiptLines(lines.data),
+          contextOf(contextJson),
+          now,
+          locatedOf(placeJson),
+        )
       : emptyCard(now);
     return JSON.stringify(card);
   } catch {
@@ -74,22 +98,23 @@ export function shareCard(linesJson: string, contextJson: string, nowIso: string
 
 /**
  * The card again once the server has looked at the photo: `lookJson` is the answer of
- * `POST /v1/receipts/read` (`{receipt: {amount, currency, merchant, at, sure} | null}`). Fields
- * the phone read surely stay; anything unreadable gives the phone's card unchanged. Returns
- * `ShareCard`.
+ * `POST /v1/receipts/read` (`{receipt: {amount, currency, merchant, at, sure} | null}`), and
+ * `placeJson` the same as `shareCard`'s. Fields the phone read surely stay; anything unreadable
+ * gives the phone's card unchanged. Returns `ShareCard`.
  */
 export function shareLook(
   linesJson: string,
   lookJson: string,
   contextJson: string,
   nowIso: string,
+  placeJson?: string,
 ): string {
   const now = nowOf(nowIso);
   try {
     const parsed = receiptLinesSchema.safeParse(json(linesJson));
     const lines = parsed.success ? toReceiptLines(parsed.data) : [];
     const context = contextOf(contextJson);
-    const read = readReceipt(lines, context?.travel?.currency ?? null);
+    const read = readReceipt(lines, context?.travel?.currency ?? null, locatedOf(placeJson));
     const look = receiptLookSchema.safeParse(json(lookJson));
     const merged = look.success ? mergeLook(read, look.data, receiptReadingOrder(lines)) : read;
     return JSON.stringify({ ...cardOf(merged, lines, context, now), needsCheck: false });

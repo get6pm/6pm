@@ -46,14 +46,16 @@ function readsAsTransfer(lines: readonly ReceiptLine[]): boolean {
 
 /**
  * Reads a shared receipt. Transfer screenshots are read as before (always đồng); anything else
- * labelled like a shop's bill is read for its total and its currency, with `prior` (the trip's
- * currency in Travel mode) used only when the receipt itself says nothing.
+ * labelled like a shop's bill is read for its total and its currency. When the receipt prints no
+ * currency, `located` (the currency where the photo was taken) is the first guess and `prior`
+ * (the trip's currency in Travel mode) the last before đồng.
  */
 export function readReceipt(
   lines: readonly ReceiptLine[],
   prior: string | null = null,
+  located: string | null = null,
 ): ReadReceipt | null {
-  const shop = readsAsTransfer(lines) ? null : parseShopReceipt(lines, prior);
+  const shop = readsAsTransfer(lines) ? null : parseShopReceipt(lines, { prior, located });
   if (shop) {
     const inDong = shop.currency === 'VND' && shop.total !== null;
     const abroad = shop.currency !== null && shop.currency !== 'VND' && shop.total !== null;

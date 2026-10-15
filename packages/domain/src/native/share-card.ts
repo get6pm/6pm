@@ -115,15 +115,17 @@ export function cardOf(
 
 /**
  * The card for a shared receipt. Nothing readable still gives a card, with no amount, so the
- * extension can ask for one rather than fail. In Travel mode the trip's currency is the guess
- * for a receipt that prints none.
+ * extension can ask for one rather than fail. For a receipt that prints no currency, where the
+ * photo was taken (`located`) is the first guess, and the trip's currency in Travel mode the last
+ * before đồng.
  */
 export function buildShareCard(
   lines: readonly ReceiptLine[],
   context: SurfaceContext | null,
   now: Date,
+  located: string | null = null,
 ): ShareCard {
-  const read = readReceipt(lines, context?.travel?.currency ?? null);
+  const read = readReceipt(lines, context?.travel?.currency ?? null, located);
   return cardOf(read, lines, context, now);
 }
 

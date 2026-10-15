@@ -20,6 +20,8 @@ final class ShareModel: ObservableObject {
   /// One shared receipt, once read.
   struct Receipt {
     let linesJson: String
+    /// Where the photo was taken (`{latitude, longitude}`), or "null".
+    let placeJson: String
     var cardJson: String
     var card: ShareCardData?
     let photo: Data?
@@ -105,7 +107,7 @@ final class ShareModel: ObservableObject {
 
   private func readOne(_ source: ReceiptReader.Source?) async -> Receipt {
     let contextJson = contextJson
-    let made: (DomainBridge?, String, String, Data?) = await Task.detached(
+    let made: (DomainBridge?, String, String, String, Data?) = await Task.detached(
       priority: .userInitiated
     ) {
       var shared = SharedReceipt(lines: [], photo: nil)
@@ -113,13 +115,21 @@ final class ShareModel: ObservableObject {
       let linesJson =
         (try? JSONEncoder().encode(shared.lines)).flatMap { String(data: $0, encoding: .utf8) }
         ?? "[]"
-      guard let bridge = try? DomainBridge() else { return (nil, linesJson, "null", shared.photo) }
-      let json = (try? bridge.call("shareCard", [linesJson, contextJson, ShareModel.now()])) ?? "null"
-      return (bridge, linesJson, json, shared.photo)
+      let placeJson =
+        shared.place.flatMap { try? JSONEncoder().encode($0) }
+        .flatMap { String(data: $0, encoding: .utf8) } ?? "null"
+      guard let bridge = try? DomainBridge() else {
+        return (nil, linesJson, placeJson, "null", shared.photo)
+      }
+      let json =
+        (try? bridge.call("shareCard", [linesJson, contextJson, ShareModel.now(), placeJson]))
+        ?? "null"
+      return (bridge, linesJson, placeJson, json, shared.photo)
     }.value
     if bridge == nil { bridge = made.0 }
     return Receipt(
-      linesJson: made.1, cardJson: made.2, card: ShareCardData.decode(made.2), photo: made.3)
+      linesJson: made.1, placeJson: made.2, cardJson: made.3, card: ShareCardData.decode(made.3),
+      photo: made.4)
   }
 
   nonisolated private static func now() -> String {
@@ -177,7 +187,7 @@ final class ShareModel: ObservableObject {
     receipt.looking = false
     if let answer, let bridge,
       let json = try? bridge.call(
-        "shareLook", [receipt.linesJson, answer, contextJson, Self.now()]),
+        "shareLook", [receipt.linesJson, answer, contextJson, Self.now(), receipt.placeJson]),
       let merged = ShareCardData.decode(json)
     {
       receipt.cardJson = json

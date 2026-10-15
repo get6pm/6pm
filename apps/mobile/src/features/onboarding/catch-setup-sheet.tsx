@@ -15,6 +15,7 @@ import { captureColours } from '../capture-guide/capture-colours';
 import { GuideSection } from '../capture-guide/guide-sections';
 import { useWalkthroughSteps } from '../capture-guide/guide-walkthroughs';
 import { Walkthrough } from '../capture-guide/walkthrough/walkthrough';
+import { WALLET_SHORTCUT_URL } from '../capture-guide/wallet-shortcut';
 import { useReceiptAddress } from '../receipt-email/receipt-address';
 import type { WalkedWay } from './catch-ways';
 
@@ -131,11 +132,18 @@ function SetupBody({
             <Walkthrough steps={steps} />
           </GuideSection>
           {way === 'wallet' ? (
-            <SheetButton
-              label={t('capture.wallet.actionOff')}
-              accent
-              onPress={() => void Linking.openURL('shortcuts://').catch(() => undefined)}
-            />
+            <View style={{ gap: 10 }}>
+              <SheetButton
+                label={t('capture.wallet.actionAdd')}
+                accent
+                onPress={() => void Linking.openURL(WALLET_SHORTCUT_URL).catch(() => undefined)}
+              />
+              <SheetButton
+                label={t('capture.wallet.actionOff')}
+                accent={false}
+                onPress={() => void Linking.openURL('shortcuts://').catch(() => undefined)}
+              />
+            </View>
           ) : null}
           {way === 'email' ? <AddressBlock address={emailAddress} /> : null}
           <Text

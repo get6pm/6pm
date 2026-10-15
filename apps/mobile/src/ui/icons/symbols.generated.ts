@@ -165,6 +165,7 @@ export const symbolCodepoints = {
   hiking: 0xe50a,
   history: 0xe8b3,
   home: 0xe9b2,
+  home_work: 0xf030,
   html: 0xeb7e,
   http: 0xe902,
   https: 0xe899,

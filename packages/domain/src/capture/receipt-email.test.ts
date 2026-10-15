@@ -207,23 +207,32 @@ describe('email bodies', () => {
 });
 
 describe('addresses', () => {
-  it('reads the handle after the receipts mailbox, ignoring case', () => {
-    expect(handleOfRecipient('Receipts+K7M2Q9XD4P@6pm.oddeggs.studio')).toBe('k7m2q9xd4p');
-    expect(receiptEmailAddress('k7m2q9xd4p', '6pm.oddeggs.studio')).toBe(
-      'receipts+k7m2q9xd4p@6pm.oddeggs.studio',
-    );
+  it('gives at6pm.app the handle alone, and other hosts the shared mailbox', () => {
+    expect(receiptEmailAddress('k7m2qx', 'at6pm.app')).toBe('k7m2qx@at6pm.app');
+    expect(receiptEmailAddress('k7m2qx', 'dev.at6pm.app')).toBe('r+k7m2qx@dev.at6pm.app');
   });
 
-  it('refuses other mailboxes, a bare handle and a tag that cannot be a handle', () => {
-    expect(handleOfRecipient('postmaster@6pm.oddeggs.studio')).toBeNull();
-    expect(handleOfRecipient('k7m2q9xd4p@6pm.oddeggs.studio')).toBeNull();
-    expect(handleOfRecipient('hello+k7m2q9xd4p@6pm.oddeggs.studio')).toBeNull();
+  it('reads the handle from every address a phone has been given, ignoring case', () => {
+    expect(handleOfRecipient('K7M2QX@at6pm.app')).toBe('k7m2qx');
+    expect(handleOfRecipient('r+k7m2qx@dev.at6pm.app')).toBe('k7m2qx');
+    expect(handleOfRecipient('k7m2q9xd4p@at6pm.app')).toBe('k7m2q9xd4p');
+    expect(handleOfRecipient('Receipts+K7M2Q9XD4P@6pm.oddeggs.studio')).toBe('k7m2q9xd4p');
+  });
+
+  it('refuses other mailboxes and anything that cannot be a handle', () => {
+    expect(handleOfRecipient('postmaster@at6pm.app')).toBeNull();
+    expect(handleOfRecipient('hello@at6pm.app')).toBeNull();
+    expect(handleOfRecipient('hello+k7m2qx@at6pm.app')).toBeNull();
+    expect(handleOfRecipient('r@dev.at6pm.app')).toBeNull();
     expect(handleOfRecipient('receipts@6pm.oddeggs.studio')).toBeNull();
-    expect(handleOfRecipient('receipts+k7m2q9xd4l@6pm.oddeggs.studio')).toBeNull();
+    // `l` and `1` are not in the alphabet; 7 and 9 places are neither length.
+    expect(handleOfRecipient('k7m2ql@at6pm.app')).toBeNull();
+    expect(handleOfRecipient('k7m2qxa@at6pm.app')).toBeNull();
+    expect(handleOfRecipient('r+k7m2q9xd4@dev.at6pm.app')).toBeNull();
   });
 
   it('reads the host of an API base', () => {
-    expect(hostOfApiBase('https://6pm-dev.oddeggs.studio/api')).toBe('6pm-dev.oddeggs.studio');
+    expect(hostOfApiBase('https://dev.at6pm.app/api')).toBe('dev.at6pm.app');
     expect(hostOfApiBase('not a url')).toBeNull();
   });
 });

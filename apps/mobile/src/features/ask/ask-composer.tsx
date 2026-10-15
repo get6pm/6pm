@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ScrollView, Text, TextInput, View } from 'react-native';
+import { type Ref, useState } from 'react';
+import { ScrollView, Text, TextInput, type TextInputInstance, View } from 'react-native';
 import { useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
 import Animated, {
   FadeIn,
@@ -149,9 +149,11 @@ function Chips({
 function Input({
   onSend,
   disabled,
+  inputRef,
 }: {
   readonly onSend: (question: string) => void;
   readonly disabled: boolean;
+  readonly inputRef: Ref<TextInputInstance>;
 }) {
   const { palette } = useTheme();
   const { t } = useI18n();
@@ -180,6 +182,7 @@ function Input({
       }}
     >
       <TextInput
+        ref={inputRef}
         value={text}
         onChangeText={setText}
         onSubmitEditing={submit}
@@ -216,9 +219,16 @@ function Input({
 
 /**
  * Everything under the conversation: the free-question meter or the lock, the suggestion chips
- * and the input. It rides on the keyboard, never lagging or leading it.
+ * and the input. It rides on the keyboard, never lagging or leading it. `inputRef` reaches the
+ * input, which is not there while the week's free questions are used up.
  */
-export function AskComposer({ chat }: { readonly chat: AskChat }) {
+export function AskComposer({
+  chat,
+  inputRef,
+}: {
+  readonly chat: AskChat;
+  readonly inputRef: Ref<TextInputInstance>;
+}) {
   const { palette } = useTheme();
   const { t } = useI18n();
   const { rest, lift: keyboardLift } = useComposerLift();
@@ -257,7 +267,11 @@ export function AskComposer({ chat }: { readonly chat: AskChat }) {
       ) : null}
       <Chips suggestions={chat.suggestions} onPick={(question) => void chat.send(question)} />
       {locked ? null : (
-        <Input disabled={chat.typing} onSend={(question) => void chat.send(question)} />
+        <Input
+          inputRef={inputRef}
+          disabled={chat.typing}
+          onSend={(question) => void chat.send(question)}
+        />
       )}
     </Animated.View>
   );

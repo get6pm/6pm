@@ -15,6 +15,21 @@ describe('formatVnd', () => {
     expect(formatVnd(0)).toBe('0₫');
   });
 
+  it('uses tỷ and B for billions, with up to two decimals', () => {
+    expect(formatShort(2_000_000_000, 'vi')).toBe('2 tỷ');
+    expect(formatShort(2_000_000_000, 'en')).toBe('2B');
+    expect(formatShort(1_250_000_000, 'vi')).toBe('1,25 tỷ');
+    expect(formatShort(1_250_000_000, 'en')).toBe('1.25B');
+    expect(formatShort(12_500_000_000, 'en')).toBe('12.5B');
+    expect(formatShort(-1_500_000_000, 'vi')).toBe('−1,5 tỷ');
+  });
+
+  it('goes into billions only where millions would read a thousand', () => {
+    expect(formatShort(995_000_000, 'vi')).toBe('995tr');
+    expect(formatShort(999_940_000, 'en')).toBe('999.9M');
+    expect(formatShort(999_950_000, 'en')).toBe('1B');
+  });
+
   it('writes negatives with U+2212, never a hyphen', () => {
     expect(formatVnd(-1_250_000)).toBe('−1.250.000₫');
   });

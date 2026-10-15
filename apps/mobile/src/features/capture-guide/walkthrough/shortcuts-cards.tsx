@@ -3,13 +3,13 @@ import { Text, View } from 'react-native';
 import type { SharedValue } from 'react-native-reanimated';
 
 import { useI18n } from '../../../i18n/i18n';
-import { Symbol } from '../../../ui/icons/symbol';
 import { body } from '../../../ui/type/fonts';
+import { WALLET_SHORTCUT_NAME } from '../wallet-shortcut';
 import { iosInk } from './frame-ink';
 import { Reveal, Switch } from './moving-parts';
-import { ActionGlyph, RemoveMark, SixPmIcon } from './shortcuts-chrome';
+import { ActionGlyph, RemoveMark } from './shortcuts-chrome';
 
-/** The cards of the Shortcuts editor: the Wallet trigger and "Log in 6pm" with its fields. */
+/** The cards of the Shortcuts editor: the Wallet trigger and "Run Shortcut" set to the 6pm one. */
 
 /** "When Any Card is tapped", the Wallet trigger at the top of the shortcut. */
 export function TriggerCard() {
@@ -32,13 +32,7 @@ export function TriggerCard() {
 }
 
 /** A labelled row of a card, with whatever sits on its right. */
-export function FieldRow({
-  label,
-  children,
-}: {
-  readonly label: string;
-  readonly children?: ReactNode;
-}) {
+function FieldRow({ label, children }: { readonly label: string; readonly children?: ReactNode }) {
   return (
     <View
       style={{
@@ -59,104 +53,78 @@ export function FieldRow({
   );
 }
 
-/** The variable in a field: a pale blue pill with the card glyph and the picked part's name. */
-export function VariableToken({ name }: { readonly name: string }) {
+/** A parameter inside an action's sentence: blue on a pale blue tint, faint while unset. */
+function Token({ text, unset = false }: { readonly text: string; readonly unset?: boolean }) {
   return (
     <View
       style={{
-        height: 26,
-        paddingHorizontal: 7,
+        height: 30,
+        paddingHorizontal: 6,
         borderRadius: 7,
         backgroundColor: iosInk.tokenBg,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 5,
+        justifyContent: 'center',
       }}
     >
-      <Symbol name="credit_card" size={16} color={iosInk.blue} />
-      <Text numberOfLines={1} style={{ ...body(14, 600), color: iosInk.blue }}>
-        {name}
+      <Text
+        numberOfLines={1}
+        style={{ ...body(20, 600), color: iosInk.blue, opacity: unset ? 0.55 : 1 }}
+      >
+        {text}
       </Text>
     </View>
   );
 }
 
-/** A field of "Log in 6pm": its placeholder, and the token that replaces it. */
-export interface FieldState {
-  /** The token's name once filled; null keeps the placeholder. */
-  readonly token: string | null;
-  /** When the token appears (it stays from the start when undefined). */
-  readonly at?: number;
-  /** The token's name before it is picked, shown from `at` until `pickAt`. */
-  readonly first?: string;
-  readonly pickAt?: number;
-}
-
-function Field({
+/**
+ * "Run Shortcut" as the editor shows it: Run, the shortcut it runs and Show When Run. Unset until
+ * `pickAt`, then "Log to 6pm"; Show When Run turns off at `showOffAt`.
+ */
+export function RunShortcutCard({
   t,
-  label,
-  state,
-}: {
-  readonly t: SharedValue<number>;
-  readonly label: string;
-  readonly state: FieldState;
-}) {
-  const placeholder = <Text style={{ ...body(17), color: iosInk.tertiary }}>{label}</Text>;
-  if (state.token === null) return <FieldRow label={label}>{placeholder}</FieldRow>;
-  const at = state.at ?? -1;
-  const pickAt = state.pickAt ?? at;
-  return (
-    <FieldRow label={label}>
-      <View style={{ height: 26, minWidth: 190, justifyContent: 'center', alignItems: 'flex-end' }}>
-        <Reveal t={t} from={at} to={at + 0.04} out>
-          {placeholder}
-        </Reveal>
-        {state.first ? (
-          <Reveal t={t} from={at} to={at + 0.05} style={{ position: 'absolute', right: 0 }}>
-            <Reveal t={t} from={pickAt} to={pickAt + 0.04} out>
-              <VariableToken name={state.first} />
-            </Reveal>
-          </Reveal>
-        ) : null}
-        <Reveal
-          t={t}
-          from={pickAt}
-          to={pickAt + 0.06}
-          fromScale={0.85}
-          style={{ position: 'absolute', right: 0 }}
-        >
-          <VariableToken name={state.token} />
-        </Reveal>
-      </View>
-    </FieldRow>
-  );
-}
-
-/** "Log in 6pm" with Amount, Where and Show When Run, each animating to the state it is given. */
-export function LogSpendCard({
-  t,
-  amount = { token: null },
-  where = { token: null },
+  pickAt,
   showOffAt,
 }: {
   readonly t: SharedValue<number>;
-  readonly amount?: FieldState;
-  readonly where?: FieldState;
+  /** When the 6pm shortcut is picked; it is set from the start when undefined. */
+  readonly pickAt?: number;
   /** When Show When Run turns off; it stays on when undefined. */
   readonly showOffAt?: number;
 }) {
   const { t: tr } = useI18n();
+  const picked = pickAt ?? -1;
   return (
     <View>
-      <View style={{ padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <SixPmIcon size={26} />
-        <Text style={{ ...body(20, 600), color: iosInk.label }}>
-          {tr('native.intents.logSpend.title')}
-        </Text>
+      <View
+        style={{
+          padding: 16,
+          paddingRight: 48,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 12,
+        }}
+      >
+        <ActionGlyph glyph="layers" />
+        <Text style={{ ...body(20, 600), color: iosInk.label }}>{tr('capture.walk.ios.run')}</Text>
+        <View
+          style={{ width: 160, height: 30, justifyContent: 'center', alignItems: 'flex-start' }}
+        >
+          {pickAt !== undefined ? (
+            <Reveal t={t} from={pickAt} to={pickAt + 0.04} out>
+              <Token text={tr('capture.walk.ios.shortcut')} unset />
+            </Reveal>
+          ) : null}
+          <Reveal
+            t={t}
+            from={picked}
+            to={picked + 0.06}
+            fromScale={0.85}
+            style={{ position: 'absolute', left: 0 }}
+          >
+            <Token text={WALLET_SHORTCUT_NAME} />
+          </Reveal>
+        </View>
       </View>
       <RemoveMark />
-      <Field t={t} label={tr('native.intents.logSpend.amount')} state={amount} />
-      <Field t={t} label={tr('native.intents.logSpend.merchant')} state={where} />
       <FieldRow label={tr('capture.walk.ios.showWhenRun')}>
         <Switch t={t} from={showOffAt ?? 2} to={(showOffAt ?? 2) + 0.06} startsOn />
       </FieldRow>

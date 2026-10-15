@@ -12,8 +12,10 @@ interface VariantConfig {
   /** Shared by the app and its extensions (widgets, share, Live Activity). */
   appGroup: string;
   scheme: string;
-  /** Hosts universal links and the API: one host per environment on oddeggs.studio. */
+  /** Hosts universal links and the API: one host per environment on at6pm.app. */
   host: string;
+  /** The host before at6pm.app: its links still open the app, and its routes still answer. */
+  legacyHost: string;
   /** Over-the-air updates. Off for device runs, which swap in the commit's own bundle. */
   updates: boolean;
 }
@@ -28,7 +30,8 @@ const DEV: VariantConfig = {
   bundleIdentifier: 'ai.sixpm.app.dev',
   appGroup: 'group.ai.sixpm.app.dev',
   scheme: 'sixpm-dev',
-  host: '6pm-dev.oddeggs.studio',
+  host: 'dev.at6pm.app',
+  legacyHost: '6pm-dev.oddeggs.studio',
   updates: true,
 };
 
@@ -40,7 +43,8 @@ const VARIANTS: Record<AppVariant, VariantConfig> = {
     bundleIdentifier: 'ai.sixpm.app',
     appGroup: 'group.ai.sixpm.app',
     scheme: 'sixpm',
-    host: '6pm.oddeggs.studio',
+    host: 'at6pm.app',
+    legacyHost: '6pm.oddeggs.studio',
     updates: true,
   },
 };
@@ -146,7 +150,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     deploymentTarget: IOS_DEPLOYMENT_TARGET,
     // v1 shipped on iPad, and an App Store update may not drop a device family it supported.
     supportsTablet: true,
-    associatedDomains: [`applinks:${variant.host}`, `webcredentials:${variant.host}`],
+    associatedDomains: [
+      `applinks:${variant.host}`,
+      `webcredentials:${variant.host}`,
+      `applinks:${variant.legacyHost}`,
+    ],
     usesAppleSignIn: true,
     // The App Group is how the app and its widgets, share extension and shortcuts reach each
     // other; the targets in ./targets copy it. Each group is registered by hand on the Apple

@@ -14,11 +14,20 @@ import {
 
 describe('onboarding maths', () => {
   it('reads the wheels as the digits of a real amount', () => {
-    expect(incomeDigits(15_500_000)).toEqual({ millions: 15, hundreds: 5 });
-    expect(incomeOf(15, 5)).toBe(15_500_000);
-    expect(incomeDigits(0)).toEqual({ millions: 1, hundreds: 0 });
+    expect(incomeDigits(15_500_000)).toEqual({ lead: 0, millions: 15, hundreds: 5 });
+    expect(incomeOf(0, 15, 5)).toBe(15_500_000);
+    expect(incomeDigits(0)).toEqual({ lead: 0, millions: 1, hundreds: 0 });
+    expect(incomeDigits(250_300_000)).toEqual({ lead: 2, millions: 50, hundreds: 3 });
+    expect(incomeOf(2, 50, 3)).toBe(250_300_000);
     expect(billDigits(3_520_000)).toEqual({ millions: 3, hundreds: 5, tens: 2 });
     expect(billOf(0, 2, 2)).toBe(220_000);
+  });
+
+  it('sets money in from 1.000.000₫ up to 1.000.000.000₫ a month', () => {
+    expect(incomeOf(0, 0, 0)).toBe(1_000_000);
+    expect(incomeOf(10, 0, 0)).toBe(1_000_000_000);
+    expect(incomeOf(10, 42, 7)).toBe(1_000_000_000);
+    expect(incomeDigits(2_000_000_000)).toEqual({ lead: 10, millions: 0, hundreds: 0 });
   });
 
   it('rounds Future you to the nearest 100.000₫', () => {

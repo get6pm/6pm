@@ -9,14 +9,13 @@ import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
 import { isSymbolName } from '../../ui/icons/symbol';
 import { useCompanionToast } from '../companion/use-companion-toast';
-import { usePlanFormat } from '../plan/plan-format';
-import { canStepNeededBy, potMonthAt, stepNeededBy } from '../plan/plan-view';
+import { potMonthAt } from '../plan/plan-view';
 import { PotSheet, type PotFields } from '../plan/pot-sheet';
 import { useTogether, useTogetherRun } from './together-provider';
 
 /**
  * A shared pot made or edited (`?id=`) on the same sheet as an own pot: name, icon and colour,
- * goal, month. What it will need each month is both partners' together.
+ * goal, month (up to ten years out). What it will need each month is both partners' together.
  */
 export function SharedPotEditor() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -25,7 +24,6 @@ export function SharedPotEditor() {
   const say = useCompanionToast();
   const run = useTogetherRun();
   const snap = useMoney();
-  const format = usePlanFormat(snap.today);
   const { state } = useTogether();
   const existing = id === undefined ? undefined : state.pair?.pots.find((p) => p.id === id);
   const from = cycleMonth(snap.cycle);
@@ -86,10 +84,9 @@ export function SharedPotEditor() {
           : undefined
       }
       month={month}
-      monthLabel={month ? format.monthLong(month) : t('plan.pot.noDate')}
-      canEarlier={canStepNeededBy(month, -1, from)}
-      canLater={canStepNeededBy(month, 1, from)}
-      onStepMonth={(by) => setMonth((m) => stepNeededBy(m, by, from))}
+      onMonth={setMonth}
+      from={from}
+      {...(existing === undefined ? {} : { saved })}
       summary={summary}
       cta={{
         label: existing === undefined ? t('together.pot.start') : t('together.pot.save'),

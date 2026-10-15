@@ -3,8 +3,9 @@
   // Two environments only: `--env dev` (Worker `sixpm-api-dev`) and `--env prd` (`sixpm-api`).
   // Bindings are not inherited, so each environment declares its own. Local runs and the tests use
   // `dev` with simulated bindings, which need no Cloudflare account.
-  // There is no dedicated 6pm domain: each environment owns `<host>/api/*` on oddeggs.studio and the
-  // website serves the rest of the host.
+  // Each environment owns `<host>/api/*` on at6pm.app (prd `at6pm.app`, dev `dev.at6pm.app`), and the
+  // website serves the rest of the host. The hosts before at6pm.app, on oddeggs.studio, keep their
+  // routes so builds and forwarding addresses made before the move keep working.
   "name": "sixpm-api",
   "main": "src/index.ts",
   "compatibility_date": "2026-08-01",
@@ -15,7 +16,10 @@
   "env": {
     "dev": {
       "name": "sixpm-api-dev",
-      "routes": [{ "pattern": "6pm-dev.oddeggs.studio/api/*", "zone_name": "oddeggs.studio" }],
+      "routes": [
+        { "pattern": "dev.at6pm.app/api/*", "zone_name": "at6pm.app" },
+        { "pattern": "6pm-dev.oddeggs.studio/api/*", "zone_name": "oddeggs.studio" },
+      ],
       // COMMIT_SHA is overridden at deploy time (`--var COMMIT_SHA:<sha>`).
       "vars": { "ENVIRONMENT": "dev", "COMMIT_SHA": "local" },
       // Travel mode's exchange rates, fetched four times a day (the ingest is idempotent).
@@ -62,11 +66,21 @@
           "namespace_id": "6305",
           "simple": { "limit": 10, "period": 60 },
         },
+        // A category icon the phone's word match could not find goes to the decision model: the
+        // phone asks after a pause in the typing, so one device gets a small allowance.
+        {
+          "name": "ICON_PICK_RATE_LIMIT",
+          "namespace_id": "6306",
+          "simple": { "limit": 20, "period": 60 },
+        },
       ],
     },
     "prd": {
       "name": "sixpm-api",
-      "routes": [{ "pattern": "6pm.oddeggs.studio/api/*", "zone_name": "oddeggs.studio" }],
+      "routes": [
+        { "pattern": "at6pm.app/api/*", "zone_name": "at6pm.app" },
+        { "pattern": "6pm.oddeggs.studio/api/*", "zone_name": "oddeggs.studio" },
+      ],
       "vars": { "ENVIRONMENT": "prd", "COMMIT_SHA": "local" },
       "triggers": { "crons": ["20 */6 * * *"] },
       "d1_databases": [
@@ -108,6 +122,13 @@
           "name": "RECEIPT_READ_RATE_LIMIT",
           "namespace_id": "6315",
           "simple": { "limit": 10, "period": 60 },
+        },
+        // A category icon the phone's word match could not find goes to the decision model: the
+        // phone asks after a pause in the typing, so one device gets a small allowance.
+        {
+          "name": "ICON_PICK_RATE_LIMIT",
+          "namespace_id": "6316",
+          "simple": { "limit": 20, "period": 60 },
         },
       ],
     },

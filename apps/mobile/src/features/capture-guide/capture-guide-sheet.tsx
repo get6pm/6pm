@@ -19,6 +19,7 @@ import { HowItWorks } from './guide-how';
 import { GuideSample, GuideSection, GuideTip, type LiveChip } from './guide-sections';
 import type { CaptureSource } from './source-status';
 import { useCaptureSources } from './use-capture-sources';
+import { WALLET_SHORTCUT_URL } from './wallet-shortcut';
 
 /** The prototype's `screenIn`: up 12 pt from 98.5 %, over 0.35 s on the entrance curve. */
 const screenIn = new Keyframe({
@@ -30,7 +31,7 @@ const screenIn = new Keyframe({
   },
 }).duration(350);
 
-/** One way's guide: its status, three steps, what lands in the Inbox, a tip and its action. */
+/** One way's guide: its status, three steps, what lands in the Inbox, a tip and its actions. */
 export function CaptureGuideSheet({ source }: { readonly source: CaptureSource }) {
   const { palette } = useTheme();
   const { t } = useI18n();
@@ -38,7 +39,7 @@ export function CaptureGuideSheet({ source }: { readonly source: CaptureSource }
   const { sources, emailAddress } = useCaptureSources();
   const colours = captureColours(palette);
   const view = sources.find((s) => s.source === source);
-  const action = useGuideAction(source, view?.on ?? false, emailAddress);
+  const actions = useGuideActions(source, view?.on ?? false, emailAddress);
   // Receipt email's first step shows the address itself; tapping it offers the share sheet.
   const addressChip: LiveChip | null =
     source === 'email' && emailAddress !== null
@@ -165,27 +166,32 @@ export function CaptureGuideSheet({ source }: { readonly source: CaptureSource }
 
           <GuideTip text={t(guide.tip)} />
 
-          {action ? (
-            <PressScale
-              accessibilityRole="button"
-              onPress={action.run}
-              style={{
-                height: 56,
-                borderRadius: 99,
-                backgroundColor: action.accent ? palette.accent : palette.btnBg,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Text
-                style={{
-                  ...body(17, 650),
-                  color: action.accent ? colours.onAccent : palette.btnFg,
-                }}
-              >
-                {action.label}
-              </Text>
-            </PressScale>
+          {actions.length > 0 ? (
+            <View style={{ gap: 10 }}>
+              {actions.map((action) => (
+                <PressScale
+                  key={action.label}
+                  accessibilityRole="button"
+                  onPress={action.run}
+                  style={{
+                    height: 56,
+                    borderRadius: 99,
+                    backgroundColor: action.accent ? palette.accent : palette.btnBg,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Text
+                    style={{
+                      ...body(17, 650),
+                      color: action.accent ? colours.onAccent : palette.btnFg,
+                    }}
+                  >
+                    {action.label}
+                  </Text>
+                </PressScale>
+              ))}
+            </View>
           ) : null}
         </Animated.View>
       </ScrollView>
@@ -200,67 +206,88 @@ interface GuideAction {
   readonly run: () => void;
 }
 
+function openUrl(url: string): void {
+  haptics.tap();
+  void Linking.openURL(url).catch(() => undefined);
+}
+
 /**
- * The button under each guide. Pinning in the share row and the Wallet automation are the user's
- * to set in iOS, so those open the share sheet and the Shortcuts app. Receipt email copies the
- * address, and has no button until the server has given one.
+ * The buttons under each guide. Pinning in the share row and the Wallet automation are the user's
+ * to set in iOS, so those open the share sheet and the Shortcuts app; while the automation is off,
+ * the 6pm shortcut it runs is offered first. Receipt email copies the address, and has no button
+ * until the server has given one.
  */
-function useGuideAction(
+function useGuideActions(
   source: CaptureSource,
   on: boolean,
   emailAddress: string | null,
-): GuideAction | null {
+): readonly GuideAction[] {
   const { t } = useI18n();
   const router = useRouter();
   const say = useCompanionToast();
   switch (source) {
     case 'share':
-      return {
-        label: t('capture.share.action'),
-        accent: false,
-        run: () => {
-          haptics.tap();
-          void Share.share({ message: t('capture.share.pinText') }).catch(() => undefined);
+      return [
+        {
+          label: t('capture.share.action'),
+          accent: false,
+          run: () => {
+            haptics.tap();
+            void Share.share({ message: t('capture.share.pinText') }).catch(() => undefined);
+          },
         },
-      };
+      ];
     case 'email':
-      if (emailAddress === null) return null;
-      return {
-        label: t('receiptEmail.copy'),
-        accent: false,
-        run: () => {
-          haptics.tap();
-          void Clipboard.setStringAsync(emailAddress)
-            .then(() => say('copied'))
-            .catch(() => undefined);
+      if (emailAddress === null) return [];
+      return [
+        {
+          label: t('receiptEmail.copy'),
+          accent: false,
+          run: () => {
+            haptics.tap();
+            void Clipboard.setStringAsync(emailAddress)
+              .then(() => say('copied'))
+              .catch(() => undefined);
+          },
         },
-      };
+      ];
     case 'scan':
-      return {
-        label: t('capture.scan.action'),
-        accent: false,
-        run: () => {
-          haptics.tap();
-          router.push('/scan');
+      return [
+        {
+          label: t('capture.scan.action'),
+          accent: false,
+          run: () => {
+            haptics.tap();
+            router.push('/scan');
+          },
         },
-      };
-    case 'wallet':
-      return {
+      ];
+    case 'wallet': {
+      const shortcuts: GuideAction = {
         label: t(on ? 'capture.wallet.actionOn' : 'capture.wallet.actionOff'),
-        accent: !on,
-        run: () => {
-          haptics.tap();
-          void Linking.openURL('shortcuts://').catch(() => undefined);
-        },
-      };
-    case 'widgets':
-      return {
-        label: t('capture.widgets.action'),
         accent: false,
-        run: () => {
-          haptics.tap();
-          router.back();
-        },
+        run: () => openUrl('shortcuts://'),
       };
+      if (on) return [shortcuts];
+      return [
+        {
+          label: t('capture.wallet.actionAdd'),
+          accent: true,
+          run: () => openUrl(WALLET_SHORTCUT_URL),
+        },
+        shortcuts,
+      ];
+    }
+    case 'widgets':
+      return [
+        {
+          label: t('capture.widgets.action'),
+          accent: false,
+          run: () => {
+            haptics.tap();
+            router.back();
+          },
+        },
+      ];
   }
 }

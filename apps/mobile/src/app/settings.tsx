@@ -26,6 +26,7 @@ import { SettingsCompanionRow } from '../features/settings/settings-companion-ro
 import { SettingsLookCard } from '../features/settings/settings-look-card';
 import { SettingsMaxCard } from '../features/settings/settings-max-card';
 import { SettingRow, SettingsSection } from '../features/settings/setting-rows';
+import { SettingsBanksRow } from '../features/settings/settings-banks-row';
 import { useCloseTimeDraft } from '../features/settings/use-close-time-draft';
 import { TravelRow } from '../features/travel/travel-row';
 import { useI18n } from '../i18n/i18n';
@@ -138,6 +139,7 @@ export default function Settings() {
             router.push('/categories');
           }}
         />
+        <SettingsBanksRow />
         <SettingRow
           icon="schedule"
           label={t('settings.closeTime')}

@@ -1,13 +1,20 @@
 import { Text, View } from 'react-native';
-import Animated, { FadeIn, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, FadeIn, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 import type { Payday } from '@6pm/domain';
+import { curves, durations } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { body, display } from '../../ui/type/fonts';
 import { Wheel } from '../../ui/wheel/wheel';
-import { DIGITS, INCOME_MILLIONS, incomeDigits, incomeOf } from './onboarding-maths';
+import {
+  DIGITS,
+  INCOME_LEADS,
+  incomeDigits,
+  incomeMillionsItems,
+  incomeOf,
+} from './onboarding-maths';
 import { ordinalDay, WheelBand } from './step-parts';
 
 /** The colours these controls draw with: onboarding's sky palette, or a sheet's own. */
@@ -21,6 +28,8 @@ export interface PickerInk {
   readonly segShadow: string;
 }
 
+/** Money in's type size: three wheels and the zeros fit a sheet's card at this size. */
+const SIZE = 34;
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 const MODES = [
   ['sameDay', 'onboarding.payday.sameDay'],
@@ -28,7 +37,17 @@ const MODES = [
   ['varies', 'onboarding.payday.varies'],
 ] as const;
 
-/** Money in: millions and hundred thousands on two wheels. */
+/** The hundreds-of-millions wheel's width once it has come in. */
+const LEAD_WIDTH = 52;
+/** Millions from which the hundreds-of-millions wheel comes in: 90.000.000₫ and up. */
+const LEAD_FROM = 90;
+const LEAD_MOVE = { duration: durations.sheet, easing: Easing.bezier(...curves.enter) };
+
+/**
+ * Money in on wheels read as the amount itself: millions and hundred thousands, and, once the
+ * millions reach 90, a hundreds-of-millions wheel that slides in on their left, up to
+ * 1.000.000.000₫ a month. It stays while it holds a digit.
+ */
 export function IncomeWheels({
   income,
   onIncome,
@@ -39,43 +58,64 @@ export function IncomeWheels({
   readonly colours: Pick<PickerInk, 'ink' | 'chipBg'>;
 }) {
   const { t } = useI18n();
-  const { millions, hundreds } = incomeDigits(income);
-  const number = { ...display(38, 600, -0.03), color: colours.ink };
+  const { lead, millions, hundreds } = incomeDigits(income);
+  const number = { ...display(SIZE, 600, -0.03), color: colours.ink };
+  const leadShown = lead > 0 || millions >= LEAD_FROM;
+  const leadStyle = useAnimatedStyle(() => ({
+    width: withTiming(leadShown ? LEAD_WIDTH : 0, LEAD_MOVE),
+    opacity: withTiming(leadShown ? 1 : 0, LEAD_MOVE),
+  }));
   return (
     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-      <WheelBand height={54} radius={16} color={colours.chipBg} />
+      <WheelBand height={48} radius={15} color={colours.chipBg} />
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Animated.View
+          pointerEvents={leadShown ? 'auto' : 'none'}
+          style={[{ overflow: 'hidden', alignItems: 'flex-end' }, leadStyle]}
+        >
+          <Wheel
+            items={INCOME_LEADS}
+            index={lead}
+            onChange={(k) => onIncome(incomeOf(k, millions, hundreds))}
+            size={SIZE}
+            padX={0}
+            align="flex-end"
+            ink={colours.ink}
+            width={LEAD_WIDTH}
+            label={t('onboarding.income.hundredMillions')}
+          />
+        </Animated.View>
         <Wheel
-          items={INCOME_MILLIONS}
-          index={millions - 1}
-          onChange={(k) => onIncome(incomeOf(k + 1, hundreds))}
-          size={38}
+          items={incomeMillionsItems(lead)}
+          index={millions}
+          onChange={(k) => onIncome(incomeOf(lead, k, hundreds))}
+          size={SIZE}
           padX={0}
-          align="flex-end"
+          align={lead > 0 ? 'flex-start' : 'flex-end'}
           ink={colours.ink}
-          width={72}
+          width={44}
           label={t('onboarding.income.millions')}
         />
         <Text style={number}>.</Text>
         <Wheel
           items={DIGITS}
           index={hundreds}
-          onChange={(k) => onIncome(incomeOf(millions, k))}
-          size={38}
+          onChange={(k) => onIncome(incomeOf(lead, millions, k))}
+          size={SIZE}
           padX={0}
           ink={colours.ink}
-          width={24}
+          width={22}
           label={t('onboarding.income.hundreds')}
         />
         <Text style={number}>00.000</Text>
         <Text
           style={{
-            ...display(19, 600),
+            ...display(18, 600),
             color: colours.ink,
             marginLeft: 4,
             opacity: 0.55,
             alignSelf: 'flex-start',
-            marginTop: 58,
+            marginTop: 52,
           }}
         >
           ₫

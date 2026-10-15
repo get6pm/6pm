@@ -24,6 +24,20 @@ export const sheet: ScreenOptions = {
 };
 
 /**
+ * The iOS page sheet (`UIModalPresentationPageSheet`), for a screen that is a place of its own
+ * rather than a step off the page: the page behind scales back into a card under the dim, as Mail
+ * and Messages do when they compose. It sits at the system's large detent, a few points lower
+ * than `sheet`, and drags and dismisses with the same physics. iOS draws its corners and offers no
+ * grabber or corner options here (react-native-screens applies `sheetCornerRadius` and
+ * `sheetGrabberVisible` to form sheets only), so the screen paints its own colour and grabber.
+ */
+export const pageSheet: ScreenOptions = {
+  presentation: 'pageSheet',
+  headerShown: false,
+  contentStyle: { backgroundColor: 'transparent' },
+};
+
+/**
  * Sheets the native sheet cannot draw, which draw themselves over a transparent modal: the
  * floating card (`CardSheet`, inset from the edges and as tall as its content) and the look
  * detail (lower on the screen, over the undimmed page wearing the look). Below the tallest detent

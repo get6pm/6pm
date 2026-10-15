@@ -4,6 +4,7 @@ export * from './backup-delete';
 export * from './backup-get';
 export * from './backup-meta';
 export * from './backup-put';
+export * from './category-icon';
 export * from './devices';
 export * from './email-captures-ack';
 export * from './email-captures-get';

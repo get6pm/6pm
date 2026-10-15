@@ -14,6 +14,7 @@ import Animated, {
 import { formatVnd } from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
+import { BankLogo } from '../../ui/bank-logo/bank-logo';
 import { Companion } from '../../ui/companion/companion';
 import { haptics } from '../../ui/haptics';
 import { PressScale } from '../../ui/primitives/press-scale';
@@ -26,7 +27,7 @@ import { sheetUp } from './scan-card';
 import { scanColours as c } from './scan-colours';
 import type { Payment } from './use-scan';
 
-function Spinner() {
+function Spinner({ size = 40 }: { readonly size?: number }) {
   const { palette } = useTheme();
   const turn = useSharedValue(0);
   useEffect(() => {
@@ -38,9 +39,9 @@ function Spinner() {
     <Animated.View
       style={[
         {
-          width: 40,
-          height: 40,
-          borderRadius: 20,
+          width: size,
+          height: size,
+          borderRadius: size / 2,
           borderWidth: 2.5,
           borderColor: c.spinnerTrack,
           borderTopColor: palette.accent,
@@ -48,6 +49,20 @@ function Spinner() {
         style,
       ]}
     />
+  );
+}
+
+/** The bank's logo, ringed by the spinner while its app is opening. */
+function BankBadge({ id, spinning }: { readonly id: string; readonly spinning: boolean }) {
+  return (
+    <View style={{ width: 72, height: 72, alignItems: 'center', justifyContent: 'center' }}>
+      {spinning ? (
+        <View style={StyleSheet.absoluteFill}>
+          <Spinner size={72} />
+        </View>
+      ) : null}
+      <BankLogo id={id} size={52} radius={16} neutral={c.glass} neutralInk={c.text} />
+    </View>
   );
 }
 
@@ -106,7 +121,11 @@ export function ScanHandoff({
           paddingHorizontal: 24,
         }}
       >
-        {waiting ? null : <Spinner />}
+        {payment.bank ? (
+          <BankBadge id={payment.bank.id} spinning={!waiting} />
+        ) : waiting ? null : (
+          <Spinner />
+        )}
         <Text
           accessibilityRole="header"
           style={{ ...display(30, 500), color: c.text, textAlign: 'center' }}

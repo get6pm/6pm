@@ -79,26 +79,32 @@ export function ShareDemo() {
         },
       ]}
     >
-      <View
-        style={{
-          width: 150,
-          flex: 1,
-          borderRadius: 12,
-          backgroundColor: DEMO.receipt,
-          boxShadow: DEMO.receiptShadow,
-          paddingVertical: 10,
-          paddingHorizontal: 12,
-          gap: 6,
-        }}
-      >
-        <Text style={{ ...mono(9, 400, 0.1), opacity: 0.5, color: DEMO.paperInk }}>
-          {t('onboarding.catch.share.receipt')}
-        </Text>
-        <Text style={{ ...display(20, 600), lineHeight: 20, color: DEMO.paperInk }}>
-          {formatVnd(SAMPLE.transfer)}
-        </Text>
-        <View style={{ height: 5, width: '80%', borderRadius: 3, backgroundColor: DEMO.rule }} />
-        <View style={{ height: 5, width: '55%', borderRadius: 3, backgroundColor: DEMO.rule }} />
+      <View style={{ width: 150, flex: 1 }}>
+        {/* Two more receipts fanned behind: several can be shared at once. */}
+        <View
+          style={[styles.backPaper, { transform: [{ translateX: -18 }, { rotate: '-7deg' }] }]}
+        />
+        <View style={[styles.backPaper, { transform: [{ translateX: 18 }, { rotate: '6deg' }] }]} />
+        <View
+          style={{
+            flex: 1,
+            borderRadius: 12,
+            backgroundColor: DEMO.receipt,
+            boxShadow: DEMO.receiptShadow,
+            paddingVertical: 10,
+            paddingHorizontal: 12,
+            gap: 6,
+          }}
+        >
+          <Text style={{ ...mono(9, 400, 0.1), opacity: 0.5, color: DEMO.paperInk }}>
+            {t('onboarding.catch.share.receipt')}
+          </Text>
+          <Text style={{ ...display(20, 600), lineHeight: 20, color: DEMO.paperInk }}>
+            {formatVnd(SAMPLE.transfer)}
+          </Text>
+          <View style={{ height: 5, width: '80%', borderRadius: 3, backgroundColor: DEMO.rule }} />
+          <View style={{ height: 5, width: '55%', borderRadius: 3, backgroundColor: DEMO.rule }} />
+        </View>
       </View>
       <View
         style={{
@@ -122,6 +128,17 @@ export function ShareDemo() {
 }
 
 const styles = StyleSheet.create({
+  backPaper: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 6,
+    bottom: 0,
+    borderRadius: 12,
+    backgroundColor: DEMO.receipt,
+    boxShadow: DEMO.receiptShadow,
+    opacity: 0.8,
+  },
   scanLine: {
     position: 'absolute',
     left: W / 2 - 66,

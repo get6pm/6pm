@@ -15,6 +15,8 @@ export interface WalletOption {
   /** What the picker shows, in the current language. */
   readonly label: string;
   readonly icon: SymbolName;
+  /** The bank's code, to draw its logo; absent for cash and a wallet 6pm does not know. */
+  readonly bankId?: string;
 }
 
 /**
@@ -35,6 +37,7 @@ export function walletOptions(
       value: bank.shortName,
       label: bank.shortName,
       icon: bank.kind === 'wallet' ? 'account_balance_wallet' : 'account_balance',
+      bankId: bank.id,
     })),
   ];
   if (current && !options.some((o) => o.value === current)) {

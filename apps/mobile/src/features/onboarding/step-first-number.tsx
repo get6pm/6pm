@@ -7,6 +7,7 @@ import { formatShort } from '@6pm/domain';
 import { useI18n } from '../../i18n/i18n';
 import { Companion } from '../../ui/companion/companion';
 import { haptics } from '../../ui/haptics';
+import { FitWidth } from '../../ui/layout/fit-width';
 import { Odometer } from '../../ui/odometer';
 import { body, display } from '../../ui/type/fonts';
 import type { FirstDay } from './onboarding-maths';
@@ -101,8 +102,10 @@ export function StepFirstNumber({
         <Companion size={120} mood="happy" />
       </Animated.View>
       <Text style={{ ...body(16, 600), color: pal.inkSoft }}>{t('onboarding.reveal.kicker')}</Text>
-      <Animated.View style={shrink}>
-        <Odometer value={shown} size={84} weight={600} letterSpacingEm={-0.04} color={pal.ink} />
+      <Animated.View style={[{ alignSelf: 'stretch', paddingHorizontal: 20 }, shrink]}>
+        <FitWidth height={Math.round(84 * 1.04)} align="center">
+          <Odometer value={shown} size={84} weight={600} letterSpacingEm={-0.04} color={pal.ink} />
+        </FitWidth>
       </Animated.View>
       <Text
         style={{

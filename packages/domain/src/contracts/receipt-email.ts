@@ -8,8 +8,13 @@ import { z } from 'zod';
 
 /** Letters and digits that cannot be mistaken for each other when read aloud or typed. */
 export const EMAIL_HANDLE_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
-export const EMAIL_HANDLE_LENGTH = 10;
-export const emailHandlePattern = /^[a-km-np-z2-9]{10}$/;
+/**
+ * A new handle's length: 32 symbols over 6 places is about a billion addresses, so a stranger
+ * guessing one still almost never lands, and the address stays short enough to type. Handles made
+ * before 15 Oct 2026 have 10 places and keep working.
+ */
+export const EMAIL_HANDLE_LENGTH = 6;
+export const emailHandlePattern = /^(?:[a-km-np-z2-9]{6}|[a-km-np-z2-9]{10})$/;
 
 /** What a phone may hold at once and fetch in one go. */
 export const EMAIL_CAPTURES_MAX_PENDING = 100;
@@ -49,30 +54,42 @@ export const ackEmailCapturesResponseSchema = z.object({
   removed: z.number().int().nonnegative(),
 });
 
-/** The host of an API base (`https://6pm.oddeggs.studio/api` → `6pm.oddeggs.studio`). */
+/** The host of an API base (`https://at6pm.app/api` → `at6pm.app`). */
 export function hostOfApiBase(apiBase: string): string | null {
   return /^https?:\/\/([^/:?#]+)/i.exec(apiBase)?.[1]?.toLowerCase() ?? null;
 }
 
 /**
- * The one mailbox each environment's host routes to its Worker. Email Routing has no catch-all on
- * a subdomain, so every phone shares it and is told apart by its handle after a `+`.
+ * Hosts whose Email Routing sends every address to the Worker (a catch-all), so a phone's address
+ * is its handle alone: `k7m2qx@at6pm.app`. Email Routing has no catch-all on a subdomain, so every
+ * other host has one mailbox that all phones share, told apart by the handle after a `+`.
  */
-export const RECEIPT_MAILBOX = 'receipts';
+const CATCH_ALL_HOSTS: ReadonlySet<string> = new Set(['at6pm.app']);
+/** The shared mailbox on a host without a catch-all: `r+k7m2qx@dev.at6pm.app`. */
+export const RECEIPT_MAILBOX = 'r';
+/** The shared mailbox before at6pm.app, which addresses already handed out still use. */
+const LEGACY_RECEIPT_MAILBOX = 'receipts';
 
-/** The address a phone shows: `receipts+<handle>@<host>`. */
+/** The address a phone shows: `<handle>@at6pm.app`, or `r+<handle>@<host>` elsewhere. */
 export function receiptEmailAddress(handle: string, host: string): string {
-  return `${RECEIPT_MAILBOX}+${handle}@${host}`;
+  return CATCH_ALL_HOSTS.has(host.toLowerCase())
+    ? `${handle}@${host}`
+    : `${RECEIPT_MAILBOX}+${handle}@${host}`;
 }
 
 /**
- * The handle a delivery was sent to, from its envelope recipient `receipts+<handle>@<host>`, lower
- * case. Null for any other mailbox, or when the tag cannot be a handle.
+ * The handle a delivery was sent to, lower case, from its envelope recipient: `<handle>@<host>`,
+ * `r+<handle>@<host>` or the older `receipts+<handle>@<host>`. Null for any other address, or when
+ * the part that should be a handle cannot be one.
  */
 export function handleOfRecipient(recipient: string): string | null {
   const local = recipient.trim().toLowerCase().split('@')[0] ?? '';
-  const [mailbox, tag = ''] = local.split('+');
-  return mailbox === RECEIPT_MAILBOX && emailHandlePattern.test(tag) ? tag : null;
+  const plus = local.indexOf('+');
+  if (plus === -1) return emailHandlePattern.test(local) ? local : null;
+  const mailbox = local.slice(0, plus);
+  const tag = local.slice(plus + 1);
+  const shared = mailbox === RECEIPT_MAILBOX || mailbox === LEGACY_RECEIPT_MAILBOX;
+  return shared && emailHandlePattern.test(tag) ? tag : null;
 }
 
 /**
@@ -112,8 +129,11 @@ export const forwardingCheckSchema = z
   .object({
     id: captureId,
     provider: z.enum(FORWARDING_PROVIDERS),
-    /** The digits the provider asks for ("99427480"). */
-    code: z.string().regex(/^\d{5,12}$/),
+    /** The digits the provider asks for ("99427480"); null when it sent only a link. */
+    code: z
+      .string()
+      .regex(/^\d{5,12}$/)
+      .nullable(),
     /** The provider's confirm link, or null when the email had none that passed the check. */
     confirmUrl: z.string().max(1000).nullable(),
     /** The address that asked to forward ("lan@gmail.com"), when the email named it. */
@@ -128,7 +148,11 @@ export const forwardingCheckSchema = z
       message: 'Not the provider’s confirm link',
       path: ['confirmUrl'],
     },
-  );
+  )
+  .refine((check) => check.code !== null || check.confirmUrl !== null, {
+    message: 'Neither a code nor a confirm link',
+    path: ['code'],
+  });
 export type ForwardingCheck = z.infer<typeof forwardingCheckSchema>;
 
 export const forwardingCheckResponseSchema = z.object({

@@ -36,6 +36,8 @@ export const iosInk = {
   /** The Shortcuts app's own gradient tile colours. */
   shortcutsA: '#E5397B',
   shortcutsB: '#3D6BF2',
+  /** The published 6pm shortcut's tile, behind Shortcuts' default layers glyph. */
+  logTile: '#E8676E',
   /** Wallet card faces in the card picker. */
   cardA: '#1F2A44',
   cardB: '#C8A2C8',

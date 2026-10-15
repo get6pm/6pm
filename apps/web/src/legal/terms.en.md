@@ -14,7 +14,7 @@ updated: '2026-10-11'
 
 ## Who we are, and what these terms cover
 
-6pm is made by {{OWNER}} ("we", "us"). These terms cover the 6pm app for iPhone and the website at 6pm.oddeggs.studio. By installing or using 6pm, you agree to them. If you do not agree, please do not use 6pm.
+6pm is made by {{OWNER}} ("we", "us"). These terms cover the 6pm app for iPhone and the website at at6pm.app. By installing or using 6pm, you agree to them. If you do not agree, please do not use 6pm.
 
 6pm is also covered by [Apple's Standard End User License Agreement (EULA)](https://www.apple.com/legal/internet-services/itunes/dev/stdeula/), which is part of this agreement. If the two disagree about something Apple's EULA covers, the EULA wins. Apple is not a party to these terms and is not responsible for 6pm, its support or its content.
 

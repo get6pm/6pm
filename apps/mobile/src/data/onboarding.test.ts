@@ -4,7 +4,12 @@ import { sql as createSettings } from '../db/migrations/0001-create-settings';
 import { sql as createMoneyTables } from '../db/migrations/0002-create-money-tables';
 import { sql as createTogetherMoves } from '../db/migrations/0003-create-together-moves';
 import { dayOf, createMoneyStore } from './money-store';
-import { completeOnboarding, readWallets, type OnboardingAnswers } from './onboarding';
+import {
+  completeOnboarding,
+  readWallets,
+  writeWallets,
+  type OnboardingAnswers,
+} from './onboarding';
 import type { SqlDatabase, SqlValue } from './table';
 
 jest.mock('expo-crypto', () => ({ randomUUID: () => crypto.randomUUID() }));
@@ -70,6 +75,10 @@ describe('completeOnboarding', () => {
       ['transport', 'Đi lại', 'two_wheeler', 245],
       ['groceries', 'Đi chợ', 'shopping_basket', 140],
       ['shopping', 'Mua sắm', 'local_mall', 300],
+      ['fun', 'Giải trí', 'movie', 85],
+      ['health', 'Sức khỏe', 'medical_services', 175],
+      ['home', 'Nhà cửa', 'home', 210],
+      ['family', 'Gia đình', 'family_restroom', 275],
       ['gifts', 'Quà tặng', 'redeem', 350],
     ]);
     expect(snap.bills.map((b) => [b.name, b.amount, b.dueDay, b.sort])).toEqual([
@@ -118,5 +127,14 @@ describe('completeOnboarding', () => {
     });
     await completeOnboarding(store, answers, { today: '2026-10-10', language: 'en' });
     expect(store.getSnapshot().categories.map((c) => c.id)).toEqual(['coffee']);
+  });
+
+  it('replaces the chosen banks when Settings changes them', async () => {
+    const store = openStore('2026-10-10');
+    await completeOnboarding(store, answers, { today: '2026-10-10', language: 'en' });
+    await writeWallets(store, ['VCB', 'CASH', 'VCB']);
+    expect(await readWallets(store)).toEqual(['VCB', 'CASH']);
+    await writeWallets(store, []);
+    expect(await readWallets(store)).toEqual([]);
   });
 });

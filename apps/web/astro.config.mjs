@@ -4,7 +4,7 @@ import { defineConfig } from 'astro/config';
 // (`wrangler.jsonc`). The API Worker owns `<host>/api/*` on the same host, so the waitlist form
 // posts to its own origin.
 export default defineConfig({
-  site: 'https://6pm.oddeggs.studio',
+  site: 'https://at6pm.app',
   output: 'static',
   // Its CSS goes inline so first paint waits on no stylesheet request.
   // `file` writes `privacy.html`, so `/privacy` (the link the app opens) is served without a redirect.

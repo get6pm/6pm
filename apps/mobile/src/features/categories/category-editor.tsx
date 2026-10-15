@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { ScrollView, Text, TextInput, View } from 'react-native';
+import { ScrollView, Text, TextInput, View, type TextInputInstance } from 'react-native';
 
 import { oklchSrgbHex } from '@6pm/theme';
 
@@ -8,6 +8,7 @@ import { useI18n } from '../../i18n/i18n';
 import { CategoryTile } from '../../ui/category-tile';
 import { isSymbolName } from '../../ui/icons/symbol';
 import { SheetFrame } from '../../ui/navigation/sheet-frame';
+import { useFocusOnPresent } from '../../ui/navigation/use-focus-on-present';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { Switch } from '../../ui/primitives/switch';
 import { useTheme } from '../../ui/theme/theme';
@@ -15,6 +16,8 @@ import { body, families } from '../../ui/type/fonts';
 import { HuePicker } from './hue-picker';
 import { FREE_ICON_COUNT, MAX_ICON_COUNT } from './icon-packs';
 import { IconPicker } from './icon-picker';
+import { mayAutoPick } from './icon-suggestion';
+import { useIconAutoPick } from './use-icon-auto-pick';
 
 const DELETE_RED = oklchSrgbHex(0.66, 0.19, 25);
 
@@ -30,8 +33,11 @@ export function CategoryEditor({
   onSave,
   onDelete,
   onClose,
+  focusName = false,
 }: {
   readonly initial: CategoryInput;
+  /** A new category: the keyboard comes up for its name once the sheet has presented. */
+  readonly focusName?: boolean;
   readonly title: string;
   /** "Delete · its spends move to Food"; null when this one cannot be deleted. */
   readonly deleteLabel: string | null;
@@ -42,6 +48,8 @@ export function CategoryEditor({
   const { palette } = useTheme();
   const { t } = useI18n();
   const [draft, setDraft] = useState(initial);
+  const nameInput = useRef<TextInputInstance>(null);
+  useFocusOnPresent(nameInput, focusName);
   // Set once the sheet starts to leave, so a second tap cannot save or delete twice.
   const leaving = useRef(false);
   const dismiss = useCallback(() => {
@@ -50,7 +58,17 @@ export function CategoryEditor({
     onClose();
   }, [onClose]);
 
-  const pickIcon = useCallback((icon: string) => setDraft((d) => ({ ...d, icon })), []);
+  // The icon follows the name until the person picks one; renaming never replaces a hand pick.
+  const [autoPick, setAutoPick] = useState(() => mayAutoPick(initial));
+  const pickIcon = useCallback((icon: string) => {
+    setAutoPick(false);
+    setDraft((d) => ({ ...d, icon }));
+  }, []);
+  useIconAutoPick({
+    name: draft.name,
+    enabled: autoPick && draft.name !== initial.name,
+    onPick: (icon) => setDraft((d) => (d.icon === icon ? d : { ...d, icon })),
+  });
   const pickHue = useCallback((hue: number) => setDraft((d) => ({ ...d, hue })), []);
   const named = draft.name.trim() !== '';
   const label = (text: string) => (
@@ -126,6 +144,7 @@ export function CategoryEditor({
             glyph={36}
           />
           <TextInput
+            ref={nameInput}
             value={draft.name}
             onChangeText={(name) => setDraft((d) => ({ ...d, name }))}
             placeholder={t('categories.edit.placeholder')}

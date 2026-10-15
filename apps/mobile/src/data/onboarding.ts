@@ -29,13 +29,20 @@ export interface OnboardingBill {
   readonly dueDay?: number;
 }
 
-/** The categories a new month starts with: id, icon and hue. Names follow the user's language. */
+/**
+ * The categories a new install starts with: id, icon and hue. Names follow the user's language.
+ * Seeded only when there are none yet, so an install that already has categories keeps its own.
+ */
 export const DEFAULT_CATEGORIES = [
   ['food', 'restaurant', 45],
   ['drinks', 'local_cafe', 25],
   ['transport', 'two_wheeler', 245],
   ['groceries', 'shopping_basket', 140],
   ['shopping', 'local_mall', 300],
+  ['fun', 'movie', 85],
+  ['health', 'medical_services', 175],
+  ['home', 'home', 210],
+  ['family', 'family_restroom', 275],
   ['gifts', 'redeem', 350],
 ] as const;
 
@@ -126,4 +133,14 @@ export async function readWallets(store: MoneyStore): Promise<string[]> {
   if (raw === undefined) return [];
   const parsed: unknown = JSON.parse(raw);
   return Array.isArray(parsed) ? parsed.filter((v): v is string => typeof v === 'string') : [];
+}
+
+/** Replaces the chosen banks and wallets, as Settings changes them later. */
+export async function writeWallets(store: MoneyStore, wallets: readonly string[]): Promise<void> {
+  await store.exclusive(() =>
+    store.db.runAsync('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', [
+      WALLETS_KEY,
+      JSON.stringify([...new Set(wallets)]),
+    ]),
+  );
 }

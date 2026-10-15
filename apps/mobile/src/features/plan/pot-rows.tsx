@@ -1,9 +1,18 @@
 import { useRouter } from 'expo-router';
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Text, View } from 'react-native';
+import Animated, {
+  LinearTransition,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
+import { Symbol } from '../../ui/icons/symbol';
+import { easeOut } from '../../ui/motion/curves';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, tabular } from '../../ui/type/fonts';
@@ -18,11 +27,15 @@ export const potRow = {
   minHeight: 58,
 } as const;
 
+/** How the sheet reflows as a row opens or closes: the card grows and what is below slides. */
+export const potReflow = LinearTransition.springify().damping(24).stiffness(260);
+
 /** The card the rows sit on. */
 export function PotCard({ children }: { readonly children: ReactNode }) {
   const { palette } = useTheme();
   return (
-    <View
+    <Animated.View
+      layout={potReflow}
       style={{
         borderRadius: 22,
         backgroundColor: palette.cell,
@@ -31,7 +44,66 @@ export function PotCard({ children }: { readonly children: ReactNode }) {
       }}
     >
       {children}
-    </View>
+    </Animated.View>
+  );
+}
+
+/**
+ * A row that opens an editor under it: the label, then the value (and a line under it) and a
+ * chevron that turns as it opens.
+ */
+export function DisclosureRow({
+  label,
+  value,
+  sub,
+  open,
+  onPress,
+  hint,
+  first,
+}: {
+  readonly label: string;
+  readonly value: string;
+  readonly sub?: string | undefined;
+  readonly open: boolean;
+  readonly onPress: () => void;
+  /** What a tap does, for VoiceOver. */
+  readonly hint: string;
+  readonly first?: boolean;
+}) {
+  const { palette } = useTheme();
+  const reduceMotion = useReducedMotion();
+  const angle = useSharedValue(open ? 180 : 0);
+  useEffect(() => {
+    angle.value = withTiming(open ? 180 : 0, { duration: reduceMotion ? 0 : 240, easing: easeOut });
+  }, [open, angle, reduceMotion]);
+  const turn = useAnimatedStyle(() => ({ transform: [{ rotate: `${angle.value}deg` }] }));
+  return (
+    <PressScale
+      highlight
+      accessibilityRole="button"
+      accessibilityHint={hint}
+      accessibilityState={{ expanded: open }}
+      onPress={() => {
+        haptics.tick();
+        onPress();
+      }}
+      style={[potRow, first ? null : { borderTopWidth: 0.5, borderColor: palette.hair }]}
+    >
+      <Text style={{ ...body(16), flex: 1, color: palette.ink }}>{label}</Text>
+      <View style={{ alignItems: 'flex-end', paddingVertical: 10, flexShrink: 1 }}>
+        <Text numberOfLines={1} style={{ ...body(17, 650), ...tabular, color: palette.ink }}>
+          {value}
+        </Text>
+        {sub ? (
+          <Text numberOfLines={1} style={{ ...body(12.5), color: palette.inkSoft }}>
+            {sub}
+          </Text>
+        ) : null}
+      </View>
+      <Animated.View style={turn}>
+        <Symbol name="expand_more" size={22} color={palette.inkSoft} />
+      </Animated.View>
+    </PressScale>
   );
 }
 

@@ -11,6 +11,7 @@ import { enBackup } from './en-backup';
 import { enExport } from './en-export';
 import { enAsk } from './en-ask';
 import { enScan } from './en-scan';
+import { enBanks } from './en-banks';
 import { enLooks } from './en-looks';
 import { enOnboarding } from './en-onboarding';
 import { enDiary } from './en-diary';
@@ -22,6 +23,7 @@ import { enToday } from './en-today';
 import { enCategories } from './en-categories';
 import { enTravel } from './en-travel';
 import { enCompanions } from './en-companions';
+import { enWidgetsGuide } from './en-widgets-guide';
 
 /** The source catalogue: every key the app uses, in English. */
 export const en = {
@@ -33,6 +35,7 @@ export const en = {
   ...enToday,
   ...enCategories,
   ...enScan,
+  ...enBanks,
   ...enLooks,
   ...enCompanion,
   ...enBackup,
@@ -49,4 +52,5 @@ export const en = {
   ...enReceiptEmail,
   ...enTravel,
   ...enCompanions,
+  ...enWidgetsGuide,
 } as const;

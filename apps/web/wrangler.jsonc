@@ -3,20 +3,27 @@
   // A Worker made only of static assets: `astro build` writes the site, `wrangler deploy --env <dev|prd>`
   // uploads it. No script runs per request.
   //
-  // There is no dedicated 6pm domain. Each environment's site takes every path of its host on the
-  // oddeggs.studio zone; the API Worker's route `<host>/api/*` is more specific, so it wins for the
-  // API and the site never sees those requests.
+  // Each environment's site takes every path of its host on at6pm.app (prd `at6pm.app`, dev
+  // `dev.at6pm.app`); the API Worker's route `<host>/api/*` is more specific, so it wins for the API
+  // and the site never sees those requests. The hosts before at6pm.app, on oddeggs.studio, keep
+  // their routes so old links (and their apple-app-site-association) still answer.
   "name": "sixpm-web",
   "compatibility_date": "2026-08-01",
   "assets": { "directory": "./dist", "html_handling": "auto-trailing-slash" },
   "env": {
     "dev": {
       "name": "sixpm-web-dev",
-      "routes": [{ "pattern": "6pm-dev.oddeggs.studio/*", "zone_name": "oddeggs.studio" }],
+      "routes": [
+        { "pattern": "dev.at6pm.app/*", "zone_name": "at6pm.app" },
+        { "pattern": "6pm-dev.oddeggs.studio/*", "zone_name": "oddeggs.studio" },
+      ],
     },
     "prd": {
       "name": "sixpm-web",
-      "routes": [{ "pattern": "6pm.oddeggs.studio/*", "zone_name": "oddeggs.studio" }],
+      "routes": [
+        { "pattern": "at6pm.app/*", "zone_name": "at6pm.app" },
+        { "pattern": "6pm.oddeggs.studio/*", "zone_name": "oddeggs.studio" },
+      ],
     },
   },
 }

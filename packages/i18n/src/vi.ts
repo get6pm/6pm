@@ -11,6 +11,7 @@ import { viBackup } from './vi-backup';
 import { viExport } from './vi-export';
 import { viAsk } from './vi-ask';
 import { viScan } from './vi-scan';
+import { viBanks } from './vi-banks';
 import { viLooks } from './vi-looks';
 import { viOnboarding } from './vi-onboarding';
 import { viDiary } from './vi-diary';
@@ -23,6 +24,7 @@ import { viToday } from './vi-today';
 import { viCategories } from './vi-categories';
 import { viTravel } from './vi-travel';
 import { viCompanions } from './vi-companions';
+import { viWidgetsGuide } from './vi-widgets-guide';
 
 export const vi: Catalogue = {
   ...viOnboarding,
@@ -33,6 +35,7 @@ export const vi: Catalogue = {
   ...viToday,
   ...viCategories,
   ...viScan,
+  ...viBanks,
   ...viLooks,
   ...viCompanion,
   ...viBackup,
@@ -49,4 +52,5 @@ export const vi: Catalogue = {
   ...viReceiptEmail,
   ...viTravel,
   ...viCompanions,
+  ...viWidgetsGuide,
 };

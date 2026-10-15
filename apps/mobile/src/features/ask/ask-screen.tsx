@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { Text, View } from 'react-native';
+import { Text, type TextInputInstance, View } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import {
   KeyboardChatScrollView,
@@ -9,6 +9,8 @@ import {
 
 import { useI18n } from '../../i18n/i18n';
 import { Companion } from '../../ui/companion/companion';
+import { haptics } from '../../ui/haptics';
+import { useFocusOnPresent } from '../../ui/navigation/use-focus-on-present';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
@@ -30,11 +32,24 @@ export function AskScreen({ question }: { readonly question: string | null }) {
   const { t } = useI18n();
   const chat = useAsk();
   const scroll = useRef<KeyboardChatScrollViewRef>(null);
+  const input = useRef<TextInputInstance>(null);
   const { keyboardOffset, lift } = useComposerLift();
   // The conversation's window ends at the composer's top without a layout pass: the clip moves up
   // with the composer and its contents move back down by as much, so only the bottom edge rises.
   const clip = useAnimatedStyle(() => ({ transform: [{ translateY: lift.get() }] }));
   const unclip = useAnimatedStyle(() => ({ transform: [{ translateY: -lift.get() }] }));
+
+  // A light tap as the sheet starts to rise, once per opening (the ways in leave it to the sheet).
+  const tapped = useRef(false);
+  useEffect(() => {
+    if (tapped.current) return;
+    tapped.current = true;
+    haptics.tap();
+  }, []);
+
+  // Opened to type: the keyboard comes up behind the sheet. Opened with a question, the answer
+  // is what to read, so the keyboard stays down.
+  useFocusOnPresent(input, question === null);
 
   // Sent once, a moment after the screen opens; closing the screen first cancels it.
   const send = useRef(chat.send);
@@ -110,7 +125,7 @@ export function AskScreen({ question }: { readonly question: string | null }) {
           </KeyboardChatScrollView>
         </Animated.View>
       </Animated.View>
-      <AskComposer chat={chat} />
+      <AskComposer chat={chat} inputRef={input} />
     </View>
   );
 }

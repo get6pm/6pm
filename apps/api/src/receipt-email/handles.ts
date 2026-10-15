@@ -1,8 +1,9 @@
 import { EMAIL_HANDLE_ALPHABET, EMAIL_HANDLE_LENGTH } from '@6pm/domain';
 
 /**
- * A new handle: random letters and digits, nothing about the person. 32 symbols over 10 places
- * is 50 bits, so guessing someone's address is hopeless and a clash is all but impossible.
+ * A new handle: random letters and digits, nothing about the person. 32 symbols over 6 places is
+ * about a billion addresses, so a guessed one almost never belongs to anyone, and a clash with
+ * another phone's is retried.
  */
 export function newEmailHandle(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(EMAIL_HANDLE_LENGTH));

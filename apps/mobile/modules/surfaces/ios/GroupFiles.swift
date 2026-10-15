@@ -16,7 +16,7 @@ enum GroupFiles {
 
   /// The host of universal links and the API for this build.
   static var host: String {
-    appBundleId.hasSuffix(".dev") ? "6pm-dev.oddeggs.studio" : "6pm.oddeggs.studio"
+    appBundleId.hasSuffix(".dev") ? "dev.at6pm.app" : "at6pm.app"
   }
 
   enum Failure: Error {

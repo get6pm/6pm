@@ -61,6 +61,7 @@ export default function CategoryRoute() {
       onSave={save}
       onDelete={remove}
       onClose={() => router.back()}
+      focusName={!shown.id}
     />
   );
 }

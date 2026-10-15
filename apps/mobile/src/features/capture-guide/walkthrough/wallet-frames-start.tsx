@@ -1,106 +1,61 @@
 import { Text, View } from 'react-native';
 
 import { useI18n } from '../../../i18n/i18n';
-import { Symbol } from '../../../ui/icons/symbol';
 import { body } from '../../../ui/type/fonts';
 import { Phone } from './device';
 import { iosInk } from './frame-ink';
-import { GlassButton, Magnifier } from './ios-parts';
+import { Magnifier } from './ios-parts';
 import { Reveal, TapFlash, Touch } from './moving-parts';
-import { EmptyAutomation, type FrameProps } from './wallet-frames-library';
+import {
+  EmptyAutomation,
+  LibraryScreen,
+  NewShortcutScreen,
+  type FrameProps,
+} from './wallet-frames-library';
 import { EditorBar, EditorCard } from './shortcuts-chrome';
 import { TriggerCard } from './shortcuts-cards';
 import { DockedDrawer, DrawerChip, DrawerItem } from './shortcuts-drawer';
 
 const FULL = { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 } as const;
 
-/** Automation's + opens a new shortcut; where it offers to describe one, the finger taps Edit. */
-export function NewShortcutFrame({ t, scale }: FrameProps) {
-  const { t: tr } = useI18n();
+/**
+ * Library, then Automation, then its +: a new shortcut opens, and where it offers to describe one
+ * the finger taps Edit.
+ */
+export function AutomationFrame({ t, scale }: FrameProps) {
   return (
     <Phone t={t} scale={scale} background={iosInk.grouped}>
-      <Reveal t={t} from={0.32} to={0.42} out style={FULL}>
-        <EmptyAutomation />
-        <View
-          style={{
-            position: 'absolute',
-            left: 168,
-            top: 773,
-            width: 67,
-            height: 67,
-            borderRadius: 34,
-            overflow: 'hidden',
-          }}
-        >
-          <TapFlash t={t} at={0.3} radius={34} />
-        </View>
+      <Reveal t={t} from={0.24} to={0.32} out style={FULL}>
+        <LibraryScreen flash={<TapFlash t={t} at={0.22} />} />
       </Reveal>
-      <Reveal t={t} from={0.34} to={0.46} dy={80} style={FULL}>
-        <View
-          style={{
-            position: 'absolute',
-            top: 62,
-            left: 16,
-            right: 16,
-            height: 44,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <GlassButton glyph="chevron_left" />
-          <Text style={{ ...body(17, 600), color: iosInk.label }}>
-            {tr('capture.walk.ios.newShortcut')}
-          </Text>
-          <GlassButton text={tr('capture.walk.ios.edit')} />
-        </View>
-        <View
-          style={{
-            position: 'absolute',
-            top: 150,
-            left: 34,
-            right: 34,
-            height: 236,
-            borderRadius: 48,
-            backgroundColor: iosInk.bg,
-            boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 30,
-          }}
-        >
-          <Symbol name="auto_awesome" size={44} color={iosInk.blue} />
-          <Text
-            style={{ ...body(20, 600), color: iosInk.label, textAlign: 'center', marginTop: 12 }}
+      <Reveal t={t} from={0.26} to={0.36} dx={60} style={FULL}>
+        <Reveal t={t} from={0.52} to={0.6} out style={FULL}>
+          <EmptyAutomation />
+          <View
+            style={{
+              position: 'absolute',
+              left: 168,
+              top: 773,
+              width: 67,
+              height: 67,
+              borderRadius: 34,
+              overflow: 'hidden',
+            }}
           >
-            {tr('capture.walk.ios.describe')}
-          </Text>
-        </View>
-        <View
-          style={{
-            position: 'absolute',
-            left: 32,
-            right: 32,
-            bottom: 36,
-            height: 50,
-            borderRadius: 25,
-            backgroundColor: iosInk.bg,
-            boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
-            justifyContent: 'center',
-            paddingHorizontal: 18,
-          }}
-        >
-          <Text style={{ ...body(17), color: iosInk.tertiary }}>
-            {tr('capture.walk.ios.describe')}
-          </Text>
-        </View>
+            <TapFlash t={t} at={0.5} radius={34} />
+          </View>
+        </Reveal>
+      </Reveal>
+      <Reveal t={t} from={0.54} to={0.64} dy={80} style={FULL}>
+        <NewShortcutScreen />
       </Reveal>
       <Touch
         t={t}
         stops={[
-          { at: 0.1, x: 290, y: 650 },
-          { at: 0.3, x: 201, y: 806, tap: true },
-          { at: 0.66, x: 352, y: 84, tap: true },
+          { at: 0.06, x: 260, y: 600 },
+          { at: 0.22, x: 280, y: 411, tap: true },
+          { at: 0.5, x: 201, y: 806, tap: true },
+          { at: 0.72, x: 352, y: 84, tap: true },
         ]}
       />
     </Phone>

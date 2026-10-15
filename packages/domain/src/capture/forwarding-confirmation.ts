@@ -9,7 +9,8 @@ import type { ReceiptEmail } from './receipt-email';
 /** A provider's request to confirm forwarding, as read from its email. */
 export interface ForwardingConfirmation {
   readonly provider: ForwardingProvider;
-  readonly code: string;
+  /** The digits to type into the provider's settings; null when the email asks for the link only. */
+  readonly code: string | null;
   /** The provider's confirm link; null when the email held none on the provider's own hosts. */
   readonly confirmUrl: string | null;
   /** The address asking to forward, when the email names it. */
@@ -61,9 +62,10 @@ function askingAddress(subject: string, lines: readonly string[]): string | null
 
 /**
  * Reads a mail service's "confirm you want forwarding" email: which service, the code, its confirm
- * link (only one on the service's own hosts, on its confirm path), and the account asking. Null
- * for any other email, including one forwarded on by a person: only the service's own sender
- * counts, and a confirmation without a code is not one.
+ * link (only one on the service's own hosts, on its confirm path), and the account asking. Gmail
+ * now often sends the link alone, with no code. Null for any other email, including one forwarded
+ * on by a person: only the service's own sender counts, and one with neither a code nor a confirm
+ * link is not a confirmation.
  */
 export function parseForwardingConfirmation(
   email: ReceiptEmail,
@@ -75,11 +77,12 @@ export function parseForwardingConfirmation(
   const code =
     SUBJECT_CODE.exec(email.subject)?.[1] ??
     lines.map((line) => BODY_CODE.exec(line)?.[1]).find((c) => c !== undefined);
-  if (!code) return null;
+  const confirmUrl = linksIn(email).find((link) => isForwardingConfirmUrl(provider, link)) ?? null;
+  if (!code && confirmUrl === null) return null;
   return {
     provider,
-    code,
-    confirmUrl: linksIn(email).find((link) => isForwardingConfirmUrl(provider, link)) ?? null,
+    code: code ?? null,
+    confirmUrl,
     address: askingAddress(email.subject, lines),
     receivedAt: options.receivedAt,
   };

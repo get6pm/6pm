@@ -164,46 +164,7 @@ export function barDays(today: LocalDate, payday: LocalDate): BarDay[] {
   });
 }
 
-/** "Needed by" choices for a new pot: months ahead of the pay cycle's month, then "No date" (0). */
-export const POT_MONTHS_AHEAD = [1, 2, 3, 4, 5, 8] as const;
-
 /** The month 'YYYY-MM' that is `ahead` months after `from`; null for "No date" (0). */
 export function potMonthAt(from: string, ahead: number): string | null {
   return ahead > 0 ? addMonthsTo(from, ahead) : null;
-}
-
-/** One step through the choices: earlier from the nearest month goes to "No date". */
-export function stepPotMonth(ahead: number, by: 1 | -1): number {
-  const order = [0, ...POT_MONTHS_AHEAD];
-  const i = Math.max(0, order.indexOf(ahead));
-  return order[Math.min(order.length - 1, Math.max(0, i + by))] ?? 0;
-}
-
-/**
- * One step on a pot's goal: 500.000₫ up to 10tr, 1tr up to 50tr, 5tr beyond, so a 15tr cushion
- * does not take thirty taps. Never below 500.000₫.
- */
-export function stepGoal(goal: Vnd, by: 1 | -1): Vnd {
-  const from = by > 0 ? goal : goal - 1;
-  const step = from >= 50_000_000 ? 5_000_000 : from >= 10_000_000 ? 1_000_000 : 500_000;
-  return Math.max(500_000, goal + by * step);
-}
-
-/** How far ahead a pot's month may be set when editing: three years. */
-const NEEDED_BY_REACH = 36;
-
-/**
- * One month step on a saved pot's "needed by", from the pay cycle's month: earlier than the cycle's
- * own month goes to "No date" (null), later from "No date" starts at the next month.
- */
-export function stepNeededBy(month: string | null, by: 1 | -1, from: string): string | null {
-  if (month === null) return by > 0 ? addMonthsTo(from, 1) : null;
-  const next = addMonthsTo(month, by);
-  if (by < 0) return next < from ? null : next;
-  return next > addMonthsTo(from, NEEDED_BY_REACH) ? month : next;
-}
-
-/** Whether `stepNeededBy` has anywhere further to go in a direction. */
-export function canStepNeededBy(month: string | null, by: 1 | -1, from: string): boolean {
-  return stepNeededBy(month, by, from) !== month;
 }

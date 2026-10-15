@@ -58,6 +58,6 @@ export function maxPlanOfProduct(productId: string): MaxPlan | null {
 
 /** The pages a subscription screen must link to. */
 export const LEGAL_LINKS = {
-  terms: 'https://6pm.oddeggs.studio/terms',
-  privacy: 'https://6pm.oddeggs.studio/privacy',
+  terms: 'https://at6pm.app/terms',
+  privacy: 'https://at6pm.app/privacy',
 } as const;

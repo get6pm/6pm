@@ -12,6 +12,7 @@ import {
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
+import { BankLogo } from '../../ui/bank-logo/bank-logo';
 import { CategoryTile } from '../../ui/category-tile';
 import { haptics } from '../../ui/haptics';
 import { isSymbolName } from '../../ui/icons/symbol';
@@ -22,7 +23,7 @@ import type { PayOptions } from './pay-options';
 import { CardButton, ScanCard } from './scan-card';
 import { scanColours as c } from './scan-colours';
 
-/** A wallet tile on the card: its colour swatch over its name, outlined in ink when picked. */
+/** A wallet tile on the card: its logo over its name, outlined in ink when picked. */
 function WalletTile({
   bank,
   picked,
@@ -51,13 +52,13 @@ function WalletTile({
         gap: 5,
       }}
     >
-      <View
-        style={{
-          width: 22,
-          height: 22,
-          borderRadius: 7,
-          backgroundColor: bank.color ?? c.cardSoft,
-        }}
+      <BankLogo
+        id={bank.id}
+        size={22}
+        radius={7}
+        neutral={c.cardSoft}
+        neutralInk={c.card}
+        edge={c.walletBorder}
       />
       <Text numberOfLines={1} style={{ ...body(13, 600), color: c.cardInk }}>
         {bank.shortName}

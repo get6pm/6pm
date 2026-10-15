@@ -16,23 +16,42 @@ const MILLION = 1_000_000;
 const HUNDRED_K = 100_000;
 const TEN_K = 10_000;
 
-/** Money in is set as millions (1–99) and hundred thousands (0–9). */
-export const INCOME_MILLIONS = Array.from({ length: 99 }, (_, i) => String(i + 1));
+/** The most money in a month the wheels set: 1.000.000.000₫. */
+export const INCOME_MAX = 1_000_000_000;
+const HUNDRED_MILLION = 100_000_000;
+
+/**
+ * Money in is set on three wheels, read as the digits of the amount: hundreds of millions (blank,
+ * 1–9, or "1.0" for a billion), the millions below that (0–99, two digits once a hundreds-of-
+ * millions digit is set), and hundred thousands (0–9).
+ */
+export const INCOME_LEADS = ['', '1', '2', '3', '4', '5', '6', '7', '8', '9', '1.0'];
+export function incomeMillionsItems(lead: number): string[] {
+  return Array.from({ length: 100 }, (_, i) => (lead > 0 ? String(i).padStart(2, '0') : String(i)));
+}
 export const DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-/** A bill is set as millions (0–50), hundred thousands and ten thousands. */
-export const BILL_MILLIONS = Array.from({ length: 51 }, (_, i) => String(i));
+/** A bill is set as millions (0–99), hundred thousands and ten thousands. */
+export const BILL_MILLIONS = Array.from({ length: 100 }, (_, i) => String(i));
 /** Future you: 0–40% of money in. */
 export const PERCENTS = Array.from({ length: 41 }, (_, i) => `${i}%`);
 
-export function incomeDigits(income: number): { millions: number; hundreds: number } {
+export function incomeDigits(income: number): {
+  lead: number;
+  millions: number;
+  hundreds: number;
+} {
+  const amount = Math.max(MILLION, Math.min(INCOME_MAX, income));
   return {
-    millions: Math.max(1, Math.min(99, Math.floor(income / MILLION))),
-    hundreds: Math.round((income % MILLION) / HUNDRED_K) % 10,
+    lead: Math.floor(amount / HUNDRED_MILLION),
+    millions: Math.floor((amount % HUNDRED_MILLION) / MILLION),
+    hundreds: Math.round((amount % MILLION) / HUNDRED_K) % 10,
   };
 }
 
-export function incomeOf(millions: number, hundreds: number): number {
-  return millions * MILLION + hundreds * HUNDRED_K;
+/** The amount the wheels read, kept between 1.000.000₫ and 1.000.000.000₫. */
+export function incomeOf(lead: number, millions: number, hundreds: number): number {
+  const amount = lead * HUNDRED_MILLION + millions * MILLION + hundreds * HUNDRED_K;
+  return Math.max(MILLION, Math.min(INCOME_MAX, amount));
 }
 
 export function billDigits(amount: number): { millions: number; hundreds: number; tens: number } {

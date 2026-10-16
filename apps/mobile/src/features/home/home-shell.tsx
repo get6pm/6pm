@@ -28,6 +28,7 @@ import { ScanFab } from './scan-fab';
 import { SideRail } from './side-rail';
 import { OpenAskProvider, OpenSpendProvider, SpreadPane } from '../duo/spread-pane';
 import { AskPreview } from '../duo/ask-preview';
+import { StandCounter } from '../duo/market-mode';
 import { DiaryBridgeProvider } from '../duo/diary-bridge';
 import { useSpreadPage } from '../duo/use-spread-page';
 import { DayPane } from '../duo/day-pane';
@@ -263,6 +264,7 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
                   </TabBarRow>
                 </View>
               )}
+              <StandCounter day={day} />
             </View>
           </DiaryBridgeProvider>
         </OpenAskProvider>

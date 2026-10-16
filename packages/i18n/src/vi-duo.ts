@@ -17,4 +17,8 @@ export const viDuo: { readonly [Key in keyof typeof enDuo]: Entry } = {
   'duo.close.ofLine': 'trên {line} hôm nay · còn {left} là của bạn',
   'duo.close.foldLater': 'Chọn từng khoản, rồi gập máy lại để chốt ngày.',
   'duo.close.foldNow': 'Gập máy lại để chốt ngày.',
+  'duo.market.title': 'Ở quầy',
+  'duo.market.left': 'Hôm nay còn',
+  'duo.market.add': 'Thêm',
+  'duo.market.leave': 'Rời quầy',
 };

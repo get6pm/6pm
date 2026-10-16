@@ -11,6 +11,7 @@ import { AmountText } from '../quick-add/amount-text';
 import { shortParts } from '../quick-add/typed-amount';
 import { PLAN_SECTIONS } from '../plan/plan-page';
 import { haptics } from '../../ui/haptics';
+import { useDesignInsets } from '../../ui/layout/design-insets';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
@@ -42,6 +43,8 @@ export const HomeTopNav = memo(function HomeTopNav({
   const { t, language } = useI18n();
   const money = useMoneyFormat();
   const { dayDate } = useClock();
+  // On the iPhone Duo, Add lives in the side rail.
+  const { rail } = useDesignInsets();
   const daysLeft = useMoneySelector((snapshot) => snapshot.cycle.daysLeft);
   const used = day.safe < 0 ? 1 : lineUsed(day);
   const meter = useAnimatedStyle(() => ({ width: `${used * 100}%` }));
@@ -72,22 +75,24 @@ export const HomeTopNav = memo(function HomeTopNav({
               </Text>
             </View>
           </View>
-          <PressScale
-            onPress={onQuickAdd}
-            accessibilityRole="button"
-            accessibilityLabel={t('home.quickAdd')}
-            hitSlop={4}
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 18,
-              backgroundColor: palette.glass,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Symbol name="add" size={22} color={palette.ink} />
-          </PressScale>
+          {rail > 0 ? null : (
+            <PressScale
+              onPress={onQuickAdd}
+              accessibilityRole="button"
+              accessibilityLabel={t('home.quickAdd')}
+              hitSlop={4}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                backgroundColor: palette.glass,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Symbol name="add" size={22} color={palette.ink} />
+            </PressScale>
+          )}
         </View>
         <View
           style={{ height: 3, borderRadius: 3, backgroundColor: meterTrack, overflow: 'hidden' }}

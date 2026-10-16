@@ -15,4 +15,8 @@ export const enDuo = {
   'duo.close.ofLine': 'of {line} today · {left} still yours',
   'duo.close.foldLater': 'Decide each one, then fold it shut to close the day.',
   'duo.close.foldNow': 'Fold it shut to close the day.',
+  'duo.market.title': 'At the counter',
+  'duo.market.left': 'Left for today',
+  'duo.market.add': 'Add',
+  'duo.market.leave': 'Leave the counter',
 } as const;

@@ -43,9 +43,10 @@ env:
 jobs:
   ios:
     name: ${{ inputs.profile }} ios
-    # macOS 26 with Xcode 26.6, selected below: the image and Xcode the sister repository builds
-    # this Expo SDK with, and the image device runs install the simulator build on.
-    runs-on: macos-26
+    # The simulator app keeps macOS 26 with Xcode 26.6: the image device runs install it on. Signed
+    # builds use the Xcode 27 image, so the app ships with the iPhone Duo's SDK once that image
+    # carries the release Xcode 27.1 (see "Select Xcode").
+    runs-on: ${{ inputs.profile == 'e2e-test' && 'macos-26' || 'xcode-27' }}
     timeout-minutes: 120
     permissions:
       contents: write
@@ -88,11 +89,28 @@ jobs:
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with: { node-version: 24, cache: pnpm }
-      - name: Select Xcode 26.6
+      # Signed builds take the newest release Xcode 27: 27.1 (the iOS 27.1 SDK, which the iPhone
+      # Duo's hinge code needs) once the image has the release build, else 27.0. A beta never
+      # builds a signed app, because App Store Connect refuses uploads built with one.
+      - name: Select Xcode
         run: |
-          xcode=/Applications/Xcode_26.6.app
-          if [ ! -d "$xcode" ]; then
-            echo "::error::Xcode 26.6 is not on this runner image. Installed: $(echo /Applications/Xcode*.app)"
+          if [ "$PROFILE" = e2e-test ]; then
+            candidates=(/Applications/Xcode_26.6.app)
+          else
+            candidates=(/Applications/Xcode_27.1.app /Applications/Xcode_27.app)
+          fi
+          xcode=
+          for candidate in "${candidates[@]}"; do
+            [ -d "$candidate" ] || continue
+            real=$(cd "$candidate" && pwd -P)
+            case "$real" in
+              *[Bb]eta*) echo "Skipping $candidate: it is a beta ($real)"; continue ;;
+            esac
+            xcode=$candidate
+            break
+          done
+          if [ -z "$xcode" ]; then
+            echo "::error::No release Xcode among ${candidates[*]}. Installed: $(echo /Applications/Xcode*.app)"
             exit 1
           fi
           sudo xcode-select -s "$xcode"

@@ -76,7 +76,7 @@ Not declared (changed 12 Oct 2026): Keychain sharing (the database key and the b
 
 - Unit tests per package (Vitest) and Jest for app logic; run only the file you changed locally.
 - `pnpm --filter @6pm/mobile exec expo export --platform ios` proves the bundle builds.
-- Native code (plugins, targets, local modules) is proven by a local simulator build before a CI one. Changed 12 Oct 2026: a new Mac (M5 Pro, 376 GB free, Xcode 27) replaced the one that sent every native build to CI. CI builds with Xcode 26.6, so a signed build is still proven there.
+- Native code (plugins, targets, local modules) is proven by a local simulator build before a CI one. Changed 12 Oct 2026: a new Mac (M5 Pro, 376 GB free, Xcode 27) replaced the one that sent every native build to CI. CI proves a signed build: the simulator app on macOS 26 with Xcode 26.6 (the image device runs use), signed builds on GitHub's `xcode-27` image with the newest release Xcode 27 there, 27.1 once it carries the release build (the iPhone Duo's SDK) and 27.0 until then. A beta Xcode never builds a signed app (16 Oct 2026).
 - Xcode 27.1 sits beside Xcode 27 at `/Applications/Xcode-27.1.app` (15 Oct 2026): it carries the iOS 27.1 SDK and the iPhone Duo simulator, whose folding is driven from its Device Hub (`Contents/Applications/DeviceHub.app`), not from `simctl`. Building with it needs Expo 58.0.9 or later.
 - The simulator build, from `apps/mobile` (Xcode is selected with `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`, or `Xcode-27.1.app` for the Duo, until `xcode-select` points at it):
 

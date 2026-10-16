@@ -2,26 +2,21 @@ import { Skia, type SkPath } from '@shopify/react-native-skia';
 
 import type { Radii } from './box-model';
 
-/** A conic weight that draws a quarter ellipse exactly. */
-const QUARTER = Math.SQRT1_2;
-
 /**
- * A rounded box from (x, y), each corner its own ellipse (CSS `border-radius` with `/`), drawn
- * with conics so a 50% radius is a true circle or ellipse.
+ * A rounded box from (x, y), each corner its own ellipse (CSS `border-radius` with `/`), so a 50%
+ * radius is a true circle or ellipse. Built as a rounded rect rather than drawn corner by corner,
+ * so the GPU draws it analytically instead of tessellating its outline again every frame.
  */
 export function roundedBox(x: number, y: number, w: number, h: number, radii: Radii): SkPath {
   const [[tlx, tly], [trx, try_], [brx, bry], [blx, bly]] = radii;
   const p = Skia.Path.Make();
-  p.moveTo(x + tlx, y);
-  p.lineTo(x + w - trx, y);
-  if (trx > 0 && try_ > 0) p.conicTo(x + w, y, x + w, y + try_, QUARTER);
-  p.lineTo(x + w, y + h - bry);
-  if (brx > 0 && bry > 0) p.conicTo(x + w, y + h, x + w - brx, y + h, QUARTER);
-  p.lineTo(x + blx, y + h);
-  if (blx > 0 && bly > 0) p.conicTo(x, y + h, x, y + h - bly, QUARTER);
-  p.lineTo(x, y + tly);
-  if (tlx > 0 && tly > 0) p.conicTo(x, y, x + tlx, y, QUARTER);
-  p.close();
+  p.addRRect({
+    rect: Skia.XYWHRect(x, y, w, h),
+    topLeft: { x: tlx, y: tly },
+    topRight: { x: trx, y: try_ },
+    bottomRight: { x: brx, y: bry },
+    bottomLeft: { x: blx, y: bly },
+  });
   return p;
 }
 

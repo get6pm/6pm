@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { Text, TextInput, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
-import { spendDayRange, movedTo, REPAYMENT, type SpendRow } from '@6pm/domain';
+import { billChoicesFor, spendDayRange, movedTo, REPAYMENT, type SpendRow } from '@6pm/domain';
 
 import { useBillPayments } from '../../data/bill-payments';
 import { useMoney } from '../../data/money-provider';
@@ -64,17 +64,10 @@ export function DetailsCard({
   const [picking, setPicking] = useState(false);
   const payments = useBillPayments();
   const run = useRunAction();
-  // "This was a bill", for a payment the close did not catch: no, one of this cycle's bills (only
-  // for a spend in this cycle), or a card or loan with no bill. Tapping on from the last undoes it.
+  // "This was a bill", for a payment the close did not catch: no, one of this cycle's bills still
+  // to pay, or a card or loan with no bill. Tapping on from the last undoes it.
   const paysBill = spend.paysBill ?? null;
-  const billChoices: (string | null)[] = [
-    null,
-    ...(spend.day >= snap.cycle.start ? snap.bills.map((b) => b.id) : []),
-    ...(paysBill !== null && paysBill !== REPAYMENT && spend.day < snap.cycle.start
-      ? [paysBill]
-      : []),
-    REPAYMENT,
-  ];
+  const billChoices = billChoicesFor(spend, snap.bills, snap.cycle);
   const billLabel =
     paysBill === null
       ? t('details.bill.no')

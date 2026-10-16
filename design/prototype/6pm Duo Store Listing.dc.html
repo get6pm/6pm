@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Patrick+Hand&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&display=block" rel="stylesheet">
+<script src="./companion.js"></script>
+<style>html,body{margin:0;background:#0d0b10}a{color:#ffb08a}a:hover{color:#ffd2a8}</style>
+</helmet>
+<div style="min-height:100vh; width:max-content; min-width:100%; background:#0d0b10; color:#f3eee7; font-family:'Be Vietnam Pro', -apple-system, system-ui, sans-serif; -webkit-font-smoothing:antialiased; padding:64px 56px 120px; box-sizing:border-box; display:flex; flex-direction:column; gap:88px;">
+
+  <header data-screen-label="Header" style="max-width:1440px; display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:center; gap:22px;">
+      <img src="apps/mobile/assets/icon/icon.png" alt="6pm icon" style="width:92px; height:92px; border-radius:22px; box-shadow:0 0 0 0.5px rgba(255,255,255,.12), 0 20px 40px rgba(0,0,0,.4);">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.16em; color:#ff8552;">APP STORE · IPHONE DUO SCREENSHOT SETS · v2</div>
+        <h1 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 92; font-size:72px; line-height:.92; letter-spacing:-.05em;">6pm, made for iPhone Duo</h1>
+      </div>
+    </div>
+    <p style="margin:0; max-width:820px; font-size:15.5px; line-height:1.55; color:rgba(243,238,231,.66); text-wrap:pretty;">Built the same way as the phone listing: real Duo screens from the prototype set in titanium frames, with the key moment lifted out of each as a card. Outer: five 1398×2034 shots joined by one sunset. Inner: five 2007×2853 shots, one for each thing only the fold can do. Shown at 1× points.</p>
+    <div style="display:flex; padding:4px; border-radius:99px; border:0.5px solid rgba(243,238,231,.18); background:#141118; align-self:flex-start;">
+      <button onClick="{{ setIntl }}" style="height:38px; padding:0 18px; border:none; border-radius:99px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:600; background:{{ intlBg }}; color:{{ intlFg }};">International</button>
+      <button onClick="{{ setVn }}" style="height:38px; padding:0 18px; border:none; border-radius:99px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:600; background:{{ vnBg }}; color:{{ vnFg }};">Vietnam</button>
+    </div>
+  </header>
+
+  <section data-screen-label="Outer set" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.14em; color:#ff8552;">01</span><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-size:34px; font-weight:500; letter-spacing:-.03em;">Outer display</span><span style="font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.1em; color:rgba(243,238,231,.5);">466×678 PT · 1398×2034 PX · PANORAMA</span></div>
+    <div style="display:flex; gap:0; width:max-content;">
+
+      <!-- O1 TODAY -->
+      <div id="o1" data-screen-label="O1 Today" style="position:relative; width:466px; height:678px; overflow:hidden; border-radius:24px 0 0 24px; background:#120f1c; flex-shrink:0;">
+        <div style="position:absolute; top:0; left:0px; width:2330px; height:678px; background:linear-gradient(90deg,#f0a462 0%,#e07c5a 16%,#b5506a 36%,#6e3a70 58%,#2e2859 80%,#17153a 100%);"><div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(18,12,34,.6) 0%, rgba(18,12,34,0) 40%);"></div><div style="position:absolute; left:216px; top:300px; width:500px; height:500px; border-radius:50%; background:radial-gradient(circle, rgba(255,160,100,.6) 0%, rgba(255,130,90,.2) 38%, transparent 68%);"></div><div style="position:absolute; left:371px; top:470px; width:190px; height:95px; overflow:hidden;"><div style="width:190px; height:190px; border-radius:50%; background:linear-gradient(180deg,#fff2c8,#ffb36e 62%,#ff8656);"></div></div><div style="position:absolute; left:0; right:0; top:565px; bottom:0; background:linear-gradient(180deg, rgba(58,22,64,.8), rgba(18,12,30,.96));"></div><div style="position:absolute; left:0; right:0; top:565px; height:1px; background:rgba(255,206,170,.55);"></div><div style="position:absolute; left:220px; top:580px; width:220px; height:8px; border-radius:9px; background:#ffb877; opacity:.7;"></div><div style="position:absolute; left:250px; top:598px; width:160px; height:7px; border-radius:9px; background:#f98e5c; opacity:.55;"></div></div>
+        <div style="position:absolute; z-index:6; left:24px; right:22px; top:42px; display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:10.5px; font-weight:600; letter-spacing:.16em; color:rgba(246,239,230,.78);"><span style="width:7px; height:7px; border-radius:50%; background:#ffb877; box-shadow:0 0 10px #ffb877;"></span>ONE NUMBER A DAY</div>
+          <div style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-variation-settings:'opsz' 96, 'wdth' 86; font-size:38px; line-height:.96; letter-spacing:-.05em; color:#fbf5ec; text-wrap:balance; text-shadow:0 2px 20px rgba(10,6,20,.35);">Know what’s safe to spend. <span style="color:#ffd2a8;">Every day.</span></div>
+        </div>
+        <div style="position:absolute; z-index:2; left:118px; top:178px;"><div style="zoom:.66; width:484px; height:696px; box-sizing:border-box; padding:9px; border-radius:54px; background:#050407; box-shadow:0 0 0 1px #5d5864, 0 0 0 3px #1a181e, 0 0 0 4px #7a7480, 0 40px 80px rgba(0,0,0,.55);"><dc-import name="DuoScreen" view="outer" market="{{ market }}" hint-size="466px,678px"></dc-import></div></div>
+        <div style="position:absolute; z-index:4; left:12px; top:300px; width:218px; padding:16px 18px 14px; box-sizing:border-box; border-radius:24px; background:rgba(34,20,46,.8); border:0.5px solid rgba(255,255,255,.2); box-shadow:0 24px 50px rgba(10,4,20,.5); transform:rotate(-2deg); display:flex; flex-direction:column; gap:6px;">
+          <div style="font-size:12.5px; font-weight:500; color:rgba(251,244,236,.74);">Safe to spend today</div>
+          <div style="font-family:'Bricolage Grotesque', sans-serif; font-size:64px; letter-spacing:-.04em; line-height:.9;">{{ x.safe }}</div>
+          <div style="height:5px; border-radius:5px; background:rgba(255,255,255,.18); margin-top:6px;"><div style="width:67%; height:100%; border-radius:5px; background:#fbf4ec;"></div></div>
+          <div style="display:flex; justify-content:space-between; font-size:11px; color:rgba(251,244,236,.74);"><span>{{ x.spent }}</span><span>{{ x.of }}</span></div>
+        </div>
+        <div style="position:absolute; z-index:4; left:16px; top:468px; width:176px; padding:12px; box-sizing:border-box; border-radius:18px; background:#1b1e2e; color:#f6efe6; box-shadow:0 16px 34px rgba(8,4,20,.5); transform:rotate(3deg); display:flex; flex-direction:column; gap:9px;">
+          <div style="font-family:'IBM Plex Mono', monospace; font-size:8.5px; font-weight:600; letter-spacing:.12em; opacity:.62;">THIS WEEK</div>
+          <div style="display:flex; gap:4px;"><sc-for list="{{ week }}" as="w" hint-placeholder-count="7"><div style="display:flex; flex-direction:column; align-items:center; gap:3px;"><span style="width:19px; height:19px; box-sizing:border-box; border-radius:50%; background:{{ w.bg }}; border:{{ w.bd }}; color:#1b1e2e; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:12px; font-variation-settings:'wght' 600; opacity:{{ w.tick }};">check</span></span><span style="font-size:8.5px; font-weight:600; opacity:.6;">{{ w.d }}</span></div></sc-for></div>
+          <div style="font-size:10.5px; opacity:.72;">4 closed · tonight’s next</div>
+        </div>
+        <div style="position:absolute; z-index:4; right:10px; top:536px; width:142px; box-sizing:border-box; padding:11px 12px 18px; border-radius:16px 16px 0 0; background:#fff; color:#1b1e2e; transform:rotate(-4deg); box-shadow:0 16px 34px rgba(8,4,20,.5); -webkit-mask-image:radial-gradient(circle at 6px 100%, transparent 5px, #000 5.5px); -webkit-mask-size:12px 100%; -webkit-mask-repeat:repeat-x; mask-image:radial-gradient(circle at 6px 100%, transparent 5px, #000 5.5px); mask-size:12px 100%; mask-repeat:repeat-x; display:flex; flex-direction:column; gap:3px;">
+          <div style="font-family:'IBM Plex Mono', monospace; font-size:8.5px; font-weight:600; letter-spacing:.12em; color:#6a5a50;">TOMORROW ≈</div>
+          <div style="font-family:'Bricolage Grotesque', sans-serif; font-size:30px; font-weight:600; letter-spacing:-.03em; line-height:1;">{{ x.tomorrow }}</div>
+          <div style="font-size:10px; color:#6a5a50;">if you stop here</div>
+        </div>
+      </div>
+
+      <!-- O2 CLOSE -->
+      <div id="o2" data-screen-label="O2 Close" style="position:relative; width:466px; height:678px; overflow:hidden; background:#120f1c; flex-shrink:0;">
+        <div style="position:absolute; top:0; left:-466px; width:2330px; height:678px; background:linear-gradient(90deg,#f0a462 0%,#e07c5a 16%,#b5506a 36%,#6e3a70 58%,#2e2859 80%,#17153a 100%);"><div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(18,12,34,.6) 0%, rgba(18,12,34,0) 40%);"></div><div style="position:absolute; left:216px; top:300px; width:500px; height:500px; border-radius:50%; background:radial-gradient(circle, rgba(255,160,100,.6) 0%, rgba(255,130,90,.2) 38%, transparent 68%);"></div><div style="position:absolute; left:371px; top:470px; width:190px; height:95px; overflow:hidden;"><div style="width:190px; height:190px; border-radius:50%; background:linear-gradient(180deg,#fff2c8,#ffb36e 62%,#ff8656);"></div></div><div style="position:absolute; left:0; right:0; top:565px; bottom:0; background:linear-gradient(180deg, rgba(58,22,64,.8), rgba(18,12,30,.96));"></div><div style="position:absolute; left:0; right:0; top:565px; height:1px; background:rgba(255,206,170,.55);"></div></div>
+        <div style="position:absolute; z-index:6; left:24px; right:22px; top:42px; display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:10.5px; font-weight:600; letter-spacing:.16em; color:rgba(246,239,230,.78);"><span style="width:7px; height:7px; border-radius:50%; background:#ffb877; box-shadow:0 0 10px #ffb877;"></span>THE 6PM CLOSE</div>
+          <div style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-variation-settings:'opsz' 96, 'wdth' 86; font-size:38px; line-height:.96; letter-spacing:-.05em; color:#fbf5ec; text-wrap:balance; text-shadow:0 2px 20px rgba(10,6,20,.35);">At six, close your day. <span style="color:#ffd2a8;">In a minute.</span></div>
+        </div>
+        <div style="position:absolute; z-index:2; left:118px; top:178px;"><div style="zoom:.66; width:484px; height:696px; box-sizing:border-box; padding:9px; border-radius:54px; background:#050407; box-shadow:0 0 0 1px #5d5864, 0 0 0 3px #1a181e, 0 0 0 4px #7a7480, 0 40px 80px rgba(0,0,0,.55);"><dc-import name="DuoScreen" view="outerClosed" all-done="{{ true }}" market="{{ market }}" hint-size="466px,678px"></dc-import></div></div>
+        <div style="position:absolute; z-index:3; left:8px; top:318px; width:176px; height:118px; border-radius:6px; background:#efe6d6; transform:rotate(-12deg); box-shadow:0 18px 36px rgba(10,4,20,.45);"></div>
+        <sc-for list="{{ cards }}" as="c" hint-placeholder-count="2">
+          <div style="position:absolute; z-index:4; left:{{ c.l }}; top:{{ c.t }}; width:188px; padding:13px 14px 16px; box-sizing:border-box; border-radius:6px 6px 0 0; background:#f8f2e8; color:#1b1e2e; transform:rotate({{ c.r }}); box-shadow:0 24px 44px rgba(10,4,20,.5); -webkit-mask-image:radial-gradient(circle at 6px 100%, transparent 5px, #000 5.5px); -webkit-mask-size:12px 100%; -webkit-mask-repeat:repeat-x; mask-image:radial-gradient(circle at 6px 100%, transparent 5px, #000 5.5px); mask-size:12px 100%; mask-repeat:repeat-x; display:flex; flex-direction:column; gap:9px;">
+            <div style="display:flex; justify-content:space-between; font-family:'IBM Plex Mono', monospace; font-size:8.5px; letter-spacing:.12em; color:#6a5a50; padding-bottom:7px; border-bottom:1px dashed rgba(27,30,46,.25);"><span>Nº {{ c.no }} · CAUGHT</span><span>{{ c.t2 }}</span></div>
+            <div style="display:flex; align-items:center; gap:9px;"><div style="width:32px; height:32px; border-radius:10px; background:{{ c.tile }}; color:{{ c.glyph }}; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:19px; font-variation-settings:'FILL' 1;">{{ c.icon }}</span></div><span style="flex:1; min-width:0; font-size:13.5px; font-weight:650; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ c.name }}</span></div>
+            <div style="font-family:'Bricolage Grotesque', sans-serif; font-size:34px; font-weight:500; letter-spacing:-.03em; line-height:1;">{{ c.amt }}</div>
+          </div>
+        </sc-for>
+        <div style="position:absolute; z-index:5; left:40px; top:420px; padding:4px 11px; border:2.5px solid #2f7d55; border-radius:8px; color:#2f7d55; font-family:'IBM Plex Mono', monospace; font-size:19px; font-weight:600; letter-spacing:.14em; transform:rotate(-13deg); opacity:.92;">KEEP</div>
+        <div style="position:absolute; z-index:5; left:14px; top:566px; display:flex; gap:8px;">
+          <div style="height:40px; padding:0 14px 0 10px; border-radius:99px; background:#ff8552; color:#2a1424; font-size:13px; font-weight:700; display:flex; align-items:center; gap:5px; box-shadow:0 12px 26px rgba(255,120,70,.4);"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:18px;">check</span>Keep</div>
+          <div style="height:40px; padding:0 14px; border-radius:99px; background:#fffaf2; color:#1b1e2e; font-size:13px; font-weight:650; display:flex; align-items:center; box-shadow:0 12px 26px rgba(0,0,0,.4);">Not mine</div>
+        </div>
+      </div>
+
+      <!-- O3 ISLAND -->
+      <div id="o3" data-screen-label="O3 Island" style="position:relative; width:466px; height:678px; overflow:hidden; background:#120f1c; flex-shrink:0;">
+        <div style="position:absolute; top:0; left:-932px; width:2330px; height:678px; background:linear-gradient(90deg,#f0a462 0%,#e07c5a 16%,#b5506a 36%,#6e3a70 58%,#2e2859 80%,#17153a 100%);"><div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(18,12,34,.6) 0%, rgba(18,12,34,0) 40%);"></div><div style="position:absolute; left:0; right:0; top:565px; bottom:0; background:linear-gradient(180deg, rgba(58,22,64,.8), rgba(18,12,30,.96));"></div><div style="position:absolute; left:0; right:0; top:565px; height:1px; background:rgba(255,206,170,.55);"></div></div>
+        <div style="position:absolute; z-index:6; left:24px; width:270px; top:42px; display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:10.5px; font-weight:600; letter-spacing:.16em; color:rgba(246,239,230,.78);"><span style="width:7px; height:7px; border-radius:50%; background:#ffb877; box-shadow:0 0 10px #ffb877;"></span>LIVE ON THE SIDE</div>
+          <div style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-variation-settings:'opsz' 96, 'wdth' 86; font-size:38px; line-height:.96; letter-spacing:-.05em; color:#fbf5ec; text-wrap:balance; text-shadow:0 2px 20px rgba(10,6,20,.35);">Your companion <span style="color:#ffd2a8;">lives in the island.</span></div>
+        </div>
+        <div style="position:absolute; z-index:2; left:-210px; top:44px;"><div style="zoom:1.18; width:484px; height:696px; box-sizing:border-box; padding:9px; border-radius:54px; background:#050407; box-shadow:0 0 0 1px #5d5864, 0 0 0 3px #1a181e, 0 0 0 4px #7a7480, 0 40px 80px rgba(0,0,0,.55);"><dc-import name="DuoScreen" view="outer" market="{{ market }}" hint-size="466px,678px"></dc-import></div></div>
+        <div style="position:absolute; z-index:3; left:0; top:0; width:300px; height:678px; background:linear-gradient(90deg, rgba(18,12,30,.92) 30%, rgba(18,12,30,0));"></div>
+        <div style="position:absolute; z-index:4; left:22px; top:250px; display:flex; flex-direction:column; gap:10px;">
+          <sc-for list="{{ islChips }}" as="i" hint-placeholder-count="5"><div style="width:212px; padding:10px 12px; box-sizing:border-box; border-radius:18px; background:{{ i.bg }}; color:{{ i.fg }}; box-shadow:0 16px 34px rgba(8,4,20,.5); transform:rotate({{ i.r }}); display:flex; align-items:center; gap:10px;"><span style="width:34px; height:34px; border-radius:11px; background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:21px; color:{{ i.c }}; font-variation-settings:'FILL' 1;">{{ i.icon }}</span></span><span style="flex:1; display:flex; flex-direction:column; gap:1px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:8.5px; font-weight:600; letter-spacing:.12em; opacity:.62;">{{ i.when }}</span><span style="font-size:13.5px; font-weight:650;">{{ i.t }}</span></span></div></sc-for>
+        </div>
+      </div>
+
+      <!-- O4 SCAN -->
+      <div id="o4" data-screen-label="O4 Scan" style="position:relative; width:466px; height:678px; overflow:hidden; background:#120f1c; flex-shrink:0;">
+        <div style="position:absolute; top:0; left:-1398px; width:2330px; height:678px; background:linear-gradient(90deg,#f0a462 0%,#e07c5a 16%,#b5506a 36%,#6e3a70 58%,#2e2859 80%,#17153a 100%);"><div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(18,12,34,.6) 0%, rgba(18,12,34,0) 40%);"></div><div style="position:absolute; left:0; right:0; top:565px; bottom:0; background:linear-gradient(180deg, rgba(58,22,64,.8), rgba(18,12,30,.96));"></div><div style="position:absolute; left:0; right:0; top:565px; height:1px; background:rgba(255,206,170,.55);"></div></div>
+        <div style="position:absolute; z-index:6; left:24px; right:22px; top:42px; display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:10.5px; font-weight:600; letter-spacing:.16em; color:rgba(246,239,230,.78);"><span style="width:7px; height:7px; border-radius:50%; background:#ffb877; box-shadow:0 0 10px #ffb877;"></span>PROP IT UP · SCAN TO PAY</div>
+          <div style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-variation-settings:'opsz' 96, 'wdth' 86; font-size:38px; line-height:.96; letter-spacing:-.05em; color:#fbf5ec; text-wrap:balance; text-shadow:0 2px 20px rgba(10,6,20,.35);">Scan, pay, <span style="color:#ffd2a8;">and it’s already logged.</span></div>
+        </div>
+        <div style="position:absolute; z-index:2; left:62px; top:150px;"><div style="zoom:.5;"><dc-import name="DuoScreen" view="scan" scan="paid" market="{{ market }}" hint-size="687px,900px"></dc-import></div></div>
+        <div style="position:absolute; z-index:4; left:12px; top:520px; width:156px; box-sizing:border-box; padding:12px; border-radius:18px; background:#1b1e2e; color:#f6efe6; box-shadow:0 16px 34px rgba(8,4,20,.5); transform:rotate(-4deg); display:flex; flex-direction:column; gap:8px;">
+          <div style="font-family:'IBM Plex Mono', monospace; font-size:8.5px; font-weight:600; letter-spacing:.12em; opacity:.62;">TOP HALF · FOR THE SELLER</div>
+          <div style="display:flex; align-items:center; gap:8px;"><span style="width:30px; height:30px; border-radius:50%; background:#2f7d55; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:19px; color:#fff; font-variation-settings:'wght' 600;">check</span></span><span style="font-family:'Bricolage Grotesque', sans-serif; font-size:21px; font-weight:500; letter-spacing:-.03em;">{{ x.paid }}</span></div>
+        </div>
+        <div style="position:absolute; z-index:4; right:12px; top:560px; width:180px; box-sizing:border-box; padding:11px 12px; border-radius:18px; background:#fffaf2; color:#1b1e2e; box-shadow:0 16px 34px rgba(8,4,20,.5); transform:rotate(3deg); display:flex; align-items:center; gap:9px;">
+          <span style="width:32px; height:32px; border-radius:10px; background:#ffd9b8; color:#a4481f; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:19px; font-variation-settings:'FILL' 1;">restaurant</span></span>
+          <span style="flex:1; min-width:0; display:flex; flex-direction:column;"><span style="font-size:12px; font-weight:650; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ x.merchant }}</span><span style="font-size:10px; color:#6a5a50;">In Today · 18:09</span></span>
+        </div>
+      </div>
+
+      <!-- O5 DIARY -->
+      <div id="o5" data-screen-label="O5 Diary" style="position:relative; width:466px; height:678px; overflow:hidden; border-radius:0 24px 24px 0; background:#120f1c; flex-shrink:0;">
+        <div style="position:absolute; top:0; left:-1864px; width:2330px; height:678px; background:linear-gradient(90deg,#f0a462 0%,#e07c5a 16%,#b5506a 36%,#6e3a70 58%,#2e2859 80%,#17153a 100%);"><div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(18,12,34,.6) 0%, rgba(18,12,34,0) 40%);"></div><div style="position:absolute; left:1864px; width:466px; top:0; height:560px; opacity:.55; background-image:radial-gradient(circle, rgba(255,250,240,.9) .8px, transparent 1.5px); background-size:37px 43px;"></div><div style="position:absolute; left:0; right:0; top:565px; bottom:0; background:linear-gradient(180deg, rgba(58,22,64,.8), rgba(18,12,30,.96));"></div><div style="position:absolute; left:0; right:0; top:565px; height:1px; background:rgba(255,206,170,.55);"></div></div>
+        <div style="position:absolute; z-index:6; left:24px; right:22px; top:42px; display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:10.5px; font-weight:600; letter-spacing:.16em; color:rgba(246,239,230,.78);"><span style="width:7px; height:7px; border-radius:50%; background:#ffb877; box-shadow:0 0 10px #ffb877;"></span>MONEY DIARY</div>
+          <div style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-variation-settings:'opsz' 96, 'wdth' 86; font-size:38px; line-height:.96; letter-spacing:-.05em; color:#fbf5ec; text-wrap:balance; text-shadow:0 2px 20px rgba(10,6,20,.35);">Open it, <span style="color:#ffd2a8;">and the diary opens too.</span></div>
+        </div>
+        <div style="position:absolute; z-index:2; left:-60px; top:236px; transform:rotate(-5deg);"><div style="zoom:.5; width:969px; height:687px; box-sizing:border-box; padding:9px; border-radius:49px; background:#050407; box-shadow:0 0 0 1px #5d5864, 0 0 0 3px #1a181e, 0 0 0 4px #7a7480, 0 50px 100px rgba(0,0,0,.6);"><dc-import name="DuoScreen" view="diary" market="{{ market }}" hint-size="951px,669px"></dc-import></div></div>
+        <div style="position:absolute; z-index:3; left:16px; top:496px; width:150px; height:192px; border-radius:4px; background:#ffd98f; transform:rotate(-12deg); box-shadow:0 18px 36px rgba(0,0,0,.45);"></div>
+        <div style="position:absolute; z-index:4; left:26px; top:470px; width:160px; height:200px; padding:14px; box-sizing:border-box; border-radius:4px; background:#f6c6d4; color:#2a1424; transform:rotate(-4deg); box-shadow:0 26px 50px rgba(0,0,0,.5); display:flex; flex-direction:column;">
+          <div style="display:flex; justify-content:space-between; font-family:'IBM Plex Mono', monospace; font-size:8px; letter-spacing:.14em;"><span>MONEY DIARY</span><span>Nº 10</span></div>
+          <div style="font-family:'Bricolage Grotesque', sans-serif; font-size:64px; font-weight:600; letter-spacing:-.06em; line-height:.9; margin-top:16px;">Oct</div>
+          <div style="font-family:'Patrick Hand', cursive; font-size:15px; line-height:1.2; margin-top:8px;">{{ x.diaryNote }}</div>
+        </div>
+        <div style="position:absolute; z-index:4; right:18px; top:520px; padding:7px 12px 6px; border:3px solid #ffb19a; color:#ffb19a; border-radius:7px; font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:15px; letter-spacing:.16em; line-height:1.15; text-align:center; transform:rotate(-8deg); background:rgba(18,12,30,.55);"><div>CLOSED</div><div>18:04</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Inner set" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.14em; color:#ff8552;">02</span><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-size:34px; font-weight:500; letter-spacing:-.03em;">Inner display</span><span style="font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.1em; color:rgba(243,238,231,.5);">669×951 PT · 2007×2853 PX</span></div>
+    <div style="display:flex; gap:24px; width:max-content;">
+
+      <!-- I1 UNFOLD -->
+      <div id="i1" data-screen-label="I1 Unfold" style="position:relative; width:669px; height:951px; overflow:hidden; border-radius:24px; background:linear-gradient(180deg,#17153a 0%,#3a2458 34%,#8a4268 66%,#e48a5c 100%); flex-shrink:0;">
+        <div style="position:absolute; left:50%; top:760px; width:1000px; height:700px; margin-left:-500px; border-radius:50%; background:radial-gradient(circle, rgba(255,180,110,.55) 0%, rgba(255,130,90,.15) 45%, transparent 70%);"></div>
+        <div style="position:absolute; left:0; width:669px; top:0; height:520px; opacity:.4; background-image:radial-gradient(circle, rgba(255,250,240,.9) .8px, transparent 1.5px); background-size:41px 47px; -webkit-mask-image:linear-gradient(180deg, #000, transparent); mask-image:linear-gradient(180deg, #000, transparent);"></div>
+        <div style="position:absolute; z-index:6; left:36px; right:36px; top:56px; display:flex; flex-direction:column; gap:14px;">
+          <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:12px; font-weight:600; letter-spacing:.16em; color:rgba(246,239,230,.8);"><span style="width:8px; height:8px; border-radius:50%; background:#ffb877; box-shadow:0 0 10px #ffb877;"></span>MADE FOR IPHONE DUO</div>
+          <div style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-variation-settings:'opsz' 96, 'wdth' 86; font-size:58px; line-height:.94; letter-spacing:-.05em; color:#fbf5ec; text-wrap:balance;">Open it. <span style="color:#ffd2a8;">October unfolds.</span></div>
+        </div>
+        <div style="position:absolute; z-index:2; left:22px; top:300px; transform:rotate(-3deg);"><div style="zoom:.64; width:969px; height:687px; box-sizing:border-box; padding:9px; border-radius:49px; background:#050407; box-shadow:0 0 0 1px #5d5864, 0 0 0 3px #1a181e, 0 0 0 4px #7a7480, 0 60px 120px rgba(0,0,0,.6);"><dc-import name="DuoScreen" view="split" market="{{ market }}" hint-size="951px,669px"></dc-import></div></div>
+        <div style="position:absolute; z-index:4; left:22px; top:700px; width:250px; padding:18px 20px 16px; box-sizing:border-box; border-radius:26px; background:rgba(34,20,46,.82); border:0.5px solid rgba(255,255,255,.2); box-shadow:0 24px 50px rgba(10,4,20,.5); transform:rotate(-2deg); display:flex; flex-direction:column; gap:6px; color:#fbf4ec;">
+          <div style="font-family:'IBM Plex Mono', monospace; font-size:9.5px; font-weight:600; letter-spacing:.14em; opacity:.62;">LEFT PAGE · TODAY</div>
+          <div style="font-family:'Bricolage Grotesque', sans-serif; font-size:68px; letter-spacing:-.04em; line-height:.9;">{{ x.safe }}</div>
+          <div style="font-size:12.5px; opacity:.74;">Safe to spend today</div>
+        </div>
+        <div style="position:absolute; z-index:4; right:26px; top:690px; width:290px; padding:18px; box-sizing:border-box; border-radius:26px; background:#fffaf2; color:#1b1e2e; box-shadow:0 30px 60px rgba(0,0,0,.55); transform:rotate(2.5deg); display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;"><span style="font-family:'IBM Plex Mono', monospace; font-size:9.5px; font-weight:600; letter-spacing:.14em; color:#6a5a50;">RIGHT PAGE · OCTOBER</span><span style="font-size:11px; color:#6a5a50;">22 days left</span></div>
+          <div style="font-family:'Bricolage Grotesque', sans-serif; font-size:24px; font-weight:500; line-height:1.05;">On pace. Easy does it.</div>
+          <div style="position:relative; height:10px; border-radius:10px; background:#ece4da;"><div style="position:absolute; left:0; top:0; bottom:0; width:31%; border-radius:10px; background:#ff8552;"></div><div style="position:absolute; left:29%; top:-4px; bottom:-4px; width:2px; background:#1b1e2e;"></div></div>
+          <div style="display:flex; height:12px; border-radius:6px; overflow:hidden; gap:2px;"><div style="width:44%; background:#7a8bd8;"></div><div style="width:28%; background:#5fb08a;"></div><div style="flex:1; background:#ffb877;"></div></div>
+          <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:600; color:#6a5a50;"><span>Bills</span><span>Future you</span><span>Fun</span></div>
+        </div>
+        <div style="position:absolute; z-index:5; left:50%; top:262px; margin-left:-118px; height:34px; padding:0 14px 0 10px; border-radius:99px; background:rgba(10,8,16,.6); border:0.5px solid rgba(255,255,255,.2); color:#fbf4ec; font-size:13px; font-weight:600; display:flex; align-items:center; gap:7px;"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:18px; color:#ffb877;">devices_fold</span>Same day, both pages</div>
+      </div>
+
+      <!-- I2 BOOK -->
+      <div id="i2" data-screen-label="I2 Book close" style="position:relative; width:669px; height:951px; overflow:hidden; border-radius:24px; background:linear-gradient(180deg,#120f22 0%,#2a1c40 40%,#5e3159 75%,#ad6648 100%); flex-shrink:0;">
+        <div style="position:absolute; left:50%; top:820px; width:900px; height:600px; margin-left:-450px; border-radius:50%; background:radial-gradient(circle, rgba(255,160,100,.45) 0%, transparent 65%);"></div>
+        <div style="position:absolute; z-index:6; left:36px; right:36px; top:56px; display:flex; flex-direction:column; gap:14px;">
+          <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:12px; font-weight:600; letter-spacing:.16em; color:rgba(246,239,230,.8);"><span style="width:8px; height:8px; border-radius:50%; background:#ffb877; box-shadow:0 0 10px #ffb877;"></span>THE 6PM CLOSE · BOOK POSE</div>
+          <div style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-variation-settings:'opsz' 96, 'wdth' 86; font-size:58px; line-height:.94; letter-spacing:-.05em; color:#fbf5ec; text-wrap:balance;">Fold it shut <span style="color:#ffd2a8;">to close the day.</span></div>
+        </div>
+        <div style="position:absolute; z-index:2; left:50%; top:270px; margin-left:-300px; width:600px; perspective:2400px;"><div style="zoom:.62;"><dc-import name="DuoScreen" view="book" market="{{ market }}" hint-size="969px,687px"></dc-import></div></div>
+        <div style="position:absolute; z-index:4; left:26px; top:712px; width:182px; padding:13px 14px 16px; box-sizing:border-box; border-radius:6px 6px 0 0; background:#f8f2e8; color:#1b1e2e; transform:rotate(-6deg); box-shadow:0 24px 44px rgba(10,4,20,.5); -webkit-mask-image:radial-gradient(circle at 6px 100%, transparent 5px, #000 5.5px); -webkit-mask-size:12px 100%; -webkit-mask-repeat:repeat-x; mask-image:radial-gradient(circle at 6px 100%, transparent 5px, #000 5.5px); mask-size:12px 100%; mask-repeat:repeat-x; display:flex; flex-direction:column; gap:8px;">
+          <div style="font-family:'IBM Plex Mono', monospace; font-size:8.5px; letter-spacing:.12em; color:#6a5a50; padding-bottom:7px; border-bottom:1px dashed rgba(27,30,46,.25);">KEPT TODAY</div>
+          <div style="font-family:'Bricolage Grotesque', sans-serif; font-size:40px; font-weight:500; letter-spacing:-.03em; line-height:1;">{{ x.kept }}</div>
+          <div style="font-size:10.5px; color:#6a5a50;">3 receipts · 52 seconds</div>
+        </div>
+        <div style="position:absolute; z-index:4; right:30px; top:690px;"><div style="zoom:.36; transform:rotate(6deg); width:484px; height:696px; box-sizing:border-box; padding:9px; border-radius:54px; background:#050407; box-shadow:0 0 0 1px #5d5864, 0 0 0 3px #1a181e, 0 0 0 4px #7a7480, 0 40px 80px rgba(0,0,0,.6);"><dc-import name="DuoScreen" view="outerClosed" all-done="{{ true }}" market="{{ market }}" hint-size="466px,678px"></dc-import></div></div>
+        <div style="position:absolute; z-index:5; left:228px; top:776px; display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:600; letter-spacing:.14em; color:#ffd2a8;"><span>FOLD SHUT</span><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:26px;">arrow_right_alt</span></div>
+      </div>
+
+      <!-- I3 STAND -->
+      <div id="i3" data-screen-label="I3 Market" style="position:relative; width:669px; height:951px; overflow:hidden; border-radius:24px; background:linear-gradient(180deg,#2a1c40 0%,#6e3a70 40%,#c86a58 75%,#f0a462 100%); flex-shrink:0;">
+        <div style="position:absolute; left:0; right:0; top:820px; bottom:0; background:linear-gradient(180deg, rgba(58,22,64,.6), rgba(18,12,30,.9));"></div>
+        <div style="position:absolute; left:0; right:0; top:820px; height:1px; background:rgba(255,206,170,.55);"></div>
+        <div style="position:absolute; z-index:6; left:36px; right:36px; top:56px; display:flex; flex-direction:column; gap:14px;">
+          <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:12px; font-weight:600; letter-spacing:.16em; color:rgba(246,239,230,.8);"><span style="width:8px; height:8px; border-radius:50%; background:#ffb877; box-shadow:0 0 10px #ffb877;"></span>MARKET MODE</div>
+          <div style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-variation-settings:'opsz' 96, 'wdth' 86; font-size:58px; line-height:.94; letter-spacing:-.05em; color:#fbf5ec; text-wrap:balance;">Stand it on the counter. <span style="color:#ffd2a8;">Tap as you buy.</span></div>
+        </div>
+        <div style="position:absolute; z-index:2; left:76px; top:250px;"><div style="zoom:.76;"><dc-import name="DuoScreen" view="stand" market="{{ market }}" hint-size="687px,900px"></dc-import></div></div>
+        <div style="position:absolute; z-index:4; left:18px; top:430px; display:flex; flex-direction:column; gap:8px;">
+          <sc-for list="{{ adds }}" as="a" hint-placeholder-count="2"><div style="height:40px; padding:0 14px 0 10px; border-radius:99px; background:#fffaf2; color:#1b1e2e; font-size:13.5px; font-weight:650; display:flex; align-items:center; gap:7px; box-shadow:0 12px 26px rgba(0,0,0,.4); transform:rotate({{ a.r }}); align-self:flex-start;"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:19px; color:#3f7a3a; font-variation-settings:'FILL' 1;">shopping_basket</span>{{ a.t }}</div></sc-for>
+        </div>
+        <div style="position:absolute; z-index:4; right:18px; top:700px; width:170px; padding:12px; box-sizing:border-box; border-radius:18px; background:#1b1e2e; color:#f6efe6; box-shadow:0 16px 34px rgba(8,4,20,.5); transform:rotate(3deg); display:flex; flex-direction:column; gap:6px;">
+          <div style="font-family:'IBM Plex Mono', monospace; font-size:8.5px; font-weight:600; letter-spacing:.12em; opacity:.62;">FLAT HALF · NO WOBBLE</div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:4px;"><sc-for list="{{ keys }}" as="k" hint-placeholder-count="6"><span style="height:22px; border-radius:6px; background:rgba(255,255,255,.1); font-size:11px; font-weight:600; display:flex; align-items:center; justify-content:center;">{{ k }}</span></sc-for></div>
+        </div>
+      </div>
+
+      <!-- I4 ASK -->
+      <div id="i4" data-screen-label="I4 Ask" style="position:relative; width:669px; height:951px; overflow:hidden; border-radius:24px; background:linear-gradient(180deg,#17153a 0%,#2e2859 40%,#6e3a70 75%,#b5506a 100%); flex-shrink:0;">
+        <div style="position:absolute; z-index:6; left:36px; right:36px; top:56px; display:flex; flex-direction:column; gap:14px;">
+          <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:12px; font-weight:600; letter-spacing:.16em; color:rgba(246,239,230,.8);"><span style="width:8px; height:8px; border-radius:50%; background:#ffb877; box-shadow:0 0 10px #ffb877;"></span>ASK 6PM</div>
+          <div style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-variation-settings:'opsz' 96, 'wdth' 86; font-size:58px; line-height:.94; letter-spacing:-.05em; color:#fbf5ec; text-wrap:balance;">Ask on the right. <span style="color:#ffd2a8;">See it on the left.</span></div>
+        </div>
+        <div style="position:absolute; z-index:2; left:34px; top:290px; transform:rotate(2deg);"><div style="zoom:.62; width:969px; height:687px; box-sizing:border-box; padding:9px; border-radius:49px; background:#050407; box-shadow:0 0 0 1px #5d5864, 0 0 0 3px #1a181e, 0 0 0 4px #7a7480, 0 60px 120px rgba(0,0,0,.6);"><dc-import name="DuoScreen" view="ask" market="{{ market }}" hint-size="951px,669px"></dc-import></div></div>
+        <div style="position:absolute; z-index:4; right:22px; top:654px; max-width:300px; padding:14px 18px; border-radius:24px 24px 6px 24px; background:#1b1e2e; color:#f6efe6; font-size:18px; font-weight:500; line-height:1.3; box-shadow:0 18px 40px rgba(0,0,0,.5); border:0.5px solid rgba(255,255,255,.12);">{{ x.ask }}</div>
+        <div style="position:absolute; z-index:4; left:22px; right:22px; top:740px; padding:20px 20px 18px; border-radius:26px; background:#fffaf2; color:#1b1e2e; box-shadow:0 30px 60px rgba(0,0,0,.55); display:flex; flex-direction:column; gap:14px; transform:rotate(-1.5deg);">
+          <div style="display:flex; align-items:flex-start; gap:10px;"><dusk-buddy form="sun" size="48" mood="think"></dusk-buddy><div style="flex:1; font-size:19px; font-weight:600; line-height:1.25; letter-spacing:-.01em; text-wrap:pretty;">{{ x.ans }}</div></div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; align-items:center; gap:10px; font-size:13px;"><span style="width:44px; color:#6a5a50;">Now</span><div style="flex:1; height:9px; border-radius:9px; background:#4a4458;"></div><span style="font-weight:700; width:60px; text-align:right;">{{ x.now }}</span></div>
+            <div style="display:flex; align-items:center; gap:10px; font-size:13px;"><span style="width:44px; color:#6a5a50;">After</span><div style="flex:1; height:9px; border-radius:9px; background:#ece4da;"><div style="width:27%; height:100%; border-radius:9px; background:#ff8552;"></div></div><span style="font-weight:700; width:60px; text-align:right;">{{ x.after }}</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- I5 BANK -->
+      <div id="i5" data-screen-label="I5 Split View" style="position:relative; width:669px; height:951px; overflow:hidden; border-radius:24px; background:linear-gradient(180deg,#120f22 0%,#2e2859 45%,#7a3f72 80%,#e0855a 100%); flex-shrink:0;">
+        <div style="position:absolute; z-index:6; left:36px; right:36px; top:56px; display:flex; flex-direction:column; gap:14px;">
+          <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:12px; font-weight:600; letter-spacing:.16em; color:rgba(246,239,230,.8);"><span style="width:8px; height:8px; border-radius:50%; background:#ffb877; box-shadow:0 0 10px #ffb877;"></span>SPLIT VIEW</div>
+          <div style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-variation-settings:'opsz' 96, 'wdth' 86; font-size:58px; line-height:.94; letter-spacing:-.05em; color:#fbf5ec; text-wrap:balance;">Drag from your bank. <span style="color:#ffd2a8;">6pm sorts it.</span></div>
+        </div>
+        <div style="position:absolute; z-index:2; left:34px; top:300px; transform:rotate(-2deg);"><div style="zoom:.62; width:969px; height:687px; box-sizing:border-box; padding:9px; border-radius:49px; background:#050407; box-shadow:0 0 0 1px #5d5864, 0 0 0 3px #1a181e, 0 0 0 4px #7a7480, 0 60px 120px rgba(0,0,0,.6);"><dc-import name="DuoScreen" view="bank" caught="{{ caughtInit }}" market="{{ market }}" hint-size="951px,669px"></dc-import></div></div>
+        <div style="position:absolute; z-index:4; left:180px; top:440px; width:300px; padding:12px 14px; box-sizing:border-box; border-radius:18px; background:#fff; color:#1d2230; box-shadow:0 30px 60px rgba(0,0,0,.5), 0 0 0 2px #ff8552; transform:rotate(-5deg); display:flex; align-items:center; gap:10px;">
+          <div style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-size:15px; font-weight:650;">{{ cName }}</span><span style="font-size:11.5px; color:rgba(29,34,48,.55);">12:05 · Card</span></div>
+          <span style="font-size:15px; font-weight:650;">−{{ cAmt }}</span>
+          <span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:28px; color:#ff8552;">drag_pan</span>
+        </div>
+        <div style="position:absolute; z-index:4; left:26px; top:760px; width:200px; padding:12px; box-sizing:border-box; border-radius:18px; background:#1b1e2e; color:#f6efe6; box-shadow:0 16px 34px rgba(8,4,20,.5); transform:rotate(-3deg); display:flex; flex-direction:column; gap:7px;">
+          <div style="font-family:'IBM Plex Mono', monospace; font-size:8.5px; font-weight:600; letter-spacing:.12em; opacity:.62;">AUTO-SORTED</div>
+          <div style="display:flex; align-items:center; gap:8px;"><span style="width:30px; height:30px; border-radius:10px; background:#ffd9b8; color:#a4481f; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:18px; font-variation-settings:'FILL' 1;">restaurant</span></span><span style="font-size:14px; font-weight:650;">Food · Today</span></div>
+        </div>
+        <div style="position:absolute; z-index:4; right:26px; top:790px; height:44px; padding:0 16px 0 12px; border-radius:99px; background:#ff8552; color:#1a0f0a; font-size:14px; font-weight:700; display:flex; align-items:center; gap:7px; box-shadow:0 14px 30px rgba(255,120,70,.4); transform:rotate(2deg);"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:20px;">inbox</span>2 caught, 0 typed</div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Product page and copy" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; align-items:baseline; gap:14px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.14em; color:#ff8552;">03</span><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-size:34px; font-weight:500; letter-spacing:-.03em;">Product page on Duo, and the words</span></div>
+    <div style="display:flex; gap:48px; align-items:flex-start; flex-wrap:wrap;">
+      <div style="width:484px; height:696px; box-sizing:border-box; padding:9px; border-radius:54px; background:#050407; box-shadow:0 0 0 1px #5d5864, 0 0 0 3px #1a181e, 0 0 0 4px #7a7480, 0 40px 90px rgba(0,0,0,.55); flex-shrink:0;">
+        <div data-screen-label="Product page · outer" style="position:relative; width:466px; height:678px; border-radius:45px; overflow:hidden; background:#000; color:#f5f5f7; font-family:-apple-system, 'SF Pro Text', 'Be Vietnam Pro', system-ui, sans-serif;">
+          <div style="position:absolute; left:0; top:0; bottom:0; right:72px; padding:26px 14px 0 20px; box-sizing:border-box; display:flex; flex-direction:column; gap:18px; overflow:hidden;">
+            <div style="display:flex; gap:14px;">
+              <img src="apps/mobile/assets/icon/icon.png" alt="" style="width:104px; height:104px; border-radius:23px; box-shadow:0 0 0 0.5px rgba(255,255,255,.12);">
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; padding-top:4px;"><div style="font-size:22px; font-weight:700; letter-spacing:-.02em;">6pm</div><div style="font-size:14px; color:#98989f; line-height:1.3;">Close your day. Know tomorrow.</div><div style="flex:1;"></div><div style="align-self:flex-start; height:30px; padding:0 20px; border-radius:99px; background:#0a84ff; color:#fff; font-size:15px; font-weight:700; display:flex; align-items:center;">Get</div></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:12px 0; border-top:0.5px solid #2c2c2e; border-bottom:0.5px solid #2c2c2e;">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:2px;"><span style="font-size:11px; color:#98989f;">RATING</span><span style="font-size:17px; font-weight:700;">4.9</span></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:2px;"><span style="font-size:11px; color:#98989f;">AGE</span><span style="font-size:17px; font-weight:700;">4+</span></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:2px;"><span style="font-size:11px; color:#98989f;">CHART</span><span style="font-size:17px; font-weight:700;">#3</span></div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:14px; background:#1c1c1e;"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:24px; color:#ff8552;">devices_fold</span><div style="flex:1; display:flex; flex-direction:column;"><span style="font-size:14px; font-weight:650;">Made for iPhone Duo</span><span style="font-size:12px; color:#98989f;">Book-pose Close, diary spread, Market mode</span></div></div>
+            <div style="display:flex; gap:8px;">
+              <div style="width:128px; height:186px; flex-shrink:0; border-radius:14px; background:linear-gradient(90deg,#f0a462,#e07c5a); padding:12px; box-sizing:border-box; font-family:'Bricolage Grotesque', sans-serif; font-weight:600; font-size:15px; line-height:1; letter-spacing:-.04em; color:#fbf5ec;">Know what’s safe to spend.</div>
+              <div style="width:128px; height:186px; flex-shrink:0; border-radius:14px; background:linear-gradient(90deg,#e07c5a,#b5506a); padding:12px; box-sizing:border-box; font-family:'Bricolage Grotesque', sans-serif; font-weight:600; font-size:15px; line-height:1; letter-spacing:-.04em; color:#fbf5ec;">At six, close your day.</div>
+              <div style="width:128px; height:186px; flex-shrink:0; border-radius:14px; background:linear-gradient(90deg,#b5506a,#6e3a70); padding:12px; box-sizing:border-box; font-family:'Bricolage Grotesque', sans-serif; font-weight:600; font-size:15px; line-height:1; letter-spacing:-.04em; color:#fbf5ec;">Your companion lives in the island.</div>
+            </div>
+            <div style="font-size:14px; line-height:1.45; color:#d1d1d6;">One number tells you what’s safe to spend today. At six, close your day in a minute. On iPhone Duo, fold it shut to finish.</div>
+          </div>
+          <div style="position:absolute; right:0; top:0; bottom:0; width:72px; box-sizing:border-box; padding:12px 0 16px; display:flex; flex-direction:column; align-items:center; gap:12px;">
+            <div style="width:38px; height:66px; border-radius:19px; background:#111; box-shadow:inset 0 0 0 0.5px #2c2c2e;"></div>
+            <div style="font-size:13px; font-weight:650; line-height:1.05; text-align:center;"><div>18</div><div>02</div></div>
+            <div style="width:46px; height:46px; border-radius:50%; background:#1c1c1e; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:22px;">chevron_left</span></div>
+            <div style="width:46px; height:46px; border-radius:50%; background:#1c1c1e; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:20px;">ios_share</span></div>
+            <div style="flex:1;"></div>
+            <div style="width:58px; padding:4px; box-sizing:border-box; border-radius:99px; background:#1c1c1e; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ storeTabs }}" as="t" hint-placeholder-count="4"><div style="height:52px; border-radius:99px; background:{{ t.bg }}; color:{{ t.fg }}; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; line-height:1; font-size:23px; font-variation-settings:'FILL' 1;">{{ t.i }}</span></div></sc-for></div>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1; min-width:420px; max-width:720px; display:flex; flex-direction:column; gap:14px;">
+        <sc-for list="{{ copy }}" as="c" hint-placeholder-count="4">
+          <div style="background:#141118; border:0.5px solid rgba(243,238,231,.1); border-radius:20px; padding:20px 22px; display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;"><span style="font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.14em; color:#ff8552;">{{ c.k }}</span><span style="font-family:'IBM Plex Mono', monospace; font-size:11px; color:rgba(243,238,231,.45);">{{ c.n }}</span></div>
+            <div style="font-size:15.5px; line-height:1.55; color:#f3eee7; white-space:pre-line; text-wrap:pretty;">{{ c.t }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;market&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;International&quot;,&quot;Vietnam&quot;],&quot;default&quot;:&quot;International&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const M = {
+  International: { safe: '$41', spent: '$20 spent', of: 'of $61 today', tomorrow: '$56', paid: '$4.50', merchant: 'Corner Bakery', ask: 'Can I do dinner with Sam tonight?', ans: 'Yes, if it stays under $30. You’d still have $11, and tomorrow stays at $52.', now: '$41', after: '$11', cards: [['Corner store', '$3.20', '17:41', 'shopping_basket', '#dff0d4', '#3f7a3a'], ['Corner Bakery', '$4.50', '12:05', 'restaurant', '#ffd9b8', '#a4481f']], kept: '$16.80', future: '$53', caught: ['Corner Bakery', '$4.50'], adds: ['Mangoes −$4.00', 'Greens −$1.50'], diaryNote: 'Eleven under. Into Future you.', day: '$36' },
+  Vietnam: { safe: '412k', spent: '200k spent', of: 'of 612k today', tomorrow: '556k', paid: '45.000₫', merchant: 'Bánh mì Huỳnh Hoa', ask: 'Can I do lẩu with Minh tonight?', ans: 'Yes, if it stays under 300k. You’d still have 112k, and tomorrow stays at 520k.', now: '412k', after: '112k', cards: [['Circle K', '32k', '17:41', 'shopping_basket', '#dff0d4', '#3f7a3a'], ['Bánh mì Huỳnh Hoa', '45k', '12:05', 'restaurant', '#ffd9b8', '#a4481f']], kept: '168k', future: '530k', caught: ['Bánh mì Huỳnh Hoa', '45k'], adds: ['Xoài −40k', 'Rau muống −15k'], diaryNote: '160k under. Into Future you.', day: '360k' }
+};
+class Component extends DCLogic {
+  state = {};
+  renderVals() {
+    const mk = this.state.market || this.props.market || 'International';
+    const x = M[mk] || M.International;
+    const on = (k) => mk === k;
+    return {
+      x, market: mk, caughtInit: [0, 1], cName: x.caught[0], cAmt: x.caught[1],
+      storeTabs: [['today', 0], ['apps', 0], ['sports_esports', 0], ['search', 1]].map(([i, on]) => ({ i, bg: on ? 'rgba(255,255,255,.12)' : 'transparent', fg: on ? '#0a84ff' : '#98989f' })),
+      copy: (() => { const c = [
+        { k: 'PROMOTIONAL TEXT', t: 'Now made for iPhone Duo. Open it and October unfolds next to today. At six, fold it shut to close the day.' },
+        { k: 'WHAT’S NEW · 1.1', t: 'Made for iPhone Duo\n• Today and October side by side on the inner display\n• The 6pm Close in book pose: fold it shut to stamp the day\n• Your money diary as a two-page spread\n• Market mode: stand it on the counter and tap as you buy\n• Your companion and Live Activities in the vertical Dynamic Island' },
+        { k: 'SUBTITLE', t: 'Close your day. Know tomorrow.' },
+        { k: 'KEYWORDS', t: 'budget,daily,spending,foldable,duo,diary,allowance,safe to spend,money,habit' }
+      ]; const lim = [170, 4000, 30, 100]; return c.map((x, i) => ({ ...x, n: x.t.length + ' / ' + lim[i] })); })(),
+
+      week: ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => ({ d, bg: i < 4 ? '#ffd3a6' : 'transparent', bd: i < 4 ? 'none' : (i === 4 ? '1.5px solid #ff8552' : '1.5px solid rgba(255,255,255,.25)'), tick: i < 4 ? 1 : 0 })),
+      cards: x.cards.map((c, i) => ({ name: c[0], amt: c[1], t2: c[2], icon: c[3], tile: c[4], glyph: c[5], no: 41 + i, l: ['14px', '44px'][i], t: ['300px', '398px'][i], r: ['-7deg', '4deg'][i] })),
+      adds: x.adds.map((t, i) => ({ t, r: ['-3deg', '2deg'][i] })), keys: ['1', '2', '3', '4', '5', '6'],
+      islChips: [
+        { when: '12:05 · CAUGHT', t: x.caught[0] + ' · ' + x.caught[1], icon: 'restaurant', c: '#ffd9b8', bg: '#1b1e2e', fg: '#f6efe6', r: '-2deg' },
+        { when: '12:06 · PAYING', t: 'Paying ' + x.paid, icon: 'progress_activity', c: '#ff8552', bg: '#1b1e2e', fg: '#f6efe6', r: '1.5deg' },
+        { when: '18:00 · 6PM CLOSE', t: '3 left to close', icon: 'wb_twilight', c: '#2a1424', bg: '#ff8552', fg: '#1a0f0a', r: '-1deg' },
+        { when: '18:12 · CLOSED', t: 'Tomorrow ' + x.tomorrow, icon: 'verified', c: '#ffb19a', bg: '#1b1e2e', fg: '#f6efe6', r: '2deg' },
+        { when: '25 OCT · PAYDAY', t: 'Money in. Split it?', icon: 'savings', c: '#ffffff', bg: 'linear-gradient(140deg,#6b4cd6,#d24f9b)', fg: '#ffffff', r: '-2deg' }
+      ],
+      setIntl: () => this.setState({ market: 'International' }), setVn: () => this.setState({ market: 'Vietnam' }),
+      intlBg: on('International') ? '#f3eee7' : 'transparent', intlFg: on('International') ? '#0d0b10' : '#f3eee7',
+      vnBg: on('Vietnam') ? '#f3eee7' : 'transparent', vnFg: on('Vietnam') ? '#0d0b10' : '#f3eee7'
+    };
+  }
+}
+</script>
+</body>
+</html>

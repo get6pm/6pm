@@ -1,4 +1,5 @@
 import { useRouter, type Href } from 'expo-router';
+import { useEffect } from 'react';
 import { Text } from 'react-native';
 import Animated, { useAnimatedStyle, type AnimatedRef } from 'react-native-reanimated';
 
@@ -17,6 +18,7 @@ import { MonthCalendar } from './month-calendar';
 import { ScrollReveal } from './scroll-reveal';
 import { useDiary } from './use-diary';
 import { WeekRecapCard } from './week-recap-card';
+import { useDiaryBridge } from '../duo/diary-bridge';
 
 /**
  * Diary: the week recap, the month's calendar of receipts, the selected day's receipt, the way
@@ -31,6 +33,26 @@ export function DiaryPage({ scrollRef }: { readonly scrollRef: AnimatedRef<Anima
   const shown = useHomePageShown();
   const { y } = useHomeScroll();
   const diary = useDiary();
+  // On the opened iPhone Duo the chosen day is written on the right page, not under the calendar.
+  const toPage = useDiaryBridge();
+  const closed = diary.cells.flatMap((c) => (c.kind === 'closed' ? [c.day] : []));
+  const at = diary.selected === null ? -1 : closed.indexOf(diary.selected);
+  const before = at > 0 ? closed[at - 1] : undefined;
+  const after = at >= 0 ? closed[at + 1] : undefined;
+  const { receipt, select } = diary;
+  useEffect(() => {
+    if (!toPage) return;
+    toPage(
+      receipt
+        ? {
+            receipt,
+            onPrevious: before ? () => select(before) : null,
+            onNext: after ? () => select(after) : null,
+          }
+        : null,
+    );
+  }, [toPage, receipt, before, after, select]);
+  useEffect(() => () => toPage?.(null), [toPage]);
   const { max } = useEntitlement();
   const header = useAnimatedStyle(() => ({
     opacity: Math.max(0, Math.min(1, 1 - y.value / 70)),
@@ -83,7 +105,7 @@ export function DiaryPage({ scrollRef }: { readonly scrollRef: AnimatedRef<Anima
         />
       </ScrollReveal>
 
-      {diary.receipt ? <DayReceipt receipt={diary.receipt} /> : null}
+      {diary.receipt && !toPage ? <DayReceipt receipt={diary.receipt} /> : null}
 
       <ScrollReveal>
         {/* Ask 6pm has no screen yet: the entry is drawn and does nothing until it lands. */}

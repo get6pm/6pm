@@ -168,11 +168,14 @@ export function useDiary() {
           rows: receiptData.spends.map((s) => ({
             time: dates.clock(s.at),
             name: s.merchant.toLocaleUpperCase(),
+            merchant: s.merchant,
+            categoryId: s.categoryId,
             amount: s.amount,
           })),
           empty: t('diary.receipt.empty'),
           totalLabel: t('close.receipt.total'),
           total: row.spent,
+          line: row.line,
           note:
             row.note ??
             (row.late

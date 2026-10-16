@@ -13,12 +13,18 @@ export interface DayReceiptView {
   readonly no: string;
   readonly rows: readonly {
     readonly time: string;
+    /** Shouted, as the receipt prints it. */
     readonly name: string;
+    /** As written, for the iPhone Duo's diary page. */
+    readonly merchant: string;
+    readonly categoryId: string;
     readonly amount: number;
   }[];
   readonly empty: string;
   readonly totalLabel: string;
   readonly total: number;
+  /** The day's line: what it had to spend. */
+  readonly line: number;
   readonly note: string;
   readonly stamp: string;
   readonly closedAt: string;

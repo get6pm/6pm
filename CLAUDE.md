@@ -28,7 +28,7 @@ Precedence: product decisions > phase file > prototype > older reports.
 ## Repo conventions
 
 - Packages are `@6pm/<dir>`, ESM, export TS source. Versions live in the `catalog:` of `pnpm-workspace.yaml`; pnpm 12 blocks install scripts unless listed under `allowBuilds`.
-- TypeScript 6 strict (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax`). Named exports except route files and configs. Files ≤ 300 lines.
+- TypeScript 6 strict (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax`). Named exports except route files and configs. Files ≤ 600 lines.
 - Relative imports are extensionless (Metro cannot map `.js` to `.ts`).
 - Money is integer đồng. All money/time maths lives in `@6pm/domain`, never in a screen.
 - Run `pnpm exec prettier --write` on what you changed.

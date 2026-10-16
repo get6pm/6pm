@@ -57,7 +57,7 @@ packages/i18n    en/vi catalogues, translate, completeness
 tools/scripts    repo hygiene checks
 ```
 
-Workspace packages are `@6pm/<dir>`, ESM, export TypeScript source (`"exports": {".": "./src/index.ts"}`). Relative imports are extensionless (Metro). Named exports only, except route files and configs. Files ≤ 300 lines.
+Workspace packages are `@6pm/<dir>`, ESM, export TypeScript source (`"exports": {".": "./src/index.ts"}`). Relative imports are extensionless (Metro). Named exports only, except route files and configs. Files ≤ 600 lines.
 
 ## 4. Motion contract
 

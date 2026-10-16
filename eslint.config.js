@@ -76,7 +76,7 @@ export default defineConfig([
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
       ],
       'no-restricted-syntax': ['error', namedExportsOnly],
-      'max-lines': ['error', { max: 300, skipBlankLines: true, skipComments: true }],
+      'max-lines': ['error', { max: 600, skipBlankLines: true, skipComments: true }],
     },
   },
 

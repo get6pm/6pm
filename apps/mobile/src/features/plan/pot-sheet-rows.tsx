@@ -105,6 +105,8 @@ export function EditorRow({
       <PressScale
         highlight
         accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityValue={{ text: sub ? `${value}, ${sub}` : value }}
         accessibilityHint={hint}
         accessibilityState={{ expanded: open }}
         onPress={() => {

@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { MEMO_MAX } from './local-rows';
+
 /**
  * Receipt email. Each phone gets a random handle; mail to `<handle>@<host>` reaches the API
  * Worker, which reads the receipt in it, keeps only what it read (sealed), and drops the email.
@@ -40,6 +42,8 @@ export const emailCaptureSchema = z.object({
   from: z.string().max(254).nullable(),
   bank: z.string().max(60).nullable(),
   code: z.string().max(40).nullable(),
+  /** The transfer's own words ("Nội dung"), where a repayment is named; absent before it was kept. */
+  memo: z.string().max(MEMO_MAX).nullable().optional(),
 });
 export type EmailCapture = z.infer<typeof emailCaptureSchema>;
 

@@ -6,6 +6,7 @@ import { sql as createTogetherMoves } from '../db/migrations/0003-create-togethe
 import { sql as addCurrencyGuessed } from '../db/migrations/0004-spend-currency-guessed';
 import { sql as addPotMoveOpening } from '../db/migrations/0007-pot-move-opening';
 import { sql as addBillPayments } from '../db/migrations/0008-bill-kind-and-payments';
+import { sql as addSpendMemo } from '../db/migrations/0009-spend-memo';
 import { createMoneyStore, dayOf } from './money-store';
 import { planActions } from './plan-actions';
 import { DEFAULT_PLAN, writePlan } from './plan-settings';
@@ -25,6 +26,7 @@ async function open(today: string, startedOn = '2026-09-01') {
   sqlite.exec(addCurrencyGuessed);
   sqlite.exec(addPotMoveOpening);
   sqlite.exec(addBillPayments);
+  sqlite.exec(addSpendMemo);
   const db: SqlDatabase = {
     getAllAsync: <T>(source: string, params: SqlValue[]) =>
       Promise.resolve(sqlite.prepare(source).all(...params) as T[]),

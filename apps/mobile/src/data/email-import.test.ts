@@ -86,6 +86,16 @@ describe('importEmailCaptures', () => {
     expect((await store.tables.spends.get(late.id))?.day).toBe('2026-10-10');
   });
 
+  it('keeps the transfer’s memo apart from the user’s note, and a capture before memos had none', async () => {
+    const card = receipt({ merchant: 'NGUYEN VAN AN', memo: 'Thanh toan the tin dung' });
+    await run(server([card, receipt({ id: 'b2xkZXJyZWNlaXB0MDEyMzQ1Njc4OQ' })]).source);
+    expect(await store.tables.spends.get(card.id)).toMatchObject({
+      memo: 'Thanh toan the tin dung',
+      note: null,
+    });
+    expect((await store.tables.spends.get('b2xkZXJyZWNlaXB0MDEyMzQ1Njc4OQ'))?.memo).toBeNull();
+  });
+
   it('files under the merchant’s rule when there is one', async () => {
     await actions.rememberMerchant('Grab', 'shopping');
     await run(server([receipt()]).source);

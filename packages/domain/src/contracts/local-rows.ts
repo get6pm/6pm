@@ -7,6 +7,9 @@ const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const instant = z.string().min(20);
 const vnd = z.number().int().nonnegative();
 
+/** The longest transfer memo kept: a bank's transfer message is at most about this long. */
+export const MEMO_MAX = 140;
+
 export const spendSourceSchema = z.enum([
   'manual',
   'voice',
@@ -62,6 +65,12 @@ export const spendRowSchema = z.object({
    * before bills could be paid by a spend.
    */
   paysBill: z.string().min(1).nullable().optional(),
+  /**
+   * The transfer's own words a bank receipt or email printed ("Nội dung: Thanh toan the tin
+   * dung"), read when asking whether it paid a bill; the user's own words are `note`. Absent on
+   * rows and backups from before it was kept.
+   */
+  memo: z.string().max(MEMO_MAX).nullable().optional(),
   createdAt: instant,
   updatedAt: instant,
 });

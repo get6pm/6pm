@@ -34,6 +34,8 @@ export interface ReadReceipt {
   readonly at: string | null;
   readonly code: string | null;
   readonly bank: string | null;
+  /** A transfer's own words ("Nội dung"), where a repayment is usually named; null for a shop. */
+  readonly memo: string | null;
 }
 
 /** Card slips print reference numbers too; only a transfer says who received the money. */
@@ -88,6 +90,7 @@ export function readReceipt(
       at: shop.at,
       code: null,
       bank: null,
+      memo: null,
     };
   }
   const bank = parseBankReceipt(lines);

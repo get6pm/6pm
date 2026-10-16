@@ -130,6 +130,7 @@ export function cardOf(
     decimalEntry: false,
     currencies: currenciesFor(read, context, money),
     needsCheck: read === null || (read.kind === 'shop' && !(read.totalSure && read.currencySure)),
+    memo: read?.memo ?? null,
   };
   const shown = shareAmount(base, {}, money);
   const category = fileCategory(context, payee, payee, at);
@@ -203,6 +204,7 @@ export function buildShareItem(
       ...(card.code ? { code: card.code } : {}),
       namingLines: card.namingLines,
       payeeSure: card.payeeSure || edits.payee !== undefined,
+      ...(card.memo ? { memo: card.memo } : {}),
     },
     ...(foreign
       ? {

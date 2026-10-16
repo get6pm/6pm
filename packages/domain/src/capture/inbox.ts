@@ -29,6 +29,8 @@ export interface InboxSpendDraft {
   readonly foreignAmount: { currency: string; amount: number; rate: number } | null;
   /** The receipt printed no currency and the one saved was guessed. */
   readonly currencyGuessed: boolean;
+  /** A transfer's own words ("Nội dung"), read when asking whether it paid a bill. */
+  readonly memo: string | null;
 }
 
 export interface InboxFiling {
@@ -160,6 +162,7 @@ export function inboxItemToNewSpend(
     at: new Date(item.at),
     foreignAmount: kept,
     currencyGuessed: item.currencyGuessed === true,
+    memo: item.receipt?.memo ?? null,
   };
 }
 

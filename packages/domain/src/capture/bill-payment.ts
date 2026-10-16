@@ -66,6 +66,8 @@ export interface PaymentCapture {
   readonly amount: Vnd;
   readonly merchant: string;
   readonly note: string | null;
+  /** The transfer's own words a bank printed ("Nội dung"), where a repayment is usually named. */
+  readonly memo?: string | null | undefined;
   /** The bill (or `REPAYMENT`) it is already marked as paying. */
   readonly paysBill?: string | null | undefined;
 }
@@ -98,17 +100,17 @@ export function billChoicesFor(
   return [null, ...open, REPAYMENT];
 }
 
-/** Whether a payee or note says it paid off a card, an instalment, a debt or a loan. */
+/** Whether a payee, note or memo says it paid off a card, an instalment, a debt or a loan. */
 export function namesRepayment(text: string): boolean {
   const folded = foldWords(text);
   return REPAYMENT_WORDS.some((word) => folded.includes(word));
 }
 
 function textOf(spend: PaymentCapture): string {
-  return `${spend.merchant} ${spend.note ?? ''}`;
+  return `${spend.merchant} ${spend.note ?? ''} ${spend.memo ?? ''}`;
 }
 
-/** The bill's own name inside the payee or note, as whole words. */
+/** The bill's own name inside the payee, note or memo, as whole words. */
 function namesBill(text: string, bill: PayableBill): boolean {
   const name = foldWords(bill.name);
   return name.trim().length >= 2 && foldWords(text).includes(name);

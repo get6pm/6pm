@@ -139,6 +139,7 @@ export async function receiveEmail(
     from: read.from?.slice(0, 254) ?? null,
     bank: read.bank?.slice(0, 60) ?? null,
     code: read.code?.slice(0, 40) ?? null,
+    memo: read.memo,
   });
   if (!capture.success) return 'not_a_receipt';
 

@@ -129,3 +129,14 @@ export function lineUsed(day: DailyNumber): number {
   if (day.line <= 0) return day.spent > 0 ? 1 : 0;
   return Math.min(1, Math.max(0, day.spent / day.line));
 }
+
+/**
+ * Whether "Tomorrow's {t}, not {b}" says anything: tomorrow's line is lower than today's and still
+ * reads lower once `word` shortens both ("43k"), as two lines a step apart can read the same.
+ */
+export function replanWorded(
+  day: Pick<DailyNumber, 'tomorrow' | 'line'>,
+  word: (amount: Vnd) => string,
+): boolean {
+  return day.tomorrow < day.line && word(day.tomorrow) !== word(day.line);
+}

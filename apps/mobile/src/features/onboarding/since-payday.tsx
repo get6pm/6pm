@@ -39,11 +39,16 @@ export function SincePaydayLine({
   const { t, dayMonth } = useI18n();
   const money = useMoneyFormat();
   const reduceMotion = useReducedMotion();
+  const line = t('onboarding.reveal.sincePayday', {
+    date: dayMonth(dateOf(since)),
+    amount: money.short(amount),
+  });
   return (
     <Animated.View entering={riseEntering(500, 900, reduceMotion)}>
       <PressScale
         scaleTo={0.96}
         accessibilityRole="button"
+        accessibilityLabel={line}
         accessibilityHint={t('onboarding.reveal.sincePaydayEdit')}
         accessibilityState={{ expanded: open }}
         onPress={() => {
@@ -62,12 +67,7 @@ export function SincePaydayLine({
           gap: 6,
         }}
       >
-        <Text style={{ ...body(13.5, 600), color: pal.inkSoft, flexShrink: 1 }}>
-          {t('onboarding.reveal.sincePayday', {
-            date: dayMonth(dateOf(since)),
-            amount: money.short(amount),
-          })}
-        </Text>
+        <Text style={{ ...body(13.5, 600), color: pal.inkSoft, flexShrink: 1 }}>{line}</Text>
         <Symbol name={open ? 'check' : 'edit'} size={15} color={pal.ink} />
       </PressScale>
     </Animated.View>
@@ -147,11 +147,15 @@ export function FutureYouAtPayday({
   readonly onChange: (on: boolean) => void;
 }) {
   const { t, dayMonth } = useI18n();
+  const title = t('onboarding.reveal.futureAtPayday');
+  const note = t('onboarding.reveal.futureAtPaydayNote', { date: dayMonth(dateOf(payday)) });
   return (
     <Animated.View entering={FadeIn.duration(220)} exiting={FadeOut.duration(140)}>
       <PressScale
         scaleTo={0.97}
         accessibilityRole="switch"
+        accessibilityLabel={title}
+        accessibilityHint={note}
         accessibilityState={{ checked: on }}
         onPress={() => onChange(!on)}
         style={{
@@ -171,12 +175,8 @@ export function FutureYouAtPayday({
           color={on ? pal.green : pal.inkSoft}
         />
         <View style={{ flex: 1, gap: 2 }}>
-          <Text style={{ ...body(14.5, 650), color: pal.ink }}>
-            {t('onboarding.reveal.futureAtPayday')}
-          </Text>
-          <Text style={{ ...body(12.5), lineHeight: 17, color: pal.inkSoft }}>
-            {t('onboarding.reveal.futureAtPaydayNote', { date: dayMonth(dateOf(payday)) })}
-          </Text>
+          <Text style={{ ...body(14.5, 650), color: pal.ink }}>{title}</Text>
+          <Text style={{ ...body(12.5), lineHeight: 17, color: pal.inkSoft }}>{note}</Text>
         </View>
       </PressScale>
     </Animated.View>

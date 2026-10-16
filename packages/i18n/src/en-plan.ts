@@ -1,9 +1,13 @@
 /** The Plan tab. */
 export const enPlan = {
   'plan.kicker': '{month} · payday {payday}',
-  'plan.lede':
-    'Bills are set aside and Future you got paid first. The {free} left is yours: {daily} a day until payday.',
-  'plan.ledeNoFuture': 'Bills are set aside. The {free} left is yours: {daily} a day until payday.',
+  'plan.lede.futureYou': 'Bills are set aside and Future you got paid first.',
+  'plan.lede.futureYouAtPayday': 'Bills are set aside, and Future you starts at payday.',
+  'plan.lede.billsOnly': 'Bills are set aside.',
+  'plan.lede.daily': 'The {free} left is yours: {daily} a day until payday.',
+  'plan.lede.untilPayday': 'The {free} left is yours until payday.',
+  'plan.lede.allSpent': 'This cycle’s free money is all spent. Payday starts it fresh.',
+  'plan.lede.pastPlan': 'This cycle is {over} past the plan. Payday starts it fresh.',
   'plan.section.overview': 'Overview',
   'plan.river.total': 'Money in this month',
   'plan.river.hint': 'Tap a colour to see where it goes.',

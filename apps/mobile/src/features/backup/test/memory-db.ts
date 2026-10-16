@@ -5,6 +5,7 @@ import { sql as addCurrencyGuessed } from '../../../db/migrations/0004-spend-cur
 import { sql as addSightingCapture } from '../../../db/migrations/0006-sighting-capture-id';
 import { sql as addPotMoveOpening } from '../../../db/migrations/0007-pot-move-opening';
 import { sql as addBillPayments } from '../../../db/migrations/0008-bill-kind-and-payments';
+import { sql as addSpendMemo } from '../../../db/migrations/0009-spend-memo';
 import { createMoneyStore, type MoneyStore } from '../../../data/money-store';
 import type { SqlDatabase, SqlValue } from '../../../data/table';
 
@@ -20,6 +21,7 @@ export function openMemoryDb(): SqlDatabase {
   sqlite.exec(addSightingCapture);
   sqlite.exec(addPotMoveOpening);
   sqlite.exec(addBillPayments);
+  sqlite.exec(addSpendMemo);
   return {
     getAllAsync: <T>(source: string, params: SqlValue[]) =>
       Promise.resolve(sqlite.prepare(source).all(...params) as T[]),

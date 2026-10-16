@@ -31,6 +31,8 @@ export interface NewSpend {
   readonly foreignAmount?: SpendRow['foreignAmount'];
   /** The receipt printed no currency and the one saved was guessed. */
   readonly currencyGuessed?: boolean;
+  /** A transfer's own words a bank printed ("Nội dung"), read when asking if it paid a bill. */
+  readonly memo?: string | null;
   /** When it happened; now unless the source says otherwise. */
   readonly at?: Date;
   /**
@@ -127,6 +129,7 @@ export function moneyActions(store: MoneyStore) {
       status: mergedStatus(twin.status, input.status),
       note: twin.note ?? input.note ?? null,
       wallet: twin.wallet ?? input.wallet ?? null,
+      memo: twin.memo ?? input.memo ?? null,
       updatedAt: new Date().toISOString(),
     };
     await store.db.withTransactionAsync(async () => {
@@ -181,6 +184,7 @@ export function moneyActions(store: MoneyStore) {
       detail: input.detail ?? null,
       foreignAmount: input.foreignAmount ?? null,
       currencyGuessed: input.currencyGuessed ?? false,
+      memo: input.memo ?? null,
       createdAt: now,
       updatedAt: now,
     };

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { DECIMAL_PATTERN } from '../travel/fx';
+import { MEMO_MAX } from './local-rows';
 
 /**
  * What the app and its extensions hand each other through the App Group. Extensions never open the
@@ -30,6 +31,8 @@ export const inboxReceiptSchema = z.object({
   namingLines: z.array(z.string()),
   /** False when the payee's name was a guess the user did not check; absent on older files. */
   payeeSure: z.boolean().optional(),
+  /** The transfer's own words ("Nội dung"), where a repayment is named; absent on older files. */
+  memo: z.string().min(1).max(MEMO_MAX).optional(),
 });
 
 export const inboxSpendSchema = z.object({
@@ -231,6 +234,8 @@ export const shareCardSchema = z.object({
   currencies: z.array(shareCurrencySchema),
   /** The reading is unsure of the total or the currency, and the photo is worth a closer look. */
   needsCheck: z.boolean(),
+  /** A transfer's own words ("Nội dung"), kept on the inbox item; absent when it printed none. */
+  memo: z.string().min(1).max(MEMO_MAX).nullable().optional(),
 });
 export type ShareCard = z.infer<typeof shareCardSchema>;
 

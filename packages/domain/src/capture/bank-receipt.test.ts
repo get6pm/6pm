@@ -32,6 +32,7 @@ const fixtures: [string, readonly ReceiptLine[], BankReceipt][] = [
       at: local(16, 40),
       code: 'FT26282917400',
       bank: 'MB Bank',
+      memo: 'NGUYEN VAN AN chuyen tien',
     },
   ],
   [
@@ -44,6 +45,7 @@ const fixtures: [string, readonly ReceiptLine[], BankReceipt][] = [
       at: local(16, 40),
       code: '5123456789',
       bank: 'Vietcombank',
+      memo: 'CIRCLE K VN thanh toan',
     },
   ],
   [
@@ -56,6 +58,7 @@ const fixtures: [string, readonly ReceiptLine[], BankReceipt][] = [
       at: local(12, 5),
       code: 'FT2628255104811',
       bank: 'Techcombank',
+      memo: 'an trua',
     },
   ],
   [
@@ -68,6 +71,7 @@ const fixtures: [string, readonly ReceiptLine[], BankReceipt][] = [
       at: local(8, 15, 42),
       code: 'VPB2628291023',
       bank: 'VPBank',
+      memo: null,
     },
   ],
   [
@@ -80,6 +84,7 @@ const fixtures: [string, readonly ReceiptLine[], BankReceipt][] = [
       at: local(19, 22),
       code: '2026100912345',
       bank: 'ACB',
+      memo: null,
     },
   ],
   [
@@ -92,6 +97,7 @@ const fixtures: [string, readonly ReceiptLine[], BankReceipt][] = [
       at: local(7, 31, 5),
       code: '2628291740123',
       bank: 'BIDV',
+      memo: 'tra sua',
     },
   ],
   [
@@ -104,6 +110,7 @@ const fixtures: [string, readonly ReceiptLine[], BankReceipt][] = [
       at: local(18, 2),
       code: '41234567890',
       bank: 'MoMo',
+      memo: null,
     },
   ],
   [
@@ -116,6 +123,7 @@ const fixtures: [string, readonly ReceiptLine[], BankReceipt][] = [
       at: local(16, 40, 12),
       code: '5123456789',
       bank: 'Vietcombank',
+      memo: 'CIRCLE K',
     },
   ],
   [
@@ -128,6 +136,7 @@ const fixtures: [string, readonly ReceiptLine[], BankReceipt][] = [
       at: local(21, 14),
       code: 'FT26282012345',
       bank: 'Techcombank',
+      memo: null,
     },
   ],
 ];
@@ -179,6 +188,7 @@ describe('parseBankReceipt', () => {
       at: local(16, 40),
       code: '9876543210',
       bank: null,
+      memo: null,
     });
   });
 

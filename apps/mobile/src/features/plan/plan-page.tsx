@@ -29,6 +29,7 @@ import { FutureYouCard } from './future-you-section';
 import { MoneyRiverCard, type RiverCopy } from './money-river-card';
 import { OccasionsStrip } from './occasions-section';
 import { planColours } from './plan-colours';
+import { PlanLede } from './plan-lede';
 import { usePlanFormat, type PlanFormat } from './plan-format';
 import { SectionHeader } from './plan-parts';
 import { planRoutes } from './plan-routes';
@@ -186,12 +187,7 @@ function PlanContent({
             <Symbol name="edit" size={19} color={ink} />
           </PressScale>
         </View>
-        <Text style={{ ...body(15), lineHeight: 21.75, paddingTop: 8, color: inkSoft }}>
-          {t(plan.futureYou > 0 ? 'plan.lede' : 'plan.ledeNoFuture', {
-            free: money.short(day.free),
-            daily: money.short(day.tomorrow),
-          })}
-        </Text>
+        <PlanLede input={input} day={day} color={inkSoft} />
       </Animated.View>
 
       <View onLayout={sections.sectionLayout(0)}>

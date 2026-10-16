@@ -130,7 +130,7 @@ describe('receiving a receipt email', () => {
     ).results;
     expect(rows).toHaveLength(1);
     const stored = JSON.stringify(rows);
-    for (const plain of ['PHO HOA', 'mbbank', '45000', '45,000', 'Thong bao']) {
+    for (const plain of ['PHO HOA', 'CHUYEN TIEN', 'mbbank', '45000', '45,000', 'Thong bao']) {
       expect(stored).not.toContain(plain);
     }
     const row = rows[0] as { id: string; sealed: string };
@@ -148,6 +148,7 @@ describe('receiving a receipt email', () => {
         from: 'thongbao@mbbank.com.vn',
         bank: 'MB Bank',
         code: null,
+        memo: 'CHUYEN TIEN TOI PHO HOA',
       },
     ]);
   });

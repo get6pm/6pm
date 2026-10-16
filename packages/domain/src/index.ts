@@ -38,6 +38,7 @@ export * from './capture/forwarding-confirmation';
 export * from './capture/receipt-email';
 export * from './contracts/receipt-email';
 export * from './contracts/receipt-read';
+export * from './capture/bank-line';
 export * from './capture/spoken-spend';
 export * from './capture/wallet-amount';
 export * from './entry/keypad';

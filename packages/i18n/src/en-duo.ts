@@ -24,4 +24,8 @@ export const enDuo = {
   'duo.scan.stand': 'Stand me on the counter and hold their QR up to the top.',
   'duo.scan.to': 'to {payee}',
   'duo.scan.paid': 'Paid',
+  'duo.drop.title': 'Drop a bank line here',
+  'duo.drop.sub': '6pm reads the merchant and amount and files it under the right category.',
+  'duo.drop.caught': 'Caught {merchant} · {amount}. It waits for the close.',
+  'duo.drop.unread': 'There’s no amount in that line.',
 } as const;

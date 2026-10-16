@@ -26,6 +26,18 @@ const DECK_HEIGHT = 340;
  */
 const AMOUNT_DECK_HEIGHT = 372;
 
+/**
+ * The fit to keep: the same object when nothing changed, so a card that reports its height on
+ * every render never sets state that renders it again.
+ */
+function sameFit(
+  prev: { readonly index: number; readonly height: number } | null,
+  index: number,
+  height: number,
+): { readonly index: number; readonly height: number } {
+  return prev?.index === index && prev.height === height ? prev : { index, height };
+}
+
 /** `cardIn`: up 22 pt from 94% and in, with a slight overshoot, .42 s. */
 function DealtCard({ children }: { readonly children: ReactNode }) {
   const reduceMotion = useReducedMotion();
@@ -143,7 +155,7 @@ export function BillDeckView({
       {...card}
       item={deck[index] ?? null}
       deckIndex={index}
-      {...(top ? { onHeight: (h: number) => setFit({ index, height: h }) } : {})}
+      {...(top ? { onHeight: (h: number) => setFit((prev) => sameFit(prev, index, h)) } : {})}
     />
   );
   return (

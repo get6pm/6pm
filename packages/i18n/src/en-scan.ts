@@ -1,10 +1,32 @@
-/** Scan to pay: the camera, the payment card, the hand-off to a bank app and the way back. */
+/**
+ * Scan: the camera that reads QR codes and receipts, the payment card, the hand-off to a bank app
+ * and the way back, and the receipt card.
+ */
 export const enScan = {
   'scan.badge': 'VietQR · NAPAS 247',
   'scan.close': 'Close',
-  'scan.hint.camera': 'Point at any VietQR code',
+  'scan.hint.camera': 'Point at a QR code or a receipt',
   'scan.hint.blurry': 'That one’s a little blurry',
   'scan.hint.got': 'Got it',
+  'scan.hint.receipt': 'Hold still and I’ll take it',
+  'scan.hint.closer': 'Come a little closer',
+  'scan.hint.reading': 'Reading the receipt…',
+  'scan.mode.qr': 'QR code',
+  'scan.mode.receipt': 'Receipt',
+  'scan.photos': 'Choose a photo',
+  'scan.shutter': 'Take the receipt',
+  'scan.light': 'Light',
+  'scan.receipt.closer': 'Reading closer…',
+  'scan.receipt.noTotal': 'I couldn’t find the total. How much was it?',
+  'scan.receipt.payee': 'Shop',
+  'scan.receipt.change': 'Change',
+  'scan.receipt.retake': 'Retake',
+  'scan.receipt.save': 'Save',
+  'scan.receipt.already': 'That receipt is already saved.',
+  'scan.receipt.failed.title': 'Couldn’t read that photo',
+  'scan.receipt.failed.body': 'Try again with the whole receipt in view, or type the amount.',
+  'scan.photo.none': 'No QR code or receipt in that photo.',
+  'scan.error.save': 'Couldn’t save the receipt. Try again.',
   'scan.typeInstead': 'Type it instead',
   'scan.unreadable.title': 'Couldn’t read that QR',
   'scan.unreadable.body': 'Try more light, or hold a little further back. Nothing was paid.',

@@ -47,7 +47,7 @@ export const viIntents: { readonly [Key in keyof typeof enIntents]: Entry } = {
   'capture.email.sample': 'Grab về nhà',
 
   'capture.scan.name': 'Quét để trả',
-  'capture.scan.sub': 'Quét mã VietQR bất kỳ, rồi trả trong app ngân hàng',
+  'capture.scan.sub': 'Quét VietQR để trả trong app ngân hàng, hoặc hoá đơn để ghi lại',
   'capture.scan.headline': 'Quét, trả trong app ngân hàng, rồi quay lại.',
   'capture.scan.time': 'Mỗi lần bạn trả tiền',
   'capture.scan.step1': 'Quét mã VietQR bất kỳ từ 6pm',

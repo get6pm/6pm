@@ -24,7 +24,7 @@ import { PurchasesProvider } from '../features/purchases/purchases-provider';
 import { TogetherProvider } from '../features/together/together-provider';
 import { TravelProvider } from '../features/travel/travel-provider';
 import { I18nProvider } from '../i18n/i18n';
-import { FoldProvider } from '../ui/layout/fold';
+import { FoldProvider, useFold } from '../ui/layout/fold';
 import { drawnSheet, pageSheet, sheet, takeover } from '../ui/navigation/presentations';
 import { ClockProvider } from '../ui/theme/clock';
 import { ThemeProvider, useTheme } from '../ui/theme/theme';
@@ -47,6 +47,9 @@ export const unstable_settings = { initialRouteName: 'index' };
 
 function Screens() {
   const { palette } = useTheme();
+  // Scan is a sheet, pulled down to close; on a phone with a hinge, whose wide screens would float
+  // a sheet as a card, it fills the screen and is swiped right to close.
+  const hinged = useFold().snapshot.hinge !== 'unknown';
   return (
     <>
       <StatusBar style={palette.dark ? 'light' : 'dark'} animated />
@@ -65,7 +68,7 @@ function Screens() {
         <Stack.Screen name="ai" options={sheet} />
         <Stack.Screen name="category/[id]" options={sheet} />
         <Stack.Screen name="quick-add" options={sheet} />
-        <Stack.Screen name="scan" options={takeover} />
+        <Stack.Screen name="scan" options={hinged ? takeover : pageSheet} />
         <Stack.Screen name="ask" options={pageSheet} />
         <Stack.Screen name="inbox" options={sheet} />
         <Stack.Screen name="close" options={takeover} />

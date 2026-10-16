@@ -4,7 +4,8 @@
  * tables by `tools/scripts/generate-native.ts`). The key's second part names the table.
  */
 export const enNative = {
-  'native.permission.camera': '6pm uses the camera to read VietQR codes when you scan to pay.',
+  'native.permission.camera':
+    '6pm uses the camera to read the QR codes and receipts you scan. Photos stay on your iPhone unless a receipt needs a closer look.',
   'native.permission.microphone':
     '6pm listens while you say a spend. Your voice goes to a speech-to-text service to be written down, or stays on this iPhone in on-device mode.',
   'native.permission.speech':

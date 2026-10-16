@@ -25,8 +25,8 @@ export const sheet: ScreenOptions = {
 
 /**
  * The iOS page sheet (`UIModalPresentationPageSheet`), for a screen that is a place of its own
- * rather than a step off the page: the page behind scales back into a card under the dim, as Mail
- * and Messages do when they compose. It sits at the system's large detent, a few points lower
+ * rather than a step off the page (Ask, Scan): the page behind scales back into a card under the
+ * dim, as Mail and Messages do when they compose. It sits at the system's large detent, a few points lower
  * than `sheet`, and drags and dismisses with the same physics. iOS draws its corners and offers no
  * grabber or corner options here (react-native-screens applies `sheetCornerRadius` and
  * `sheetGrabberVisible` to form sheets only), so the screen paints its own colour and grabber.
@@ -50,7 +50,10 @@ export const drawnSheet: ScreenOptions = {
   contentStyle: { backgroundColor: 'transparent' },
 };
 
-/** Full-screen moments that own the whole display: the 6pm Close, Scan, Max welcome. */
+/**
+ * Full-screen moments that own the whole display: the 6pm Close, Max welcome, and Scan on a phone
+ * with a hinge.
+ */
 export const takeover: ScreenOptions = {
   presentation: 'fullScreenModal',
   animation: 'fade_from_bottom',

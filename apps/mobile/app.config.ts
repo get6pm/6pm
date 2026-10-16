@@ -218,7 +218,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     ['expo-build-properties', { android: { compileSdkVersion: 37, targetSdkVersion: 36 } }],
     ['expo-localization', { supportedLocales: ['en', 'vi'] }],
-    // Scan reads VietQR codes and never records; the microphone is voice's, and both plugins
+    // Scan reads QR codes and receipts and never records; the microphone is voice's, and both plugins
     // write the same prompt so neither replaces the other's.
     [
       'expo-camera',

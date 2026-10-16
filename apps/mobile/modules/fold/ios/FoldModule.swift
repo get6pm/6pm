@@ -40,6 +40,9 @@ public class FoldModule: Module {
 /// Watches the key window: a hinge interaction for the hinge, and an invisible view that fills
 /// the window and reads the reserved regions each time the window lays out (folding, unfolding,
 /// turning and Split View all resize it).
+// The hinge and reserved-region calls are in the iOS 27.1 SDK only. Xcode 27.0 has the same Swift
+// as 27.1, so the SDK is told apart by UIKit's own module version (9127.0.85 is iOS 27.1's).
+
 final class FoldTracker {
   static let empty: [String: Any] = [
     "hinge": "unknown", "angle": NSNull(), "divisions": [], "occlusions": [],
@@ -106,7 +109,7 @@ final class FoldTracker {
   }
 
   private func addHinge(to window: UIWindow) {
-    #if compiler(>=6.4)
+    #if canImport(UIKit, _version: 9127.0.85)
       if #available(iOS 27.1, *) {
         let interaction = UIHingeInteraction { [weak self] _, update in
           guard let self else { return }
@@ -126,7 +129,7 @@ final class FoldTracker {
   }
 
   private func removeHinge() {
-    #if compiler(>=6.4)
+    #if canImport(UIKit, _version: 9127.0.85)
       if #available(iOS 27.1, *), let interaction = hingeInteraction as? UIHingeInteraction {
         interaction.view?.removeInteraction(interaction)
       }
@@ -134,7 +137,7 @@ final class FoldTracker {
     hingeInteraction = nil
   }
 
-  #if compiler(>=6.4)
+  #if canImport(UIKit, _version: 9127.0.85)
     @available(iOS 27.1, *)
     private static func name(_ status: UIHinge.Status) -> String {
       switch status {
@@ -149,7 +152,7 @@ final class FoldTracker {
   func snapshot() -> [String: Any] {
     var divisions: [[String: Double]] = []
     var occlusions: [[String: Double]] = []
-    #if compiler(>=6.4)
+    #if canImport(UIKit, _version: 9127.0.85)
       if #available(iOS 27.1, *), let view = probe {
         divisions = view.reservedRegions(kind: .division).filter(\.isActive).map { Self.rect($0.frame) }
         occlusions = view.reservedRegions(kind: .occlusion).filter(\.isActive).map { Self.rect($0.frame) }

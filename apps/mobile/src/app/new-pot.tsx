@@ -6,10 +6,8 @@ import {
   cycleMonth,
   designAmount,
   suggestCategoryIcon,
-  goalMonthly,
   joinedShare,
-  potMonthlyNeed,
-  potMonthsLeft,
+  potSetAside,
 } from '@6pm/domain';
 
 import { useMoney } from '../data/money-provider';
@@ -75,6 +73,8 @@ export default function NewPot() {
   const [percent, setPercent] = useState(
     others === 0 ? 100 : Math.round(100 / (others + 1) / SHARE_STEP) * SHARE_STEP,
   );
+  // "Already saved": what it holds before 6pm. It lowers the monthly, never today's number.
+  const [opening, setOpening] = useState(0);
   const [working, setWorking] = useState(false);
   const busy = useRef(false);
   const finished = useRef(false);
@@ -90,10 +90,13 @@ export default function NewPot() {
   const change = (patch: Partial<PotFields>) => setDraft((d) => ({ ...d, ...patch }));
   const futureYou = snap.plan?.futureYou ?? 0;
   const share = percent / 100;
-  const monthly =
-    kind === 'goal'
-      ? Math.min(draft.goal, goalMonthly(futureYou, share))
-      : potMonthlyNeed(draft.goal, 0, potMonthsLeft(snap.cycle, month), currency);
+  const monthly = potSetAside({
+    pot: { kind, goal: draft.goal, neededBy: month, share, paused: false },
+    savedBefore: opening,
+    futureYou,
+    cycle: snap.cycle,
+    currency,
+  });
   const perDay = aboutPerDay(
     monthly,
     snap.cycle.daysLeft,
@@ -104,7 +107,7 @@ export default function NewPot() {
   const warn = usePotWarn({
     potId: null,
     goal: draft.goal,
-    saved: 0,
+    saved: opening,
     monthly: kind === 'goal' ? 0 : monthly,
     from,
     onMonth: setMonth,
@@ -137,6 +140,7 @@ export default function NewPot() {
         hue: draft.hue,
         goal: draft.goal,
         neededBy: month,
+        opening,
         ...(kind === 'goal' ? { share } : {}),
       }),
     );
@@ -168,6 +172,7 @@ export default function NewPot() {
       month={month}
       onMonth={setMonth}
       from={from}
+      opening={{ amount: opening, onChange: setOpening }}
       rows={
         kind === 'goal' && others > 0 ? (
           <StepperRow

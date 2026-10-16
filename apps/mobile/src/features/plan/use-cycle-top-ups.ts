@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react-native';
 import { useEffect, useState } from 'react';
 
 import { useMoneyStore } from '../../data/money-provider';
-import { readCycleTopUps, type CycleTopUps } from '../../data/plan-actions';
+import { readCycleTopUps, type CycleTopUps } from '../../data/pot-moves';
 import type { MoneySnapshot } from '../../data/money-store';
 
 /**

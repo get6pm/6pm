@@ -130,6 +130,29 @@ describe('the snapshot of the phone', () => {
     expect((await buildSnapshot(phone, TAKEN)).spends).toHaveLength(2);
   });
 
+  it('carries what a pot held before 6pm back, and still reads a format 2 snapshot', async () => {
+    const source = openMemoryDb();
+    await seedMoney(source);
+    await source.runAsync(
+      'INSERT INTO pot_moves (id, pot_id, amount, kind, cycle, at) VALUES (?, ?, ?, ?, ?, ?)',
+      ['opening:pot-1', 'pot-1', 2_000_000, 'opening', '2026-09-25', '2026-10-02T00:00:00.000Z'],
+    );
+    const snapshot = await buildSnapshot(source, TAKEN);
+    expect(backupSnapshotSchema.safeParse(snapshot).success).toBe(true);
+    expect(backupSnapshotSchema.safeParse({ ...snapshot, version: 2 }).success).toBe(true);
+
+    const phone = openMemoryDb();
+    await restoreSnapshot(phone, snapshot);
+    const moves = await phone.getAllAsync<{ kind: string; amount: number }>(
+      'SELECT kind, amount FROM pot_moves ORDER BY id',
+      [],
+    );
+    expect(moves).toEqual([
+      { kind: 'setAside', amount: 500_000 },
+      { kind: 'opening', amount: 2_000_000 },
+    ]);
+  });
+
   it('replaces what the phone held and leaves the settings that are its own', async () => {
     const source = openMemoryDb();
     await seedMoney(source);

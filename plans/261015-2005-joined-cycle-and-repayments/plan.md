@@ -50,7 +50,7 @@ All maths in `@6pm/domain`. Nothing leaves the phone; the new bill fields, the b
 |---|---|---|---|
 | 1 | Spent since payday: domain (joined-cycle free money from an answer, else the estimate), plan setting, onboarding step, editable river segment, tests | `plan/*`, `features/onboarding/*`, `features/plan/*`, `data/plan-settings.ts` | todo |
 | 2 | Repayments and bill payments: bill kind and last month, the deck's "Paying anything off?" card, bill matching in the close, "Paying off a card or loan?", "This was a bill", migration and backup, tests | `plan/*`, `capture/*`, `features/onboarding/*`, `features/close/*`, `features/details/*`, `data/*`, `db/migrations/*` | todo |
-| 3 | Savings you already have: `opening` pot moves, "Already saved" in the pot and goal editors, monthly need and progress, backup, tests | `plan/pots.ts`, `contracts/*`, `features/plan/*`, `data/pot-moves.ts` | todo |
+| 3 | Savings you already have: `opening` pot moves, "Already saved" in the pot and goal editors, monthly need and progress, backup, tests | `plan/pots.ts`, `contracts/*`, `features/plan/*`, `data/pot-moves.ts` | done |
 
 The prototype has neither screen. Both are built from existing components (onboarding's money step and bill deck, the close's question card) and logged in `docs/undesigned-states.md`.
 
@@ -61,5 +61,5 @@ The prototype has neither screen. Both are built from existing components (onboa
 - A 12-month trả góp of 1tr comes off each cycle and stops after the twelfth.
 - A 5tr card payment caught by email, answered "Yes, my card" in the close: the daily number does not drop; the card bill shows paid this cycle. Paid 6tr against a 5tr bill: free money drops by 1tr once.
 - A 2tr card bill and an 8tr full statement caught by email, "Yes, my card": the bill is paid, free money does not move.
-- A 50tr pot due in 10 months with 20tr already saved: 3tr a month, and today's number is the same as before the pot's saved amount was typed.
+- A 50tr pot due in 10 months with 20tr already saved: 3tr a month; typing the saved amount never lowers today's number (it rises by the set-aside it saves).
 - Domain Vitest for each rule; typecheck, lint, the changed tests; simulator check of both onboarding steps and the close question in VND and USD.

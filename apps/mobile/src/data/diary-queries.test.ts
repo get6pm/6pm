@@ -35,6 +35,21 @@ describe('futureYouOfMonth', () => {
     expect(futureYouOfMonth(moves, '2026-11', lastDay).total).toBe(4_400_000);
     expect(futureYouOfMonth(moves, '2026-09', lastDay)).toEqual({ added: 0, total: 0 });
   });
+
+  it('holds what a goal had before 6pm from the start, never as money added in a month', () => {
+    const opening = {
+      kind: 'opening',
+      amount: 20_000_000,
+      cycle: '2026-10-31',
+      at: '2026-11-02T05:00:00.000Z',
+    };
+    const all = [...moves, opening];
+    expect(futureYouOfMonth(all, '2026-11', lastDay)).toEqual({
+      added: 2_300_000,
+      total: 24_400_000,
+    });
+    expect(futureYouOfMonth(all, '2026-09', lastDay)).toEqual({ added: 0, total: 20_000_000 });
+  });
 });
 
 describe('readDayNumber', () => {

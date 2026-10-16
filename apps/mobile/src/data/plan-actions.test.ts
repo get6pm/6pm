@@ -4,6 +4,7 @@ import { sql as createSettings } from '../db/migrations/0001-create-settings';
 import { sql as createMoneyTables } from '../db/migrations/0002-create-money-tables';
 import { sql as createTogetherMoves } from '../db/migrations/0003-create-together-moves';
 import { sql as addCurrencyGuessed } from '../db/migrations/0004-spend-currency-guessed';
+import { sql as addPotMoveOpening } from '../db/migrations/0007-pot-move-opening';
 import { createMoneyStore, dayOf } from './money-store';
 import { planActions } from './plan-actions';
 import { DEFAULT_PLAN, writePlan } from './plan-settings';
@@ -21,6 +22,7 @@ async function open(today: string, startedOn = '2026-09-01') {
   sqlite.exec(createMoneyTables);
   sqlite.exec(createTogetherMoves);
   sqlite.exec(addCurrencyGuessed);
+  sqlite.exec(addPotMoveOpening);
   const db: SqlDatabase = {
     getAllAsync: <T>(source: string, params: SqlValue[]) =>
       Promise.resolve(sqlite.prepare(source).all(...params) as T[]),
@@ -212,5 +214,41 @@ describe('updateMonth', () => {
     expect(store.getSnapshot().cycle.start).toBe('2026-09-25');
     expect(moveCount(sqlite, 'setAside')).toBe(1);
     expect(Object.values(store.getSnapshot().setAsideThisCycle)).toEqual([1_500_000]);
+  });
+});
+
+describe('already saved', () => {
+  const wedding = { ...pot, name: 'Wedding', goal: 50_000_000, neededBy: '2027-08' };
+  const openings = (sqlite: InstanceType<typeof DatabaseSync>) =>
+    sqlite.prepare("SELECT amount FROM pot_moves WHERE kind = 'opening'").all();
+
+  it('counts toward the pot and its monthly, and never comes out of today', async () => {
+    const { store, actions } = await open('2026-10-11');
+    const before = dayOf(store.getSnapshot())?.startFree ?? 0;
+    const made = await actions.createPot({ ...wedding, opening: 20_000_000 });
+    const snap = store.getSnapshot();
+    // 30tr left over 10 months: 3tr a month, not 5tr.
+    expect(snap.setAsideThisCycle[made.id]).toBe(3_000_000);
+    expect(snap.potSaved[made.id]).toBe(23_000_000);
+    expect(snap.topUpsThisCycle).toBe(0);
+    expect(dayOf(snap)?.startFree).toBe(before - 3_000_000);
+  });
+
+  it('replaces the one opening move when edited, and works the cycle out again', async () => {
+    const { store, actions, sqlite } = await open('2026-10-11');
+    const made = await actions.createPot({ ...wedding, opening: 20_000_000 });
+    await actions.updatePot(made.id, { opening: 25_000_000 });
+    expect(openings(sqlite)).toEqual([{ amount: 25_000_000 }]);
+    expect(store.getSnapshot().setAsideThisCycle[made.id]).toBe(2_500_000);
+    expect(store.getSnapshot().topUpsThisCycle).toBe(0);
+    await actions.updatePot(made.id, { opening: 0 });
+    expect(openings(sqlite)).toEqual([]);
+    expect(store.getSnapshot().setAsideThisCycle[made.id]).toBe(5_000_000);
+  });
+
+  it('writes nothing for a pot made without one', async () => {
+    const { actions, sqlite } = await open('2026-10-11');
+    await actions.createPot(wedding);
+    expect(openings(sqlite)).toEqual([]);
   });
 });

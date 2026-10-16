@@ -9,6 +9,7 @@ import {
   type PotRow,
 } from '@6pm/domain';
 
+import type { MoneyStore } from './money-store';
 import type { SqlDatabase } from './table';
 
 interface MoveColumns {
@@ -18,7 +19,7 @@ interface MoveColumns {
   cycle: string;
 }
 
-const KINDS: readonly string[] = ['setAside', 'topUp', 'spent'] satisfies PotMoveKind[];
+const KINDS: readonly string[] = ['setAside', 'topUp', 'spent', 'opening'] satisfies PotMoveKind[];
 
 /** Every move of every pot, as the domain reads them. A row of an unknown kind is left out. */
 export async function readPotMoves(db: SqlDatabase): Promise<PotMove[]> {
@@ -73,6 +74,29 @@ export async function recordDueSetAsides(
 }
 
 /**
+ * Sets what a pot already held before 6pm: its one opening move, replaced on every edit and
+ * removed at 0. It is filed in the cycle it was typed in, but counts as saved before every cycle.
+ */
+export async function writeOpening(
+  db: SqlDatabase,
+  potId: string,
+  amount: number,
+  cycle: LocalDate,
+): Promise<void> {
+  const id = `opening:${potId}`;
+  const held = Math.max(0, Math.round(amount));
+  if (held === 0) {
+    await db.runAsync('DELETE FROM pot_moves WHERE id = ?', [id]);
+    return;
+  }
+  await db.runAsync(
+    `INSERT INTO pot_moves (id, pot_id, amount, kind, cycle, at) VALUES (?, ?, ?, 'opening', ?, ?)
+     ON CONFLICT (id) DO UPDATE SET amount = excluded.amount, at = excluded.at`,
+    [id, potId, held, cycle, new Date().toISOString()],
+  );
+}
+
+/**
  * Forgets one cycle's set-aside of a pot so the next load works it out again from the pot as it
  * is now: an edit to the pot (or to Future you, for a goal) reaches this cycle, never an earlier one.
  */
@@ -97,4 +121,21 @@ export async function moveCycleRecords(
   await db.runAsync('UPDATE pot_moves SET cycle = ? WHERE cycle = ?', [to, from]);
   await db.runAsync('UPDATE together_moves SET cycle = ? WHERE cycle = ?', [to, from]);
   await db.runAsync('UPDATE bills SET paid_cycle = ? WHERE paid_cycle = ?', [to, from]);
+}
+
+/** Top-ups this pay cycle, split by where they went: the river shows each under its own colour. */
+export interface CycleTopUps {
+  readonly goal: number;
+  readonly occasion: number;
+}
+
+/** This cycle's top-ups by the kind of pot they went into. */
+export async function readCycleTopUps(store: MoneyStore): Promise<CycleTopUps> {
+  const rows = await store.db.getAllAsync<{ kind: string; total: number }>(
+    `SELECT p.kind AS kind, SUM(m.amount) AS total FROM pot_moves m JOIN pots p ON p.id = m.pot_id
+     WHERE m.kind = 'topUp' AND m.cycle = ? AND p.archived_at IS NULL GROUP BY p.kind`,
+    [store.getSnapshot().cycle.start],
+  );
+  const of = (kind: string) => rows.find((r) => r.kind === kind)?.total ?? 0;
+  return { goal: of('goal'), occasion: of('occasion') };
 }

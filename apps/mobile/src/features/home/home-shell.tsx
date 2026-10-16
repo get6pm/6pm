@@ -26,6 +26,8 @@ import { HomeTopNav } from './home-top-nav';
 import { useHomeVisible } from './home-visible';
 import { ScanFab } from './scan-fab';
 import { SideRail } from './side-rail';
+import { OpenSpendProvider, SpreadPane, type PaneView } from '../duo/spread-pane';
+import { useFoldForm } from '../../ui/layout/fold';
 import { TabBar, TabBarRow } from './tab-bar';
 import { useHomePager } from './use-home-pager';
 
@@ -45,8 +47,22 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
   const { hour } = useClock();
   const { t } = useI18n();
   const { bottom, rail } = useDesignInsets();
-  // On the iPhone Duo the pages stop at the side rail; the sky still runs under it.
-  const width = useWindowDimensions().width - rail;
+  // On the iPhone Duo the pages stop at the side rail; the sky still runs under it. Opened
+  // sideways, they take the left page and the month fills the right one.
+  const form = useFoldForm();
+  const spread = form.kind === 'spread' ? form : null;
+  const windowWidth = useWindowDimensions().width;
+  const width = spread ? spread.left.width : windowWidth - rail;
+  const [pane, setPane] = useState<PaneView>({ kind: 'month' });
+  const openOnPage = useCallback((id: string) => setPane({ kind: 'spend', id }), []);
+  const backToMonth = useCallback(() => setPane({ kind: 'month' }), []);
+  // Shut part way through a spend, the same spend carries on in its sheet on the outer screen.
+  const openSpendId = pane.kind === 'spend' ? pane.id : null;
+  useEffect(() => {
+    if (spread || openSpendId === null) return;
+    setPane({ kind: 'month' });
+    router.push(`/spend/${openSpendId}`);
+  }, [spread, openSpendId, router]);
   const { y } = useHomeScroll();
   const [tab, setTab] = useState<HomeTab>(initialTab);
   const startIndex = HOME_TABS.indexOf(initialTab);
@@ -122,97 +138,118 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
 
   return (
     <HomeNavProvider value={homeNav}>
-      <View style={{ flex: 1, backgroundColor: palette.st[2] }}>
-        <Sky
-          look={look}
-          hour={hour}
-          serious={serious}
-          closed={closedToday}
-          scrollY={y}
-          showSun={sun}
-          active={homeVisible}
-        />
-        <GestureDetector gesture={pan}>
-          <View style={[StyleSheet.absoluteFill, { right: rail }]}>
-            <HomePage
-              index={0}
-              tabIndex={tabIndex}
-              position={position}
-              width={width}
-              homeVisible={homeVisible}
-              shown={tab === 'today'}
-            >
-              <Today
-                day={day}
-                scrollRef={todayRef}
-                onSettings={openSettings}
-                onQuickAdd={openQuickAdd}
-                onOpenDiary={openDiary}
-              />
-            </HomePage>
-            <HomePage
-              index={1}
-              tabIndex={tabIndex}
-              position={position}
-              width={width}
-              homeVisible={homeVisible}
-              shown={tab === 'plan'}
-            >
-              {mounted[1] ? (
-                <Plan
-                  active={tab === 'plan'}
-                  scrollRef={planRef}
-                  sectionsRef={planSections}
-                  onSectionChange={setPlanSection}
-                />
-              ) : null}
-            </HomePage>
-            <HomePage
-              index={2}
-              tabIndex={tabIndex}
-              position={position}
-              width={width}
-              homeVisible={homeVisible}
-              shown={tab === 'diary'}
-            >
-              {mounted[2] ? <Diary scrollRef={diaryRef} /> : null}
-            </HomePage>
-          </View>
-        </GestureDetector>
-        <HomeTopNav
-          tab={tab}
-          day={day}
-          onPressTop={scrollTop}
-          onQuickAdd={openQuickAdd}
-          planSection={planSection}
-          onPlanSection={jumpToSection}
-        />
-        {rail > 0 ? (
-          <SideRail
-            tab={tab}
-            onSelect={goToTab}
-            onReselect={scrollTop}
-            onQuickAdd={openQuickAdd}
-            onSettings={openSettings}
-            onScan={openScan}
+      <OpenSpendProvider value={spread ? openOnPage : null}>
+        <View style={{ flex: 1, backgroundColor: palette.st[2] }}>
+          <Sky
+            look={look}
+            hour={hour}
+            serious={serious}
+            closed={closedToday}
+            scrollY={y}
+            showSun={sun}
+            active={homeVisible}
           />
-        ) : (
-          <View
-            pointerEvents="box-none"
-            style={{ position: 'absolute', left: 0, right: 0, bottom: bottom(26) }}
-          >
-            <TabBarRow>
-              <TabBar active={tab} onSelect={goToTab} onReselect={scrollTop} />
-              <ScanFab
-                label={t('home.scan')}
-                hint={t('home.scanHint')}
-                onScan={openScan}
-                onQuickAdd={openQuickAdd}
-              />
-            </TabBarRow>
-          </View>
-        )}
-      </View>
+          <GestureDetector gesture={pan}>
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                spread ? { right: windowWidth - width, overflow: 'hidden' } : { right: rail },
+              ]}
+            >
+              <HomePage
+                index={0}
+                tabIndex={tabIndex}
+                position={position}
+                width={width}
+                homeVisible={homeVisible}
+                shown={tab === 'today'}
+              >
+                <Today
+                  day={day}
+                  scrollRef={todayRef}
+                  onSettings={openSettings}
+                  onQuickAdd={openQuickAdd}
+                  onOpenDiary={openDiary}
+                />
+              </HomePage>
+              <HomePage
+                index={1}
+                tabIndex={tabIndex}
+                position={position}
+                width={width}
+                homeVisible={homeVisible}
+                shown={tab === 'plan'}
+              >
+                {mounted[1] ? (
+                  <Plan
+                    active={tab === 'plan'}
+                    scrollRef={planRef}
+                    sectionsRef={planSections}
+                    onSectionChange={setPlanSection}
+                  />
+                ) : null}
+              </HomePage>
+              <HomePage
+                index={2}
+                tabIndex={tabIndex}
+                position={position}
+                width={width}
+                homeVisible={homeVisible}
+                shown={tab === 'diary'}
+              >
+                {mounted[2] ? <Diary scrollRef={diaryRef} /> : null}
+              </HomePage>
+            </View>
+          </GestureDetector>
+          {spread ? (
+            <View
+              style={{
+                position: 'absolute',
+                left: spread.right.x,
+                right: rail,
+                top: 14,
+                bottom: 14,
+              }}
+            >
+              <SpreadPane day={day} view={pane} onBack={backToMonth} />
+            </View>
+          ) : null}
+          <HomeTopNav
+            edge={spread ? windowWidth - width : rail}
+            tab={tab}
+            day={day}
+            onPressTop={scrollTop}
+            onQuickAdd={openQuickAdd}
+            planSection={planSection}
+            onPlanSection={jumpToSection}
+          />
+          {rail > 0 ? (
+            <SideRail
+              tab={tab}
+              onSelect={goToTab}
+              onReselect={scrollTop}
+              onQuickAdd={openQuickAdd}
+              onSettings={openSettings}
+              onScan={openScan}
+            />
+          ) : (
+            <View
+              pointerEvents="box-none"
+              style={{ position: 'absolute', left: 0, right: 0, bottom: bottom(26) }}
+            >
+              <TabBarRow>
+                <TabBar active={tab} onSelect={goToTab} onReselect={scrollTop} />
+                <ScanFab
+                  label={t('home.scan')}
+                  hint={t('home.scanHint')}
+                  onScan={openScan}
+                  onQuickAdd={openQuickAdd}
+                />
+              </TabBarRow>
+            </View>
+          )}
+        </View>
+      </OpenSpendProvider>
     </HomeNavProvider>
   );
 }

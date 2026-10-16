@@ -49,7 +49,7 @@ export function readSpendsBetween(
 }
 
 /** The first day 6pm has anything for: a spend or a closed day. Null on a fresh install. */
-async function readFirstDay(store: MoneyStore): Promise<LocalDate | null> {
+export async function readFirstDay(store: MoneyStore): Promise<LocalDate | null> {
   const rows = await store.db.getAllAsync<{ day: string | null }>(
     `SELECT MIN(day) AS day FROM (
        SELECT MIN(day) AS day FROM spends WHERE status != 'deleted'

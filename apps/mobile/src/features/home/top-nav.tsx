@@ -34,13 +34,16 @@ const FADE_AFTER = 24;
  */
 export function TopNav({
   onPressTop,
+  edge,
   children,
 }: {
   readonly onPressTop: () => void;
+  /** What it leaves clear on the right: the Duo's side rail, or the month's page beside Today. */
+  readonly edge: number;
   readonly children: ReactNode;
 }) {
   const { palette } = useTheme();
-  const { top, rail } = useDesignInsets();
+  const { top } = useDesignInsets();
   const { y, nav } = useHomeScroll();
 
   const fade = useAnimatedStyle(() => ({
@@ -69,7 +72,7 @@ export function TopNav({
           {
             position: 'absolute',
             left: 0,
-            right: 0,
+            right: edge,
             top: 0,
             height: top(96),
             experimental_backgroundImage: `linear-gradient(180deg, ${palette.st[0]} 0%, ${palette.st[0]}00 100%)`,
@@ -79,7 +82,7 @@ export function TopNav({
       />
       <Animated.View
         pointerEvents={touchable ? 'auto' : 'none'}
-        style={[{ position: 'absolute', left: 0, right: 0, top: 0 }, shown]}
+        style={[{ position: 'absolute', left: 0, right: edge, top: 0 }, shown]}
       >
         <BlurView
           intensity={60}
@@ -101,7 +104,7 @@ export function TopNav({
           style={{
             paddingTop: top(52),
             paddingLeft: 16,
-            paddingRight: 16 + rail,
+            paddingRight: 16,
             paddingBottom: 10,
             gap: 9,
           }}

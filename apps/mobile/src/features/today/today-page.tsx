@@ -20,6 +20,7 @@ import { TodayList } from './today-list';
 import { todayView, type WeekDay } from './today-view';
 import { useSpendLabels } from './use-spend-rows';
 import { TonightCard } from './tonight-card';
+import { useOpenSpend } from '../duo/spread-pane';
 
 /**
  * Today: the hero over the sky, then the sheet that holds the companion, tonight's card, the week
@@ -42,6 +43,7 @@ export function TodayPage({
 }) {
   const { palette } = useTheme();
   const router = useRouter();
+  const openSpend = useOpenSpend();
   const { closeHour, dayDate } = useClock();
   const snap = useMoney();
   const actions = useMoneyActions();
@@ -137,7 +139,7 @@ export function TodayPage({
           waiting={view.queue.length}
           spentLabel={view.spentLabel}
           onOpenInbox={() => router.push('/inbox')}
-          onOpenSpend={(id) => router.push(`/spend/${id}`)}
+          onOpenSpend={openSpend}
           onConfirm={(id) => void run(() => actions.setStatus(id, 'kept'))}
           onDelete={(id) => {
             const name = snap.cycleSpends.find((s) => s.id === id)?.merchant ?? '';

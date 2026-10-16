@@ -50,6 +50,21 @@ export const planInk = {
 } as const;
 
 /**
+ * The iPhone Duo's month beside Today: each day's tile, green when it came in under its line and
+ * red when it went over (the Duo design's daily numbers), and the same washes over a dark sheet.
+ */
+export const duoInk = {
+  under: {
+    light: { bg: '#e3f0dc', fg: '#2f5e33' },
+    dark: { bg: 'rgba(120,200,140,.18)', fg: '#a8dcb8' },
+  },
+  over: {
+    light: { bg: '#fbe0d8', fg: '#9a3a2a' },
+    dark: { bg: 'rgba(255,140,110,.18)', fg: '#ffb4a0' },
+  },
+} as const;
+
+/**
  * Budget together's round avatars (Plan card, `App:376`): the person's own in the prototype's
  * peach, the partner's in the same lightness at a cool hue, both with the prototype's dark ink.
  */

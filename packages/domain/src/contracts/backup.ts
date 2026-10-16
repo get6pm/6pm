@@ -97,6 +97,8 @@ export const spendSightingRowSchema = z.object({
   source: spendSourceSchema,
   seenAt: z.string().min(20),
   detail: z.string().nullable(),
+  /** The capture it came from; absent in backups taken before sightings kept it. */
+  captureId: z.string().nullable().optional(),
 });
 export type SpendSightingRow = z.infer<typeof spendSightingRowSchema>;
 

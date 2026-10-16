@@ -44,6 +44,7 @@ describe('the snapshot of the phone', () => {
         source: 'email',
         seenAt: '2026-10-10T05:13:00.000Z',
         detail: 'Duplicate merged',
+        captureId: null,
       },
     ]);
     expect(snapshot.merchantRules).toHaveLength(1);

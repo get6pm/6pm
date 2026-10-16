@@ -169,6 +169,20 @@ describe('receiving a receipt email', () => {
     expect(await fetchCaptures(token)).toHaveLength(1);
   });
 
+  it('keeps one receipt for one bank alert forwarded twice, each with its own Message-ID', async () => {
+    const { token, address } = await phone();
+    const withCode = (id: string, amount?: string) =>
+      rawEmail(id, amount).replace('ND: ', 'Ma GD: FT26283123456\r\nND: ');
+    for (const id of ['filter-1', 'by-hand-1']) {
+      const { message } = inbound(address, withCode(id));
+      expect(await receiveEmail(message, env, NOW)).toBe('stored');
+    }
+    expect(await fetchCaptures(token)).toHaveLength(1);
+    // The same code on another amount is another payment.
+    await receiveEmail(inbound(address, withCode('other-1', '30,000')).message, env, NOW);
+    expect(await fetchCaptures(token)).toHaveLength(2);
+  });
+
   it('drops mail that holds no payment, without a bounce', async () => {
     const { token, address } = await phone();
     const raw = rawEmail('news-1').replace(/TK 0123[^\r]*\r\n/, 'Giam gia cho ban!\r\n');

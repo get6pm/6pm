@@ -81,7 +81,8 @@ function parseJson(json: string): unknown {
 
 /**
  * Whether a capture was saved before: its id is a spend's, or it was merged into a payment seen
- * another way and its sighting is the trace it left.
+ * another way and its sighting carries its id. A sighting written before sightings kept their
+ * capture is known by its source and time.
  */
 export async function alreadyImported(
   store: MoneyStore,
@@ -89,8 +90,9 @@ export async function alreadyImported(
 ): Promise<boolean> {
   if (await store.tables.spends.get(item.id)) return true;
   const seen = await store.db.getAllAsync<{ n: number }>(
-    'SELECT COUNT(*) AS n FROM spend_sightings WHERE source = ? AND seen_at = ?',
-    [item.source, new Date(item.at).toISOString()],
+    `SELECT COUNT(*) AS n FROM spend_sightings
+      WHERE capture_id = ? OR (capture_id IS NULL AND source = ? AND seen_at = ?)`,
+    [item.id, item.source, new Date(item.at).toISOString()],
   );
   return (seen[0]?.n ?? 0) > 0;
 }

@@ -1,8 +1,8 @@
 import type { Vnd } from '../money/format';
 import { BANKS } from '../vietqr/bank-catalogue';
 import { readReceiptTime } from './receipt-time';
+import { dongIn, heroAmount } from './receipt-amount';
 import { foldWords } from './spoken-spend';
-import { parseWalletAmount } from './wallet-amount';
 
 export { readReceiptTime } from './receipt-time';
 
@@ -42,7 +42,9 @@ export type Field =
 
 /** Receipt labels in Vietnamese and English, folded (no accents, lower case), by field. */
 const LABELS: Readonly<Record<Field, string>> = {
-  amount: 'so tien, so tien giao dich, so tien chuyen, amount, transaction amount, tong tien',
+  amount:
+    'so tien, so tien giao dich, so tien gd, so tien chuyen, phat sinh, so tien phat sinh, ' +
+    'gd, amount, transaction amount, debit amount, tong tien',
   payee:
     'toi, to, den, chuyen den, nguoi nhan, ten nguoi nhan, nguoi huong, ten nguoi huong, ' +
     'nguoi thu huong, ten nguoi thu huong, don vi thu huong, ten tai khoan nhan, ' +
@@ -68,11 +70,16 @@ const LABEL_INDEX = new Map<string, Field>(
   ),
 );
 
+/** Labels that name a balance whatever follows them: "Số dư cuối", "SD TK 0071", "Balance after". */
+const BALANCE_LABEL = /^ (?:so du|sd|sdc|balance|available balance) /;
+
 /** The field a label names. Bilingual PDF labels ("Số tiền / Amount (VND)") match either part. */
 function labelOf(text: string): Field | null {
   const parts = text.replace(/\(.*?\)/g, ' ').split('/');
   for (const part of parts) {
-    const field = LABEL_INDEX.get(foldWords(part).trim());
+    const folded = foldWords(part);
+    const balance = BALANCE_LABEL.test(folded) && !/\d/.test(part);
+    const field = LABEL_INDEX.get(folded.trim()) ?? (balance ? 'balance' : null);
     if (field) return field;
   }
   return null;
@@ -153,31 +160,6 @@ export function readFields(rows: readonly Row[]): {
     if (found && !fields.has(field)) fields.set(field, found);
   });
   return { fields, rowFields };
-}
-
-/** An amount in đồng, as a receipt prints it ("-120,000 VND", "120.000 đ", "VND 120,000"). */
-function dongIn(text: string): Vnd | null {
-  const read = parseWalletAmount(text);
-  return read?.currency === 'VND' ? read.amount : null;
-}
-
-const PRINTED_AMOUNT =
-  /(?:vnd|₫)?\s*\d{1,3}(?:[.,]\d{3})+(?:[.,]\d{1,2})?\s*(?:vnd|vnđ|đ|₫|d)?(?!\p{L})|\d+\s*(?:vnd|vnđ|đ|₫)(?!\p{L})/iu;
-
-/** The amount printed largest, for receipts that show it without a label. */
-function heroAmount(rows: readonly Row[], rowFields: readonly (Field | null)[]): Vnd | null {
-  let best: Vnd | null = null;
-  let bestHeight = -1;
-  rows.forEach((row, i) => {
-    if (rowFields[i] !== null && rowFields[i] !== 'amount') return;
-    const printed = PRINTED_AMOUNT.exec(row.cells.join(' '))?.[0];
-    const amount = printed ? dongIn(printed) : null;
-    if (amount !== null && row.height > bestHeight) {
-      best = amount;
-      bestHeight = row.height;
-    }
-  });
-  return best;
 }
 
 /** A name as the bank registered it rather than the shop's own: all capitals, or a company. */

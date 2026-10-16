@@ -152,6 +152,23 @@ describe('parseReceiptEmail', () => {
     });
   });
 
+  it('reads the payment, not the balance, in a one-line balance change', () => {
+    const alert = email({
+      from: { name: 'VPBank', address: 'alert@vpbank.com.vn' },
+      subject: 'Thông báo biến động số dư',
+      text: 'Số dư cuối: 9,950,000 VND\nPhát sinh: -50,000 VND\nNội dung: Thanh toan QR tai PHUC LONG',
+    });
+    expect(parseReceiptEmail(alert, { receivedAt })).toMatchObject({
+      amount: 50_000,
+      merchant: 'PHUC LONG',
+    });
+  });
+
+  it('skips a notice that prints only the balance', () => {
+    const notice = email({ subject: 'Số dư tài khoản', text: 'Số dư khả dụng: 9,950,000 VND' });
+    expect(parseReceiptEmail(notice, { receivedAt })).toBeNull();
+  });
+
   it('skips an email with no amount in it', () => {
     const newsletter = email({ subject: 'Ưu đãi tháng 10', text: 'Giảm giá cho bạn! Xem ngay.' });
     expect(parseReceiptEmail(newsletter, { receivedAt })).toBeNull();

@@ -131,10 +131,16 @@ export function moneyActions(store: MoneyStore) {
     };
     await store.db.withTransactionAsync(async () => {
       const insert =
-        'INSERT OR IGNORE INTO spend_sightings (spend_id, source, seen_at, detail) VALUES (?, ?, ?, ?)';
+        'INSERT OR IGNORE INTO spend_sightings (spend_id, source, seen_at, detail, capture_id) VALUES (?, ?, ?, ?, ?)';
       // The first sighting was never written on its own; it is part of the trail from now on.
-      await store.db.runAsync(insert, [twin.id, twin.source, twin.at, twin.detail]);
-      await store.db.runAsync(insert, [twin.id, input.source, seenAt, input.detail ?? null]);
+      await store.db.runAsync(insert, [twin.id, twin.source, twin.at, twin.detail, twin.id]);
+      await store.db.runAsync(insert, [
+        twin.id,
+        input.source,
+        seenAt,
+        input.detail ?? null,
+        input.id ?? null,
+      ]);
       await tables.spends.put(next);
     });
     replaceSpend(next);

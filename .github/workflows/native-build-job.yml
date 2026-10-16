@@ -135,6 +135,11 @@ jobs:
           ASC_API_KEY_P8: ${{ inputs.profile != 'e2e-test' && secrets.EXPO_ASC_API_KEY_P8 || '' }}
           EXPO_ASC_KEY_ID: ${{ inputs.profile != 'e2e-test' && secrets.EXPO_ASC_KEY_ID || '' }}
           EXPO_ASC_ISSUER_ID: ${{ inputs.profile != 'e2e-test' && secrets.EXPO_ASC_ISSUER_ID || '' }}
+          # Uploads the signed build's source maps and debug symbols, so its crash reports read
+          # as code. Without it the Sentry plugin skips the upload (app.config.ts).
+          SENTRY_AUTH_TOKEN: ${{ inputs.profile != 'e2e-test' && secrets.SENTRY_AUTH_TOKEN || '' }}
+          # A failed upload costs readable crashes, never the build.
+          SENTRY_ALLOW_FAILURE: 'true'
         run: tools/scripts/native-build-ios.sh "$PROFILE" "$RUNNER_TEMP/native"
 
       - name: Keep the simulator app

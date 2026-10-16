@@ -127,7 +127,9 @@ export function PurchasesProvider({
       return undefined;
     }
     const refresh = () => {
-      port.customer().then(setCustomer, () => undefined);
+      // Without the store's word, the kept customer is read again: a Max that ran out meanwhile
+      // ends here too.
+      port.customer().then(setCustomer, () => setCustomer(parseCustomer(keptRef.current)));
     };
     // Prices are the shop's and the Max sheet's business: they ask when they open.
     refresh();

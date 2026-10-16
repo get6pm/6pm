@@ -46,6 +46,11 @@ export interface TogetherSnapshot {
   readonly refreshing: boolean;
 }
 
+interface Entry {
+  readonly seq: number;
+  readonly op: TogetherOp;
+}
+
 export type RunResult = { readonly ok: true } | { readonly ok: false; readonly error: unknown };
 
 export interface TogetherSync {
@@ -72,8 +77,16 @@ export function createTogetherSync(
   let base: TogetherState = initial ?? SIGNED_OUT;
   let known = initial !== null;
   let offline = false;
-  let pending: { readonly seq: number; readonly op: TogetherOp }[] = [];
+  let pending: Entry[] = [];
+  /**
+   * Writes the server took while another was still in flight. Answers to overlapping writes can
+   * arrive in any order, so one may lack a write the server took just before it: these stay laid
+   * over the copy until a fetch made after all of them have answered is adopted.
+   */
+  let settled: Entry[] = [];
   let seq = 0;
+  /** The newest write whose answer is the copy: an answer to an earlier one is never adopted. */
+  let answered = 0;
   let fetching: Promise<void> | null = null;
   /** Counts answers to writes: a fetch sent before one of them answered is older than it. */
   let written = 0;
@@ -83,7 +96,7 @@ export function createTogetherSync(
     return {
       state: viewOf(
         base,
-        pending.map((p) => p.op),
+        [...settled, ...pending].sort((a, b) => a.seq - b.seq).map((p) => p.op),
       ),
       known,
       offline,
@@ -101,11 +114,17 @@ export function createTogetherSync(
     base = next;
     known = true;
     offline = false;
+    if (fetched) settled = [];
     // Only a fetch can bring news from the other side; this phone's own leave is not news.
     if (fetched && endedByPartner(before, next)) deps.onEnded();
-    deps.persist(next).catch(deps.onLocalError);
+    // What the server has taken, including writes whose answers came back out of order.
+    const confirmed = viewOf(
+      next,
+      settled.map((p) => p.op),
+    );
+    deps.persist(confirmed).catch(deps.onLocalError);
     deps.history
-      .reconcile(ownContributions(next), next.pair?.pots.map((p) => p.id) ?? [])
+      .reconcile(ownContributions(confirmed), confirmed.pair?.pots.map((p) => p.id) ?? [])
       .catch(deps.onLocalError);
     publish();
   }
@@ -129,15 +148,12 @@ export function createTogetherSync(
   }
 
   async function run(op: TogetherOp): Promise<RunResult> {
-    const entry = { seq: ++seq, op };
+    const entry: Entry = { seq: ++seq, op };
     pending = [...pending, entry];
     publish();
+    let next: TogetherState;
     try {
-      const next = await deps.api.send(op);
-      pending = pending.filter((p) => p.seq !== entry.seq);
-      written += 1;
-      adopt(next);
-      return { ok: true };
+      next = await deps.api.send(op);
     } catch (error) {
       pending = pending.filter((p) => p.seq !== entry.seq);
       publish();
@@ -145,6 +161,23 @@ export function createTogetherSync(
       void refresh();
       return { ok: false, error };
     }
+    pending = pending.filter((p) => p.seq !== entry.seq);
+    written += 1;
+    if (pending.length === 0 && settled.length === 0 && entry.seq > answered) {
+      answered = entry.seq;
+      adopt(next);
+      return { ok: true };
+    }
+    settled = [...settled, entry];
+    if (entry.seq > answered) {
+      answered = entry.seq;
+      adopt(next);
+    } else {
+      publish();
+    }
+    // The writes overlapped: once all have answered, one fetch says what the server ended with.
+    if (pending.length === 0) void refresh();
+    return { ok: true };
   }
 
   return {

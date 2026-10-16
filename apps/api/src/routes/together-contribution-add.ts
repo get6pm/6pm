@@ -19,20 +19,25 @@ export const togetherContributionAddRoute: RouteDefinition = {
     const pairId = await requirePair(db, user.id);
     const potId = c.req.param('id') ?? '';
     await requirePot(db, pairId, potId);
-    const count = await db
-      .prepare('SELECT COUNT(*) AS n FROM together_contributions WHERE pot_id = ?')
-      .bind(potId)
-      .first<{ n: number }>();
-    if ((count?.n ?? 0) >= MAX_POT_CONTRIBUTIONS) {
-      throw new ApiError('bad_request', 'This pot holds no more entries', { reason: 'too_many' });
-    }
-    await db
+    // The cap is checked in the insert itself, so two adds at once cannot both take the last place.
+    const added = await db
       .prepare(
         `INSERT INTO together_contributions (id, pot_id, user_id, amount, added_at)
-         VALUES (?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING`,
+         SELECT ?1, ?2, ?3, ?4, ?5
+         WHERE (SELECT COUNT(*) FROM together_contributions WHERE pot_id = ?2) < ?6
+         ON CONFLICT (id) DO NOTHING`,
       )
-      .bind(id, potId, user.id, amount, new Date().toISOString())
+      .bind(id, potId, user.id, amount, new Date().toISOString(), MAX_POT_CONTRIBUTIONS)
       .run();
+    if (added.meta.changes === 0) {
+      const taken = await db
+        .prepare('SELECT 1 AS ok FROM together_contributions WHERE id = ?')
+        .bind(id)
+        .first();
+      if (taken === null) {
+        throw new ApiError('bad_request', 'This pot holds no more entries', { reason: 'too_many' });
+      }
+    }
     // The same id from someone else, or in another pot, is a clash, not a retry.
     const kept = await db
       .prepare(

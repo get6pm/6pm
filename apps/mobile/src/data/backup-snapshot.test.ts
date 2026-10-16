@@ -23,6 +23,14 @@ async function settingsOf(db: ReturnType<typeof openMemoryDb>) {
   return Object.fromEntries(rows.map((row) => [row.key, row.value]));
 }
 
+async function togetherIn(db: ReturnType<typeof openMemoryDb>, cycle: string) {
+  const [row] = await db.getAllAsync<{ total: number | null }>(
+    'SELECT SUM(amount) AS total FROM together_moves WHERE cycle = ?',
+    [cycle],
+  );
+  return row?.total ?? 0;
+}
+
 describe('the snapshot of the phone', () => {
   it('carries every table the app keeps and only the settings a person chose', async () => {
     const db = openMemoryDb();
@@ -60,6 +68,16 @@ describe('the snapshot of the phone', () => {
         at: '2026-10-01T00:00:00.000Z',
       },
     ]);
+    expect(snapshot.togetherMoves).toEqual([
+      {
+        id: 'together-1',
+        potId: 'shared-1',
+        potName: 'Đà Lạt',
+        amount: 300_000,
+        cycle: '2026-09-25',
+        at: '2026-10-05T00:00:00.000Z',
+      },
+    ]);
     expect(snapshot.closedDays).toHaveLength(1);
     expect(Object.keys(snapshot.settings).sort()).toEqual(['language', 'look', 'plan', 'wallets']);
     expect(snapshotItemCount(snapshot)).toBe(2 + 1 + 1 + 1 + 2 + 1);
@@ -76,6 +94,40 @@ describe('the snapshot of the phone', () => {
 
     expect(await isFreshDatabase(fresh)).toBe(false);
     expect(await buildSnapshot(fresh, TAKEN)).toEqual(snapshot);
+  });
+
+  it('brings Budget together history back, so it still counts as a top-up', async () => {
+    const original = openMemoryDb();
+    await seedMoney(original);
+    const snapshot = await buildSnapshot(original, TAKEN);
+
+    const phone = openMemoryDb();
+    await phone.runAsync(
+      'INSERT INTO together_moves (id, pot_id, pot_name, amount, cycle, at) VALUES (?, ?, ?, ?, ?, ?)',
+      ['stray', 'shared-9', 'Gone', 1_000, '2026-08-25', '2026-09-01T00:00:00.000Z'],
+    );
+    await restoreSnapshot(phone, snapshot);
+
+    expect(await togetherIn(phone, '2026-09-25')).toBe(300_000);
+    expect(await togetherIn(phone, '2026-08-25')).toBe(0);
+  });
+
+  it("keeps the phone's together history when an older snapshot does not carry it", async () => {
+    const source = openMemoryDb();
+    await seedMoney(source);
+    const { togetherMoves, ...older } = await buildSnapshot(source, TAKEN);
+    expect(togetherMoves).toHaveLength(1);
+    expect(backupSnapshotSchema.safeParse({ ...older, version: 1 }).success).toBe(true);
+
+    const phone = openMemoryDb();
+    await phone.runAsync(
+      'INSERT INTO together_moves (id, pot_id, pot_name, amount, cycle, at) VALUES (?, ?, ?, ?, ?, ?)',
+      ['own', 'shared-2', 'Rent', 2_000_000, '2026-09-25', '2026-10-02T00:00:00.000Z'],
+    );
+    await restoreSnapshot(phone, { ...older, version: 1 });
+
+    expect(await togetherIn(phone, '2026-09-25')).toBe(2_000_000);
+    expect((await buildSnapshot(phone, TAKEN)).spends).toHaveLength(2);
   });
 
   it('replaces what the phone held and leaves the settings that are its own', async () => {

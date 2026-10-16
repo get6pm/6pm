@@ -115,6 +115,10 @@ export async function seedMoney(db: SqlDatabase): Promise<void> {
     'INSERT INTO pot_moves (id, pot_id, amount, kind, cycle, at) VALUES (?, ?, ?, ?, ?, ?)',
     ['move-1', 'pot-1', 500_000, 'setAside', '2026-09-25', '2026-10-01T00:00:00.000Z'],
   );
+  await db.runAsync(
+    'INSERT INTO together_moves (id, pot_id, pot_name, amount, cycle, at) VALUES (?, ?, ?, ?, ?, ?)',
+    ['together-1', 'shared-1', 'Đà Lạt', 300_000, '2026-09-25', '2026-10-05T00:00:00.000Z'],
+  );
   await tables.closedDays.put({
     day: '2026-10-10',
     closedAt: '2026-10-10T12:30:00.000Z',

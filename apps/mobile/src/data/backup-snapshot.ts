@@ -6,6 +6,7 @@ import {
   type BackupSnapshot,
   type PotMoveRow,
   type SpendSightingRow,
+  type TogetherMoveRow,
 } from '@6pm/domain';
 
 import { openMoneyTables } from './money-tables';
@@ -44,6 +45,26 @@ async function readSettings(db: SqlDatabase): Promise<BackupSnapshot['settings']
   return settings;
 }
 
+/** Budget together history. It points at pots on the server, not here, so it has no parent. */
+async function readTogetherMoves(db: SqlDatabase): Promise<TogetherMoveRow[]> {
+  const rows = await db.getAllAsync<{
+    id: string;
+    pot_id: string;
+    pot_name: string;
+    amount: number;
+    cycle: string;
+    at: string;
+  }>('SELECT id, pot_id, pot_name, amount, cycle, at FROM together_moves ORDER BY id', []);
+  return rows.map((row) => ({
+    id: row.id,
+    potId: row.pot_id,
+    potName: row.pot_name,
+    amount: row.amount,
+    cycle: row.cycle,
+    at: row.at,
+  }));
+}
+
 /**
  * Every table the app keeps, as plain rows. Rows that others point at are read last, so a row
  * written while this runs never points at one that was missed: spends before their categories,
@@ -71,12 +92,13 @@ export async function buildSnapshot(db: SqlDatabase, takenAt: string): Promise<B
     cycle: string;
     at: string;
   }>('SELECT id, pot_id, amount, kind, cycle, at FROM pot_moves ORDER BY id', []);
-  const [categories, bills, pots, closedDays, settings] = await Promise.all([
+  const [categories, bills, pots, closedDays, settings, togetherMoves] = await Promise.all([
     tables.categories.all(),
     tables.bills.all(),
     tables.pots.all(),
     tables.closedDays.all(),
     readSettings(db),
+    readTogetherMoves(db),
   ]);
   const spendIds = new Set(spends.map((spend) => spend.id));
   const potIds = new Set(pots.map((pot) => pot.id));
@@ -108,6 +130,7 @@ export async function buildSnapshot(db: SqlDatabase, takenAt: string): Promise<B
         cycle: row.cycle,
         at: row.at,
       })),
+    togetherMoves,
     closedDays,
   };
 }
@@ -164,13 +187,16 @@ function checkSettings(settings: BackupSnapshot['settings']): void {
  * Replaces everything the app keeps with the snapshot, in one transaction: a snapshot that fails
  * half way leaves the phone exactly as it was. Settings that belong to this phone (what the store
  * said about purchases, where backup stands) are left alone; the four a snapshot carries are
- * replaced, and removed when the snapshot has none.
+ * replaced, and removed when the snapshot has none. Budget together history is replaced only by a
+ * snapshot that carries it: one taken before it was carried says nothing about it, so the phone's
+ * own stays.
  */
 export async function restoreSnapshot(db: SqlDatabase, snapshot: BackupSnapshot): Promise<void> {
   checkSettings(snapshot.settings);
   const tables = openMoneyTables(db);
   await db.withTransactionAsync(async () => {
     for (const table of CLEARED_IN_ORDER) await db.runAsync(`DELETE FROM ${table}`, []);
+    if (snapshot.togetherMoves !== undefined) await db.runAsync('DELETE FROM together_moves', []);
     await db.runAsync(`DELETE FROM settings WHERE key IN (${keyList})`, [...BACKUP_SETTING_KEYS]);
 
     for (const [key, value] of Object.entries(snapshot.settings)) {
@@ -196,6 +222,12 @@ export async function restoreSnapshot(db: SqlDatabase, snapshot: BackupSnapshot)
       await db.runAsync(
         'INSERT OR REPLACE INTO pot_moves (id, pot_id, amount, kind, cycle, at) VALUES (?, ?, ?, ?, ?, ?)',
         [row.id, row.potId, row.amount, row.kind, row.cycle, row.at],
+      );
+    }
+    for (const row of snapshot.togetherMoves ?? []) {
+      await db.runAsync(
+        'INSERT OR REPLACE INTO together_moves (id, pot_id, pot_name, amount, cycle, at) VALUES (?, ?, ?, ?, ?, ?)',
+        [row.id, row.potId, row.potName, row.amount, row.cycle, row.at],
       );
     }
     for (const row of snapshot.closedDays) await tables.closedDays.put(row);

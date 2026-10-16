@@ -80,6 +80,16 @@ describe('encodeVietQR', () => {
     );
   });
 
+  it('reads back the largest amount it writes', () => {
+    const payload = encodeVietQR({
+      bin: '970436',
+      account: '1023334821',
+      amount: 9_999_999_999_999,
+    });
+    const parsed = parseVietQR(payload);
+    expect(parsed.ok && parsed.amount).toBe(9_999_999_999_999);
+  });
+
   it('refuses inputs NAPAS would refuse', () => {
     const ok = { bin: '970436', account: '1023334821' };
     expect(() => encodeVietQR({ ...ok, bin: '97043' })).toThrow(RangeError);
@@ -87,6 +97,9 @@ describe('encodeVietQR', () => {
     expect(() => encodeVietQR({ ...ok, account: '1'.repeat(20) })).toThrow(RangeError);
     expect(() => encodeVietQR({ ...ok, amount: 0 })).toThrow(RangeError);
     expect(() => encodeVietQR({ ...ok, amount: 55_000.5 })).toThrow(RangeError);
+    expect(() => encodeVietQR({ ...ok, amount: 10_000_000_000_000 })).toThrow(RangeError);
+    expect(() => encodeVietQR({ ...ok, amount: Number.MAX_SAFE_INTEGER })).toThrow(RangeError);
+    expect(() => encodeVietQR({ ...ok, amount: Number.NaN })).toThrow(RangeError);
     expect(() => encodeVietQR({ ...ok, note: 'x'.repeat(100) })).toThrow(RangeError);
   });
 });

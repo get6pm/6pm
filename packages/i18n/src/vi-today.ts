@@ -127,6 +127,7 @@ export const viToday: { readonly [Key in keyof typeof enToday]: Entry } = {
   'settings.remindersOff': 'Tắt',
   'settings.language': 'Ngôn ngữ',
   'settings.languageName': 'Tiếng Việt',
+  'settings.languagePhone': 'Theo điện thoại',
   'settings.yourData': 'Dữ liệu của bạn',
   'settings.privacy': 'Quyền riêng tư',
   'settings.privacyBody':

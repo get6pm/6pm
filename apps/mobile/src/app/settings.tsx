@@ -45,7 +45,7 @@ const ARM_MS = 3000;
 export default function Settings() {
   const router = useRouter();
   const { palette } = useTheme();
-  const { t, language, setLanguage } = useI18n();
+  const { t, setLanguage } = useI18n();
   const toast = useToast();
   const snap = useMoney();
   const store = useMoneyStore();
@@ -171,8 +171,7 @@ export default function Settings() {
           value={t('settings.languageName')}
           onPress={() => {
             haptics.tick();
-            // The reminder's words follow the language on their own.
-            setLanguage(language === 'vi' ? 'en' : 'vi');
+            router.push('/language');
           }}
         />
         <SettingRow

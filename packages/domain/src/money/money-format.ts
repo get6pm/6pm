@@ -146,7 +146,8 @@ function shortOf(amount: Money, locale: MoneyLocale): string {
   if (Math.round(major / 100_000) >= 10_000) {
     const billions = (Math.round(major / 10_000_000) / 100).toString().replace('.', decimal);
     body = billions + (locale.language === 'vi' ? '\u00a0tỷ' : 'B');
-  } else if (Math.round(major / 100_000) >= 10) {
+  } else if (Math.round(major / 1000) >= 1000) {
+    // An amount that rounds up to a thousand thousands is a million: "$1M", never "1000k".
     body = oneDecimal(major / 1_000_000, decimal) + (locale.language === 'vi' ? 'tr' : 'M');
   } else if (Math.round(major / stepMajor) * stepMajor >= 10_000) {
     const thousands = major / 1000;

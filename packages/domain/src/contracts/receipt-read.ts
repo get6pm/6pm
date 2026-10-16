@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
 import { readPrintedNumber } from '../capture/wallet-amount';
-import { TRAVEL_CURRENCIES } from '../travel/currencies';
+import { currencyOf } from '../money/currency';
+import { foreignDecimalsOf } from '../travel/currencies';
 import { languageSchema } from './wire';
 
 /**
@@ -71,13 +72,12 @@ export const receiptReadResponseSchema = z.object({
 export type ReceiptReadResponse = z.infer<typeof receiptReadResponseSchema>;
 
 /**
- * Decimals a currency's amounts are counted in. Đồng and the currencies Travel mode writes whole
- * (yen, won, riel, kip, rupiah) have none; every other currency has cents. For the currencies a
- * payment app prints this matches `parseWalletAmount`.
+ * Decimals a currency's amounts are counted in, as every foreign amount is written
+ * (`foreignDecimalsOf`): đồng and the currencies written whole (yen, won, rupiah, forints) have
+ * none; every other currency has cents.
  */
 export function receiptCurrencyDecimals(currency: string): 0 | 2 {
-  if (currency === 'VND') return 0;
-  return TRAVEL_CURRENCIES[currency]?.decimals ?? 2;
+  return foreignDecimalsOf(currency);
 }
 
 /**
@@ -90,7 +90,7 @@ export function receiptMinorUnits(printed: string, currency: string): number | n
     .replace(/[^\d.,'\s]/g, '')
     .trim();
   if (digits === '') return null;
-  const value = readPrintedNumber(digits);
+  const value = readPrintedNumber(digits, currencyOf(currency).minorDigits);
   if (value === null || !Number.isFinite(value) || value <= 0) return null;
   const amount = Math.round(value * 10 ** receiptCurrencyDecimals(currency));
   return amount > 0 && Number.isSafeInteger(amount) ? amount : null;

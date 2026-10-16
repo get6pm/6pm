@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { encodeVietQR, parseVietQR, type VietQR } from '@6pm/domain';
+import { currencyOf, encodeVietQR, parseVietQR, VND, type VietQR } from '@6pm/domain';
 
 import { foreignAmountLabel, payeeName, payOptions, payWallets } from './pay-options';
 
@@ -72,15 +72,28 @@ describe('payeeName', () => {
 });
 
 describe('foreignAmountLabel', () => {
+  const dong = { home: VND, language: 'en' } as const;
+
   it('writes a Thai PromptPay amount in baht', () => {
     const failure = parseVietQR(
       '00020101021229370016A0000006770101110113006681234567853037645406120.005802TH6304BC9B',
     );
     expect(failure.ok).toBe(false);
-    if (!failure.ok) expect(foreignAmountLabel(failure)).toBe('฿120');
+    if (!failure.ok) expect(foreignAmountLabel(failure, dong)).toBe('฿120');
+  });
+
+  it('writes it in the phone’s own style away from đồng', () => {
+    const failure = { ok: false, reason: 'foreign', currency: '702', amount: '12.5' } as const;
+    const us = {
+      home: currencyOf('USD'),
+      language: 'en',
+      phone: { languageTag: 'en-US' },
+    } as const;
+    expect(foreignAmountLabel(failure, dong)).toBe('S$12,50');
+    expect(foreignAmountLabel(failure, us)).toBe('S$12.50');
   });
 
   it('is null for a foreign QR without an amount', () => {
-    expect(foreignAmountLabel({ ok: false, reason: 'foreign', currency: '764' })).toBeNull();
+    expect(foreignAmountLabel({ ok: false, reason: 'foreign', currency: '764' }, dong)).toBeNull();
   });
 });

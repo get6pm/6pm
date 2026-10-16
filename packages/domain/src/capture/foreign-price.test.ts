@@ -50,8 +50,15 @@ describe('waitingForeign', () => {
     expect(waitingForeign({ ...saved, foreignAmount: null })).toBeNull();
   });
 
+  it('waits for any currency the server fetches a rate for', () => {
+    for (const currency of ['CHF', 'MXN', 'CAD', 'INR', 'KWD']) {
+      const waiting = { ...saved, foreignAmount: { currency, amount: 12, rate: 0 } };
+      expect(waitingForeign(waiting)).toEqual({ currency, amount: 12, fromNote: false });
+    }
+  });
+
   it('leaves alone a currency 6pm has no rate for', () => {
-    const franc = { ...saved, foreignAmount: { currency: 'CHF', amount: 12, rate: 0 } };
+    const franc = { ...saved, foreignAmount: { currency: 'XAF', amount: 12, rate: 0 } };
     expect(waitingForeign(franc)).toBeNull();
   });
 });
@@ -60,6 +67,13 @@ describe('pricing at the rate of the receipt’s day', () => {
   it('takes the phone’s calendar day the receipt was paid', () => {
     expect(rateDayOf(new Date(2026, 8, 2, 11, 55))).toBe('2026-09-02');
     expect(rateDayOf(new Date(2026, 8, 2, 23, 59))).toBe('2026-09-02');
+  });
+
+  it('prices a currency outside the travel table in its own decimals', () => {
+    const waiting = { currency: 'CHF', amount: 8.5, fromNote: false };
+    expect(priceWaiting(waiting, '30000')?.amount).toBe(255_000);
+    const forints = { currency: 'HUF', amount: 1200.4, fromNote: false };
+    expect(priceWaiting(forints, '70')?.amount).toBe(84_000);
   });
 
   it('prices exactly, to the nearest đồng', () => {

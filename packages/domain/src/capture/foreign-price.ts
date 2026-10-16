@@ -1,6 +1,6 @@
 import { VND, type Currency, type Money } from '../money/currency';
 import { localDateOf, type LocalDate } from '../time/local-date';
-import { TRAVEL_CURRENCIES, travelCurrency } from '../travel/currencies';
+import { foreignDecimalsOf, hasRate, TRAVEL_CURRENCIES } from '../travel/currencies';
 import { formatForeign, isRate, rateNumber } from '../travel/fx';
 import { foreignToHome } from '../travel/home-fx';
 
@@ -74,7 +74,7 @@ export function waitingForeign(spend: WaitingSpend): Waiting | null {
   if (foreign !== null) {
     if (foreign.rate > 0 || foreign.amount <= 0) return null;
     // Đồng waits too, on a phone counting another currency: the server quotes everything in it.
-    if (!travelCurrency(foreign.currency) && foreign.currency !== 'VND') return null;
+    if (!hasRate(foreign.currency)) return null;
     return { currency: foreign.currency, amount: foreign.amount, fromNote: false };
   }
   if (spend.source !== 'shared') return null;
@@ -96,7 +96,7 @@ export function priceWaiting(
   rate: string,
 ): { amount: Money; foreignAmount: ForeignAmount } | null {
   if (!isRate(rate)) return null;
-  const decimals = travelCurrency(waiting.currency)?.decimals ?? 2;
+  const decimals = foreignDecimalsOf(waiting.currency);
   const amount = foreignToHome(waiting.amount.toFixed(decimals), rate, VND);
   if (amount === null || amount <= 0) return null;
   return {

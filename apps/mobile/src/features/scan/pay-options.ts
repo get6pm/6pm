@@ -1,4 +1,13 @@
-import { findBank, type BankInfo, type VietQR, type VietQRFailure } from '@6pm/domain';
+import {
+  currencyOfForeignQr,
+  findBank,
+  foreignAmountText,
+  isRate,
+  type BankInfo,
+  type VietQR,
+  type VietQRFailure,
+  type WritingStyle,
+} from '@6pm/domain';
 
 /**
  * How a scanned VietQR gets paid. A transfer to an account or card offers the user's own banks
@@ -41,18 +50,12 @@ export function payeeName(qr: VietQR): string {
   return `${qr.bank?.shortName ?? qr.bin} ${qr.accountMasked}`;
 }
 
-/** ISO 4217 numeric codes the foreign schemes use, as the symbol a person writes. */
-const CURRENCY_SYMBOLS: Readonly<Record<string, string>> = {
-  '764': '฿',
-  '702': 'S$',
-  '458': 'RM',
-  '116': '៛',
-  '840': '$',
-};
-
-/** "฿120" for a foreign QR with an amount; null when it carries none. */
-export function foreignAmountLabel(failure: VietQRFailure): string | null {
-  if (failure.amount === undefined) return null;
-  const symbol = (failure.currency && CURRENCY_SYMBOLS[failure.currency]) ?? '';
-  return `${symbol}${Number(failure.amount).toLocaleString('en-US')}`;
+/**
+ * "฿120" for a foreign QR with an amount, written as the phone writes foreign money; null when it
+ * carries none, or no currency 6pm can name.
+ */
+export function foreignAmountLabel(failure: VietQRFailure, style: WritingStyle): string | null {
+  const currency = currencyOfForeignQr(failure);
+  if (failure.amount === undefined || currency === null || !isRate(failure.amount)) return null;
+  return foreignAmountText({ currency: currency.code, amount: Number(failure.amount) }, style);
 }

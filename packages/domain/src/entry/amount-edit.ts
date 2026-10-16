@@ -1,5 +1,5 @@
 import { toMajor, VND, type Currency } from '../money/currency';
-import { travelCurrency } from '../travel/currencies';
+import { foreignDecimalsOf } from '../travel/currencies';
 import { DECIMAL_PATTERN } from '../travel/fx';
 import { foreignToHome } from '../travel/home-fx';
 import { homeKeypad, keypadHomeMinor, pressKey, type KeypadKey, type KeypadState } from './keypad';
@@ -11,10 +11,6 @@ import { homeKeypad, keypadHomeMinor, pressKey, type KeypadKey, type KeypadState
 export interface SpendAmount {
   readonly amount: number;
   readonly foreignAmount: { currency: string; amount: number; rate: number } | null;
-}
-
-function decimalsOf(currency: string): number {
-  return travelCurrency(currency)?.decimals ?? 2;
 }
 
 /** A number as the keypad holds it: "68.8", "496650", never an exponent. */
@@ -34,7 +30,7 @@ export function editKeypadOf(
 ): KeypadState {
   const base = homeKeypad(home);
   if (foreignAmount) {
-    const decimals = decimalsOf(foreignAmount.currency);
+    const decimals = foreignDecimalsOf(foreignAmount.currency);
     const foreign = { code: foreignAmount.currency, decimals };
     return {
       ...base,

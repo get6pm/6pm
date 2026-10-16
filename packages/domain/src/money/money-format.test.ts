@@ -73,6 +73,12 @@ describe('moneyFormat elsewhere', () => {
     expect(jp.short(353_000)).toBe('¥353k');
   });
 
+  it('switches to M only once the thousands round to a thousand', () => {
+    expect(us.short(95_000_000)).toBe('$950k');
+    expect(us.short(99_949_900)).toBe('$999k');
+    expect(us.short(99_950_000)).toBe('$1M');
+  });
+
   it('says millions as tr in Vietnamese', () => {
     const vi = moneyFormat(moneyLocale(currencyOf('USD'), 'vi', { languageTag: 'en-US' }));
     expect(vi.short(120_000_000)).toBe('$1.2tr');

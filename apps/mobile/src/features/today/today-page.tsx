@@ -20,7 +20,7 @@ import { TodayList } from './today-list';
 import { todayView, type WeekDay } from './today-view';
 import { useSpendLabels } from './use-spend-rows';
 import { TonightCard } from './tonight-card';
-import { useOpenSpend } from '../duo/spread-pane';
+import { useOpenAsk, useOpenSpend } from '../duo/spread-pane';
 
 /**
  * Today: the hero over the sky, then the sheet that holds the companion, tonight's card, the week
@@ -44,6 +44,7 @@ export function TodayPage({
   const { palette } = useTheme();
   const router = useRouter();
   const openSpend = useOpenSpend();
+  const openAsk = useOpenAsk();
   const { closeHour, dayDate } = useClock();
   const snap = useMoney();
   const actions = useMoneyActions();
@@ -116,7 +117,7 @@ export function TodayPage({
                         ? 'replan'
                         : 'idle'
             }
-            onPress={() => router.push('/ask')}
+            onPress={() => openAsk()}
           />
         ) : null}
         <TonightCard

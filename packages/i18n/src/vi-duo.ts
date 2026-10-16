@@ -9,4 +9,8 @@ export const viDuo: { readonly [Key in keyof typeof enDuo]: Entry } = {
   'duo.day.ofLine': 'trên {line} của ngày đó',
   'duo.day.previous': 'Ngày trước',
   'duo.day.next': 'Ngày sau',
+  'duo.ask.title': 'Nếu bạn tiêu {amount}',
+  'duo.ask.from': 'xem trước từ Hỏi',
+  'duo.ask.spent': 'đã tiêu {spent} · thêm ~{amount}',
+  'duo.ask.left': 'còn {left}',
 };

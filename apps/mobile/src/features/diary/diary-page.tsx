@@ -19,6 +19,7 @@ import { ScrollReveal } from './scroll-reveal';
 import { useDiary } from './use-diary';
 import { WeekRecapCard } from './week-recap-card';
 import { useDiaryBridge } from '../duo/diary-bridge';
+import { useOpenAsk } from '../duo/spread-pane';
 
 /**
  * Diary: the week recap, the month's calendar of receipts, the selected day's receipt, the way
@@ -33,6 +34,7 @@ export function DiaryPage({ scrollRef }: { readonly scrollRef: AnimatedRef<Anima
   const shown = useHomePageShown();
   const { y } = useHomeScroll();
   const diary = useDiary();
+  const openAsk = useOpenAsk();
   // On the opened iPhone Duo the chosen day is written on the right page, not under the calendar.
   const toPage = useDiaryBridge();
   const closed = diary.cells.flatMap((c) => (c.kind === 'closed' ? [c.day] : []));
@@ -109,9 +111,7 @@ export function DiaryPage({ scrollRef }: { readonly scrollRef: AnimatedRef<Anima
 
       <ScrollReveal>
         {/* Ask 6pm has no screen yet: the entry is drawn and does nothing until it lands. */}
-        <AskEntry
-          onAsk={(q) => router.push(q === undefined ? '/ask' : { pathname: '/ask', params: { q } })}
-        />
+        <AskEntry onAsk={openAsk} />
       </ScrollReveal>
 
       <ScrollReveal>

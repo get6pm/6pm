@@ -28,7 +28,15 @@ export function CloseRevealStep({
   const monthDays = monthDots(day, snap.closedDays);
   // Companion keys are composed from the event and persona; every one takes the same placeholders.
   const lineFor = t as unknown as (key: string, params: Record<string, string | number>) => string;
-  const event = number.spent === 0 ? 'zero' : number.replan ? 'replan' : 'reveal';
+  // A day that takes the cycle past its plan never hears that the month still lands.
+  const event =
+    number.spent === 0
+      ? 'zero'
+      : number.overspent
+        ? 'pastPlan'
+        : number.replan
+          ? 'replan'
+          : 'reveal';
 
   return (
     <CloseReveal
@@ -48,7 +56,7 @@ export function CloseRevealStep({
               day: new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(on),
             })
       }
-      mood={event === 'replan' ? 'nod' : 'happy'}
+      mood={event === 'replan' || event === 'pastPlan' ? 'nod' : 'happy'}
       sub={t('close.reveal.free', {
         free: money.short(number.free),
         days: payCycleOn(day, plan.payday).daysLeft,

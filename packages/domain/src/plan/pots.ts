@@ -162,7 +162,8 @@ export function occasionsOf(
  * Splits Future you between its goals so the shares add up to one. `pinned` keeps the share it was
  * given (the goal the user just set) and the others fill the rest in their old proportions, or
  * evenly when they had none. Without `pinned` every share is scaled to fit. Shares are whole
- * percents; rounding leaves the largest of the others with the difference.
+ * percents, each between none and all: the others' percents are rounded down and the points still
+ * missing go to those that lost the most in the rounding (the largest remainders).
  */
 export function rebalanceShares(
   shares: Readonly<Record<string, number>>,
@@ -172,21 +173,28 @@ export function rebalanceShares(
   const only = ids[0];
   if (only === undefined) return {};
   if (ids.length === 1) return { [only]: 1 };
-  const clamp = (n: number) => Math.min(1, Math.max(0, n));
+  const clamp = (n: number) => (Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0);
   const pin = pinned !== undefined && pinned in shares ? pinned : null;
-  const keep = pin === null ? 0 : clamp(shares[pin] ?? 0);
+  const keep = pin === null ? 0 : Math.round(clamp(shares[pin] ?? 0) * 100);
   const others = ids.filter((id) => id !== pin);
   const total = others.reduce((sum, id) => sum + clamp(shares[id] ?? 0), 0);
-  const out: Record<string, number> = {};
-  for (const id of others) {
+  const exact = others.map((id) => {
     const part = total > 0 ? clamp(shares[id] ?? 0) / total : 1 / others.length;
-    out[id] = Math.round(part * (1 - keep) * 100) / 100;
+    return { id, points: part * (100 - keep) };
+  });
+  const points: Record<string, number> = {};
+  for (const { id, points: p } of exact) points[id] = Math.floor(p);
+  let missing = 100 - keep - exact.reduce((sum, e) => sum + (points[e.id] ?? 0), 0);
+  const byRemainder = [...exact].sort(
+    (a, b) => b.points - Math.floor(b.points) - (a.points - Math.floor(a.points)),
+  );
+  for (const { id } of byRemainder) {
+    if (missing <= 0) break;
+    points[id] = (points[id] ?? 0) + 1;
+    missing -= 1;
   }
-  const absorbs = others.sort((a, b) => (out[b] ?? 0) - (out[a] ?? 0))[0];
-  if (pin !== null) out[pin] = Math.round(keep * 100) / 100;
-  const sum = Object.values(out).reduce((a, b) => a + b, 0);
-  const last = absorbs ?? pin;
-  if (last !== null) out[last] = Math.round(((out[last] ?? 0) + (1 - sum)) * 100) / 100;
+  const out: Record<string, number> = {};
+  for (const id of ids) out[id] = (id === pin ? keep : (points[id] ?? 0)) / 100;
   return out;
 }
 
@@ -204,6 +212,14 @@ export function potTopUpStep(goal: Vnd, currency: Currency = VND): Vnd {
   const most = goal / 20;
   const steps = currency.code === 'VND' ? TOP_UP_STEPS : topUpStepsIn(currency);
   return steps.reduce((best, step) => (step <= most ? step : best), steps[0] ?? 0);
+}
+
+/**
+ * What one tap of a jar's quick top-up adds: the step, or only what is left when that is less, and
+ * nothing once the jar is full.
+ */
+export function potTopUp(goal: Vnd, saved: Vnd, step: Vnd): Vnd {
+  return Math.max(0, Math.min(step, goal - saved));
 }
 
 /**

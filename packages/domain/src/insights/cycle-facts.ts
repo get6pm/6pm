@@ -1,5 +1,5 @@
 import { floorToThousand } from '../money/format';
-import { addDays, diffDays } from '../time/local-date';
+import { addDays, diffDays, type LocalDate } from '../time/local-date';
 import {
   compareAmounts,
   countedSpends,
@@ -23,29 +23,35 @@ const MIN_PACE_DAYS = 7;
 const MIN_DAYS_LEFT = 3;
 
 interface CycleMoney {
-  /** Days this cycle's money covers, its start through payday. */
+  /** The first day 6pm counted in this cycle: its start, or the day the user joined. */
+  readonly from: LocalDate;
+  /** Days this cycle's money covers, `from` through payday. */
   readonly length: number;
-  /** Whole days of the cycle before today. */
+  /** Whole days counted before today. */
   readonly elapsed: number;
   /** Counted before today. */
   readonly spentBefore: number;
-  /** The cycle's free money: what was free at its start. */
+  /** The cycle's free money: what was free when counting began. */
   readonly total: number;
 }
 
 function cycleMoney(input: InsightInput): CycleMoney {
-  const { cycle, today, day } = input;
-  const spentBefore = countedSpends(input, cycle.start, addDays(today, -1)).reduce(
-    (sum, s) => sum + s.amount,
-    0,
-  );
+  const { cycle, today, day, joinedOn } = input;
+  // In the cycle the user joined, spending exists only from that day: time is measured from it,
+  // as the daily number's share of the cycle is (M2a).
+  const from = joinedOn != null && joinedOn > cycle.start ? joinedOn : cycle.start;
+  const spentBefore = sumOf(countedSpends(input, cycle.start, addDays(today, -1)));
   return {
-    length: diffDays(cycle.payday, cycle.start) + 1,
-    elapsed: diffDays(today, cycle.start),
+    from,
+    length: diffDays(cycle.payday, from) + 1,
+    elapsed: Math.max(0, diffDays(today, from)),
     spentBefore,
     total: day.startFree + spentBefore,
   };
 }
+
+const sumOf = (spends: readonly { readonly amount: number }[]) =>
+  spends.reduce((sum, s) => sum + s.amount, 0);
 
 const percentOf = (part: number, whole: number) => Math.round((part * 100) / whole);
 
@@ -71,14 +77,11 @@ export function cycleHalfwayFacts(input: InsightInput): Fact[] {
 
 /** The first seven days against an even share of the cycle, told just after they end. */
 export function firstWeekPaceFacts(input: InsightInput): Fact[] {
-  const { length, elapsed, total } = cycleMoney(input);
+  const { from, length, elapsed, total } = cycleMoney(input);
   if (length < MIN_CYCLE_DAYS || total <= 0) return [];
   if (elapsed < FIRST_WEEK || elapsed >= FIRST_WEEK + FIRST_WEEK_TOLD_FOR) return [];
   const { start } = input.cycle;
-  const week = countedSpends(input, start, addDays(start, FIRST_WEEK - 1)).reduce(
-    (sum, s) => sum + s.amount,
-    0,
-  );
+  const week = sumOf(countedSpends(input, from, addDays(from, FIRST_WEEK - 1)));
   const even = (total * FIRST_WEEK) / length;
   const word = compareAmounts(week, even);
   if (word === 'about') return [];

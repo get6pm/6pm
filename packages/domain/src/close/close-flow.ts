@@ -88,7 +88,10 @@ function needsWorkQuestion(state: CloseState): boolean {
 export function closeReducer(state: CloseState, event: CloseEvent): CloseState {
   switch (event.type) {
     case 'decide': {
-      if (state.step !== 'cards' || state.verdicts[event.id] !== undefined) return state;
+      // A paused close takes no swipes until it is resumed.
+      if (state.paused || state.step !== 'cards' || state.verdicts[event.id] !== undefined) {
+        return state;
+      }
       if (!state.cards.some((card) => card.id === event.id)) return state;
       const verdicts = { ...state.verdicts, [event.id]: event.verdict };
       const next = { ...state, verdicts, undoable: event.id };

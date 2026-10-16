@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { potTopUpStep } from '@6pm/domain';
+import { potTopUp, potTopUpStep } from '@6pm/domain';
 import { curves } from '@6pm/theme';
 
 import { usePlanActions } from '../../data/plan-actions';
@@ -61,9 +61,9 @@ function Jar({
   const fillStyle = useAnimatedStyle(() => ({ height: fill.value * CARD_H }));
   const jar = jarTint(view.pot.hue, palette.dark);
   const { pot, full } = view;
-  const step = potTopUpStep(pot.goal, money.currency);
+  const step = potTopUp(pot.goal, view.saved, potTopUpStep(pot.goal, money.currency));
   const add = () => {
-    if (full) return;
+    if (full || step <= 0) return;
     haptics.tap();
     void run(() => actions.topUp(pot.id, step));
     if (view.saved + step >= pot.goal) say('potFull');

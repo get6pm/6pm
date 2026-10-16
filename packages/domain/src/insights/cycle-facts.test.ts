@@ -95,4 +95,32 @@ describe('paceFacts', () => {
     expect(paceFacts(input({ today: '2026-10-05', spends }))).toEqual([]);
     expect(paceFacts(input({ day: day({ free: -10_000 }), spends }))).toEqual([]);
   });
+
+  it('measures the pace from the day the user joined, in the cycle they joined', () => {
+    const joined = input({
+      today: '2026-10-21',
+      joinedOn: '2026-10-12',
+      cycle: { start: '2026-09-30', payday: '2026-10-31', daysLeft: 10 },
+      day: day({ free: 1_500_000, line: 150_000 }),
+      spends: [spend('2026-10-13', 'Lotte', 2_700_000, 'groceries')],
+    });
+    // 2,7tr over the nine days since joining runs out on the 27th; spread over 21 it would not.
+    expect(paceFacts(joined)[0]).toMatchObject({
+      kind: 'paceShort',
+      slots: { runsOut: { value: '2026-10-27' } },
+    });
+    expect(paceFacts({ ...joined, joinedOn: null })[0]?.kind).toBe('paceSpare');
+  });
+
+  it('counts the first week from the joining day', () => {
+    const joined = input({
+      today: '2026-10-09',
+      joinedOn: '2026-10-02',
+      day: day({ startFree: 5_000_000, free: 5_000_000 }),
+      spends: [spend('2026-10-08', 'Lotte', 3_000_000, 'groceries')],
+    });
+    expect(firstWeekPaceFacts(joined)[0]?.tone).toBe('watch');
+    // From the cycle's start the week would be 30 Sep to 6 Oct, before any spending was caught.
+    expect(firstWeekPaceFacts({ ...joined, joinedOn: null })[0]?.tone).toBe('good');
+  });
 });

@@ -45,23 +45,28 @@ export function TodayHero({
   const { goToTab } = useHomeNav();
   const { top } = useDesignInsets();
 
-  const over = day.safe < 0;
+  // A day over its line is covered by the days after it, unless the cycle's free money is gone:
+  // then the meter says how far past the plan the cycle is, and only a spend today fills it.
+  const cycleOver = day.overspent;
+  const over = !cycleOver && day.safe < 0;
   const warn = palette.dark ? '#ffbe8a' : '#b8622a';
-  const meterColor = over ? warn : palette.ink;
+  const meterColor = over || (cycleOver && day.spent > 0) ? warn : palette.ink;
   const meterTrack = palette.dark ? 'rgba(255,255,255,.2)' : 'rgba(27,30,46,.12)';
   const pct = over ? 1 : lineUsed(day);
   const fill = useAnimatedStyle(() => ({
     width: withTiming(`${pct * 100}%`, { duration: 800, easing: meterEase }),
   }));
 
-  const left = over
-    ? t('today.meterOver', { over: money.short(-day.safe) })
-    : day.spent
-      ? t('today.meterUsed', {
-          spent: money.short(day.spent),
-          line: money.short(day.line),
-        })
-      : t('today.meterNothing');
+  const left = cycleOver
+    ? t('today.meterPastPlan', { over: money.short(-day.free) })
+    : over
+      ? t('today.meterOver', { over: money.short(-day.safe) })
+      : day.spent
+        ? t('today.meterUsed', {
+            spent: money.short(day.spent),
+            line: money.short(day.line),
+          })
+        : t('today.meterNothing');
   const right = t('today.tomorrowAbout', { amount: money.short(day.tomorrow) });
 
   return (

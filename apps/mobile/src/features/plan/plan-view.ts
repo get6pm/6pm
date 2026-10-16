@@ -134,7 +134,7 @@ export function goalViews(snap: MoneySnapshot): GoalView[] {
           saved,
           monthly,
           neededBy: pot.neededBy,
-          today: snap.today,
+          cycle: snap.cycle,
         }),
       };
     });

@@ -4,7 +4,7 @@ import { useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { Easing, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { aboutPerDay } from '@6pm/domain';
+import { aboutPerDay, potTopUp } from '@6pm/domain';
 import { curves } from '@6pm/theme';
 
 import { usePlanActions } from '../../data/plan-actions';
@@ -175,6 +175,7 @@ export function FutureYouCard({
                   ? t('plan.future.status.behind', { month: by })
                   : t('plan.future.status.steady', { amount: money.short(monthly) });
         const ok = status !== 'behind' && status !== 'paused';
+        const add = potTopUp(g.pot.goal, g.saved, topUp);
         return (
           <View
             key={g.pot.id}
@@ -214,15 +215,21 @@ export function FutureYouCard({
                 />
               </View>
             </PressScale>
-            <ChipButton
-              label={`+${step}`}
-              accessibilityLabel={t('plan.future.add', { amount: step, name: g.pot.name })}
-              onPress={() => {
-                haptics.tap();
-                void run(() => actions.topUp(g.pot.id, topUp));
-                say('save', { day: weekday(new Date()) });
-              }}
-            />
+            {/* A full goal takes no more; the last tap adds only what is left. */}
+            {add > 0 ? (
+              <ChipButton
+                label={`+${money.short(add)}`}
+                accessibilityLabel={t('plan.future.add', {
+                  amount: money.short(add),
+                  name: g.pot.name,
+                })}
+                onPress={() => {
+                  haptics.tap();
+                  void run(() => actions.topUp(g.pot.id, add));
+                  say('save', { day: weekday(new Date()) });
+                }}
+              />
+            ) : null}
           </View>
         );
       })}

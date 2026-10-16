@@ -227,7 +227,7 @@ describe('pots and goals', () => {
       saved: 3_600_000,
       monthly: goalMonthly(2_000_000, 0.6),
       neededBy: '2027-03',
-      today,
+      cycle,
     });
     expect(japan).toEqual({ status: 'onTrack', eta: '2026-12', monthly: 1_200_000 });
     const cushion = goalPlan({
@@ -235,16 +235,24 @@ describe('pots and goals', () => {
       saved: 5_000_000,
       monthly: goalMonthly(2_000_000, 0.4),
       neededBy: null,
-      today,
+      cycle,
     });
     expect(cushion).toEqual({ status: 'steady', eta: '2027-11', monthly: 800_000 });
   });
 
   it('is behind when the pace misses the date, paused at zero, reached when full', () => {
-    const base = { goal: 6_000_000, saved: 3_600_000, neededBy: '2026-11', today };
+    const base = { goal: 6_000_000, saved: 3_600_000, neededBy: '2026-11', cycle };
     expect(goalPlan({ ...base, monthly: 1_200_000 }).status).toBe('behind');
     expect(goalPlan({ ...base, monthly: 0 }).status).toBe('paused');
     expect(goalPlan({ ...base, saved: 6_000_000, monthly: 0 }).status).toBe('reached');
+  });
+
+  it('gives the same answer every day of one pay cycle, across the calendar month', () => {
+    const payday = { kind: 'sameDay', day: 31 } as const;
+    const goal = { goal: 6_000_000, saved: 3_600_000, monthly: 1_200_000, neededBy: '2026-12' };
+    const lastOfOct = goalPlan({ ...goal, cycle: payCycleOn('2026-10-31', payday) });
+    const firstOfNov = goalPlan({ ...goal, cycle: payCycleOn('2026-11-01', payday) });
+    expect(firstOfNov).toEqual(lastOfOct);
   });
 
   it('moves months across years', () => {

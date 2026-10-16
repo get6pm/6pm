@@ -1,0 +1,82 @@
+name: agent fix
+
+# Claude Code fixes a bug the ops bot reported. Only `repository_dispatch` starts it: the bot sends
+# `agent-fix` with an issue number, or `agent-fix-followup` with a pull request number and the
+# owner's change request. Comments and labels never start it, so nothing anyone can do on this
+# public repository puts a prompt in front of Claude. Pushes go through the Claude app's token,
+# so CI runs on the pull request as on any other.
+
+on:
+  repository_dispatch:
+    types: [agent-fix, agent-fix-followup]
+
+# One fix at a time; a second dispatch waits for the first.
+concurrency:
+  group: agent-fix
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: read
+  id-token: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+
+      - name: Fix the issue
+        if: github.event.action == 'agent-fix'
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: >-
+            --allowedTools "Edit,MultiEdit,Write,Read,Glob,Grep,LS,Bash(git:*),Bash(pnpm:*),Bash(gh issue view:*),Bash(gh issue comment:*),Bash(gh pr create:*),Bash(gh pr view:*)"
+          prompt: |
+            Fix GitHub issue #${{ github.event.client_payload.issue }} in this repository. Read it with
+            `gh issue view ${{ github.event.client_payload.issue }}`. It is a crash or error reported
+            from production; the stack trace and release are in it.
+
+            Read CLAUDE.md first and follow it: it binds you like any other agent on this repository.
+
+            1. Find the root cause in the code. Change as little as fixes it; no refactors on the side.
+            2. Where the behaviour is money maths, the close state machine, parsers, sync/backup,
+               permissions or purchases, add or extend a test that fails without the fix.
+            3. Run the tests for each package you changed (`pnpm --filter @6pm/<pkg> test -- <file>`),
+               `pnpm typecheck`, and `pnpm exec prettier --write` on the changed files.
+            4. Branch from main as `fix/<area>-<behaviour>`, make one conventional commit, push it.
+            5. Open a pull request into main with `gh pr create`. Its body starts with
+               `Fixes #${{ github.event.client_payload.issue }}`, then says the root cause, the change,
+               and exactly what you ran to check it. Say plainly what you could not check, such as UI
+               on a device.
+
+            If you cannot find a fix you are confident in, do not open a pull request: comment on the
+            issue with what you found and why you stopped.
+
+      - name: Change the pull request
+        if: github.event.action == 'agent-fix-followup'
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: >-
+            --allowedTools "Edit,MultiEdit,Write,Read,Glob,Grep,LS,Bash(git:*),Bash(pnpm:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr checks:*),Bash(gh pr comment:*),Bash(gh run view:*)"
+          prompt: |
+            The owner reviewed pull request #${{ github.event.client_payload.pr }} and asks for this:
+
+            ${{ github.event.client_payload.request }}
+
+            Read the pull request with `gh pr view ${{ github.event.client_payload.pr }}` and its diff,
+            check out its branch, and make the change. Read CLAUDE.md first and follow it. Run the
+            tests for each package you change, `pnpm typecheck`, and `pnpm exec prettier --write`.
+            Push one more commit to the same branch, then comment on the pull request with what you
+            changed and what you ran.

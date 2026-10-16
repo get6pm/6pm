@@ -44,6 +44,14 @@ describe('parseAmount', () => {
   it('returns null when there is no number', () => {
     expect(parseAmount('phở with extra beef')).toBeNull();
   });
+
+  it('returns null for an amount too large to count exactly', () => {
+    expect(parseAmount('99999999 tỷ')).toBeNull();
+  });
+
+  it('never reads a first group of 0 as thousands', () => {
+    expect(parseAmount('0.500tr')).toBe(500_000);
+  });
 });
 describe('parseAmount outside đồng', () => {
   const usd = currencyOf('USD');
@@ -69,6 +77,17 @@ describe('parseAmount outside đồng', () => {
   it('finds the amount in a question', () => {
     expect(parseAmount('can I afford 120 on saturday?', usd)).toBe(12_000);
     expect(parseAmount('nothing here', usd)).toBeNull();
+  });
+
+  it('never reads a first group of 0 as thousands', () => {
+    expect(parseAmount('0.250', usd)).toBe(25);
+    expect(parseAmount('$0.500', usd)).toBe(50);
+  });
+
+  it('reads one lone .ddd as thousandths in a dinar', () => {
+    expect(parseAmount('1.250', currencyOf('KWD'))).toBe(1_250);
+    expect(parseAmount('KD 12.500', currencyOf('KWD'))).toBe(12_500);
+    expect(parseAmount('1.250.000', currencyOf('KWD'))).toBe(1_250_000_000);
   });
 
   it('keeps a symbol of letters from eating the units', () => {

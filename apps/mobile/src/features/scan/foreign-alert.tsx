@@ -1,16 +1,10 @@
 import { useEffect } from 'react';
 
-import {
-  currencyOf,
-  currencyOfForeignQr,
-  formatForeign,
-  isRate,
-  tripCurrencyOf,
-  type FxRate,
-} from '@6pm/domain';
+import { currencyOfForeignQr, tripCurrencyOf, type FxRate } from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
-import { moneyFormatFor, useHomeCurrency } from '../../money/use-money-format';
+import { phoneNumberStyle } from '../../money/device-money';
+import { useHomeCurrency } from '../../money/use-money-format';
 import { rateFor } from '../travel/trip';
 import { useTravel } from '../travel/travel-provider';
 import { foreignAmountLabel } from './pay-options';
@@ -50,11 +44,9 @@ export function ForeignAlert({
     if (travelling) refreshRates();
   }, [travelling, refreshRates]);
 
+  const amount = foreignAmountLabel(failure, { home, language, phone: phoneNumberStyle() });
+
   if (currency !== null && rate !== null) {
-    const minor =
-      failure.amount !== undefined && isRate(failure.amount)
-        ? Math.round(Number(failure.amount) * 10 ** currency.decimals)
-        : null;
     return (
       <ScanAlert
         icon="public"
@@ -66,22 +58,13 @@ export function ForeignAlert({
         }
         secondary={{ label: t('scan.tryAgain'), onPress: onRetry }}
         primary={
-          minor === null
+          amount === null
             ? { label: t('travel.scan.logIn', { symbol: currency.symbol }), onPress: onLog }
-            : {
-                label: t('travel.scan.keep', {
-                  amount:
-                    home.code === 'VND'
-                      ? formatForeign(minor, currency)
-                      : moneyFormatFor(currencyOf(currency.code), language).full(minor),
-                }),
-                onPress: () => onKeep(rate, scheme),
-              }
+            : { label: t('travel.scan.keep', { amount }), onPress: () => onKeep(rate, scheme) }
         }
       />
     );
   }
-  const amount = foreignAmountLabel(failure);
   return (
     <ScanAlert
       icon="public"

@@ -11,8 +11,8 @@ export interface TravelCurrency {
   /** What a person writes in front of the amount: "฿". */
   readonly symbol: string;
   /**
-   * Decimals as prices are written there. Cambodia, Indonesia and Laos have official cents nobody
-   * uses, so they are entered and shown in whole units, like đồng. Three-decimal dinars are
+   * Decimals as prices are written there. Cambodia, Indonesia, Laos and Taiwan have official cents
+   * nobody uses, so they are entered and shown in whole units, like đồng. Three-decimal dinars are
    * entered to two: a thousandth of a dinar is less than a cent.
    */
   readonly decimals: 0 | 2;
@@ -42,7 +42,7 @@ export const TRAVEL_CURRENCIES: Readonly<Record<string, TravelCurrency>> = {
   JPY: currency('JPY', '¥', 0, '392'),
   KRW: currency('KRW', '₩', 0, '410'),
   CNY: currency('CNY', 'CN¥', 2, '156'),
-  TWD: currency('TWD', 'NT$', 2, '901'),
+  TWD: currency('TWD', 'NT$', 0, '901'),
   HKD: currency('HKD', 'HK$', 2, '344'),
   USD: currency('USD', '$', 2, '840'),
   AUD: currency('AUD', 'A$', 2, '036'),
@@ -65,6 +65,8 @@ export const FX_CURRENCY_CODES: readonly string[] = [
     'KZT UZS GEL IRR IQD'
   ).split(' '),
 ];
+
+const PRICED = new Set(FX_CURRENCY_CODES);
 
 /** The national QR schemes Scan recognises, by the currency their codes are paid in. */
 const SCHEME_CURRENCY: Readonly<Record<ForeignScheme, string>> = {
@@ -104,6 +106,21 @@ export function travelCurrencyOf(code: string): TravelCurrency | null {
   const made = currency(upper, symbol, row.minorDigits === 0 ? 0 : 2, numeric);
   built.set(upper, made);
   return made;
+}
+
+/**
+ * Decimals a foreign amount in `code` is written and entered with: the one rule every screen,
+ * card and parser reads. Whole units for đồng and the currencies with no minor unit in use, two
+ * otherwise (three-decimal dinars are entered to two).
+ */
+export function foreignDecimalsOf(code: string): 0 | 2 {
+  return travelCurrencyOf(code)?.decimals ?? 2;
+}
+
+/** Whether 6pm can price `code`: the đồng, or a currency the server fetches a rate for. */
+export function hasRate(code: string): boolean {
+  const upper = code.trim().toUpperCase();
+  return upper === 'VND' || PRICED.has(upper);
 }
 
 /**

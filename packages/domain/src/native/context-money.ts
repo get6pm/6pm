@@ -7,7 +7,7 @@ import {
   type MoneyFormat,
   type PhoneNumberStyle,
 } from '../money/money-format';
-import { travelCurrency } from '../travel/currencies';
+import { foreignDecimalsOf, travelCurrency } from '../travel/currencies';
 import { formatForeign, isRate } from '../travel/fx';
 import { foreignToHome, homeRate } from '../travel/home-fx';
 
@@ -28,10 +28,9 @@ export interface ContextMoney {
   foreignEditText(amount: string, code: string): string;
 }
 
-/** Decimals a foreign currency's prices are written with: đồng and Travel's whole ones none. */
+/** Decimals a foreign currency's prices are written with: đồng and the whole ones none. */
 export function decimalsOf(currency: string): 0 | 2 {
-  if (currency === 'VND') return 0;
-  return travelCurrency(currency)?.decimals ?? 2;
+  return foreignDecimalsOf(currency);
 }
 
 /** Decimals an amount in `code` is written with, when home is `home`. */

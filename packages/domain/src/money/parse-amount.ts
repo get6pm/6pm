@@ -60,17 +60,19 @@ export function parseAmount(text: string, currency: Currency = VND): Money | nul
   }
   // "rưỡi" is half of the unit: "2 triệu rưỡi" is 2.500.000, "45 nghìn rưỡi" is 45.500.
   if (half) value += isBillion ? 500_000_000 : isMillion ? 500_000 : 500;
-  return Math.round(value);
+  const amount = Math.round(value);
+  return Number.isSafeInteger(amount) ? amount : null;
 }
 
 /**
- * "45.000" and "1.250.000" are grouped thousands; "1.5" and "1,5" are decimals (only meaningful
- * before a unit).
+ * "45.000" and "1.250.000" are grouped thousands; "1.5", "1,5" and "0.500" are decimals (only
+ * meaningful before a unit).
  */
 function readNumber(raw: string, hasUnit: boolean): number | null {
   const groups = raw.split(/[.,]/);
   if (groups.length === 1) return Number(raw);
-  const grouped = groups.slice(1).every((g) => g.length === 3);
+  const grouped =
+    !(groups[0] ?? '').startsWith('0') && groups.slice(1).every((g) => g.length === 3);
   if (grouped && !(hasUnit && groups.length === 2 && raw.includes(','))) {
     return Number(groups.join(''));
   }
@@ -102,7 +104,7 @@ function parseForeign(text: string, currency: Currency): Money | null {
       : THOUSAND.test(unit)
         ? 1000
         : 1;
-  let value = readPrintedNumber(rawNumber);
+  let value = readPrintedNumber(rawNumber, currency.minorDigits);
   if (value === null || !Number.isFinite(value)) return null;
   if (scale > 1) {
     value *= scale;

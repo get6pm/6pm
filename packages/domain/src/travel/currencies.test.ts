@@ -4,7 +4,9 @@ import { currencyOf, isKnownCurrency, VND } from '../money/currency';
 import {
   currencyOfCountry,
   currencyOfForeignQr,
+  foreignDecimalsOf,
   FX_CURRENCY_CODES,
+  hasRate,
   travelCurrency,
   travelCurrencyOf,
   tripCurrencyOf,
@@ -23,6 +25,32 @@ describe('the currencies with a rate', () => {
   });
 });
 
+describe('decimals', () => {
+  it('agree between the currency table and the way foreign amounts are written', () => {
+    for (const code of ['VND', ...FX_CURRENCY_CODES]) {
+      const whole = currencyOf(code).minorDigits === 0;
+      expect([code, foreignDecimalsOf(code)]).toEqual([code, whole ? 0 : 2]);
+      expect([code, travelCurrencyOf(code)?.decimals]).toEqual([code, whole ? 0 : 2]);
+    }
+  });
+
+  it('write Taiwan dollars, forints and pesos in whole units', () => {
+    expect(foreignDecimalsOf('TWD')).toBe(0);
+    expect(foreignDecimalsOf('HUF')).toBe(0);
+    expect(foreignDecimalsOf('CLP')).toBe(0);
+    expect(foreignDecimalsOf('CHF')).toBe(2);
+  });
+});
+
+describe('a rate to price with', () => {
+  it('exists for the đồng and every currency the server fetches', () => {
+    for (const code of FX_CURRENCY_CODES) expect([code, hasRate(code)]).toEqual([code, true]);
+    expect(hasRate('VND')).toBe(true);
+    expect(hasRate('chf')).toBe(true);
+    expect(hasRate('XAF')).toBe(false);
+  });
+});
+
 describe('any currency abroad', () => {
   it('keeps the travel table’s symbols, decimals and QR codes', () => {
     expect(travelCurrencyOf('sgd')).toEqual({
@@ -31,7 +59,7 @@ describe('any currency abroad', () => {
       decimals: 2,
       numeric: '702',
     });
-    expect(travelCurrencyOf('TWD')?.decimals).toBe(2);
+    expect(travelCurrencyOf('TWD')?.decimals).toBe(0);
   });
 
   it('builds the rest from the currency table, telling shared symbols apart', () => {

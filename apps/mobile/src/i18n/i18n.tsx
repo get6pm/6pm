@@ -2,10 +2,19 @@ import { getLocales } from 'expo-localization';
 import { useSQLiteContext } from 'expo-sqlite';
 import { createContext, use, useMemo, useState, type ReactNode } from 'react';
 
-import { pickLanguage, t, type Language, type ParamsArgument, type StringKey } from '@6pm/i18n';
+import {
+  isLanguage,
+  pickLanguage,
+  t,
+  type Language,
+  type ParamsArgument,
+  type StringKey,
+} from '@6pm/i18n';
 
 export interface I18n {
   readonly language: Language;
+  /** The language kept in Settings, or null while the app follows the phone. */
+  readonly chosen: Language | null;
   /** The interface string for a key, in the current language. */
   readonly t: <Key extends StringKey>(key: Key, ...params: ParamsArgument<Key>) => string;
   /** "Friday", "Thứ Sáu". */
@@ -22,7 +31,7 @@ const KEY = 'language';
 
 const I18nContext = createContext<I18n | null>(null);
 
-function make(language: Language, setLanguage: I18n['setLanguage']): I18n {
+function make(language: Language, chosen: Language | null, setLanguage: I18n['setLanguage']): I18n {
   const locale = language === 'vi' ? 'vi-VN' : 'en-GB';
   const weekday = new Intl.DateTimeFormat(locale, { weekday: 'long' });
   const dayMonth = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long' });
@@ -33,6 +42,7 @@ function make(language: Language, setLanguage: I18n['setLanguage']): I18n {
   });
   return {
     language,
+    chosen,
     t: (key, ...params) => t(language, key, ...params),
     weekday: (date) => weekday.format(date),
     weekdayDate: (date) => weekdayDate.format(date),
@@ -56,14 +66,15 @@ export function I18nProvider({ children }: { readonly children: ReactNode }) {
     getLocales().map((l) => l.languageTag),
     stored,
   );
+  const chosen = isLanguage(stored) ? stored : null;
   const value = useMemo(
     () =>
-      make(language, (next) => {
+      make(language, chosen, (next) => {
         setStored(next);
         if (next === null) db.runSync('DELETE FROM settings WHERE key = ?', [KEY]);
         else db.runSync('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', [KEY, next]);
       }),
-    [db, language],
+    [db, language, chosen],
   );
   return <I18nContext value={value}>{children}</I18nContext>;
 }

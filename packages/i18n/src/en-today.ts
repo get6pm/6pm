@@ -131,6 +131,7 @@ export const enToday = {
   'settings.remindersOff': 'Off',
   'settings.language': 'Language',
   'settings.languageName': 'English',
+  'settings.languagePhone': 'Same as your phone',
   'settings.yourData': 'Your data',
   'settings.privacy': 'Privacy',
   'settings.privacyBody':

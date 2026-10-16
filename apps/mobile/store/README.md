@@ -15,6 +15,19 @@ eas metadata:push
 The description opens with the design's three lines; the paragraphs after them follow the screenshot
 captions.
 
+## Header and search results
+
+`creative/{en-US,vi}` holds the two creative assets App Store Connect shows on iOS 27 and later, rendered
+from `StoreCreative.dc.html` (the listing's "Header & search results" section):
+
+| File | Slot | Size |
+| --- | --- | --- |
+| `header.png` | Product page header, 21:9, above the icon | 3840 × 1646 |
+| `search.png` | Search results, 3:2, in place of the screenshot row | 3840 × 2560 |
+
+They upload on the version page under Header and Search Results, one per localization, and only
+while the version can be edited.
+
 ## Screenshots
 
 `screenshots/en-US` (International storefronts: captions in English, $, Apple Pay, cards) and

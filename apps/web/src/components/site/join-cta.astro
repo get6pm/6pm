@@ -80,6 +80,10 @@ const id = `email-${size}`;
   .form[hidden] {
     display: none;
   }
+  /* At midnight the button stays centred when a phone wraps it under the field. */
+  .final .form {
+    justify-content: center;
+  }
   input {
     flex: 1 1 220px;
     min-width: 0;
@@ -94,7 +98,6 @@ const id = `email-${size}`;
     font-size: 16px;
     outline: none;
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     transition:
       border-color 0.2s,
       box-shadow 0.2s;
@@ -110,7 +113,6 @@ const id = `email-${size}`;
     padding: 0 22px;
     background: rgba(10, 8, 18, 0.45);
     backdrop-filter: none;
-    -webkit-backdrop-filter: none;
   }
   button {
     height: 54px;

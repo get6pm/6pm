@@ -1,0 +1,175 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import { duoStandIcons } from '../../data/site/duo-data';
+
+/** The stand's bottom half: the amount, the categories and the keys. */
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].duo.screen.stand;
+const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '00', '0', 'del'];
+---
+
+<div class="half bottom-half">
+  <div class="duo-screen keypad">
+    <div class="shade"></div>
+    <div class="entry">
+      <div class="amount d-face" data-stand-amount>{lang === 'vi' ? '0k' : '$0'}</div>
+      <button type="button" class="add" tabindex="-1" data-stand-add>
+        <span class="sym" style="font-size:22px">add</span>{t.add}
+      </button>
+    </div>
+    <div class="cats">
+      {
+        t.categories.map((label, i) => (
+          <button
+            type="button"
+            class="cat"
+            tabindex="-1"
+            aria-pressed={i === 0 ? 'true' : 'false'}
+            data-stand-cat={label}
+          >
+            <span class="sym sym-fill">{duoStandIcons[i]}</span>
+            {label}
+          </button>
+        ))
+      }
+    </div>
+    <div class="keys">
+      {
+        keys.map((k) => (
+          <button type="button" class="key d-face" tabindex="-1" data-stand-key={k}>
+            {k === 'del' ? <span class="sym">backspace</span> : k}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .half {
+    width: 687px;
+    height: 484px;
+    box-sizing: border-box;
+    background: #050407;
+  }
+  .bottom-half {
+    padding: 0 9px 9px;
+    border-radius: 0 0 49px 49px;
+    box-shadow:
+      0 0 0 1px #5d5864,
+      0 0 0 2.5px #1a181e,
+      0 0 0 3.5px #7a7480,
+      0 40px 80px rgba(0, 0, 0, 0.5);
+  }
+  .keypad {
+    width: 669px;
+    height: 475px;
+    border-radius: 0 0 40px 40px;
+    background: #f6f0e7;
+    box-sizing: border-box;
+    padding: 34px 28px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .shade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 24px;
+    background: linear-gradient(180deg, rgba(60, 30, 30, 0.12), transparent);
+    pointer-events: none;
+  }
+  .entry {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .amount {
+    flex: 1;
+    font-size: 54px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.35;
+  }
+  .amount[data-typed] {
+    opacity: 1;
+  }
+  .add {
+    height: 58px;
+    padding: 0 26px;
+    border: 0.5px solid rgba(255, 255, 255, 0.45);
+    border-radius: 99px;
+    background: #ff8552;
+    color: #2a1424;
+    box-shadow:
+      0 10px 26px rgba(255, 120, 70, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cats {
+    display: flex;
+    gap: 8px;
+  }
+  .cat {
+    height: 40px;
+    padding: 0 14px 0 11px;
+    border: none;
+    border-radius: 99px;
+    background: rgba(70, 45, 30, 0.07);
+    color: #1b1e2e;
+    font-size: 14px;
+    font-weight: 650;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+  }
+  .cat[aria-pressed='true'] {
+    background: #1b1e2e;
+    color: #fbf4ec;
+  }
+  .cat .sym {
+    font-size: 18px;
+  }
+  .keys {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .key {
+    border: none;
+    border-radius: 18px;
+    background: #fffdf9;
+    box-shadow: 0 1px 2px rgba(70, 45, 30, 0.08);
+    color: #1b1e2e;
+    font-size: 28px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .key:active {
+    background: rgba(70, 45, 30, 0.14);
+    transform: none;
+  }
+  .key .sym {
+    font-size: 26px;
+  }
+</style>

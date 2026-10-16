@@ -33,8 +33,8 @@ const banks = [
                 <img
                   src={`/banks/${file}.png`}
                   alt={copy ? '' : name}
-                  width="60"
-                  height="60"
+                  width="56"
+                  height="56"
                   loading="lazy"
                   decoding="async"
                 />
@@ -49,22 +49,26 @@ const banks = [
 
 <style>
   .strip {
-    padding: 0 0 clamp(80px, 10vw, 128px);
+    position: relative;
+    z-index: 1;
+    padding: 0 0 clamp(60px, 8vw, 100px);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 22px;
+    gap: 20px;
   }
   .label {
     font-size: 11.5px;
     letter-spacing: 0.14em;
-    color: var(--ink-55);
+    color: var(--ink2);
     text-align: center;
     padding: 0 var(--pad-x);
   }
   .window {
     width: 100%;
     overflow: hidden;
+    padding: 8px 0 28px;
+    margin: -8px 0 -28px;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
     mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
   }
@@ -83,16 +87,16 @@ const banks = [
   }
   img {
     display: block;
-    width: 60px;
-    height: 60px;
-    border-radius: 18px;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
     background: #fff;
     object-fit: cover;
-    box-shadow: 0 0 0 0.5px var(--line-3);
+    box-shadow:
+      0 0 0 0.5px var(--line),
+      0 6px 16px rgba(30, 40, 40, 0.12);
   }
   @keyframes marquee {
-    to {
-      transform: translateX(calc(-50% - 9px));
-    }
+    to { transform: translateX(calc(-50% - 9px)); }
   }
 </style>

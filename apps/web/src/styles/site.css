@@ -1,57 +1,60 @@
 /*
- * The home page: near-black dusk with one sunset accent. Its tokens live on `.site` so the legal
- * pages keep their own.
+ * The home page: one day from nine in the morning to midnight. The sky behind it follows the
+ * scroll (scripts/site/sky.ts), and so do the ink tokens below, which flip from day to night as
+ * the sun sets. Its tokens live on `.site` so the legal pages keep their own.
  */
 .site {
-  --bg: #0d0b10;
-  --bg-2: #100e13;
-  --card: #131117;
-  --raised: #16141a;
-  --ink: #f3eee7;
-  --ink-75: rgba(243, 238, 231, 0.75);
-  --ink-70: rgba(243, 238, 231, 0.7);
-  --ink-62: rgba(243, 238, 231, 0.62);
-  --ink-55: rgba(243, 238, 231, 0.55);
-  --ink-45: rgba(243, 238, 231, 0.45);
-  --line: rgba(243, 238, 231, 0.08);
-  --line-2: rgba(243, 238, 231, 0.12);
-  --line-3: rgba(243, 238, 231, 0.16);
+  --ink: #1b1e2e;
+  --ink2: rgba(27, 30, 46, 0.72);
+  --line: rgba(27, 30, 46, 0.16);
+  --glass: rgba(255, 253, 249, 0.5);
+  --inv: #fbf4ec;
+  --acc: #c4441c;
+  --nav: rgba(240, 246, 236, 0.55);
   --sun: #ff8552;
   --sun-hover: #ff9a6e;
   --sun-soft: #ffb08a;
   --on-sun: #1a0f0a;
-  --dark-ink: #16131a;
-  --lilac: #c9b8f0;
-  --mint: #a8dcb8;
-  --error: #ffb4a3;
+  --paper: #fbf4ec;
+  --error: #e0533a;
   --pad-x: clamp(20px, 4vw, 40px);
-  --pad-y: clamp(96px, 12vw, 160px);
+  --hlx: 0;
 
   position: relative;
   min-height: 100vh;
-  background: var(--bg);
   color: var(--ink);
   font-family: var(--font-text);
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
 }
+/* Vietnamese stacks its marks above the line, so display type gets a little more leading. */
+.site:lang(vi) {
+  --hlx: 0.1;
+}
 
 body:has(.site) {
-  background: #0d0b10;
+  background: #8fd0c6;
+  color-scheme: light;
 }
 
 .site :where(a) {
-  color: var(--ink);
+  color: inherit;
 }
 .site :where(a:hover) {
-  color: var(--sun-soft);
+  color: var(--sun);
 }
 .site ::selection {
   background: var(--sun);
   color: var(--on-sun);
 }
 .site input::placeholder {
-  color: rgba(243, 238, 231, 0.42);
+  color: currentColor;
+  opacity: 0.5;
+}
+
+.site main {
+  position: relative;
+  z-index: 1;
 }
 
 .site section[id] {
@@ -67,6 +70,7 @@ body:has(.site) {
   letter-spacing: normal;
   text-transform: none;
   white-space: nowrap;
+  direction: ltr;
   font-feature-settings: 'liga';
   user-select: none;
 }
@@ -77,46 +81,22 @@ body:has(.site) {
 .mono {
   font-family: var(--font-mono);
 }
-
-.kicker {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--sun);
-}
-
-.display {
-  margin: 0;
+.display-face {
   font-family: var(--font-display);
-  font-weight: 500;
-  font-variation-settings:
-    'opsz' 96,
-    'wdth' 92;
-  font-size: clamp(44px, 6vw, 88px);
-  line-height: 0.95;
-  letter-spacing: -0.05em;
-  text-wrap: balance;
 }
 
-.sub {
-  margin: 0;
-  font-size: 17px;
-  line-height: 1.5;
-  color: var(--ink-62);
-}
-
-.wrap {
-  max-width: 1200px;
+/* A section: the page's column and its breathing room. */
+.sec {
+  max-width: 1240px;
   margin: 0 auto;
   box-sizing: border-box;
-  padding: var(--pad-y) var(--pad-x);
+  padding: clamp(80px, 10vw, 140px) var(--pad-x);
 }
 
-/* A copy block beside an illustration, stacking under 860px or so. */
+/* Copy beside an illustration, stacking when there is no room for both. */
 .split {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
   align-items: center;
   gap: clamp(40px, 6vw, 80px);
 }
@@ -128,11 +108,59 @@ body:has(.site) {
   min-width: 0;
 }
 
-.band {
-  border-top: 0.5px solid var(--line);
+/* Section headings: the size comes from `--size` and the leading from `--lh`. */
+.h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variation-settings:
+    'opsz' 96,
+    'wdth' 88;
+  font-size: var(--size, clamp(44px, 5.6vw, 84px));
+  line-height: calc(var(--lh, 0.92) + var(--hlx));
+  letter-spacing: var(--ls, -0.05em);
+  text-wrap: balance;
 }
-.band-dim {
-  background: var(--bg-2);
+
+.lede {
+  margin: 0;
+  max-width: 440px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink2);
+  text-wrap: pretty;
+}
+
+/* A phone in the hand: the bezel the hero, capture and Ask screens sit in. */
+.phone {
+  position: relative;
+  justify-self: center;
+  width: 300px;
+}
+.bezel {
+  position: relative;
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 54px;
+  background: linear-gradient(160deg, #2c2930, #16141a 40%, #0f0e12);
+}
+.screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 44px;
+  height: 620px;
+  font-family: -apple-system, 'SF Pro Text', var(--font-text);
+  text-align: left;
+}
+
+/* A category tile: a soft gradient in one hue, set by `--tile` and `--glyph`. */
+.tile {
+  flex-shrink: 0;
+  background: var(--tile);
+  color: var(--glyph);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .site .pill-btn {
@@ -158,7 +186,7 @@ body:has(.site) {
 }
 
 .site :where(a, button, summary, input):focus-visible {
-  outline: 2px solid var(--sun-soft);
+  outline: 2px solid var(--sun);
   outline-offset: 3px;
 }
 
@@ -189,36 +217,29 @@ body:has(.site) {
     opacity: 0.35;
   }
 }
-@keyframes breathe {
-  0%,
+@keyframes rise {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
   100% {
-    transform: scale(1);
-    filter: brightness(1);
-  }
-  50% {
-    transform: scale(1.025);
-    filter: brightness(1.08);
+    opacity: 1;
+    transform: none;
   }
 }
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-@keyframes bob {
+@keyframes dot {
   0%,
   100% {
     transform: translateY(0);
+    opacity: 0.35;
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
+    opacity: 1;
   }
 }
 
-/*
- * Reduce Motion: nothing loops, each scene rests on its finished frame, and what only exists to
- * move (playheads, pulses, scan lines, flying coins) is left out.
- */
+/* Reduce Motion: nothing loops, and each scene rests on its finished frame. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -226,10 +247,9 @@ body:has(.site) {
   .site *,
   .site *::before,
   .site *::after {
-    animation: none !important;
-  }
-  .site [data-reveal] {
-    transition: none;
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
   }
   .site .moving {
     display: none !important;

@@ -1,0 +1,134 @@
+---
+import type { SurfacesCopy } from '../../data/site/surfaces-copy';
+import Buddy from './buddy.astro';
+
+/** The bottom of the Lock Screen: the close's Live Activity and a caught-spend notification. */
+interface Props {
+  t: SurfacesCopy;
+}
+
+const { t } = Astro.props;
+const lock = t.lock;
+---
+
+<div class="stack">
+  <div class="activity">
+    <Buddy size={38} mood="wave" />
+    <div class="words">
+      <span class="top">{lock.activityTop}</span><span class="main">{lock.activityMain}</span>
+    </div>
+    <span class="go">{lock.activityButton}</span>
+  </div>
+  <div class="notice">
+    <div class="notice-body">
+      <img src="/app-icon-96.png" alt="" width="32" height="32" />
+      <div class="words">
+        <div class="notice-head"><span class="app">6pm</span><span class="ago">16:12</span></div>
+        <div class="notice-line">{lock.notice}</div>
+      </div>
+    </div>
+    <div class="actions"><span>{lock.confirm}</span><span>{lock.edit}</span></div>
+  </div>
+</div>
+
+<style>
+  .stack {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding-bottom: 22px;
+  }
+  .activity {
+    border-radius: 22px;
+    background: rgba(20, 12, 30, 0.6);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    padding: 11px 11px 11px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .words {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .top,
+  .main {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .top {
+    font-size: 10.5px;
+    font-weight: 600;
+    opacity: 0.6;
+  }
+  .main {
+    font-size: 13.5px;
+    font-weight: 650;
+  }
+  .go {
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 99px;
+    background: var(--sun);
+    color: var(--on-sun);
+    font-weight: 650;
+    font-size: 12.5px;
+    display: flex;
+    align-items: center;
+  }
+  .notice {
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    overflow: hidden;
+  }
+  .notice-body {
+    padding: 10px 12px;
+    display: flex;
+    gap: 10px;
+  }
+  .notice img {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    display: block;
+  }
+  .notice-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+  .app {
+    font-weight: 650;
+  }
+  .ago {
+    opacity: 0.6;
+  }
+  .notice-line {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.2);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .actions span {
+    padding: 9px;
+  }
+  .actions span + span {
+    border-left: 0.5px solid rgba(255, 255, 255, 0.2);
+  }
+</style>

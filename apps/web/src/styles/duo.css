@@ -1,0 +1,130 @@
+/*
+ * What the iPhone Duo screens share: the app's type, its cards, tiles and round buttons, drawn
+ * at the device's own size (the stage scales them to the page).
+ */
+.duo-screen {
+  position: relative;
+  overflow: hidden;
+  font-family: -apple-system, 'SF Pro Text', var(--font-text);
+  letter-spacing: -0.01em;
+  text-align: left;
+  color: #1b1e2e;
+}
+.duo-screen .d-face {
+  font-family: var(--font-display);
+}
+.duo-screen .d-mono {
+  font-family: var(--font-mono);
+}
+.duo-screen .d-card {
+  border-radius: 24px;
+  background: #fffdf9;
+  box-shadow:
+    0 1px 2px rgba(70, 45, 30, 0.06),
+    0 10px 26px rgba(70, 45, 30, 0.08);
+}
+.duo-screen .d-tile {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 3px 8px rgba(30, 10, 40, 0.12);
+}
+.duo-screen .d-round {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  cursor: pointer;
+}
+.duo-screen button {
+  font-family: inherit;
+  color: inherit;
+}
+.duo-screen button:active {
+  transform: scale(0.95);
+}
+.duo-screen .d-muted {
+  color: rgba(27, 30, 46, 0.62);
+}
+.duo-screen .d-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The side rail's tab pill: Today, Plan, Diary. */
+.duo-screen .d-tabs {
+  width: 58px;
+  padding: 4px;
+  box-sizing: border-box;
+  border-radius: 99px;
+  background: #fffdf9;
+  box-shadow: 0 6px 18px rgba(50, 40, 70, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.duo-screen .d-tab {
+  height: 58px;
+  border-radius: 99px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  opacity: 0.6;
+}
+.duo-screen .d-tab.on {
+  background: rgba(27, 30, 46, 0.07);
+  opacity: 1;
+}
+.duo-screen .d-tab .sym {
+  font-size: 23px;
+}
+.duo-screen .d-tab.on .sym {
+  font-variation-settings: 'FILL' 1;
+}
+.duo-screen .d-tab span:last-child {
+  font-size: 9.5px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.duo-screen .d-scan {
+  width: 58px;
+  height: 58px;
+  border: 0.5px solid rgba(255, 255, 255, 0.45);
+  background: #ff8552;
+  color: #2a1424;
+  box-shadow:
+    0 10px 26px rgba(255, 120, 70, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.duo-screen .d-white {
+  width: 48px;
+  height: 48px;
+  background: #fffdf9;
+  color: #1b1e2e;
+  box-shadow: 0 6px 18px rgba(50, 40, 70, 0.18);
+}
+.duo-screen .d-camera {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: radial-gradient(circle at 40% 35%, #2b3350, #0a0b12 70%);
+}
+.duo-screen .d-time {
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.05;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: #fbf4ec;
+}

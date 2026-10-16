@@ -1,0 +1,181 @@
+---
+import type { SurfacesCopy } from '../../data/site/surfaces-copy';
+import Buddy from './buddy.astro';
+
+interface Props {
+  t: SurfacesCopy;
+}
+
+const { t } = Astro.props;
+---
+
+<div class="column">
+  <div class="panel island-card" data-reveal="80">
+    <span class="panel-label">{t.island.label}</span>
+    <div class="pill" aria-hidden="true">
+      <Buddy size={24} mood="calm" /><span class="mono count">{t.island.countdown}</span>
+    </div>
+    <div class="expanded" aria-hidden="true">
+      <Buddy size={42} mood="calm" />
+      <div class="words">
+        <span class="top">{t.island.top}</span><span class="main">{t.island.main}</span>
+      </div>
+      <span class="paid">{t.island.paid}</span>
+    </div>
+    <span class="panel-note">{t.island.note}</span>
+  </div>
+  <div class="panel widgets-card" data-reveal="120">
+    <span class="panel-label">{t.widgets.label}</span>
+    <div class="widgets" aria-hidden="true">
+      <div class="widget dark">
+        <span class="widget-head"
+          >{t.widgets.closesIn}<span class="sym sym-fill">wb_twilight</span></span
+        >
+        <span class="widget-foot"
+          ><span class="widget-num">8m</span><span class="widget-sub">{t.widgets.caught}</span
+          ></span
+        >
+      </div>
+      <div class="widget light">
+        <Buddy size={36} mood="calm" />
+        <span class="widget-foot"
+          ><span class="widget-num big">{t.safe}</span><span class="widget-sub"
+            >{t.widgets.safeToday}</span
+          ></span
+        >
+      </div>
+    </div>
+    <span class="panel-note">{t.widgets.note}</span>
+  </div>
+</div>
+
+<style>
+  .island-card {
+    background: linear-gradient(170deg, #241f45 0%, #4a2c5c 100%);
+  }
+  .pill {
+    align-self: center;
+    width: 190px;
+    height: 36px;
+    border-radius: 24px;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px 0 6px;
+    box-sizing: border-box;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+  .count {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--sun);
+  }
+  .expanded {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 38px;
+    background: #000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
+  }
+  .words {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .top {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .main {
+    font-size: 14px;
+    font-weight: 650;
+  }
+  .paid {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 99px;
+    background: var(--sun);
+    color: var(--on-sun);
+    font-weight: 650;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .column > .panel.widgets-card {
+    flex: 1;
+    padding: 24px 22px;
+    background: linear-gradient(170deg, #2c2758 0%, #6e3c6e 55%, #d07a58 100%);
+  }
+  .column .widgets-card .panel-note {
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .widgets {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .widget {
+    width: 150px;
+    height: 150px;
+    border-radius: 24px;
+    padding: 14px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  }
+  .dark {
+    background: #221c33;
+    color: #fbf4ec;
+  }
+  .light {
+    background: #fbf4ec;
+    color: #2a1d30;
+  }
+  .widget-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(251, 244, 236, 0.75);
+  }
+  .widget-head .sym {
+    font-size: 18px;
+    color: var(--sun);
+  }
+  .widget-foot {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .widget-num {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 34px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .widget-num.big {
+    font-size: 38px;
+    letter-spacing: 0;
+  }
+  .widget-sub {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+  .light .widget-sub {
+    opacity: 0.6;
+  }
+</style>

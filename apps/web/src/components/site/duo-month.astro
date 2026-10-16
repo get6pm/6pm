@@ -1,0 +1,239 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import { duoMoney, duoPots, duoSpent, duoToday } from '../../data/site/duo-data';
+import DuoDetail from './duo-detail.astro';
+
+/**
+ * The open screen's right page: October at a glance with each day's number, or, once a spend on
+ * the left is tapped, that spend and what it did to today (`duo-detail.astro`).
+ */
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].duo.screen;
+const money = (k: number): string => duoMoney(lang, k);
+// October 2026 starts on a Thursday: three blanks, then the days. 9 October is today, 7 slipped by.
+const days = Array.from({ length: 31 }, (_, i) => {
+  const day = i + 1;
+  const spent = duoSpent[day];
+  if (day === 9) return { day, amount: money(duoToday.left), kind: 'today' };
+  if (day === 7) return { day, amount: '—', kind: 'missed' };
+  if (spent) return { day, amount: money(spent), kind: spent <= duoToday.daily ? 'under' : 'over' };
+  return { day, amount: money(duoToday.daily), kind: 'ahead' };
+});
+const pots = duoPots.map(([amount, color], i) => ({ label: t.pots[i], value: money(amount), color }));
+---
+
+<div class="month" data-duo-month>
+  <div class="month-head">
+    <div class="month-name d-face">{t.month}</div>
+    <div class="d-muted payday">{t.payday}</div>
+  </div>
+  <div class="d-card pace">
+    <div class="pace-words">
+      <div class="pace-title d-face">{t.paceTitle}</div>
+      <div class="pace-sub d-muted">{t.paceSub}</div>
+    </div>
+    <div class="pace-bar"><div class="used"></div><div class="gone"></div></div>
+    <div class="pots">
+      {
+        pots.map((p) => (
+          <div class="pot">
+            <div class="pot-label">
+              <span class="swatch" style={`background:${p.color}`} />
+              {p.label}
+            </div>
+            <div class="pot-value d-face">{p.value}</div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <div class="daily">
+    <div class="daily-title">{t.daily}</div>
+    <div class="grid">
+      {t.week.map((w) => <div class="wk">{w}</div>)}
+      {[0, 1, 2].map(() => <div class="cell blank" />)}
+      {
+        days.map((d) => (
+          <div class:list={['cell', d.kind]}>
+            <span class="num">{d.day}</span>
+            <span class="amt">{d.amount}</span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+<DuoDetail lang={lang} />
+
+<style>
+  .month {
+    padding: 22px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    animation: duoFade 0.3s both;
+  }
+  .month[hidden] {
+    display: none;
+  }
+  .month-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 4px;
+  }
+  .month-name {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .payday {
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+  .pace {
+    border-radius: 22px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .pace-words {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .pace-title {
+    font-weight: 500;
+    font-size: 21px;
+    line-height: 1.1;
+  }
+  .pace-sub {
+    font-size: 13px;
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+  .pace-bar {
+    position: relative;
+    height: 9px;
+    border-radius: 9px;
+    background: rgba(27, 30, 46, 0.08);
+  }
+  .used {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 31%;
+    border-radius: 9px;
+    background: #ff8552;
+  }
+  .gone {
+    position: absolute;
+    left: 29%;
+    top: -5px;
+    bottom: -5px;
+    width: 2px;
+    border-radius: 2px;
+    background: #1b1e2e;
+  }
+  .pots {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    padding-top: 12px;
+    border-top: 0.5px solid rgba(27, 30, 46, 0.08);
+  }
+  .pot {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .pot-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(27, 30, 46, 0.62);
+    white-space: nowrap;
+  }
+  .swatch {
+    width: 8px;
+    height: 8px;
+    border-radius: 3px;
+  }
+  .pot-value {
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1;
+  }
+  .daily {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .daily-title {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 0 4px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 5px;
+  }
+  .wk {
+    text-align: center;
+    font-size: 10.5px;
+    font-weight: 650;
+    color: rgba(27, 30, 46, 0.5);
+  }
+  .cell {
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+  .num {
+    font-size: 12.5px;
+    font-weight: 650;
+  }
+  .amt {
+    font-size: 9.5px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.8;
+  }
+  .today {
+    background: #1b1e2e;
+    color: #fbf4ec;
+  }
+  .missed {
+    background: rgba(27, 30, 46, 0.05);
+    opacity: 0.7;
+  }
+  .under {
+    background: #e3f0dc;
+    color: #2f5e33;
+  }
+  .over {
+    background: #fbe0d8;
+    color: #9a3a2a;
+  }
+  .ahead {
+    background: #fffdf9;
+    opacity: 0.5;
+  }
+  @keyframes duoFade {
+    from { opacity: 0; }
+  }
+</style>

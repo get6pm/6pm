@@ -1,0 +1,141 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import { duoMoney, duoToday } from '../../data/site/duo-data';
+import Buddy from './buddy.astro';
+
+/** The top of Today on a Duo screen: the date, today's number and how much of it has gone. */
+interface Props {
+  lang: SiteLang;
+  /** The outer screen is narrower; the open screen has the companion beside the date. */
+  wide?: boolean;
+}
+
+const { lang, wide = false } = Astro.props;
+const d = siteCopy[lang].duo;
+const t = d.screen;
+const money = (k: number): string => duoMoney(lang, k);
+---
+
+<div class:list={['today', { wide }]}>
+  <div class="when">
+    <div class="date-block">
+      <div class="day">{t.day}</div>
+      <div class="date">{t.date}</div>
+    </div>
+    {wide && <Buddy size={52} mood="calm" tight />}
+  </div>
+  <div class="number">
+    <div class="safe">{t.safe}</div>
+    <div class="big d-face">
+      {money(duoToday.left)}{d.unit && <span class="unit">{d.unit}</span>}
+    </div>
+    <div class="progress">
+      <div class="track"><div class="fill"></div></div>
+      <div class="ends">
+        <span>{t.spent(money(duoToday.spent))}</span><span>{t.ofToday(money(duoToday.start))}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .today {
+    padding: 26px 18px 30px 22px;
+    color: #fbf4ec;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  .wide {
+    padding: 30px 28px 26px 30px;
+    gap: 26px;
+  }
+  .when {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .date-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .day {
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(251, 244, 236, 0.72);
+  }
+  .date {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .number {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .safe {
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(251, 244, 236, 0.78);
+  }
+  .big {
+    font-size: 96px;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-left: -3px;
+    display: flex;
+    align-items: baseline;
+  }
+  .wide .big {
+    font-size: 104px;
+    margin-left: -4px;
+  }
+  .unit {
+    font-size: 34px;
+    opacity: 0.6;
+    margin-left: 6px;
+  }
+  .wide .unit {
+    font-size: 36px;
+  }
+  .progress {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 10px;
+    max-width: 262px;
+  }
+  .wide .progress {
+    max-width: 300px;
+  }
+  .track {
+    position: relative;
+    height: 6px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+  }
+  .fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 33%;
+    border-radius: 6px;
+    background: #ffd3a6;
+  }
+  .ends {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: rgba(251, 244, 236, 0.78);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

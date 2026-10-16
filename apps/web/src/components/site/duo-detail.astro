@@ -1,0 +1,162 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import { duoKinds, duoMoney, duoRows, duoToday } from '../../data/site/duo-data';
+
+/** One page per spend of today, shown in place of October when that spend is tapped. */
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].duo.screen;
+const money = (k: number): string => duoMoney(lang, k);
+---
+
+{
+  duoRows.map(([kind, amount], i) => {
+    const [tile, glyph, icon] = duoKinds[kind];
+    const [name = '', meta = ''] = t.rows[i] ?? [];
+    return (
+      <div class="detail" hidden data-duo-detail={i}>
+        <button type="button" class="back" tabindex="-1" data-duo-back>
+          <span class="sym">chevron_left</span>
+          {t.month}
+        </button>
+        <div class="hero">
+          <div class="big-tile" style={`background:${tile};color:${glyph}`}>
+            <span class="sym sym-fill">{icon}</span>
+          </div>
+          <div class="d-name">{name}</div>
+          <div class="d-muted d-meta">{meta}</div>
+          <div class="d-amt d-face">{money(amount)}</div>
+        </div>
+        <div class="d-card change">
+          <div class="change-label d-muted">{t.todayNumber}</div>
+          <div class="change-nums d-face">
+            <span class="was">{money(duoToday.left + amount)}</span>
+            <span class="sym arrow">arrow_forward</span>
+            <span>{money(duoToday.left)}</span>
+          </div>
+        </div>
+        <div class="chips">
+          <span class="chip"><span class="sym">{icon}</span>{t.kinds[kind]}</span>
+          <span class="chip"><span class="sym">call_split</span>{t.split}</span>
+          <span class="chip"><span class="sym">block</span>{t.notMine}</span>
+        </div>
+      </div>
+    );
+  })
+}
+
+<style>
+  .detail[hidden] {
+    display: none;
+  }
+  .detail {
+    padding: 16px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    animation: rise 0.3s both;
+  }
+  .back {
+    align-self: flex-start;
+    height: 40px;
+    padding: 0 14px 0 8px;
+    border: none;
+    border-radius: 99px;
+    background: rgba(70, 45, 30, 0.07);
+    font-size: 14.5px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .back .sym {
+    font-size: 22px;
+  }
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+    padding-top: 6px;
+  }
+  .big-tile {
+    width: 64px;
+    height: 64px;
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 6px 14px rgba(30, 10, 40, 0.14);
+  }
+  .big-tile .sym {
+    font-size: 34px;
+  }
+  .d-name {
+    font-size: 20px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    padding-top: 6px;
+  }
+  .d-meta {
+    font-size: 13.5px;
+  }
+  .d-amt {
+    font-weight: 500;
+    font-size: 68px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    padding-top: 8px;
+  }
+  .change {
+    border-radius: 22px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .change-label {
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .change-nums {
+    font-size: 24px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .was {
+    opacity: 0.45;
+    text-decoration: line-through;
+  }
+  .arrow {
+    font-size: 18px;
+    opacity: 0.5;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    height: 36px;
+    padding: 0 13px 0 10px;
+    border-radius: 99px;
+    background: rgba(70, 45, 30, 0.07);
+    font-size: 13.5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .chip .sym {
+    font-size: 18px;
+  }
+</style>

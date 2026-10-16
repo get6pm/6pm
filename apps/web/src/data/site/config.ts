@@ -11,4 +11,13 @@ export const repoUrl = 'https://github.com/get6pm/6pm';
 export const studioUrl = 'https://oddeggs.studio';
 
 /** The page's background, also the browser chrome colour. */
-export const siteBackground = '#0d0b10';
+export const siteBackground = '#8fd0c6';
+
+/**
+ * 6pm Max as the App Store sells it: Vietnam in đồng for the Vietnamese page, the US in dollars for
+ * the English one. The app reads its prices from the store; these are the tiers configured there.
+ */
+export const maxPrices = {
+  en: { month: 4.99, year: 34.99 },
+  vi: { month: 99_000, year: 799_000 },
+} as const;

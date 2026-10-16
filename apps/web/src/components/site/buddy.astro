@@ -1,0 +1,27 @@
+---
+/** The sun companion at a size and in a mood; `scripts/site/companion.ts` draws it. */
+interface Props {
+  size: number;
+  mood: 'calm' | 'happy' | 'wave' | 'think' | 'sleepy';
+  /**
+   * On the page the companion keeps a little room under its feet, as the design lays it out; on
+   * the iPhone Duo screens it sits flush.
+   */
+  tight?: boolean;
+}
+
+const { size, mood, tight = false } = Astro.props;
+---
+
+<dusk-buddy
+  size={size}
+  mood={mood}
+  style={`width:${size}px;height:${tight ? size : size + 4}px`}></dusk-buddy>
+
+<style>
+  dusk-buddy {
+    display: block;
+    flex-shrink: 0;
+    line-height: 0;
+  }
+</style>

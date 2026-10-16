@@ -1,0 +1,183 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import { duoMoney, duoStandRecent, duoToday } from '../../data/site/duo-data';
+import DuoBackdrop from './duo-backdrop.astro';
+import DuoKeypad from './duo-keypad.astro';
+
+/**
+ * Propped up like a tiny laptop at the market: what is left for today on the top half, a keypad on
+ * the bottom half. The keypad works; adding a spend takes it off what is left.
+ */
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].duo.screen.stand;
+const recent = duoStandRecent.map((amount, i) => ({ name: t.recent[i], amount }));
+---
+
+<div class="stand" data-duo-stand data-lang={lang} data-left={duoToday.left} data-start={duoToday.start}>
+  <div class="half top-half">
+    <div class="duo-screen glance">
+      <DuoBackdrop sunLeft="50%" horizon={360} ray={184} />
+      <div class="bar">
+        <span class="d-round ghost"><span class="sym" style="font-size:22px">close</span></span>
+        <div class="place">{t.place}</div>
+        <span class="done">{t.done}</span>
+      </div>
+      <div class="middle">
+        <div class="left-label">{t.left}</div>
+        <div class="left-num d-face" data-stand-left>{duoMoney(lang, duoToday.left)}</div>
+        <div class="track">
+          <div
+            class="fill"
+            data-stand-fill
+            style={`width:${(duoToday.left / duoToday.start) * 100}%`}
+          >
+          </div>
+        </div>
+      </div>
+      <div class="recent" data-stand-recent>
+        {
+          recent.map((r) => (
+            <span class="chip">
+              {r.name}
+              <span class="chip-amt">−{duoMoney(lang, r.amount)}</span>
+            </span>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+  <DuoKeypad lang={lang} />
+</div>
+
+<style>
+  .stand {
+    width: 687px;
+    height: 900px;
+    perspective: 2400px;
+    perspective-origin: 50% 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .half {
+    width: 687px;
+    height: 484px;
+    box-sizing: border-box;
+    background: #050407;
+  }
+  .top-half {
+    padding: 9px 9px 0;
+    border-radius: 49px 49px 0 0;
+    transform-origin: 50% 100%;
+    transform: rotateX(26deg);
+    box-shadow:
+      0 0 0 1px #5d5864,
+      0 0 0 2.5px #1a181e,
+      0 0 0 3.5px #7a7480;
+  }
+  .glance {
+    width: 669px;
+    height: 475px;
+    border-radius: 40px 40px 0 0;
+    background: linear-gradient(180deg, #2c2758 0%, #7a3f72 60%, #c86a58 100%);
+    color: #fbf4ec;
+    box-sizing: border-box;
+    padding: 18px 24px 30px;
+    display: flex;
+    flex-direction: column;
+  }
+  .bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ghost {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fbf4ec;
+  }
+  .place {
+    flex: 1;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 650;
+  }
+  .done {
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 99px;
+    background: #fbf4ec;
+    color: #1b1e2e;
+    font-size: 15px;
+    font-weight: 650;
+    display: flex;
+    align-items: center;
+  }
+  .middle {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+  }
+  .left-label {
+    font-size: 18px;
+    font-weight: 500;
+    color: rgba(251, 244, 236, 0.8);
+  }
+  .left-num {
+    font-size: 170px;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    font-variant-numeric: tabular-nums;
+  }
+  .track {
+    width: 340px;
+    height: 8px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    margin-top: 12px;
+  }
+  .fill {
+    height: 100%;
+    border-radius: 8px;
+    background: #ffd3a6;
+    transition: width 0.5s cubic-bezier(0.2, 0.9, 0.2, 1);
+  }
+  .recent {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-height: 34px;
+  }
+  .recent :global(.chip) {
+    height: 34px;
+    padding: 0 13px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    animation: rise 0.3s both;
+  }
+  .recent :global(.chip-amt) {
+    opacity: 0.7;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

@@ -1,0 +1,299 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import { duoMoney, duoSpent, duoToday } from '../../data/site/duo-data';
+import Buddy from './buddy.astro';
+import DuoDiaryDay from './duo-diary-day.astro';
+
+/** The inner screen as a diary: October on the left page, the picked day on the right. */
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].duo.screen;
+const shown = 8;
+// Closed days get a ring (green under the day's number, red over), today a clock, the missed day
+// a dashed ring; the days ahead are blank.
+const days = Array.from({ length: 31 }, (_, i) => {
+  const day = i + 1;
+  const spent = duoSpent[day];
+  if (day === 9) return { day, kind: 'today', icon: 'schedule' };
+  if (day === 7) return { day, kind: 'missed', icon: '' };
+  if (spent) {
+    const under = spent <= duoToday.daily;
+    return { day, kind: under ? 'under' : 'over', icon: under ? 'check' : 'arrow_upward' };
+  }
+  return { day, kind: 'ahead', icon: '' };
+});
+---
+
+<div class="duo-screen diary">
+  <div class="spine"></div>
+  <div class="paper"></div>
+  <div class="left">
+    <div class="title-block">
+      <div class="kicker d-mono">{t.diary.kicker}</div>
+      <div class="title d-face">{t.diary.title}</div>
+      <div class="sub">{t.diary.sub}</div>
+    </div>
+    <div class="grid">
+      {t.week.map((w) => <div class="wk d-mono">{w}</div>)}
+      {[0, 1, 2].map(() => <span class="cell" />)}
+      {
+        days.map((d) =>
+          d.kind === 'ahead' ? (
+            <span class="cell ahead">
+              <span class="num">{d.day}</span>
+            </span>
+          ) : (
+            <button
+              type="button"
+              class:list={['cell', d.kind]}
+              tabindex="-1"
+              aria-pressed={d.day === shown ? 'true' : 'false'}
+              data-duo-day={d.day}
+            >
+              <span class="num">{d.day}</span>
+              <span class="mark">
+                <span class="sym">{d.icon}</span>
+              </span>
+            </button>
+          ),
+        )
+      }
+    </div>
+    <div class="grow"></div>
+    <div class="kept">
+      <div class="kept-words">
+        <div class="kept-label d-mono">{t.diary.kept}</div>
+        <div class="kept-value d-face">{duoMoney(lang, duoToday.kept)}</div>
+      </div>
+      <Buddy size={54} mood="happy" tight />
+    </div>
+  </div>
+  <div class="right">
+    {
+      Array.from({ length: 9 }, (_, i) => (
+        <DuoDiaryDay lang={lang} day={i + 1} hidden={i + 1 !== shown} />
+      ))
+    }
+  </div>
+  <div class="rail">
+    <span class="d-camera ring"></span>
+    <span class="d-round soft first"><span class="sym" style="font-size:22px">close</span></span>
+    <div class="grow"></div>
+    <button type="button" class="d-round soft" tabindex="-1" data-duo-step="-1">
+      <span class="sym" style="font-size:24px">keyboard_arrow_up</span>
+    </button>
+    <button type="button" class="d-round soft" tabindex="-1" data-duo-step="1">
+      <span class="sym" style="font-size:24px">keyboard_arrow_down</span>
+    </button>
+    <span class="d-round share"><span class="sym" style="font-size:21px">ios_share</span></span>
+  </div>
+</div>
+
+<style>
+  .diary {
+    width: 951px;
+    height: 669px;
+    border-radius: 40px;
+    background: linear-gradient(90deg, #f1e7d8 0%, #f6eee2 49%, #f8f1e6 51%, #f3eadc 100%);
+    color: #2a1424;
+  }
+  .spine {
+    position: absolute;
+    left: 405px;
+    top: 0;
+    bottom: 0;
+    width: 140px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(80, 40, 30, 0.07) 42%,
+      rgba(80, 40, 30, 0.16) 50%,
+      rgba(80, 40, 30, 0.07) 58%,
+      transparent
+    );
+    pointer-events: none;
+  }
+  .paper {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 475px;
+    box-sizing: border-box;
+    padding: 34px 44px 30px 38px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .kicker {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: rgba(42, 20, 36, 0.55);
+  }
+  .title {
+    font-size: 44px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .sub {
+    font-size: 14.5px;
+    color: rgba(42, 20, 36, 0.62);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .wk {
+    text-align: center;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: rgba(42, 20, 36, 0.45);
+  }
+  .cell {
+    height: 52px;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    padding: 0;
+    color: #2a1424;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: background 0.2s;
+  }
+  button.cell {
+    cursor: pointer;
+  }
+  button.cell:active {
+    transform: none;
+  }
+  .cell[aria-pressed='true'] {
+    background: rgba(42, 20, 36, 0.09);
+  }
+  .ahead {
+    opacity: 0.3;
+  }
+  .num {
+    font-size: 13px;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+  }
+  .ahead .num {
+    padding-bottom: 22px;
+  }
+  .mark {
+    width: 18px;
+    height: 18px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mark .sym {
+    font-size: 12px;
+    font-variation-settings: 'wght' 600;
+  }
+  .today .mark {
+    background: #ff8552;
+    color: #2a1424;
+  }
+  .missed .mark {
+    border: 1.5px dashed rgba(42, 20, 36, 0.4);
+  }
+  .under .mark {
+    border: 1.5px solid #2f7d55;
+    color: #2f7d55;
+  }
+  .over .mark {
+    border: 1.5px solid #c0443a;
+    color: #c0443a;
+  }
+  .grow {
+    flex: 1;
+  }
+  .kept {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(42, 20, 36, 0.22);
+  }
+  .kept-words {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .kept-label {
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    color: rgba(42, 20, 36, 0.55);
+  }
+  .kept-value {
+    font-size: 34px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .right {
+    position: absolute;
+    left: 476px;
+    top: 0;
+    bottom: 0;
+    width: 403px;
+    box-sizing: border-box;
+    padding: 34px 22px 30px 44px;
+    display: flex;
+    flex-direction: column;
+  }
+  .rail {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 72px;
+    box-sizing: border-box;
+    padding: 16px 0 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .ring {
+    box-shadow: 0 0 0 5px #000;
+  }
+  .soft,
+  .share {
+    width: 46px;
+    height: 46px;
+    background: rgba(42, 20, 36, 0.08);
+    color: #2a1424;
+  }
+  .first {
+    margin-top: 6px;
+  }
+  .share {
+    background: #2a1424;
+    color: #f8f1e6;
+  }
+</style>

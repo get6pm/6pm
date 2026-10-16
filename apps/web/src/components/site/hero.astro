@@ -10,77 +10,49 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = siteCopy[lang].hero;
-// Shimmer lines on the water, narrowing as they reach the horizon's reflection below.
-const waves = [0, 1, 2, 3, 4, 5].map((i) => ({
-  top: `${18 + i * 26}px`,
-  width: `min(${520 - i * 70}px, ${88 - i * 12}vw)`,
-  duration: `${2.4 + i * 0.3}s`,
-  delay: `${i * 0.35}s`,
-}));
 ---
 
-<section id="top" class="hero">
+<section id="top" class="hero" data-hour="9">
   <div class="copy">
-    <div class="kicker-row mono">
+    <div class="kicker mono">
       <span class="dot"></span><span>{ctaMode === 'store' ? t.kickStore : t.kickWait}</span>
     </div>
     <h1>{t.a} <span class="accent">{t.b}</span></h1>
-    <p class="lede">{t.sub}</p>
+    <p class="sub">{t.sub}</p>
     <JoinCta lang={lang} size="hero" />
-    <div class="clock mono" data-clock>
+    <div class="clock mono">
       <span class="sym" aria-hidden="true">schedule</span><span data-clock-line></span>
     </div>
   </div>
-
-  <div class="stage">
-    <div class="sun-sky" aria-hidden="true">
-      <div class="halo"></div>
-      <div class="sun-box"><div class="sun"></div></div>
-    </div>
-    <div class="horizon" aria-hidden="true"></div>
-    <div class="water" aria-hidden="true">
-      <div class="reflection"></div>
-      {
-        waves.map((w) => (
-          <div
-            class="wave"
-            style={`top:${w.top};width:${w.width};margin-left:calc(${w.width} / -2);animation-duration:${w.duration};animation-delay:${w.delay}`}
-          />
-        ))
-      }
-    </div>
-    <HeroPhone lang={lang} />
-  </div>
+  <HeroPhone lang={lang} />
 </section>
 
 <style>
   .hero {
-    position: relative;
-    isolation: isolate;
+    max-width: 1240px;
+    margin: 0 auto;
     box-sizing: border-box;
-    padding: clamp(120px, 15vh, 160px) var(--pad-x) 0;
-    display: flex;
-    flex-direction: column;
+    min-height: 100vh;
+    padding: clamp(110px, 14vh, 150px) var(--pad-x) clamp(60px, 8vh, 96px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
     align-items: center;
-    text-align: center;
-    overflow: hidden;
+    gap: clamp(40px, 6vw, 80px);
   }
   .copy {
-    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 26px;
-    max-width: 900px;
+    gap: 28px;
+    min-width: 0;
   }
-  .kicker-row {
+  .kicker {
     display: flex;
     align-items: center;
     gap: 10px;
     font-size: 12px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--ink-62);
+    color: var(--ink2);
   }
   .dot {
     width: 6px;
@@ -95,138 +67,32 @@ const waves = [0, 1, 2, 3, 4, 5].map((i) => ({
     font-weight: 500;
     font-variation-settings:
       'opsz' 96,
-      'wdth' 92;
-    font-size: clamp(60px, 9vw, 136px);
-    line-height: 0.9;
-    letter-spacing: -0.055em;
+      'wdth' 88;
+    font-size: clamp(64px, 9.4vw, 148px);
+    line-height: calc(0.86 + var(--hlx));
+    letter-spacing: -0.06em;
     text-wrap: balance;
   }
   .accent {
-    color: var(--sun);
+    color: var(--acc);
   }
-  .lede {
+  .sub {
     margin: 0;
-    max-width: 520px;
+    max-width: 470px;
     font-size: clamp(17px, 1.4vw, 20px);
     line-height: 1.5;
-    color: var(--ink-70);
-    text-wrap: balance;
+    color: var(--ink2);
+    text-wrap: pretty;
   }
   .clock {
-    min-height: 16px;
     display: flex;
     align-items: center;
     gap: 8px;
+    min-height: 16px;
     font-size: 12px;
-    color: var(--ink-55);
+    color: var(--ink2);
   }
   .clock .sym {
     font-size: 16px;
-  }
-  /* The visitor's own clock; until the script writes it, nothing shows. */
-  .clock:has([data-clock-line]:empty) {
-    visibility: hidden;
-  }
-  .stage {
-    position: relative;
-    width: 100%;
-    max-width: 1200px;
-    height: 680px;
-    margin-top: clamp(48px, 7vh, 80px);
-  }
-  .sun-sky {
-    position: absolute;
-    left: -20vw;
-    right: -20vw;
-    top: 0;
-    height: 420px;
-    overflow: hidden;
-    pointer-events: none;
-  }
-  .halo {
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    width: min(1100px, 160vw);
-    height: min(700px, 110vw);
-    transform: translate(-50%, 50%);
-    background: radial-gradient(
-      closest-side,
-      rgba(255, 133, 82, 0.28),
-      rgba(255, 133, 82, 0.08) 55%,
-      transparent
-    );
-  }
-  .sun-box {
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    width: min(560px, 96vw);
-    aspect-ratio: 1;
-    margin-left: calc(min(560px, 96vw) / -2);
-    transform: translateY(46%);
-  }
-  .sun {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle at 50% 35%,
-      #ffe2bf 0%,
-      #ffa06a 34%,
-      #e45f3e 66%,
-      #a43d4c 100%
-    );
-    box-shadow: 0 0 120px 30px rgba(255, 120, 80, 0.35);
-    animation: breathe 7s ease-in-out infinite;
-  }
-  .horizon {
-    position: absolute;
-    left: -20vw;
-    right: -20vw;
-    top: 420px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 10%, rgba(255, 196, 160, 0.75) 50%, transparent 90%);
-  }
-  .water {
-    position: absolute;
-    left: -20vw;
-    right: -20vw;
-    top: 421px;
-    bottom: 0;
-    overflow: hidden;
-    pointer-events: none;
-    background: linear-gradient(180deg, rgba(255, 133, 82, 0.08), transparent 70%);
-  }
-  .reflection {
-    position: absolute;
-    left: 50%;
-    top: -60px;
-    width: min(520px, 90vw);
-    height: 200px;
-    transform: translateX(-50%);
-    border-radius: 50%;
-    background: radial-gradient(closest-side, rgba(255, 150, 100, 0.35), transparent);
-    filter: blur(10px);
-  }
-  .wave {
-    position: absolute;
-    left: 50%;
-    height: 2px;
-    border-radius: 2px;
-    background: rgba(255, 190, 150, 0.8);
-    opacity: 0.3;
-    animation: waveShimmer 2.4s ease-in-out infinite;
-  }
-  @keyframes waveShimmer {
-    0%,
-    100% {
-      opacity: 0.12;
-      transform: scaleX(0.6);
-    }
-    50% {
-      opacity: 0.55;
-      transform: scaleX(1);
-    }
   }
 </style>

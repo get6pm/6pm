@@ -1,0 +1,139 @@
+---
+import '../../styles/duo.css';
+
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import DuoStage from './duo-stage.astro';
+import Mark from './mark.astro';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].duo;
+---
+
+<section id="duo" class="sec duo" data-hour="21.4" data-duo data-duo-captions={JSON.stringify(t.captions)}>
+  <div class="stack head" data-reveal="0">
+    <Mark time="21:30" label="iPhone Duo" />
+    <h2 class="h2">{t.title}</h2>
+    <p class="lede">{t.sub}</p>
+  </div>
+  <div class="poses" role="group" aria-label={t.stageLabel} data-reveal="60">
+    {
+      t.tabs.map((label, i) => (
+        <button type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-duo-pose={i}>
+          {label}
+        </button>
+      ))
+    }
+  </div>
+  <DuoStage lang={lang} />
+  <div class="hints">
+    {
+      t.hints.map((group, i) => (
+        <div class="hint-group" hidden={i !== 0} data-duo-hints={i}>
+          {group.map(([icon, line]) => (
+            <span class="hint">
+              <span class="sym" aria-hidden="true">
+                {icon}
+              </span>
+              {line}
+            </span>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+  <p class="caption" aria-live="polite" data-duo-caption>{t.captions[0]}</p>
+</section>
+
+<style>
+  .duo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: clamp(32px, 4vw, 48px);
+  }
+  .head {
+    align-items: center;
+    max-width: 860px;
+  }
+  .head .h2 {
+    --size: clamp(52px, 7.4vw, 116px);
+    --lh: 0.88;
+    --ls: -0.055em;
+  }
+  .head .lede {
+    max-width: 520px;
+  }
+  .poses {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 99px;
+    border: 0.5px solid var(--line);
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .poses button {
+    height: 40px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 99px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    background: transparent;
+    color: var(--ink);
+    transition:
+      background 0.25s,
+      color 0.25s;
+  }
+  .poses button[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--inv);
+  }
+  .hints {
+    display: flex;
+    justify-content: center;
+  }
+  .hint-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .hint-group[hidden] {
+    display: none;
+  }
+  .hint {
+    height: 34px;
+    padding: 0 14px 0 10px;
+    border-radius: 99px;
+    border: 0.5px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ink2);
+    animation: rise 0.4s both;
+  }
+  .hint .sym {
+    font-size: 18px;
+    color: var(--sun);
+  }
+  .caption {
+    margin: 0;
+    max-width: 460px;
+    min-height: 3em;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink2);
+    text-wrap: balance;
+  }
+</style>

@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..700&family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&display=block" rel="stylesheet">
+<script src="./companion.js"></script>
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;background:#8fd0c6}
+a{color:inherit}
+a:hover{color:#ff8552}
+::selection{background:#ff8552;color:#1a0f0a}
+input::placeholder{color:currentColor;opacity:.5}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes rowIn{0%{opacity:0;transform:translateY(-14px) scale(.96);background:rgba(255,133,82,.28)}40%{opacity:1;transform:none;background:rgba(255,133,82,.22)}100%{opacity:1;transform:none;background:rgba(255,133,82,0)}}
+@keyframes stampIn{0%{opacity:0;transform:translate(-50%,-50%) rotate(-16deg) scale(2.2)}60%{opacity:1;transform:translate(-50%,-50%) rotate(-8deg) scale(.94)}100%{opacity:1;transform:translate(-50%,-50%) rotate(-8deg) scale(1)}}
+@keyframes rise{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:none}}
+@keyframes dot{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(-4px);opacity:1}}
+@keyframes ansIn{0%,30%{opacity:0;transform:translateY(10px)}45%,100%{opacity:1;transform:none}}
+@keyframes dotsOut{0%,28%{opacity:1}34%,100%{opacity:0}}
+@keyframes lit{0%,100%{color:rgba(251,244,236,.18)}5%,22%{color:#fbf4ec}32%{color:rgba(251,244,236,.18)}}
+@keyframes litA{0%,100%{color:rgba(255,133,82,.25)}5%,22%{color:#ff8552}32%{color:rgba(255,133,82,.25)}}
+@keyframes type{0%{width:0}40%,88%{width:var(--w)}96%,100%{width:0}}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes lineIn{0%,44%{opacity:0;transform:translateY(6px)}50%,88%{opacity:1;transform:none}96%,100%{opacity:0;transform:none}}
+@keyframes marquee{to{transform:translateX(calc(-50% - 9px))}}
+@keyframes grain{0%{transform:translate(0,0)}10%{transform:translate(-5%,-8%)}20%{transform:translate(-12%,4%)}30%{transform:translate(6%,-14%)}40%{transform:translate(-4%,16%)}50%{transform:translate(-14%,6%)}60%{transform:translate(12%,0)}70%{transform:translate(0,12%)}80%{transform:translate(2%,22%)}90%{transform:translate(-8%,8%)}}
+@keyframes leak{0%,100%{opacity:.35;transform:translateX(0)}50%{opacity:.6;transform:translateX(-2%)}}
+@keyframes scratch{0%{transform:translateX(0);opacity:.05}30%{transform:translateX(-41px);opacity:0}55%{transform:translateX(83px);opacity:.06}80%{transform:translateX(17px);opacity:0}}
+@keyframes ghostX{0%,15%{transform:translateX(0);opacity:0}25%{opacity:1}70%{transform:translateX(220px);opacity:1}80%,100%{transform:translateX(240px);opacity:0}}
+@keyframes ghostXL{0%,15%{transform:translateX(0);opacity:0}25%{opacity:1}70%{transform:translateX(-260px);opacity:1}80%,100%{transform:translateX(-280px);opacity:0}}
+@keyframes ghostY{0%,15%{transform:translateY(160px);opacity:0}25%{opacity:1}70%{transform:translateY(-120px);opacity:1}80%,100%{transform:translateY(-140px);opacity:0}}
+@keyframes twinkle{0%,100%{opacity:.5}50%{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:0s !important;animation-iteration-count:1 !important}}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="--ink:#1b1e2e; --ink2:rgba(27,30,46,.72); --line:rgba(27,30,46,.16); --glass:rgba(255,253,249,.5); --inv:#fbf4ec; --acc:#c4441c; --nav:rgba(240,246,236,.55); position:relative; color:var(--ink); font-family:'Be Vietnam Pro', -apple-system, system-ui, sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip; min-height:100vh;">
+
+  <div aria-hidden="true" ref="{{ skyRef }}" style="position:fixed; inset:0; z-index:0; background:linear-gradient(180deg, #8fd0c6 0%, #e4efcf 52%, #fff1cf 100%);"></div>
+  <div aria-hidden="true" ref="{{ starRef }}" style="position:fixed; inset:0; z-index:0; opacity:0; pointer-events:none; background-image:radial-gradient(circle, rgba(255,250,240,.9) .8px, transparent 1.4px), radial-gradient(circle, rgba(255,250,240,.6) .6px, transparent 1.2px); background-size:97px 83px, 53px 61px; background-position:0 0, 21px 37px; -webkit-mask-image:linear-gradient(180deg, #000 30%, transparent 86%); mask-image:linear-gradient(180deg, #000 30%, transparent 86%);"></div>
+  <div aria-hidden="true" style="position:fixed; left:0; right:0; top:0; height:86vh; z-index:0; overflow:hidden; pointer-events:none;">
+    <div ref="{{ sunRef }}" style="--sun:#fff07a; --rim:#ffd23f; --haze:0; position:absolute; right:7vw; top:14vh; width:clamp(150px,19vw,260px); aspect-ratio:1;">
+      <div style="position:absolute; inset:-260%; border-radius:50%; background:radial-gradient(closest-side, color-mix(in oklab, var(--sun) 34%, transparent) 0%, color-mix(in oklab, var(--rim) 14%, transparent) 38%, transparent 100%); mix-blend-mode:screen;"></div>
+      <div style="position:absolute; inset:-60%; border-radius:50%; background:radial-gradient(closest-side, color-mix(in oklab, #fff8e6 70%, transparent) 0%, color-mix(in oklab, var(--sun) 40%, transparent) 45%, transparent 100%); filter:blur(8px);"></div>
+      <div style="position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle at 50% 50%, #fffdf4 0%, #fff6dc 30%, var(--sun) 72%, var(--rim) 100%); filter:blur(2.5px); box-shadow:0 0 30px 6px color-mix(in oklab, var(--sun) 70%, transparent);"></div>
+      <div style="position:absolute; left:-180%; right:-180%; top:50%; height:3px; margin-top:-1.5px; background:linear-gradient(90deg, transparent, color-mix(in oklab, var(--sun) 50%, transparent) 30%, rgba(255,252,240,.85) 50%, color-mix(in oklab, var(--sun) 50%, transparent) 70%, transparent); filter:blur(1.5px); mix-blend-mode:screen;"></div>
+      <div style="position:absolute; left:-120%; right:-120%; top:50%; height:40px; margin-top:-20px; background:radial-gradient(closest-side, color-mix(in oklab, var(--sun) 30%, transparent), transparent); filter:blur(6px); mix-blend-mode:screen;"></div>
+      <div style="position:absolute; left:-30%; right:-30%; top:58%; bottom:-10%; opacity:var(--haze); background:repeating-linear-gradient(180deg, transparent 0 9px, color-mix(in oklab, var(--rim) 55%, #3a1c5a) 9px 13px); -webkit-mask-image:radial-gradient(closest-side, #000 40%, transparent); mask-image:radial-gradient(closest-side, #000 40%, transparent); filter:blur(1.5px);"></div>
+      <div style="position:absolute; left:calc(-130% - 30px); top:210%; width:34%; aspect-ratio:1; border-radius:50%; border:1px solid rgba(255,240,210,.18); background:radial-gradient(closest-side, transparent 60%, rgba(160,220,255,.08) 80%, rgba(255,200,150,.12) 95%, transparent); mix-blend-mode:screen;"></div>
+      <div style="position:absolute; left:-210%; top:330%; width:14%; aspect-ratio:1; border-radius:50%; background:rgba(255,220,180,.14); filter:blur(1px); mix-blend-mode:screen;"></div>
+    </div>
+  </div>
+  <div aria-hidden="true" ref="{{ hazeRef }}" style="position:fixed; inset:0; z-index:0; pointer-events:none; background:radial-gradient(120% 60% at 50% 100%, rgba(255,214,170,.35), transparent 60%), radial-gradient(80% 50% at 10% 0%, rgba(40,30,90,.18), transparent 70%);"></div>
+  <div aria-hidden="true" ref="{{ horizonRef }}" style="position:fixed; left:0; right:0; top:86vh; bottom:0; z-index:0; opacity:0; pointer-events:none; border-top:1px solid rgba(255,206,170,.7); background:linear-gradient(180deg, rgba(255,140,90,.35), rgba(20,10,30,.2) 60%, transparent);"></div>
+
+  <div aria-hidden="true" style="position:fixed; inset:0; z-index:40; pointer-events:none; background:radial-gradient(130% 100% at 50% 45%, transparent 55%, rgba(18,8,24,.34) 100%);"></div>
+  <div aria-hidden="true" ref="{{ leakRef }}" style="position:fixed; inset:0; z-index:40; pointer-events:none; mix-blend-mode:screen; opacity:.5; background:radial-gradient(40% 70% at 100% 20%, rgba(255,120,60,.22), transparent 70%), radial-gradient(30% 50% at 0% 85%, rgba(255,80,120,.12), transparent 70%); animation:leak 14s ease-in-out infinite;"></div>
+  <div aria-hidden="true" style="position:fixed; inset:-100%; z-index:41; pointer-events:none; opacity:.16; mix-blend-mode:overlay; background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E&quot;); animation:grain .9s steps(1) infinite;"></div>
+  <div aria-hidden="true" style="position:fixed; inset:0; z-index:41; pointer-events:none; opacity:.05; background:repeating-linear-gradient(90deg, transparent 0 137px, rgba(255,255,255,.6) 137px 138px, transparent 138px 311px); animation:scratch 7s steps(1) infinite;"></div>
+  <header data-screen-label="Nav" style="position:fixed; z-index:50; top:0; left:0; right:0; background:var(--nav); backdrop-filter:saturate(1.4) blur(20px); -webkit-backdrop-filter:saturate(1.4) blur(20px); border-bottom:0.5px solid var(--line);">
+    <div style="max-width:1240px; margin:0 auto; height:64px; box-sizing:border-box; padding:0 clamp(20px,4vw,40px); display:flex; align-items:center; gap:clamp(14px,3vw,28px);">
+      <a href="#top" style="color:var(--ink); text-decoration:none; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-size:24px; letter-spacing:-.05em; line-height:1;">6pm</a>
+      <span style="display:flex; align-items:center; gap:7px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.08em; color:var(--ink2);"><span style="width:6px; height:6px; border-radius:50%; background:#ff8552;"></span><span ref="{{ clockRef }}">09:00</span></span>
+      <nav style="flex:1; min-width:0; height:20px; overflow:hidden; display:flex; flex-wrap:wrap; justify-content:center; gap:0 26px; font-size:14px; line-height:20px;">
+        <a href="#capture" style="color:var(--ink2); text-decoration:none;">{{ t.navCapture }}</a>
+        <a href="#close" style="color:var(--ink2); text-decoration:none;">{{ t.navClose }}</a>
+        <a href="#surfaces" style="color:var(--ink2); text-decoration:none;">{{ t.navSurf }}</a>
+        <a href="#duo" style="color:var(--ink2); text-decoration:none;">iPhone Duo</a>
+        <a href="#privacy" style="color:var(--ink2); text-decoration:none;">{{ t.navPrivacy }}</a>
+        <a href="#pricing" style="color:var(--ink2); text-decoration:none;">{{ t.navPricing }}</a>
+      </nav>
+      <div style="display:flex; padding:3px; border-radius:99px; border:0.5px solid var(--line); font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px; letter-spacing:.06em;">
+        <button onClick="{{ setEn }}" style="height:28px; min-width:36px; padding:0 8px; border:none; border-radius:99px; cursor:pointer; font:inherit; background: {{ enBg }}; color: {{ enFg }};">EN</button>
+        <button onClick="{{ setVi }}" style="height:28px; min-width:36px; padding:0 8px; border:none; border-radius:99px; cursor:pointer; font:inherit; background: {{ viBg }}; color: {{ viFg }};">VI</button>
+      </div>
+      <a href="#join" style-hover="background:#ff9a6e; color:#1a0f0a;" style="flex-shrink:0; height:36px; padding:0 16px; border-radius:99px; background:#ff8552; color:#1a0f0a; text-decoration:none; font-size:14px; font-weight:600; display:flex; align-items:center; white-space:nowrap; transition:background .2s;">{{ navCta }}</a>
+    </div>
+  </header>
+
+  <main style="position:relative; z-index:1;">
+
+  <section id="top" data-hour="9" data-screen-label="01 Hero 09:00" style="max-width:1240px; margin:0 auto; box-sizing:border-box; min-height:100vh; padding:clamp(110px,14vh,150px) clamp(20px,4vw,40px) clamp(60px,8vh,96px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr)); align-items:center; gap:clamp(40px,6vw,80px);">
+    <div style="display:flex; flex-direction:column; gap:28px; min-width:0;">
+      <div style="display:flex; align-items:center; gap:10px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink2);"><span style="width:6px; height:6px; border-radius:50%; background:#ff8552; animation:pulse 2.4s ease-in-out infinite;"></span><span>{{ heroKicker }}</span></div>
+      <h1 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:clamp(64px,9.4vw,148px); line-height:calc(.86 + var(--hlx,0)); letter-spacing:-.06em; text-wrap:balance;">{{ t.heroA }} <span style="color:var(--acc);">{{ t.heroB }}</span></h1>
+      <p style="margin:0; max-width:470px; font-size:clamp(17px,1.4vw,20px); line-height:1.5; color:var(--ink2); text-wrap:pretty;">{{ t.heroSub }}</p>
+      <sc-if value="{{ isWaitlist }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; flex-direction:column; gap:10px; max-width:460px;">
+          <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+            <form onSubmit="{{ submit }}" style="display:flex; flex-wrap:wrap; gap:10px;">
+              <input type="email" autocomplete="email" placeholder="{{ t.emailPh }}" value="{{ email }}" onChange="{{ setEmail }}" style-focus="border-color:#ff8552; box-shadow:0 0 0 3px rgba(255,133,82,.28);" style="flex:1 1 220px; min-width:0; height:54px; box-sizing:border-box; padding:0 20px; border-radius:99px; border:0.5px solid var(--line); background:var(--glass); color:var(--ink); font-family:inherit; font-size:16px; outline:none; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);">
+              <button type="submit" style-hover="background:#ff9a6e;" style="flex:0 0 auto; height:54px; padding:0 24px; border:none; border-radius:99px; background:#ff8552; color:#1a0f0a; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; transition:background .2s;">{{ t.ctaWait }}</button>
+            </form>
+          </sc-if>
+          <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:center; gap:12px; height:54px; font-size:16px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px; color:var(--acc);">check_circle</span>{{ t.sentMsg }}</div>
+          </sc-if>
+          <span style="font-size:13.5px; padding-left:20px; color: {{ msgColor }};">{{ formNote }}</span>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isStore }}" hint-placeholder-val="{{ false }}">
+        <a href="#" aria-label="Download on the App Store" style-hover="transform:translateY(-2px); box-shadow:0 0 0 1px #a6a6a6, 0 18px 40px -12px rgba(0,0,0,.55);" style-active="transform:scale(.97);" style="align-self:flex-start; height:60px; box-sizing:border-box; padding:0 24px 0 18px; border-radius:14px; background:#000; color:#fff; text-decoration:none; display:flex; align-items:center; gap:11px; box-shadow:0 0 0 1px #a6a6a6, 0 10px 28px -10px rgba(0,0,0,.5); font-family:-apple-system, 'SF Pro Display', 'Helvetica Neue', 'Be Vietnam Pro', system-ui, sans-serif; transition:transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s;"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true" style="flex-shrink:0; display:block;"><path fill="#fff" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"></path></svg><span style="display:flex; flex-direction:column; gap:1px; line-height:1;"><span style="font-size:11.5px; font-weight:500; letter-spacing:.01em;">{{ t.badgeTop }}</span><span style="font-size:25px; font-weight:600; letter-spacing:-.025em;">App Store</span></span></a>
+      </sc-if>
+      <sc-if value="{{ showClock }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; color:var(--ink2);"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:16px;">schedule</span><span>{{ clockLine }}</span></div>
+      </sc-if>
+    </div>
+
+    <div style="position:relative; justify-self:center; width:300px;">
+      <div style="position:relative; box-sizing:border-box; padding:10px; border-radius:54px; background:linear-gradient(160deg, #2c2930, #16141a 40%, #0f0e12); box-shadow:0 0 0 0.5px rgba(0,0,0,.3), 0 50px 100px -30px rgba(30,40,40,.55); transform:rotate(-2deg);">
+        <div style="position:relative; overflow:hidden; border-radius:44px; height:620px; background:linear-gradient(180deg, #8fd0c6 0%, #e4efcf 52%, #fff1cf 100%); color:#1b1e2e; text-align:left; font-family:-apple-system, 'SF Pro Text', 'Be Vietnam Pro', system-ui, sans-serif;">
+          <div style="position:absolute; right:-150px; top:-50px; width:390px; height:390px; border-radius:50%; background:radial-gradient(closest-side, rgba(255,246,200,.55), rgba(255,230,140,.18) 45%, transparent);"></div><div style="position:absolute; right:-30px; top:70px; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle, #fffdf4 0%, #fff6dc 32%, #fff3b0 72%, #ffe08a 100%); filter:blur(2px); box-shadow:0 0 24px 6px rgba(255,240,170,.7);"></div>
+          <div style="position:relative; display:flex; justify-content:space-between; align-items:center; height:44px; padding:0 26px; font-size:13px; font-weight:600;">
+            <span>09:12</span>
+            <span style="position:absolute; left:50%; top:10px; width:88px; height:26px; margin-left:-44px; border-radius:20px; background:#000;"></span>
+            <span style="width:22px; height:11px; border-radius:3.5px; border:1px solid rgba(27,30,46,.6); box-sizing:border-box; padding:1px;"><span style="display:block; width:80%; height:100%; border-radius:1.5px; background:#1b1e2e;"></span></span>
+          </div>
+          <div style="position:relative; padding:12px 18px 0; display:flex; justify-content:space-between; align-items:flex-start;">
+            <div style="display:flex; flex-direction:column; gap:1px;"><span style="font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:rgba(27,30,46,.7);">{{ t.phDay }}</span><span style="font-size:19px; font-weight:700; letter-spacing:-.02em;">{{ t.phDate }}</span></div>
+            <div style="display:flex; gap:6px;">
+              <span style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.5); box-shadow:inset 0 1px 0 #fff; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:19px;">tune</span></span>
+              <span style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.5); box-shadow:inset 0 1px 0 #fff; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px;">add</span></span>
+            </div>
+          </div>
+          <div style="position:relative; padding:58px 18px 0; display:flex; flex-direction:column; gap:4px;">
+            <span style="font-size:13px; font-weight:500; color:rgba(27,30,46,.72);">{{ t.phSafe }}</span>
+            <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:400; font-size:{{ t.phNumSize }}; line-height:1; letter-spacing:-.03em; margin-left:-2px;">{{ t.phNum }}</span>
+            <div style="display:flex; flex-direction:column; gap:6px; padding-top:8px; max-width:220px;">
+              <div style="height:5px; border-radius:5px; background:rgba(27,30,46,.12); overflow:hidden;"><div style="width:9%; height:100%; border-radius:5px; background:#1b1e2e;"></div></div>
+              <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:500; color:rgba(27,30,46,.72);"><span>{{ t.phLeft }}</span><span>{{ t.phRight }}</span></div>
+            </div>
+          </div>
+          <div style="position:absolute; left:0; right:0; top:318px; bottom:0; border-radius:32px 32px 0 0; background:#f6f0e7; padding:62px 12px 0; box-sizing:border-box; display:flex; flex-direction:column; gap:14px;">
+            <div style="position:absolute; left:14px; right:14px; top:14px; display:flex; align-items:flex-end; gap:4px;">
+              <dusk-buddy form="sun" size="50" mood="wave"></dusk-buddy>
+              <span style="margin-bottom:18px; padding:8px 12px 9px; border-radius:16px 16px 16px 5px; background:#1b1e2e; color:#fbf4ec; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:13.5px; line-height:1.25;">{{ t.phBuddy }}</span>
+            </div>
+            <div style="border-radius:22px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); padding:12px; display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <span style="width:38px; height:38px; border-radius:13px; flex-shrink:0; background:linear-gradient(155deg, oklch(0.9 0.07 50), oklch(0.78 0.12 50)); color:oklch(0.34 0.09 50); display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:21px; font-variation-settings:'FILL' 1;">wb_twilight</span></span>
+                <span style="display:flex; flex-direction:column; gap:2px; min-width:0;"><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:16px; letter-spacing:-.01em;">{{ t.phTonight }}</span><span style="font-size:11.5px; color:rgba(27,30,46,.65);">{{ t.phTonightSub }}</span></span>
+              </div>
+              <div style="display:flex; align-items:center; gap:5px; padding-top:10px; border-top:0.5px solid rgba(27,30,46,.08);">
+                <sc-for list="{{ week }}" as="w" hint-placeholder-count="7">
+                  <span style="display:flex; flex-direction:column; align-items:center; gap:3px;"><span style="width:21px; height:21px; border-radius:50%; box-sizing:border-box; background: {{ w.bg }}; border: {{ w.border }}; color:#fbf4ec; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:13px; opacity: {{ w.tick }};">check</span></span><span style="font-size:9px; font-weight:600; color:rgba(27,30,46,.6);">{{ w.d }}</span></span>
+                </sc-for>
+                <span style="flex:1; text-align:right; font-size:10.5px; line-height:1.3; color:rgba(27,30,46,.65);"><b style="color:#1b1e2e;">{{ t.phStreak }}</b><br>{{ t.phStreakSub }}</span>
+              </div>
+            </div>
+            <div style="border-radius:22px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); padding:4px 0;">
+              <div style="display:flex; align-items:center; gap:10px; padding:8px 12px;">
+                <span style="width:32px; height:32px; border-radius:11px; flex-shrink:0; background:linear-gradient(155deg, oklch(0.9 0.07 25), oklch(0.78 0.12 25)); color:oklch(0.34 0.09 25); display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:18px; font-variation-settings:'FILL' 1;">local_cafe</span></span>
+                <span style="flex:1; display:flex; flex-direction:column; gap:1px; min-width:0;"><span style="font-size:13px; font-weight:600;">{{ heroRow.name }}</span><span style="font-size:10.5px; color:rgba(27,30,46,.6);">08:15 · {{ heroRow.src }}</span></span>
+                <span style="font-size:13px; font-weight:600; font-variant-numeric:tabular-nums;">−{{ heroRow.amt }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="capture" data-hour="12.7" data-screen-label="02 Capture 12:40" style="scroll-margin-top:64px; max-width:1240px; margin:0 auto; box-sizing:border-box; padding:clamp(80px,10vw,140px) clamp(20px,4vw,40px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr)); align-items:center; gap:clamp(40px,6vw,80px);">
+    <div style="display:flex; flex-direction:column; gap:30px; min-width:0;">
+      <div data-reveal="0" style="display:flex; flex-direction:column; gap:20px;">
+        <div style="display:flex; align-items:center; gap:12px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.1em; color:var(--ink2);"><span style="font-weight:600; color:var(--ink);">12:40</span><span style="width:36px; height:1px; background:var(--line);"></span><span style="text-transform:uppercase;">{{ t.capMark }}</span></div>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:clamp(44px,5.6vw,84px); line-height:calc(.92 + var(--hlx,0)); letter-spacing:-.05em; text-wrap:balance;">{{ t.capTitle }}</h2>
+        <p style="margin:0; max-width:440px; font-size:17px; line-height:1.5; color:var(--ink2); text-wrap:pretty;">{{ t.capSub }}</p>
+      </div>
+      <div data-reveal="80" style="display:flex; flex-direction:column; border-top:0.5px solid var(--line);">
+        <sc-for list="{{ ways }}" as="w" hint-placeholder-count="6">
+          <button onClick="{{ w.pick }}" style-hover="background:var(--glass);" style="display:flex; align-items:center; gap:16px; min-height:60px; padding:10px 14px 10px 6px; border:none; border-bottom:0.5px solid var(--line); background: {{ w.bg }}; color:var(--ink); font-family:inherit; text-align:left; cursor:pointer; transition:background .25s;">
+            <span style="width:38px; height:38px; flex-shrink:0; border-radius:12px; background: {{ w.tileBg }}; color: {{ w.tileFg }}; display:flex; align-items:center; justify-content:center; transition:background .25s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:20px;">{{ w.icon }}</span></span>
+            <span style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px;"><span style="font-size:16.5px; font-weight:600;">{{ w.label }}</span><span style="font-size:14px; line-height:1.4; color:var(--ink2); opacity: {{ w.subOp }}; transition:opacity .25s;">{{ w.sub }}</span></span>
+            <span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:20px; opacity: {{ w.arrowOp }};">arrow_forward</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div data-reveal="120" style="position:relative; justify-self:center; width:300px;">
+      <div style="position:relative; box-sizing:border-box; padding:10px; border-radius:54px; background:linear-gradient(160deg, #2c2930, #16141a 40%, #0f0e12); box-shadow:0 0 0 0.5px rgba(0,0,0,.3), 0 50px 100px -30px rgba(40,40,30,.5);">
+        <div style="position:relative; overflow:hidden; border-radius:44px; height:620px; background:linear-gradient(180deg, #62b7c2 0%, #cfe8d2 52%, #f9eccb 100%); color:#1b1e2e; font-family:-apple-system, 'SF Pro Text', 'Be Vietnam Pro', system-ui, sans-serif;">
+          <div style="position:relative; display:flex; justify-content:space-between; align-items:center; height:44px; padding:0 26px; font-size:13px; font-weight:600;">
+            <span>12:40</span>
+            <span style="position:absolute; left:50%; top:10px; width:88px; height:26px; margin-left:-44px; border-radius:20px; background:#000;"></span>
+            <span style="width:22px; height:11px; border-radius:3.5px; border:1px solid rgba(27,30,46,.6); box-sizing:border-box; padding:1px;"><span style="display:block; width:62%; height:100%; border-radius:1.5px; background:#1b1e2e;"></span></span>
+          </div>
+          <div style="position:absolute; left:0; right:0; top:56px; bottom:0; border-radius:32px 32px 0 0; background:#f6f0e7; box-shadow:0 -10px 40px rgba(10,6,18,.12); padding:8px 14px 0; box-sizing:border-box; display:flex; flex-direction:column; gap:14px;">
+            <span style="align-self:center; width:36px; height:5px; border-radius:5px; background:rgba(27,30,46,.18);"></span>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:0 4px;">
+              <span style="display:flex; flex-direction:column; gap:2px;"><span style="font-size:22px; font-weight:700; letter-spacing:-.02em;">{{ t.inboxTitle }}</span><span style="font-size:12.5px; color:rgba(27,30,46,.62);">{{ t.inboxSub }}</span></span>
+              <span style="height:28px; padding:0 11px; border-radius:99px; background:#1b1e2e; color:#fbf4ec; font-size:12px; font-weight:600; display:flex; align-items:center;">{{ t.inboxBadge }}</span>
+            </div>
+            <div style="border-radius:22px; background:#fffdf9; box-shadow:0 1px 2px rgba(70,45,30,.06), 0 10px 26px rgba(70,45,30,.08); overflow:hidden;">
+              <sc-if value="{{ capEven }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex; align-items:center; gap:10px; padding:11px 12px; border-bottom:0.5px solid rgba(27,30,46,.08); animation:rowIn 1.6s cubic-bezier(.2,.8,.2,1) both;">
+                  <span style="width:36px; height:36px; border-radius:12px; flex-shrink:0; background: {{ newRow.tile }}; color: {{ newRow.glyph }}; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:20px; font-variation-settings:'FILL' 1;">{{ newRow.cat }}</span></span>
+                  <span style="flex:1; display:flex; flex-direction:column; gap:2px; min-width:0;"><span style="font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ newRow.name }}</span><span style="display:flex; align-items:center; gap:4px; font-size:11px; color:rgba(27,30,46,.6);"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:13px;">{{ newRow.icon }}</span>{{ newRow.src }} · {{ t.justNow }}</span></span>
+                  <span style="font-size:14px; font-weight:600; font-variant-numeric:tabular-nums;">−{{ newRow.amt }}</span>
+                </div>
+              </sc-if>
+              <sc-if value="{{ capOdd }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; align-items:center; gap:10px; padding:11px 12px; border-bottom:0.5px solid rgba(27,30,46,.08); animation:rowIn 1.6s cubic-bezier(.2,.8,.2,1) both;">
+                  <span style="width:36px; height:36px; border-radius:12px; flex-shrink:0; background: {{ newRow.tile }}; color: {{ newRow.glyph }}; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:20px; font-variation-settings:'FILL' 1;">{{ newRow.cat }}</span></span>
+                  <span style="flex:1; display:flex; flex-direction:column; gap:2px; min-width:0;"><span style="font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ newRow.name }}</span><span style="display:flex; align-items:center; gap:4px; font-size:11px; color:rgba(27,30,46,.6);"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:13px;">{{ newRow.icon }}</span>{{ newRow.src }} · {{ t.justNow }}</span></span>
+                  <span style="font-size:14px; font-weight:600; font-variant-numeric:tabular-nums;">−{{ newRow.amt }}</span>
+                </div>
+              </sc-if>
+              <sc-for list="{{ oldRows }}" as="r" hint-placeholder-count="3">
+                <div style="display:flex; align-items:center; gap:10px; padding:11px 12px; border-bottom:0.5px solid rgba(27,30,46,.08);">
+                  <span style="width:36px; height:36px; border-radius:12px; flex-shrink:0; background: {{ r.tile }}; color: {{ r.glyph }}; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:20px; font-variation-settings:'FILL' 1;">{{ r.cat }}</span></span>
+                  <span style="flex:1; display:flex; flex-direction:column; gap:2px; min-width:0;"><span style="font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ r.name }}</span><span style="display:flex; align-items:center; gap:4px; font-size:11px; color:rgba(27,30,46,.6);"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:13px;">{{ r.icon }}</span>{{ r.src }} · {{ r.time }}</span></span>
+                  <span style="font-size:14px; font-weight:600; font-variant-numeric:tabular-nums;">−{{ r.amt }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; padding:0 6px; font-size:12px; line-height:1.4; color:rgba(27,30,46,.62);"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:17px;">schedule</span>{{ t.inboxFoot }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <sc-if value="{{ isVi }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:0 0 clamp(60px,8vw,100px); display:flex; flex-direction:column; align-items:center; gap:20px;">
+      <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px; letter-spacing:.14em; color:var(--ink2);">{{ t.bankStrip }}</span>
+      <div style="width:100%; overflow:hidden; padding:8px 0 28px; margin:-8px 0 -28px; -webkit-mask-image:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);">
+        <div style="display:flex; gap:18px; width:max-content; animation:marquee 36s linear infinite;">
+          <sc-for list="{{ banks }}" as="b" hint-placeholder-count="24">
+            <span role="img" aria-label="{{ b.name }}" style="width:56px; height:56px; flex-shrink:0; border-radius:16px; background-color:#fff; background-image: {{ b.bg }}; background-size:cover; background-position:center; box-shadow:0 0 0 0.5px var(--line), 0 6px 16px rgba(30,40,40,.12);"></span>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <section id="surfaces" data-hour="16.6" data-screen-label="03 Surfaces 17:52" style="scroll-margin-top:64px; max-width:1240px; margin:0 auto; box-sizing:border-box; padding:clamp(80px,10vw,140px) clamp(20px,4vw,40px); display:flex; flex-direction:column; gap:clamp(36px,4vw,56px);">
+    <div data-reveal="0" style="display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:20px 64px;">
+      <div style="display:flex; flex-direction:column; gap:20px; max-width:760px;">
+        <div style="display:flex; align-items:center; gap:12px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.1em; color:var(--ink2);"><span style="font-weight:600; color:var(--ink);">17:52</span><span style="width:36px; height:1px; background:var(--line);"></span><span style="text-transform:uppercase;">{{ t.surfMark }}</span></div>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:clamp(44px,5.6vw,84px); line-height:calc(.92 + var(--hlx,0)); letter-spacing:-.05em; text-wrap:balance;">{{ t.surfTitle }}</h2>
+      </div>
+      <p style="margin:0; max-width:360px; font-size:17px; line-height:1.5; color:var(--ink2); text-wrap:pretty;">{{ t.surfSub }}</p>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:18px; align-items:stretch;">
+      <div data-reveal="0" style="flex:1 1 330px; min-width:0; position:relative; border-radius:32px; overflow:hidden; background:linear-gradient(170deg,#2c2758 0%,#6e3c6e 55%,#d07a58 100%); padding:28px 20px 0; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; gap:18px; color:#fff; min-height:640px;">
+        <span style="align-self:flex-start; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(255,255,255,.75);">{{ t.sLock }}</span>
+        <div style="position:relative; width:290px; flex:1; min-height:580px; box-sizing:border-box; padding:10px 10px 0; border-radius:52px 52px 0 0; background:#0f0e12; box-shadow:0 0 0 0.5px rgba(255,255,255,.2), 0 -10px 60px rgba(0,0,0,.3);">
+          <div style="position:relative; height:100%; overflow:hidden; border-radius:42px 42px 0 0; background:linear-gradient(180deg,#2c2758 0%,#7a3f72 48%,#e0855a 100%); display:flex; flex-direction:column; align-items:center; padding:46px 12px 0; box-sizing:border-box; font-family:-apple-system, 'SF Pro Text', 'Be Vietnam Pro', system-ui, sans-serif;">
+            <div style="position:absolute; left:50%; bottom:-90px; width:200px; height:200px; transform:translateX(-50%); border-radius:50%; background:radial-gradient(circle, #fff1d6 0%, #ffcf9a 40%, #ff9d6a 100%); filter:blur(3px); box-shadow:0 0 120px 60px rgba(255,160,100,.35);"></div>
+            <span style="position:absolute; left:50%; top:10px; width:88px; height:26px; margin-left:-44px; border-radius:20px; background:#000;"></span>
+            <span style="position:relative; font-size:14px; font-weight:600; opacity:.9;">{{ t.lockDate }}</span>
+            <span style="position:relative; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:84px; line-height:1; letter-spacing:-.03em;">17:52</span>
+            <div style="position:relative; display:flex; gap:8px; margin-top:8px;">
+              <div style="position:relative; width:56px; height:56px; border-radius:50%; background:rgba(255,255,255,.16); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                <div style="position:absolute; inset:3px; border-radius:50%; background:conic-gradient(#fff 0 58%, rgba(255,255,255,.25) 58% 100%); -webkit-mask:radial-gradient(circle, transparent 21px, #000 21.5px); mask:radial-gradient(circle, transparent 21px, #000 21.5px);"></div>
+                <span style="font-size:13px; font-weight:700; line-height:1;">{{ t.lockRing }}</span><span style="font-size:8.5px; font-weight:600; opacity:.7;">{{ t.left }}</span>
+              </div>
+              <div style="width:124px; height:56px; border-radius:16px; background:rgba(255,255,255,.16); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); padding:7px 11px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; gap:1px;">
+                <span style="font-size:10px; font-weight:600; opacity:.75;">{{ t.lockW1 }}</span>
+                <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:21px; line-height:1;">{{ t.lockRing }}</span>
+                <span style="font-size:10px; font-weight:600; opacity:.75;">{{ t.lockW2 }}</span>
+              </div>
+            </div>
+            <div style="flex:1;"></div>
+            <div style="position:relative; width:100%; display:flex; flex-direction:column; gap:7px; padding-bottom:22px;">
+              <div style="border-radius:22px; background:rgba(20,12,30,.6); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px); padding:11px 11px 11px 12px; display:flex; align-items:center; gap:10px;">
+                <dusk-buddy form="sun" size="38" mood="wave"></dusk-buddy>
+                <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:1px;"><span style="font-size:10.5px; font-weight:600; opacity:.6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ t.laTop }}</span><span style="font-size:13.5px; font-weight:650; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ t.laMain }}</span></div>
+                <span style="height:30px; padding:0 12px; border-radius:99px; background:#ff8552; color:#1a0f0a; font-weight:650; font-size:12.5px; display:flex; align-items:center;">{{ t.laBtn }}</span>
+              </div>
+              <div style="border-radius:20px; background:rgba(255,255,255,.22); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px); overflow:hidden;">
+                <div style="padding:10px 12px; display:flex; gap:10px;">
+                  <img src="apps/mobile/assets/icon/icon.png" alt="6pm" style="width:32px; height:32px; flex-shrink:0; border-radius:8px; display:block;"></img>
+                  <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:1px;"><div style="display:flex; justify-content:space-between; font-size:12px;"><span style="font-weight:650;">6pm</span><span style="opacity:.6;">16:12</span></div><div style="font-size:13px; line-height:1.3;">{{ t.notif }}</div></div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; border-top:0.5px solid rgba(255,255,255,.2); font-size:13px; font-weight:600; text-align:center;"><span style="padding:9px;">{{ t.confirm }}</span><span style="padding:9px; border-left:0.5px solid rgba(255,255,255,.2);">{{ t.edit }}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:2 1 580px; min-width:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); gap:18px;">
+      <div style="display:flex; flex-direction:column; gap:18px;">
+        <div data-reveal="80" style="border-radius:32px; background:linear-gradient(170deg,#241f45 0%,#4a2c5c 100%); padding:24px 22px 26px; color:#fff; display:flex; flex-direction:column; gap:16px;">
+          <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(255,255,255,.75);">{{ t.sIsland }}</span>
+          <div style="align-self:center; width:190px; height:36px; border-radius:24px; background:#000; display:flex; align-items:center; justify-content:space-between; padding:0 14px 0 6px; box-sizing:border-box; box-shadow:0 10px 30px rgba(0,0,0,.35);"><dusk-buddy form="sun" size="24" mood="calm"></dusk-buddy><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-weight:600; font-size:13px; color:#ff8552;">{{ t.islandC }}</span></div>
+          <div style="width:100%; box-sizing:border-box; border-radius:38px; background:#000; display:flex; align-items:center; gap:10px; padding:12px 12px 12px 12px; box-shadow:0 14px 40px rgba(0,0,0,.4);">
+            <dusk-buddy form="sun" size="42" mood="calm"></dusk-buddy>
+            <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:1px;"><span style="font-size:11px; font-weight:600; color:rgba(255,255,255,.55);">{{ t.islandTop }}</span><span style="font-size:14px; font-weight:650;">{{ t.islandMain }}</span></div>
+            <span style="height:32px; padding:0 14px; border-radius:99px; background:#ff8552; color:#1a0f0a; font-weight:650; font-size:13px; display:flex; align-items:center;">{{ t.paid }}</span>
+          </div>
+          <span style="font-size:13px; line-height:1.45; color:rgba(255,255,255,.72);">{{ t.islandNote }}</span>
+        </div>
+        <div data-reveal="120" style="flex:1; border-radius:32px; background:linear-gradient(170deg,#2c2758 0%,#6e3c6e 55%,#d07a58 100%); padding:24px 22px; color:#fff; display:flex; flex-direction:column; gap:16px;">
+          <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(255,255,255,.75);">{{ t.sWidgets }}</span>
+          <div style="display:flex; gap:14px; flex-wrap:wrap;">
+            <div style="width:150px; height:150px; border-radius:24px; background:#221c33; color:#fbf4ec; padding:14px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 10px 30px rgba(0,0,0,.25);">
+              <span style="display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:600; opacity:.75;">{{ t.wClose }}<span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:18px; color:#ff8552; font-variation-settings:'FILL' 1; opacity:1;">wb_twilight</span></span>
+              <span style="display:flex; flex-direction:column; gap:2px;"><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:34px; line-height:1; letter-spacing:-.02em;">8m</span><span style="font-size:11px; font-weight:600; opacity:.7;">{{ t.wCaught }}</span></span>
+            </div>
+            <div style="width:150px; height:150px; border-radius:24px; background:#fbf4ec; color:#2a1d30; padding:14px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 10px 30px rgba(0,0,0,.25);">
+              <dusk-buddy form="sun" size="36" mood="calm"></dusk-buddy>
+              <span style="display:flex; flex-direction:column; gap:2px;"><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:38px; line-height:1;">{{ t.lockRing }}</span><span style="font-size:11px; font-weight:600; opacity:.6;">{{ t.safeToday }}</span></span>
+            </div>
+          </div>
+          <span style="font-size:13px; line-height:1.45; color:rgba(255,255,255,.78);">{{ t.wNote }}</span>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:18px;">
+        <div data-reveal="160" style="border-radius:32px; background:linear-gradient(170deg,#3a2f6a 0%,#7a3f72 100%); padding:24px 22px 26px; color:#fff; display:flex; flex-direction:column; gap:14px;">
+          <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(255,255,255,.75);">SIRI</span>
+          <div style="align-self:flex-end; max-width:90%; padding:10px 16px; border-radius:20px 20px 4px 20px; background:rgba(255,255,255,.14); font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:19px; line-height:1.25;">{{ t.siriQ }}</div>
+          <div style="border-radius:24px; background:#fbf4ec; color:#2a1d30; padding:12px 14px; display:flex; align-items:center; gap:10px;">
+            <dusk-buddy form="sun" size="40" mood="happy"></dusk-buddy>
+            <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:1px;"><span style="font-size:14px; font-weight:650;">{{ t.siriA }}</span><span style="font-size:12px; opacity:.6;">{{ t.siriB }}</span></div>
+            <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:22px;">{{ t.siriAmt }}</span>
+          </div>
+        </div>
+        <div data-reveal="200" style="flex:1; border-radius:32px; background:#16131c; padding:24px 22px 26px; color:#fff; display:flex; flex-direction:column; gap:16px;">
+          <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.14em; color:rgba(255,255,255,.75);">{{ t.sAction }}</span>
+          <div style="display:flex; gap:14px; align-items:center;">
+            <span style="display:flex; flex-direction:column; align-items:center; gap:7px;"><span style="width:64px; height:64px; border-radius:50%; background:#ff8552; color:#1a0f0a; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:28px;">{{ t.actIcon }}</span></span><span style="font-size:11.5px; font-weight:600;">{{ t.actA }}</span></span>
+            <span style="display:flex; flex-direction:column; align-items:center; gap:7px;"><span style="width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,.14); display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:28px;">add</span></span><span style="font-size:11.5px; font-weight:600;">{{ t.actB }}</span></span>
+            <span style="flex:1; min-width:0; height:64px; border-radius:22px; background:rgba(255,255,255,.08); border:0.5px solid rgba(255,255,255,.14); display:flex; align-items:center; gap:10px; padding:0 14px; box-sizing:border-box;"><span style="width:6px; height:32px; border-radius:4px; background:#ff8552; flex-shrink:0;"></span><span style="display:flex; flex-direction:column; gap:1px; min-width:0;"><span style="font-size:11px; color:rgba(255,255,255,.6);">{{ t.actLbl }}</span><span style="font-size:13.5px; font-weight:650;">{{ t.actMain }}</span></span></span>
+          </div>
+          <span style="font-size:13px; line-height:1.45; color:rgba(255,255,255,.72);">{{ t.actNote }}</span>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="close" data-hour="18" data-screen-label="03 The close 18:00" style="scroll-margin-top:64px; max-width:1240px; margin:0 auto; box-sizing:border-box; min-height:100vh; padding:clamp(80px,10vw,140px) clamp(20px,4vw,40px); display:flex; flex-direction:column; align-items:center; text-align:center; gap:clamp(36px,4vw,56px);">
+    <div data-reveal="0" style="display:flex; flex-direction:column; align-items:center; gap:20px; max-width:900px;">
+      <div style="display:flex; align-items:center; gap:12px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.1em; color:var(--ink2);"><span style="font-weight:600; color:#ff8552;">18:00</span><span style="width:36px; height:1px; background:var(--line);"></span><span style="text-transform:uppercase;">{{ t.closeMark }}</span></div>
+      <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:clamp(52px,7.4vw,116px); line-height:calc(.88 + var(--hlx,0)); letter-spacing:-.055em; text-wrap:balance;">{{ t.closeTitle }}</h2>
+      <p style="margin:0; max-width:520px; font-size:17px; line-height:1.5; color:var(--ink2); text-wrap:pretty;">{{ t.closeSub }}</p>
+    </div>
+
+    <div data-reveal="80" style="display:flex; flex-direction:column; align-items:center; gap:26px; width:100%;">
+      <div style="position:relative; width:min(320px,86vw); height:410px;">
+        <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+          <div onPointerDown="{{ c.down }}" onPointerMove="{{ c.move }}" onPointerUp="{{ c.up }}" onPointerCancel="{{ c.up }}" style="position:absolute; left:0; right:0; top:0; z-index: {{ c.z }}; transform: {{ c.transform }}; opacity: {{ c.op }}; transition: {{ c.transition }}; touch-action:none; cursor: {{ c.cursor }}; user-select:none; filter:drop-shadow(0 24px 36px rgba(20,6,30,.38)); text-align:left;">
+            <div style="position:relative; overflow:hidden; background:linear-gradient(180deg,#fdfaf3,#f4efe4); color:#2a2230; padding:20px 22px 18px; height:350px; box-sizing:border-box; border-radius:6px 6px 0 0; display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; justify-content:space-between; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px; letter-spacing:.1em; color:rgba(42,34,48,.6);"><span>Nº {{ c.no }} · {{ c.src }}</span><span>{{ c.time }}</span></div>
+              <div style="border-top:1px dashed rgba(42,34,48,.25);"></div>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <span style="width:44px; height:44px; border-radius:15px; flex-shrink:0; background: {{ c.tile }}; color: {{ c.glyph }}; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 3px 8px rgba(30,10,40,.14);"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:25px; font-variation-settings:'FILL' 1;">{{ c.icon }}</span></span>
+                <span style="display:flex; flex-direction:column; gap:2px; min-width:0;"><span style="font-size:20px; font-weight:650; letter-spacing:-.02em;">{{ c.name }}</span><span style="font-size:13px; color:rgba(42,34,48,.6);">{{ c.cat }}</span></span>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:6px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px; color:rgba(42,34,48,.62);">
+                <div style="display:flex; justify-content:space-between; gap:10px;"><span style="letter-spacing:.1em;">{{ t.keptSoFar }}</span><span>{{ c.from }}</span></div>
+                <div style="display:flex; justify-content:space-between; gap:10px; color:#2a2230;"><span style="letter-spacing:.1em;">{{ t.withThis }}</span><span style="font-weight:600;">{{ c.to }}</span></div>
+              </div>
+              <div style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:{{ t.cardNumSize }}; letter-spacing:-.03em; line-height:1;">{{ c.amt }}</div>
+              <div style="border-top:1px dashed rgba(42,34,48,.25); padding-top:10px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11.5px; color:rgba(42,34,48,.62);">{{ c.meta }}</div>
+              <div style="position:absolute; top:100px; right:18px; padding:5px 12px; border:3px solid #2f7d55; color:#2f7d55; border-radius:6px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-weight:600; font-size:24px; letter-spacing:.16em; transform:rotate(9deg); opacity: {{ c.keepOp }}; mix-blend-mode:multiply;">{{ t.keepStamp }}</div>
+            </div>
+            <div style="height:9px; background:radial-gradient(circle at 6px 9px, transparent 5.5px, #f4efe4 6px) 0 0 / 12px 9px repeat-x;"></div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ closeDone }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; animation:rise .6s .2s both;">
+            <dusk-buddy form="sun" size="96" mood="happy"></dusk-buddy>
+            <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:var(--ink2);">{{ t.tmrLbl }}</span>
+            <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:clamp(64px,9vw,104px); line-height:.9; letter-spacing:-.05em; color:#ff8552;">{{ t.tmrNum }}</span>
+            <span style="font-size:15px; color:var(--ink2); max-width:280px; text-wrap:balance;">{{ t.tmrNote }}</span>
+          </div>
+          <div style="position:absolute; left:50%; top:16%; padding:10px 18px 8px; border:3.5px solid #ff8f7a; border-radius:10px; color:#ff8f7a; font-family:'IBM Plex Mono', ui-monospace, monospace; font-weight:600; font-size:22px; letter-spacing:.16em; line-height:1.15; text-align:center; animation:stampIn .55s cubic-bezier(.3,1.5,.5,1) both; pointer-events:none;">{{ t.closedStamp }}<br>18:00</div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:14px; min-height:64px;">
+        <sc-if value="{{ closeOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; align-items:center; gap:16px;">
+            <button onClick="{{ undo }}" aria-label="Undo" style-hover="background:var(--glass);" style="width:52px; height:52px; border-radius:50%; border:0.5px solid var(--line); background:transparent; color:var(--ink); cursor:pointer; display:flex; align-items:center; justify-content:center; opacity: {{ undoOp }}; transition:opacity .2s, background .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px;">undo</span></button>
+            <button onClick="{{ keep }}" style-hover="background:#ff9a6e;" style="height:64px; padding:0 30px 0 24px; border:none; border-radius:99px; background:#ff8552; color:#1a0f0a; font-family:inherit; font-size:17px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:10px; box-shadow:0 14px 34px -10px rgba(255,133,82,.7); transition:background .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:24px;">check</span>{{ keepLabel }}</button>
+            <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.1em; color:var(--ink2); min-width:48px;">{{ closeStep }}</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ closeDone }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ resetClose }}" style-hover="background:var(--glass);" style="height:52px; padding:0 22px 0 18px; border-radius:99px; border:0.5px solid var(--line); background:transparent; color:var(--ink); font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:20px;">replay</span>{{ t.again }}</button>
+        </sc-if>
+      </div>
+      <span style="font-size:13.5px; color:var(--ink2);">{{ t.closeHint }}</span>
+    </div>
+  </section>
+
+  <section data-hour="19.4" data-screen-label="04 One number 19:30" style="max-width:1240px; margin:0 auto; box-sizing:border-box; padding:clamp(80px,10vw,140px) clamp(20px,4vw,40px); display:flex; flex-direction:column; gap:clamp(40px,5vw,64px);">
+    <div data-reveal="0" style="display:flex; flex-direction:column; gap:20px; max-width:900px;">
+      <div style="display:flex; align-items:center; gap:12px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.1em; color:var(--ink2);"><span style="font-weight:600; color:var(--ink);">19:30</span><span style="width:36px; height:1px; background:var(--line);"></span><span style="text-transform:uppercase;">{{ t.numMark }}</span></div>
+      <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:clamp(40px,5vw,76px); line-height:calc(.94 + var(--hlx,0)); letter-spacing:-.05em; text-wrap:balance;">{{ t.numTitle }}</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr)); align-items:end; gap:clamp(32px,6vw,96px);">
+      <div data-reveal="60" style="display:flex; flex-direction:column; font-variant-numeric:tabular-nums;">
+        <sc-for list="{{ eqRows }}" as="e" hint-placeholder-count="6">
+          <div style="display:grid; grid-template-columns:44px 1fr auto; align-items:baseline; gap:12px; padding:14px 0; border-bottom:0.5px solid var(--line);">
+            <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:14px; color:#ff8552;">{{ e.op }}</span>
+            <span style="font-size:16px; color:var(--ink2);">{{ e.label }}</span>
+            <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:16px; font-weight:500;">{{ e.val }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div data-reveal="140" style="display:flex; flex-direction:column; gap:14px;">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; color:var(--ink2);">{{ t.eqLbl }}</span>
+        <span style="display:flex; align-items:baseline; flex-wrap:wrap; gap:6px 14px;"><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:{{ t.eqSize }}; line-height:.82; letter-spacing:-.06em; color:#ff8552;">{{ t.phNum }}</span><span style="font-size:20px; color:var(--ink2);">{{ t.perDay }}</span></span>
+        <p style="margin:8px 0 0; max-width:420px; font-size:16px; line-height:1.55; color:var(--ink2); text-wrap:pretty;">{{ t.numSub }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section data-hour="20.1" data-screen-label="05 Belief" style="max-width:1240px; margin:0 auto; box-sizing:border-box; padding:clamp(80px,10vw,140px) clamp(20px,4vw,40px);">
+    <p data-reveal="0" style="margin:0; display:flex; flex-wrap:wrap; gap:0 .26em; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:clamp(44px,7vw,112px); line-height:calc(1 + var(--hlx,0)); letter-spacing:-.05em;">
+      <sc-for list="{{ phrases }}" as="p" hint-placeholder-count="6">
+        <span style="color:rgba(251,244,236,.18); animation: {{ p.anim }};">{{ p.t }}</span>
+      </sc-for>
+    </p>
+  </section>
+
+  <section id="ask" data-hour="20.8" data-screen-label="06 Ask 20:45" style="scroll-margin-top:64px; max-width:1240px; margin:0 auto; box-sizing:border-box; padding:clamp(80px,10vw,140px) clamp(20px,4vw,40px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr)); align-items:center; gap:clamp(40px,6vw,80px);">
+    <div data-reveal="0" style="position:relative; justify-self:center; width:300px; order:0;">
+      <div style="position:relative; box-sizing:border-box; padding:10px; border-radius:54px; background:linear-gradient(160deg, #2c2930, #16141a 40%, #0f0e12); box-shadow:0 0 0 0.5px rgba(255,255,255,.12), 0 50px 100px -30px rgba(0,0,0,.7);">
+        <div style="position:relative; overflow:hidden; border-radius:44px; height:620px; background:linear-gradient(180deg, #1a2456 0%, #3a1c5a 52%, #8e2a58 100%); color:#fbf4ec; font-family:-apple-system, 'SF Pro Text', 'Be Vietnam Pro', system-ui, sans-serif; display:flex; flex-direction:column;">
+          <div style="position:relative; display:flex; justify-content:space-between; align-items:center; height:44px; padding:0 26px; font-size:13px; font-weight:600; flex-shrink:0;">
+            <span>20:45</span>
+            <span style="position:absolute; left:50%; top:10px; width:88px; height:26px; margin-left:-44px; border-radius:20px; background:#000;"></span>
+            <span style="width:22px; height:11px; border-radius:3.5px; border:1px solid rgba(251,244,236,.6); box-sizing:border-box; padding:1px;"><span style="display:block; width:44%; height:100%; border-radius:1.5px; background:#fbf4ec;"></span></span>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 14px; flex-shrink:0;">
+            <span style="width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.12); border:0.5px solid rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:20px;">arrow_back</span></span>
+            <span style="font-size:17px; font-weight:700;">{{ t.askTitle }}</span>
+          </div>
+          <div style="flex:1; min-height:0; display:flex; flex-direction:column; justify-content:flex-end; gap:12px; padding:0 14px 14px;">
+            <sc-if value="{{ askEven }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <div style="align-self:flex-end; max-width:82%; padding:11px 15px; border-radius:20px 20px 6px 20px; background:#fbf4ec; color:#2a1a30; font-size:15px; line-height:1.35; animation:rise .4s both;">{{ ask.q }}</div>
+                <div style="display:flex; align-items:flex-end; gap:6px;">
+                  <dusk-buddy form="sun" size="44" mood="think"></dusk-buddy>
+                  <div style="position:relative; flex:1; min-width:0;">
+                    <div style="position:absolute; left:0; bottom:0; display:flex; gap:5px; padding:14px 16px; border-radius:20px 20px 20px 6px; background:rgba(255,255,255,.12); animation:dotsOut 2.6s both;"><span style="width:6px; height:6px; border-radius:50%; background:#fbf4ec; animation:dot .9s infinite;"></span><span style="width:6px; height:6px; border-radius:50%; background:#fbf4ec; animation:dot .9s .15s infinite;"></span><span style="width:6px; height:6px; border-radius:50%; background:#fbf4ec; animation:dot .9s .3s infinite;"></span></div>
+                    <div style="padding:13px 15px; border-radius:20px 20px 20px 6px; background:rgba(255,255,255,.12); border:0.5px solid rgba(255,255,255,.14); display:flex; flex-direction:column; gap:8px; animation:ansIn 2.6s both;">
+                      <span style="font-size:14.5px; line-height:1.4;">{{ ask.a }}</span>
+                      <span style="display:flex; align-items:baseline; gap:8px; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; letter-spacing:-.03em;"><span style="font-size:18px; text-decoration:line-through; opacity:.45;">{{ ask.old }}</span><span style="font-size:32px; color:#ffb08a;">{{ ask.big }}</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:0; opacity:.7;">{{ ask.unit }}</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ askOdd }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <div style="align-self:flex-end; max-width:82%; padding:11px 15px; border-radius:20px 20px 6px 20px; background:#fbf4ec; color:#2a1a30; font-size:15px; line-height:1.35; animation:rise .4s both;">{{ ask.q }}</div>
+                <div style="display:flex; align-items:flex-end; gap:6px;">
+                  <dusk-buddy form="sun" size="44" mood="think"></dusk-buddy>
+                  <div style="position:relative; flex:1; min-width:0;">
+                    <div style="position:absolute; left:0; bottom:0; display:flex; gap:5px; padding:14px 16px; border-radius:20px 20px 20px 6px; background:rgba(255,255,255,.12); animation:dotsOut 2.6s both;"><span style="width:6px; height:6px; border-radius:50%; background:#fbf4ec; animation:dot .9s infinite;"></span><span style="width:6px; height:6px; border-radius:50%; background:#fbf4ec; animation:dot .9s .15s infinite;"></span><span style="width:6px; height:6px; border-radius:50%; background:#fbf4ec; animation:dot .9s .3s infinite;"></span></div>
+                    <div style="padding:13px 15px; border-radius:20px 20px 20px 6px; background:rgba(255,255,255,.12); border:0.5px solid rgba(255,255,255,.14); display:flex; flex-direction:column; gap:8px; animation:ansIn 2.6s both;">
+                      <span style="font-size:14.5px; line-height:1.4;">{{ ask.a }}</span>
+                      <span style="display:flex; align-items:baseline; gap:8px; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; letter-spacing:-.03em;"><span style="font-size:18px; text-decoration:line-through; opacity:.45;">{{ ask.old }}</span><span style="font-size:32px; color:#ffb08a;">{{ ask.big }}</span><span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:0; opacity:.7;">{{ ask.unit }}</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+          <div style="margin:0 12px 22px; height:46px; flex-shrink:0; border-radius:99px; background:rgba(255,255,255,.1); border:0.5px solid rgba(255,255,255,.16); display:flex; align-items:center; gap:8px; padding:0 6px 0 16px; font-size:14px; color:rgba(251,244,236,.55);"><span style="flex:1;">{{ t.askPh }}</span><span style="width:34px; height:34px; border-radius:50%; background:#ff8552; color:#1a0f0a; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:20px;">arrow_upward</span></span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:30px; min-width:0;">
+      <div data-reveal="0" style="display:flex; flex-direction:column; gap:20px;">
+        <div style="display:flex; align-items:center; gap:12px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.1em; color:var(--ink2);"><span style="font-weight:600; color:var(--ink);">20:45</span><span style="width:36px; height:1px; background:var(--line);"></span><span style="text-transform:uppercase;">{{ t.askMark }}</span></div>
+        <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:clamp(44px,5.6vw,84px); line-height:calc(.92 + var(--hlx,0)); letter-spacing:-.05em; text-wrap:balance;">{{ t.askH }}</h2>
+        <p style="margin:0; max-width:420px; font-size:17px; line-height:1.5; color:var(--ink2); text-wrap:pretty;">{{ t.askSub }}</p>
+      </div>
+      <div data-reveal="80" style="display:flex; flex-direction:column; align-items:flex-start; gap:10px;">
+        <sc-for list="{{ askChips }}" as="c" hint-placeholder-count="3">
+          <button onClick="{{ c.pick }}" style-hover="border-color:#ff8552;" style="max-width:100%; min-height:46px; padding:10px 18px; border-radius:22px; border:0.5px solid {{ c.border }}; background: {{ c.bg }}; color: {{ c.fg }}; font-family:inherit; font-size:15px; line-height:1.35; text-align:left; cursor:pointer; transition:background .2s, color .2s, border-color .2s;">{{ c.q }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="duo" data-hour="21.4" data-screen-label="07 iPhone Duo 21:30" style="scroll-margin-top:64px; max-width:1240px; margin:0 auto; box-sizing:border-box; padding:clamp(80px,10vw,140px) clamp(20px,4vw,40px); display:flex; flex-direction:column; align-items:center; text-align:center; gap:clamp(32px,4vw,48px);">
+    <div data-reveal="0" style="display:flex; flex-direction:column; align-items:center; gap:20px; max-width:860px;">
+      <div style="display:flex; align-items:center; gap:12px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.1em; color:var(--ink2);"><span style="font-weight:600; color:var(--ink);">21:30</span><span style="width:36px; height:1px; background:var(--line);"></span><span style="text-transform:uppercase;">iPhone Duo</span></div>
+      <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:clamp(52px,7.4vw,116px); line-height:calc(.88 + var(--hlx,0)); letter-spacing:-.055em; text-wrap:balance;">{{ t.duoTitle }}</h2>
+      <p style="margin:0; max-width:520px; font-size:17px; line-height:1.5; color:var(--ink2); text-wrap:pretty;">{{ t.duoSub }}</p>
+    </div>
+    <div data-reveal="60" style="display:flex; flex-wrap:wrap; justify-content:center; padding:4px; border-radius:99px; border:0.5px solid var(--line); background:var(--glass); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);">
+      <sc-for list="{{ duoTabs }}" as="d" hint-placeholder-count="4">
+        <button onClick="{{ d.pick }}" style="height:40px; padding:0 18px; border:none; border-radius:99px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:600; background: {{ d.bg }}; color: {{ d.fg }}; transition:background .25s, color .25s;">{{ d.label }}</button>
+      </sc-for>
+    </div>
+    <div data-reveal="100" style="position:relative; width:100%; height: {{ duoH }}; display:flex; justify-content:center; align-items:center;">
+      <div onPointerDown="{{ duoDown }}" onPointerMove="{{ duoMove }}" onPointerUp="{{ duoUp }}" onPointerCancel="{{ duoUp }}" onPointerLeave="{{ duoUp }}" style="position:absolute; left:50%; top:50%; width:969px; height:696px; margin:-348px 0 0 -484.5px; zoom: {{ duoZw }}; perspective:2600px; touch-action:pan-y; cursor: {{ duoCursor }}; user-select:none; text-align:left; opacity: {{ duoStageOp }}; pointer-events: {{ duoStagePe }}; transform: {{ duoStageTf }}; transition: {{ duoStageTr }};">
+        <div style="position:absolute; inset:0; transform-style:preserve-3d; transform: {{ duoBodyTf }}; transition: {{ duoTr }};">
+          <div style="position:absolute; left:0; top:4.5px; width:969px; height:687px; border-radius:49px; box-shadow:0 0 0 1px #5d5864, 0 0 0 3px #1a181e, 0 0 0 4px #7a7480, 0 60px 120px rgba(0,0,0,.55); opacity: {{ duoRing }}; transition: {{ duoOpTr }};"></div>
+          <div style="position:absolute; left:484px; top:4.5px; width:485px; height:687px; overflow:hidden; border-radius: {{ duoRRad }}; box-shadow: {{ duoLShadow }}; transition: {{ duoRadTr }};">
+            <div style="position:absolute; left:-484px; top:0;"><div style="display:flex; flex-direction:column; transform: {{ duoPageTf }}; transition: {{ duoPageTr }};"><div style="width:969px; height:687px; flex-shrink:0; box-sizing:border-box; padding:9px; border-radius:49px; background:#050407;"><dc-import name="DuoScreen" view="split" market="{{ market }}" hint-size="951px,669px"></dc-import></div><div style="width:969px; height:687px; flex-shrink:0; box-sizing:border-box; padding:9px; border-radius:49px; background:#050407;"><dc-import name="DuoScreen" view="diary" market="{{ market }}" hint-size="951px,669px"></dc-import></div></div></div>
+            <div style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(90deg, rgba(0,0,0,.5), transparent 60%); opacity: {{ duoShadeL }}; transition: {{ duoOpTr }};"></div>
+          </div>
+          <div style="position:absolute; left:0; top:4.5px; width:484.5px; height:687px; transform-origin:100% 50%; transform-style:preserve-3d; transform: {{ duoHingeTf }}; transition: {{ duoTr }};">
+            <div style="position:absolute; inset:0; overflow:hidden; border-radius:49px 0 0 49px; backface-visibility:hidden; -webkit-backface-visibility:hidden; box-shadow: {{ duoFShadow }};">
+              <div style="display:flex; flex-direction:column; transform: {{ duoPageTf }}; transition: {{ duoPageTr }};"><div style="width:969px; height:687px; flex-shrink:0; box-sizing:border-box; padding:9px; border-radius:49px; background:#050407;"><dc-import name="DuoScreen" view="split" market="{{ market }}" hint-size="951px,669px"></dc-import></div><div style="width:969px; height:687px; flex-shrink:0; box-sizing:border-box; padding:9px; border-radius:49px; background:#050407;"><dc-import name="DuoScreen" view="diary" market="{{ market }}" hint-size="951px,669px"></dc-import></div></div>
+              <div style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(270deg, rgba(0,0,0,.7), rgba(0,0,0,.25)); opacity: {{ duoShadeR }}; transition: {{ duoOpTr }};"></div>
+              <div style="position:absolute; right:0; top:0; bottom:0; width:40px; pointer-events:none; background:linear-gradient(270deg, rgba(255,255,255,.08), transparent); opacity: {{ duoGlint }};"></div>
+            </div>
+            <div style="position:absolute; left:0; top:-4.5px; width:484px; height:696px; box-sizing:border-box; padding:9px; border-radius:20px 56px 56px 20px; background:#050407; box-shadow:0 0 0 1px #5d5864, 0 0 0 3px #1a181e, 0 0 0 4px #7a7480, 0 60px 120px rgba(0,0,0,.55); transform:rotateY(180deg); backface-visibility:hidden; -webkit-backface-visibility:hidden;">
+              <dc-import name="DuoScreen" view="outer" market="{{ market }}" outer-radius="12px 47px 47px 12px" hint-size="466px,678px"></dc-import>
+              <div style="position:absolute; left:0; top:0; bottom:0; width:6px; border-radius:20px 0 0 20px; pointer-events:none; background:linear-gradient(90deg, #8a8490, #2a272e);"></div>
+              <div style="position:absolute; inset:9px; border-radius:12px 47px 47px 12px; pointer-events:none; background:linear-gradient(90deg, rgba(0,0,0,.6), transparent 70%); opacity: {{ duoShadeB }}; transition: {{ duoOpTr }};"></div>
+            </div>
+          </div>
+        </div>
+        <div aria-hidden="true" style="position:absolute; left: {{ ghostLeft }}; top:50%; width:44px; height:44px; margin:-22px 0 0 -22px; border-radius:50%; background:rgba(255,255,255,.28); box-shadow:0 0 0 1.5px rgba(255,255,255,.7), 0 0 24px rgba(255,255,255,.5); pointer-events:none; opacity: {{ ghostOp }}; animation: {{ ghostAnim }}; transition:opacity .4s;"></div>
+      </div>
+      <div style="position:absolute; left:50%; top:50%; zoom: {{ duoZs }}; width:687px; height:900px; margin:-450px 0 0 -343.5px; text-align:left; perspective:2000px; opacity: {{ duoStandOp }}; pointer-events: {{ duoStandPe }}; transition:opacity .6s .15s;">
+        <div onPointerDown="{{ duoDown }}" onPointerMove="{{ duoMove }}" onPointerUp="{{ duoUp }}" onPointerCancel="{{ duoUp }}" style="transform-origin:50% 100%; transform: {{ duoStandTf }}; transition:transform 1s cubic-bezier(.2,.8,.2,1); touch-action:pan-x;">
+          <dc-import name="DuoScreen" view="stand" market="{{ market }}" hint-size="687px,900px"></dc-import>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px;">
+      <sc-for list="{{ duoHints }}" as="g" hint-placeholder-count="2">
+        <span style="height:34px; padding:0 14px 0 10px; border-radius:99px; border:0.5px solid var(--line); display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink2); animation:rise .4s both;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:18px; color:#ff8552;">{{ g.icon }}</span>{{ g.t }}</span>
+      </sc-for>
+    </div>
+    <p style="margin:0; max-width:460px; min-height:3em; font-size:16px; line-height:1.5; color:var(--ink2); text-wrap:balance;">{{ duoCap }}</p>
+  </section>
+
+  <section id="privacy" data-hour="22" data-screen-label="07 Privacy 22:00" style="scroll-margin-top:64px; max-width:1240px; margin:0 auto; box-sizing:border-box; padding:clamp(80px,10vw,140px) clamp(20px,4vw,40px); display:flex; flex-direction:column; gap:clamp(40px,5vw,64px);">
+    <div data-reveal="0" style="display:flex; flex-direction:column; gap:20px;">
+      <div style="display:flex; align-items:center; gap:12px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.1em; color:var(--ink2);"><span style="font-weight:600; color:var(--ink);">22:00</span><span style="width:36px; height:1px; background:var(--line);"></span><span style="text-transform:uppercase;">{{ t.privMark }}</span></div>
+      <h2 style="margin:0; max-width:1000px; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:clamp(48px,7vw,112px); line-height:calc(.88 + var(--hlx,0)); letter-spacing:-.055em; text-wrap:balance;">{{ t.privTitle }}</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); gap:0; border-top:0.5px solid var(--line);">
+      <sc-for list="{{ privFacts }}" as="f" hint-placeholder-count="3">
+        <div data-reveal="{{ f.delay }}" style="display:flex; flex-direction:column; gap:12px; padding:28px 28px 28px 0;">
+          <span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:28px; color:#ffb08a;">{{ f.icon }}</span>
+          <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:26px; letter-spacing:-.03em; line-height:1.05;">{{ f.h }}</span>
+          <span style="font-size:15px; line-height:1.5; color:var(--ink2); text-wrap:pretty;">{{ f.p }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div data-reveal="80" style="border-radius:24px; background:rgba(10,8,18,.55); border:0.5px solid rgba(255,255,255,.12); overflow:hidden; backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); color:#fbf4ec;">
+      <div style="height:44px; padding:0 18px; display:flex; align-items:center; gap:8px; border-bottom:0.5px solid rgba(255,255,255,.08);">
+        <span style="width:11px; height:11px; border-radius:50%; background:rgba(255,255,255,.18);"></span><span style="width:11px; height:11px; border-radius:50%; background:rgba(255,255,255,.18);"></span><span style="width:11px; height:11px; border-radius:50%; background:rgba(255,255,255,.18);"></span>
+        <span style="flex:1;"></span>
+        <a href="https://github.com/get6pm/6pm" target="_blank" rel="noopener" style-hover="color:#ffb08a;" style="display:flex; align-items:center; gap:6px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; color:rgba(251,244,236,.7); text-decoration:none;">get6pm/6pm<span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:15px;">arrow_outward</span></a>
+      </div>
+      <div style="padding:24px 22px 28px; display:flex; flex-direction:column; gap:12px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:clamp(12px,1.2vw,14px); line-height:1.5; overflow:hidden;">
+        <div style="display:flex; align-items:center; gap:10px; white-space:nowrap;"><span style="color:#ff8552;">$</span><span style="--w:30ch; display:inline-block; overflow:hidden; white-space:nowrap; animation:type 7s steps(30) infinite both;">git clone github.com/get6pm/6pm</span><span style="width:8px; height:1.2em; background:#fbf4ec; animation:blink 1s steps(1) infinite;"></span></div>
+        <div style="display:flex; flex-direction:column; gap:6px; color:rgba(251,244,236,.62); animation:lineIn 7s infinite both;">
+          <span>{{ t.osLine0 }}</span>
+          <span><span style="color:#a8dcb8;">✓</span> apps/mobile <span style="color:rgba(251,244,236,.38);">· {{ t.osLine1 }}</span></span>
+          <span><span style="color:#a8dcb8;">✓</span> packages/domain <span style="color:rgba(251,244,236,.38);">· {{ t.osLine2 }}</span></span>
+          <span><span style="color:#a8dcb8;">✓</span> legal/privacy <span style="color:rgba(251,244,236,.38);">· {{ t.osLine3 }}</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-hour="22.6" data-screen-label="08 Together 22:40" style="max-width:1240px; margin:0 auto; box-sizing:border-box; padding:clamp(60px,8vw,110px) clamp(20px,4vw,40px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr)); align-items:center; gap:clamp(40px,6vw,80px);">
+    <div data-reveal="0" style="display:flex; flex-direction:column; gap:20px; min-width:0;">
+      <div style="display:flex; align-items:center; gap:12px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.1em; color:var(--ink2);"><span style="font-weight:600; color:var(--ink);">22:40</span><span style="width:36px; height:1px; background:var(--line);"></span><span style="text-transform:uppercase;">{{ t.togMark }}</span></div>
+      <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:clamp(40px,5vw,76px); line-height:calc(.94 + var(--hlx,0)); letter-spacing:-.05em; text-wrap:balance;">{{ t.togTitle }}</h2>
+      <p style="margin:0; max-width:400px; font-size:17px; line-height:1.5; color:var(--ink2); text-wrap:pretty;">{{ t.togSub }}</p>
+    </div>
+    <div data-reveal="100" style="justify-self:center; width:min(400px,100%); box-sizing:border-box; border-radius:30px; background:#f6f0e7; color:#1b1e2e; padding:20px; display:flex; flex-direction:column; gap:18px; box-shadow:0 40px 80px -30px rgba(0,0,0,.7);">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span style="width:46px; height:46px; border-radius:16px; background:linear-gradient(155deg, oklch(0.9 0.07 300), oklch(0.78 0.12 300)); color:oklch(0.34 0.09 300); display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:24px; font-variation-settings:'FILL' 1;">flight</span></span>
+        <span style="flex:1; display:flex; flex-direction:column; gap:2px;"><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:22px; letter-spacing:-.02em;">{{ t.jar }}</span><span style="font-size:13px; color:rgba(27,30,46,.62);">{{ t.potSub }}</span></span>
+        <span style="display:flex;"><span style="width:32px; height:32px; border-radius:50%; background:#ff8552; color:#1a0f0a; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2px #f6f0e7;">{{ t.youI }}</span><span style="width:32px; height:32px; margin-left:-8px; border-radius:50%; background:#c9b8f0; color:#1f1830; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2px #f6f0e7;">{{ t.partnerI }}</span></span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; height:10px; border-radius:10px; background:rgba(27,30,46,.08); overflow:hidden;"><span style="width:22%; background:#ff8552;"></span><span style="width:19%; background:#c9b8f0;"></span></div>
+        <div style="display:flex; justify-content:space-between; font-size:13.5px; font-weight:500; font-variant-numeric:tabular-nums;"><span>{{ t.potHave }}</span><span style="color:rgba(27,30,46,.62);">{{ t.potGoal }}</span></div>
+      </div>
+      <div style="border-radius:20px; background:#fffdf9; padding:4px 14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:0.5px solid rgba(27,30,46,.08); font-size:14px;"><span style="display:flex; align-items:center; gap:8px;"><span style="width:8px; height:8px; border-radius:50%; background:#ff8552;"></span>{{ t.you }}</span><span style="font-variant-numeric:tabular-nums; font-weight:600;">{{ t.potYou }}</span></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; font-size:14px;"><span style="display:flex; align-items:center; gap:8px;"><span style="width:8px; height:8px; border-radius:50%; background:#c9b8f0;"></span>{{ t.partner }}</span><span style="font-variant-numeric:tabular-nums; font-weight:600;">{{ t.potThem }}</span></div>
+      </div>
+      <span style="font-size:12.5px; line-height:1.45; color:rgba(27,30,46,.62);">{{ t.potNote }}</span>
+    </div>
+  </section>
+
+  <section id="pricing" data-hour="23" data-screen-label="09 Pricing 23:00" style="scroll-margin-top:64px; max-width:1040px; margin:0 auto; box-sizing:border-box; padding:clamp(80px,10vw,140px) clamp(20px,4vw,40px); display:flex; flex-direction:column; align-items:center; gap:clamp(36px,4vw,48px);">
+    <div data-reveal="0" style="display:flex; flex-direction:column; align-items:center; text-align:center; gap:22px;">
+      <h2 style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:clamp(44px,6vw,88px); line-height:calc(.92 + var(--hlx,0)); letter-spacing:-.05em; text-wrap:balance;">{{ t.priceTitle }}</h2>
+      <div style="display:flex; padding:4px; border-radius:99px; border:0.5px solid var(--line);">
+        <button onClick="{{ setMonthly }}" style="height:38px; padding:0 18px; border:none; border-radius:99px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:500; background: {{ moBg }}; color: {{ moFg }}; transition:background .2s;">{{ t.monthly }}</button>
+        <button onClick="{{ setYearly }}" style="height:38px; padding:0 18px; border:none; border-radius:99px; cursor:pointer; font-family:inherit; font-size:14px; font-weight:500; background: {{ yrBg }}; color: {{ yrFg }}; display:flex; align-items:center; gap:8px; transition:background .2s;">{{ t.yearly }}<span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; color: {{ saveFg }};">−36%</span></button>
+      </div>
+    </div>
+    <div style="width:100%; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr)); gap:20px;">
+      <div data-reveal="0" style="border-radius:28px; border:0.5px solid var(--line); background:rgba(10,8,18,.35); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); padding:clamp(26px,3.4vw,36px); display:flex; flex-direction:column; gap:24px;">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:17px; font-weight:600;">{{ t.freeName }}</span>
+          <span style="display:flex; align-items:baseline; gap:8px;"><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:52px; line-height:1; letter-spacing:-.045em;">{{ t.zero }}</span><span style="font-size:15px; color:var(--ink2);">{{ t.freeFor }}</span></span>
+        </div>
+        <div style="height:0.5px; background:var(--line);"></div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <sc-for list="{{ t.free }}" as="f" hint-placeholder-count="4">
+            <div style="display:flex; gap:12px; font-size:15px; line-height:1.45;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1.45; letter-spacing:normal; font-size:18px; color:var(--ink2);">check</span><span>{{ f }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+      <div data-reveal="100" style="border-radius:28px; background:linear-gradient(180deg, rgba(70,30,40,.6), rgba(20,14,30,.6)); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:0.5px solid rgba(255,133,82,.5); padding:clamp(26px,3.4vw,36px); display:flex; flex-direction:column; gap:24px; box-shadow:0 40px 100px -40px rgba(255,133,82,.35);">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <span style="display:flex; align-items:center; justify-content:space-between; gap:12px;"><span style="font-size:17px; font-weight:600;">6pm Max</span><span style="height:26px; padding:0 10px; border-radius:99px; background:rgba(255,133,82,.16); color:#ffb08a; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.08em; display:flex; align-items:center;">{{ t.trial }}</span></span>
+          <span style="display:flex; align-items:baseline; gap:8px;"><span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-size:52px; line-height:1; letter-spacing:-.045em;">{{ maxPrice }}</span><span style="font-size:15px; color:var(--ink2);">{{ maxPer }}</span></span>
+        </div>
+        <div style="height:0.5px; background:rgba(255,133,82,.3);"></div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <sc-for list="{{ t.max }}" as="f" hint-placeholder-count="5">
+            <div style="display:flex; gap:12px; font-size:15px; line-height:1.45;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1.45; letter-spacing:normal; font-size:18px; color:#ff8552;">check</span><span>{{ f }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" data-hour="23.4" data-screen-label="10 FAQ" style="scroll-margin-top:64px; max-width:1240px; margin:0 auto; box-sizing:border-box; padding:clamp(60px,8vw,110px) clamp(20px,4vw,40px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr)); align-items:start; gap:clamp(32px,6vw,80px);">
+    <h2 data-reveal="0" style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:clamp(40px,5vw,72px); line-height:calc(.94 + var(--hlx,0)); letter-spacing:-.05em;">{{ t.faqTitle }}</h2>
+    <div data-reveal="80" style="display:flex; flex-direction:column; border-top:0.5px solid var(--line);">
+      <sc-for list="{{ faq }}" as="f" hint-placeholder-count="4">
+        <div style="border-bottom:0.5px solid var(--line);">
+          <button onClick="{{ f.toggle }}" style-hover="color:#ffb08a;" style="width:100%; min-height:68px; padding:18px 0; border:none; background:transparent; color:var(--ink); font-family:inherit; font-size:18px; font-weight:500; text-align:left; display:flex; align-items:center; justify-content:space-between; gap:24px; cursor:pointer; transition:color .2s;">
+            <span>{{ f.q }}</span>
+            <span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px; flex-shrink:0; transform: {{ f.rot }}; transition:transform .3s cubic-bezier(.2,.7,.2,1);">add</span>
+          </button>
+          <sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}">
+            <p style="margin:0; padding:0 48px 24px 0; font-size:16px; line-height:1.6; color:var(--ink2); text-wrap:pretty;">{{ f.a }}</p>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="join" data-hour="23.9" data-screen-label="11 Final 23:59" style="scroll-margin-top:64px; box-sizing:border-box; padding:clamp(100px,13vw,170px) clamp(20px,4vw,40px) clamp(110px,14vw,180px); display:flex; flex-direction:column; align-items:center; text-align:center; gap:26px;">
+    <div data-reveal="0"><dusk-buddy form="sun" size="88" mood="sleepy"></dusk-buddy></div>
+    <span data-reveal="0" style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink2);">{{ finalKicker }}</span>
+    <h2 data-reveal="60" style="margin:0; font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:500; font-variation-settings:'opsz' 96, 'wdth' 88; font-size:clamp(64px,10.5vw,170px); line-height:calc(.86 + var(--hlx,0)); letter-spacing:-.06em; text-wrap:balance;">{{ t.finalA }} <span style="color:#ff8552;">{{ t.finalB }}</span></h2>
+    <p data-reveal="90" style="margin:0; max-width:440px; font-size:17px; line-height:1.5; color:var(--ink2); text-wrap:balance;">{{ t.finalSub }}</p>
+    <div data-reveal="120" style="width:100%; max-width:460px; display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:6px;">
+      <sc-if value="{{ isWaitlist }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ submit }}" style="width:100%; display:flex; flex-wrap:wrap; gap:10px;">
+            <input type="email" autocomplete="email" placeholder="{{ t.emailPh }}" value="{{ email }}" onChange="{{ setEmail }}" style-focus="border-color:#ff8552; box-shadow:0 0 0 3px rgba(255,133,82,.28);" style="flex:1 1 220px; min-width:0; height:56px; box-sizing:border-box; padding:0 22px; border-radius:99px; border:0.5px solid var(--line); background:rgba(10,8,18,.45); color:var(--ink); font-family:inherit; font-size:16px; outline:none;">
+            <button type="submit" style-hover="background:#ff9a6e;" style="flex:0 0 auto; height:56px; padding:0 26px; border:none; border-radius:99px; background:#ff8552; color:#1a0f0a; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; transition:background .2s;">{{ t.ctaWait }}</button>
+          </form>
+        </sc-if>
+        <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; gap:12px; height:56px; font-size:17px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:22px; color:#ff8552;">check_circle</span>{{ t.sentMsg }}</div>
+        </sc-if>
+        <span style="font-size:13.5px; color: {{ msgColor }};">{{ formNote }}</span>
+      </sc-if>
+      <sc-if value="{{ isStore }}" hint-placeholder-val="{{ false }}">
+        <a href="#" aria-label="Download on the App Store" style-hover="transform:translateY(-2px); box-shadow:0 0 0 1px #a6a6a6, 0 18px 40px -12px rgba(0,0,0,.55);" style-active="transform:scale(.97);" style="height:60px; box-sizing:border-box; padding:0 24px 0 18px; border-radius:14px; background:#000; color:#fff; text-decoration:none; display:flex; align-items:center; gap:11px; box-shadow:0 0 0 1px #a6a6a6, 0 10px 28px -10px rgba(0,0,0,.5); font-family:-apple-system, 'SF Pro Display', 'Helvetica Neue', 'Be Vietnam Pro', system-ui, sans-serif; transition:transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s;"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true" style="flex-shrink:0; display:block;"><path fill="#fff" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"></path></svg><span style="display:flex; flex-direction:column; gap:1px; line-height:1;"><span style="font-size:11.5px; font-weight:500; letter-spacing:.01em;">{{ t.badgeTop }}</span><span style="font-size:25px; font-weight:600; letter-spacing:-.025em;">App Store</span></span></a>
+      </sc-if>
+    </div>
+  </section>
+
+  <footer data-screen-label="Footer" style="border-top:0.5px solid var(--line);">
+    <div style="max-width:1240px; margin:0 auto; box-sizing:border-box; padding:36px clamp(20px,4vw,40px) 44px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px;">
+      <div style="display:flex; align-items:baseline; gap:14px;">
+        <span style="font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:600; font-size:22px; letter-spacing:-.05em;">6pm</span>
+        <span style="font-size:14px; color:var(--ink2);">{{ t.footTag }}</span>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; align-items:center; gap:24px; font-size:14px;">
+        <a href="https://github.com/get6pm/6pm" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:6px; color:var(--ink2); text-decoration:none;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; line-height:1; letter-spacing:normal; font-size:17px;">code</span>{{ t.footOs }}</a>
+        <a href="#" style="color:var(--ink2); text-decoration:none;">{{ t.footPrivacy }}</a>
+        <a href="#" style="color:var(--ink2); text-decoration:none;">{{ t.footTerms }}</a>
+        <span style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; color:var(--ink2);">© 2026 · {{ t.madeBy }} <a href="https://oddeggs.studio" target="_blank" rel="noopener" style="color:var(--ink); text-decoration:none;">oddeggs.studio</a></span>
+      </div>
+    </div>
+  </footer>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;ctaMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Waitlist&quot;,&quot;App Store&quot;],&quot;default&quot;:&quot;Waitlist&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Launch&quot;},&quot;launch&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2026-11-06T18:00:00+07:00&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Launch&quot;},&quot;liveClock&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hero&quot;},&quot;sky&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Day to night&quot;,&quot;Always dusk&quot;],&quot;default&quot;:&quot;Day to night&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Atmosphere&quot;}}">
+const SKY = [[6, '#b9b4dc', '#efc9d2', '#ffe1b0', '#ff9f8a'], [9, '#8fd0c6', '#e4efcf', '#fff1cf', '#fff07a'], [13, '#62b7c2', '#cfe8d2', '#f9eccb', '#ffe36b'], [16, '#5f97a8', '#f0c39c', '#ff9d6a', '#ffcf5a'], [17.4, '#33427f', '#e0607a', '#ffad45', '#ffd23f'], [18.2, '#1a2456', '#b8336a', '#ff6b35', '#ffc53d'], [19.3, '#0f1838', '#3a1c5a', '#8e2a58', '#ff5470'], [21, '#081026', '#0f2038', '#16384a', '#1fbf9a'], [24, '#04070e', '#08141e', '#0c2628', '#17a387']];
+const hx = h => { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const mixc = (a, b, k) => { const A = hx(a), B = hx(b); return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * k)).join(',')})`; };
+const skyAt = h => { h = Math.max(6, Math.min(24, h)); let i = 0; while (i < SKY.length - 2 && h > SKY[i + 1][0]) i++; const a = SKY[i], b = SKY[i + 1], k = Math.max(0, Math.min(1, (h - a[0]) / (b[0] - a[0]))); return [1, 2, 3, 4].map(j => mixc(a[j], b[j], k)); };
+const tile = h => `linear-gradient(155deg, oklch(0.9 0.07 ${h}), oklch(0.78 0.12 ${h}))`, glyph = h => `oklch(0.34 0.09 ${h})`;
+const WAY_ICONS = { en: ['contactless', 'receipt_long', 'alternate_email', 'mic', 'bolt', 'dialpad'], vi: ['qr_code_scanner', 'receipt_long', 'alternate_email', 'contactless', 'mic', 'dialpad'] };
+const WAY_CAT = [['local_cafe', 25], ['shopping_basket', 140], ['local_taxi', 230], ['ramen_dining', 60], ['train', 280], ['storefront', 100]];
+const PRIV_ICONS = ['phonelink_lock', 'no_accounts', 'code'];
+const T = {
+  en: {
+    navSurf: 'Surfaces', surfMark: 'Before six', surfTitle: 'It lives where you already look.',
+    surfSub: 'Lock Screen, Dynamic Island, widgets, Siri and the Action button. Most days you won’t open the app until six.',
+    sLock: 'LOCK SCREEN · LIVE ACTIVITY', lockDate: 'Friday 9 October', lockRing: '$31', left: 'left', lockW1: '6pm · Safe today', lockW2: '2 to check',
+    laTop: 'Day closes in 8 min', laMain: '4 caught · 1 min', laBtn: 'Close', notif: 'Caught $4.50 · Oat latte', confirm: 'Confirm', edit: 'Edit',
+    sIsland: 'DYNAMIC ISLAND', islandC: '8m', islandTop: 'Waiting · tap when paid', islandMain: '$12.00 to Noodle bar', paid: 'Paid', islandNote: 'Paid by QR or cash? It waits up top until you say it’s done.',
+    sWidgets: 'WIDGETS', wClose: 'Day closes in', wCaught: '4 caught so far', safeToday: 'safe today', wNote: 'Your number on the Home Screen, in whichever look you picked.',
+    siriQ: '“Log twelve dollars lunch in 6pm”', siriA: 'Logged. Lunch · Food', siriB: 'Safe today is now $19', siriAmt: '$12',
+    sAction: 'ACTION BUTTON · CONTROL CENTER', actIcon: 'mic', actA: 'Say it', actB: 'Quick add', actLbl: 'Action button', actMain: 'Log a spend in 6pm', actNote: 'One press from anywhere, without unlocking.',
+    duoTitle: 'Unfold the day.', duoSub: 'On iPhone Duo, 6pm uses both halves. Today lives on the outside. Open it and the day reads like a book.',
+    duoTabs: ['Folded', 'Open', 'Diary', 'Propped'], duoHints: [[['swipe_left', 'Drag left to unfold']], [['swipe_up', 'Swipe up for your diary'], ['swipe_down', 'Swipe down to prop it up'], ['swipe_right', 'Drag right to fold']], [['swipe_down', 'Swipe down for today'], ['swipe_right', 'Drag right to fold']], [['swipe_up', 'Swipe up to lay it flat']]], duoCaps: ['Today on the outer screen, with your companion up in the side rail.', 'Inbox on one page, the day on the other. Drag a spend across to file it.', 'Your month as a spread, like a notebook you actually keep.', 'Stand it on the table. Glance at the day up top, log with the keypad below.'],
+    navCapture: 'Capture', navClose: 'The close', navPrivacy: 'Privacy', navPricing: 'Pricing', navWait: 'Join the waitlist', navStore: 'Download',
+    kickWait: 'For iPhone · Arrives 6 Nov, 18:00', kickStore: 'For iPhone · Free on the App Store',
+    heroA: 'Close your day', heroB: 'at six.',
+    heroSub: 'Spend like you normally do. At six, one swipe settles the day, and tomorrow starts with one number you can trust.',
+    badgeTop: 'Download on the', ctaWait: 'Join the waitlist', ctaStore: 'Download for iPhone', emailPh: 'you@example.com',
+    waitNote: 'One email on launch day. That’s all.', sentMsg: 'You’re on the list. See you at six.', errMsg: 'That doesn’t look like an email yet.',
+    clock: (t, d) => `${t} where you are · today closes in ${d}`, clockNow: 'It’s six. Time to close the day.', dur: (h, m) => h ? `${h}h ${m}m` : `${m}m`,
+    phDay: 'Friday', phDate: '9 October', phSafe: 'Safe to spend today', phNum: '$54', phNumSize: '78px', phLeft: '$4.50 spent', phRight: 'of $54',
+    phBuddy: 'Morning. Coffee’s already in.', phTonight: 'Close at 6pm', phTonightSub: 'About a minute. I’ll remind you.', phStreak: '4 of 4', phStreakSub: 'closed this week',
+    capMark: 'Somewhere in your day', capTitle: 'It notices, so you don’t have to.',
+    capSub: 'Pay, snap, forward or say it. Every spend lands in one inbox and waits quietly for six.',
+    ways: [['Apple Pay', 'Tap to pay. It’s in before the receipt prints.'], ['Receipt photo', 'Snap it. Read on your phone, never in the cloud.'], ['Bank email', 'Forward your bank’s alert to your 6pm address.'], ['Voice', '“Lunch, twelve dollars.” That’s it.'], ['Shortcuts', 'Back Tap, the Action button or a widget.'], ['Keypad', 'For cash. Three taps.']],
+    rows: [['Oat latte', 'APPLE PAY', '$4.50', '08:15'], ['Green Grocer', 'RECEIPT', '$23.18', '11:02'], ['Rideshare', 'BANK EMAIL', '$12.40', '09:40'], ['Lunch', 'VOICE', '$12.00', '12:31'], ['Metro', 'SHORTCUT', '$2.90', '08:52'], ['Market stall', 'KEYPAD', '$6.50', '10:20']],
+    inboxTitle: 'Inbox', inboxSub: 'Caught today', inboxBadge: '4 for six', justNow: 'now', inboxFoot: 'Nothing counts twice. Duplicates are merged.',
+    closeMark: 'The close', closeTitle: 'Six o’clock. One minute. Done.',
+    closeSub: 'Each spend comes up as a receipt. Keep it, fix it, or say it isn’t yours. The last one closes the day.',
+    cards: [['041', 'APPLE PAY', '08:15', 'local_cafe', 25, 'Oat latte', 'Coffee', '$0.00', '$4.50', '$4.50', 'Corner Café · card ••4417'], ['042', 'RECEIPT', '11:02', 'shopping_basket', 140, 'Green Grocer', 'Groceries', '$4.50', '$27.68', '$23.18', '3 items, read on your phone'], ['043', 'BANK EMAIL', '17:22', 'local_taxi', 230, 'Rideshare', 'Getting around', '$27.68', '$40.08', '$12.40', 'From your bank’s alert']],
+    cardNumSize: '68px', keptSoFar: 'KEPT SO FAR', withThis: 'WITH THIS ONE', keepStamp: 'KEEP', keep: 'Keep', keepLast: 'Keep and close', closedStamp: 'CLOSED',
+    closeHint: 'Try it. Tap Keep, or drag the receipt to the right.', again: 'Close it again',
+    tmrLbl: 'SAFE TO SPEND TOMORROW', tmrNum: '$55', tmrNote: 'You came in under. Tomorrow gets the change.',
+    numMark: 'The number', numTitle: 'Bills first. Future you second. The rest is yours.',
+    eq: [['IN', 'October pay', '$3,200'], ['−', 'Bills', '$1,180'], ['−', 'Pots · Tokyo, rainy day', '$480'], ['−', 'Future you · 11%', '$352'], ['=', 'Free to spend', '$1,188'], ['÷', 'Days to payday', '22']],
+    eqLbl: 'SAFE TO SPEND TODAY', perDay: 'a day', eqSize: 'clamp(120px,17vw,240px)',
+    numSub: 'Go big on Saturday and the days after shrink a little. Spend less and they grow. No budgets to babysit, no categories to police.',
+    phrases: ['Count it,', 'never move it.', 'One number,', 'not twenty charts.', 'No shame.', 'Every day at six.'],
+    askMark: 'Ask', askTitle: 'Ask 6pm', askH: 'Ask before you spend.', askSub: 'The maths runs on your phone. AI only finds the words, and it works offline.', askPh: 'Ask about your money',
+    asks: [['Can I afford $350 on Saturday?', 'Yes. Until payday, your day becomes', '$54', '$37', '/ day'], ['Where did my money go this week?', 'Mostly food. Lunches out were the big one.', '', '$96', 'of $171'], ['If I skip takeaway, when do I reach Tokyo?', 'About five weeks sooner. Early March, not April.', 'Apr', 'Mar', 'Tokyo pot']],
+    privMark: 'Privacy', privTitle: 'Your money stays on your phone.',
+    priv: [['No bank login. Ever.', '6pm reads what you share with it. It never asks for your bank password, and it can’t move a cent.'], ['No account.', 'Encrypted on your iPhone. Backups only you can open. No ads, no trackers.'], ['Read every line.', 'The app, the money maths and the privacy promises are all open source.']],
+    osLine0: 'Cloning into ’6pm’…', osLine1: 'the iPhone app', osLine2: 'every money rule, tested', osLine3: 'what we promise',
+    togMark: 'Together', togTitle: 'Save together. Spend apart.', togSub: 'Share a pot with one person. Each of you keeps your own day. Free for everyone.',
+    jar: 'Tokyo', potSub: 'With Alex · by March', potHave: '$1,240 saved', potGoal: 'of $3,000', you: 'You', youI: 'Y', partner: 'Alex', partnerI: 'A', potYou: '+$660', potThem: '+$580', potNote: 'Alex sees the pot, never your spending.',
+    priceTitle: 'Free for the ritual.', monthly: 'Monthly', yearly: 'Yearly', freeName: 'Free', freeFor: 'forever', zero: '$0', priceM: '$2.99', priceY: '$22.99', perMonth: '/ month', perYear: '/ year',
+    free: ['The close and every way to capture', 'Today, Plan and Diary', 'Budget together', '10 questions a day'],
+    trial: '7 DAYS FREE', max: ['Every look, including living scenes', 'Unlimited questions and pots', 'Travel mode', 'Encrypted backup and export', 'Year book and widgets in your look'],
+    faqTitle: 'Questions.',
+    faq: [['Does 6pm connect to my bank?', 'No. It never asks for your bank login. It reads the receipts you share, the codes you scan and the alerts your bank sends to your 6pm address.'], ['Can 6pm move my money?', 'Never. 6pm only counts. Payments happen in your own bank app.'], ['What if I miss a close?', 'Nothing breaks. Missed days wait for you, and what you spent already counts.'], ['Is it on Android?', 'iPhone first, from 6 November. Android follows.']],
+    finalA: 'See you', finalB: 'at six.', finalSub: 'Tomorrow, around six, your phone will nudge you. One minute, and the day is done.',
+    cd: (d, h, m) => `${d}d ${h}h ${m}m to launch`, out: 'Out now',
+    footTag: 'Close your day at six.', footOs: 'Open source', madeBy: 'Made by', footPrivacy: 'Privacy', footTerms: 'Terms', bankStrip: ''
+  },
+  vi: {
+    navSurf: 'Tiện ích', surfMark: 'Trước sáu giờ', surfTitle: 'Nó ở ngay chỗ bạn hay nhìn.',
+    surfSub: 'Màn hình khoá, Dynamic Island, widget, Siri và nút Tác vụ. Hầu hết các ngày, bạn chẳng cần mở app đến tận sáu giờ.',
+    sLock: 'MÀN HÌNH KHOÁ · LIVE ACTIVITY', lockDate: 'Thứ Sáu, 9 tháng 10', lockRing: '183k', left: 'còn', lockW1: '6pm · Hôm nay', lockW2: '2 chờ kiểm',
+    laTop: 'Chốt trong 8 phút', laMain: '4 khoản · 1 phút', laBtn: 'Chốt', notif: 'Đã ghi 29.000₫ · Cà phê sữa đá', confirm: 'Xác nhận', edit: 'Sửa',
+    sIsland: 'DYNAMIC ISLAND', islandC: '8 ph', islandTop: 'Đang chờ · chạm khi đã trả', islandMain: '45.000₫ cho Phở Hòa', paid: 'Đã trả', islandNote: 'Trả bằng QR hay tiền mặt? Nó chờ ở trên cùng đến khi bạn xác nhận.',
+    sWidgets: 'WIDGET', wClose: 'Giờ chốt còn', wCaught: 'Đã ghi 4 khoản', safeToday: 'hôm nay còn', wNote: 'Con số của bạn ngay trên màn hình chính, theo giao diện bạn chọn.',
+    siriQ: '“Ghi phở năm lăm nghìn vào 6pm”', siriA: 'Đã ghi. Phở · Ăn uống', siriB: 'Hôm nay còn 128k', siriAmt: '55k',
+    sAction: 'NÚT TÁC VỤ · TRUNG TÂM ĐIỀU KHIỂN', actIcon: 'qr_code_scanner', actA: 'Quét QR', actB: 'Ghi nhanh', actLbl: 'Nút Tác vụ', actMain: 'Quét QR trong 6pm', actNote: 'Một lần bấm từ bất cứ đâu, không cần mở khoá.',
+    duoTitle: 'Mở ra là thấy cả ngày.', duoSub: 'Trên iPhone Duo, 6pm dùng cả hai nửa màn hình. Hôm nay ở mặt ngoài. Mở ra, ngày của bạn đọc như một cuốn sổ.',
+    duoTabs: ['Gập', 'Mở', 'Nhật ký', 'Dựng'], duoHints: [[['swipe_left', 'Kéo sang trái để mở']], [['swipe_up', 'Vuốt lên xem nhật ký'], ['swipe_down', 'Vuốt xuống để dựng máy'], ['swipe_right', 'Kéo sang phải để gập']], [['swipe_down', 'Vuốt xuống về hôm nay'], ['swipe_right', 'Kéo sang phải để gập']], [['swipe_up', 'Vuốt lên để đặt nằm']]], duoCaps: ['Hôm nay trên màn hình ngoài, bạn đồng hành ở thanh bên.', 'Hộp thư một trang, ngày của bạn một trang. Kéo khoản chi sang để xếp.', 'Cả tháng trải ra hai trang, như cuốn sổ bạn giữ được thật.', 'Dựng lên bàn. Nhìn ngày ở nửa trên, ghi bằng bàn phím ở nửa dưới.'],
+    navCapture: 'Ghi chi tiêu', navClose: 'Chốt ngày', navPrivacy: 'Quyền riêng tư', navPricing: 'Bảng giá', navWait: 'Đăng ký sớm', navStore: 'Tải về',
+    kickWait: 'Cho iPhone · Ra mắt 18:00, 6/11', kickStore: 'Cho iPhone · Miễn phí trên App Store',
+    heroA: 'Chốt ngày', heroB: 'lúc sáu giờ.',
+    heroSub: 'Cứ tiêu như mọi ngày. Sáu giờ, vuốt một lần là xong ngày, và sáng mai bắt đầu bằng một con số bạn tin được.',
+    badgeTop: 'Tải về trên', ctaWait: 'Đăng ký sớm', ctaStore: 'Tải cho iPhone', emailPh: 'email@cuaban.com',
+    waitNote: 'Một email vào ngày ra mắt. Vậy thôi.', sentMsg: 'Bạn đã có tên. Hẹn lúc sáu giờ.', errMsg: 'Email này có vẻ chưa đúng.',
+    clock: (t, d) => `Chỗ bạn đang là ${t} · còn ${d} đến giờ chốt`, clockNow: 'Sáu giờ rồi. Chốt ngày thôi.', dur: (h, m) => h ? `${h} giờ ${m} phút` : `${m} phút`,
+    phDay: 'Thứ Sáu', phDate: '9 tháng 10', phSafe: 'Hôm nay tiêu được', phNum: '312k', phNumSize: '72px', phLeft: '29k đã tiêu', phRight: 'trên 312k',
+    phBuddy: 'Chào buổi sáng. Cà phê ghi rồi nhé.', phTonight: 'Chốt lúc 18:00', phTonightSub: 'Khoảng một phút. Mình sẽ nhắc.', phStreak: '4 / 4', phStreakSub: 'ngày đã chốt',
+    capMark: 'Giữa ngày của bạn', capTitle: 'Nó tự để ý, bạn khỏi phải nhớ.',
+    capSub: 'Quét, chụp, chuyển tiếp hoặc nói. Mọi khoản chi về một hộp thư và chờ đến sáu giờ.',
+    ways: [['VietQR', 'Quét mã trả tiền là đã ghi xong.'], ['Biên lai', 'Chụp lại. Đọc ngay trên máy, không gửi lên mây.'], ['Email ngân hàng', 'Chuyển thông báo ngân hàng về địa chỉ 6pm.'], ['Apple Pay', 'Chạm để trả. Ghi trước cả khi in hoá đơn.'], ['Giọng nói', '“Phở năm lăm nghìn.” Thế là xong.'], ['Bàn phím', 'Cho tiền mặt. Ba lần chạm.']],
+    rows: [['Bún chả Cô Lan', 'VIETQR', '55.000₫', '12:05'], ['Bách Hoá Xanh', 'BIÊN LAI', '186.000₫', '11:02'], ['Grab bike', 'EMAIL', '38.000₫', '09:40'], ['Cà phê sữa đá', 'APPLE PAY', '29.000₫', '08:15'], ['Phở bò', 'GIỌNG NÓI', '55.000₫', '12:31'], ['Nước mía', 'BÀN PHÍM', '15.000₫', '10:20']],
+    inboxTitle: 'Hộp thư', inboxSub: 'Ghi được hôm nay', inboxBadge: '4 chờ chốt', justNow: 'vừa xong', inboxFoot: 'Không ghi trùng. Khoản lặp được gộp lại.',
+    closeMark: 'Chốt ngày', closeTitle: 'Sáu giờ. Một phút. Xong.',
+    closeSub: 'Mỗi khoản hiện ra như một tờ biên lai. Giữ, sửa, hoặc báo không phải của bạn. Tờ cuối cùng chốt ngày.',
+    cards: [['041', 'APPLE PAY', '08:15', 'local_cafe', 25, 'Cà phê sữa đá', 'Cà phê', '0₫', '29.000₫', '29.000₫', 'Highlands · thẻ ••4417'], ['042', 'VIETQR', '12:05', 'ramen_dining', 60, 'Bún chả Cô Lan', 'Ăn uống', '29.000₫', '84.000₫', '55.000₫', 'Quét mã tại quán'], ['043', 'EMAIL NGÂN HÀNG', '17:22', 'two_wheeler', 230, 'Grab bike', 'Đi lại', '84.000₫', '122.000₫', '38.000₫', 'Từ thông báo Vietcombank']],
+    cardNumSize: '56px', keptSoFar: 'ĐÃ GIỮ', withThis: 'THÊM KHOẢN NÀY', keepStamp: 'GIỮ', keep: 'Giữ', keepLast: 'Giữ và chốt', closedStamp: 'ĐÃ CHỐT',
+    closeHint: 'Thử đi. Bấm Giữ, hoặc kéo biên lai sang phải.', again: 'Chốt lại lần nữa',
+    tmrLbl: 'NGÀY MAI TIÊU ĐƯỢC', tmrNum: '321k', tmrNote: 'Hôm nay bạn tiêu ít hơn. Phần dư cộng cho ngày mai.',
+    numMark: 'Con số', numTitle: 'Hoá đơn trước. Bạn tương lai sau. Phần còn lại là của bạn.',
+    eq: [['THU', 'Lương tháng 10', '18.500.000₫'], ['−', 'Hoá đơn', '6.800.000₫'], ['−', 'Hũ · Đà Lạt, dự phòng', '2.800.000₫'], ['−', 'Tương lai · 11%', '2.036.000₫'], ['=', 'Tự do chi tiêu', '6.864.000₫'], ['÷', 'Ngày đến kỳ lương', '22']],
+    eqLbl: 'HÔM NAY TIÊU ĐƯỢC', perDay: 'mỗi ngày', eqSize: 'clamp(100px,14vw,200px)',
+    numSub: 'Thứ Bảy tiêu mạnh tay thì những ngày sau bớt đi chút. Tiêu ít thì chúng tăng lên. Không cần trông ngân sách, không cần soi danh mục.',
+    phrases: ['Chỉ đếm,', 'không đụng.', 'Một con số,', 'không phải hai mươi biểu đồ.', 'Không trách móc.', 'Mỗi ngày, lúc sáu giờ.'],
+    askMark: 'Hỏi', askTitle: 'Hỏi 6pm', askH: 'Hỏi trước khi tiêu.', askSub: 'Điện thoại tự tính. AI chỉ giúp tìm lời, và chạy được cả khi offline.', askPh: 'Hỏi về tiền của bạn',
+    asks: [['Thứ Bảy tiêu 2tr được không?', 'Được. Đến kỳ lương, mỗi ngày còn', '312k', '217k', '/ ngày'], ['Tuần này tiền đi đâu hết?', 'Chủ yếu là ăn uống. Ăn trưa ngoài nhiều nhất.', '', '640k', 'trên 1,1tr'], ['Bớt gọi đồ ăn thì bao giờ đi Đà Lạt được?', 'Sớm hơn khoảng năm tuần. Đầu tháng Ba thay vì tháng Tư.', 'T4', 'T3', 'hũ Đà Lạt']],
+    privMark: 'Quyền riêng tư', privTitle: 'Tiền của bạn ở lại trên điện thoại của bạn.',
+    priv: [['Không đăng nhập ngân hàng.', '6pm chỉ đọc những gì bạn chia sẻ. Không bao giờ hỏi mật khẩu ngân hàng, và không thể chuyển một đồng.'], ['Không tài khoản.', 'Mã hoá trên iPhone. Bản sao lưu chỉ bạn mở được. Không quảng cáo, không theo dõi.'], ['Đọc từng dòng.', 'App, phần tính tiền và cam kết quyền riêng tư đều là mã nguồn mở.']],
+    osLine0: 'Đang tải ’6pm’…', osLine1: 'app iPhone', osLine2: 'mọi quy tắc tiền, có kiểm thử', osLine3: 'những gì chúng tôi cam kết',
+    togMark: 'Cùng nhau', togTitle: 'Cùng để dành. Ai tiêu nấy giữ.', togSub: 'Chung một hũ với một người. Mỗi người vẫn giữ ngày của riêng mình. Miễn phí cho mọi người.',
+    jar: 'Đà Lạt', potSub: 'Với Minh · trước tháng Ba', potHave: 'Đã có 7.400.000₫', potGoal: 'trên 18.000.000₫', you: 'Bạn', youI: 'B', partner: 'Minh', partnerI: 'M', potYou: '+3.900.000₫', potThem: '+3.500.000₫', potNote: 'Minh thấy hũ chung, không bao giờ thấy chi tiêu của bạn.',
+    priceTitle: 'Miễn phí cho nghi thức.', monthly: 'Theo tháng', yearly: 'Theo năm', freeName: 'Miễn phí', freeFor: 'mãi mãi', zero: '0₫', priceM: '78.000₫', priceY: '598.000₫', perMonth: '/ tháng', perYear: '/ năm',
+    free: ['Chốt ngày và mọi cách ghi', 'Hôm nay, Kế hoạch và Nhật ký', 'Cùng nhau', '10 câu hỏi mỗi ngày'],
+    trial: '7 NGÀY MIỄN PHÍ', max: ['Mọi giao diện, kể cả cảnh động', 'Hỏi và tạo hũ không giới hạn', 'Chế độ du lịch', 'Sao lưu mã hoá và xuất dữ liệu', 'Sổ kỷ niệm và widget theo giao diện'],
+    faqTitle: 'Hỏi đáp.',
+    faq: [['6pm có kết nối ngân hàng của tôi không?', 'Không. 6pm không bao giờ hỏi thông tin đăng nhập ngân hàng. Nó đọc biên lai bạn chia sẻ, mã QR bạn quét và email ngân hàng gửi đến địa chỉ 6pm của bạn.'], ['6pm có chuyển tiền của tôi không?', 'Không bao giờ. 6pm chỉ đếm. Thanh toán diễn ra trong app ngân hàng của bạn.'], ['Quên chốt ngày thì sao?', 'Không sao. Ngày bị lỡ sẽ chờ bạn, và những gì đã tiêu vẫn được tính.'], ['Có bản Android không?', 'iPhone trước, từ 6 tháng 11. Android sẽ đến sau.']],
+    finalA: 'Hẹn bạn', finalB: 'lúc sáu giờ.', finalSub: 'Mai, khoảng sáu giờ, điện thoại sẽ nhắc bạn. Một phút, và ngày khép lại.',
+    cd: (d, h, m) => `Còn ${d} ngày ${h} giờ ${m} phút`, out: 'Đã ra mắt',
+    footTag: 'Chốt ngày lúc sáu giờ.', footOs: 'Mã nguồn mở', madeBy: 'Thực hiện bởi', footPrivacy: 'Quyền riêng tư', footTerms: 'Điều khoản', bankStrip: 'HỖ TRỢ 31 APP NGÂN HÀNG VÀ VÍ ĐIỆN TỬ'
+  }
+};
+const BANKS = ['vcb', 'tcb', 'mb', 'bidv', 'icb', 'acb', 'vpb', 'tpb', 'shbvn', 'cake', 'momo', 'zalopay'];
+
+class Component extends DCLogic {
+  state = { lang: 'en', now: Date.now(), email: '', sent: false, err: '', yearly: true, faq: 0, cap: 0, capAuto: true, ci: 0, dx: 0, dragging: false, ask: 0, duo: 0, vw: 1280, open: 0, duoDrag: false, touched: false };
+  rootRef = React.createRef(); skyRef = React.createRef(); sunRef = React.createRef(); starRef = React.createRef(); horizonRef = React.createRef(); clockRef = React.createRef(); hazeRef = React.createRef(); leakRef = React.createRef();
+  banks = BANKS.concat(BANKS).map(b => ({ name: b, bg: "url('./apps/mobile/assets/banks/" + b + ".png')" }));
+  componentDidMount() {
+    try {
+      const saved = localStorage.getItem('6pm-site-lang');
+      const l = saved || ((navigator.language || '').toLowerCase().startsWith('vi') ? 'vi' : 'en');
+      if (l !== this.state.lang) this.setState({ lang: l });
+    } catch (e) {}
+    this.tm = setInterval(() => this.setState({ now: Date.now() }), 15000);
+    this.capT = setInterval(() => { if (this.state.capAuto) this.setState(s => ({ cap: (s.cap + 1) % 6 })); }, 2800);
+    this.onScroll = () => { if (!this.raf) this.raf = requestAnimationFrame(() => { this.raf = 0; this.paintSky(); }); };
+    addEventListener('scroll', this.onScroll, { passive: true }); addEventListener('resize', this.onScroll);
+    this.onResize = () => this.setState({ vw: innerWidth }); addEventListener('resize', this.onResize); this.onResize();
+    requestAnimationFrame(() => { this.setupReveal(); this.paintSky(); this.paintLang(); });
+  }
+  componentDidUpdate() { this.paintSky(); this.paintLang(); }
+  paintLang() { const r = this.rootRef.current; if (r) r.style.setProperty('--hlx', this.state.lang === 'vi' ? '.1' : '0'); }
+  componentWillUnmount() { clearInterval(this.tm); clearInterval(this.capT); removeEventListener('scroll', this.onScroll); removeEventListener('resize', this.onScroll); removeEventListener('resize', this.onResize); this.io && this.io.disconnect(); }
+  hourNow() {
+    if ((this.props.sky ?? 'Day to night') === 'Always dusk') return 18.2;
+    const r = this.rootRef.current; if (!r) return 9;
+    const secs = [...r.querySelectorAll('[data-hour]')], mid = innerHeight * .5;
+    if (!secs.length) return 9;
+    const pts = secs.map(s => [s.getBoundingClientRect().top + Math.min(s.offsetHeight, innerHeight) * .5, +s.dataset.hour]);
+    if (mid <= pts[0][0]) return pts[0][1];
+    for (let i = 0; i < pts.length - 1; i++) if (mid <= pts[i + 1][0]) { const k = (mid - pts[i][0]) / (pts[i + 1][0] - pts[i][0]); return pts[i][1] + (pts[i + 1][1] - pts[i][1]) * k; }
+    return pts[pts.length - 1][1];
+  }
+  paintSky() {
+    const r = this.rootRef.current; if (!r || !this.skyRef.current) return;
+    const h = this.hourNow(); if (h === this.lastH) return; this.lastH = h;
+    const [a, b, c, sun] = skyAt(h);
+    this.skyRef.current.style.background = `linear-gradient(180deg, ${a} 0%, ${b} 52%, ${c} 100%)`;
+    document.body.style.background = a;
+    const night = h >= 17.3, S = r.style;
+    S.setProperty('--ink', night ? '#fbf4ec' : '#1b1e2e'); S.setProperty('--ink2', night ? 'rgba(251,244,236,.74)' : 'rgba(27,30,46,.72)');
+    S.setProperty('--line', night ? 'rgba(251,244,236,.16)' : 'rgba(27,30,46,.16)'); S.setProperty('--glass', night ? 'rgba(255,255,255,.08)' : 'rgba(255,253,249,.5)');
+    S.setProperty('--inv', night ? '#1b1e2e' : '#fbf4ec'); S.setProperty('--acc', night ? '#ff8552' : '#c4441c'); S.setProperty('--nav', night ? 'rgba(12,9,22,.5)' : 'rgba(240,246,236,.55)');
+    const top = h <= 18.2 ? 14 + (h - 9) / 9.2 * 64 : 78 + (h - 18.2) * 40;
+    const sn = this.sunRef.current; sn.style.top = Math.max(14, top) + 'vh';
+    const dusk = Math.max(0, Math.min(1, (h - 15.5) / 2.7));
+    sn.style.setProperty('--sun', mixc('#fff3b0', '#ffb070', dusk));
+    sn.style.setProperty('--rim', mixc('#ffe08a', '#e8503a', dusk));
+    sn.style.setProperty('--haze', dusk > .5 ? (dusk - .5) * 2 : 0);
+    sn.style.transform = `scale(${1 + dusk * .14}, ${1 - dusk * .06})`;
+    sn.style.opacity = h > 19.4 ? 0 : 1;
+    if (this.hazeRef.current) { const g = mixc('#ffe2bf', '#ff7a4a', dusk).replace('rgb(', 'rgba(').replace(')', `,${h > 20 ? .1 : .38})`); this.hazeRef.current.style.background = `radial-gradient(120% 60% at 50% 100%, ${g}, transparent 60%), radial-gradient(80% 50% at 10% 0%, rgba(40,30,90,${(.18 + dusk * .25).toFixed(2)}), transparent 70%)`; }
+    if (this.leakRef.current) this.leakRef.current.style.filter = `hue-rotate(${h > 19.5 ? 160 : 0}deg)`;
+    this.starRef.current.style.opacity = Math.max(0, Math.min(1, (h - 19.2) / 1.8));
+    this.horizonRef.current.style.opacity = Math.max(0, 1 - Math.abs(h - 18.4) / 1.4);
+    const hh = Math.floor(h), mm = Math.floor((h - hh) * 60), p = n => String(n).padStart(2, '0');
+    if (this.clockRef.current) this.clockRef.current.textContent = p(Math.min(23, hh)) + ':' + p(hh >= 24 ? 59 : mm);
+  }
+  setupReveal() {
+    const r = this.rootRef.current; if (!r || !('IntersectionObserver' in window)) return;
+    const ease = 'cubic-bezier(.2,.7,.2,1)';
+    this.io = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; e.target.style.opacity = '1'; e.target.style.translate = '0 0'; this.io.unobserve(e.target); }), { rootMargin: '0px 0px -6% 0px' });
+    r.querySelectorAll('[data-reveal]').forEach(el => {
+      if (el.getBoundingClientRect().top < innerHeight * .94) return;
+      const d = +el.dataset.reveal || 0;
+      el.style.opacity = '0'; el.style.translate = '0 28px'; el.style.transition = `opacity 1s ${ease} ${d}ms, translate 1s ${ease} ${d}ms`;
+      this.io.observe(el);
+    });
+  }
+  setLang(l) { try { localStorage.setItem('6pm-site-lang', l); } catch (e) {} this.setState({ lang: l }); }
+  keep() { this.setState(s => ({ ci: Math.min(3, s.ci + 1), dx: 0, dragging: false })); }
+  duoVals(s, t) {
+    const W = Math.min(s.vw, 1240), zw = Math.min(1, (W - 48) / 969), zs = Math.min(.72, (W - 40) / 687); this.zw = zw;
+    const fold = 1 - s.open, drag = s.duoDrag, ease = 'cubic-bezier(.2,.8,.2,1)', cl = v => Math.max(0, Math.min(1, v));
+    const ghost = [['640px', 'ghostXL'], ['720px', 'ghostY'], ['160px', 'ghostX'], ['0px', 'none']][s.duo];
+    return {
+      duoTabs: t.duoTabs.map((l, i) => ({ label: l, bg: i === s.duo ? 'var(--ink)' : 'transparent', fg: i === s.duo ? 'var(--inv)' : 'var(--ink)', pick: () => this.setState({ duo: i, open: i === 0 ? 0 : 1, touched: true }) })),
+      duoCap: t.duoCaps[s.duo], duoHints: t.duoHints[s.duo].map(x => ({ icon: x[0], t: x[1] })),
+      duoZw: zw, duoZs: zs, duoH: Math.round(Math.max(780 * zw, 900 * zs) + 20) + 'px',
+      duoBodyTf: `translateX(${(-242 * fold).toFixed(1)}px) scale(${(1 + .12 * fold).toFixed(3)})`, duoHingeTf: `rotateY(${(180 * fold).toFixed(1)}deg)`,
+      duoTr: drag ? 'none' : `transform 1.1s ${ease}`, duoOpTr: drag ? 'none' : `opacity 1.1s ${ease}`,
+      duoShadeL: cl(fold * .9).toFixed(2), duoShadeR: cl(fold * 1.6).toFixed(2), duoShadeB: cl((1 - fold) * 1.6).toFixed(2), duoGlint: Math.sin(fold * Math.PI).toFixed(2),
+      duoRRad: `${Math.round(20 * cl(fold * 1.6))}px ${Math.round(49 + 7 * fold)}px ${Math.round(49 + 7 * fold)}px ${Math.round(20 * cl(fold * 1.6))}px`, duoLShadow: fold < .04 ? 'none' : '0 0 0 1px #5d5864, 0 0 0 3px #1a181e, 0 60px 120px rgba(0,0,0,.55)', duoFShadow: fold < .04 ? 'none' : '0 0 0 1px #5d5864, 0 0 0 3px #1a181e, 0 60px 120px rgba(0,0,0,.4)', duoRing: fold < .04 ? 1 : 0, duoRadTr: drag ? 'none' : `border-radius 1.1s ${ease}`,
+      duoPageTf: s.duo === 2 ? 'translateY(-687px)' : 'none', duoPageTr: `transform .95s cubic-bezier(.65,0,.25,1)`,
+      duoCursor: drag ? 'grabbing' : 'grab', duoStageOp: s.duo === 3 ? 0 : 1, duoStagePe: s.duo === 3 ? 'none' : 'auto',
+      duoStageTf: s.duo === 3 ? 'rotate(-90deg) scale(.72)' : 'none', duoStageTr: `transform 1s ${ease}, opacity .5s`,
+      duoStandOp: s.duo === 3 ? 1 : 0, duoStandPe: s.duo === 3 ? 'auto' : 'none', duoStandTf: s.duo === 3 ? 'none' : 'rotateX(62deg) scale(.82)',
+      ghostLeft: ghost[0], ghostOp: s.touched || s.duo === 3 ? 0 : 1, ghostAnim: ghost[1] === 'none' ? 'none' : `${ghost[1]} 2.8s ease-in-out infinite`,
+      duoDown: e => { this.g = { x: e.clientX, y: e.clientY, open: this.state.open, axis: null }; },
+      duoMove: e => {
+        const g = this.g; if (!g) return; const dx = e.clientX - g.x, dy = e.clientY - g.y;
+        if (!g.axis && Math.hypot(dx, dy) > 8) g.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+        if (g.axis === 'x' && this.state.duo !== 3) this.setState({ open: cl(g.open - dx / (484 * this.zw)), duoDrag: true, touched: true });
+        g.dy = dy;
+      },
+      duoUp: () => {
+        const g = this.g; if (!g) return; this.g = null; const st = this.state;
+        if (g.axis === 'x' && st.duo !== 3) { const o = st.open > (g.open > .5 ? .8 : .2) ? 1 : 0; this.setState({ open: o, duo: o ? (st.duo === 0 ? 1 : st.duo) : 0, duoDrag: false }); return; }
+        if (g.axis === 'y' && Math.abs(g.dy || 0) > 50) {
+          const up = g.dy < 0, d = st.duo, n = up ? (d === 1 ? 2 : d === 3 ? 1 : d) : (d === 1 ? 3 : d === 2 ? 1 : d);
+          if (n !== d) this.setState({ duo: n, open: 1, touched: true });
+        }
+        if (st.duoDrag) this.setState({ duoDrag: false });
+      }
+    };
+  }
+  renderVals() {
+    const s = this.state, t = T[s.lang] || T.en, lang = T[s.lang] ? s.lang : 'en';
+    const store = (this.props.ctaMode ?? 'Waitlist') === 'App Store';
+    const pad = n => String(n).padStart(2, '0');
+    const d = new Date(s.now), hh = d.getHours(), mm = d.getMinutes();
+    let mins = 18 * 60 - (hh * 60 + mm); const closeNow = mins <= 0 && mins > -20; if (mins <= 0) mins += 1440;
+    const clockLine = closeNow ? t.clockNow : t.clock(pad(hh) + ':' + pad(mm), t.dur(Math.floor(mins / 60), mins % 60));
+    let L = Date.parse(this.props.launch ?? '2026-11-06T18:00:00+07:00'); if (isNaN(L)) L = Date.parse('2026-11-06T18:00:00+07:00');
+    const diff = L - s.now;
+    const cd = diff <= 0 ? t.out : t.cd(Math.floor(diff / 864e5), pad(Math.floor(diff / 36e5) % 24), pad(Math.floor(diff / 6e4) % 60));
+    const valid = /^\S+@\S+\.\S+$/.test(s.email.trim());
+    const on = a => a ? 'var(--ink)' : 'transparent', onFg = a => a ? 'var(--inv)' : 'var(--ink2)';
+    const row = i => ({ icon: WAY_ICONS[lang][i], cat: WAY_CAT[i][0], tile: tile(WAY_CAT[i][1]), glyph: glyph(WAY_CAT[i][1]), name: t.rows[i][0], src: t.rows[i][1], amt: t.rows[i][2], time: t.rows[i][3] });
+    const others = [0, 1, 2, 3, 4, 5].filter(i => i !== s.cap).slice(0, 3);
+    const ci = s.ci;
+    const cards = t.cards.map((c, i) => {
+      const rel = i - ci, top = rel === 0, dx = top ? s.dx : 0;
+      return { no: c[0], src: c[1], time: c[2], icon: c[3], tile: tile(c[4]), glyph: glyph(c[4]), name: c[5], cat: c[6], from: c[7], to: c[8], amt: c[9], meta: c[10],
+        z: 10 - i, op: rel < 0 ? 0 : 1, cursor: top ? 'grab' : 'default', keepOp: top ? Math.max(0, Math.min(1, dx / 90)) : 0,
+        transform: rel < 0 ? 'translate(120%, -30px) rotate(18deg)' : `translate(${dx}px, ${rel * 16}px) scale(${1 - rel * .05}) rotate(${dx / 18}deg)`,
+        transition: top && s.dragging ? 'none' : 'transform .55s cubic-bezier(.2,.8,.2,1), opacity .45s',
+        down: e => { if (!top) return; this.dragX = e.clientX; e.currentTarget.setPointerCapture && e.currentTarget.setPointerCapture(e.pointerId); this.setState({ dragging: true }); },
+        move: e => { if (!top || this.dragX == null) return; this.setState({ dx: Math.max(-40, e.clientX - this.dragX) }); },
+        up: () => { if (!top || this.dragX == null) return; this.dragX = null; if (this.state.dx > 90) this.keep(); else this.setState({ dx: 0, dragging: false }); } };
+    });
+    const a = t.asks[s.ask];
+    return {
+      rootRef: this.rootRef, skyRef: this.skyRef, sunRef: this.sunRef, starRef: this.starRef, horizonRef: this.horizonRef, clockRef: this.clockRef, hazeRef: this.hazeRef, leakRef: this.leakRef, t,
+      setEn: () => this.setLang('en'), setVi: () => this.setLang('vi'),
+      enBg: on(s.lang === 'en'), enFg: onFg(s.lang === 'en'), viBg: on(s.lang === 'vi'), viFg: onFg(s.lang === 'vi'),
+      isWaitlist: !store, isStore: store, navCta: store ? t.navStore : t.navWait, heroKicker: store ? t.kickStore : t.kickWait,
+      showClock: this.props.liveClock ?? true, clockLine, finalKicker: store ? '6pm · iPhone' : cd,
+      email: s.email, sent: s.sent, notSent: !s.sent,
+      formNote: s.err || (s.sent ? '' : t.waitNote), msgColor: s.err ? '#e0533a' : 'var(--ink2)',
+      setEmail: e => this.setState({ email: e.target.value, err: '' }),
+      submit: e => { e.preventDefault(); if (!valid) return this.setState({ err: t.errMsg }); this.setState({ sent: true, err: '' }); },
+      week: ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((x, i) => ({ d: lang === 'vi' ? ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'][i] : x, bg: i < 4 ? '#1b1e2e' : 'transparent', border: i < 4 ? 'none' : (i === 4 ? '1.5px solid #ff8552' : '1.5px dashed rgba(27,30,46,.25)'), tick: i < 4 ? 1 : 0 })),
+      ways: t.ways.map((w, i) => ({ label: w[0], sub: w[1], icon: WAY_ICONS[lang][i], bg: i === s.cap ? 'var(--glass)' : 'transparent', tileBg: i === s.cap ? '#ff8552' : 'var(--glass)', tileFg: i === s.cap ? '#1a0f0a' : 'var(--ink)', subOp: i === s.cap ? 1 : .6, arrowOp: i === s.cap ? 1 : 0, pick: () => this.setState({ cap: i, capAuto: false }) })),
+      newRow: row(s.cap), oldRows: others.map(row), capEven: s.cap % 2 === 0, capOdd: s.cap % 2 === 1,
+      isVi: s.lang === 'vi', banks: this.banks,
+      cards, closeDone: ci >= 3, closeOpen: ci < 3, keepLabel: ci === 2 ? t.keepLast : t.keep, closeStep: `${Math.min(ci + 1, 3)} / 3`, undoOp: ci > 0 ? 1 : .3,
+      keep: () => this.keep(), undo: () => this.setState(st => ({ ci: Math.max(0, st.ci - 1), dx: 0 })), resetClose: () => this.setState({ ci: 0, dx: 0 }),
+      phrases: t.phrases.map((p, i) => ({ t: p, anim: `${i === t.phrases.length - 1 ? 'litA' : 'lit'} 12s ${i * 2}s ease-in-out infinite` })),
+      ask: { q: a[0], a: a[1], old: a[2], big: a[3], unit: a[4] }, askEven: s.ask % 2 === 0, askOdd: s.ask % 2 === 1,
+      askChips: t.asks.map((x, i) => ({ q: x[0], bg: i === s.ask ? '#fbf4ec' : 'transparent', fg: i === s.ask ? '#2a1a30' : 'var(--ink)', border: i === s.ask ? '#fbf4ec' : 'var(--line)', pick: () => this.setState(st => ({ ask: i, askFlip: !st.askFlip })) })),
+      market: lang === 'vi' ? 'Vietnam' : 'International',
+      ...this.duoVals(s, t),
+      heroRow: { name: t.cards[0][5], src: t.cards[0][1], amt: t.cards[0][9] },
+      eqRows: t.eq.map(x => ({ op: x[0], label: x[1], val: x[2] })),
+      privFacts: t.priv.map((x, i) => ({ h: x[0], p: x[1], icon: PRIV_ICONS[i], delay: i * 80 })),
+      setMonthly: () => this.setState({ yearly: false }), setYearly: () => this.setState({ yearly: true }),
+      moBg: on(!s.yearly), moFg: onFg(!s.yearly), yrBg: on(s.yearly), yrFg: onFg(s.yearly), saveFg: s.yearly ? '#c4502a' : '#ffb08a',
+      maxPrice: s.yearly ? t.priceY : t.priceM, maxPer: s.yearly ? t.perYear : t.perMonth,
+      faq: t.faq.map((x, i) => ({ q: x[0], a: x[1], open: s.faq === i, rot: s.faq === i ? 'rotate(45deg)' : 'none', toggle: () => this.setState({ faq: s.faq === i ? -1 : i }) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

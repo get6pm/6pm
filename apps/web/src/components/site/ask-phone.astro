@@ -1,0 +1,228 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import Buddy from './buddy.astro';
+import StatusBar from './status-bar.astro';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].ask;
+---
+
+<div class="phone" data-reveal="0">
+  <div class="bezel night">
+    <div class="screen">
+      <StatusBar time="20:45" battery={44} light />
+      <div class="top" aria-hidden="true">
+        <span class="back"><span class="sym">arrow_back</span></span>
+        <span class="title">{t.appTitle}</span>
+      </div>
+      <div class="thread" aria-live="polite">
+        {
+          t.asks.map((ask, i) => (
+            <div class="exchange" hidden={i !== 0} data-ask-answer={i}>
+              <div class="q">{ask.q}</div>
+              <div class="reply">
+                <Buddy size={44} mood="think" />
+                <div class="bubble-box">
+                  <div class="dots moving" aria-hidden="true">
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                  <div class="a">
+                    <span class="a-line">{ask.a}</span>
+                    <span class="a-nums">
+                      {ask.old && <span class="old">{ask.old}</span>}
+                      <span class="big">{ask.big}</span>
+                      <span class="unit mono">{ask.unit}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <div class="field" aria-hidden="true">
+        <span class="placeholder">{t.placeholder}</span>
+        <span class="send"><span class="sym">arrow_upward</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .night {
+    box-shadow:
+      0 0 0 0.5px rgba(255, 255, 255, 0.12),
+      0 50px 100px -30px rgba(0, 0, 0, 0.7);
+  }
+  .screen {
+    background: linear-gradient(180deg, #1a2456 0%, #3a1c5a 52%, #8e2a58 100%);
+    color: #fbf4ec;
+    display: flex;
+    flex-direction: column;
+  }
+  .top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    flex-shrink: 0;
+  }
+  .back {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    border: 0.5px solid rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .back .sym {
+    font-size: 20px;
+  }
+  .title {
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .thread {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 14px 14px;
+  }
+  .exchange {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .exchange[hidden] {
+    display: none;
+  }
+  .q {
+    align-self: flex-end;
+    max-width: 82%;
+    padding: 11px 15px;
+    border-radius: 20px 20px 6px 20px;
+    background: #fbf4ec;
+    color: #2a1a30;
+    font-size: 15px;
+    line-height: 1.35;
+    animation: rise 0.4s both;
+  }
+  .reply {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .bubble-box {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+  }
+  .dots {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    gap: 5px;
+    padding: 14px 16px;
+    border-radius: 20px 20px 20px 6px;
+    background: rgba(255, 255, 255, 0.12);
+    animation: dotsOut 2.6s both;
+  }
+  .dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fbf4ec;
+    animation: dot 0.9s infinite;
+  }
+  .dots span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .dots span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  .a {
+    padding: 13px 15px;
+    border-radius: 20px 20px 20px 6px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 0.5px solid rgba(255, 255, 255, 0.14);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    animation: ansIn 2.6s both;
+  }
+  .a-line {
+    font-size: 14.5px;
+    line-height: 1.4;
+  }
+  .a-nums {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+  }
+  .old {
+    font-size: 18px;
+    text-decoration: line-through;
+    opacity: 0.45;
+  }
+  .big {
+    font-size: 32px;
+    color: var(--sun-soft);
+  }
+  .unit {
+    font-size: 11px;
+    letter-spacing: 0;
+    opacity: 0.7;
+  }
+  .field {
+    margin: 0 12px 22px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 0.5px solid rgba(255, 255, 255, 0.16);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 6px 0 16px;
+    font-size: 14px;
+    color: rgba(251, 244, 236, 0.55);
+  }
+  .placeholder {
+    flex: 1;
+  }
+  .send {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--sun);
+    color: var(--on-sun);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .send .sym {
+    font-size: 20px;
+  }
+  @keyframes ansIn {
+    0%, 30% { opacity: 0; transform: translateY(10px); }
+    45%, 100% { opacity: 1; transform: none; }
+  }
+  @keyframes dotsOut {
+    0%, 28% { opacity: 1; }
+    34%, 100% { opacity: 0; }
+  }
+</style>

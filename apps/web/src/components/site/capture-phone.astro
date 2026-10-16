@@ -1,0 +1,224 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import { glyphColor, tileGradient } from '../../data/site/tiles';
+import StatusBar from './status-bar.astro';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].capture;
+// Each row carries the icon of the way that caught it. The newest sits on top, three under it.
+const ways = siteCopy[lang].capture.ways;
+---
+
+<div class="phone" data-reveal="120" aria-hidden="true">
+  <div class="bezel lift">
+    <div class="screen">
+      <StatusBar time="12:40" battery={62} />
+      <div class="sheet">
+        <span class="grabber"></span>
+        <div class="head">
+          <span class="title-block"
+            ><span class="title">{t.inboxTitle}</span><span class="sub">{t.inboxSub}</span></span
+          >
+          <span class="badge">{t.inboxBadge}</span>
+        </div>
+        <div class="list" data-inbox>
+          {
+            t.rows.map(([name, source, amount, time, icon, hue], i) => (
+              <div
+                class:list={['row', { fresh: i === 0 }]}
+                data-row={i}
+                hidden={i > 3}
+                style={`order:${i}`}
+              >
+                <span
+                  class="tile row-tile"
+                  style={`--tile:${tileGradient(hue)};--glyph:${glyphColor(hue)}`}
+                >
+                  <span class="sym sym-fill">{icon}</span>
+                </span>
+                <span class="row-words">
+                  <span class="row-name">{name}</span>
+                  <span class="row-src">
+                    <span class="sym">{ways[i]?.[2]}</span>
+                    {source} · <span class="when">{time}</span>
+                    <span class="now">{t.justNow}</span>
+                  </span>
+                </span>
+                <span class="row-amt">−{amount}</span>
+              </div>
+            ))
+          }
+        </div>
+        <div class="foot">
+          <span class="sym">schedule</span>{t.inboxFoot}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .lift {
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.3),
+      0 50px 100px -30px rgba(40, 40, 30, 0.5);
+  }
+  .screen {
+    background: linear-gradient(180deg, #62b7c2 0%, #cfe8d2 52%, #f9eccb 100%);
+    color: #1b1e2e;
+  }
+  .sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 56px;
+    bottom: 0;
+    border-radius: 32px 32px 0 0;
+    background: #f6f0e7;
+    box-shadow: 0 -10px 40px rgba(10, 6, 18, 0.12);
+    padding: 8px 14px 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .grabber {
+    align-self: center;
+    width: 36px;
+    height: 5px;
+    border-radius: 5px;
+    background: rgba(27, 30, 46, 0.18);
+  }
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 4px;
+  }
+  .title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .sub {
+    font-size: 12.5px;
+    color: rgba(27, 30, 46, 0.62);
+  }
+  .badge {
+    height: 28px;
+    padding: 0 11px;
+    border-radius: 99px;
+    background: #1b1e2e;
+    color: #fbf4ec;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+  }
+  .list {
+    border-radius: 22px;
+    background: #fffdf9;
+    box-shadow:
+      0 1px 2px rgba(70, 45, 30, 0.06),
+      0 10px 26px rgba(70, 45, 30, 0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 12px;
+    border-bottom: 0.5px solid rgba(27, 30, 46, 0.08);
+  }
+  .row[hidden] {
+    display: none;
+  }
+  .row.fresh {
+    animation: rowIn 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .row-tile {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+  }
+  .row-tile .sym {
+    font-size: 20px;
+  }
+  .row-words {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .row-name {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .row-src {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: rgba(27, 30, 46, 0.6);
+    white-space: nowrap;
+  }
+  .row-src .sym {
+    font-size: 13px;
+  }
+  .now,
+  .fresh .when {
+    display: none;
+  }
+  .fresh .now {
+    display: inline;
+  }
+  .row-amt {
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 6px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: rgba(27, 30, 46, 0.62);
+  }
+  .foot .sym {
+    font-size: 17px;
+  }
+  @keyframes rowIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-14px) scale(0.96);
+      background: rgba(255, 133, 82, 0.28);
+    }
+    40% {
+      opacity: 1;
+      transform: none;
+      background: rgba(255, 133, 82, 0.22);
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+      background: rgba(255, 133, 82, 0);
+    }
+  }
+</style>

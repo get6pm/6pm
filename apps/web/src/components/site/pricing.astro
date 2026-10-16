@@ -1,5 +1,6 @@
 ---
 import { siteCopy, type SiteLang } from '../../data/site/copy';
+import { maxPriceLabel, yearlySavingLabel } from '../../data/site/prices';
 
 interface Props {
   lang: SiteLang;
@@ -7,16 +8,17 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = siteCopy[lang].pricing;
+const month = maxPriceLabel(lang, 'month');
+const year = maxPriceLabel(lang, 'year');
 ---
 
-<section id="pricing" class="band">
-  <div class="wrap pricing" data-pricing>
+<section id="pricing" class="sec pricing" data-hour="23" data-pricing>
     <div class="head" data-reveal="0">
-      <h2 class="display">{t.title}</h2>
+      <h2 class="h2">{t.title}</h2>
       <div class="period" role="group">
         <button type="button" aria-pressed="false" data-period="month">{t.monthly}</button>
         <button type="button" aria-pressed="true" data-period="year">
-          {t.yearly}<span class="mono save">{t.yearlySaving}</span>
+          {t.yearly}<span class="mono save">{yearlySavingLabel(lang)}</span>
         </button>
       </div>
     </div>
@@ -49,8 +51,8 @@ const t = siteCopy[lang].pricing;
             <span
               class="amount"
               data-price
-              data-month={t.priceMonth}
-              data-year={t.priceYear}>{t.priceYear}</span
+              data-month={month}
+              data-year={year}>{year}</span
             ><span class="per" data-per data-month={t.perMonth} data-year={t.perYear}
               >{t.perYear}</span
             >
@@ -71,12 +73,11 @@ const t = siteCopy[lang].pricing;
         </ul>
       </div>
     </div>
-  </div>
 </section>
 
 <style>
   .pricing {
-    max-width: 1000px;
+    max-width: 1040px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -87,13 +88,16 @@ const t = siteCopy[lang].pricing;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 20px;
+    gap: 22px;
+  }
+  .h2 {
+    --size: clamp(44px, 6vw, 88px);
   }
   .period {
     display: flex;
     padding: 4px;
     border-radius: 99px;
-    border: 0.5px solid var(--line-3);
+    border: 0.5px solid var(--line);
   }
   .period button {
     height: 38px;
@@ -105,7 +109,7 @@ const t = siteCopy[lang].pricing;
     font-size: 14px;
     font-weight: 500;
     background: transparent;
-    color: var(--ink-70);
+    color: var(--ink2);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -113,7 +117,7 @@ const t = siteCopy[lang].pricing;
   }
   .period button[aria-pressed='true'] {
     background: var(--ink);
-    color: var(--dark-ink);
+    color: var(--inv);
   }
   .save {
     font-size: 11px;
@@ -130,16 +134,19 @@ const t = siteCopy[lang].pricing;
   }
   .plan {
     border-radius: 28px;
-    border: 0.5px solid var(--line-2);
-    padding: clamp(28px, 3.4vw, 36px);
+    border: 0.5px solid var(--line);
+    background: rgba(10, 8, 18, 0.35);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: clamp(26px, 3.4vw, 36px);
     display: flex;
     flex-direction: column;
     gap: 24px;
   }
   .plan.max {
-    background: linear-gradient(180deg, #1a1416, #131117 60%);
-    border-color: rgba(255, 133, 82, 0.45);
-    box-shadow: 0 40px 100px -40px rgba(255, 133, 82, 0.3);
+    background: linear-gradient(180deg, rgba(70, 30, 40, 0.6), rgba(20, 14, 30, 0.6));
+    border-color: rgba(255, 133, 82, 0.5);
+    box-shadow: 0 40px 100px -40px rgba(255, 133, 82, 0.35);
   }
   .top {
     display: flex;
@@ -160,7 +167,7 @@ const t = siteCopy[lang].pricing;
     height: 26px;
     padding: 0 10px;
     border-radius: 99px;
-    background: rgba(255, 133, 82, 0.14);
+    background: rgba(255, 133, 82, 0.16);
     color: var(--sun-soft);
     font-size: 11px;
     letter-spacing: 0.08em;
@@ -181,14 +188,14 @@ const t = siteCopy[lang].pricing;
   }
   .per {
     font-size: 15px;
-    color: var(--ink-55);
+    color: var(--ink2);
   }
   .rule {
     height: 0.5px;
-    background: var(--line-2);
+    background: var(--line);
   }
   .max .rule {
-    background: rgba(255, 133, 82, 0.25);
+    background: rgba(255, 133, 82, 0.3);
   }
   ul {
     margin: 0;
@@ -207,7 +214,7 @@ const t = siteCopy[lang].pricing;
   li .sym {
     font-size: 18px;
     line-height: 1.45;
-    color: var(--ink-55);
+    color: var(--ink2);
   }
   .max li .sym {
     color: var(--sun);

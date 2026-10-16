@@ -1,0 +1,225 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import { glyphColor, tileGradient } from '../../data/site/tiles';
+import Buddy from './buddy.astro';
+
+/** The hero phone's sheet: the companion's morning line, tonight's close, the first spend. */
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].phone;
+// The first spend of the day is the close's first receipt.
+const coffee = siteCopy[lang].close.cards[0];
+// Monday to Thursday closed, Friday today, the weekend still ahead.
+const week = t.week.map((d, i) => ({ d, state: i < 4 ? 'done' : i === 4 ? 'today' : 'ahead' }));
+---
+
+  <div class="sheet">
+    <div class="talk">
+      <Buddy size={50} mood="wave" />
+      <span class="bubble">{t.buddy}</span>
+    </div>
+    <div class="card tonight">
+      <div class="tonight-head">
+        <span class="tile big-tile" style={`--tile:${tileGradient(50)};--glyph:${glyphColor(50)}`}
+          ><span class="sym sym-fill" style="font-size:21px">wb_twilight</span></span
+        >
+        <span class="tonight-words"
+          ><span class="tonight-title">{t.tonight}</span><span class="muted"
+            >{t.tonightSub}</span
+          ></span
+        >
+      </div>
+      <div class="week">
+        {
+          week.map((w) => (
+            <span class="wd">
+              <span class:list={['tick', w.state]}>
+                <span class="sym">check</span>
+              </span>
+              <span class="wd-name">{w.d}</span>
+            </span>
+          ))
+        }
+        <span class="streak"><b>{t.streak}</b><br />{t.streakSub}</span>
+      </div>
+    </div>
+    {
+      coffee && (
+        <div class="card spend">
+          <span
+            class="tile small-tile"
+            style={`--tile:${tileGradient(coffee.hue)};--glyph:${glyphColor(coffee.hue)}`}
+          >
+            <span class="sym sym-fill" style="font-size:18px">
+              {coffee.icon}
+            </span>
+          </span>
+          <span class="spend-words">
+            <span class="spend-name">{coffee.name}</span>
+            <span class="spend-src">08:15 · {coffee.source}</span>
+          </span>
+          <span class="spend-amt">−{coffee.amount}</span>
+        </div>
+      )
+    }
+  </div>
+
+<style>
+  .sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 318px;
+    bottom: 0;
+    border-radius: 32px 32px 0 0;
+    background: #f6f0e7;
+    padding: 62px 12px 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .talk {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    top: 14px;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .bubble {
+    margin-bottom: 18px;
+    padding: 8px 12px 9px;
+    border-radius: 16px 16px 16px 5px;
+    background: #1b1e2e;
+    color: #fbf4ec;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 13.5px;
+    line-height: 1.25;
+  }
+  .card {
+    border-radius: 22px;
+    background: #fffdf9;
+    box-shadow:
+      0 1px 2px rgba(70, 45, 30, 0.06),
+      0 10px 26px rgba(70, 45, 30, 0.08);
+  }
+  .tonight {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .tonight-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .big-tile {
+    width: 38px;
+    height: 38px;
+    border-radius: 13px;
+  }
+  .small-tile {
+    width: 32px;
+    height: 32px;
+    border-radius: 11px;
+  }
+  .tonight-words,
+  .spend-words {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .tonight-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+  .muted {
+    font-size: 11.5px;
+    color: rgba(27, 30, 46, 0.65);
+  }
+  .week {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-top: 10px;
+    border-top: 0.5px solid rgba(27, 30, 46, 0.08);
+  }
+  .wd {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .tick {
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    color: #fbf4ec;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tick .sym {
+    font-size: 13px;
+  }
+  .tick.done {
+    background: #1b1e2e;
+  }
+  .tick.today {
+    border: 1.5px solid var(--sun);
+  }
+  .tick.ahead {
+    border: 1.5px dashed rgba(27, 30, 46, 0.25);
+  }
+  .tick:not(.done) .sym {
+    opacity: 0;
+  }
+  .wd-name {
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(27, 30, 46, 0.6);
+  }
+  .streak {
+    flex: 1;
+    text-align: right;
+    font-size: 10.5px;
+    line-height: 1.3;
+    color: rgba(27, 30, 46, 0.65);
+  }
+  .streak b {
+    color: #1b1e2e;
+  }
+  .spend {
+    padding: 12px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .spend-words {
+    flex: 1;
+    gap: 1px;
+  }
+  .spend-name,
+  .spend-amt {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .spend-amt {
+    font-variant-numeric: tabular-nums;
+  }
+  .spend-src {
+    font-size: 10.5px;
+    color: rgba(27, 30, 46, 0.6);
+  }
+</style>

@@ -1,0 +1,270 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import { duoMoney, duoToday } from '../../data/site/duo-data';
+import Buddy from './buddy.astro';
+import DuoBackdrop from './duo-backdrop.astro';
+import DuoRows from './duo-rows.astro';
+import DuoToday from './duo-today.astro';
+
+/** The outer screen, folded: Today, with the island and the tabs down the side rail. */
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].duo.screen;
+const tabIcons = ['today', 'calendar_month', 'auto_stories'];
+---
+
+<div class="duo-screen outer">
+  <DuoBackdrop sunLeft="78%" horizon={300} />
+  <div class="scroll">
+    <DuoToday lang={lang} />
+    <div class="sheet">
+      <div class="talk">
+        <Buddy size={56} mood="wave" tight />
+        <div class="bubble d-face">{t.buddy}</div>
+      </div>
+      <div class="d-card close">
+        <div class="close-head">
+          <div class="tile-dusk"><span class="sym sym-fill">wb_twilight</span></div>
+          <div class="close-words">
+            <div class="close-title d-face">{t.closeTitle}</div>
+            <div class="close-sub d-muted">{t.closeSub}</div>
+          </div>
+        </div>
+        <button type="button" class="close-btn" tabindex="-1">
+          {t.closeButton}<span class="sym">arrow_forward</span>
+        </button>
+      </div>
+      <div class="today">
+        <div class="today-head">
+          <div class="today-title">{t.today}</div>
+          <div class="today-spent d-muted">{t.spent(duoMoney(lang, duoToday.spent))}</div>
+        </div>
+        <DuoRows lang={lang} />
+      </div>
+    </div>
+  </div>
+  <div class="rail">
+    <button type="button" class="island" aria-expanded="true" tabindex="-1" data-duo-island>
+      <span class="d-camera"></span>
+      <span class="island-open">
+        <Buddy size={30} mood="calm" tight />
+        <span class="count d-face">3</span>
+        <span class="vertical d-mono">{t.islandLabel}</span>
+      </span>
+    </button>
+    <div class="status">
+      <div class="d-time"><div>18</div><div>07</div></div>
+      <span class="sym sym-fill">signal_cellular_alt</span>
+      <span class="sym sym-fill battery">battery_5_bar</span>
+    </div>
+    <span class="d-round d-white"><span class="sym" style="font-size:26px">add</span></span>
+    <div class="grow"></div>
+    <div class="d-tabs">
+      {
+        t.tabs.map((label, i) => (
+          <div class:list={['d-tab', { on: i === 0 }]}>
+            <span class="sym">{tabIcons[i]}</span>
+            <span>{label}</span>
+          </div>
+        ))
+      }
+    </div>
+    <span class="d-round d-scan"><span class="sym" style="font-size:28px">qr_code_scanner</span></span>
+  </div>
+</div>
+
+<style>
+  .outer {
+    width: 466px;
+    height: 678px;
+    border-radius: var(--outer-radius, 45px);
+    background: linear-gradient(180deg, #2c2758 0%, #7a3f72 48%, #e0855a 100%);
+  }
+  .scroll {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 72px;
+    overflow: hidden;
+  }
+  .sheet {
+    min-height: 440px;
+    border-radius: 34px 34px 0 0;
+    background: #f6f0e7;
+    padding: 20px 14px 28px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .talk {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .bubble {
+    margin-bottom: 20px;
+    padding: 10px 14px 11px;
+    border-radius: 20px 20px 20px 6px;
+    background: #1b1e2e;
+    color: #fbf4ec;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.25;
+    text-wrap: pretty;
+  }
+  .close {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .close-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .tile-dusk {
+    width: 44px;
+    height: 44px;
+    border-radius: 15px;
+    flex-shrink: 0;
+    background: #ffe2cc;
+    color: #a4481f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tile-dusk .sym {
+    font-size: 25px;
+  }
+  .close-words {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .close-title {
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.15;
+  }
+  .close-sub {
+    font-size: 13.5px;
+  }
+  .close-btn {
+    height: 50px;
+    border: none;
+    border-radius: 99px;
+    background: #1b1e2e;
+    color: #fbf4ec;
+    font-weight: 650;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .close-btn .sym {
+    font-size: 20px;
+  }
+  .today {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .today-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 6px;
+  }
+  .today-title {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .today-spent {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .rail {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 72px;
+    box-sizing: border-box;
+    padding: 12px 0 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .island {
+    width: 38px;
+    height: 188px;
+    border: none;
+    border-radius: 19px;
+    background: #000;
+    padding: 9px 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: height 0.5s cubic-bezier(0.3, 1.3, 0.5, 1);
+    flex-shrink: 0;
+  }
+  .island[aria-expanded='false'] {
+    height: 66px;
+  }
+  .island-open {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    transition: opacity 0.4s 0.15s;
+  }
+  .island[aria-expanded='false'] .island-open {
+    opacity: 0;
+    transition-delay: 0s;
+  }
+  .count {
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1;
+    color: #ff8552;
+  }
+  .vertical {
+    writing-mode: vertical-rl;
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    color: rgba(255, 255, 255, 0.72);
+    white-space: nowrap;
+  }
+  .status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #fbf4ec;
+  }
+  .status .sym {
+    font-size: 15px;
+  }
+  .battery {
+    transform: rotate(90deg);
+  }
+  .grow {
+    flex: 1;
+  }
+</style>

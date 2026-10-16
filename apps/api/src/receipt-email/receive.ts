@@ -40,11 +40,19 @@ function toBase64Url(bytes: Uint8Array): string {
 }
 
 /**
- * The capture's id: from the device and the email's Message-ID when it has one, so the same
- * email sent twice is one receipt (here, and on the phone after it was fetched).
+ * The capture's id, from the device and what makes the payment one: the bank's transaction code
+ * with its amount when the receipt prints one (so the same alert forwarded twice, by a filter and
+ * by hand, is one receipt), else the email's Message-ID (the same email sent twice). Either way
+ * it is one receipt here, and on the phone after it was fetched.
  */
-async function captureIdOf(deviceHash: string, messageId: string | undefined): Promise<string> {
-  const seed = messageId?.trim() ? messageId.trim() : crypto.randomUUID();
+async function captureIdOf(
+  deviceHash: string,
+  messageId: string | undefined,
+  read: { readonly bank: string | null; readonly code: string | null; readonly amount: number },
+): Promise<string> {
+  const seed = read.code
+    ? `code\n${read.bank ?? ''}\n${read.code}\n${read.amount}`
+    : messageId?.trim() || crypto.randomUUID();
   const digest = await crypto.subtle.digest(
     'SHA-256',
     new TextEncoder().encode(`${deviceHash}\n${seed}`),
@@ -124,7 +132,7 @@ export async function receiveEmail(
   const read = parseReceiptEmail(email, { receivedAt: now.toISOString() });
   if (read === null) return 'not_a_receipt';
   const capture = emailCaptureSchema.safeParse({
-    id: await captureIdOf(deviceHash, messageId),
+    id: await captureIdOf(deviceHash, messageId, read),
     amount: read.amount,
     merchant: read.merchant.slice(0, 120),
     at: read.at,

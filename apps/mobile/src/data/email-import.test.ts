@@ -132,6 +132,30 @@ describe('importEmailCaptures', () => {
     expect(store.getSnapshot().cycleSpends).toHaveLength(1);
   });
 
+  it('keeps a second payment the bank printed in the same minute as a merged one', async () => {
+    await actions.captureSpend({
+      amount: 45_000,
+      categoryId: 'food',
+      merchant: 'Phở Hòa',
+      source: 'qr',
+      status: 'pending',
+      at: new Date(2026, 9, 11, 12, 30),
+    });
+    const at = new Date(2026, 9, 11, 12, 30).toISOString();
+    const merged = receipt({ id: 'bWVyZ2VkLXdpdGgtdGhlLXNjYW4tMDAwMDA', amount: 45_000, at });
+    const other = receipt({ id: 'YS1zZWNvbmQtcGF5bWVudC0wMDAwMDAwMDA', amount: 30_000, at });
+    await run(server([merged]).source);
+    expect(await run(server([other]).source)).toEqual({ saved: 1, acknowledged: 1 });
+    expect(
+      store
+        .getSnapshot()
+        .cycleSpends.map((s) => s.amount)
+        .sort(),
+    ).toEqual([30_000, 45_000]);
+    // The merged one, fetched again, is still known by its own id.
+    expect(await run(server([merged]).source)).toEqual({ saved: 0, acknowledged: 1 });
+  });
+
   it('changes nothing when the server cannot be reached', async () => {
     const ack = jest.fn<EmailCaptureSource['ack']>();
     const source: EmailCaptureSource = { fetch: () => Promise.reject(new Error('network')), ack };

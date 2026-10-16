@@ -57,8 +57,9 @@ export async function buildSnapshot(db: SqlDatabase, takenAt: string): Promise<B
     source: SpendSightingRow['source'];
     seen_at: string;
     detail: string | null;
+    capture_id: string | null;
   }>(
-    'SELECT spend_id, source, seen_at, detail FROM spend_sightings ORDER BY spend_id, source, seen_at',
+    'SELECT spend_id, source, seen_at, detail, capture_id FROM spend_sightings ORDER BY spend_id, source, seen_at',
     [],
   );
   const merchantRules = await tables.rules.all();
@@ -92,6 +93,7 @@ export async function buildSnapshot(db: SqlDatabase, takenAt: string): Promise<B
         source: row.source,
         seenAt: row.seen_at,
         detail: row.detail,
+        captureId: row.capture_id,
       })),
     merchantRules,
     bills,
@@ -183,8 +185,8 @@ export async function restoreSnapshot(db: SqlDatabase, snapshot: BackupSnapshot)
     for (const row of snapshot.spends) await tables.spends.put(row);
     for (const row of snapshot.spendSightings) {
       await db.runAsync(
-        'INSERT OR REPLACE INTO spend_sightings (spend_id, source, seen_at, detail) VALUES (?, ?, ?, ?)',
-        [row.spendId, row.source, row.seenAt, row.detail],
+        'INSERT OR REPLACE INTO spend_sightings (spend_id, source, seen_at, detail, capture_id) VALUES (?, ?, ?, ?, ?)',
+        [row.spendId, row.source, row.seenAt, row.detail, row.captureId ?? null],
       );
     }
     for (const row of snapshot.merchantRules) await tables.rules.put(row);

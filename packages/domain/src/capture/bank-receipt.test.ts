@@ -182,6 +182,28 @@ describe('parseBankReceipt', () => {
     });
   });
 
+  it('reads what moved, never the balance printed beside it', () => {
+    const amountOf = (...texts: string[]) =>
+      parseBankReceipt(texts.map((text) => ({ text })))?.amount;
+    expect(amountOf('Số dư cuối: 9,950,000 VND', 'Phát sinh: -50,000 VND')).toBe(50_000);
+    expect(amountOf('Tài khoản 0071', 'Số dư cuối: 9,950,000', 'Số tiền GD: -50,000')).toBe(50_000);
+    expect(amountOf('SD TK 0071000123: 9,950,000VND sau GD -50,000VND luc 15/10')).toBe(50_000);
+    expect(amountOf('Account 123: balance 9,950,000 VND after debit of 50,000 VND')).toBe(50_000);
+    expect(
+      amountOf('So du TK VCB 0011001234567 -50,000VND luc 15-10-2026. So du 9,950,000VND'),
+    ).toBe(50_000);
+    expect(amountOf('So du TK VCB 0011001234567 thay doi 50,000 VND')).toBe(50_000);
+  });
+
+  it('has no amount when only a balance is printed', () => {
+    expect(
+      parseBankReceipt([
+        { text: 'Số dư khả dụng TK 0071: 9,950,000 VND' },
+        { text: 'Ma GD FT26282012345' },
+      ])?.amount,
+    ).toBeNull();
+  });
+
   it('never throws on anything the recogniser could give', () => {
     const box = fc.record({
       x: fc.double({ min: 0, max: 1, noNaN: true }),

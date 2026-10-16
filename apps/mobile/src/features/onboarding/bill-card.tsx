@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, type LayoutChangeEvent } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
 
 import { useI18n } from '../../i18n/i18n';
@@ -11,7 +11,7 @@ import { cardCopy, optionLabel } from './bill-copy';
 import type { BillAnswers, DeckItem } from './bill-deck';
 import { popEntering } from './onboarding-motion';
 import type { OnboardingPalette } from './onboarding-palette';
-import { Grid3 } from './step-parts';
+import { Grid } from './step-parts';
 
 export interface BillCardProps {
   readonly item: DeckItem | null;
@@ -22,7 +22,7 @@ export interface BillCardProps {
   readonly endTitle: string;
   readonly onAnswers: (next: BillAnswers) => void;
   readonly onGo: (index: number, direction: 1 | -1) => void;
-  /** The height an amount card needs for its question, wheels and buttons, once laid out. */
+  /** The height the card needs for everything on it, once laid out; the deck grows to it. */
   readonly onHeight?: (height: number) => void;
 }
 
@@ -52,6 +52,11 @@ export function BillCardFace({
     // Below the subline: the spacer between two gaps, the wheels, a gap, the buttons, the padding.
     onHeight?.(questionBottom + GAP * 3 + wheelsHeight + BUTTON_HEIGHT + PAD);
   }, [questionBottom, wheelsHeight, onHeight]);
+  // A question card's buttons sit last: where they end is the height its content needs.
+  const reportBottom = (e: LayoutChangeEvent) => {
+    const { y, height } = e.nativeEvent.layout;
+    onHeight?.(y + height + PAD);
+  };
   const face = {
     flex: 1,
     borderRadius: 30,
@@ -112,7 +117,7 @@ export function BillCardFace({
       <View style={face}>
         <CardTop item={item} pal={pal} />
         <Question q={q} sub={sub} pal={pal} />
-        <View style={{ flexDirection: 'row', gap: 8 }}>
+        <View style={{ flexDirection: 'row', gap: 8 }} onLayout={reportBottom}>
           <Pill
             label={t('onboarding.bills.no')}
             bg={pal.chipBg}
@@ -147,9 +152,10 @@ export function BillCardFace({
       <View style={face}>
         <CardTop item={item} pal={pal} />
         <Question q={q} sub={sub} pal={pal} />
-        <Grid3
+        <Grid
           items={card.options}
           gap={6}
+          columns={card.columns ?? 3}
           render={(option) => {
             const on = picked.includes(option.id);
             const label = optionLabel(i18n, option);
@@ -174,8 +180,13 @@ export function BillCardFace({
                 >
                   <Symbol name={option.icon} size={17} fill={1} color={on ? pal.btnFg : pal.ink} />
                   <Text
-                    numberOfLines={1}
-                    style={{ ...body(13.5, 650), flexShrink: 1, color: on ? pal.btnFg : pal.ink }}
+                    numberOfLines={2}
+                    style={{
+                      ...body(13.5, 650),
+                      lineHeight: 16,
+                      flexShrink: 1,
+                      color: on ? pal.btnFg : pal.ink,
+                    }}
                   >
                     {label}
                   </Text>
@@ -184,7 +195,7 @@ export function BillCardFace({
             );
           }}
         />
-        <View style={{ flexDirection: 'row', gap: 6 }}>
+        <View style={{ flexDirection: 'row', gap: 6 }} onLayout={reportBottom}>
           <Pill
             label={count ? t('onboarding.bills.clear') : t('onboarding.bills.none')}
             bg={pal.accentClear}

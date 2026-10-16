@@ -7,7 +7,7 @@ import { BANKS, findBank, type BankInfo } from '@6pm/domain';
 import { useI18n } from '../../i18n/i18n';
 import { useHomeCurrency } from '../../money/use-money-format';
 import { body } from '../../ui/type/fonts';
-import { Grid3 } from '../onboarding/step-parts';
+import { Grid } from '../onboarding/step-parts';
 import { BankRow, PickerLabel, QuickTile, SearchField, type PickerInks } from './bank-picker-parts';
 import { banksInVietnam, CASH, quickPicks } from './bank-ranking';
 import { searchBanks } from './bank-search';
@@ -146,7 +146,7 @@ export function BankPicker({
         inks={inks}
         text={t(!local ? 'banks.yoursOnly' : hadChoice ? 'banks.yours' : 'banks.suggested')}
       />
-      <Grid3
+      <Grid
         items={tiles}
         gap={8}
         render={(id) => (

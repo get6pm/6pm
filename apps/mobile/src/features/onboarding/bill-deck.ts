@@ -29,6 +29,8 @@ export type BillCard =
       readonly icon: SymbolName;
       readonly hue: number;
       readonly options: readonly BillOption[];
+      /** Two columns for options whose names run long in some language; three otherwise. */
+      readonly columns?: 2;
     };
 
 export const BILL_CARDS: readonly BillCard[] = [
@@ -67,6 +69,7 @@ export const BILL_CARDS: readonly BillCard[] = [
     key: 'debts',
     icon: 'payments',
     hue: 280,
+    columns: 2,
     options: [
       { id: 'card', icon: 'credit_card', kind: 'card' },
       { id: 'instalment', icon: 'shopping_bag', ends: true },

@@ -63,7 +63,7 @@ export async function importInbox(deps: InboxImportDeps): Promise<InboxImportRes
     const item = parsed.data;
     if (item.kind === 'paid') {
       if (await markPaid(deps, item)) saved += 1;
-    } else if (await saveSpend(deps, item)) {
+    } else if (await saveInboxSpend(deps, item)) {
       saved += 1;
     }
     await remove(file.id);
@@ -97,7 +97,15 @@ export async function alreadyImported(
   return (seen[0]?.n ?? 0) > 0;
 }
 
-async function saveSpend(deps: InboxImportDeps, incoming: InboxSpend): Promise<boolean> {
+/**
+ * Saves one spend as the inbox does: never twice (a repeat tap or the same receipt again is
+ * skipped, and false returned), named first when it is a receipt, then filed and captured with the
+ * duplicate merge. Scan saves the receipts it reads through here too.
+ */
+export async function saveInboxSpend(
+  deps: Pick<InboxImportDeps, 'store' | 'actions' | 'enrich' | 'home'>,
+  incoming: InboxSpend,
+): Promise<boolean> {
   const { store, actions } = deps;
   if (await alreadyImported(store, incoming)) return false;
   const snap = store.getSnapshot();

@@ -46,7 +46,7 @@ export const enIntents = {
   'capture.email.sample': 'Grab ride home',
 
   'capture.scan.name': 'Scan to pay',
-  'capture.scan.sub': 'Scan any VietQR, then pay in your bank app',
+  'capture.scan.sub': 'Scan a VietQR to pay in your bank app, or a receipt to log it',
   'capture.scan.headline': 'Scan, pay in your bank app, come back.',
   'capture.scan.time': 'Every time you pay',
   'capture.scan.step1': 'Scan any VietQR from 6pm',

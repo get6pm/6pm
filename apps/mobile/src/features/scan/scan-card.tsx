@@ -1,6 +1,6 @@
 import { BlurView } from 'expo-blur';
 import type { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 import Animated, {
   Easing,
   withTiming,
@@ -26,10 +26,17 @@ export function sheetUp(values: EntryAnimationsValues): LayoutAnimation {
 }
 
 /** The frosted paper card Scan raises over the camera: 8 pt from the edges, 44 pt corners. */
-export function ScanCard({ children }: { readonly children: ReactNode }) {
+export function ScanCard({
+  children,
+  onLayout,
+}: {
+  readonly children: ReactNode;
+  readonly onLayout?: (event: LayoutChangeEvent) => void;
+}) {
   return (
     <Animated.View
       entering={sheetUp}
+      {...(onLayout ? { onLayout } : {})}
       style={{
         position: 'absolute',
         left: 8,

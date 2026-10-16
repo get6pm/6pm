@@ -149,6 +149,8 @@ describe('receiving a receipt email', () => {
         bank: 'MB Bank',
         code: null,
         memo: 'CHUYEN TIEN TOI PHO HOA',
+        currency: 'VND',
+        category: null,
       },
     ]);
   });

@@ -79,7 +79,7 @@ In Settings → AI you can keep 6pm's AI on your iPhone. Then nothing in "Ask 6p
 
 6pm gives your phone its own address, like k7m2qx@at6pm.app. If you have your bank email you, or forward its emails, to that address, the payments land in your Inbox.
 
-Our server reads each email as it arrives. If the email holds a payment, the server keeps only what it read: the amount, the merchant, the time, and the sender's address. It locks this with encryption until your phone collects it, then deletes it. The email itself is never stored, forwarded or logged, and anything that is not a receipt is dropped. A receipt your phone has not collected after 30 days is deleted unread.
+Our server reads each email as it arrives. An email that prints an amount is sent to Anthropic, an AI service, to tell a payment from a transfer between your own accounts, a refund or a promotion, and to read who you paid, what for, and how much; an email with no amount in it is dropped unread. If the email holds a payment, the server keeps only what was read: the amount and its currency, the merchant, the category, the time, the sender's address and the transfer's note. It locks this with encryption until your phone collects it, then deletes it. The email itself is never stored or logged by 6pm and is sent to no one but Anthropic, which does not use it to train its models and deletes it within 30 days (longer only if it is flagged for breaking Anthropic's usage policy, or the law requires it). Anything that is not a receipt is dropped. A receipt your phone has not collected after 30 days is deleted unread.
 
 The address is linked to your anonymous device ID, not to your name. Mail to it from anyone is read the same way, so share it only with your bank.
 
@@ -143,7 +143,7 @@ These companies run the parts of the service described above. They may handle yo
 - **RevenueCat** records purchase status. [RevenueCat's privacy policy](https://www.revenuecat.com/privacy).
 - **Cloudflare** hosts our website and server. [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/).
 - **Sentry** receives crash reports. [Sentry's privacy policy](https://sentry.io/privacy/).
-- **Anthropic** reads the questions you ask, writes your companion's lines from the facts about your day described above, suggests icons for your categories from their names, names payees from number-free receipt lines, and reads a receipt photo your phone cannot read. [Anthropic's privacy policy](https://www.anthropic.com/legal/privacy).
+- **Anthropic** reads the questions you ask, writes your companion's lines from the facts about your day described above, suggests icons for your categories from their names, names payees from number-free receipt lines, reads a receipt photo your phone cannot read, and reads the bank and shop emails you forward to your receipt address. [Anthropic's privacy policy](https://www.anthropic.com/legal/privacy).
 - **Deepgram** turns your voice into text when you say a spend. [Deepgram's privacy policy](https://deepgram.com/privacy).
 - **ElevenLabs** can do the same in Deepgram's place. [ElevenLabs' privacy policy](https://elevenlabs.io/privacy-policy).
 - **Hugging Face** hosts the models you can download for on-device mode. [Hugging Face's privacy policy](https://huggingface.co/privacy).
@@ -157,7 +157,7 @@ We use them only for these purposes.
 - **Device ID.** For as long as the app is used on that device.
 - **Crash reports.** Up to 90 days, then deleted.
 - **Receipt email.** Until your phone collects the receipt, and never more than 30 days. Your receipt address lasts as long as your device ID.
-- **Questions, facts for lines and receipt lines.** We do not keep them. Anthropic deletes them within 30 days, as described above.
+- **Questions, facts for lines, receipt lines and forwarded emails.** We do not keep them. Anthropic deletes them within 30 days, as described above.
 - **Receipt photos.** We do not keep them. Anthropic deletes them within 30 days, as described above.
 - **Your voice.** We do not keep it. Deepgram handles it only while you speak; ElevenLabs keeps it as its own policy says.
 - **Backup.** Until you delete it. When you do, we delete the encrypted data from our server.

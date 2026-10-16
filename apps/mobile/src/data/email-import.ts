@@ -25,7 +25,10 @@ export interface EmailImportResult {
   readonly acknowledged: number;
 }
 
-/** The category a receipt is filed under: the merchant's rule, its name's hint, then the hour's. */
+/**
+ * The category a receipt is filed under: the merchant's rule, then what the email was for when the
+ * server could tell, then the merchant name's hint, then the hour's.
+ */
 async function categoryFor(deps: EmailImportDeps, capture: EmailCapture): Promise<string> {
   const { store, actions } = deps;
   const categories = store.getSnapshot().categories;
@@ -35,6 +38,7 @@ async function categoryFor(deps: EmailImportDeps, capture: EmailCapture): Promis
   const likely = likelyCategoriesAt(new Date(capture.at).getHours()).map((n) => n.toLowerCase());
   return (
     exists(ruled) ??
+    exists(capture.category) ??
     exists(categoryHintOf(capture.merchant)) ??
     categories.find((c) => likely.includes(c.id))?.id ??
     categories[0]?.id ??
@@ -56,9 +60,9 @@ export async function importEmailCaptures(deps: EmailImportDeps): Promise<EmailI
   const done: string[] = [];
   for (const capture of captures) {
     if (!(await alreadyImported(store, { id: capture.id, source: 'email', at: capture.at }))) {
-      // Emailed receipts are Vietnamese, in đồng: on another home they wait to be priced.
+      // In its own currency (đồng when the server did not say): in another it waits to be priced.
       const home = homeCurrencyOf(store.getSnapshot().plan).code;
-      const priced = capturedInHome(capture.amount, 'VND', home);
+      const priced = capturedInHome(capture.amount, capture.currency ?? 'VND', home);
       await actions.captureSpend({
         id: capture.id,
         amount: priced.amount,

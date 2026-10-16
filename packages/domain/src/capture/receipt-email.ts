@@ -178,41 +178,77 @@ function forwardedTime(value: string | null): string | null {
   return readReceiptTime(plain);
 }
 
+/** Where an email came from: its body lines, the original sender of a forwarded one, its date. */
+export interface EmailOrigin {
+  /** The subject, then the body with any forwarded header taken out. */
+  readonly lines: readonly string[];
+  readonly sender: EmailSender | null;
+  /** The bank the sender is, from its domain. */
+  readonly bank: string | null;
+  /** The forwarded email's own Date line, as printed. */
+  readonly forwardedDate: string | null;
+}
+
+export function emailOrigin(email: ReceiptEmail): EmailOrigin {
+  const body = email.html ? htmlToLines(email.html) : textToLines(email.text ?? '');
+  const forwarded = readForwarded(body);
+  const subject = email.subject.replace(/^(?:\s*(?:fwd?|tr|chuyển tiếp)\s*:)+/iu, '').trim();
+  const sender = forwarded.from ?? email.from;
+  return {
+    lines: [subject, ...forwarded.lines].filter((l) => l !== ''),
+    sender,
+    bank: bankOf(sender),
+    forwardedDate: forwarded.date,
+  };
+}
+
 /**
- * Reads the spend in a bank notification or a shop's e-receipt, forwarded or sent on by a filter:
- * the body (HTML tables or plain text) is turned into lines and read like a shared receipt, with
- * shop totals read as the amount. The shop or bank comes from the sender's domain. The time is
- * the one the receipt prints (taken as Vietnam time), else the forwarded email's own date, else
- * the email's Date, else when it arrived; a time later than its arrival is not believed. Returns
- * null for anything that is not a payment out: no amount, or money that came in.
+ * When a receipt was paid: the time it prints (local, `YYYY-MM-DDTHH:MM:SS`, taken as Vietnam
+ * time), else the forwarded email's own date, else the email's Date, else when it arrived. A time
+ * later than its arrival is not believed.
+ */
+export function emailPaidAt(
+  printedLocal: string | null,
+  origin: Pick<EmailOrigin, 'forwardedDate'>,
+  email: Pick<ReceiptEmail, 'date'>,
+  options: ReceiptEmailOptions,
+): string {
+  const offset = options.utcOffsetMinutes ?? VIETNAM_UTC_OFFSET_MINUTES;
+  const fromForward = forwardedTime(origin.forwardedDate);
+  const candidates = [
+    printedLocal ? inZone(printedLocal, offset) : null,
+    fromForward ? inZone(fromForward, offset) : null,
+    email.date,
+  ];
+  const arrived = Date.parse(options.receivedAt);
+  return (
+    candidates.find((c) => c !== null && Date.parse(c) <= arrived + 10 * 60_000) ??
+    new Date(arrived).toISOString()
+  );
+}
+
+/**
+ * Reads the spend in a bank notification or a shop's e-receipt, forwarded or sent on by a filter,
+ * with rules alone: the body (HTML tables or plain text) is turned into lines and read like a
+ * shared receipt, with shop totals read as the amount. The shop or bank comes from the sender's
+ * domain. Returns null for anything that is not a payment out: no amount, or money that came in.
+ * The server reads email with a model when it can (`emailSpendOf`); this is what it falls back to.
  */
 export function parseReceiptEmail(
   email: ReceiptEmail,
   options: ReceiptEmailOptions,
 ): EmailReceipt | null {
-  const offset = options.utcOffsetMinutes ?? VIETNAM_UTC_OFFSET_MINUTES;
-  const body = email.html ? htmlToLines(email.html) : textToLines(email.text ?? '');
-  const forwarded = readForwarded(body);
-  const subject = email.subject.replace(/^(?:\s*(?:fwd?|tr|chuyển tiếp)\s*:)+/iu, '').trim();
-  const lines = [subject, ...forwarded.lines].filter((l) => l !== '').map(withTotalsAsAmount);
+  const origin = emailOrigin(email);
+  const lines = origin.lines.map(withTotalsAsAmount);
   if (isIncoming(lines)) return null;
   const receipt = parseBankReceipt(lines.map((text) => ({ text })));
   if (!receipt || receipt.amount === null) return null;
-
-  const sender = forwarded.from ?? email.from;
-  const printed = receipt.at ? inZone(receipt.at, offset) : null;
-  const fromForward = forwardedTime(forwarded.date);
-  const candidates = [printed, fromForward ? inZone(fromForward, offset) : null, email.date];
-  const arrived = Date.parse(options.receivedAt);
-  const at =
-    candidates.find((c) => c !== null && Date.parse(c) <= arrived + 10 * 60_000) ??
-    new Date(arrived).toISOString();
   return {
     amount: receipt.amount,
-    merchant: shopOf(sender) ?? (receipt.payee || payeeInNote(lines)),
-    at,
-    from: sender?.address ?? null,
-    bank: bankOf(sender) ?? receipt.bank,
+    merchant: shopOf(origin.sender) ?? (receipt.payee || payeeInNote(lines)),
+    at: emailPaidAt(receipt.at, origin, email, options),
+    from: origin.sender?.address ?? null,
+    bank: origin.bank ?? receipt.bank,
     code: receipt.code,
     memo: receipt.memo ?? noteIn(lines),
   };

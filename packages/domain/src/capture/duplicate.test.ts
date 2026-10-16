@@ -109,6 +109,21 @@ describe('findDuplicate', () => {
     }
   });
 
+  it('merges the bank’s email with the shop’s email for one payment, never two from one sender', () => {
+    const alert = {
+      ...base,
+      source: 'email' as const,
+      status: 'caught' as const,
+      detail: 'info@info.vietcombank.com.vn',
+    };
+    const fromShop = { amount: 45_000, source: 'email' as const, at: at(4_000) };
+    expect(findDuplicate({ ...fromShop, detail: 'info@mail.shopee.vn' }, [alert])?.id).toBe('a');
+    expect(findDuplicate({ ...fromShop, detail: 'INFO@info.vietcombank.com.vn' }, [alert])).toBe(
+      null,
+    );
+    expect(findDuplicate({ ...fromShop, detail: null }, [alert])).toBeNull();
+  });
+
   it('never merges cash, which no other source can have seen', () => {
     expect(findDuplicate({ amount: 45_000, source: 'cash', at: at(0) }, [base])).toBeNull();
     const cash = { ...base, source: 'cash' as const, status: 'kept' as const };

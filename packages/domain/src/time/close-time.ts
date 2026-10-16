@@ -1,4 +1,4 @@
-import { addDays, hourOf, localDateOf, type LocalDate } from './local-date';
+import { addDays, hourOf, localDateOf, parts, type LocalDate } from './local-date';
 
 /** 'HH:MM' on the phone's clock. */
 export type ClockTime = string;
@@ -68,4 +68,39 @@ export function moneyDayOf(instant: Date): LocalDate {
 export function moneyHourOf(instant: Date): number {
   const hour = hourOf(instant);
   return hour < LATE_CLOSE_CUTOFF_HOUR ? hour + 24 : hour;
+}
+
+/** Days of close reminders kept scheduled ahead: well under the 64 iOS keeps pending for an app. */
+export const CLOSE_REMINDER_DAYS = 14;
+
+/** One close reminder: the money day it asks to close, at that day's close time on the phone. */
+export interface CloseReminderSlot {
+  readonly day: LocalDate;
+  readonly at: Date;
+}
+
+/**
+ * The close reminders to schedule from `now`: one at the close time on each of the next `days`
+ * money days, leaving out days already closed and close times already past. Today counts when its
+ * close is still ahead.
+ */
+export function closeRemindersAhead(
+  now: Date,
+  closeAt: ClockTime,
+  closedDays: ReadonlySet<LocalDate>,
+  days: number = CLOSE_REMINDER_DAYS,
+): CloseReminderSlot[] {
+  const hours = hoursOf(closeAt);
+  const hour = Math.floor(hours);
+  const minute = Math.round((hours - hour) * 60);
+  const today = moneyDayOf(now);
+  const slots: CloseReminderSlot[] = [];
+  for (let i = 0; i < days; i += 1) {
+    const day = addDays(today, i);
+    if (closedDays.has(day)) continue;
+    const { year, month, day: date } = parts(day);
+    const at = new Date(year, month - 1, date, hour, minute);
+    if (at.getTime() > now.getTime()) slots.push({ day, at });
+  }
+  return slots;
 }

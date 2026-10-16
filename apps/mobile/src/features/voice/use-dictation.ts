@@ -2,6 +2,7 @@ import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-spe
 import { useSQLiteContext } from 'expo-sqlite';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { allowanceDayOf } from '@6pm/domain';
 import type { Language } from '@6pm/i18n';
 
 import { micStream } from '../../../modules/mic-stream';
@@ -61,7 +62,8 @@ export function useDictation({
   const store = useMoneyStore();
   const api = useApi();
   const { max } = useEntitlement();
-  const { today } = useClock();
+  // Cloud transcriptions are counted on the phone's calendar day: they come back at local midnight.
+  const allowanceDay = allowanceDayOf(useClock().now);
   const [state, setState] = useState(initialDictation);
   const [listening, setListening] = useState(false);
   const current = useRef(state);
@@ -76,11 +78,11 @@ export function useDictation({
   const appleReady = useRef(false);
   const read = useRef(onRead);
   const words = useRef(contextualStrings);
-  const now = useRef({ max, today });
+  const now = useRef({ max, allowanceDay });
   useEffect(() => {
     read.current = onRead;
     words.current = contextualStrings;
-    now.current = { max, today };
+    now.current = { max, allowanceDay };
   });
 
   const apply = useCallback((event: DictationEvent) => {
@@ -166,7 +168,7 @@ export function useDictation({
   /** Who hears this one: `voiceSource` with the mode, the plan and the count for today. */
   const chooseSource = useCallback(async () => {
     const mode = readAiMode(db);
-    const { max: isMax, today: day } = now.current;
+    const { max: isMax, allowanceDay: day } = now.current;
     const usedToday = mode === 'server' && !isMax ? await cloudVoiceUsed(store.db, day) : 0;
     return voiceSource({
       mode,
@@ -183,7 +185,8 @@ export function useDictation({
       request: api.request.bind(api),
       language,
       hold,
-      minted: () => void recordCloudVoice(store.db, now.current.today).catch(() => undefined),
+      minted: () =>
+        void recordCloudVoice(store.db, now.current.allowanceDay).catch(() => undefined),
       events: {
         heard: (text, final) => live.current && apply({ type: 'heard', text, final }),
         ended: () => {

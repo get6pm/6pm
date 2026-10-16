@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { DUPLICATE_WINDOW_MS, findDuplicate, mergedStatus, type SightedSpend } from './duplicate';
+import {
+  DUPLICATE_WINDOW_MS,
+  findDuplicate,
+  mergedStatus,
+  QR_RECEIPT_WINDOW_MS,
+  type SightedSpend,
+} from './duplicate';
 
 const base: SightedSpend = {
   id: 'a',
@@ -18,14 +24,55 @@ describe('findDuplicate', () => {
   });
 
   it('includes exactly three minutes, in either direction', () => {
+    const kept = { ...base, status: 'kept' as const };
     expect(
-      findDuplicate({ amount: 45_000, source: 'email', at: at(DUPLICATE_WINDOW_MS) }, [base]),
+      findDuplicate({ amount: 45_000, source: 'email', at: at(DUPLICATE_WINDOW_MS) }, [kept]),
     ).not.toBeNull();
+    expect(
+      findDuplicate({ amount: 45_000, source: 'email', at: at(-DUPLICATE_WINDOW_MS) }, [kept]),
+    ).not.toBeNull();
+    expect(
+      findDuplicate({ amount: 45_000, source: 'email', at: at(DUPLICATE_WINDOW_MS + 1) }, [kept]),
+    ).toBeNull();
+  });
+
+  it('matches a waiting scan with its bank receipt up to twenty minutes after the tap', () => {
+    for (const source of ['email', 'shared', 'applePay'] as const) {
+      expect(
+        findDuplicate({ amount: 45_000, source, at: at(QR_RECEIPT_WINDOW_MS) }, [base])?.id,
+      ).toBe('a');
+      expect(
+        findDuplicate({ amount: 45_000, source, at: at(QR_RECEIPT_WINDOW_MS + 1) }, [base]),
+      ).toBeNull();
+    }
+  });
+
+  it('looks only forward from the tap for a waiting scan', () => {
     expect(
       findDuplicate({ amount: 45_000, source: 'email', at: at(-DUPLICATE_WINDOW_MS) }, [base]),
     ).not.toBeNull();
     expect(
-      findDuplicate({ amount: 45_000, source: 'email', at: at(DUPLICATE_WINDOW_MS + 1) }, [base]),
+      findDuplicate({ amount: 45_000, source: 'email', at: at(-DUPLICATE_WINDOW_MS - 1) }, [base]),
+    ).toBeNull();
+  });
+
+  it('keeps three minutes for a scan that is no longer waiting', () => {
+    for (const status of ['kept', 'caught'] as const) {
+      expect(
+        findDuplicate({ amount: 45_000, source: 'email', at: at(10 * 60_000) }, [
+          { ...base, status },
+        ]),
+      ).toBeNull();
+    }
+  });
+
+  it('matches a waiting scan arriving after a receipt it may have paid', () => {
+    const receipt = { ...base, source: 'email' as const, status: 'caught' as const };
+    const scan = { amount: 45_000, source: 'qr' as const, status: 'pending' as const };
+    expect(findDuplicate({ ...scan, at: at(-10 * 60_000) }, [receipt])?.id).toBe('a');
+    expect(findDuplicate({ ...scan, at: at(10 * 60_000) }, [receipt])).toBeNull();
+    expect(
+      findDuplicate({ ...scan, status: 'caught', at: at(-10 * 60_000) }, [receipt]),
     ).toBeNull();
   });
 

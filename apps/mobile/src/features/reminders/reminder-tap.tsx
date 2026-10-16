@@ -2,11 +2,12 @@ import { usePathname, useRootNavigationState, useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
 
 import { useMoney } from '../../data/money-provider';
-import { routeForTappedNotification } from './reminder-route';
+import { deliveredAtOf, routeForTappedNotification } from './reminder-route';
 
 /**
- * Tapping the close reminder opens the close, whether 6pm was running or was started by the tap.
- * Waits for the navigator, so a launch from the notification does not navigate before it exists.
+ * Tapping the close reminder opens the close, whether 6pm was running or was started by the tap;
+ * one left over from an earlier day opens that day instead. Waits for the navigator, so a launch
+ * from the notification does not navigate before it exists.
  */
 export function ReminderTap() {
   const router = useRouter();
@@ -39,7 +40,9 @@ export function ReminderTap() {
           seen.add(key);
           const { snapshot: current, pathname: path } = latest.current;
           if (path === '/close') return;
-          if (routeForTappedNotification(identifier, current) === '/close') router.push('/close');
+          const deliveredAt = deliveredAtOf(response.notification.date);
+          const route = routeForTappedNotification(identifier, deliveredAt, current);
+          if (route !== null) router.push(route);
         };
         const sub = Notifications.addNotificationResponseReceivedListener(open);
         stop = () => sub.remove();

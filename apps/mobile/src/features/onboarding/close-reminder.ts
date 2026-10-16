@@ -1,4 +1,4 @@
-import { DEFAULT_CLOSE_AT, hoursOf } from '@6pm/domain';
+import { closeRemindersAhead, DEFAULT_CLOSE_AT, type LocalDate } from '@6pm/domain';
 import { t, type Language } from '@6pm/i18n';
 
 /**
@@ -7,8 +7,25 @@ import { t, type Language } from '@6pm/i18n';
  */
 const notifications = () => import('expo-notifications');
 
-/** One daily reminder; scheduling again under the same id replaces it. */
-export const CLOSE_REMINDER_ID = 'close-reminder';
+/** Every close reminder's id: this, then the money day it asks to close ('close-reminder:2026-10-16'). */
+export const CLOSE_REMINDER_PREFIX = 'close-reminder:';
+
+/** The one repeating daily reminder builds before this one scheduled; cancelled on every rebuild. */
+const REPEATING_REMINDER_ID = 'close-reminder';
+
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Whether a notification is a close reminder, either kind. */
+export function isCloseReminder(identifier: string): boolean {
+  return identifier === REPEATING_REMINDER_ID || identifier.startsWith(CLOSE_REMINDER_PREFIX);
+}
+
+/** The money day a close reminder asks to close, or null when its id does not name one. */
+export function closeReminderDay(identifier: string): LocalDate | null {
+  if (!identifier.startsWith(CLOSE_REMINDER_PREFIX)) return null;
+  const day = identifier.slice(CLOSE_REMINDER_PREFIX.length);
+  return DAY.test(day) ? day : null;
+}
 
 /** "It's six. Time to close your day." at 18:00, "It's 19:30. …" at any other close time. */
 export function closeReminderText(language: Language, closeAt: string): string {
@@ -32,31 +49,62 @@ export async function askForReminders(): Promise<boolean> {
   return answer.granted;
 }
 
-/** Schedules (or moves) the reminder to fire every day at the close time. */
-export async function scheduleCloseReminder(language: Language, closeAt: string): Promise<void> {
-  const hours = hoursOf(closeAt);
-  const hour = Math.floor(hours);
-  const minute = Math.round((hours - hour) * 60);
-  const Notifications = await notifications();
-  await Notifications.cancelScheduledNotificationAsync(CLOSE_REMINDER_ID);
-  await Notifications.scheduleNotificationAsync({
-    identifier: CLOSE_REMINDER_ID,
-    content: { body: closeReminderText(language, closeAt), sound: 'default' },
-    trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour, minute },
+type NotificationsModule = Awaited<ReturnType<typeof notifications>>;
+
+async function cancelAll(Notifications: NotificationsModule): Promise<void> {
+  const pending = await Notifications.getAllScheduledNotificationsAsync();
+  const ids = new Set([REPEATING_REMINDER_ID]);
+  for (const request of pending)
+    if (isCloseReminder(request.identifier)) ids.add(request.identifier);
+  await Promise.all([...ids].map((id) => Notifications.cancelScheduledNotificationAsync(id)));
+}
+
+/** Rebuilds run one after another, so two at once never leave a mix of both. */
+let rebuilding: Promise<void> = Promise.resolve();
+
+/**
+ * Schedules the close reminder once on each of the coming money days, at the close time, leaving
+ * out days already closed. Each call replaces the whole set, so it is rebuilt whenever a day closes,
+ * the close time or the language changes, and when the app comes back.
+ */
+export function scheduleCloseReminder(
+  language: Language,
+  closeAt: string,
+  closedDays: Iterable<LocalDate> = [],
+): Promise<void> {
+  const closed = new Set(closedDays);
+  const run = rebuilding.then(async () => {
+    const Notifications = await notifications();
+    await cancelAll(Notifications);
+    const body = closeReminderText(language, closeAt);
+    for (const slot of closeRemindersAhead(new Date(), closeAt, closed)) {
+      await Notifications.scheduleNotificationAsync({
+        identifier: `${CLOSE_REMINDER_PREFIX}${slot.day}`,
+        content: { body, sound: 'default' },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: slot.at },
+      });
+    }
   });
+  rebuilding = run.catch(() => undefined);
+  return run;
 }
 
 /** No more reminders: after Delete all data, until onboarding sets one again. */
-export async function cancelCloseReminder(): Promise<void> {
-  const Notifications = await notifications();
-  await Notifications.cancelScheduledNotificationAsync(CLOSE_REMINDER_ID);
+export function cancelCloseReminder(): Promise<void> {
+  const run = rebuilding.then(async () => cancelAll(await notifications()));
+  rebuilding = run.catch(() => undefined);
+  return run;
 }
 
 /**
  * While 6pm is open, the reminder is not shown as a banner over the app: `onArrive` gets it
- * instead, so the companion can say it in the island. Returns the unsubscribe.
+ * instead, so the companion can say it in the island. When `quiet` says so (the day it asks about
+ * is closed, or the close is already open), it is neither shown nor said. Returns the unsubscribe.
  */
-export function takeOverRemindersWhileOpen(onArrive: () => void): () => void {
+export function takeOverRemindersWhileOpen(
+  onArrive: () => void,
+  quiet: (identifier: string) => boolean,
+): () => void {
   let removed = false;
   let remove = () => {
     removed = true;
@@ -66,11 +114,13 @@ export function takeOverRemindersWhileOpen(onArrive: () => void): () => void {
       if (removed) return;
       Notifications.setNotificationHandler({
         handleNotification: (n) => {
-          const ours = n.request.identifier === CLOSE_REMINDER_ID;
-          if (ours) onArrive();
+          const { identifier } = n.request;
+          const ours = isCloseReminder(identifier);
+          const silent = ours && quiet(identifier);
+          if (ours && !silent) onArrive();
           return Promise.resolve({
             shouldShowBanner: !ours,
-            shouldShowList: true,
+            shouldShowList: !silent,
             shouldPlaySound: !ours,
             shouldSetBadge: false,
           });

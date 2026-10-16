@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 
 import { useMoney } from '../../data/money-provider';
@@ -7,27 +7,35 @@ import { scheduleCloseReminder } from '../onboarding/close-reminder';
 import { refreshReminderPermission, useReminderPermission } from './reminder-permission';
 
 /**
- * Keeps the daily close reminder matching the plan: it is scheduled on launch, when the close time
+ * Keeps the close reminders matching the plan: one on each coming day that is not closed yet. They
+ * are rebuilt on launch, each time the app comes back, after a day is closed, when the close time
  * or the language changes, and when the user allows notifications in iOS Settings and comes back.
  * Nothing is scheduled before a plan exists or while notifications are not allowed.
  */
 export function CloseReminderSync() {
   const { language } = useI18n();
-  const closeAt = useMoney().plan?.closeAt ?? null;
+  const money = useMoney();
+  const closeAt = money.plan?.closeAt ?? null;
+  const { today } = money;
+  const closed = money.closedDays.map((day) => day.day).join(',');
   const permission = useReminderPermission();
+  const [returns, setReturns] = useState(0);
 
   useEffect(() => {
     void refreshReminderPermission();
     const sub = AppState.addEventListener('change', (state) => {
-      if (state === 'active') void refreshReminderPermission();
+      if (state !== 'active') return;
+      void refreshReminderPermission();
+      setReturns((n) => n + 1);
     });
     return () => sub.remove();
   }, []);
 
   useEffect(() => {
     if (closeAt === null || permission !== 'granted') return;
-    scheduleCloseReminder(language, closeAt).catch(() => undefined);
-  }, [closeAt, language, permission]);
+    const closedDays = closed === '' ? [] : closed.split(',');
+    scheduleCloseReminder(language, closeAt, closedDays).catch(() => undefined);
+  }, [closeAt, language, permission, today, closed, returns]);
 
   return null;
 }

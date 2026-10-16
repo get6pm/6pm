@@ -1,5 +1,7 @@
 import {
   registerDeviceResponseSchema,
+  UTC_OFFSET_HEADER,
+  utcOffsetOf,
   wireErrorSchema,
   type ApiLanguage,
   type WireErrorCode,
@@ -59,7 +61,8 @@ interface Answer {
 
 /**
  * The phone's one way to the 6pm server for routes that need a device: JSON in and out, the
- * bearer token attached, every answer checked against a schema, a timeout on every call. A
+ * bearer token attached, every answer checked against a schema, a timeout on every call. Each call
+ * says the phone's offset from UTC, so the server's daily allowances turn at the user's midnight. A
  * server that no longer knows the token (401) is told about it again and the call is repeated
  * once. Failures come out as `ApiRequestError` and never hold a body or a token.
  */
@@ -85,6 +88,7 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
         method,
         headers: {
           Accept: 'application/json',
+          [UTC_OFFSET_HEADER]: String(utcOffsetOf(new Date())),
           ...(token === null ? {} : { Authorization: `Bearer ${token}` }),
           ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
         },

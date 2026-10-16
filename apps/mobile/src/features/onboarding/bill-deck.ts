@@ -1,17 +1,24 @@
+import type { BillKind } from '@6pm/domain';
+
 import type { SymbolName } from '../../ui/icons/symbols.generated';
 
 /**
- * The fixed-bills deck: one yes/no card per common bill, two pick-several cards, and an amount
- * card for every yes and every pick. Amounts start at zero: nobody is judged against a range.
+ * The fixed-bills deck: one yes/no card per common bill, three pick-several cards (the last one
+ * for what is being paid off), and an amount card for every yes and every pick. Amounts start at
+ * zero: nobody is judged against a range.
  */
 export type AskKey = 'rent' | 'power' | 'phone';
-export type MultiKey = 'subs' | 'other';
+export type MultiKey = 'subs' | 'other' | 'debts';
 
 export interface BillOption {
   readonly id: string;
   readonly icon: SymbolName;
   /** Brand names are shown as they are in every language; the rest come from the catalogue. */
   readonly brand?: string;
+  /** A card's payment never moves free money; everything else is `other`. */
+  readonly kind?: BillKind;
+  /** Paid off in a set number of months (trả góp): its amount card also asks how many are left. */
+  readonly ends?: boolean;
 }
 
 export type BillCard =
@@ -50,10 +57,21 @@ export const BILL_CARDS: readonly BillCard[] = [
     options: [
       { id: 'gym', icon: 'fitness_center' },
       { id: 'insurance', icon: 'health_and_safety' },
-      { id: 'instalment', icon: 'credit_card' },
       { id: 'family', icon: 'family_restroom' },
       { id: 'tuition', icon: 'school' },
       { id: 'parking', icon: 'local_parking' },
+    ],
+  },
+  {
+    kind: 'multi',
+    key: 'debts',
+    icon: 'payments',
+    hue: 280,
+    options: [
+      { id: 'card', icon: 'credit_card', kind: 'card' },
+      { id: 'instalment', icon: 'shopping_bag', ends: true },
+      { id: 'loan', icon: 'account_balance' },
+      { id: 'owe', icon: 'handshake' },
     ],
   },
 ];
@@ -70,11 +88,23 @@ export interface BillAnswers {
   readonly amounts: Readonly<Record<string, number>>;
   /** Day of the month each bill is due, by the same keys; the 1st until the wheel is turned. */
   readonly dueDays: Readonly<Record<string, number>>;
+  /** Payments still to go on a bill that ends (trả góp), by the same keys. */
+  readonly monthsLeft?: Readonly<Record<string, number>>;
 }
 
-export const NO_BILL_ANSWERS: BillAnswers = { asks: {}, multis: {}, amounts: {}, dueDays: {} };
+export const NO_BILL_ANSWERS: BillAnswers = {
+  asks: {},
+  multis: {},
+  amounts: {},
+  dueDays: {},
+  monthsLeft: {},
+};
 
 export const DEFAULT_DUE_DAY = 1;
+/** A trả góp's payments to go until the wheel is turned: a year, the most common term. */
+export const DEFAULT_MONTHS_LEFT = 12;
+/** The most payments to go the wheel offers: five years. */
+export const MAX_MONTHS_LEFT = 60;
 
 /** A card in the order the deck deals it. */
 export type DeckItem =
@@ -125,6 +155,9 @@ export interface ChosenBill {
   readonly amount: number;
   /** Day of the month it is due. */
   readonly dueDay: number;
+  readonly kind: BillKind;
+  /** Payments still to go, for a bill that ends; absent for one that does not. */
+  readonly monthsLeft?: number;
   /** Where its amount card sits in the deck, to revisit it from the tray. */
   readonly deckIndex: number;
 }
@@ -142,6 +175,10 @@ export function chosenBills(deck: readonly DeckItem[], answers: BillAnswers): Ch
       hue: item.card.hue,
       amount: answers.amounts[item.key] ?? 0,
       dueDay: answers.dueDays[item.key] ?? DEFAULT_DUE_DAY,
+      kind: item.option?.kind ?? 'other',
+      ...(item.option?.ends
+        ? { monthsLeft: answers.monthsLeft?.[item.key] ?? DEFAULT_MONTHS_LEFT }
+        : {}),
       deckIndex,
     });
   });

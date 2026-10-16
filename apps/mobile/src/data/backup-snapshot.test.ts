@@ -58,6 +58,8 @@ describe('the snapshot of the phone', () => {
     ]);
     expect(snapshot.merchantRules).toHaveLength(1);
     expect(snapshot.bills).toHaveLength(1);
+    expect(snapshot.bills[0]).toMatchObject({ kind: 'card', lastMonth: '2027-09' });
+    expect(snapshot.spends.map((row) => row.paysBill)).toEqual([null, 'bill-1']);
     expect(snapshot.pots).toHaveLength(1);
     expect(snapshot.potMoves).toEqual([
       {

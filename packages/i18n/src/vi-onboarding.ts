@@ -199,4 +199,12 @@ export const viOnboarding: { readonly [Key in keyof typeof enOnboarding]: Entry 
   'onboarding.category.home': 'Nhà cửa',
   'onboarding.category.family': 'Gia đình',
   'onboarding.category.gifts': 'Quà tặng',
+  'onboarding.bills.debts.q': 'Bạn đang trả nợ khoản nào không?',
+  'onboarding.bills.debts.sub': 'Mỗi khoản là một hoá đơn hằng tháng, tới khi trả xong.',
+  'onboarding.bills.card': 'Thẻ tín dụng',
+  'onboarding.bills.loan': 'Khoản vay',
+  'onboarding.bills.owe': 'Nợ người quen',
+  'onboarding.bills.cardSub':
+    'Chỉ phần trả dần dư nợ cũ mỗi tháng. Tiêu mới bằng thẻ được tính ngay ngày tiêu.',
+  'onboarding.bills.monthsLeft': 'Còn mấy tháng',
 };

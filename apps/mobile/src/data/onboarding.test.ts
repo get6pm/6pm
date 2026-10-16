@@ -4,6 +4,7 @@ import { sql as createSettings } from '../db/migrations/0001-create-settings';
 import { sql as createMoneyTables } from '../db/migrations/0002-create-money-tables';
 import { sql as createTogetherMoves } from '../db/migrations/0003-create-together-moves';
 import { sql as addCurrencyGuessed } from '../db/migrations/0004-spend-currency-guessed';
+import { sql as addBillPayments } from '../db/migrations/0008-bill-kind-and-payments';
 import { dayOf, createMoneyStore } from './money-store';
 import {
   completeOnboarding,
@@ -28,6 +29,7 @@ function openStore(today: string) {
   sqlite.exec(createMoneyTables);
   sqlite.exec(createTogetherMoves);
   sqlite.exec(addCurrencyGuessed);
+  sqlite.exec(addBillPayments);
   const db: SqlDatabase = {
     getAllAsync: <T>(source: string, params: SqlValue[]) =>
       Promise.resolve(sqlite.prepare(source).all(...params) as T[]),
@@ -162,6 +164,43 @@ describe('completeOnboarding', () => {
       ['Rent', 5, snap.cycle.start],
       ['Power', 20, null],
       ['Gym', 10, null],
+    ]);
+  });
+
+  it('saves what is being paid off: a card bill, and a trả góp that ends after its months', async () => {
+    const store = openStore('2026-10-10');
+    await completeOnboarding(
+      store,
+      {
+        ...answers,
+        bills: [
+          { name: 'Card', icon: 'credit_card', hue: 280, amount: 2_000_000, kind: 'card' },
+          // Due on the 5th, already gone by: this cycle's payment is made, 12 are still to go.
+          {
+            name: 'Phone',
+            icon: 'shopping_bag',
+            hue: 280,
+            amount: 1_000_000,
+            dueDay: 5,
+            monthsLeft: 12,
+          },
+          {
+            name: 'Bike',
+            icon: 'shopping_bag',
+            hue: 280,
+            amount: 900_000,
+            dueDay: 20,
+            monthsLeft: 3,
+          },
+        ],
+      },
+      { today: '2026-10-10', language: 'en' },
+    );
+    // Payday the 25th: 25 Sep → 25 Oct is October's cycle.
+    expect(store.getSnapshot().bills.map((b) => [b.name, b.kind, b.lastMonth])).toEqual([
+      ['Card', 'card', null],
+      ['Phone', 'other', '2027-10'],
+      ['Bike', 'other', '2026-12'],
     ]);
   });
 

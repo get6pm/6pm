@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
 import {
+  billPaymentAsks,
   closeQueue,
   closeReducer,
   designAmount,
@@ -8,8 +9,11 @@ import {
   remainingCards,
   startClose,
   type CardVerdict,
+  type BillRow,
   type CloseState,
   type Currency,
+  type PayCycle,
+  REPAYMENT,
   type SpendRow,
 } from '@6pm/domain';
 
@@ -43,7 +47,13 @@ interface Start {
  * cards step picks up at that step with the same queue and the cash already added. Waiting
  * spends from earlier days are part of the queue.
  */
-function startOf(spends: readonly SpendRow[], day: string, home: Currency): Start {
+function startOf(
+  spends: readonly SpendRow[],
+  day: string,
+  home: Currency,
+  bills: readonly BillRow[],
+  cycle: PayCycle,
+): Start {
   const parked = parkedClose(day);
   if (parked !== null && parked.state.step !== 'cards' && parked.state.step !== 'done') {
     const byId = new Map(spends.map((s) => [s.id, s]));
@@ -55,9 +65,21 @@ function startOf(spends: readonly SpendRow[], day: string, home: Currency): Star
   }
   const queue = closeQueue(spends, day);
   const askWorkId = workCandidate(queue, designAmount(WORK_QUESTION_MIN, home));
+  const asks = new Map(
+    billPaymentAsks(queue, bills, cycle).map((ask) => [ask.spendId, ask.billId ?? REPAYMENT]),
+  );
   return {
     queue,
-    state: startClose(queue.map((s) => ({ id: s.id, askWork: s.id === askWorkId }))),
+    state: startClose(
+      queue.map((s) => {
+        const askBill = asks.get(s.id);
+        return {
+          id: s.id,
+          askWork: s.id === askWorkId,
+          ...(askBill === undefined ? {} : { askBill }),
+        };
+      }),
+    ),
     cash: [],
   };
 }
@@ -85,7 +107,9 @@ export function useClose() {
 
   // Fixed when the close opens; its order never changes underneath the user.
   const home = homeCurrencyOf(snap.plan);
-  const [start] = useState(() => startOf([...snap.cycleSpends, ...snap.waitingBefore], day, home));
+  const [start] = useState(() =>
+    startOf([...snap.cycleSpends, ...snap.waitingBefore], day, home, snap.bills, snap.cycle),
+  );
   const { queue } = start;
   const askWorkId = useMemo(
     () => workCandidate(queue, designAmount(WORK_QUESTION_MIN, home)),

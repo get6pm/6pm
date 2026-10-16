@@ -157,4 +157,8 @@ export const enToday = {
   'today.tonight.pausedAlmost': 'Almost there · just your receipt to go',
   'inbox.earlier': '{weekday} · not confirmed yet',
   'details.seenWays': 'Seen {count} ways · {sources}',
+  'today.row.bill': 'Bill',
+  'details.bill': 'This was a bill',
+  'details.bill.no': 'No',
+  'details.bill.repayment': 'A card or loan',
 } as const;

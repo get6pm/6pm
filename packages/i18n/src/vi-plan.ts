@@ -173,4 +173,8 @@ export const viPlan: { readonly [Key in keyof typeof enPlan]: Entry } = {
   'plan.goal.sumNoneSub': 'Kéo thanh “Nếu…” phía trên để góp lại nha.',
   'plan.goal.delete': 'Xoá mục tiêu',
   'plan.goal.pause': 'Tạm dừng mục tiêu này',
+  'plan.bill.card': 'Trả nợ thẻ',
+  'plan.bill.cardSub': 'Chỉ phần trả dần dư nợ cũ. Tiêu mới bằng thẻ được tính ngay ngày tiêu.',
+  'plan.bill.monthsLeft': 'Còn mấy tháng',
+  'plan.bill.noEnd': 'Không hạn',
 };

@@ -3,12 +3,15 @@ import { useEffect, useRef, useState } from 'react';
 import { ScrollView, Text, TextInput, type TextInputInstance, View } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
+import { lastMonthAfter, monthsLeftOf, type BillKind } from '@6pm/domain';
+
 import { useMoney } from '../../data/money-provider';
 import { usePlanActions } from '../../data/plan-actions';
 import { useRunAction } from '../../features/companion/use-run-action';
 import { AmountWheels } from '../../features/onboarding/bill-card-parts';
 import { DEFAULT_DUE_DAY } from '../../features/onboarding/bill-deck';
 import { DayOfMonthWheel } from '../../features/onboarding/money-in-controls';
+import { BillRepaymentCard } from '../../features/plan/bill-repayment-card';
 import { PotCard, SheetHeader } from '../../features/plan/pot-rows';
 import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
@@ -35,11 +38,15 @@ export default function BillSheet() {
   const run = useRunAction();
   const offerUndo = useOfferUndo();
   const actions = usePlanActions();
-  const { bills } = useMoney();
+  const { bills, cycle } = useMoney();
   const bill = id === 'new' ? undefined : bills.find((b) => b.id === id);
+  const paidNow = bill?.paidCycle === cycle.start;
   const [name, setName] = useState('');
   const [amount, setAmount] = useState(0);
   const [dueDay, setDueDay] = useState(DEFAULT_DUE_DAY);
+  const [kind, setKind] = useState<BillKind>('other');
+  // Payments still to go; 0 for a bill with no end.
+  const [monthsLeft, setMonthsLeft] = useState(0);
   const [loaded, setLoaded] = useState(id === 'new');
   const [working, setWorking] = useState(false);
   const busy = useRef(false);
@@ -55,8 +62,10 @@ export default function BillSheet() {
     setName(bill.name);
     setAmount(bill.amount);
     setDueDay(bill.dueDay);
+    setKind(bill.kind);
+    setMonthsLeft(bill.lastMonth ? monthsLeftOf(bill.lastMonth, cycle, paidNow) : 0);
     setLoaded(true);
-  }, [bill, loaded]);
+  }, [bill, loaded, cycle, paidNow]);
 
   // The bill is gone (deleted here): nothing left to edit.
   useEffect(() => {
@@ -87,10 +96,10 @@ export default function BillSheet() {
   const save = async () => {
     const trimmed = name.trim();
     if (!trimmed) return;
+    const lastMonth = monthsLeft > 0 ? lastMonthAfter(cycle, monthsLeft, paidNow) : null;
+    const fields = { name: trimmed, amount, dueDay, kind, lastMonth };
     const done = await finish(() =>
-      bill
-        ? actions.updateBill(bill.id, { name: trimmed, amount, dueDay })
-        : actions.addBill({ ...NEW_BILL, name: trimmed, amount, dueDay }),
+      bill ? actions.updateBill(bill.id, fields) : actions.addBill({ ...NEW_BILL, ...fields }),
     );
     if (done) {
       haptics.success();
@@ -176,6 +185,12 @@ export default function BillSheet() {
             </View>
           </View>
         </PotCard>
+        <BillRepaymentCard
+          kind={kind}
+          monthsLeft={monthsLeft}
+          onKind={setKind}
+          onMonthsLeft={setMonthsLeft}
+        />
         <Animated.View style={button}>
           <PressScale
             scaleTo={0.95}

@@ -22,6 +22,7 @@ import {
   type PotRow,
   type RiverSegment,
   type Vnd,
+  billsThisCycle,
 } from '@6pm/domain';
 
 import type { CycleTopUps } from '../../data/pot-moves';
@@ -81,7 +82,7 @@ export function riverOf(
   const joined = joinedCycle(snap.cycle, joinedAnswersOf(snap.plan));
   return moneyRiver({
     income: snap.plan?.income ?? 0,
-    bills: snap.bills.reduce((sum, b) => sum + b.amount, 0),
+    bills: billsThisCycle(snap.bills, snap.cycle),
     futureYou: futureYouIn(snap.plan?.futureYou ?? 0, joined),
     occasions: occasionsMonthly(snap),
     goalTopUps,

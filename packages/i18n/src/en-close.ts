@@ -64,4 +64,16 @@ export const enClose = {
   'close.cash.other': 'Other amount',
   'close.cash.otherTitle': 'How much in cash?',
   'close.cash.add': 'Add to cash today',
+  'close.bill.title': 'Is this your {bill}?',
+  'close.bill.sub':
+    'If it is, the bill is paid this month and this stays out of your daily number.',
+  'close.bill.subCard':
+    'If it is, your card bill is paid this month. What you bought on the card already counted the day you bought it.',
+  'close.bill.yes': 'Yes, that’s the bill',
+  'close.bill.yesCard': 'Yes, my card',
+  'close.bill.no': 'No, that was spending',
+  'close.repayment.title': 'Paying off a card or loan?',
+  'close.repayment.sub':
+    'If it is, it stays out of your daily number. What you bought on the card already counted.',
+  'close.repayment.yes': 'Yes, paying it off',
 } as const;

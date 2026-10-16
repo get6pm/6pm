@@ -7,6 +7,7 @@ import { clockOf, stepPosition, tally } from '@6pm/domain';
 import { readDayNumber } from '../data/diary-queries';
 import { useMoney, useMoneyActions, useMoneyStore } from '../data/money-provider';
 import { CashCustom } from '../features/close/cash-custom';
+import { BillQuestionStep } from '../features/close/close-bill-question';
 import { CloseCards } from '../features/close/close-cards';
 import { CloseEdit } from '../features/close/close-edit';
 import { CloseReceiptStep } from '../features/close/close-receipt-step';
@@ -189,6 +190,9 @@ export default function Close() {
             onOther={() => setTypingCash(true)}
             onDone={() => dispatch({ type: 'cashDone' })}
           />
+        ) : null}
+        {state.step === 'bill' ? (
+          <BillQuestionStep state={state} queue={close.queue} dispatch={dispatch} run={run} />
         ) : null}
         {state.step === 'question' && close.askWorkId ? (
           <WorkQuestionStep

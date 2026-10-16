@@ -3,13 +3,12 @@ import { Text, View } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
 
 import { useI18n } from '../../i18n/i18n';
-import { useMoneyFormat } from '../../money/use-money-format';
 import { Symbol } from '../../ui/icons/symbol';
 import { body, display } from '../../ui/type/fonts';
-import { AmountWheels, CardTop, Pill, Question } from './bill-card-parts';
-import { DayOfMonthWheel } from './money-in-controls';
-import { billName, cardCopy, optionLabel } from './bill-copy';
-import { DEFAULT_DUE_DAY, type BillAnswers, type DeckItem } from './bill-deck';
+import { BillAmountFace } from './bill-amount-card';
+import { CardTop, Pill, Question } from './bill-card-parts';
+import { cardCopy, optionLabel } from './bill-copy';
+import type { BillAnswers, DeckItem } from './bill-deck';
 import { popEntering } from './onboarding-motion';
 import type { OnboardingPalette } from './onboarding-palette';
 import { Grid3 } from './step-parts';
@@ -45,7 +44,6 @@ export function BillCardFace({
 }: BillCardProps) {
   const i18n = useI18n();
   const { t } = i18n;
-  const money = useMoneyFormat();
   const reduceMotion = useReducedMotion();
   const [questionBottom, setQuestionBottom] = useState(0);
   const [wheelsHeight, setWheelsHeight] = useState(0);
@@ -215,66 +213,18 @@ export function BillCardFace({
     );
   }
 
-  const name = billName(i18n, item.card, item.option);
-  const value = answers.amounts[item.key] ?? 0;
-  const dueDay = answers.dueDays[item.key] ?? DEFAULT_DUE_DAY;
-  const setValue = (next: number) =>
-    onAnswers({ ...answers, amounts: { ...answers.amounts, [item.key]: next } });
-  const setDueDay = (next: number) =>
-    onAnswers({ ...answers, dueDays: { ...answers.dueDays, [item.key]: next } });
   return (
-    <View style={face}>
-      <CardTop item={item} pal={pal} />
-      <Question
-        q={t('onboarding.bills.amountQ', { name })}
-        sub={t('onboarding.bills.amountSub')}
-        pal={pal}
-        onBottom={setQuestionBottom}
-      />
-      <View
-        onLayout={(e) => setWheelsHeight(e.nativeEvent.layout.height)}
-        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}
-      >
-        <AmountWheels value={value} ink={pal.ink} band={pal.chipBg} onValue={setValue} />
-        <View style={{ alignItems: 'center', gap: 4 }}>
-          <DayOfMonthWheel
-            day={dueDay}
-            onDay={setDueDay}
-            label={t('onboarding.bills.dueDay')}
-            colours={pal}
-          />
-          <Text style={{ ...body(11.5, 600), color: pal.inkSoft }}>
-            {t('onboarding.bills.dueDay')}
-          </Text>
-        </View>
-      </View>
-      <View style={{ flexDirection: 'row', gap: 6 }}>
-        <Pill
-          label={t('onboarding.bills.later')}
-          bg={pal.accentClear}
-          fg={pal.inkSoft}
-          flex={1}
-          height={44}
-          onPress={() => {
-            setValue(0);
-            onGo(deckIndex + 1, 1);
-          }}
-        />
-        <Pill
-          label={
-            value
-              ? t('onboarding.bills.save', { amount: money.full(value) })
-              : t('onboarding.bills.spin')
-          }
-          bg={value ? pal.btnBg : pal.chipBg}
-          fg={value ? pal.btnFg : pal.inkSoft}
-          flex={2}
-          height={BUTTON_HEIGHT}
-          onPress={() => {
-            if (value) onGo(deckIndex + 1, 1);
-          }}
-        />
-      </View>
-    </View>
+    <BillAmountFace
+      item={item}
+      deckIndex={deckIndex}
+      answers={answers}
+      pal={pal}
+      face={face}
+      buttonHeight={BUTTON_HEIGHT}
+      onAnswers={onAnswers}
+      onGo={onGo}
+      onQuestionBottom={setQuestionBottom}
+      onWheelsHeight={setWheelsHeight}
+    />
   );
 }

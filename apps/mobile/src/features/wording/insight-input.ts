@@ -28,6 +28,7 @@ export function insightSpendOf(row: SpendRow): InsightSpend {
     status: row.status,
     source: row.source,
     forWork: row.forWork,
+    paysBill: row.paysBill,
     ...hour,
   };
 }

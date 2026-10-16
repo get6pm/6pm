@@ -49,7 +49,7 @@ All maths in `@6pm/domain`. Nothing leaves the phone; the new bill fields, the b
 | # | Phase | Owns | Status |
 |---|---|---|---|
 | 1 | Spent since payday: domain (joined-cycle free money from an answer, else the estimate), plan setting, onboarding step, editable river segment, tests | `plan/*`, `features/onboarding/*`, `features/plan/*`, `data/plan-settings.ts` | todo |
-| 2 | Repayments and bill payments: bill kind and last month, the deck's "Paying anything off?" card, bill matching in the close, "Paying off a card or loan?", "This was a bill", migration and backup, tests | `plan/*`, `capture/*`, `features/onboarding/*`, `features/close/*`, `features/details/*`, `data/*`, `db/migrations/*` | todo |
+| 2 | Repayments and bill payments: bill kind and last month, the deck's "Paying anything off?" card, bill matching in the close, "Paying off a card or loan?", "This was a bill", migration and backup, tests | `plan/*`, `capture/*`, `features/onboarding/*`, `features/close/*`, `features/details/*`, `data/*`, `db/migrations/*` | done |
 | 3 | Savings you already have: `opening` pot moves, "Already saved" in the pot and goal editors, monthly need and progress, backup, tests | `plan/pots.ts`, `contracts/*`, `features/plan/*`, `data/pot-moves.ts` | done |
 
 The prototype has neither screen. Both are built from existing components (onboarding's money step and bill deck, the close's question card) and logged in `docs/undesigned-states.md`.

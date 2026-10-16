@@ -40,6 +40,10 @@ const bill = (id: string, amount: number, dueDay: number, paid: boolean): BillRo
   paidCycle: paid ? cycle.start : null,
   sort: 0,
   archivedAt: null,
+  kind: 'other',
+  lastMonth: null,
+  paidAmount: null,
+  askedCycle: null,
 });
 
 const pot = (p: Partial<PotRow> & Pick<PotRow, 'id' | 'kind' | 'goal'>): PotRow => ({

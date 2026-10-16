@@ -124,4 +124,8 @@ export const viCompanion: { readonly [Key in keyof typeof enCompanion]: Entry } 
   'companion.share.cheeky': 'Biên lai xong rồi. Đem đóng khung đi.',
   'companion.share.roast': 'Biên lai xong. Khoe có trách nhiệm nha.',
   'companion.share.plain': 'Biên lai đã sẵn sàng để chia sẻ.',
+  'companion.billQuestion.soft': 'Khoản này giống hoá đơn ghê.',
+  'companion.billQuestion.cheeky': 'Khoan, hình như mình biết khoản này.',
+  'companion.billQuestion.roast': 'Hoá đơn, hay một cú chơi lớn?',
+  'companion.billQuestion.plain': 'Khoản này có thể là hoá đơn.',
 };

@@ -2,8 +2,9 @@ import { useState, type ReactNode } from 'react';
 import { Text, TextInput, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
-import { spendDayRange, movedTo, type SpendRow } from '@6pm/domain';
+import { spendDayRange, movedTo, REPAYMENT, type SpendRow } from '@6pm/domain';
 
+import { useBillPayments } from '../../data/bill-payments';
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
@@ -12,6 +13,7 @@ import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
+import { useRunAction } from '../companion/use-run-action';
 import { useWalletOptions } from '../quick-add/use-wallet-options';
 import { useAutosavedNote, useAutosavedText } from './use-autosaved-note';
 import { WhenPicker } from './when-picker';
@@ -60,6 +62,25 @@ export function DetailsCard({
   const shop = useAutosavedText(spend.id, spend.merchant, 'merchant');
   const autosave = useAutosavedNote(spend.id, spend.note ?? null);
   const [picking, setPicking] = useState(false);
+  const payments = useBillPayments();
+  const run = useRunAction();
+  // "This was a bill", for a payment the close did not catch: no, one of this cycle's bills (only
+  // for a spend in this cycle), or a card or loan with no bill. Tapping on from the last undoes it.
+  const paysBill = spend.paysBill ?? null;
+  const billChoices: (string | null)[] = [
+    null,
+    ...(spend.day >= snap.cycle.start ? snap.bills.map((b) => b.id) : []),
+    ...(paysBill !== null && paysBill !== REPAYMENT && spend.day < snap.cycle.start
+      ? [paysBill]
+      : []),
+    REPAYMENT,
+  ];
+  const billLabel =
+    paysBill === null
+      ? t('details.bill.no')
+      : paysBill === REPAYMENT
+        ? t('details.bill.repayment')
+        : (snap.bills.find((b) => b.id === paysBill)?.name ?? t('today.row.bill'));
   const range = spendDayRange(spend.day, {
     today: snap.today,
     cycleStart: snap.cycle.start,
@@ -94,6 +115,15 @@ export function DetailsCard({
       onPress: () => {
         const at = wallets.findIndex((w) => w.value === (spend.wallet ?? 'Cash'));
         onUpdate({ wallet: wallets[(at + 1) % wallets.length]?.value ?? null });
+      },
+    },
+    {
+      key: 'bill',
+      label: t('details.bill'),
+      value: billLabel,
+      onPress: () => {
+        const next = billChoices[(billChoices.indexOf(paysBill) + 1) % billChoices.length];
+        void run(() => payments.setPaysBill(spend.id, next ?? null));
       },
     },
     { key: 'status', label: t('details.status'), value: statusLabel(spend.status) },

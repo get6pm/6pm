@@ -22,9 +22,10 @@ export const BACKUP_FORMAT_VERSION = 1;
  * Format of the snapshot inside the envelope. Bumped when a table or field changes meaning, and
  * when a table is added: the snapshot is a strict object, so a phone that does not know the new
  * table must say "update 6pm" rather than call the backup damaged. A phone reads every version up
- * to its own.
+ * to its own. Format 4 brought bill kinds and last months, and spends that paid a bill: a phone
+ * from before would drop those fields and count each bill payment as spending again.
  */
-export const BACKUP_SNAPSHOT_VERSION = 3;
+export const BACKUP_SNAPSHOT_VERSION = 4;
 
 /** AES-GCM: a 12-byte nonce in front of the ciphertext, a 16-byte tag behind it. */
 export const BACKUP_IV_BYTES = 12;

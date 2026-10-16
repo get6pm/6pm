@@ -1,6 +1,13 @@
 import { randomUUID } from 'expo-crypto';
 
-import { billDueIn, payCycleOn, type LocalDate, type Payday } from '@6pm/domain';
+import {
+  billDueIn,
+  lastMonthAfter,
+  payCycleOn,
+  type BillKind,
+  type LocalDate,
+  type Payday,
+} from '@6pm/domain';
 import { t, type Language } from '@6pm/i18n';
 
 import type { MoneyStore } from './money-store';
@@ -38,6 +45,10 @@ export interface OnboardingBill {
   readonly amount: number;
   /** Day of the month it is due; the 1st when left out. */
   readonly dueDay?: number;
+  /** A card's payment never moves free money; `other` when left out. */
+  readonly kind?: BillKind;
+  /** Payments still to go (trả góp): the bill stops by itself after the last. No end when left out. */
+  readonly monthsLeft?: number;
 }
 
 /**
@@ -123,6 +134,7 @@ async function setUp(
     let sort = bills.reduce((max, b) => Math.max(max, b.sort + 1), 0);
     for (const bill of answers.bills) {
       const dueDay = bill.dueDay ?? FIRST_DUE_DAY;
+      const paid = billDueIn(cycle, dueDay) < today;
       await tables.bills.put({
         id: randomUUID(),
         name: bill.name,
@@ -130,9 +142,14 @@ async function setUp(
         hue: bill.hue,
         amount: Math.max(0, Math.round(bill.amount)),
         dueDay,
-        paidCycle: billDueIn(cycle, dueDay) < today ? cycle.start : null,
+        paidCycle: paid ? cycle.start : null,
         sort: sort++,
         archivedAt: null,
+        kind: bill.kind ?? 'other',
+        lastMonth:
+          bill.monthsLeft === undefined ? null : lastMonthAfter(cycle, bill.monthsLeft, paid),
+        paidAmount: null,
+        askedCycle: null,
       });
     }
 

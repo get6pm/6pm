@@ -151,4 +151,8 @@ export const viToday: { readonly [Key in keyof typeof enToday]: Entry } = {
   'today.tonight.pausedAlmost': 'Gần xong · chỉ còn hoá đơn của bạn',
   'inbox.earlier': '{weekday} · chưa xác nhận',
   'details.seenWays': 'Thấy qua {count} nguồn · {sources}',
+  'today.row.bill': 'Hoá đơn',
+  'details.bill': 'Đây là hoá đơn',
+  'details.bill.no': 'Không',
+  'details.bill.repayment': 'Trả thẻ hay khoản vay',
 };

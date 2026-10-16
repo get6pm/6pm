@@ -1,4 +1,6 @@
 import {
+  billCountsIn,
+  billsThisCycle,
   currencyOf,
   dailyNumber,
   futureYouStartsOn,
@@ -44,6 +46,7 @@ export interface MoneySnapshot {
    * stays here, with its new status, until the next read; `waitingOf` lists only those still waiting.
    */
   readonly waitingBefore: readonly SpendRow[];
+  /** The bills that still come off in this pay cycle: one past its last month has stopped. */
   readonly bills: readonly BillRow[];
   readonly pots: readonly PotRow[];
   /** Saved per pot, from its moves. */
@@ -80,12 +83,13 @@ export function dailyInputOf(snapshot: MoneySnapshot): DailyNumberInput | null {
     category: s.categoryId,
     status: s.status,
     forWork: s.forWork,
+    paysBill: s.paysBill,
   });
   const spentBefore = sumCounted(
     snapshot.cycleSpends.filter((s) => s.day < today).map(counted),
     notDaily,
   );
-  const bills = snapshot.bills.reduce((sum, b) => sum + b.amount, 0);
+  const bills = billsThisCycle(snapshot.bills, snapshot.cycle);
   const occasions = occasionsOf(snapshot.pots, snapshot.setAsideThisCycle);
   const joined = joinedCycle(snapshot.cycle, joinedAnswersOf(plan));
   return {
@@ -206,7 +210,7 @@ export function createMoneyStore(db: SqlDatabase, today: LocalDate): MoneyStore 
       categories,
       cycleSpends,
       waitingBefore,
-      bills,
+      bills: bills.filter((b) => billCountsIn(b, cycle)),
       pots,
       potSaved,
       topUpsThisCycle: topUps + together,

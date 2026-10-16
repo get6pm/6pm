@@ -83,6 +83,10 @@ export async function seedDesignFriday(
         paidCycle: paid ? cycle.start : null,
         sort: i,
         archivedAt: null,
+        kind: 'other',
+        lastMonth: null,
+        paidAmount: null,
+        askedCycle: null,
       });
     }
     const { year, month } = parts(today);

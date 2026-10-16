@@ -20,16 +20,20 @@ export interface CountedSpend {
   readonly status: SpendStatus;
   /** Marked "for work" in the close: moves to Claim back, out of the daily number. */
   readonly forWork?: boolean;
+  /** Paid a bill (its id) or a card or loan with none: the bill already came off the plan. */
+  readonly paysBill?: string | null | undefined;
 }
 
 /**
  * Whether a spend lowers the daily number. Caught and pending spends count until the user says
  * otherwise, so the number never flatters the day; skipped, deleted and work spends never count,
- * and neither do categories the user marked as not daily.
+ * nor does paying a bill (the bill came off the plan already), nor categories the user marked as
+ * not daily.
  */
 export function countsTowardDay(spend: CountedSpend, notDaily: ReadonlySet<string>): boolean {
   if (spend.status === 'skipped' || spend.status === 'deleted') return false;
   if (spend.forWork === true) return false;
+  if (spend.paysBill != null) return false;
   return !notDaily.has(spend.category);
 }
 

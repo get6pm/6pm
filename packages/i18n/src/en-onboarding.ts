@@ -201,4 +201,12 @@ export const enOnboarding = {
   'onboarding.category.home': 'Home',
   'onboarding.category.family': 'Family',
   'onboarding.category.gifts': 'Gifts',
+  'onboarding.bills.debts.q': 'Paying anything off?',
+  'onboarding.bills.debts.sub': 'Each one is a bill every month, until it’s done.',
+  'onboarding.bills.card': 'Credit card',
+  'onboarding.bills.loan': 'Loan',
+  'onboarding.bills.owe': 'Someone I owe',
+  'onboarding.bills.cardSub':
+    'Only what pays off an old balance each month. New card spending counts the day it happens.',
+  'onboarding.bills.monthsLeft': 'Months left',
 } as const;

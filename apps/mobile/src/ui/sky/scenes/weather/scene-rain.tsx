@@ -1,18 +1,22 @@
-import { BlurMask, Group, Path } from '@shopify/react-native-skia';
+import { FilterMode, Group, ImageShader, MipmapMode, Rect } from '@shopify/react-native-skia';
 import { useMemo } from 'react';
+import { PixelRatio } from 'react-native';
 import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 
 import { useSceneTween } from '../use-scene-tween';
+import { bakeRainTile } from './rain-bake';
 import {
   RAIN_OVERHANG,
   RAIN_TILT_DEG,
+  rainCells,
   rainLayersFor,
-  rainPath,
-  strokeGroups,
   type RainLayerSpec,
 } from './rain-geometry';
 import { asNumber, parseRainTile, type RainTile } from './weather-atm';
 import { rainOffset } from './weather-math';
+
+/** The tilted tile is sampled smoothly, as the browser draws a rotated background. */
+const LINEAR = { filter: FilterMode.Linear, mipmap: MipmapMode.None };
 
 interface LayerProps {
   readonly tile: RainTile;
@@ -24,14 +28,11 @@ interface LayerProps {
 }
 
 function RainLayer({ tile, spec, width, height, time, strength }: LayerProps) {
-  const groups = useMemo(
-    () =>
-      strokeGroups(tile).map((g) => ({
-        ...g,
-        d: rainPath(tile, g.strokes, spec, width, height),
-      })),
-    [tile, spec, width, height],
-  );
+  // The tile is painted once, blur and all, and repeats as an image: a frame samples a texture
+  // instead of stroking and blurring a screenful of lines on the CPU.
+  const scale = PixelRatio.get();
+  const baked = useMemo(() => bakeRainTile(tile, spec, scale), [tile, spec, scale]);
+  const { c0, c1, r0, r1 } = useMemo(() => rainCells(spec, width, height), [spec, width, height]);
   const [tw, th] = spec.tile;
   // The layer is the screen oversized and tilted about its centre; its tile slides down, looping.
   const place = useDerivedValue(() => [
@@ -44,58 +45,28 @@ function RainLayer({ tile, spec, width, height, time, strength }: LayerProps) {
         -height / 2 - RAIN_OVERHANG.y * height + rainOffset(time.value, spec.periodMs, th),
     },
   ]);
-  const scaleX = tw / tile.width;
-  const scaleY = th / tile.height;
-  const scale = [{ scaleX }, { scaleY }];
-  // The layer's opacity and the hour's rain strength ride on the strokes' own alpha: one path is one
-  // coverage, so this equals fading a layer, without an offscreen layer per frame.
+  // The layer's opacity and the hour's rain strength, over each stroke's own ink.
   const alpha = useDerivedValue(() => tile.color[3] * spec.opacity * strength.value);
-  // The soft layer's blur is a mask on the strokes. The mask scales with the tile's squeeze, so the
-  // deviation is divided by it to keep spec.blur on screen.
-  const blur = spec.blur / Math.sqrt(scaleX * scaleY);
+  if (!baked) return null;
+  const [px, py] = baked.pixels;
   return (
     <Group transform={place}>
-      <Group transform={scale}>
-        {groups.map((g) => (
-          <Stroke
-            key={`${g.width}|${g.opacity}`}
-            d={g.d}
-            width={g.width}
-            ink={g.opacity}
-            tile={tile}
-            alpha={alpha}
-            blur={spec.blur > 0 ? blur : 0}
-          />
-        ))}
-      </Group>
+      <Rect
+        x={c0 * tw}
+        y={r0 * th}
+        width={(c1 - c0 + 1) * tw}
+        height={(r1 - r0 + 1) * th}
+        opacity={alpha}
+      >
+        <ImageShader
+          image={baked.image}
+          tx="repeat"
+          ty="repeat"
+          sampling={LINEAR}
+          transform={[{ scaleX: tw / px }, { scaleY: th / py }]}
+        />
+      </Rect>
     </Group>
-  );
-}
-
-/** One weight and ink of the tile's strokes, as one path. */
-function Stroke({
-  d,
-  width,
-  ink,
-  tile,
-  alpha,
-  blur,
-}: {
-  readonly d: string;
-  readonly width: number;
-  readonly ink: number;
-  readonly tile: RainTile;
-  readonly alpha: SharedValue<number>;
-  readonly blur: number;
-}) {
-  const color = useDerivedValue(() => {
-    const [r, g, b] = tile.color;
-    return [r, g, b, alpha.value * ink];
-  });
-  return (
-    <Path path={d} style="stroke" strokeWidth={width} strokeCap="round" color={color}>
-      {blur > 0 ? <BlurMask blur={blur} style="normal" respectCTM /> : null}
-    </Path>
   );
 }
 

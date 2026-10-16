@@ -7,7 +7,7 @@ export const ctaMode: 'waitlist' | 'store' = 'waitlist';
 /** The App Store page, once the app has one. */
 export const appStoreUrl = '#';
 
-export const repoUrl = 'https://github.com/get6pm/6pm';
+export const repoUrl = 'https://github.com/at6pm/6pm';
 export const studioUrl = 'https://oddeggs.studio';
 
 /** The page's background, also the browser chrome colour. */

@@ -66,23 +66,3 @@ export function rainCells(spec: RainLayerSpec, width: number, height: number) {
     r1: Math.floor((cy + halfH) / th),
   };
 }
-
-/** The visible tile cells (in tile units) as one SVG path of strokes. */
-export function rainPath(
-  tile: Pick<RainTile, 'width' | 'height'>,
-  strokes: readonly RainStroke[],
-  spec: RainLayerSpec,
-  width: number,
-  height: number,
-): string {
-  const { c0, c1, r0, r1 } = rainCells(spec, width, height);
-  const parts: string[] = [];
-  for (let r = r0; r <= r1; r++) {
-    for (let c = c0; c <= c1; c++) {
-      for (const s of strokes) {
-        parts.push(`M${c * tile.width + s.x} ${r * tile.height + s.y}v${s.length}`);
-      }
-    }
-  }
-  return parts.join('');
-}

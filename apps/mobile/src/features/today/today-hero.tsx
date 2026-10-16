@@ -43,7 +43,8 @@ export function TodayHero({
   const { t, weekday, dayMonth } = useI18n();
   const money = useMoneyFormat();
   const { goToTab } = useHomeNav();
-  const { top } = useDesignInsets();
+  // On the iPhone Duo, Settings and Add live in the side rail.
+  const { top, rail } = useDesignInsets();
 
   // A day over its line is covered by the days after it, unless the cycle's free money is gone:
   // then the meter says how far past the plan the cycle is, and only a spend today fills it.
@@ -93,10 +94,12 @@ export function TodayHero({
           <Text style={{ ...body(22, 700, -0.02), color: palette.ink }}>{dayMonth(dayDate)}</Text>
           <TravelPill />
         </View>
-        <View style={{ flexDirection: 'row', gap: 8 }}>
-          <GlassButton icon="tune" label={t('home.settings')} onPress={onSettings} />
-          <GlassButton icon="add" iconSize={26} label={t('home.quickAdd')} onPress={onQuickAdd} />
-        </View>
+        {rail > 0 ? null : (
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            <GlassButton icon="tune" label={t('home.settings')} onPress={onSettings} />
+            <GlassButton icon="add" iconSize={26} label={t('home.quickAdd')} onPress={onQuickAdd} />
+          </View>
+        )}
       </View>
 
       {/* The number opens the plan behind it, as in the prototype (`toPlan`). */}

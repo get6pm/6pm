@@ -40,7 +40,7 @@ export function TopNav({
   readonly children: ReactNode;
 }) {
   const { palette } = useTheme();
-  const { top } = useDesignInsets();
+  const { top, rail } = useDesignInsets();
   const { y, nav } = useHomeScroll();
 
   const fade = useAnimatedStyle(() => ({
@@ -98,7 +98,13 @@ export function TopNav({
         />
         <Pressable
           onPress={onPressTop}
-          style={{ paddingTop: top(52), paddingHorizontal: 16, paddingBottom: 10, gap: 9 }}
+          style={{
+            paddingTop: top(52),
+            paddingLeft: 16,
+            paddingRight: 16 + rail,
+            paddingBottom: 10,
+            gap: 9,
+          }}
         >
           {children}
         </Pressable>

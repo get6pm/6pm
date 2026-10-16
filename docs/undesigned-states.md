@@ -285,3 +285,6 @@ fakes behaviour the app cannot fake. Founder review.
 | Plan · Future you / Occasions | A goal or jar is full | Future you: the +step chip is hidden. Occasions: the chip reads Full, as designed. A last tap adds only what is left | The prototype's chips add their step past the goal |
 | Website · Nav | Phone widths | The section links hide under 720 px and the clock under 420 px, so the brand, language switch and call to action fit | At 390 px the design's bar runs off the screen |
 | Website · iPhone Duo, propped | English keypad | Typed amounts are dollars ("$12"), taken off the dollar number above | The design's keypad types thousands of đồng and converts them |
+| Home · iPhone Duo side rail | Settings on the outer screen | Settings sits under Add in the rail, as on the inner screen | The outer screen's rail is drawn with Add alone, and Settings has no other way in from Home there |
+| Home · iPhone Duo side rail | Rail width | The rail is the right inset iOS reports (84 pt) where the design draws 72 pt; its controls stay centred in it | The status bar and island fill that column on the device; nothing can sit under them |
+| Home · iPhone Duo side rail | Scan button size | The Scan button keeps its 64 pt size from the tab bar; the rail drawing shows 58 pt | One Scan button, the same everywhere, with its hold for Quick add |

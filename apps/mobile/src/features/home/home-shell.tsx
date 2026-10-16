@@ -25,6 +25,7 @@ import { HOME_TABS, type HomeTab } from './home-tabs';
 import { HomeTopNav } from './home-top-nav';
 import { useHomeVisible } from './home-visible';
 import { ScanFab } from './scan-fab';
+import { SideRail } from './side-rail';
 import { TabBar, TabBarRow } from './tab-bar';
 import { useHomePager } from './use-home-pager';
 
@@ -43,8 +44,9 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
   const { palette, look, serious } = useTheme();
   const { hour } = useClock();
   const { t } = useI18n();
-  const { bottom } = useDesignInsets();
-  const { width } = useWindowDimensions();
+  const { bottom, rail } = useDesignInsets();
+  // On the iPhone Duo the pages stop at the side rail; the sky still runs under it.
+  const width = useWindowDimensions().width - rail;
   const { y } = useHomeScroll();
   const [tab, setTab] = useState<HomeTab>(initialTab);
   const startIndex = HOME_TABS.indexOf(initialTab);
@@ -131,7 +133,7 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
           active={homeVisible}
         />
         <GestureDetector gesture={pan}>
-          <View style={StyleSheet.absoluteFill}>
+          <View style={[StyleSheet.absoluteFill, { right: rail }]}>
             <HomePage
               index={0}
               tabIndex={tabIndex}
@@ -185,20 +187,31 @@ function Shell({ day, initialTab }: { readonly day: DailyNumber; readonly initia
           planSection={planSection}
           onPlanSection={jumpToSection}
         />
-        <View
-          pointerEvents="box-none"
-          style={{ position: 'absolute', left: 0, right: 0, bottom: bottom(26) }}
-        >
-          <TabBarRow>
-            <TabBar active={tab} onSelect={goToTab} onReselect={scrollTop} />
-            <ScanFab
-              label={t('home.scan')}
-              hint={t('home.scanHint')}
-              onScan={openScan}
-              onQuickAdd={openQuickAdd}
-            />
-          </TabBarRow>
-        </View>
+        {rail > 0 ? (
+          <SideRail
+            tab={tab}
+            onSelect={goToTab}
+            onReselect={scrollTop}
+            onQuickAdd={openQuickAdd}
+            onSettings={openSettings}
+            onScan={openScan}
+          />
+        ) : (
+          <View
+            pointerEvents="box-none"
+            style={{ position: 'absolute', left: 0, right: 0, bottom: bottom(26) }}
+          >
+            <TabBarRow>
+              <TabBar active={tab} onSelect={goToTab} onReselect={scrollTop} />
+              <ScanFab
+                label={t('home.scan')}
+                hint={t('home.scanHint')}
+                onScan={openScan}
+                onQuickAdd={openQuickAdd}
+              />
+            </TabBarRow>
+          </View>
+        )}
       </View>
     </HomeNavProvider>
   );

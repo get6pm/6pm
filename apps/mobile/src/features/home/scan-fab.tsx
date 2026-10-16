@@ -11,10 +11,12 @@ import { scheduleOnRN } from 'react-native-worklets';
 
 import { gestures } from '@6pm/theme';
 
+import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
 import { easeOut } from '../../ui/motion/curves';
 import { useTheme } from '../../ui/theme/theme';
+import { nativeReach } from '../surfaces/native-reach';
 import { useHomeScroll } from './home-scroll';
 
 const PRESS_IN = { duration: 100, easing: easeOut, reduceMotion: ReduceMotion.System } as const;
@@ -26,6 +28,7 @@ const SHRINK = 12;
 /**
  * The scan button beside the tab bar. Tap to scan a VietQR; hold for half a second to jump
  * straight to Quick add (with a tap of haptics when it triggers). It shrinks with the tab bar.
+ * On a phone without Scan it is Quick add's button: a plus, and a tap opens Quick add.
  *
  * It keeps a fixed 64 pt slot. When it shrinks, only the coloured disc (a childless layer out of
  * the flow) changes size, so its shadow and hairline stay exactly as drawn; the glyph moves with
@@ -43,6 +46,7 @@ export const ScanFab = memo(function ScanFab({
   readonly onQuickAdd: () => void;
 }) {
   const { palette } = useTheme();
+  const { t } = useI18n();
   const { barMin } = useHomeScroll();
   const pressed = useSharedValue(0);
 
@@ -51,7 +55,7 @@ export const ScanFab = memo(function ScanFab({
   actions.current = { onScan, onQuickAdd };
 
   const gesture = useMemo(() => {
-    const scan = () => actions.current.onScan();
+    const scan = () => (nativeReach.scan ? actions.current.onScan() : actions.current.onQuickAdd());
     const longPressed = () => {
       haptics.tap();
       actions.current.onQuickAdd();
@@ -97,8 +101,8 @@ export const ScanFab = memo(function ScanFab({
       <View
         accessible
         accessibilityRole="button"
-        accessibilityLabel={label}
-        accessibilityHint={hint}
+        accessibilityLabel={nativeReach.scan ? label : t('home.quickAdd')}
+        accessibilityHint={nativeReach.scan ? hint : undefined}
         style={{ width: FULL, height: FULL }}
       >
         <Animated.View
@@ -120,7 +124,11 @@ export const ScanFab = memo(function ScanFab({
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
             pointerEvents="none"
           >
-            <Symbol name="qr_code_scanner" size={30} color={palette.accentFg} />
+            <Symbol
+              name={nativeReach.scan ? 'qr_code_scanner' : 'add'}
+              size={30}
+              color={palette.accentFg}
+            />
           </View>
         </Animated.View>
       </View>

@@ -22,6 +22,7 @@ import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
 import { useHomePageScroll } from '../home/home-scroll';
 import { useEntitlement } from '../purchases/purchases-provider';
+import { nativeReach } from '../surfaces/native-reach';
 import { TogetherSection } from '../together/together-card';
 import { BillsCard } from './bills-section';
 import { DailyCard } from './daily-card';
@@ -256,7 +257,8 @@ function PlanContent({
           format={format}
         />
       </Reveal>
-      <TogetherSection cycle={cycle} colours={colours} />
+      {/* Budget together pairs with Sign in with Apple: a phone without it is not offered it. */}
+      {nativeReach.appleSignIn ? <TogetherSection cycle={cycle} colours={colours} /> : null}
     </>
   );
 }

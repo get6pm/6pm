@@ -12,6 +12,7 @@ import { useI18n } from '../../i18n/i18n';
 import { useHomeCurrency } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
 import { useAiMode } from '../privacy/use-ai-mode';
+import { nativeReach } from '../surfaces/native-reach';
 import { CatchCard, type CatchAction, type CatchStatus } from './catch-card';
 import { useSampleMoney } from './catch-demo-kit';
 import { ScanDemo, ShareDemo } from './catch-demos';
@@ -48,7 +49,7 @@ export function StepCatching({
 }) {
   const { t } = useI18n();
   const aiMode = useAiMode();
-  const ways = catchWaysFor(useHomeCurrency(), aiMode);
+  const ways = catchWaysFor(useHomeCurrency(), aiMode, nativeReach);
   const sample = useSampleMoney();
   const bodyOf = (way: CatchWay) =>
     way === 'add'

@@ -12,7 +12,9 @@ function weightOf(style: TextStyle): number {
 
 /** Whether a text style's face can draw every character of a currency symbol. */
 export function faceDraws(style: TextStyle, symbol: string): boolean {
-  const missing = style.fontFamily ? MISSING_CURRENCY_GLYPHS[style.fontFamily] : undefined;
+  // Keyed by family name; Android draws a variable file by its file name (`variableFamily`).
+  const family = style.fontFamily?.replace(/-Variable$/, '');
+  const missing = family ? MISSING_CURRENCY_GLYPHS[family] : undefined;
   if (!missing) return true;
   return ![...symbol].some((c) => missing.includes(c));
 }

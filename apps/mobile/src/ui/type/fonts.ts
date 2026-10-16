@@ -1,11 +1,11 @@
 import { Platform, type TextStyle } from 'react-native';
 
-import { faceOf, type Face } from './faces';
+import { faceOf, variableFamily, type Face } from './faces';
 import { FONT_LINE_HEIGHT } from './font-metrics.generated';
 
-/** Family names as the font files register them (tools/fonts/build_fonts.py). */
+/** Family names as the font files register them (tools/fonts/build_fonts.py); see `variableFamily`. */
 export const families = {
-  display: 'BricolageGrotesque',
+  display: variableFamily('BricolageGrotesque'),
   body: Platform.select({ ios: undefined, default: 'BeVietnamPro-Regular' }),
   bodyMedium: Platform.select({ ios: undefined, default: 'BeVietnamPro-Medium' }),
   bodySemiBold: Platform.select({ ios: undefined, default: 'BeVietnamPro-SemiBold' }),
@@ -14,7 +14,7 @@ export const families = {
   monoMedium: 'IBMPlexMono-Medium',
   monoSemiBold: 'IBMPlexMono-SemiBold',
   hand: 'PatrickHand-Regular',
-  symbols: 'MaterialSymbolsRounded',
+  symbols: variableFamily('MaterialSymbolsRounded'),
 } as const;
 
 const BRICOLAGE_CSS = "'Bricolage Grotesque', ui-rounded, system-ui, sans-serif";

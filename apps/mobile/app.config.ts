@@ -244,6 +244,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         photosPermission: PERMISSION.NSPhotoLibraryUsageDescription,
         savePhotosPermission: PERMISSION.NSPhotoLibraryAddUsageDescription,
+        // Android asks only for images: nothing is saved as audio or video.
+        granularPermissions: ['photo'],
       },
     ],
     // Travel mode turns on abroad: the country, while the app is open, never in the background.

@@ -6,8 +6,7 @@ export const viNative: { readonly [Key in keyof typeof enNative]: Entry } = {
     '6pm dùng camera để đọc mã QR và hoá đơn bạn quét. Ảnh ở lại trên iPhone, trừ khi hoá đơn cần đọc kỹ hơn.',
   'native.permission.microphone':
     '6pm nghe khi bạn nói một khoản chi. Giọng nói được gửi tới một dịch vụ chuyển giọng nói thành chữ, hoặc chỉ ở lại trên iPhone này ở chế độ trên máy.',
-  'native.permission.speech':
-    '6pm chuyển lời bạn nói thành số tiền và tên khoản chi, ngay trên iPhone này. Không gửi đi đâu cả.',
+  'native.permission.speech': '6pm chuyển lời bạn nói thành số tiền và tên khoản chi.',
   'native.permission.photos':
     '6pm chỉ lưu biên lai cuối ngày và nhật ký tiêu tiền vào Ảnh. 6pm không bao giờ xem thư viện ảnh của bạn.',
   'native.permission.photosAdd':

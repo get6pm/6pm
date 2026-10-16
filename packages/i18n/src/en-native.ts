@@ -8,8 +8,7 @@ export const enNative = {
     '6pm uses the camera to read the QR codes and receipts you scan. Photos stay on your iPhone unless a receipt needs a closer look.',
   'native.permission.microphone':
     '6pm listens while you say a spend. Your voice goes to a speech-to-text service to be written down, or stays on this iPhone in on-device mode.',
-  'native.permission.speech':
-    '6pm turns what you say into an amount and a name, on this iPhone. Nothing is sent anywhere.',
+  'native.permission.speech': '6pm turns what you say into an amount and a name.',
   'native.permission.photos':
     '6pm only saves your close receipt and money diary to Photos. It never looks through your library.',
   'native.permission.photosAdd':

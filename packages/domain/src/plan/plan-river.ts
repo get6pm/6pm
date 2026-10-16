@@ -14,8 +14,8 @@ import {
   parts,
   type LocalDate,
 } from '../time/local-date';
-import { dailyNumber, type DailyNumberInput } from './daily-number';
-import type { PayCycle } from './pay-cycle';
+import { countedFree, dailyNumber, type DailyNumberInput } from './daily-number';
+import { cycleMonth, type PayCycle } from './pay-cycle';
 
 /**
  * The money river's segments, left to right. `before` is the part of the cycle's free money that
@@ -58,8 +58,9 @@ export function moneyRiver(input: RiverInput): Readonly<Record<RiverSegment, Vnd
   const futureYou = input.futureYou + input.goalTopUps;
   const occasions = input.occasions + input.occasionTopUps;
   const planned = input.income - input.bills - input.futureYou - input.occasions;
-  // The engine scales the cycle's free money by `share`; what it drops was spent before joining.
-  const before = planned > 0 ? planned - Math.round(planned * share) : 0;
+  // What the engine leaves out of the cycle's free money was spent before joining; a shortfall it
+  // counts whole, so none of it was before.
+  const before = planned - countedFree(planned, share);
   return {
     bills: input.bills,
     futureYou,
@@ -139,9 +140,9 @@ export function potMonthlyNeed(
   return Math.min(left, ceilToSetAside(left / monthsLeft, currency));
 }
 
-/** A goal's share of Future you, each month. */
+/** A goal's share of Future you, each month; never below zero. */
 export function goalMonthly(futureYou: Vnd, share: number): Vnd {
-  return Math.round(futureYou * share);
+  return Math.max(0, Math.round(futureYou * share)) || 0;
 }
 
 export type GoalStatus = 'reached' | 'paused' | 'onTrack' | 'behind' | 'steady';
@@ -155,20 +156,22 @@ export interface GoalPlan {
 
 /**
  * When a Future you goal fills: months of its monthly share until nothing is left, counted from
- * this month. With a date it is on track when it fills by then; without one it just keeps going.
+ * the pay cycle's month (`cycleMonth`) as an occasion counts its months left, so the answer holds
+ * still from payday to payday. With a date it is on track when it fills by then; without one it
+ * just keeps going.
  */
 export function goalPlan(input: {
   readonly goal: Vnd;
   readonly saved: Vnd;
   readonly monthly: Vnd;
   readonly neededBy: string | null;
-  readonly today: LocalDate;
+  readonly cycle: PayCycle;
 }): GoalPlan {
   const left = Math.max(0, input.goal - input.saved);
   const { monthly } = input;
   if (left === 0) return { status: 'reached', eta: null, monthly };
   if (monthly <= 0) return { status: 'paused', eta: null, monthly };
-  const eta = addMonthsTo(monthKey(input.today), Math.ceil(left / monthly));
+  const eta = addMonthsTo(cycleMonth(input.cycle), Math.ceil(left / monthly));
   if (input.neededBy === null) return { status: 'steady', eta, monthly };
   return { status: eta <= input.neededBy ? 'onTrack' : 'behind', eta, monthly };
 }

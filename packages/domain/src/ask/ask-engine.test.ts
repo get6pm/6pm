@@ -15,6 +15,7 @@ const day: DailyNumber = {
   safe: 49_000,
   tomorrow: 353_000,
   replan: false,
+  overspent: false,
 };
 
 const ctx: AskContext = {

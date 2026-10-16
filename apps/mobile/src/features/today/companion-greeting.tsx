@@ -21,7 +21,7 @@ import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
 import { display, leading } from '../../ui/type/fonts';
 
-type HomeEvent = 'idle' | 'closedIdle' | 'late' | 'replan' | 'paused';
+type HomeEvent = 'idle' | 'closedIdle' | 'late' | 'replan' | 'pastPlan' | 'paused';
 
 /** Where the companion's row sits on the sheet, and the room the sheet keeps under it. */
 const ROW_TOP = 20;

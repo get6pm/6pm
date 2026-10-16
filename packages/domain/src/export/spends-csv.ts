@@ -1,5 +1,5 @@
 import type { CategoryRow, SpendRow } from '../contracts/local-rows';
-import { VND, type Currency, type Money } from '../money/currency';
+import { currencyOf, toMinor, VND, type Currency, type Money } from '../money/currency';
 import type { SpendSource, SpendStatus } from '../spend/spend';
 
 /**
@@ -45,12 +45,13 @@ export function csvField(value: string): string {
 
 /**
  * Text a person or a receipt wrote. A spreadsheet runs a cell that starts with `=`, `+`, `-` or
- * `@` as a formula, so a merchant name from a shared receipt could do so too: such text gets a
- * leading apostrophe, which the spreadsheet shows as plain text.
+ * `@` (or their full-width forms, which some spreadsheets read the same) as a formula, so a
+ * merchant name from a shared receipt could do so too: such text gets a leading apostrophe, which
+ * the spreadsheet shows as plain text.
  */
 function textCell(value: string | null): string {
   if (value === null) return '';
-  return /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+  return /^[=+\-@\t\r＝＋－＠]/.test(value) ? `'${value}` : value;
 }
 
 /** The phone's wall-clock time of an instant, `HH:MM`. */
@@ -76,6 +77,15 @@ export function csvAmount(amount: Money, currency: Currency): string {
   const whole = Math.floor(abs / currency.minorPerMajor);
   const minor = String(abs % currency.minorPerMajor).padStart(currency.minorDigits, '0');
   return `${sign}${whole}.${minor}`;
+}
+
+/**
+ * A foreign amount (kept in its major units, `12.5`) with its own currency's decimals: "12.50"
+ * for dollars, "1500" for yen, never a float's long tail.
+ */
+export function csvForeignAmount(amount: number, code: string): string {
+  const currency = currencyOf(code);
+  return csvAmount(toMinor(amount, currency), currency);
 }
 
 /**
@@ -107,7 +117,9 @@ export function spendsCsv(
       note: textCell(s.note),
       detail: textCell(s.detail),
       forWork: s.forWork ? labels.yes : labels.no,
-      foreignAmount: s.foreignAmount ? String(s.foreignAmount.amount) : '',
+      foreignAmount: s.foreignAmount
+        ? csvForeignAmount(s.foreignAmount.amount, s.foreignAmount.currency)
+        : '',
       currency: s.foreignAmount ? s.foreignAmount.currency : '',
     }));
   const lines = [

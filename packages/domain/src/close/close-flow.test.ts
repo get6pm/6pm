@@ -78,6 +78,11 @@ describe('the 6pm close', () => {
     expect(paused.paused).toBe(true);
     expect(paused.step).toBe('cards');
     expect(run(paused, { type: 'resume' }).paused).toBe(false);
+    // A swipe that lands while paused is ignored; after resuming it counts.
+    expect(run(paused, { type: 'decide', id: 'pho', verdict: 'kept' })).toBe(paused);
+    expect(
+      run(paused, { type: 'resume' }, { type: 'decide', id: 'pho', verdict: 'kept' }).verdicts,
+    ).toHaveProperty('pho', 'kept');
 
     const sorted = run(
       startClose([{ id: 'a' }]),

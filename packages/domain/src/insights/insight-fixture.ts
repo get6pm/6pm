@@ -15,6 +15,7 @@ export function day(overrides: Partial<DailyNumber> = {}): DailyNumber {
     safe: 351_000,
     tomorrow: 351_000,
     replan: false,
+    overspent: false,
     ...overrides,
   };
 }

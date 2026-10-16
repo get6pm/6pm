@@ -79,6 +79,7 @@ export function insightInputOf(
     today: snap.today,
     day,
     cycle: snap.cycle,
+    joinedOn: snap.plan?.startedOn ?? null,
     previousCycleStart: previousCycleStartOf(snap),
     spends,
     closed: snap.closedDays.map((d) => ({ day: d.day, spent: d.spent, line: d.line })),

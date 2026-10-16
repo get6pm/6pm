@@ -225,7 +225,7 @@ describe('spendsCsv', () => {
       ),
     );
     expect(rows[1]?.slice(4, 5)).toEqual(['318000']);
-    expect(rows[1]?.slice(11)).toEqual(['12.5', 'USD']);
+    expect(rows[1]?.slice(11)).toEqual(['12.50', 'USD']);
   });
 
   it('names each source in the given words', () => {

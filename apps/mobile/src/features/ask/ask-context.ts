@@ -72,4 +72,5 @@ const ZERO_DAY = {
   safe: 0,
   tomorrow: 0,
   replan: false,
+  overspent: false,
 } as const;

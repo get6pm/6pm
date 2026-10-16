@@ -56,7 +56,16 @@ describe('the suggested questions', () => {
       expect(
         answerAsk(readIntent(question), {
           today: '2026-10-09',
-          day: { startFree: 0, line: 0, spent: 0, free: 0, safe: 0, tomorrow: 0, replan: false },
+          day: {
+            startFree: 0,
+            line: 0,
+            spent: 0,
+            free: 0,
+            safe: 0,
+            tomorrow: 0,
+            replan: false,
+            overspent: false,
+          },
           daysLeft: 22,
           payday: '2026-10-31',
           futureYou: 0,

@@ -7,6 +7,7 @@ export const viToday: { readonly [Key in keyof typeof enToday]: Entry } = {
   'today.meterUsed': 'Đã dùng {spent} / {line}',
   'today.meterNothing': 'Chưa tiêu gì',
   'today.meterOver': 'Lố {over} · vẫn ổn',
+  'today.meterPastPlan': 'Vượt kế hoạch {over}',
   'today.meterClosed': 'Hôm nay tiêu {spent}',
   'today.tomorrowAbout': 'Ngày mai ≈ {amount}',
   'today.closedAt': 'Đã chốt lúc {time}',

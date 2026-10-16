@@ -120,6 +120,11 @@ export interface InsightInput {
   readonly today: LocalDate;
   readonly day: DailyNumber;
   readonly cycle: PayCycle;
+  /**
+   * The day the user set 6pm up (the plan's `startedOn`): in the cycle it falls in, spending was
+   * counted only from then, so paces are measured from it. Null or absent: from the cycle's start.
+   */
+  readonly joinedOn?: LocalDate | null;
   /** Where the cycle before this one started, when there was one; patterns compare against it. */
   readonly previousCycleStart: LocalDate | null;
   /**

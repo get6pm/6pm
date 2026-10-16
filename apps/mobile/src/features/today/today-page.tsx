@@ -108,9 +108,11 @@ export function TodayPage({
                   ? 'paused'
                   : view.moment === 'late'
                     ? 'late'
-                    : day.safe < 0
-                      ? 'replan'
-                      : 'idle'
+                    : day.overspent && day.spent > 0
+                      ? 'pastPlan'
+                      : day.safe < 0
+                        ? 'replan'
+                        : 'idle'
             }
             onPress={() => router.push('/ask')}
           />

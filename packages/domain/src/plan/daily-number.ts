@@ -37,7 +37,7 @@ export interface DailyNumberInput {
 export interface DailyNumber {
   /** Free money at the start of today: income less everything set aside and spent before. */
   readonly startFree: Vnd;
-  /** Today's line: an even share of `startFree`, today included. */
+  /** Today's line: an even share of `startFree`, today included; never below zero. */
   readonly line: Vnd;
   /** Counted today. */
   readonly spent: Vnd;
@@ -47,22 +47,47 @@ export interface DailyNumber {
   readonly safe: Vnd;
   /** Tomorrow's line if the day ended now. */
   readonly tomorrow: Vnd;
-  /** Tomorrow's line dropped below today's: the companion says the month still lands. */
+  /**
+   * Tomorrow's line dropped below today's and the cycle still has free money: the companion says
+   * the month still lands. Never true once the cycle is `overspent`, when it would not.
+   */
   readonly replan: boolean;
+  /**
+   * The cycle's free money is gone: more was spent than it held, so nothing is safe until payday
+   * and a day that goes over is not covered by the days after.
+   */
+  readonly overspent: boolean;
+}
+
+/** A joined share as the engine uses it: between none and all, and all when it is not a number. */
+export function cleanShare(share: number): number {
+  return Number.isFinite(share) ? Math.min(1, Math.max(0, share)) : 1;
+}
+
+/**
+ * The cycle's free money (income less bills, Future you and occasions) as far as 6pm counts it:
+ * scaled by the joined `share` when there is some (M2a). A shortfall is never scaled: bills and
+ * Future you stay whole, so the whole of what they take beyond the income still counts.
+ */
+export function countedFree(planned: Vnd, share: number): Vnd {
+  return planned > 0 ? Math.round(planned * cleanShare(share)) : planned;
 }
 
 /**
  * The one number. Free money is split evenly across the days left, today included, and rounded
- * down to a whole step (1.000₫, $1) so the promise is always kept.
+ * down to a whole step (1.000₫, $1) so the promise is always kept. Once the cycle's free money is
+ * gone the line stays at zero until payday (`overspent`), never a negative allowance.
  */
 export function dailyNumber(input: DailyNumberInput): DailyNumber {
-  const { plan, daysLeft, share = 1, currency = VND } = input;
+  const { plan, share = 1, currency = VND } = input;
+  const daysLeft = Number.isFinite(input.daysLeft) ? Math.max(0, input.daysLeft) : 0;
   const planned = plan.income - plan.bills - plan.futureYou - plan.occasions;
-  const startFree = Math.round(planned * share) - plan.topUps - input.spentBefore;
-  const line = floorToStep(startFree / (daysLeft + 1), currency);
+  const startFree = countedFree(planned, share) - plan.topUps - input.spentBefore;
+  const line = Math.max(0, floorToStep(startFree / (daysLeft + 1), currency));
   const spent = sumCounted(input.today, input.notDaily);
   const free = startFree - spent;
   const tomorrow = daysLeft > 0 ? Math.max(0, floorToStep(free / daysLeft, currency)) : 0;
+  const overspent = free < 0;
   return {
     startFree,
     line,
@@ -70,7 +95,8 @@ export function dailyNumber(input: DailyNumberInput): DailyNumber {
     free,
     safe: line - spent,
     tomorrow,
-    replan: tomorrow < line,
+    replan: !overspent && tomorrow < line,
+    overspent,
   };
 }
 

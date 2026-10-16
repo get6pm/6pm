@@ -5,6 +5,7 @@ export const enToday = {
   'today.meterUsed': '{spent} of {line} used',
   'today.meterNothing': 'Nothing spent yet',
   'today.meterOver': '{over} over · still covered',
+  'today.meterPastPlan': '{over} past the plan',
   'today.meterClosed': '{spent} spent today',
   'today.tomorrowAbout': 'Tomorrow ≈ {amount}',
   'today.closedAt': 'Closed {time}',

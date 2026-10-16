@@ -24,6 +24,7 @@ import { PurchasesProvider } from '../features/purchases/purchases-provider';
 import { TogetherProvider } from '../features/together/together-provider';
 import { TravelProvider } from '../features/travel/travel-provider';
 import { I18nProvider } from '../i18n/i18n';
+import { FoldProvider } from '../ui/layout/fold';
 import { drawnSheet, pageSheet, sheet, takeover } from '../ui/navigation/presentations';
 import { ClockProvider } from '../ui/theme/clock';
 import { ThemeProvider, useTheme } from '../ui/theme/theme';
@@ -110,39 +111,41 @@ function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       {/* Keyboard-following UI reads the keyboard's real position on the UI thread from here. */}
       <KeyboardProvider>
-        <DatabaseGate>
-          <AiModeSync />
-          <PurchasesProvider>
-            <MemberCompanionForm>
-              <LookSettingsProvider>
-                <I18nProvider>
-                  <ClockProvider>
-                    <MoneyProvider failed={(retry) => <StartupError onRetry={retry} />}>
-                      <TravelProvider>
-                        <PlanTheme>
-                          <ToastHost>
-                            <TogetherProvider>
-                              <UndoHost>
-                                <Screens />
-                              </UndoHost>
-                            </TogetherProvider>
-                            <CloseNudge />
-                            <CloseReminderSync />
-                            <ReminderTap />
-                            <BackupHost />
-                            <SurfacesSync />
-                            <AppIconSync />
-                            {__DEV__ ? <DevCommands /> : null}
-                          </ToastHost>
-                        </PlanTheme>
-                      </TravelProvider>
-                    </MoneyProvider>
-                  </ClockProvider>
-                </I18nProvider>
-              </LookSettingsProvider>
-            </MemberCompanionForm>
-          </PurchasesProvider>
-        </DatabaseGate>
+        <FoldProvider>
+          <DatabaseGate>
+            <AiModeSync />
+            <PurchasesProvider>
+              <MemberCompanionForm>
+                <LookSettingsProvider>
+                  <I18nProvider>
+                    <ClockProvider>
+                      <MoneyProvider failed={(retry) => <StartupError onRetry={retry} />}>
+                        <TravelProvider>
+                          <PlanTheme>
+                            <ToastHost>
+                              <TogetherProvider>
+                                <UndoHost>
+                                  <Screens />
+                                </UndoHost>
+                              </TogetherProvider>
+                              <CloseNudge />
+                              <CloseReminderSync />
+                              <ReminderTap />
+                              <BackupHost />
+                              <SurfacesSync />
+                              <AppIconSync />
+                              {__DEV__ ? <DevCommands /> : null}
+                            </ToastHost>
+                          </PlanTheme>
+                        </TravelProvider>
+                      </MoneyProvider>
+                    </ClockProvider>
+                  </I18nProvider>
+                </LookSettingsProvider>
+              </MemberCompanionForm>
+            </PurchasesProvider>
+          </DatabaseGate>
+        </FoldProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>
   );

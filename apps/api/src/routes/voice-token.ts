@@ -1,12 +1,13 @@
-import { voiceTokenRequestSchema } from '@6pm/domain';
+import { readUtcOffset, UTC_OFFSET_HEADER, voiceTokenRequestSchema } from '@6pm/domain';
 
 import { mintVoiceToken } from '../ai/voice-token';
 import { recordAiUsage, requireAiBudget } from '../ledger';
 import { readBody, type RouteDefinition } from '../route';
 
 /**
- * Transcriptions one device may start in a UTC day. Free members get ten a day on the phone and
- * Max has no cap there; this only stops a runaway client from spending the transcriber budget.
+ * Transcriptions one device may start in a day, from midnight on the user's clock. Free members
+ * get ten a day on the phone and Max has no cap there; this only stops a runaway client from
+ * spending the transcriber budget.
  */
 const voiceTokensPerDay = 200;
 
@@ -21,7 +22,13 @@ export const voiceTokenRoute: RouteDefinition = {
   access: 'device',
   handle: async (c) => {
     const request = await readBody(c, voiceTokenRequestSchema, { maxBytes: 1_000 });
-    await requireAiBudget(c.env.DB, c.var.device.hash, 'voice.token', voiceTokensPerDay);
+    await requireAiBudget(
+      c.env.DB,
+      c.var.device.hash,
+      'voice.token',
+      voiceTokensPerDay,
+      readUtcOffset(c.req.header(UTC_OFFSET_HEADER)),
+    );
     const minted = await mintVoiceToken(
       {
         provider: c.env.VOICE_PROVIDER,

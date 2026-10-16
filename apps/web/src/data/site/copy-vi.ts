@@ -129,6 +129,7 @@ export const siteCopyVi: SiteCopy = {
     title: 'Miễn phí cho nghi thức.',
     monthly: 'Theo tháng',
     yearly: 'Theo năm',
+    yearlySaving: '−33%',
     freeName: 'Miễn phí',
     zero: '0₫',
     freeFor: 'mãi mãi',

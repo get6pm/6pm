@@ -1,12 +1,13 @@
-import { LINE_MAX_LENGTH, wordRequestSchema } from '@6pm/domain';
+import { LINE_MAX_LENGTH, readUtcOffset, UTC_OFFSET_HEADER, wordRequestSchema } from '@6pm/domain';
 
 import { wordLine } from '../ai/word-line';
 import { recordAiUsage, requireAiBudget } from '../ledger';
 import { readBody, type RouteDefinition } from '../route';
 
 /**
- * Lines one device may have worded in a UTC day. The phone words a moment's lines ahead and caps
- * itself well under this; it only stops a runaway client from spending the model budget.
+ * Lines one device may have worded in a day, from midnight on the user's clock. The phone words a
+ * moment's lines ahead and caps itself well under this; it only stops a runaway client from
+ * spending the model budget.
  */
 const wordsPerDay = 40;
 
@@ -21,7 +22,13 @@ export const wordRoute: RouteDefinition = {
   access: 'device',
   handle: async (c) => {
     const request = await readBody(c, wordRequestSchema, { maxBytes: 8_000 });
-    await requireAiBudget(c.env.DB, c.var.device.hash, 'word', wordsPerDay);
+    await requireAiBudget(
+      c.env.DB,
+      c.var.device.hash,
+      'word',
+      wordsPerDay,
+      readUtcOffset(c.req.header(UTC_OFFSET_HEADER)),
+    );
     const generated = await wordLine(
       { apiKey: c.env.ANTHROPIC_API_KEY },
       request,

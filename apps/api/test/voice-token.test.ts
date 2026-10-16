@@ -2,7 +2,7 @@ import { createExecutionContext, waitOnExecutionContext } from 'cloudflare:test'
 import { env } from 'cloudflare:workers';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { voiceTokenResponseSchema } from '@6pm/domain';
+import { dayStartAtOffset, UTC_OFFSET_HEADER, voiceTokenResponseSchema } from '@6pm/domain';
 
 import { createApp } from '../src/app';
 import { hashDeviceToken } from '../src/device-auth';
@@ -17,6 +17,7 @@ async function mint(
   token: string,
   bindings: Partial<Bindings>,
   body: unknown = { language: 'vi' },
+  headers: Record<string, string> = {},
 ): Promise<Response> {
   const app = createApp(Object.values(routes));
   const ctx = createExecutionContext();
@@ -27,6 +28,7 @@ async function mint(
         'CF-Connecting-IP': freshIp(),
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
+        ...headers,
       },
       body: JSON.stringify(body),
     }),
@@ -186,5 +188,32 @@ describe('POST /v1/voice/token', () => {
     const response = await mint(token, { DEEPGRAM_API_KEY: 'dg-key' });
     expect(response.status).toBe(429);
     expect(vendor).not.toHaveBeenCalled();
+  });
+
+  it("starts the day's count at midnight on the phone's clock", async () => {
+    const token = await registerDevice();
+    const hash = await hashDeviceToken(token);
+    const midnight = Date.parse(dayStartAtOffset(new Date(), 420));
+    const fill = (at: number) =>
+      env.DB.batch(
+        Array.from({ length: 200 }, () =>
+          env.DB.prepare(
+            `INSERT INTO ai_usage (route, model, input_tokens, output_tokens, device_hash, created_at)
+             VALUES ('voice.token', 'nova-3', 0, 0, ?, ?)`,
+          ).bind(hash, new Date(at).toISOString()),
+        ),
+      );
+    const inVietnam = { [UTC_OFFSET_HEADER]: '420' };
+    vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(Response.json({ access_token: 'jwt-test', expires_in: 30 })),
+    );
+
+    await fill(midnight - 1);
+    const yesterday = await mint(token, { DEEPGRAM_API_KEY: 'dg-key' }, undefined, inVietnam);
+    expect(yesterday.status).toBe(200);
+
+    await fill(midnight);
+    const today = await mint(token, { DEEPGRAM_API_KEY: 'dg-key' }, undefined, inVietnam);
+    expect(today.status).toBe(429);
   });
 });

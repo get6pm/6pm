@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   FREE_ASKS_PER_DAY,
+  allowanceDayOf,
   answerQuery,
   freeAsksLeft,
   isAskIntent,
@@ -86,7 +87,9 @@ function lastMood(messages: readonly AskMessage[]): CompanionMood {
 export function useAsk(): AskChat {
   const router = useRouter();
   const { t, language, weekday } = useI18n();
-  const { today } = useClock();
+  const { today, now } = useClock();
+  // Free questions are counted on the phone's calendar day: they come back at local midnight.
+  const allowanceDay = allowanceDayOf(now);
   const store = useMoneyStore();
   const actions = useMoneyActions();
   const api = useApi();
@@ -144,18 +147,18 @@ export function useAsk(): AskChat {
   }, [router]);
 
   // The latest words and clock, so a question asked a moment ago is answered in today's terms.
-  const words = useRef<AskWordsNow & { today: LocalDate }>({
+  const words = useRef<AskWordsNow & { allowanceDay: LocalDate }>({
     t,
     language,
     weekday,
     format,
     money,
-    today,
+    allowanceDay,
     serious,
     persona,
     form,
   });
-  words.current = { t, language, weekday, format, money, today, serious, persona, form };
+  words.current = { t, language, weekday, format, money, allowanceDay, serious, persona, form };
 
   /** Shows a message and keeps it on the phone. */
   const push = useCallback(
@@ -175,7 +178,7 @@ export function useAsk(): AskChat {
       const question = raw.trim();
       if (question === '' || busy.current) return;
       busy.current = true;
-      const { today: day } = words.current;
+      const { allowanceDay: day } = words.current;
       // Only questions the server reads count: on-device mode has no limit.
       const counted = !max && readAiMode(db) !== 'device';
       try {
@@ -245,7 +248,9 @@ export function useAsk(): AskChat {
   const act = useAskAct({ messages, setMessages, words, actions });
 
   const freeLeft =
-    max || askedOn === null || readAiMode(db) === 'device' ? null : freeAsksLeft(askedOn, today);
+    max || askedOn === null || readAiMode(db) === 'device'
+      ? null
+      : freeAsksLeft(askedOn, allowanceDay);
   const mood: CompanionMood = typing ? 'think' : lastMood(messages);
   const suggestions = useMemo(() => askSuggestions(t, potName, money), [t, potName, money]);
 

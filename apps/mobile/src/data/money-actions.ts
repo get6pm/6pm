@@ -151,7 +151,12 @@ export function moneyActions(store: MoneyStore) {
     const at = input.at ?? new Date();
     const snap = store.getSnapshot();
     const twin = findDuplicate(
-      { amount: Math.round(input.amount), source: input.source, at: at.toISOString() },
+      {
+        amount: Math.round(input.amount),
+        source: input.source,
+        status: input.status,
+        at: at.toISOString(),
+      },
       snap.cycleSpends,
     );
     if (twin) {

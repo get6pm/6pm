@@ -4,7 +4,7 @@ import { dailyNumber, type DailyNumber, type DailyNumberInput } from '../plan/da
 import { whatIfDaily } from '../plan/plan-river';
 import { answerAsk, type AskContext } from './ask-engine';
 import { readIntent } from './ask-intent';
-import { freeAsksLeft } from './ask-quota';
+import { allowanceDayOf, freeAsksLeft } from './ask-quota';
 
 /** The designed Friday 9 October: 351k line, 49k safe, 353k tomorrow, 22 days to payday. */
 const day: DailyNumber = {
@@ -132,5 +132,11 @@ describe('freeAsksLeft', () => {
     expect(freeAsksLeft(['2026-10-09', '2026-10-09', '2026-10-08'], '2026-10-09')).toBe(8);
     expect(freeAsksLeft(Array<string>(12).fill('2026-10-09'), '2026-10-09')).toBe(0);
     expect(freeAsksLeft(Array<string>(10).fill('2026-10-09'), '2026-10-10')).toBe(10);
+  });
+
+  it('starts again at local midnight, not at the money day’s 04:00', () => {
+    expect(allowanceDayOf(new Date(2026, 9, 9, 23, 59))).toBe('2026-10-09');
+    expect(allowanceDayOf(new Date(2026, 9, 10, 0, 0))).toBe('2026-10-10');
+    expect(allowanceDayOf(new Date(2026, 9, 10, 3, 0))).toBe('2026-10-10');
   });
 });

@@ -12,6 +12,7 @@ export * from './spend/spend';
 export * from './spend/spend-when';
 export * from './time/close-time';
 export * from './time/local-date';
+export * from './time/utc-offset';
 export * from './contracts/wire';
 export * from './contracts/local-rows';
 export * from './contracts/waitlist';

@@ -124,6 +124,7 @@ export const siteCopyEn: SiteCopy = {
     title: 'Free for the ritual.',
     monthly: 'Monthly',
     yearly: 'Yearly',
+    yearlySaving: '−42%',
     freeName: 'Free',
     zero: '$0',
     freeFor: 'forever',

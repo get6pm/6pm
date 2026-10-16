@@ -107,6 +107,8 @@ export interface SiteCopy {
     readonly title: string;
     readonly monthly: string;
     readonly yearly: string;
+    /** Yearly against twelve months, in that market's prices: −33% for 799.000₫, −42% for $34.99. */
+    readonly yearlySaving: string;
     readonly freeName: string;
     readonly zero: string;
     readonly freeFor: string;

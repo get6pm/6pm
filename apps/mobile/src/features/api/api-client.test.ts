@@ -2,6 +2,8 @@ import { describe, expect, it, jest } from '@jest/globals';
 
 import { z } from 'zod';
 
+import { UTC_OFFSET_HEADER, utcOffsetOf } from '@6pm/domain';
+
 import { createApiClient } from './api-client';
 import { ApiRequestError } from './api-error';
 import type { DeviceTokenStore } from './device-token-store';
@@ -179,5 +181,12 @@ describe('the server client', () => {
     await expect(client.request({ path: '/v1/x', schema })).rejects.toMatchObject({
       failure: 'network',
     });
+  });
+
+  it("says the phone's offset from UTC, so daily allowances turn at the user's midnight", async () => {
+    const { client, calls } = setup(() => reply(200, { ok: true }), memoryTokens(TOKEN));
+    await client.request({ path: '/v1/x', schema });
+    const headers = calls[0]?.init.headers as Record<string, string>;
+    expect(headers[UTC_OFFSET_HEADER]).toBe(String(utcOffsetOf(new Date())));
   });
 });

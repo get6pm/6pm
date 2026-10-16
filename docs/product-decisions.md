@@ -19,7 +19,7 @@ Rules that never bend:
 |---|---|
 | Store listing | Update to the existing App Store app `ai.sixpm.app` (dev build `ai.sixpm.app.dev`) |
 | v1 users | Fresh start. v1 is retired; no import, no migration code |
-| Code | `get6pm/6pm`, branch `main` |
+| Code | `at6pm/6pm`, branch `main` |
 | Launch | Fri 6 Nov 2026, 18:00 ICT (Coming Soon page countdown) |
 | Domain | `at6pm.app`: website at `/`, API at `/api/*`, receipt email `{handle}@at6pm.app` (dev `r+{handle}@dev.at6pm.app`). Dev: `dev.at6pm.app`. Changed 15 Oct 2026 from `6pm.oddeggs.studio` (dev `6pm-dev.oddeggs.studio`), which keeps its routes, links and receipt mailbox so builds and forwarding set up before the move keep working |
 | Platforms | iPhone at launch. Android is built and kept green in CI, not released *(default)* |

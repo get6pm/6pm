@@ -1,6 +1,6 @@
 # 6pm: agent contract
 
-Binding for every coding agent working on 6pm v2 (branch `main` of `get6pm/6pm`).
+Binding for every coding agent working on 6pm v2 (branch `main` of `at6pm/6pm`).
 
 ## Read before coding
 

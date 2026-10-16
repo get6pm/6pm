@@ -15,15 +15,17 @@ export function cardFling(
   y: number,
   velocityX: number,
   velocityY: number,
-  threshold: number = gestures.cardFling,
+  threshold?: number,
 ): CardFling {
   'worklet';
+  // Read here, not as a default parameter: a worklet captures only names its body uses.
+  const reach = threshold ?? gestures.cardFling;
   const px = x + project(velocityX);
   const py = y + project(velocityY);
   if (Math.abs(px) >= Math.abs(py)) {
-    if (px > threshold) return 'kept';
-    if (px < -threshold) return 'edit';
+    if (px > reach) return 'kept';
+    if (px < -reach) return 'edit';
     return null;
   }
-  return py > threshold ? 'notMine' : null;
+  return py > reach ? 'notMine' : null;
 }

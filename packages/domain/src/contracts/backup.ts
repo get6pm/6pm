@@ -24,7 +24,7 @@ export const BACKUP_FORMAT_VERSION = 1;
  * table must say "update 6pm" rather than call the backup damaged. A phone reads every version up
  * to its own.
  */
-export const BACKUP_SNAPSHOT_VERSION = 2;
+export const BACKUP_SNAPSHOT_VERSION = 3;
 
 /** AES-GCM: a 12-byte nonce in front of the ciphertext, a 16-byte tag behind it. */
 export const BACKUP_IV_BYTES = 12;
@@ -107,11 +107,12 @@ export const spendSightingRowSchema = z.object({
 });
 export type SpendSightingRow = z.infer<typeof spendSightingRowSchema>;
 
+/** `opening` (what a pot held before 6pm) arrived with snapshot format 3. */
 export const potMoveRowSchema = z.object({
   id: z.string().min(1),
   potId: z.string().min(1),
   amount: z.number().int(),
-  kind: z.enum(['setAside', 'topUp', 'spent']),
+  kind: z.enum(['setAside', 'topUp', 'spent', 'opening']),
   cycle: z.string().min(1),
   at: z.string().min(20),
 });

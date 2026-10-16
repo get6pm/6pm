@@ -30,7 +30,7 @@ export interface PotFields {
   readonly goal: number;
 }
 
-type Open = 'icon' | 'goal' | 'date' | null;
+type Open = 'icon' | 'goal' | 'opening' | 'date' | null;
 
 export interface PotSheetProps {
   readonly title: string;
@@ -46,6 +46,11 @@ export interface PotSheetProps {
   readonly from: string;
   /** What a saved pot holds already: shown under its name. */
   readonly saved?: Vnd | undefined;
+  /**
+   * "Already saved": what the pot held before 6pm, typed on the goal's keypad. It counts toward
+   * the goal and never comes out of this month. Left out, the row is not shown.
+   */
+  readonly opening?: { readonly amount: Vnd; readonly onChange: (amount: Vnd) => void } | undefined;
   /** More rows on the card (a goal's share, pause); a card of their own on a saved pot's sheet. */
   readonly rows?: ReactNode;
   /** Under the card, for a pot not saved yet. */
@@ -96,7 +101,7 @@ export function PotSheet(props: PotSheetProps) {
     opacity: withTiming(ready ? 1 : 0.35, { duration: 200 }),
   }));
   const saved = cost !== undefined;
-  const editing = saved && (open === 'goal' || open === 'date');
+  const editing = saved && (open === 'goal' || open === 'opening' || open === 'date');
 
   const toggle = (next: Exclude<Open, null>) => {
     Keyboard.dismiss();
@@ -193,6 +198,28 @@ export function PotSheet(props: PotSheetProps) {
                 onChange={(goal) => onChange({ goal })}
               />
             ) : null}
+            {props.opening ? (
+              <Row
+                label={t('plan.pot.opening')}
+                value={
+                  props.opening.amount > 0
+                    ? money.short(props.opening.amount)
+                    : t('plan.pot.openingNone')
+                }
+                open={open === 'opening'}
+                hint={t('plan.pot.editOpening')}
+                onPress={() => toggle('opening')}
+              />
+            ) : null}
+            {open === 'opening' && props.opening ? (
+              <GoalAmountEditor
+                goal={props.opening.amount}
+                presets={[]}
+                currency={props.currency}
+                hue={fields.hue}
+                onChange={props.opening.onChange}
+              />
+            ) : null}
             <Row
               label={t('plan.pot.neededBy')}
               value={monthValue}
@@ -211,7 +238,9 @@ export function PotSheet(props: PotSheetProps) {
                 onChange={props.onMonth}
               />
             ) : null}
-            {cost && open !== 'goal' ? <PotCostPanel cost={cost} hue={fields.hue} /> : null}
+            {cost && open !== 'goal' && open !== 'opening' ? (
+              <PotCostPanel cost={cost} hue={fields.hue} />
+            ) : null}
             {saved ? null : props.rows}
           </PotCard>
         </Animated.View>

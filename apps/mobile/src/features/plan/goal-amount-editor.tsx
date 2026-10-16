@@ -232,7 +232,7 @@ export function GoalAmountEditor({
         ) : null}
       </View>
 
-      <View style={{ flexDirection: 'row', gap: GAP }}>
+      <View style={{ flexDirection: 'row', gap: GAP, display: presets.length ? 'flex' : 'none' }}>
         {presets.slice(-PRESETS).map((amount) => {
           const on = amount === value;
           return (

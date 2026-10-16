@@ -7,9 +7,11 @@ import { goalMonthly, monthsBetween, potMonthlyNeed } from './plan-river';
 
 /**
  * Pots only count: 6pm never moves money. Each pay cycle writes one `setAside` move per pot, the
- * pot's share of that month's money, so the jar fills as the months go by.
+ * pot's share of that month's money, so the jar fills as the months go by. An `opening` move is
+ * what the pot already held before 6pm ("Already saved"): one per pot at most, it counts in what
+ * the pot holds and never in a cycle's top-ups, so it never lowers the daily number.
  */
-export type PotMoveKind = 'setAside' | 'topUp' | 'spent';
+export type PotMoveKind = 'setAside' | 'topUp' | 'spent' | 'opening';
 
 export interface PotMove {
   readonly potId: string;
@@ -53,12 +55,34 @@ export function potSetAside(input: {
   return potMonthlyNeed(pot.goal, savedBefore, potMonthsLeft(cycle, pot.neededBy), currency);
 }
 
-/** What a pot held when a cycle began: every move filed in an earlier cycle. */
+/**
+ * What a pot held when a cycle began: every move filed in an earlier cycle, and what it already
+ * held before 6pm, whenever that was typed, so the cycle's set-aside already knows about it.
+ */
 export function savedBefore(moves: readonly PotMove[], potId: string, cycleStart: LocalDate): Vnd {
   return moves.reduce(
-    (sum, m) => (m.potId === potId && m.cycle < cycleStart ? sum + m.amount : sum),
+    (sum, m) =>
+      m.potId === potId && (m.kind === 'opening' || m.cycle < cycleStart) ? sum + m.amount : sum,
     0,
   );
+}
+
+/** What a pot already held before 6pm: its opening move, 0 when it has none. */
+export function openingOf(moves: readonly PotMove[], potId: string): Vnd {
+  return moves.reduce(
+    (sum, m) => (m.potId === potId && m.kind === 'opening' ? sum + m.amount : sum),
+    0,
+  );
+}
+
+/** An amount the pot holds, as it would be with `opening` typed in place of its opening move. */
+export function withOpening(
+  held: Vnd,
+  moves: readonly PotMove[],
+  potId: string,
+  opening: Vnd,
+): Vnd {
+  return held - openingOf(moves, potId) + Math.max(0, Math.round(opening));
 }
 
 export interface SetAsideRecord {

@@ -23,7 +23,7 @@ import {
   type Vnd,
 } from '@6pm/domain';
 
-import type { CycleTopUps } from '../../data/plan-actions';
+import type { CycleTopUps } from '../../data/pot-moves';
 import type { MoneySnapshot } from '../../data/money-store';
 
 /**

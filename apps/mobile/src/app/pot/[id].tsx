@@ -2,7 +2,16 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Text } from 'react-native';
 
-import { aboutPerDay, cycleMonth, joinedShare, potSetAside, savedBefore } from '@6pm/domain';
+import {
+  aboutPerDay,
+  cycleMonth,
+  joinedShare,
+  openingOf,
+  potSetAside,
+  savedBefore,
+  withOpening,
+  type PotMove,
+} from '@6pm/domain';
 
 import { useMoney, useMoneyStore } from '../../data/money-provider';
 import { usePlanActions, type PotPatch } from '../../data/plan-actions';
@@ -45,7 +54,8 @@ export default function EditPot() {
   const [month, setMonth] = useState<string | null>(null);
   const [paused, setPaused] = useState(false);
   const [percent, setPercent] = useState(100);
-  const [held, setHeld] = useState<number | null>(null);
+  const [moves, setMoves] = useState<readonly PotMove[] | null>(null);
+  const [opening, setOpening] = useState<number | null>(null);
   const [working, setWorking] = useState(false);
   const busy = useRef(false);
   const left = useRef(false);
@@ -64,13 +74,16 @@ export default function EditPot() {
     setPercent(Math.round((pot.share ?? 1) * 100));
   }, [pot, fields]);
 
-  // What the pot held when this cycle began, so the sheet shows the set-aside it will really take.
+  // The pot's moves: what it held when this cycle began, so the sheet shows the set-aside it will
+  // really take, and what it held before 6pm, the "Already saved" row's starting amount.
   const startOfCycle = snap.cycle.start;
   useEffect(() => {
     let live = true;
     readPotMoves(store.db).then(
-      (moves) => {
-        if (live) setHeld(savedBefore(moves, id ?? '', startOfCycle));
+      (read) => {
+        if (!live) return;
+        setMoves(read);
+        setOpening((o) => o ?? openingOf(read, id ?? ''));
       },
       () => undefined,
     );
@@ -93,6 +106,11 @@ export default function EditPot() {
   const from = cycleMonth(snap.cycle);
   const share = goalKind ? (goals > 1 ? percent / 100 : 1) : null;
   const goal = fields?.goal ?? 0;
+  // With "Already saved" as typed: it counts as held before every cycle.
+  const held =
+    moves === null
+      ? null
+      : withOpening(savedBefore(moves, id ?? '', startOfCycle), moves, id ?? '', opening ?? 0);
   const monthly = potSetAside({
     pot: { kind: pot?.kind ?? 'occasion', goal, neededBy: month, share, paused },
     savedBefore: held ?? 0,
@@ -132,6 +150,7 @@ export default function EditPot() {
       neededBy: month,
       paused,
       ...(goalKind && goals > 1 ? { share: percent / 100 } : {}),
+      ...(moves && opening !== openingOf(moves, pot.id) ? { opening: opening ?? 0 } : {}),
     };
     if (!(await run(() => actions.updatePot(pot.id, patch)))) {
       busy.current = false;
@@ -171,7 +190,12 @@ export default function EditPot() {
       month={month}
       onMonth={setMonth}
       from={from}
-      saved={snap.potSaved[pot.id] ?? 0}
+      saved={
+        moves
+          ? withOpening(snap.potSaved[pot.id] ?? 0, moves, pot.id, opening ?? 0)
+          : (snap.potSaved[pot.id] ?? 0)
+      }
+      opening={{ amount: opening ?? 0, onChange: setOpening }}
       rows={
         <>
           {goalKind && goals > 1 ? (

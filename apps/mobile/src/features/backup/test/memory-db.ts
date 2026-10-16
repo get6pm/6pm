@@ -3,6 +3,7 @@ import { sql as createMoneyTables } from '../../../db/migrations/0002-create-mon
 import { sql as createTogetherMoves } from '../../../db/migrations/0003-create-together-moves';
 import { sql as addCurrencyGuessed } from '../../../db/migrations/0004-spend-currency-guessed';
 import { sql as addSightingCapture } from '../../../db/migrations/0006-sighting-capture-id';
+import { sql as addPotMoveOpening } from '../../../db/migrations/0007-pot-move-opening';
 import { createMoneyStore, type MoneyStore } from '../../../data/money-store';
 import type { SqlDatabase, SqlValue } from '../../../data/table';
 
@@ -16,6 +17,7 @@ export function openMemoryDb(): SqlDatabase {
   sqlite.exec(createTogetherMoves);
   sqlite.exec(addCurrencyGuessed);
   sqlite.exec(addSightingCapture);
+  sqlite.exec(addPotMoveOpening);
   return {
     getAllAsync: <T>(source: string, params: SqlValue[]) =>
       Promise.resolve(sqlite.prepare(source).all(...params) as T[]),

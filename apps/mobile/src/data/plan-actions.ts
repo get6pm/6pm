@@ -6,7 +6,7 @@ import { payCycleOn, rebalanceShares, type BillRow, type Payday, type PotRow } f
 import { useMoneyStore } from './money-provider';
 import type { MoneyStore } from './money-store';
 import { writePlan } from './plan-settings';
-import { clearCycleSetAside, moveCycleRecords } from './pot-moves';
+import { clearCycleSetAside, moveCycleRecords, writeOpening } from './pot-moves';
 import { inTurn } from './store-queue';
 
 export interface NewBill {
@@ -28,21 +28,19 @@ export interface NewPot {
   readonly neededBy: string | null;
   /** A goal's share of Future you (0–1); the other goals give way to it. */
   readonly share?: number;
+  /** What it already holds before 6pm ("Already saved"); none when left out. */
+  readonly opening?: number;
 }
 
-/** What the edit sheet changes on a pot. */
+/** What the edit sheet changes on a pot; `opening` is what it held before 6pm. */
 export type PotPatch = Partial<
-  Pick<PotRow, 'name' | 'icon' | 'hue' | 'goal' | 'neededBy' | 'paused' | 'share'>
+  Pick<PotRow, 'name' | 'icon' | 'hue' | 'goal' | 'neededBy' | 'paused' | 'share'> & {
+    opening: number;
+  }
 >;
 
-/** Changes that reach this cycle's set-aside; a rename or a new icon does not. */
+/** Changes that reach this cycle's set-aside (as does what it held before 6pm); a rename does not. */
 const SET_ASIDE_FIELDS = ['goal', 'neededBy', 'paused', 'share'] as const;
-
-/** Top-ups this pay cycle, split by where they went: the river shows each under its own colour. */
-export interface CycleTopUps {
-  readonly goal: number;
-  readonly occasion: number;
-}
 
 /**
  * The Plan tab's writes: bills paid, edited and removed, pots made, edited, topped up and removed,
@@ -147,6 +145,7 @@ export function planActions(store: MoneyStore) {
       };
       await db.withTransactionAsync(async () => {
         await tables.pots.put(row);
+        await writeOpening(db, row.id, input.opening ?? 0, snap.cycle.start);
         if (kind === 'goal') {
           const shares = rebalanceShares(
             { ...goalShares(snap.pots), [row.id]: row.share ?? 1 },
@@ -161,7 +160,7 @@ export function planActions(store: MoneyStore) {
     },
 
     /** The edit sheet's save: details, goal, date, pause, and a goal's share of Future you. */
-    updatePot: async (id: string, patch: PotPatch) => {
+    updatePot: async (id: string, { opening, ...patch }: PotPatch) => {
       const snap = store.getSnapshot();
       const pot = snap.pots.find((p) => p.id === id);
       if (!pot) return;
@@ -174,7 +173,10 @@ export function planActions(store: MoneyStore) {
       const touched = new Set<string>();
       await db.withTransactionAsync(async () => {
         await tables.pots.put(next);
-        if (SET_ASIDE_FIELDS.some((field) => field in patch)) touched.add(id);
+        if (opening !== undefined) await writeOpening(db, id, opening, snap.cycle.start);
+        if (SET_ASIDE_FIELDS.some((field) => field in patch) || opening !== undefined) {
+          touched.add(id);
+        }
         if (pot.kind === 'goal' && typeof patch.share === 'number' && patch.share !== pot.share) {
           const shares = rebalanceShares({ ...goalShares(snap.pots), [id]: patch.share }, id);
           for (const moved of await putShares(
@@ -284,15 +286,4 @@ export type PlanActions = ReturnType<typeof planActions>;
 export function usePlanActions(): PlanActions {
   const store = useMoneyStore();
   return useMemo(() => planActions(store), [store]);
-}
-
-/** This cycle's top-ups by the kind of pot they went into. */
-export async function readCycleTopUps(store: MoneyStore): Promise<CycleTopUps> {
-  const rows = await store.db.getAllAsync<{ kind: string; total: number }>(
-    `SELECT p.kind AS kind, SUM(m.amount) AS total FROM pot_moves m JOIN pots p ON p.id = m.pot_id
-     WHERE m.kind = 'topUp' AND m.cycle = ? AND p.archived_at IS NULL GROUP BY p.kind`,
-    [store.getSnapshot().cycle.start],
-  );
-  const of = (kind: string) => rows.find((r) => r.kind === kind)?.total ?? 0;
-  return { goal: of('goal'), occasion: of('occasion') };
 }

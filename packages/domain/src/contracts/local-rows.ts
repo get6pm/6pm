@@ -56,6 +56,12 @@ export const spendRowSchema = z.object({
    * from before it was kept.
    */
   currencyGuessed: z.boolean().optional(),
+  /**
+   * The bill this payment paid (its id), or `'repayment'` for a card or loan with no bill: out of
+   * the daily number, since the bill already came off the plan. Absent on rows and backups from
+   * before bills could be paid by a spend.
+   */
+  paysBill: z.string().min(1).nullable().optional(),
   createdAt: instant,
   updatedAt: instant,
 });
@@ -70,6 +76,11 @@ export const merchantRuleRowSchema = z.object({
 });
 export type MerchantRuleRow = z.infer<typeof merchantRuleRowSchema>;
 
+const month = z.string().regex(/^\d{4}-\d{2}$/);
+
+export const billKindSchema = z.enum(['card', 'other']);
+
+/** Kind, last month, paid amount and asked cycle arrived with snapshot format 4. */
 export const billRowSchema = z.object({
   id,
   name: z.string().min(1),
@@ -80,6 +91,14 @@ export const billRowSchema = z.object({
   paidCycle: day.nullable(),
   sort: z.number().int(),
   archivedAt: instant.nullable(),
+  /** A card bill's payment never moves free money (card spending counted when it happened). */
+  kind: billKindSchema.default('other'),
+  /** The last month ('YYYY-MM') it is paid in; it stops by itself after. Null: no end. */
+  lastMonth: month.nullable().default(null),
+  /** What paying it took in `paidCycle`, when that was not its amount (`other` bills only). */
+  paidAmount: vnd.nullable().default(null),
+  /** The pay cycle the close last asked whether a capture paid it: once a cycle at most. */
+  askedCycle: day.nullable().default(null),
 });
 export type BillRow = z.infer<typeof billRowSchema>;
 

@@ -1,4 +1,4 @@
-import { potRoom, soonestNeededBy, type Vnd } from '@6pm/domain';
+import { potRoom, soonestNeededBy, type Vnd, billsThisCycle } from '@6pm/domain';
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
@@ -30,7 +30,7 @@ export function usePotWarn(input: {
   const own = input.potId === null ? 0 : (snap.setAsideThisCycle[input.potId] ?? 0);
   const room = potRoom({
     income,
-    bills: snap.bills.reduce((sum, b) => sum + b.amount, 0),
+    bills: billsThisCycle(snap.bills, snap.cycle),
     futureYou: snap.plan?.futureYou ?? 0,
     otherOccasions: Math.max(0, occasionsMonthly(snap) - own),
   });

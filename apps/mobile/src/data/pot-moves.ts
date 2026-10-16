@@ -122,6 +122,7 @@ export async function moveCycleRecords(
   await db.runAsync('UPDATE pot_moves SET cycle = ? WHERE cycle = ?', [to, from]);
   await db.runAsync('UPDATE together_moves SET cycle = ? WHERE cycle = ?', [to, from]);
   await db.runAsync('UPDATE bills SET paid_cycle = ? WHERE paid_cycle = ?', [to, from]);
+  await db.runAsync('UPDATE bills SET asked_cycle = ? WHERE asked_cycle = ?', [to, from]);
 }
 
 /** Top-ups this pay cycle, split by where they went: the river shows each under its own colour. */

@@ -29,7 +29,9 @@ export function useSpendLabels(): Labels {
               ? t('today.row.claimBack')
               : row.status === 'skipped'
                 ? t('today.row.notMine')
-                : null,
+                : row.paysBill
+                  ? t('today.row.bill')
+                  : null,
       money,
     };
   }, [t, language, money]);

@@ -23,7 +23,13 @@ export function receiptSpends(
   return {
     lines: kept.filter((s) =>
       countsTowardDay(
-        { amount: s.amount, category: s.categoryId, status: s.status, forWork: s.forWork },
+        {
+          amount: s.amount,
+          category: s.categoryId,
+          status: s.status,
+          forWork: s.forWork,
+          paysBill: s.paysBill,
+        },
         notDaily,
       ),
     ),

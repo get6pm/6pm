@@ -82,6 +82,8 @@ export function useOnboarding(startStep = 0) {
             hue: b.hue,
             amount: b.amount,
             dueDay: b.dueDay,
+            kind: b.kind,
+            ...(b.monthsLeft === undefined ? {} : { monthsLeft: b.monthsLeft }),
           })),
           wallets,
           closeAt,

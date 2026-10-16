@@ -1,19 +1,22 @@
 /**
  * The 6pm Close as a state machine, independent of any screen:
  *
- *   cards → sorted → cash (or sweep when nothing was caught) → question? → receipt → reveal
+ *   cards → sorted → cash (or sweep when nothing was caught) → bill? → question? → receipt → reveal
  *
  * - `cards`: each waiting spend is kept, edited (then kept) or marked not mine; the last swipe can
  *   be undone.
  * - `sorted`: a beat that tallies the swipes, then moves on by itself.
  * - `cash`: anything paid in cash today; `sweep` is the same step when nothing was caught.
+ * - `bill`: one question per kept spend that looks like a bill's payment ("Is this your {bill}?")
+ *   or a repayment with no bill ("Paying off a card or loan?"), in the queue's order.
  * - `question`: asked only when a kept spend is flagged as maybe-for-work and not yet answered.
  * - `receipt` and `reveal`: the printed day and tomorrow's number.
  *
  * Leaving at any step pauses the close; resuming returns to that step (`sorted` resumes at cash).
  */
 
-export type CloseStep = 'cards' | 'sorted' | 'cash' | 'question' | 'receipt' | 'reveal' | 'done';
+export type CloseStep =
+  'cards' | 'sorted' | 'cash' | 'bill' | 'question' | 'receipt' | 'reveal' | 'done';
 
 export type CardVerdict = 'kept' | 'edited' | 'notMine';
 
@@ -21,6 +24,11 @@ export interface CloseCard {
   readonly id: string;
   /** The spend might be for work: the close asks once. */
   readonly askWork?: boolean;
+  /**
+   * The spend may have paid a bill: the bill's id, or `REPAYMENT` for a card or loan with no bill.
+   * The close asks once.
+   */
+  readonly askBill?: string;
 }
 
 export interface CloseState {
@@ -33,6 +41,8 @@ export interface CloseState {
   /** Nothing was caught today: the cash step is a quick sweep. */
   readonly sweep: boolean;
   readonly workAnswered: boolean;
+  /** Bill questions answered, by card id: true when the spend paid it. */
+  readonly billAnswers: Readonly<Record<string, boolean>>;
   readonly paused: boolean;
 }
 
@@ -42,6 +52,7 @@ export type CloseEvent =
   | { readonly type: 'undoExpired' }
   | { readonly type: 'sortedShown' }
   | { readonly type: 'cashDone' }
+  | { readonly type: 'answerBill'; readonly id: string; readonly paid: boolean }
   | { readonly type: 'answerWork' }
   | { readonly type: 'receiptDone' }
   | { readonly type: 'finish' }
@@ -56,6 +67,7 @@ export function startClose(cards: readonly CloseCard[]): CloseState {
     undoable: null,
     sweep: cards.length === 0,
     workAnswered: false,
+    billAnswers: {},
     paused: false,
   };
 }
@@ -80,9 +92,33 @@ export function tally(state: CloseState): CloseTally {
   };
 }
 
+/** The next card the close asks "Is this your bill?" about, or null when none is left. */
+export function billQuestion(state: CloseState): CloseCard | null {
+  return (
+    state.cards.find(
+      (card) =>
+        card.askBill !== undefined &&
+        state.verdicts[card.id] !== 'notMine' &&
+        state.billAnswers[card.id] === undefined,
+    ) ?? null
+  );
+}
+
+/** A spend that paid a bill is not spending, so it is never asked about as work. */
 function needsWorkQuestion(state: CloseState): boolean {
   if (state.workAnswered) return false;
-  return state.cards.some((card) => card.askWork === true && state.verdicts[card.id] !== 'notMine');
+  return state.cards.some(
+    (card) =>
+      card.askWork === true &&
+      state.verdicts[card.id] !== 'notMine' &&
+      state.billAnswers[card.id] !== true,
+  );
+}
+
+/** Where the close goes after the cash step and each bill answer. */
+function afterCash(state: CloseState): CloseState {
+  const step = billQuestion(state) ? 'bill' : needsWorkQuestion(state) ? 'question' : 'receipt';
+  return { ...state, step };
 }
 
 export function closeReducer(state: CloseState, event: CloseEvent): CloseState {
@@ -108,8 +144,11 @@ export function closeReducer(state: CloseState, event: CloseEvent): CloseState {
     case 'sortedShown':
       return state.step === 'sorted' ? { ...state, step: 'cash', undoable: null } : state;
     case 'cashDone':
-      if (state.step !== 'cash') return state;
-      return { ...state, step: needsWorkQuestion(state) ? 'question' : 'receipt' };
+      return state.step === 'cash' ? afterCash(state) : state;
+    case 'answerBill': {
+      if (state.step !== 'bill' || billQuestion(state)?.id !== event.id) return state;
+      return afterCash({ ...state, billAnswers: { ...state.billAnswers, [event.id]: event.paid } });
+    }
     case 'answerWork':
       return state.step === 'question' ? { ...state, workAnswered: true, step: 'receipt' } : state;
     case 'receiptDone':
@@ -138,7 +177,7 @@ export function stepPosition(step: CloseStep): { index: number; of: 5 } {
       ? 1
       : step === 'cash'
         ? 2
-        : step === 'question'
+        : step === 'bill' || step === 'question'
           ? 3
           : step === 'receipt'
             ? 4

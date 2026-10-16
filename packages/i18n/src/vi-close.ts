@@ -66,4 +66,16 @@ export const viClose: { readonly [Key in keyof typeof enClose]: Entry } = {
   'close.cash.other': 'Số khác',
   'close.cash.otherTitle': 'Bao nhiêu tiền mặt?',
   'close.cash.add': 'Thêm vào tiền mặt hôm nay',
+  'close.bill.title': 'Đây là {bill} của bạn?',
+  'close.bill.sub':
+    'Nếu đúng, hoá đơn này coi như đã trả tháng này, và khoản này không tính vào số tiêu mỗi ngày.',
+  'close.bill.subCard':
+    'Nếu đúng, hoá đơn thẻ tháng này coi như đã trả. Những gì bạn quẹt thẻ đã được tính vào ngày bạn mua.',
+  'close.bill.yes': 'Đúng, là hoá đơn đó',
+  'close.bill.yesCard': 'Đúng, trả thẻ',
+  'close.bill.no': 'Không, là chi tiêu',
+  'close.repayment.title': 'Bạn đang trả thẻ hay khoản vay?',
+  'close.repayment.sub':
+    'Nếu đúng, khoản này không tính vào số tiêu mỗi ngày. Những gì bạn quẹt thẻ đã được tính rồi.',
+  'close.repayment.yes': 'Đúng, đang trả nợ',
 };

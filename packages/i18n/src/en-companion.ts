@@ -124,4 +124,8 @@ export const enCompanion = {
   'companion.share.cheeky': 'Receipt ready. Frame it.',
   'companion.share.roast': 'Receipt ready. Brag responsibly.',
   'companion.share.plain': 'Receipt ready to share.',
+  'companion.billQuestion.soft': 'This one looks like a bill.',
+  'companion.billQuestion.cheeky': 'Wait, I think I know this one.',
+  'companion.billQuestion.roast': 'A bill, or a very big treat?',
+  'companion.billQuestion.plain': 'This may be a bill.',
 } as const;

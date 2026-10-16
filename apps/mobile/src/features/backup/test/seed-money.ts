@@ -73,6 +73,7 @@ export async function seedMoney(db: SqlDatabase): Promise<void> {
     forWork: false,
     detail: null,
     foreignAmount: null,
+    paysBill: 'bill-1',
     createdAt: '2026-10-11T02:00:00.000Z',
     updatedAt: '2026-10-11T02:01:00.000Z',
   });
@@ -97,6 +98,10 @@ export async function seedMoney(db: SqlDatabase): Promise<void> {
     paidCycle: '2026-09-25',
     sort: 0,
     archivedAt: null,
+    kind: 'card',
+    lastMonth: '2027-09',
+    paidAmount: null,
+    askedCycle: '2026-09-25',
   });
   await tables.pots.put({
     id: 'pot-1',

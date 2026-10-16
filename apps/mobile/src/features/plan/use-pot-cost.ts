@@ -1,4 +1,4 @@
-import { potFit, potRoom, soonestNeededBy, type Vnd } from '@6pm/domain';
+import { potFit, potRoom, soonestNeededBy, type Vnd, billsThisCycle } from '@6pm/domain';
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
@@ -46,7 +46,7 @@ export function usePotCost(input: {
       ? null
       : potRoom({
           income,
-          bills: snap.bills.reduce((sum, b) => sum + b.amount, 0),
+          bills: billsThisCycle(snap.bills, snap.cycle),
           futureYou,
           otherOccasions: Math.max(0, occasionsMonthly(snap) - own),
         });

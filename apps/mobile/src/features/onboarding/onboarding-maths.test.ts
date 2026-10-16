@@ -204,8 +204,25 @@ describe('bill deck', () => {
       'subs:spotify',
       'subs:icloud',
       'multi',
+      'multi',
     ]);
-    expect(dealDeck(NO_BILL_ANSWERS)).toHaveLength(5);
+    expect(dealDeck(NO_BILL_ANSWERS)).toHaveLength(6);
+  });
+
+  it('asks what is being paid off: a card is a card bill, a trả góp asks its months left', () => {
+    const answers: BillAnswers = {
+      asks: {},
+      multis: { debts: { picked: ['card', 'instalment', 'owe'], done: true } },
+      amounts: { 'debts:card': 2_000_000, 'debts:instalment': 1_000_000, 'debts:owe': 500_000 },
+      dueDays: {},
+      monthsLeft: { 'debts:instalment': 9 },
+    };
+    const bills = chosenBills(dealDeck(answers), answers);
+    expect(bills.map((b) => [b.key, b.kind, b.monthsLeft])).toEqual([
+      ['debts:card', 'card', undefined],
+      ['debts:instalment', 'other', 9],
+      ['debts:owe', 'other', undefined],
+    ]);
   });
 
   it('keeps answered bills, including ones put off without an amount', () => {

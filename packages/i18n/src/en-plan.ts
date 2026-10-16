@@ -167,4 +167,9 @@ export const enPlan = {
   'plan.goal.sumNoneSub': 'Slide “What if” above to start again.',
   'plan.goal.delete': 'Delete goal',
   'plan.goal.pause': 'Pause this goal',
+  'plan.bill.card': 'Paying off a card',
+  'plan.bill.cardSub':
+    'Only what pays off an old balance. New card spending counts the day it happens.',
+  'plan.bill.monthsLeft': 'Months left',
+  'plan.bill.noEnd': 'No end',
 } as const;

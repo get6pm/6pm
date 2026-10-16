@@ -22,6 +22,7 @@ const ASK_COPY = {
 const MULTI_COPY = {
   subs: { q: 'onboarding.bills.subs.q', sub: 'onboarding.bills.subs.sub' },
   other: { q: 'onboarding.bills.other.q', sub: 'onboarding.bills.other.sub' },
+  debts: { q: 'onboarding.bills.debts.q', sub: 'onboarding.bills.debts.sub' },
 } as const satisfies Record<MultiKey, unknown>;
 
 const OPTION_COPY = {
@@ -31,6 +32,9 @@ const OPTION_COPY = {
   family: 'onboarding.bills.family',
   tuition: 'onboarding.bills.tuition',
   parking: 'onboarding.bills.parking',
+  card: 'onboarding.bills.card',
+  loan: 'onboarding.bills.loan',
+  owe: 'onboarding.bills.owe',
 } as const;
 
 function isOptionWithCopy(id: string): id is keyof typeof OPTION_COPY {

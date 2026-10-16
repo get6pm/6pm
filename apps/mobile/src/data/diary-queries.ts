@@ -135,6 +135,7 @@ export function toDiarySpend(s: SpendRow): DiarySpend {
     category: s.categoryId,
     status: s.status,
     forWork: s.forWork,
+    paysBill: s.paysBill,
   };
 }
 
@@ -211,7 +212,13 @@ export async function readDayReceipt(
     (s) =>
       s.status === 'kept' &&
       countsTowardDay(
-        { amount: s.amount, category: s.categoryId, status: s.status, forWork: s.forWork },
+        {
+          amount: s.amount,
+          category: s.categoryId,
+          status: s.status,
+          forWork: s.forWork,
+          paysBill: s.paysBill,
+        },
         notDaily,
       ),
   );

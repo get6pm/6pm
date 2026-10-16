@@ -96,6 +96,75 @@ describe('backupSnapshotSchema', () => {
     }
   });
 
+  it('restores bills from formats 1 to 3 as plain bills with no end, and keeps format 4 kinds', () => {
+    const bill = {
+      id: 'bill-1',
+      name: 'Rent',
+      icon: 'home',
+      hue: 30,
+      amount: 5_000_000,
+      dueDay: 5,
+      paidCycle: null,
+      sort: 0,
+      archivedAt: null,
+    };
+    for (const version of [1, 2, 3]) {
+      const parsed = backupSnapshotSchema.parse({ ...empty, version, bills: [bill] });
+      expect(parsed.bills[0]).toMatchObject({
+        kind: 'other',
+        lastMonth: null,
+        paidAmount: null,
+        askedCycle: null,
+      });
+    }
+    const card = {
+      ...bill,
+      kind: 'card',
+      lastMonth: '2027-09',
+      paidAmount: null,
+      askedCycle: null,
+    };
+    expect(backupSnapshotSchema.parse({ ...empty, bills: [card] }).bills[0]).toMatchObject({
+      kind: 'card',
+      lastMonth: '2027-09',
+    });
+    expect(
+      backupSnapshotSchema.safeParse({ ...empty, bills: [{ ...bill, kind: 'loan' }] }).success,
+    ).toBe(false);
+    expect(
+      backupSnapshotSchema.safeParse({ ...empty, bills: [{ ...bill, lastMonth: '2027-9' }] })
+        .success,
+    ).toBe(false);
+  });
+
+  it('keeps which bill a spend paid, and reads spends from before it was kept', () => {
+    const spend = {
+      id: 'spend-1',
+      day: '2026-10-05',
+      at: '2026-10-05T03:00:00.000Z',
+      amount: 8_000_000,
+      categoryId: 'shopping',
+      merchant: 'THANH TOAN THE',
+      note: null,
+      source: 'email',
+      status: 'kept',
+      previousStatus: null,
+      wallet: null,
+      forWork: false,
+      detail: null,
+      foreignAmount: null,
+      createdAt: '2026-10-05T03:00:00.000Z',
+      updatedAt: '2026-10-05T03:00:00.000Z',
+    };
+    expect(
+      backupSnapshotSchema.parse({ ...empty, version: 3, spends: [spend] }).spends[0],
+    ).not.toHaveProperty('paysBill');
+    const paid = { ...spend, paysBill: 'bill-1' };
+    expect(backupSnapshotSchema.parse({ ...empty, spends: [paid] }).spends[0]?.paysBill).toBe(
+      'bill-1',
+    );
+  });
+
   it('counts what a person made and would miss', () => {
     expect(backupItemCount(backupSnapshotSchema.parse(empty))).toBe(0);
   });

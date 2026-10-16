@@ -15,6 +15,10 @@ export interface NewBill {
   readonly hue: number;
   readonly amount: number;
   readonly dueDay: number;
+  /** A card's payment never moves free money; `other` when left out. */
+  readonly kind?: BillRow['kind'];
+  /** The last month ('YYYY-MM') it is paid in; null or left out for no end. */
+  readonly lastMonth?: string | null;
 }
 
 export interface NewPot {
@@ -88,7 +92,8 @@ export function planActions(store: MoneyStore) {
       const snap = store.getSnapshot();
       const bill = snap.bills.find((b) => b.id === id);
       if (!bill) return;
-      await putBill({ ...bill, paidCycle: paid ? snap.cycle.start : null });
+      // Ticked by hand, a bill is paid its own amount.
+      await putBill({ ...bill, paidCycle: paid ? snap.cycle.start : null, paidAmount: null });
     },
     addBill: async (input: NewBill) => {
       const snap = store.getSnapshot();
@@ -99,14 +104,20 @@ export function planActions(store: MoneyStore) {
         paidCycle: null,
         sort: snap.bills.reduce((max, b) => Math.max(max, b.sort + 1), 0),
         archivedAt: null,
+        kind: input.kind ?? 'other',
+        lastMonth: input.lastMonth ?? null,
+        paidAmount: null,
+        askedCycle: null,
       });
     },
     updateBill: async (id: string, patch: Partial<NewBill>) => {
       const bill = store.getSnapshot().bills.find((b) => b.id === id);
       if (!bill) return;
+      const { lastMonth, ...rest } = patch;
       await putBill({
         ...bill,
-        ...patch,
+        ...rest,
+        ...(lastMonth === undefined ? {} : { lastMonth }),
         ...(patch.amount === undefined ? {} : { amount: Math.round(patch.amount) }),
       });
     },

@@ -18,6 +18,7 @@ import { LiveStage } from './live-stage';
 import { LockStage } from './lock-stage';
 import { useWidgetPreview } from './preview-data';
 import { SurfaceCard } from './surface-card';
+import { useMeasuredWidth } from '../../ui/layout/use-measured-width';
 
 /** The prototype's `screenIn`: up 12 pt from 98.5 %, over 0.35 s on the entrance curve. */
 const screenIn = new Keyframe({
@@ -40,8 +41,10 @@ export function WidgetsGuideSheet() {
   const router = useRouter();
   const preview = useWidgetPreview();
   const window = useWindowDimensions();
-  // The sheet's 16 pt margins, then the card's 16 pt padding.
-  const stageWidth = window.width - 64;
+  // The sheet's own width (narrower than the window on a wide screen), less its 16 pt margins
+  // and the card's 16 pt padding.
+  const sheet = useMeasuredWidth(window.width);
+  const stageWidth = sheet.width - 64;
 
   const header = (
     <View style={{ paddingTop: 8, paddingHorizontal: 14, paddingBottom: 6, gap: 6 }}>
@@ -86,7 +89,11 @@ export function WidgetsGuideSheet() {
 
   return (
     <SheetFrame header={header}>
-      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        onLayout={sheet.onLayout}
+        style={{ flex: 1, opacity: sheet.ready ? 1 : 0 }}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={{ paddingTop: 6, paddingHorizontal: 16, paddingBottom: 44, gap: 16 }}>
           <Animated.View
             entering={screenIn}

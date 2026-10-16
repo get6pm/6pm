@@ -20,6 +20,7 @@ import { PressScale } from '../../../ui/primitives/press-scale';
 import { useTheme } from '../../../ui/theme/theme';
 import { body } from '../../../ui/type/fonts';
 import { Page } from './walkthrough-page';
+import { useMeasuredWidth } from '../../../ui/layout/use-measured-width';
 
 /** One step: what to do, in words, and the screen it happens on, drawn and playing on `t`. */
 export interface WalkthroughStep {
@@ -53,7 +54,9 @@ export function Walkthrough({ steps }: { readonly steps: readonly WalkthroughSte
   const { t } = useI18n();
   const still = useReducedMotion();
   const window = useWindowDimensions();
-  const width = window.width - 32;
+  // The card's own width: the sheet less its 16 pt sides, which is not the window's on a wide screen.
+  const card = useMeasuredWidth(window.width - 32);
+  const width = card.width;
   const size: FrameSize = {
     width,
     phoneScale: Math.min(222, width * 0.62) / 402,
@@ -130,7 +133,9 @@ export function Walkthrough({ steps }: { readonly steps: readonly WalkthroughSte
 
   return (
     <View
+      onLayout={card.onLayout}
       style={{
+        opacity: card.ready ? 1 : 0,
         borderRadius: 26,
         backgroundColor: palette.cell,
         boxShadow: palette.cardShadow,

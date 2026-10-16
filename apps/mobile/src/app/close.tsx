@@ -27,6 +27,9 @@ import { useDesignInsets } from '../ui/layout/design-insets';
 import { useClock } from '../ui/theme/clock';
 import { useTheme } from '../ui/theme/theme';
 
+/** The design phone's width less its 20 pt sides. */
+const COLUMN = 362;
+
 const STEP_KEYS = [
   'close.step.cards',
   'close.step.cash',
@@ -42,7 +45,7 @@ export default function Close() {
   const { t, language } = useI18n();
   const money = useMoneyFormat();
   const { now } = useClock();
-  const { top, bottom } = useDesignInsets();
+  const { top, bottom, rail } = useDesignInsets();
   const snap = useMoney();
   const store = useMoneyStore();
   const actions = useMoneyActions();
@@ -113,122 +116,126 @@ export default function Close() {
         flex: 1,
         experimental_backgroundImage: palette.skyDeep,
         paddingTop: top(60),
-        paddingHorizontal: 20,
+        paddingLeft: 20,
+        paddingRight: 20 + rail,
         paddingBottom: bottom(30),
       }}
     >
-      <CloseTopBar
-        keys={STEP_KEYS}
-        index={position.index}
-        of={position.of}
-        label={t(STEP_KEYS[position.index - 1] ?? 'close.step.cards')}
-        closeLabel={t('common.done')}
-        onClose={() => (state.step === 'reveal' ? void finish() : router.back())}
-      />
+      {/* A phone's column, centred where the screen is wider (the iPhone Duo opened). */}
+      <View style={{ flex: 1, width: '100%', maxWidth: COLUMN, alignSelf: 'center' }}>
+        <CloseTopBar
+          keys={STEP_KEYS}
+          index={position.index}
+          of={position.of}
+          label={t(STEP_KEYS[position.index - 1] ?? 'close.step.cards')}
+          closeLabel={t('common.done')}
+          onClose={() => (state.step === 'reveal' ? void finish() : router.back())}
+        />
 
-      {state.step === 'cards' ? (
-        <CloseCards
-          cards={close.cards}
-          kicker={
-            counts.kept + counts.edited > 0
-              ? t('close.kicker', {
-                  date: shortDate(closingDate),
-                  n: close.queue.length - close.cards.length + 1,
-                  total: close.queue.length,
-                  kept: money.short(close.keptBefore).toUpperCase(),
-                })
-              : t('close.kickerStart', {
-                  date: shortDate(closingDate),
-                  n: 1,
-                  total: close.queue.length,
-                })
-          }
-          title={t('close.title', { count: close.queue.length })}
-          hint={t('close.hint')}
-          undoText={close.undoText}
-          undoLabel={t('close.undo')}
-          buttons={{
-            edit: t('close.btn.edit'),
-            notMine: t('close.btn.notMine'),
-            keep: t('close.btn.keep'),
-          }}
-          onDecide={close.decide}
-          onEdit={setEditing}
-          onUndo={close.undo}
-        />
-      ) : null}
-      {state.step === 'sorted' ? (
-        <SortedStep
-          title={t('close.sorted.title', { count: close.queue.length })}
-          sub={t('close.sorted.sub', counts)}
-          undoLabel={t('close.undoLast')}
-          canUndo={state.undoable !== null}
-          onUndo={close.undo}
-        />
-      ) : null}
-      {state.step === 'cash' ? (
-        <CashStep
-          title={state.sweep ? t('close.cash.sweep') : t('close.cash.title')}
-          sub={t('close.cash.sub')}
-          chips={chips}
-          added={close.cash}
-          totalLabel={t('close.cash.total')}
-          doneLabel={t('close.cash.done')}
-          noneLabel={t('close.cash.none')}
-          otherLabel={t('close.cash.other')}
-          onAdd={(chip) => addCash(chip.name, chip.amount, categoryFor(chip.key), chip.key)}
-          onSaid={(said) =>
-            addCash(said.name, said.amount, categoryFor(said.key), said.key, 'voice')
-          }
-          onOther={() => setTypingCash(true)}
-          onDone={() => dispatch({ type: 'cashDone' })}
-        />
-      ) : null}
-      {state.step === 'question' && close.askWorkId ? (
-        <WorkQuestionStep
-          line={
-            snap.plan.serious
-              ? null
-              : t(`companion.question.${snap.plan.persona}` as 'companion.question.cheeky')
-          }
-          receiptLine={(() => {
-            const s = close.queue.find((q) => q.id === close.askWorkId);
-            return {
-              time: s
-                ? new Intl.DateTimeFormat(locale, {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                  }).format(new Date(s.at))
-                : '',
-              name: s?.merchant ?? '',
-              amount: s?.amount ?? 0,
-            };
-          })()}
-          title={t('close.work.title')}
-          sub={t('close.work.sub')}
-          yes={t('close.work.yes')}
-          no={t('close.work.no')}
-          onAnswer={(forWork) => {
-            haptics.tap();
-            const id = close.askWorkId;
-            if (forWork && id) void run(() => actions.markForWork(id, true));
-            dispatch({ type: 'answerWork' });
-          }}
-        />
-      ) : null}
-      {state.step === 'receipt' ? (
-        <CloseReceiptStep
-          day={close.day}
-          closedAt={closedAt}
-          spent={day.spent}
-          tomorrow={day.tomorrow}
-          onNext={() => dispatch({ type: 'receiptDone' })}
-        />
-      ) : null}
-      {state.step === 'reveal' ? (
-        <CloseRevealStep day={close.day} number={day} onDone={() => void finish()} />
-      ) : null}
+        {state.step === 'cards' ? (
+          <CloseCards
+            cards={close.cards}
+            kicker={
+              counts.kept + counts.edited > 0
+                ? t('close.kicker', {
+                    date: shortDate(closingDate),
+                    n: close.queue.length - close.cards.length + 1,
+                    total: close.queue.length,
+                    kept: money.short(close.keptBefore).toUpperCase(),
+                  })
+                : t('close.kickerStart', {
+                    date: shortDate(closingDate),
+                    n: 1,
+                    total: close.queue.length,
+                  })
+            }
+            title={t('close.title', { count: close.queue.length })}
+            hint={t('close.hint')}
+            undoText={close.undoText}
+            undoLabel={t('close.undo')}
+            buttons={{
+              edit: t('close.btn.edit'),
+              notMine: t('close.btn.notMine'),
+              keep: t('close.btn.keep'),
+            }}
+            onDecide={close.decide}
+            onEdit={setEditing}
+            onUndo={close.undo}
+          />
+        ) : null}
+        {state.step === 'sorted' ? (
+          <SortedStep
+            title={t('close.sorted.title', { count: close.queue.length })}
+            sub={t('close.sorted.sub', counts)}
+            undoLabel={t('close.undoLast')}
+            canUndo={state.undoable !== null}
+            onUndo={close.undo}
+          />
+        ) : null}
+        {state.step === 'cash' ? (
+          <CashStep
+            title={state.sweep ? t('close.cash.sweep') : t('close.cash.title')}
+            sub={t('close.cash.sub')}
+            chips={chips}
+            added={close.cash}
+            totalLabel={t('close.cash.total')}
+            doneLabel={t('close.cash.done')}
+            noneLabel={t('close.cash.none')}
+            otherLabel={t('close.cash.other')}
+            onAdd={(chip) => addCash(chip.name, chip.amount, categoryFor(chip.key), chip.key)}
+            onSaid={(said) =>
+              addCash(said.name, said.amount, categoryFor(said.key), said.key, 'voice')
+            }
+            onOther={() => setTypingCash(true)}
+            onDone={() => dispatch({ type: 'cashDone' })}
+          />
+        ) : null}
+        {state.step === 'question' && close.askWorkId ? (
+          <WorkQuestionStep
+            line={
+              snap.plan.serious
+                ? null
+                : t(`companion.question.${snap.plan.persona}` as 'companion.question.cheeky')
+            }
+            receiptLine={(() => {
+              const s = close.queue.find((q) => q.id === close.askWorkId);
+              return {
+                time: s
+                  ? new Intl.DateTimeFormat(locale, {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false,
+                    }).format(new Date(s.at))
+                  : '',
+                name: s?.merchant ?? '',
+                amount: s?.amount ?? 0,
+              };
+            })()}
+            title={t('close.work.title')}
+            sub={t('close.work.sub')}
+            yes={t('close.work.yes')}
+            no={t('close.work.no')}
+            onAnswer={(forWork) => {
+              haptics.tap();
+              const id = close.askWorkId;
+              if (forWork && id) void run(() => actions.markForWork(id, true));
+              dispatch({ type: 'answerWork' });
+            }}
+          />
+        ) : null}
+        {state.step === 'receipt' ? (
+          <CloseReceiptStep
+            day={close.day}
+            closedAt={closedAt}
+            spent={day.spent}
+            tomorrow={day.tomorrow}
+            onNext={() => dispatch({ type: 'receiptDone' })}
+          />
+        ) : null}
+        {state.step === 'reveal' ? (
+          <CloseRevealStep day={close.day} number={day} onDone={() => void finish()} />
+        ) : null}
+      </View>
 
       {rules.offer && rule ? (
         <View style={{ position: 'absolute', left: 16, right: 16, bottom: bottom(24), zIndex: 15 }}>

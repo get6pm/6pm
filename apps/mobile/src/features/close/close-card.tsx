@@ -82,6 +82,11 @@ function Stamp({
   );
 }
 
+/** The shortest card that still has room for the running total under the name. */
+const FULL_HEIGHT = 300;
+/** The shortest card at all: header, name, amount and where it was read from. */
+export const MIN_HEIGHT = 254;
+
 /**
  * One caught spend on thermal paper: number and source, the merchant tile, the running total,
  * the amount in big type, where it was read from, and the three stamps.
@@ -90,21 +95,26 @@ export function CloseCard({
   content,
   dx,
   dy,
+  height = 340,
   top,
 }: {
   readonly content: CloseCardContent;
   readonly dx: SharedValue<number>;
   readonly dy: SharedValue<number>;
+  /** 340 pt on a phone; less on a short screen, where the middle gives way. */
+  readonly height?: number;
   readonly top: boolean;
 }) {
   const { row, labels } = content;
   const money = useMoneyFormat();
   const { numK } = useTheme().palette;
+  // Too short for the running total (a short screen): the receipt keeps its name and amount.
+  const compact = height < FULL_HEIGHT;
   return (
     <View style={{ boxShadow: '0 22px 34px rgba(20,6,30,.32)' }}>
       <View
         style={{
-          height: 340,
+          height,
           paddingTop: 20,
           paddingHorizontal: 22,
           paddingBottom: 18,
@@ -134,22 +144,26 @@ export function CloseCard({
             <Text style={{ ...body(13), color: INK_SOFT }}>{content.category}</Text>
           </View>
         </View>
-        <View style={{ flex: 1, justifyContent: 'center', gap: 6 }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ ...mono(11.5, 400, 0.1), color: 'rgba(42,34,48,.62)' }}>
-              {labels.keptSoFar}
-            </Text>
-            <Text style={{ ...mono(11.5), ...tabular, color: 'rgba(42,34,48,.62)' }}>
-              {money.number(content.keptBefore)}
-            </Text>
+        {compact ? (
+          <View style={{ flex: 1 }} />
+        ) : (
+          <View style={{ flex: 1, justifyContent: 'center', gap: 6 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text style={{ ...mono(11.5, 400, 0.1), color: 'rgba(42,34,48,.62)' }}>
+                {labels.keptSoFar}
+              </Text>
+              <Text style={{ ...mono(11.5), ...tabular, color: 'rgba(42,34,48,.62)' }}>
+                {money.number(content.keptBefore)}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text style={{ ...mono(11.5, 400, 0.1), color: INK }}>{labels.withThis}</Text>
+              <Text style={{ ...mono(11.5, 600), ...tabular, color: INK }}>
+                {money.number(content.keptBefore + content.amount)}
+              </Text>
+            </View>
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ ...mono(11.5, 400, 0.1), color: INK }}>{labels.withThis}</Text>
-            <Text style={{ ...mono(11.5, 600), ...tabular, color: INK }}>
-              {money.number(content.keptBefore + content.amount)}
-            </Text>
-          </View>
-        </View>
+        )}
         {/* The prototype's inline `<span style="font-size:.42em; margin-left:4px">₫</span>`. */}
         <FitWidth height={72}>
           <AmountText
@@ -209,5 +223,33 @@ export function CloseCard({
       </View>
       <PaperEdge color={PAPER} />
     </View>
+  );
+}
+
+/** A card behind the top one: it rises and grows as the top card is dragged away. */
+export function BackCard({
+  content,
+  index,
+  dx,
+  dy,
+  height,
+}: {
+  readonly content: CloseCardContent;
+  readonly index: number;
+  readonly dx: SharedValue<number>;
+  readonly dy: SharedValue<number>;
+  readonly height: number;
+}) {
+  const lift = useAnimatedStyle(() => {
+    const prog = Math.min(1, Math.hypot(dx.get(), dy.get()) / 140);
+    const k = index - prog;
+    return { transform: [{ translateY: k * 14 }, { scale: 1 - k * 0.045 }] };
+  });
+  return (
+    <Animated.View
+      style={[{ position: 'absolute', left: 4, right: 4, top: 0, zIndex: 10 - index }, lift]}
+    >
+      <CloseCard content={content} dx={dx} dy={dy} height={height} top={false} />
+    </Animated.View>
   );
 }

@@ -79,7 +79,7 @@ export function CashVoice({ onSaid }: { readonly onSaid: (cash: SaidCash) => voi
         disabled={phase === 'unavailable'}
         onDown={() => {
           press.current = { at: Date.now(), wasListening: listening };
-          if (!listening) dictation.start();
+          if (!listening) void dictation.start();
         }}
         onUp={() => {
           const { at, wasListening } = press.current;

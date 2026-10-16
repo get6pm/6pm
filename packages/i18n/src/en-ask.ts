@@ -6,8 +6,10 @@ export const enAsk = {
   'ask.intro':
     'Ask what fits, how a big spend changes your days, or when a pot fills up. I’ll show the maths.',
   'ask.try': 'Try',
-  'ask.placeholder': 'Can I afford…',
+  'ask.placeholder': 'Ask or just say it…',
   'ask.send': 'Send',
+  'ask.speak': 'Ask out loud',
+  'ask.listening': 'Listening…',
   'ask.suggest.afford': 'Can I afford a {amount} dinner Saturday?',
   'ask.suggest.weekend': 'How much for this weekend?',
   'ask.suggest.spend': 'What if I buy a {amount} jacket?',

@@ -1,13 +1,7 @@
 /** Saying a spend out loud. */
 export const enVoice = {
-  'voice.mode.keypad': 'Keypad',
-  'voice.mode.voice': 'Voice',
-  'voice.prompt': 'Hold and say it like you’d text a friend',
-  'voice.hold': 'Hold',
   'voice.listening': 'Listening',
   'voice.sayIt': 'Say it',
-  'voice.save': 'Save',
-  'voice.nothing': 'I didn’t catch that. Hold and say it again.',
   'voice.nothingTap': 'I didn’t catch that. Tap and say it again.',
   'voice.noAmount': 'No amount heard. Say how much too, like “forty-five k”.',
   'voice.unavailable': 'Voice needs {language} dictation on this iPhone',
@@ -15,6 +9,13 @@ export const enVoice = {
   'voice.language.en': 'English',
   'voice.denied': 'The microphone or speech recognition is off for 6pm.',
   'voice.openSettings': 'Open Settings',
-  'voice.holdHint': 'Hold to say a spend',
   'voice.tapHint': 'Say a cash spend',
+  'voice.promptTap': 'Say it like you’d text a friend',
+  'voice.reading': 'Making sense of it',
+  'voice.gotIt': 'Got it',
+  'voice.doneTalking': 'Done talking',
+  'voice.cancel': 'Cancel',
+  'voice.heard': 'Heard “{said}”',
+  'voice.micHint': 'Say a spend',
+  'voice.stopHint': 'Stop listening',
 } as const;

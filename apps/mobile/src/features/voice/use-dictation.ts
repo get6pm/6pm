@@ -33,10 +33,16 @@ export interface Dictation {
   readonly transcript: string;
   /** True from the start of listening until the recogniser lets go. */
   readonly listening: boolean;
-  /** Asks for the microphone if needed, then listens. */
-  readonly start: () => void;
+  /**
+   * Asks for the microphone if needed, then listens. Resolves to false when the try ended with
+   * nothing to show (the prompt was dismissed, or it was stopped before it began): the phase is
+   * back to idle.
+   */
+  readonly start: () => Promise<boolean>;
   /** Stops listening; the last words arrive, then they are read. */
   readonly stop: () => void;
+  /** Stops listening and drops what was heard: nothing is read. */
+  readonly cancel: () => void;
 }
 
 /**
@@ -215,39 +221,52 @@ export function useDictation({
     });
   }, [api, apply, hold, language, letGo, listenOnPhone, stopSource, store]);
 
-  const start = useCallback(() => {
-    if (live.current || current.current.phase === 'unavailable') return;
+  const start = useCallback(async (): Promise<boolean> => {
+    if (live.current || current.current.phase === 'unavailable') return false;
     pressing.current = true;
     stopAsked.current = false;
-    const begin = async () => {
+    // What the last try heard goes at once, before the microphone is asked for.
+    apply({ type: 'reset' });
+    const begin = async (): Promise<boolean> => {
       let permission = await ExpoSpeechRecognitionModule.getPermissionsAsync();
       if (!permission.granted) {
-        if (!permission.canAskAgain) return apply({ type: 'denied' });
+        if (!permission.canAskAgain) {
+          apply({ type: 'denied' });
+          return true;
+        }
         permission = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
         if (!permission.granted) {
-          return apply(permission.canAskAgain ? { type: 'reset' } : { type: 'denied' });
+          apply(permission.canAskAgain ? { type: 'reset' } : { type: 'denied' });
+          return !permission.canAskAgain;
         }
         // The prompt took the finger off the button: the next hold listens.
-        if (hold) return apply({ type: 'reset' });
+        if (hold) {
+          apply({ type: 'reset' });
+          return false;
+        }
       }
-      if ((hold && !pressing.current) || live.current) return;
+      // Let go, stopped or cancelled while the permission was asked: nothing starts.
+      if (!pressing.current || live.current) return false;
       live.current = true;
       setListening(true);
       haptics.tick();
       apply({ type: 'start' });
       const chosen = await chooseSource().catch(() => (appleReady.current ? 'apple' : null));
-      if (!live.current) return;
+      if (!live.current) return true;
       if (chosen === 'cloud') listenInTheCloud();
       else if (chosen === 'apple') listenOnPhone();
       else {
         letGo();
-        return apply({ type: 'failed', error: 'language-not-supported' });
+        apply({ type: 'failed', error: 'language-not-supported' });
+        return true;
       }
       if (stopAsked.current) stopSource();
+      return true;
     };
-    begin().catch(() => {
+    return begin().catch(() => {
       letGo();
       apply({ type: 'failed', error: 'audio-capture' });
+      return true;
     });
   }, [apply, hold, letGo, listenInTheCloud, listenOnPhone, chooseSource, stopSource]);
 
@@ -259,5 +278,17 @@ export function useDictation({
     stopSource();
   }, [apply, stopSource]);
 
-  return { state, transcript: heardText(state), listening, start, stop };
+  const cancel = useCallback(() => {
+    pressing.current = false;
+    stopAsked.current = false;
+    if (live.current) {
+      if (source.current === 'cloud') cloud.current?.abort();
+      else if (source.current === 'apple') ExpoSpeechRecognitionModule.abort();
+      cloud.current = null;
+      letGo();
+    }
+    apply({ type: 'reset' });
+  }, [apply, letGo]);
+
+  return { state, transcript: heardText(state), listening, start, stop, cancel };
 }

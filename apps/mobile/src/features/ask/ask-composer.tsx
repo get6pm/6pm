@@ -1,12 +1,7 @@
-import { type Ref, useState } from 'react';
-import { ScrollView, Text, TextInput, type TextInputInstance, View } from 'react-native';
+import type { Ref } from 'react';
+import { ScrollView, Text, type TextInputInstance, View } from 'react-native';
 import { useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
-import Animated, {
-  FadeIn,
-  useAnimatedStyle,
-  useDerivedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, { FadeIn, useAnimatedStyle, useDerivedValue } from 'react-native-reanimated';
 
 import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
@@ -15,10 +10,8 @@ import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
 import { MAX_CREAM, MAX_INK } from '../purchases/max-colours';
+import { AskInput } from './ask-input';
 import type { AskChat } from './use-ask';
-
-/** The longest question the server reads (the request schema's limit). */
-const MAX_QUESTION = 300;
 
 /** The gap between the input and the top of the keyboard while it is up. */
 const KEYBOARD_GAP = 8;
@@ -146,77 +139,6 @@ function Chips({
   );
 }
 
-function Input({
-  onSend,
-  disabled,
-  inputRef,
-}: {
-  readonly onSend: (question: string) => void;
-  readonly disabled: boolean;
-  readonly inputRef: Ref<TextInputInstance>;
-}) {
-  const { palette } = useTheme();
-  const { t } = useI18n();
-  const [text, setText] = useState('');
-  const ready = text.trim() !== '' && !disabled;
-  const submit = () => {
-    if (!ready) return;
-    onSend(text);
-    setText('');
-  };
-  const sendStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(ready ? 1 : 0.4, { duration: 200 }),
-  }));
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        paddingVertical: 6,
-        paddingLeft: 18,
-        paddingRight: 6,
-        borderRadius: 30,
-        backgroundColor: palette.cell,
-        boxShadow: palette.cardShadow,
-      }}
-    >
-      <TextInput
-        ref={inputRef}
-        value={text}
-        onChangeText={setText}
-        onSubmitEditing={submit}
-        placeholder={t('ask.placeholder')}
-        placeholderTextColor={palette.inkSoft}
-        returnKeyType="send"
-        submitBehavior="submit"
-        maxLength={MAX_QUESTION}
-        autoCorrect={false}
-        selectionColor={palette.accent}
-        style={{ flex: 1, minWidth: 0, height: 40, padding: 0, fontSize: 16, color: palette.ink }}
-      />
-      <Animated.View style={sendStyle}>
-        <PressScale
-          accessibilityRole="button"
-          accessibilityLabel={t('ask.send')}
-          disabled={!ready}
-          onPress={submit}
-          style={{
-            width: 42,
-            height: 42,
-            borderRadius: 21,
-            backgroundColor: palette.accent,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Symbol name="arrow_upward" size={22} color={palette.accentFg} />
-        </PressScale>
-      </Animated.View>
-    </View>
-  );
-}
-
 /**
  * Everything under the conversation: the free-question meter or the lock, the suggestion chips
  * and the input. It rides on the keyboard, never lagging or leading it. `inputRef` reaches the
@@ -267,7 +189,7 @@ export function AskComposer({
       ) : null}
       <Chips suggestions={chat.suggestions} onPick={(question) => void chat.send(question)} />
       {locked ? null : (
-        <Input
+        <AskInput
           inputRef={inputRef}
           disabled={chat.typing}
           onSend={(question) => void chat.send(question)}

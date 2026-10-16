@@ -54,6 +54,9 @@ a:hover{color:#ffd2a8}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes confetti{0%{transform:translateY(0) rotate(0deg);opacity:1}85%{opacity:1}100%{transform:translateY(940px) rotate(560deg);opacity:0}}
 @keyframes slideInL{from{opacity:0;transform:translateX(-44px)}to{opacity:1;transform:none}}
+@keyframes wave{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes micIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
 </style>
 </helmet>
 <div style="min-height:100vh; background: {{ pageBg }}; transition: background 1s; display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:center; gap:64px; padding:48px 24px; box-sizing:border-box; font-family:-apple-system, 'SF Pro Text', 'Be Vietnam Pro', system-ui, sans-serif;">
@@ -1497,9 +1500,17 @@ a:hover{color:#ffd2a8}
                 <button style-active="transform:scale(.95); filter:brightness(.94);" onClick="{{ c.pick }}" style="flex-shrink:0; height:34px; padding:0 13px; border-radius:99px; border:none; background: {{ chipBg }}; color: {{ ink }}; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer;">{{ c.label }}</button>
               </sc-for>
             </div>
-            <sc-if value="{{ askOpen }}" hint-placeholder-val="{{ true }}"><div style="display:flex; align-items:center; gap:8px; padding:6px 6px 6px 18px; border-radius:99px; background: {{ cell }}; box-shadow: {{ cardShadow }};">
-              <input value="{{ chatInput }}" onChange="{{ setChatInput }}" onKeyDown="{{ chatKey }}" placeholder="Can I afford…" style="flex:1; min-width:0; height:40px; border:none; background:transparent; color: {{ ink }}; font-family:inherit; font-size:16px; outline:none;">
-              <button style-active="transform:scale(.95); filter:brightness(.94);" onClick="{{ sendChat }}" style="width:42px; height:42px; flex-shrink:0; border-radius:50%; border:none; background:{{ accent }}; color:#2a1424; opacity: {{ sendOp }}; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; transition:opacity .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; font-style:normal; line-height:1; letter-spacing:normal; white-space:nowrap; direction:ltr; font-size:22px;">arrow_upward</span></button>
+            <sc-if value="{{ askOpen }}" hint-placeholder-val="{{ true }}"><div style="display:flex; align-items:center; gap:8px; padding:6px 6px 6px 18px; border-radius:99px; background: {{ cell }}; box-shadow: {{ askBarShadow }}; transition:box-shadow .35s;">
+              <sc-if value="{{ askIdle }}" hint-placeholder-val="{{ true }}"><input value="{{ chatInput }}" onChange="{{ setChatInput }}" onKeyDown="{{ chatKey }}" placeholder="Ask or just say it…" style="flex:1; min-width:0; height:40px; border:none; background:transparent; color: {{ ink }}; font-family:inherit; font-size:16px; outline:none; animation:fade .3s both;"></sc-if>
+              <sc-if value="{{ askBusy }}" hint-placeholder-val="{{ false }}"><div onClick="{{ askVoiceCancel }}" style="flex:1; min-width:0; height:40px; display:flex; align-items:center; gap:10px; animation:fade .3s both; cursor:pointer;">
+                <sc-if value="{{ askListening }}" hint-placeholder-val="{{ true }}"><div style="height:20px; display:flex; align-items:center; gap:3px; flex-shrink:0;"><span style="width:3px; height:20px; border-radius:2px; background: {{ accent }}; animation:wave .9s ease-in-out infinite; animation-delay:-.1s;"></span><span style="width:3px; height:20px; border-radius:2px; background: {{ accent }}; animation:wave .7s ease-in-out infinite; animation-delay:-.4s;"></span><span style="width:3px; height:20px; border-radius:2px; background: {{ accent }}; animation:wave 1.1s ease-in-out infinite; animation-delay:-.2s;"></span><span style="width:3px; height:20px; border-radius:2px; background: {{ accent }}; animation:wave .8s ease-in-out infinite; animation-delay:-.6s;"></span></div></sc-if>
+                <sc-if value="{{ askTranscribing }}" hint-placeholder-val="{{ false }}"><span style="flex-shrink:0; font-family:'Material Symbols Rounded'; font-weight:normal; font-style:normal; line-height:1; letter-spacing:normal; white-space:nowrap; direction:ltr; font-size:18px; color: {{ accent }}; animation:spin 1s linear infinite;">progress_activity</span></sc-if>
+                <div style="flex:1; min-width:0; font-size:16px; color: {{ askSaidColor }}; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; direction:rtl; text-align:left; transition:color .3s;"><span style="direction:ltr; unicode-bidi:isolate;">{{ askSaidText }}</span></div>
+              </div></sc-if>
+              <div style="position:relative; width:42px; height:42px; flex-shrink:0;">
+                <sc-if value="{{ askListening }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; border-radius:50%; background:{{ accent }}; animation:ring 1.1s ease-out infinite;"></div></sc-if>
+                <button style-active="transform:scale(.95); filter:brightness(.94);" onClick="{{ askMic }}" style="position:absolute; inset:0; border-radius:50%; border:none; background:{{ accent }}; color:#2a1424; opacity: {{ sendOp }}; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; transition:opacity .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; font-style:normal; line-height:1; letter-spacing:normal; white-space:nowrap; direction:ltr; font-size:22px; font-variation-settings:'FILL' 1; animation: {{ askBtnAnim }};">{{ askBtnIcon }}</span></button>
+              </div>
             </div></sc-if>
           </div>
         </div>
@@ -1513,11 +1524,7 @@ a:hover{color:#ffd2a8}
             <div data-dismiss="quick" onPointerDown="{{ shDown }}" onPointerMove="{{ shMove }}" onPointerUp="{{ shUp }}" onPointerCancel="{{ shUp }}" style="align-self:center; flex-shrink:0; display:flex; padding:10px 48px; margin:-10px 0 -6px; touch-action:none; cursor:grab;"><div style="width:36px; height:5px; border-radius:9px; background: {{ inkSoft }}; opacity:.35;"></div></div>
             <div style="display:flex; align-items:center; justify-content:space-between; flex-shrink:0;">
               <button style-active="transform:scale(.95);" onClick="{{ closeQuick }}" style="border:none; background:transparent; color: {{ inkSoft }}; font-family:inherit; font-size:16px; cursor:pointer; padding:6px 0; width:60px; text-align:left;">Cancel</button>
-              <div style="display:flex; padding:3px; border-radius:99px; background: {{ chipBg }};">
-                <sc-for list="{{ qaModes }}" as="m" hint-placeholder-count="2">
-                  <button style-active="transform:scale(.95);" onClick="{{ m.pick }}" style="border:none; padding:6px 16px; border-radius:99px; background: {{ m.bg }}; color: {{ ink }}; font-family:inherit; font-weight:600; font-size:13px; cursor:pointer; box-shadow: {{ m.shadow }};">{{ m.label }}</button>
-                </sc-for>
-              </div>
+              <div style="font-size:16px; font-weight:650; color: {{ ink }};">New spend</div>
               <div style="width:60px;"></div>
             </div>
             <div style="position:relative; flex-shrink:0; margin:0 4px; filter:drop-shadow(0 16px 24px rgba(20,10,30,.22)); animation:rise .45s .05s cubic-bezier(.2,.9,.2,1) both;">
@@ -1540,7 +1547,7 @@ a:hover{color:#ffd2a8}
               </div>
               <div style="height:9px; background-image:radial-gradient(circle at 6px 9px, transparent 5.5px, #fbf7ef 6px); background-size:12px 9px; background-repeat:repeat-x;"></div>
             </div>
-            <div style="display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; margin:0 -16px; padding:6px 16px 2px; flex-shrink:0;">
+            <div style="display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; margin:-6px -16px -4px; padding:12px 16px 6px; flex-shrink:0;">
               <sc-for list="{{ qaCatTiles }}" as="c" hint-placeholder-count="6">
                 <button onClick="{{ c.pick }}" style="flex-shrink:0; width:62px; border:none; background:transparent; padding:0; display:flex; flex-direction:column; align-items:center; gap:6px; color: {{ ink }}; font-family:inherit; cursor:pointer;">
                   <span style="width:52px; height:52px; border-radius:17px; background: {{ c.tile }}; color: {{ c.glyph }}; display:flex; align-items:center; justify-content:center; box-shadow: {{ c.ring }}; transform: {{ c.lift }}; transition:transform .25s cubic-bezier(.3,1.4,.5,1), box-shadow .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; font-style:normal; line-height:1; letter-spacing:normal; text-transform:none; white-space:nowrap; direction:ltr; -webkit-font-smoothing:antialiased; font-size:25px; font-variation-settings:'FILL' 1, 'wght' 500;">{{ c.icon }}</span></span>
@@ -1553,36 +1560,43 @@ a:hover{color:#ffd2a8}
                 <button style-active="transform:scale(.96);" onClick="{{ w.pick }}" style="height:38px; border:none; border-radius:12px; background: {{ w.bg }}; color: {{ w.fg }}; font-family:inherit; font-size:13px; font-weight:650; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; transition:background .2s;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; font-style:normal; line-height:1; letter-spacing:normal; text-transform:none; white-space:nowrap; direction:ltr; -webkit-font-smoothing:antialiased; font-size:17px;">{{ w.icon }}</span>{{ w.label }}</button>
               </sc-for>
             </div>
-            <sc-if value="{{ qaKeysOn }}" hint-placeholder-val="{{ true }}">
-              <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; flex-shrink:0;">
+            <div style="position:relative; flex-shrink:0;">
+              <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; opacity: {{ qaPadOp }}; transform: {{ qaPadTf }}; filter: {{ qaPadBlur }}; pointer-events: {{ qaPadPE }}; transition:opacity .35s, transform .45s cubic-bezier(.2,.9,.2,1), filter .35s;">
                 <sc-for list="{{ keys }}" as="k" hint-placeholder-count="16">
                   <button onClick="{{ k.press }}" style="height:48px; border:none; border-radius:15px; background: {{ chipBg }}; color: {{ ink }}; font-family: {{ k.ff }}; font-weight: {{ k.fw }}; font-size: {{ k.fs }}; opacity: {{ k.op }}; cursor:pointer;" style-active="transform:scale(.94); filter:brightness(.92);">{{ k.label }}</button>
                 </sc-for>
               </div>
-              <button style-active="transform:scale(.97); filter:brightness(.94);" onClick="{{ saveQuick }}" style="height:56px; flex-shrink:0; border:none; border-radius:18px; background: {{ btnBg }}; color: {{ btnFg }}; font-family:inherit; font-weight:650; font-size:17px; cursor:pointer; opacity: {{ qaSaveOp }}; transition:opacity .2s; display:flex; align-items:center; justify-content:center; gap:8px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; font-style:normal; line-height:1; letter-spacing:normal; text-transform:none; white-space:nowrap; direction:ltr; -webkit-font-smoothing:antialiased; font-size:20px;">receipt_long</span>Keep it</button>
-            </sc-if>
-            <sc-if value="{{ qaVoiceOn }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex; flex-direction:column; align-items:center; gap:16px; padding:6px 0 0;">
-                <div style="min-height:56px; max-width:300px; text-align:center; font-family: {{ dispFont }}; font-weight:500; font-size:24px; line-height:1.2; color: {{ inkSoft }};">{{ qaTranscript }}</div>
-                <sc-if value="{{ qaHasParsed }}" hint-placeholder-val="{{ false }}">
-                  <div style="display:flex; gap:6px; animation:rise .3s both;">
+              <div style="position:absolute; inset:0; border-radius:22px; background: {{ chipBg }}; opacity: {{ qaVoiceOp }}; transform: {{ qaVoiceTf }}; pointer-events: {{ qaVoicePE }}; transition:opacity .35s, transform .45s cubic-bezier(.2,.9,.2,1); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:16px 20px; box-sizing:border-box; overflow:hidden;">
+                <div style="display:flex; align-items:center; gap:7px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color: {{ inkSoft }};"><span style="width:7px; height:7px; border-radius:50%; background: {{ qaDotBg }}; transition:background .3s;"></span>{{ qaVoiceTitle }}</div>
+                <div style="min-height:58px; max-width:300px; text-align:center; font-family: {{ dispFont }}; font-weight:500; font-size:23px; line-height:1.25; color: {{ qaSaidColor }}; text-wrap:pretty; transition:color .3s;">{{ qaTranscript }}</div>
+                <sc-if value="{{ qaListening }}" hint-placeholder-val="{{ false }}">
+                  <div style="height:28px; display:flex; align-items:center; gap:4px; animation:fade .3s both;">
+                    <span style="width:4px; height:28px; border-radius:3px; background: {{ accent }}; animation:wave .9s ease-in-out infinite; animation-delay:-.1s;"></span><span style="width:4px; height:28px; border-radius:3px; background: {{ accent }}; animation:wave .7s ease-in-out infinite; animation-delay:-.4s;"></span><span style="width:4px; height:28px; border-radius:3px; background: {{ accent }}; animation:wave 1.1s ease-in-out infinite; animation-delay:-.2s;"></span><span style="width:4px; height:28px; border-radius:3px; background: {{ accent }}; animation:wave .8s ease-in-out infinite; animation-delay:-.6s;"></span><span style="width:4px; height:28px; border-radius:3px; background: {{ accent }}; animation:wave 1s ease-in-out infinite; animation-delay:-.3s;"></span><span style="width:4px; height:28px; border-radius:3px; background: {{ accent }}; animation:wave .75s ease-in-out infinite; animation-delay:-.5s;"></span><span style="width:4px; height:28px; border-radius:3px; background: {{ accent }}; animation:wave .95s ease-in-out infinite; animation-delay:0s;"></span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ qaTranscribing }}" hint-placeholder-val="{{ false }}">
+                  <div style="height:28px; width:160px; border-radius:3px; animation:fade .3s both; background:linear-gradient(90deg, {{ chipBg }} 20%, {{ accent }} 50%, {{ chipBg }} 80%); background-size:200% 100%; -webkit-mask:linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask:linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); height:3px; animation:shimmer 1.1s linear infinite;"></div>
+                </sc-if>
+                <sc-if value="{{ qaDone }}" hint-placeholder-val="{{ false }}">
+                  <div style="height:28px; display:flex; gap:6px; align-items:center;">
                     <sc-for list="{{ qaParsedChips }}" as="pc" hint-placeholder-count="3">
-                      <div style="height:30px; padding:0 12px; border-radius:99px; background: {{ chipBg }}; display:flex; align-items:center; font-size:13px; font-weight:600;">{{ pc }}</div>
+                      <div style="height:28px; padding:0 11px; border-radius:99px; background: {{ pc.bg }}; color: {{ pc.fg }}; display:flex; align-items:center; gap:4px; font-size:12.5px; font-weight:650; animation:micIn .4s cubic-bezier(.2,1.4,.4,1) both; animation-delay: {{ pc.delay }};"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; font-style:normal; line-height:1; letter-spacing:normal; text-transform:none; white-space:nowrap; direction:ltr; -webkit-font-smoothing:antialiased; font-size:14px; font-variation-settings:'FILL' 1;">{{ pc.icon }}</span>{{ pc.label }}</div>
                     </sc-for>
                   </div>
                 </sc-if>
-                <div style="position:relative; width:104px; height:104px;">
-                  <sc-if value="{{ qaListening }}" hint-placeholder-val="{{ false }}">
-                    <div style="position:absolute; inset:0; border-radius:50%; background:{{ accent }}; animation:ring 1.1s ease-out infinite;"></div>
-                  </sc-if>
-                  <button style-active="transform:scale(.95); filter:brightness(.94);" onPointerDown="{{ holdStart }}" onPointerUp="{{ holdEnd }}" onPointerLeave="{{ holdEnd }}" style="position:absolute; inset:0; border:none; border-radius:50%; background:{{ accent }}; color:#2a1424; font-family:inherit; font-weight:650; font-size:13px; cursor:pointer; touch-action:none; user-select:none; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px; box-shadow:0 12px 30px rgba(255,120,70,.35), inset 0 1px 0 rgba(255,255,255,.5);">
-                    <span style="font-family:'Material Symbols Rounded'; font-weight:normal; font-style:normal; line-height:1; letter-spacing:normal; text-transform:none; white-space:nowrap; direction:ltr; -webkit-font-smoothing:antialiased; font-size:30px;">mic</span>
-                    <span>{{ micLabel }}</span>
-                  </button>
-                </div>
-                <button style-active="transform:scale(.95); filter:brightness(.94);" onClick="{{ saveQuick }}" style="width:100%; height:56px; border:none; border-radius:99px; background: {{ btnBg }}; color: {{ btnFg }}; font-family:inherit; font-weight:650; font-size:17px; cursor:pointer; opacity: {{ qaSaveOp }};">Save</button>
               </div>
-            </sc-if>
+            </div>
+            <div style="display:flex; gap:8px; flex-shrink:0; align-items:center;">
+              <div style="position:relative; width:56px; height:56px; flex-shrink:0;">
+                <sc-if value="{{ qaListening }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute; inset:0; border-radius:18px; background:{{ accent }}; animation:ring 1.1s ease-out infinite;"></div>
+                </sc-if>
+                <button style-active="transform:scale(.93); filter:brightness(.94);" onClick="{{ qaMic }}" style="position:absolute; inset:0; border:none; border-radius:18px; background: {{ qaMicBg }}; color: {{ qaMicFg }}; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; transition:background .3s, color .3s, box-shadow .3s; box-shadow: {{ qaMicShadow }};">
+                  <span style="font-family:'Material Symbols Rounded'; font-weight:normal; font-style:normal; line-height:1; letter-spacing:normal; text-transform:none; white-space:nowrap; direction:ltr; -webkit-font-smoothing:antialiased; font-size:26px; font-variation-settings:'FILL' 1; animation: {{ qaMicAnim }};">{{ qaMicIcon }}</span>
+                </button>
+              </div>
+              <button style-active="transform:scale(.97); filter:brightness(.94);" onClick="{{ qaMain }}" style="flex:1; height:56px; border:none; border-radius:18px; background: {{ btnBg }}; color: {{ btnFg }}; font-family:inherit; font-weight:650; font-size:17px; cursor:pointer; opacity: {{ qaSaveOp }}; transition:opacity .25s; display:flex; align-items:center; justify-content:center; gap:8px;"><span style="font-family:'Material Symbols Rounded'; font-weight:normal; font-style:normal; line-height:1; letter-spacing:normal; text-transform:none; white-space:nowrap; direction:ltr; -webkit-font-smoothing:antialiased; font-size:20px;">{{ qaMainIcon }}</span>{{ qaMainLabel }}</button>
+            </div>
           </div>
         </div>
       </sc-if>
@@ -3687,19 +3701,45 @@ class Component extends DCLogic {
     this.setState(st => ({ items: st.items.concat([it]), screen: 'home', qa: null }));
     this.buzz(); this.toast('capture');
   };
-  holdStart = () => {
-    const qa = this.state.qa; if (!qa || qa.listening) return;
+  qaMic = () => {
+    const qa = this.state.qa; if (!qa) return;
+    if (qa.voice === 'listening') return this.qaFinish();
+    if (qa.voice) return;
     const words = 'trà sữa with pearls, forty-five k'.split(' ');
-    let i = 0; this.setQA({ listening: true, transcript: '', parsed: null });
-    clearInterval(this.vt);
-    this.vt = setInterval(() => { i++; this.setQA({ transcript: words.slice(0, i).join(' ') }); if (i >= words.length) clearInterval(this.vt); }, 200);
+    let i = 0; this.setQA({ voice: 'listening', transcript: '', parsed: null }); this.buzz();
+    clearInterval(this.vt); clearTimeout(this.vt2);
+    this.vt = setInterval(() => { i++; this.setQA({ transcript: words.slice(0, i).join(' ') }); if (i >= words.length) { clearInterval(this.vt); this.vt2 = setTimeout(this.qaFinish, 1100); } }, 210);
   };
-  holdEnd = () => {
-    const qa = this.state.qa; if (!qa || !qa.listening) return;
-    clearInterval(this.vt);
-    this.setQA({ listening: false, transcript: '“trà sữa with pearls, forty-five k”', parsed: ['Trà sữa', '45.000₫', 'Drinks'], digits: '45000', cat: 'Drinks', note: 'Trà sữa', cur: 'VND' });
-    this.buzz();
+  qaFinish = () => {
+    const qa = this.state.qa; if (!qa || qa.voice !== 'listening') return;
+    clearInterval(this.vt); clearTimeout(this.vt2);
+    this.setQA({ voice: 'transcribing', transcript: qa.transcript || 'trà sữa with pearls, forty-five k' });
+    this.vt2 = setTimeout(() => {
+      this.setQA({ voice: 'done', parsed: true, digits: '45000', cat: 'Drinks', note: 'Trà sữa', cur: 'VND', mode: 'voice' }); this.buzz();
+      this.vt2 = setTimeout(() => this.setQA({ voice: null }), 1500);
+    }, 1000);
   };
+  qaVoiceCancel = () => { clearInterval(this.vt); clearTimeout(this.vt2); this.setQA({ voice: null, transcript: '' }); };
+  askMic = () => {
+    const s = this.state;
+    if (s.askVoice === 'listening') return this.askFinish();
+    if (s.askVoice) return;
+    if ((s.chatInput || '').trim()) return this.sendAsk();
+    const words = 'can I still afford a two million dinner on Saturday'.split(' ');
+    let i = 0; this.setState({ askVoice: 'listening', askSaid: '' }); this.buzz();
+    clearInterval(this.at); clearTimeout(this.at2);
+    this.at = setInterval(() => { i++; this.setState({ askSaid: words.slice(0, i).join(' ') }); if (i >= words.length) { clearInterval(this.at); this.at2 = setTimeout(this.askFinish, 1000); } }, 190);
+  };
+  askFinish = () => {
+    if (this.state.askVoice !== 'listening') return;
+    clearInterval(this.at); clearTimeout(this.at2);
+    this.setState({ askVoice: 'transcribing' });
+    this.at2 = setTimeout(() => {
+      this.setState({ askVoice: null, chatInput: 'Can I still afford a 2tr dinner on Saturday?' }); this.buzz();
+      this.at2 = setTimeout(() => { if (!this.state.askVoice && (this.state.chatInput || '').trim()) this.sendAsk(); }, 900);
+    }, 900);
+  };
+  askVoiceCancel = () => { clearInterval(this.at); clearTimeout(this.at2); this.setState({ askVoice: null, askSaid: '' }); };
 
   openScan = () => {
     this.setState({ screen: 'scan', scan: { phase: 'camera', wallet: 'MB Bank' } });
@@ -3883,8 +3923,14 @@ class Component extends DCLogic {
       openAsk: this.openAsk, showAsk: s.screen === 'ask',
       chat: (s.chat || []).map((m, k) => Object.assign({}, m, { notMe: !m.me, delay: '0ms' })), chatEmpty: !(s.chat || []).length, typing: !!s.typing,
       askMood: s.typing ? 'think' : ((s.chat || []).slice(-1)[0] || {}).mood || 'wave',
-      chatInput: s.chatInput || '', setChatInput: (e) => this.setState({ chatInput: e.target.value }), chatKey: (e) => { if (e.key === 'Enter') this.sendAsk(); }, sendChat: () => this.sendAsk(),
-      sendOp: (s.chatInput || '').trim() ? 1 : 0.4,
+      chatInput: s.chatInput || '', setChatInput: (e) => { clearTimeout(this.at2); this.setState({ chatInput: e.target.value }); }, chatKey: (e) => { if (e.key === 'Enter') this.sendAsk(); }, sendChat: () => this.sendAsk(),
+      sendOp: s.askVoice === 'transcribing' ? 0.55 : 1,
+      askIdle: !s.askVoice, askBusy: !!s.askVoice, askListening: s.askVoice === 'listening', askTranscribing: s.askVoice === 'transcribing',
+      askSaidText: s.askVoice === 'listening' ? (s.askSaid || 'Listening…') : (s.askSaid || ''), askSaidColor: s.askVoice === 'listening' && !s.askSaid ? pal.inkSoft : pal.ink,
+      askBtnIcon: s.askVoice === 'listening' ? 'stop' : s.askVoice === 'transcribing' ? 'more_horiz' : (s.chatInput || '').trim() ? 'arrow_upward' : 'mic',
+      askBtnAnim: s.askVoice ? 'none' : 'micIn .3s cubic-bezier(.2,1.4,.4,1)',
+      askBarShadow: s.askVoice === 'listening' ? `0 0 0 2px ${pal.accent}, ${pal.cardShadow}` : pal.cardShadow,
+      askMic: this.askMic, askVoiceCancel: this.askVoiceCancel,
       askSuggest: ['Can I afford a 2tr dinner Saturday?', 'How much for this weekend?', 'What if I buy a 450k jacket?', 'When is Tết covered?', 'Should I save more?'].map(label => ({ label, pick: () => this.sendAsk(label) })),
       askPreview: ['2tr dinner Saturday?', 'This weekend?', 'Tết covered?'].map((label, k) => ({ label, pick: () => this.openAsk(['Can I afford a 2tr dinner Saturday?', 'How much for this weekend?', 'When is Tết covered?'][k]) })),
       openDay9: () => this.setState({ tab: 'diary', selDay: 9 }),
@@ -4272,7 +4318,7 @@ class Component extends DCLogic {
     }, 'CLOSED', React.createElement('br'), clock);
     const bars = [2, 1, 1, 3, 1, 2, 1, 1, 2, 3, 1, 1, 2, 1, 3, 1, 2, 2, 1, 1, 3, 1, 2, 1, 1, 2, 1, 3, 2, 1, 1, 2, 1, 1, 3, 1, 2, 1, 2, 1].map(w => w + 'px');
 
-    const qa = s.qa;
+    const qa = s.qa, qv = qa ? (qa.voice || '') : '';
     const qaVnd = this.qaVnd();
     const keysL = ['1', '2', '3', '⌫', '4', '5', '6', 'k', '7', '8', '9', '000', 'cur', '0', '.', ''];
     const keys = qa ? keysL.map(k => ({
@@ -4377,17 +4423,26 @@ class Component extends DCLogic {
 
       showQuick: s.screen === 'quick' && !!qa,
       closeQuick: () => this.setState({ screen: 'home', qa: null }),
-      qaModes: qa ? [['Keypad', 'keys'], ['Voice', 'voice']].map(([label, m]) => ({ label, pick: () => this.setQA({ mode: m }), bg: qa.mode === m ? (pal.dark ? 'rgba(255,255,255,.2)' : '#fff') : 'transparent', shadow: qa.mode === m ? '0 1px 4px rgba(0,0,0,.12)' : 'none' })) : [],
+
       qaAmountText: qa ? (qa.cur === 'USD' ? '$' + (qa.digits || '0') : this.num(parseInt(qa.digits || '0', 10)) + '₫') : '',
       qaAmountOp: qa && qa.digits ? 1 : 0.3,
-      qaSub: qa ? (qa.cur === 'USD' ? `≈ ${this.fmt(qaVnd)} at 25.400₫ per $` : (qa.digits ? `≈ ${this.short(qaVnd)}` : 'Type 45 then k for 45.000₫')) : '',
+      qaSub: qa ? (qa.cur === 'USD' ? `≈ ${this.fmt(qaVnd)} at 25.400₫ per $` : (qa.parsed && !qa.voice ? `Heard “${qa.transcript}”` : qa.digits ? `≈ ${this.short(qaVnd)}` : 'Type 45 then k, or tap the mic')) : '',
       qaCats: qa ? this.predicted().map(x => pickBtn(x, qa.cat === x, () => this.setQA({ cat: x }))) : [],
       qaWallets: qa ? ['Cash', 'MB Bank', 'MoMo'].map(x => pickBtn(x, qa.wallet === x, () => this.setQA({ wallet: x }))) : [],
-      qaKeysOn: !!qa && qa.mode === 'keys', qaVoiceOn: !!qa && qa.mode === 'voice', keys,
-      qaTranscript: qa ? (qa.transcript || 'Hold and say it like you’d text a friend') : '',
-      qaHasParsed: !!qa && !!qa.parsed, qaParsedChips: qa && qa.parsed ? qa.parsed : [],
-      qaListening: !!qa && qa.listening, micLabel: qa && qa.listening ? 'Listening' : 'Hold',
-      holdStart: this.holdStart, holdEnd: this.holdEnd, saveQuick: this.saveQuick, qaSaveOp: qaVnd ? 1 : 0.35,
+      keys,
+      qaPadOp: qv ? 0 : 1, qaPadTf: qv ? 'scale(.96) translateY(6px)' : 'none', qaPadBlur: qv ? 'blur(4px)' : 'none', qaPadPE: qv ? 'none' : 'auto',
+      qaVoiceOp: qv ? 1 : 0, qaVoiceTf: qv ? 'none' : 'scale(.96) translateY(10px)', qaVoicePE: qv ? 'auto' : 'none',
+      qaListening: qv === 'listening', qaTranscribing: qv === 'transcribing', qaDone: qv === 'done',
+      qaVoiceTitle: qv === 'listening' ? 'Listening' : qv === 'transcribing' ? 'Making sense of it' : 'Got it',
+      qaDotBg: qv === 'done' ? '#3cb371' : pal.accent,
+      qaTranscript: qa ? (qa.transcript ? (qv === 'listening' ? qa.transcript : `“${qa.transcript}”`) : 'Say it like you’d text a friend') : '',
+      qaSaidColor: qa && qa.transcript && qv !== 'transcribing' ? pal.ink : pal.inkSoft,
+      qaParsedChips: qa && qv === 'done' ? [['local_cafe', 'Trà sữa', '0s'], ['payments', '45.000₫', '.08s'], ['category', 'Drinks', '.16s']].map(([icon, label, delay]) => ({ icon, label, delay, bg: pal.accent, fg: '#2a1424' })) : [],
+      qaMic: this.qaMic, qaMain: qv === 'listening' ? this.qaFinish : qv ? this.qaVoiceCancel : this.saveQuick,
+      qaMicIcon: qv === 'listening' ? 'stop' : qv === 'transcribing' ? 'more_horiz' : qv === 'done' ? 'check' : 'mic',
+      qaMicBg: qv ? pal.accent : pal.chipBg, qaMicFg: qv ? '#2a1424' : pal.ink, qaMicShadow: qv === 'listening' ? '0 10px 26px rgba(255,120,70,.4)' : 'none', qaMicAnim: qv ? 'micIn .3s cubic-bezier(.2,1.4,.4,1)' : 'none',
+      qaMainIcon: qv === 'listening' ? 'check' : qv ? 'close' : 'receipt_long', qaMainLabel: qv === 'listening' ? 'Done talking' : qv ? 'Cancel' : 'Keep it',
+      saveQuick: this.saveQuick, qaSaveOp: qv === 'transcribing' || qv === 'done' ? 0.5 : qv === 'listening' || qaVnd ? 1 : 0.35,
 
       showScan: s.screen === 'scan' && !!s.scan,
       scanCamera: !!s.scan && s.scan.phase === 'camera', scanPreview: !!s.scan && s.scan.phase === 'preview',

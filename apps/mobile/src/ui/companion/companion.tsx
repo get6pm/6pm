@@ -42,6 +42,10 @@ const STILL_SECONDS = 2.6;
 /** Long past any mood or form change: no hop and no burst. */
 const SETTLED_SECONDS = 99;
 const fadeEase = Easing.bezier(...curves.enter);
+/** Idle motion steps 30 times a second. */
+const IDLE_STEP_SECONDS = 1 / 30;
+/** For this long after a mood, form or cue change it moves at the display's full rate. */
+const LIVELY_SECONDS = 2;
 
 /** The sleeping "z"s are italic serif, as the prototype's Georgia fallback draws them. */
 function sleepFonts(size: number): SleepFonts {
@@ -76,9 +80,20 @@ export function Companion({ size, mood, form: asked, serious = false, cue = 0 }:
 
   const box = useAnimatedRef<Animated.View>();
   const window = useWindowDimensions();
+  const pending = useSharedValue(0);
   const tick = useCallback(
     (frame: FrameInfo) => {
       'worklet';
+      // Added up frame by frame so a pause does not send the clock back to zero.
+      const waited = pending.value + (frame.timeSincePreviousFrame ?? 0) / 1000;
+      // Idle, it steps 30 times a second (breathing and blinks look the same as at 120, and each
+      // step draws it again); an arrival or a new mood plays at the display's full rate.
+      const settled = clock.value - Math.max(moodAt.value, formAt.value) > LIVELY_SECONDS;
+      if (settled && waited < IDLE_STEP_SECONDS - 0.001) {
+        pending.value = waited;
+        return;
+      }
+      pending.value = 0;
       // Scrolled out of sight (a long sheet, the Today list), it holds still: drawing a canvas
       // nobody sees costs every frame, and one taken off screen can stall the UI thread waiting
       // for a surface to draw into.
@@ -92,10 +107,9 @@ export function Companion({ size, mood, form: asked, serious = false, cue = 0 }:
       ) {
         return;
       }
-      // Added up frame by frame so a pause does not send the clock back to zero.
-      clock.value += (frame.timeSincePreviousFrame ?? 0) / 1000;
+      clock.value += waited;
     },
-    [clock, box, window.width, window.height],
+    [clock, moodAt, formAt, pending, box, window.width, window.height],
   );
   useGatedFrameCallback(tick, !reduceMotion, useScreenActivity());
 

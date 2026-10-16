@@ -38,6 +38,9 @@ import { WeatherMiddle, WeatherTop } from './scenes/weather/weather-scene';
 /** The prototype eases every hour-driven change over 1 s with CSS `ease`. */
 const TRANSITION = { duration: 1000, easing: Easing.bezier(0.25, 0.1, 0.25, 1) };
 const BOKEH_PARALLAX = 0.2;
+/** The sky's slow drifts step 30 times a second; falling rain needs 60 to read as a fall. */
+const DRIFT_STEP_MS = 1000 / 30;
+const RAIN_STEP_MS = 1000 / 60;
 
 export interface SkyProps {
   readonly look: LookId;
@@ -135,7 +138,8 @@ function SkyView({
 
   const frame = useSwitchedTween(shownSun.values, hiddenSun.values, sun.flag, sun.initial);
 
-  const time = useSkyClock(active ?? null);
+  const raining = shownSun.atm.rainOn === true || hiddenSun.atm.rainOn === true;
+  const time = useSkyClock(active ?? null, raining ? RAIN_STEP_MS : DRIFT_STEP_MS);
   const still = useSharedValue(0);
   const scroll = scrollY ?? still;
   const sunLift = useParallax(scroll, SUN_PARALLAX);

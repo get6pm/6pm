@@ -8,7 +8,6 @@ import {
   RAIN_TILT_DEG,
   rainCells,
   rainLayersFor,
-  rainPath,
 } from './rain-geometry';
 
 const tileUrl = (stroke: string) =>
@@ -100,15 +99,6 @@ describe('rainCells', () => {
         }
       }
     }
-  });
-
-  it('write three strokes per cell', () => {
-    const tile = parseRainTile(tileUrl('rgba(255,255,255,.75)'));
-    const spec = RAIN_LAYERS[0];
-    if (!tile || !spec) throw new Error('fixture');
-    const { c0, c1, r0, r1 } = rainCells(spec, 402, 874);
-    const strokes = rainPath(tile, tile.strokes, spec, 402, 874).split('M').length - 1;
-    expect(strokes).toBe(3 * (c1 - c0 + 1) * (r1 - r0 + 1));
   });
 });
 

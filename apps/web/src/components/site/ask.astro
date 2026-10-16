@@ -1,0 +1,76 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import AskPhone from './ask-phone.astro';
+import Mark from './mark.astro';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].ask;
+---
+
+<section id="ask" class="sec split" data-hour="20.8" data-ask>
+  <AskPhone lang={lang} />
+  <div class="copy">
+    <div class="stack" data-reveal="0">
+      <Mark time="20:45" label={t.mark} />
+      <h2 class="h2">{t.title}</h2>
+      <p class="lede">{t.sub}</p>
+    </div>
+    <div class="chips" data-reveal="80">
+      {
+        t.asks.map((ask, i) => (
+          <button type="button" class="chip" aria-pressed={i === 0 ? 'true' : 'false'} data-ask-pick={i}>
+            {ask.q}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .copy {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    min-width: 0;
+  }
+  .copy .lede {
+    max-width: 420px;
+  }
+  .chips {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .chip {
+    max-width: 100%;
+    min-height: 46px;
+    padding: 10px 18px;
+    border-radius: 22px;
+    border: 0.5px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.35;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      color 0.2s,
+      border-color 0.2s;
+  }
+  .chip:hover {
+    border-color: var(--sun);
+  }
+  .chip[aria-pressed='true'] {
+    background: #fbf4ec;
+    color: #2a1a30;
+    border-color: #fbf4ec;
+  }
+</style>

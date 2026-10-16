@@ -1,0 +1,60 @@
+---
+/** A phone's status bar: the time, the island, and the battery at a level. */
+interface Props {
+  time: string;
+  /** How full the battery is, 0 to 100. */
+  battery: number;
+  /** Light ink, for a dark screen. */
+  light?: boolean;
+}
+
+const { time, battery, light = false } = Astro.props;
+---
+
+<div class:list={['bar', { light }]} aria-hidden="true">
+  <span>{time}</span>
+  <span class="island"></span>
+  <span class="battery"><span style={`width:${battery}%`}></span></span>
+</div>
+
+<style>
+  .bar {
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 44px;
+    padding: 0 26px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1b1e2e;
+  }
+  .light {
+    color: #fbf4ec;
+  }
+  .island {
+    position: absolute;
+    left: 50%;
+    top: 10px;
+    width: 88px;
+    height: 26px;
+    margin-left: -44px;
+    border-radius: 20px;
+    background: #000;
+  }
+  .battery {
+    width: 22px;
+    height: 11px;
+    border-radius: 3.5px;
+    border: 1px solid color-mix(in srgb, currentColor 60%, transparent);
+    box-sizing: border-box;
+    padding: 1px;
+  }
+  .battery span {
+    display: block;
+    height: 100%;
+    border-radius: 1.5px;
+    background: currentColor;
+  }
+</style>

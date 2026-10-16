@@ -1,0 +1,173 @@
+---
+import type { CloseCard, SiteCopy } from '../../data/site/copy';
+import { glyphColor, tileGradient } from '../../data/site/tiles';
+
+interface Props {
+  card: CloseCard;
+  t: SiteCopy['close'];
+  index: number;
+}
+
+const { card, t, index } = Astro.props;
+// Stacked: each card under the top one sits a little lower and smaller.
+const rest = `transform:translate(0px, ${index * 16}px) scale(${1 - index * 0.05});z-index:${10 - index}`;
+---
+
+<div class="receipt" style={rest} data-close-card={index}>
+  <div class="paper">
+    <div class="top mono">
+      <span>Nº {card.no} · {card.source}</span><span>{card.time}</span>
+    </div>
+    <div class="dash"></div>
+    <div class="who">
+      <span class="tile" style={`--tile:${tileGradient(card.hue)};--glyph:${glyphColor(card.hue)}`}>
+        <span class="sym sym-fill" aria-hidden="true">{card.icon}</span>
+      </span>
+      <span class="who-words">
+        <span class="name">{card.name}</span><span class="category">{card.category}</span>
+      </span>
+    </div>
+    <div class="sums mono">
+      <div class="sum"><span class="sum-label">{t.keptSoFar}</span><span>{card.from}</span></div>
+      <div class="sum strong">
+        <span class="sum-label">{t.withThis}</span><span class="sum-to">{card.to}</span>
+      </div>
+    </div>
+    <div class="amount" style={`font-size:${t.cardNumSize}`}>{card.amount}</div>
+    <div class="meta mono">{card.meta}</div>
+    <div class="keep-stamp mono" aria-hidden="true" data-close-keep-stamp>{t.keepStamp}</div>
+  </div>
+  <div class="tear" aria-hidden="true"></div>
+</div>
+
+<style>
+  .receipt {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    touch-action: none;
+    user-select: none;
+    filter: drop-shadow(0 24px 36px rgba(20, 6, 30, 0.38));
+    text-align: left;
+    transition:
+      transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 0.45s;
+  }
+  .receipt[data-top] {
+    cursor: grab;
+  }
+  .receipt[data-dragging] {
+    cursor: grabbing;
+    transition: none;
+  }
+  .paper {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #fdfaf3, #f4efe4);
+    color: #2a2230;
+    padding: 20px 22px 18px;
+    height: 350px;
+    box-sizing: border-box;
+    border-radius: 6px 6px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    color: rgba(42, 34, 48, 0.6);
+  }
+  .dash {
+    border-top: 1px dashed rgba(42, 34, 48, 0.25);
+  }
+  .who {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .tile {
+    width: 44px;
+    height: 44px;
+    border-radius: 15px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 3px 8px rgba(30, 10, 40, 0.14);
+  }
+  .tile .sym {
+    font-size: 25px;
+  }
+  .who-words {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .name {
+    font-size: 20px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+  .category {
+    font-size: 13px;
+    color: rgba(42, 34, 48, 0.6);
+  }
+  .sums {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: rgba(42, 34, 48, 0.62);
+  }
+  .sum {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .sum-label {
+    letter-spacing: 0.1em;
+  }
+  .strong {
+    color: #2a2230;
+  }
+  .sum-to {
+    font-weight: 600;
+  }
+  .amount {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .meta {
+    border-top: 1px dashed rgba(42, 34, 48, 0.25);
+    padding-top: 10px;
+    font-size: 11.5px;
+    color: rgba(42, 34, 48, 0.62);
+  }
+  .keep-stamp {
+    position: absolute;
+    top: 100px;
+    right: 18px;
+    padding: 5px 12px;
+    border: 3px solid #2f7d55;
+    color: #2f7d55;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 24px;
+    letter-spacing: 0.16em;
+    transform: rotate(9deg);
+    opacity: 0;
+    mix-blend-mode: multiply;
+  }
+  .tear {
+    height: 9px;
+    background: radial-gradient(circle at 6px 9px, transparent 5.5px, #f4efe4 6px) 0 0 / 12px 9px
+      repeat-x;
+  }
+</style>

@@ -9,45 +9,46 @@ const { lang } = Astro.props;
 const t = siteCopy[lang].faq;
 ---
 
-<section id="faq" class="band">
-  <div class="wrap faq">
-    <h2 class="display" data-reveal="0">{t.title}</h2>
-    <div class="list" data-reveal="80">
-      {
-        t.items.map(([question, answer], i) => (
-          <details name="faq" open={i === 0}>
-            <summary>
-              <span>{question}</span>
-              <span class="sym" aria-hidden="true">
-                add
-              </span>
-            </summary>
-            <p>{answer}</p>
-          </details>
-        ))
-      }
-    </div>
+<section id="faq" class="sec faq" data-hour="23.4">
+  <h2 class="h2" data-reveal="0">{t.title}</h2>
+  <div class="list" data-reveal="80">
+    {
+      t.items.map(([question, answer], i) => (
+        <details name="faq" open={i === 0}>
+          <summary>
+            <span>{question}</span>
+            <span class="sym" aria-hidden="true">
+              add
+            </span>
+          </summary>
+          <p>{answer}</p>
+        </details>
+      ))
+    }
   </div>
 </section>
 
 <style>
   .faq {
-    max-width: 820px;
-    display: flex;
-    flex-direction: column;
-    gap: clamp(32px, 4vw, 48px);
+    padding-top: clamp(60px, 8vw, 110px);
+    padding-bottom: clamp(60px, 8vw, 110px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+    align-items: start;
+    gap: clamp(32px, 6vw, 80px);
   }
-  .display {
-    text-align: center;
-    font-size: clamp(40px, 5vw, 72px);
+  .h2 {
+    --size: clamp(40px, 5vw, 72px);
+    --lh: 0.94;
+    text-wrap: initial;
   }
   .list {
     display: flex;
     flex-direction: column;
-    border-top: 0.5px solid var(--line-2);
+    border-top: 0.5px solid var(--line);
   }
   details {
-    border-bottom: 0.5px solid var(--line-2);
+    border-bottom: 0.5px solid var(--line);
   }
   summary {
     min-height: 68px;
@@ -82,7 +83,7 @@ const t = siteCopy[lang].faq;
     padding: 0 48px 24px 0;
     font-size: 16px;
     line-height: 1.6;
-    color: rgba(243, 238, 231, 0.66);
+    color: var(--ink2);
     text-wrap: pretty;
   }
 </style>

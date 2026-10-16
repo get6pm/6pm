@@ -1,5 +1,7 @@
 ---
 import { siteCopy, type SiteLang } from '../../data/site/copy';
+import { glyphColor, tileGradient } from '../../data/site/tiles';
+import Mark from './mark.astro';
 
 interface Props {
   lang: SiteLang;
@@ -9,189 +11,187 @@ const { lang } = Astro.props;
 const t = siteCopy[lang].together;
 ---
 
-<section class="band band-dim">
-  <div class="wrap split">
-    <div class="stack" data-reveal="0">
-      <span class="kicker">{t.kicker}</span>
-      <h2 class="display">{t.title}</h2>
-      <p class="sub">{t.sub}</p>
+<section class="sec split together" data-hour="22.6">
+  <div class="stack" data-reveal="0">
+    <Mark time="22:40" label={t.mark} />
+    <h2 class="h2">{t.title}</h2>
+    <p class="lede">{t.sub}</p>
+  </div>
+  <div class="pot" data-reveal="100">
+    <div class="pot-head">
+      <span class="tile" style={`--tile:${tileGradient(300)};--glyph:${glyphColor(300)}`}>
+        <span class="sym sym-fill" aria-hidden="true">flight</span>
+      </span>
+      <span class="pot-words"><span class="jar">{t.jar}</span><span class="muted">{t.potSub}</span></span>
+      <span class="faces" aria-hidden="true">
+        <span class="face you">{t.youInitial}</span><span class="face them">{t.partnerInitial}</span>
+      </span>
     </div>
-    <div class="scene" data-reveal="100" aria-hidden="true">
-      <div class="person left">
-        <span class="avatar you">{t.youInitial}</span><span class="mono">{t.you}</span>
+    <div class="progress">
+      <div class="track"><span class="mine"></span><span class="theirs"></span></div>
+      <div class="ends"><span>{t.have}</span><span class="muted">{t.goal}</span></div>
+    </div>
+    <div class="who">
+      <div class="line">
+        <span class="name"><span class="dot you"></span>{t.you}</span><span class="sum"
+          >{t.fromYou}</span
+        >
       </div>
-      <div class="person right">
-        <span class="avatar partner">{t.partnerInitial}</span><span class="mono">{t.partner}</span>
-      </div>
-      <div class="coin-x moving" style="--from:calc(var(--W) * -0.38)">
-        <div class="coin you-coin"></div>
-      </div>
-      <div class="coin-x late moving" style="--from:calc(var(--W) * 0.38)">
-        <div class="coin partner-coin"></div>
-      </div>
-      <div class="jar">
-        <div class="lid"></div>
-        <div class="glass">
-          <div class="level"></div>
-          <div class="shine"></div>
-          <div class="mono jar-name">{t.jar}</div>
-        </div>
+      <div class="line">
+        <span class="name"><span class="dot them"></span>{t.partner}</span><span class="sum"
+          >{t.fromPartner}</span
+        >
       </div>
     </div>
+    <span class="note muted">{t.note}</span>
   </div>
 </section>
 
 <style>
-  .sub {
+  .together {
+    padding-top: clamp(60px, 8vw, 110px);
+    padding-bottom: clamp(60px, 8vw, 110px);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  }
+  .h2 {
+    --size: clamp(40px, 5vw, 76px);
+    --lh: 0.94;
+  }
+  .lede {
     max-width: 400px;
   }
-  .scene {
-    --W: min(440px, 90vw);
-    position: relative;
+  .pot {
     justify-self: center;
-    width: var(--W);
-    height: 380px;
-  }
-  .person {
-    position: absolute;
-    top: 40px;
+    width: min(400px, 100%);
+    box-sizing: border-box;
+    border-radius: 30px;
+    background: #f6f0e7;
+    color: #1b1e2e;
+    padding: 20px;
     display: flex;
     flex-direction: column;
+    gap: 18px;
+    box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.7);
+  }
+  .pot-head {
+    display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
   }
-  .person .mono {
-    font-size: 11px;
-    color: rgba(243, 238, 231, 0.6);
+  .tile {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
   }
-  .left {
-    left: 4%;
+  .tile .sym {
+    font-size: 24px;
   }
-  .right {
-    right: 4%;
+  .pot-words {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
-  .avatar {
-    width: 56px;
-    height: 56px;
+  .jar {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+  }
+  .muted {
+    font-size: 13px;
+    color: rgba(27, 30, 46, 0.62);
+  }
+  .faces {
+    display: flex;
+  }
+  .face {
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    font-weight: 600;
-    font-size: 20px;
+    font-size: 13px;
+    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: bob 3s ease-in-out infinite;
+    box-shadow: 0 0 0 2px #f6f0e7;
   }
-  .avatar.you {
+  .face.you {
     background: var(--sun);
     color: var(--on-sun);
   }
-  .avatar.partner {
-    background: var(--lilac);
+  .face.them {
+    margin-left: -8px;
+    background: #c9b8f0;
     color: #1f1830;
-    animation-delay: 1.5s;
   }
-  /* Each coin is thrown across (x) while it arcs up and drops in (y). */
-  .coin-x {
-    position: absolute;
-    left: 50%;
-    top: 52px;
-    margin-left: -11px;
-    animation: coinX 3s linear infinite both;
+  .progress {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
-  .coin {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    animation: coinY 3s infinite both;
-  }
-  .late,
-  .late .coin {
-    animation-delay: 1.5s;
-  }
-  .you-coin {
-    background: radial-gradient(circle at 35% 30%, #ffe2bf, #ff8552 70%);
-    box-shadow: inset 0 0 0 2px rgba(26, 15, 10, 0.15);
-  }
-  .partner-coin {
-    background: radial-gradient(circle at 35% 30%, #f1eaff, #c9b8f0 70%);
-    box-shadow: inset 0 0 0 2px rgba(31, 24, 48, 0.15);
-  }
-  .jar {
-    position: absolute;
-    left: 50%;
-    bottom: 20px;
-    width: 170px;
-    height: 200px;
-    margin-left: -85px;
-  }
-  .lid {
-    position: absolute;
-    left: 16px;
-    right: 16px;
-    top: 0;
-    height: 14px;
-    border-radius: 6px;
-    background: #1e1b22;
-    border: 1px solid rgba(243, 238, 231, 0.24);
-  }
-  .glass {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 12px;
-    bottom: 0;
-    box-sizing: border-box;
-    border-radius: 30px 30px 44px 44px;
-    border: 1px solid rgba(243, 238, 231, 0.24);
-    background: rgba(243, 238, 231, 0.03);
+  .track {
+    display: flex;
+    height: 10px;
+    border-radius: 10px;
+    background: rgba(27, 30, 46, 0.08);
     overflow: hidden;
   }
-  .level {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 60%;
-    background: linear-gradient(180deg, #ffb08a, #ff8552 40%, #c9b8f0);
-    opacity: 0.85;
-    animation: jar 12s cubic-bezier(0.4, 0, 0.6, 1) infinite both;
+  .mine {
+    width: 22%;
+    background: var(--sun);
   }
-  .shine {
-    position: absolute;
-    left: 14px;
-    top: 14px;
-    width: 10px;
-    bottom: 30px;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.08);
+  .theirs {
+    width: 19%;
+    background: #c9b8f0;
   }
-  .jar-name {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 44%;
-    text-align: center;
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    color: var(--ink);
-    mix-blend-mode: difference;
+  .ends {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
   }
-
-  @keyframes coinX {
-    0% { transform: translateX(var(--from)); opacity: 0; }
-    6% { opacity: 1; }
-    45% { transform: translateX(0); opacity: 1; }
-    48%, 100% { transform: translateX(0); opacity: 0; }
+  .ends .muted {
+    font-size: 13.5px;
   }
-  @keyframes coinY {
-    0% { transform: translateY(0); animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1); }
-    20% { transform: translateY(-60px); animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.5); }
-    45%, 100% { transform: translateY(150px); }
+  .who {
+    border-radius: 20px;
+    background: #fffdf9;
+    padding: 4px 14px;
   }
-  @keyframes jar {
-    0% { height: 16%; }
-    88% { height: 76%; }
-    94% { height: 76%; }
-    100% { height: 16%; }
+  .line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 14px;
+  }
+  .line + .line {
+    border-top: 0.5px solid rgba(27, 30, 46, 0.08);
+  }
+  .name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .dot.you {
+    background: var(--sun);
+  }
+  .dot.them {
+    background: #c9b8f0;
+  }
+  .sum {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+  .note {
+    font-size: 12.5px;
+    line-height: 1.45;
   }
 </style>

@@ -1,0 +1,267 @@
+---
+import type { SiteLang } from '../../data/site/copy';
+import DuoDiary from './duo-diary.astro';
+import DuoOuter from './duo-outer.astro';
+import DuoSplit from './duo-split.astro';
+import DuoStand from './duo-stand.astro';
+
+/**
+ * The phone itself, at its real size, scaled to the page by `scripts/site/duo.ts`. Open, the inner
+ * screen shows across both halves: the right half is one copy of it, and the left half, which
+ * folds over on a hinge, is another, with the outer screen on its back. The inner screen pages
+ * between the open view and the diary by sliding up.
+ */
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+---
+
+<div class="box" data-reveal="100" data-duo-box>
+  <div class="stage" data-duo-stage>
+    <div class="body" data-duo-body>
+      <div class="ring" data-duo-ring></div>
+      <div class="right" data-duo-right>
+        <div class="right-shift">
+          <div class="pages" data-duo-pages>
+            <div class="frame"><DuoSplit lang={lang} /></div>
+            <div class="frame"><DuoDiary lang={lang} /></div>
+          </div>
+        </div>
+        <div class="shade-left" data-duo-shade-left></div>
+      </div>
+      <div class="hinge" data-duo-hinge>
+        <div class="front" data-duo-front aria-hidden="true">
+          <div class="pages" data-duo-pages>
+            <div class="frame"><DuoSplit lang={lang} /></div>
+            <div class="frame"><DuoDiary lang={lang} /></div>
+          </div>
+          <div class="shade-right" data-duo-shade-right></div>
+          <div class="glint" data-duo-glint></div>
+        </div>
+        <div class="back">
+          <DuoOuter lang={lang} />
+          <div class="edge"></div>
+          <div class="shade-back" data-duo-shade-back></div>
+        </div>
+      </div>
+    </div>
+    <div class="ghost moving" aria-hidden="true" data-duo-ghost></div>
+  </div>
+  <div class="stand-box" data-duo-stand-box>
+    <div class="stand-tilt" data-duo-stand-tilt>
+      <DuoStand lang={lang} />
+    </div>
+  </div>
+</div>
+
+<style>
+  .box {
+    position: relative;
+    width: 100%;
+    height: var(--duo-h, 800px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .stage {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 969px;
+    height: 696px;
+    margin: -348px 0 0 -484.5px;
+    zoom: var(--duo-zw, 1);
+    perspective: 2600px;
+    touch-action: pan-y;
+    cursor: grab;
+    user-select: none;
+    text-align: left;
+    transition:
+      transform 1s cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 0.5s;
+  }
+  .stage[data-dragging] {
+    cursor: grabbing;
+  }
+  .body {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transform: translateX(-242px) scale(1.12);
+  }
+  .ring {
+    position: absolute;
+    left: 0;
+    top: 4.5px;
+    width: 969px;
+    height: 687px;
+    border-radius: 49px;
+    box-shadow:
+      0 0 0 1px #5d5864,
+      0 0 0 3px #1a181e,
+      0 0 0 4px #7a7480,
+      0 60px 120px rgba(0, 0, 0, 0.55);
+    opacity: 0;
+  }
+  .right {
+    position: absolute;
+    left: 484px;
+    top: 4.5px;
+    width: 485px;
+    height: 687px;
+    overflow: hidden;
+    border-radius: 20px 56px 56px 20px;
+  }
+  .right-shift {
+    position: absolute;
+    left: -484px;
+    top: 0;
+  }
+  .pages {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.95s cubic-bezier(0.65, 0, 0.25, 1);
+  }
+  .frame {
+    width: 969px;
+    height: 687px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 9px;
+    border-radius: 49px;
+    background: #050407;
+  }
+  .shade-left,
+  .shade-right,
+  .glint,
+  .shade-back {
+    position: absolute;
+    pointer-events: none;
+  }
+  .shade-left {
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.5), transparent 60%);
+  }
+  .hinge {
+    position: absolute;
+    left: 0;
+    top: 4.5px;
+    width: 484.5px;
+    height: 687px;
+    transform-origin: 100% 50%;
+    transform-style: preserve-3d;
+    transform: rotateY(180deg);
+  }
+  .front {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 49px 0 0 49px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .shade-right {
+    inset: 0;
+    background: linear-gradient(270deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.25));
+  }
+  .glint {
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    background: linear-gradient(270deg, rgba(255, 255, 255, 0.08), transparent);
+    opacity: 0;
+  }
+  .back {
+    position: absolute;
+    left: 0;
+    top: -4.5px;
+    width: 484px;
+    height: 696px;
+    box-sizing: border-box;
+    padding: 9px;
+    border-radius: 20px 56px 56px 20px;
+    background: #050407;
+    box-shadow:
+      0 0 0 1px #5d5864,
+      0 0 0 3px #1a181e,
+      0 0 0 4px #7a7480,
+      0 60px 120px rgba(0, 0, 0, 0.55);
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    --outer-radius: 12px 47px 47px 12px;
+  }
+  .edge {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    border-radius: 20px 0 0 20px;
+    pointer-events: none;
+    background: linear-gradient(90deg, #8a8490, #2a272e);
+  }
+  .shade-back {
+    inset: 9px;
+    border-radius: 12px 47px 47px 12px;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.6), transparent 70%);
+    opacity: 0;
+  }
+  .ghost {
+    position: absolute;
+    left: 640px;
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.28);
+    box-shadow:
+      0 0 0 1.5px rgba(255, 255, 255, 0.7),
+      0 0 24px rgba(255, 255, 255, 0.5);
+    pointer-events: none;
+    animation: ghostXL 2.8s ease-in-out infinite;
+    transition: opacity 0.4s;
+  }
+  .stand-box {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    zoom: var(--duo-zs, 0.72);
+    width: 687px;
+    height: 900px;
+    margin: -450px 0 0 -343.5px;
+    text-align: left;
+    perspective: 2000px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s 0.15s;
+  }
+  .stand-tilt {
+    transform-origin: 50% 100%;
+    transform: rotateX(62deg) scale(0.82);
+    transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    touch-action: pan-x;
+  }
+  @keyframes ghostX {
+    0%, 15% { transform: translateX(0); opacity: 0; }
+    25% { opacity: 1; }
+    70% { transform: translateX(220px); opacity: 1; }
+    80%, 100% { transform: translateX(240px); opacity: 0; }
+  }
+  @keyframes ghostXL {
+    0%, 15% { transform: translateX(0); opacity: 0; }
+    25% { opacity: 1; }
+    70% { transform: translateX(-260px); opacity: 1; }
+    80%, 100% { transform: translateX(-280px); opacity: 0; }
+  }
+  @keyframes ghostY {
+    0%, 15% { transform: translateY(160px); opacity: 0; }
+    25% { opacity: 1; }
+    70% { transform: translateY(-120px); opacity: 1; }
+    80%, 100% { transform: translateY(-140px); opacity: 0; }
+  }
+</style>

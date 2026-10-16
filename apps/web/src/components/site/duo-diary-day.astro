@@ -1,0 +1,230 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import {
+  duoClosedAt,
+  duoDiary,
+  duoKinds,
+  duoMoney,
+  duoRows,
+  duoSpent,
+  duoToday,
+} from '../../data/site/duo-data';
+
+/** One day on the diary's right page: closed (with its stamp), still open, or slipped by. */
+interface Props {
+  lang: SiteLang;
+  day: number;
+  hidden: boolean;
+}
+
+const { lang, day, hidden } = Astro.props;
+const d = siteCopy[lang].duo.screen.diary;
+const names = siteCopy[lang].duo.screen.rows;
+const money = (k: number): string => duoMoney(lang, k);
+const weekday = d.weekdays[(day - 1) % 7] ?? '';
+const spent = duoSpent[day] ?? 0;
+const under = spent <= duoToday.daily;
+const open = day === 9;
+const missed = day === 7;
+const items = open
+  ? duoRows.map(([kind, amount], i) => ({ name: names[i]?.[0] ?? '', kind, amount }))
+  : (duoDiary[day] ?? []).map(([kind, amount], i) => ({
+      name: d.items[day]?.[i] ?? '',
+      kind,
+      amount,
+    }));
+const label = d.label(
+  weekday,
+  day,
+  open ? d.stillOpen : missed ? d.notClosed : d.closedAt(duoClosedAt[day] ?? ''),
+);
+const gap = Math.abs(duoToday.daily - spent);
+const note = open ? d.openNote : under ? d.under(money(gap)) : d.over(money(gap));
+---
+
+<div class="page" hidden={hidden} data-duo-page={day}>
+  <div class="label d-mono">{label}</div>
+  {
+    missed ? (
+      <div class="missed">
+        <div class="missed-title d-face">{d.missedTitle}</div>
+        <div class="missed-sub">{d.missedSub}</div>
+        <span class="missed-btn">{d.missedButton}</span>
+      </div>
+    ) : (
+      <div class="day">
+        <div class="top">
+          <div class="spent-block">
+            <div class="spent d-face">{money(open ? duoToday.spent : spent)}</div>
+            <div class="of">
+              {open ? d.ofSoFar(money(duoToday.start)) : d.ofThatDay(money(duoToday.daily))}
+            </div>
+          </div>
+          {!open && (
+            <div class:list={['stamp', 'd-mono', { over: !under }]}>
+              <div>{d.stamp}</div>
+              <div>{duoClosedAt[day]}</div>
+            </div>
+          )}
+        </div>
+        <div class="note">“{note}”</div>
+        <div class="items">
+          {items.map((it) => {
+            const [tile, glyph, icon] = duoKinds[it.kind];
+            return (
+              <div class="item">
+                <span class="tile" style={`background:${tile};color:${glyph}`}>
+                  <span class="sym sym-fill">{icon}</span>
+                </span>
+                <span class="item-name">{it.name}</span>
+                <span class="item-amt d-mono">{money(it.amount)}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: duoPageIn 0.3s both;
+  }
+  .page[hidden] {
+    display: none;
+  }
+  .label {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: rgba(42, 20, 36, 0.55);
+  }
+  .missed {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .missed-title {
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    text-wrap: pretty;
+  }
+  .missed-sub {
+    font-size: 15px;
+    line-height: 1.5;
+    color: rgba(42, 20, 36, 0.65);
+    text-wrap: pretty;
+  }
+  .missed-btn {
+    align-self: flex-start;
+    height: 46px;
+    padding: 0 18px;
+    border-radius: 99px;
+    background: #2a1424;
+    color: #f8f1e6;
+    font-size: 15px;
+    font-weight: 650;
+    display: flex;
+    align-items: center;
+  }
+  .day {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .spent-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .spent {
+    font-size: 76px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+  }
+  .of {
+    font-size: 14px;
+    color: rgba(42, 20, 36, 0.6);
+  }
+  .stamp {
+    flex-shrink: 0;
+    margin-bottom: 8px;
+    padding: 6px 10px 5px;
+    border: 2.5px solid #2f7d55;
+    color: #2f7d55;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    line-height: 1.15;
+    text-align: center;
+    transform: rotate(-7deg);
+    opacity: 0.9;
+  }
+  .stamp.over {
+    border-color: #c0443a;
+    color: #c0443a;
+  }
+  .note {
+    font-family: 'Patrick Hand', var(--font-display);
+    font-size: 22px;
+    line-height: 1.25;
+    color: #7a3f72;
+    text-wrap: pretty;
+  }
+  .items {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px dashed rgba(42, 20, 36, 0.22);
+  }
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px dashed rgba(42, 20, 36, 0.22);
+  }
+  .tile {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tile .sym {
+    font-size: 19px;
+  }
+  .item-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 15px;
+    font-weight: 550;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .item-amt {
+    font-size: 14px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  @keyframes duoPageIn {
+    from { opacity: 0; }
+  }
+</style>

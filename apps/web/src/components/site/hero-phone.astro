@@ -1,7 +1,7 @@
 ---
 import { siteCopy, type SiteLang } from '../../data/site/copy';
-import { glyphColor, tileGradient } from '../../data/site/tiles';
-import PhoneSwipe from './phone-swipe.astro';
+import HeroSheet from './hero-sheet.astro';
+import StatusBar from './status-bar.astro';
 
 interface Props {
   lang: SiteLang;
@@ -9,292 +9,148 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = siteCopy[lang].phone;
-// Icon, tile hue and the time it was caught, beside the copy's name, source and amount.
-const looks = [
-  ['local_cafe', 25, '08:15'],
-  ['ramen_dining', 60, '12:40'],
-  [t.rideIcon, 220, '17:22'],
-] as const;
-const items = t.items.map(([name, source, amount], i) => {
-  const [icon, hue, time] = looks[i] ?? looks[0];
-  return { name, source, amount, icon, hue, time, delay: `${0.3 + i * 0.8}s` };
-});
 ---
 
 <div class="phone" aria-hidden="true">
-  <div class="screen">
-    <div class="sky"></div>
-    <div class="glow"></div>
-    <div class="status">
-      <span>18:00</span>
-      <span class="island"></span>
-      <span class="battery"><span></span></span>
+  <div class="bezel tilt">
+    <div class="screen">
+      <div class="sun-glow"></div>
+      <div class="sun-disc"></div>
+      <StatusBar time="09:12" battery={80} />
+      <div class="head">
+        <div class="when">
+          <span class="day">{t.day}</span><span class="date">{t.date}</span>
+        </div>
+        <div class="buttons">
+          <span class="round"><span class="sym" style="font-size:19px">tune</span></span>
+          <span class="round"><span class="sym" style="font-size:22px">add</span></span>
+        </div>
+      </div>
+      <div class="number">
+        <span class="safe">{t.safe}</span>
+        <span class="big" style={`font-size:${t.numSize}`}>{t.num}</span>
+        <div class="progress">
+          <div class="track"><div class="fill"></div></div>
+          <div class="ends"><span>{t.spent}</span><span>{t.of}</span></div>
+        </div>
+      </div>
+      <HeroSheet lang={lang} />
     </div>
-    <div class="today">
-      <span class="mono label">{t.date}</span>
-      <span class="safe">{t.safe}</span>
-      <span class="num">{t.num}</span>
-      <div class="meter"><div></div></div>
-    </div>
-    <div class="inbox">
-      <span class="mono label dim">{t.inbox}</span>
-      {
-        items.map((item) => (
-          <div class="item" style={`animation-delay:${item.delay}`}>
-            <span
-              class="tile"
-              style={`background:${tileGradient(item.hue)};color:${glyphColor(item.hue)}`}
-            >
-              <span class="sym sym-fill">{item.icon}</span>
-            </span>
-            <span class="what">
-              <span class="name">{item.name}</span>
-              <span class="mono src">
-                {item.source} · {item.time}
-              </span>
-            </span>
-            <span class="mono amt">−{item.amount}</span>
-          </div>
-        ))
-      }
-      <div class="stamp mono moving">CLOSED<br />18:00</div>
-    </div>
-    <PhoneSwipe label={t.swipe} />
   </div>
 </div>
 
 <style>
-  .phone {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    width: 300px;
-    margin-left: -150px;
-    box-sizing: border-box;
-    padding: 10px;
-    border-radius: 56px;
-    background: linear-gradient(160deg, #2c2930, #16141a 40%, #0f0e12);
+  .tilt {
     box-shadow:
-      0 0 0 0.5px rgba(243, 238, 231, 0.16),
-      0 60px 120px -30px rgba(0, 0, 0, 0.85);
+      0 0 0 0.5px rgba(0, 0, 0, 0.3),
+      0 50px 100px -30px rgba(30, 40, 40, 0.55);
+    transform: rotate(-2deg);
   }
   .screen {
-    position: relative;
-    overflow: hidden;
-    border-radius: 46px;
-    background: #0f0d12;
-    height: 604px;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
+    background: linear-gradient(180deg, #8fd0c6 0%, #e4efcf 52%, #fff1cf 100%);
+    color: #1b1e2e;
   }
-  .sky {
+  .sun-glow {
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 56%;
-    background: linear-gradient(180deg, #1c2350 0%, #5a2a55 46%, #a8483c 80%, #0f0d12 100%);
-    opacity: 0.92;
-  }
-  .glow {
-    position: absolute;
-    left: 50%;
-    top: 36%;
-    width: 170px;
-    height: 170px;
-    margin-left: -85px;
+    right: -150px;
+    top: -50px;
+    width: 390px;
+    height: 390px;
     border-radius: 50%;
-    background: radial-gradient(
-      circle,
-      rgba(255, 214, 170, 0.7),
-      rgba(255, 140, 90, 0.25) 45%,
-      transparent 70%
-    );
-    animation: breathe 7s ease-in-out infinite;
+    background: radial-gradient(closest-side, rgba(255, 246, 200, 0.55), rgba(255, 230, 140, 0.18) 45%, transparent);
   }
-  .status {
+  .sun-disc {
+    position: absolute;
+    right: -30px;
+    top: 70px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fffdf4 0%, #fff6dc 32%, #fff3b0 72%, #ffe08a 100%);
+    filter: blur(2px);
+    box-shadow: 0 0 24px 6px rgba(255, 240, 170, 0.7);
+  }
+  .head {
     position: relative;
+    padding: 12px 18px 0;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    height: 44px;
-    padding: 0 26px;
-    font-size: 13px;
-    font-weight: 600;
+    align-items: flex-start;
   }
-  .island {
-    position: absolute;
-    left: 50%;
-    top: 10px;
-    width: 90px;
-    height: 26px;
-    margin-left: -45px;
-    border-radius: 20px;
-    background: #000;
-  }
-  .battery {
-    width: 22px;
-    height: 11px;
-    border-radius: 3.5px;
-    border: 1px solid rgba(243, 238, 231, 0.6);
-    box-sizing: border-box;
-    padding: 1px;
-  }
-  .battery span {
-    display: block;
-    width: 70%;
-    height: 100%;
-    border-radius: 1.5px;
-    background: var(--ink);
-  }
-  .today {
-    position: relative;
-    padding: 20px 22px 0;
+  .when {
     display: flex;
     flex-direction: column;
+    gap: 1px;
+  }
+  .day {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(27, 30, 46, 0.7);
+  }
+  .date {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .buttons {
+    display: flex;
     gap: 6px;
   }
-  .label {
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    color: var(--ink-75);
-  }
-  .label.dim {
-    padding: 0 6px;
-    color: var(--ink-55);
-  }
-  .safe {
-    font-size: 13px;
-    color: rgba(243, 238, 231, 0.85);
-  }
-  .num {
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-size: 50px;
-    line-height: 1;
-    letter-spacing: -0.045em;
-  }
-  .meter {
-    margin-top: 10px;
-    height: 4px;
-    border-radius: 4px;
-    background: rgba(243, 238, 231, 0.18);
-    overflow: hidden;
-  }
-  .meter div {
-    width: 42%;
-    height: 100%;
-    background: var(--ink);
-    border-radius: 4px;
-  }
-  .inbox {
-    position: relative;
-    flex: 1;
-    margin-top: 30px;
-    padding: 0 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    overflow: hidden;
-  }
-  .item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 10px;
-    border-radius: 16px;
-    background: rgba(243, 238, 231, 0.07);
-    border: 0.5px solid var(--line);
-    animation: phItem 10s cubic-bezier(0.2, 0.8, 0.2, 1) infinite both;
-  }
-  .tile {
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-    border-radius: 10px;
+  .round {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: inset 0 1px 0 #fff;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .tile .sym {
-    font-size: 18px;
-  }
-  .what {
-    flex: 1;
-    min-width: 0;
+  .number {
+    position: relative;
+    padding: 58px 18px 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
   }
-  .name {
-    font-size: 12.5px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .src {
-    font-size: 8.5px;
-    letter-spacing: 0.1em;
-    color: rgba(243, 238, 231, 0.5);
-  }
-  .amt {
-    font-size: 11.5px;
-  }
-  .stamp {
-    position: absolute;
-    left: 50%;
-    top: 46%;
-    margin-left: -78px;
-    width: 156px;
-    box-sizing: border-box;
-    padding: 10px 0 8px;
-    border: 3px solid #ff8f7a;
-    border-radius: 10px;
-    color: #ff8f7a;
-    text-align: center;
+  .safe {
+    font-size: 13px;
     font-weight: 500;
-    font-size: 20px;
-    letter-spacing: 0.14em;
-    line-height: 1.15;
-    animation: closedIn 10s infinite both;
+    color: rgba(27, 30, 46, 0.72);
   }
-  @keyframes phItem {
-    0% {
-      opacity: 0;
-      transform: translateY(-16px) scale(0.96);
-    }
-    5%,
-    48% {
-      opacity: 1;
-      transform: none;
-    }
-    56%,
-    100% {
-      opacity: 0;
-      transform: translateX(115%);
-    }
+  .big {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-left: -2px;
   }
-  @keyframes closedIn {
-    0%,
-    74% {
-      opacity: 0;
-      transform: rotate(-14deg) scale(2.2);
-    }
-    78% {
-      opacity: 1;
-      transform: rotate(-7deg) scale(0.94);
-    }
-    80%,
-    91% {
-      opacity: 1;
-      transform: rotate(-7deg) scale(1);
-    }
-    96%,
-    100% {
-      opacity: 0;
-      transform: rotate(-7deg) scale(1);
-    }
+  .progress {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 8px;
+    max-width: 220px;
+  }
+  .track {
+    height: 5px;
+    border-radius: 5px;
+    background: rgba(27, 30, 46, 0.12);
+    overflow: hidden;
+  }
+  .fill {
+    width: 9%;
+    height: 100%;
+    border-radius: 5px;
+    background: #1b1e2e;
+  }
+  .ends {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: rgba(27, 30, 46, 0.72);
   }
 </style>

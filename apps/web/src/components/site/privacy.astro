@@ -1,5 +1,7 @@
 ---
+import { repoUrl } from '../../data/site/config';
 import { siteCopy, type SiteLang } from '../../data/site/copy';
+import Mark from './mark.astro';
 
 interface Props {
   lang: SiteLang;
@@ -7,261 +9,193 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = siteCopy[lang].privacy;
-const chipIcons = ['lock', 'person_off', 'visibility_off', 'cloud_lock'];
-const chips = t.chips.map((text, i) => ({ text, icon: chipIcons[i] ?? 'lock' }));
-// Trackers trying the shield from eight directions, half a second apart.
-const probes = [
-  'ads_click',
-  'cookie',
-  'visibility',
-  'track_changes',
-  'campaign',
-  'person_search',
-  'ads_click',
-  'cookie',
-].map((icon, i) => ({ icon, angle: i * 45 + 20, delay: `${i * 0.5}s` }));
+const icons = ['phonelink_lock', 'no_accounts', 'code'];
 ---
 
-<section id="privacy" class="band band-dim privacy">
-  <div class="wrap inner">
-    <div class="stack head" data-reveal="0">
-      <span class="kicker">{t.kicker}</span>
-      <h2 class="display">{t.title}</h2>
+<section id="privacy" class="sec privacy" data-hour="22">
+  <div class="stack" data-reveal="0">
+    <Mark time="22:00" label={t.mark} />
+    <h2 class="h2">{t.title}</h2>
+  </div>
+  <div class="facts">
+    {
+      t.facts.map(([title, line], i) => (
+        <div class="fact" data-reveal={String(i * 80)}>
+          <span class="sym" aria-hidden="true">
+            {icons[i]}
+          </span>
+          <span class="fact-title">{title}</span>
+          <span class="fact-line">{line}</span>
+        </div>
+      ))
+    }
+  </div>
+  <div class="terminal" data-reveal="80">
+    <div class="chrome">
+      <span class="light"></span><span class="light"></span><span class="light"></span>
+      <span class="grow"></span>
+      <a class="repo mono" href={repoUrl} target="_blank" rel="noopener"
+        >get6pm/6pm<span class="sym" aria-hidden="true">arrow_outward</span></a
+      >
     </div>
-    <div class="vault" data-reveal="80" aria-hidden="true">
-      <div class="shield"></div>
-      <div class="shield-glow"></div>
-      {
-        probes.map((p) => (
-          <div class="probe moving" style={`transform:rotate(${p.angle}deg);--delay:${p.delay}`}>
-            <div class="flash" />
-            <div class="tracker">
-              <span class="tracker-face" style={`transform:rotate(${-p.angle}deg)`}>
-                <span class="sym">{p.icon}</span>
-              </span>
-            </div>
-          </div>
-        ))
-      }
-      <div class="device">
-        <div class="orbit" style="animation-duration:6s">
-          <span class="mint"></span>
-        </div>
-        <div class="orbit" style="animation-duration:9s;animation-direction:reverse">
-          <span class="lilac"></span>
-        </div>
-        <div class="orbit" style="animation-duration:4.5s"><span class="peach"></span></div>
-        <div class="lock"><span class="sym sym-fill">lock</span></div>
+    <div class="lines mono">
+      <div class="prompt">
+        <span class="dollar">$</span><span class="typed">git clone github.com/get6pm/6pm</span><span
+          class="caret moving"></span>
+      </div>
+      <div class="out">
+        <span>{t.cloning}</span>
+        <span><span class="ok">✓</span> apps/mobile <span class="dim">· {t.app}</span></span>
+        <span><span class="ok">✓</span> packages/domain <span class="dim">· {t.domain}</span></span>
+        <span><span class="ok">✓</span> legal/privacy <span class="dim">· {t.legal}</span></span>
       </div>
     </div>
-    <ul class="chips" data-reveal="0">
-      {
-        chips.map((c) => (
-          <li>
-            <span class="sym" aria-hidden="true">
-              {c.icon}
-            </span>
-            {c.text}
-          </li>
-        ))
-      }
-    </ul>
-    <a class="more" href={t.linkHref}>
-      {t.link}<span class="sym" aria-hidden="true">arrow_outward</span>
-    </a>
   </div>
 </section>
 
 <style>
   .privacy {
-    overflow: hidden;
-  }
-  .inner {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: clamp(32px, 4vw, 48px);
+    gap: clamp(40px, 5vw, 64px);
   }
-  .head {
-    align-items: center;
-    gap: 18px;
-    max-width: 860px;
+  .h2 {
+    max-width: 1000px;
+    --size: clamp(48px, 7vw, 112px);
+    --lh: 0.88;
+    --ls: -0.055em;
   }
-  .head .display {
-    font-size: clamp(44px, 6.4vw, 96px);
-    line-height: 0.94;
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    border-top: 0.5px solid var(--line);
   }
-  .vault {
-    --R: min(160px, 26vw);
-    position: relative;
-    width: min(560px, 92vw);
-    height: min(480px, 80vw);
-  }
-  .shield,
-  .shield-glow {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: calc(var(--R) * 2);
-    height: calc(var(--R) * 2);
-    margin: calc(var(--R) * -1) 0 0 calc(var(--R) * -1);
-    border-radius: 50%;
-  }
-  .shield {
-    border: 1px dashed rgba(255, 133, 82, 0.4);
-    animation: spin 50s linear infinite;
-  }
-  .shield-glow {
-    background: radial-gradient(closest-side, rgba(255, 133, 82, 0.1), transparent);
-  }
-  .probe {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 0;
-    height: 0;
-  }
-  .flash {
-    position: absolute;
-    left: calc(var(--R) - 6px);
-    top: -6px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--sun);
-    filter: blur(3px);
-    animation: flash 4s infinite both;
-    animation-delay: var(--delay);
-  }
-  .tracker {
-    position: absolute;
-    left: 0;
-    top: -14px;
-    animation: probe 4s cubic-bezier(0.4, 0, 0.4, 1) infinite both;
-    animation-delay: var(--delay);
-  }
-  .tracker-face {
+  .fact {
     display: flex;
-    width: 28px;
-    height: 28px;
-    margin-left: -14px;
-    border-radius: 50%;
-    background: #1e1b22;
-    border: 0.5px solid var(--line-3);
-    align-items: center;
-    justify-content: center;
-    color: rgba(243, 238, 231, 0.6);
+    flex-direction: column;
+    gap: 12px;
+    padding: 28px 28px 28px 0;
   }
-  .tracker-face .sym {
-    font-size: 15px;
-  }
-  .device {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: calc(var(--R) * 0.78);
-    height: calc(var(--R) * 1.5);
-    transform: translate(-50%, -50%);
-    box-sizing: border-box;
-    border-radius: calc(var(--R) * 0.16);
-    background: var(--raised);
-    border: 1px solid rgba(243, 238, 231, 0.22);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-  }
-  /* Data circling inside the phone, never leaving it. */
-  .orbit {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 0;
-    height: 0;
-    animation: spin 6s linear infinite;
-  }
-  .orbit span {
-    position: absolute;
-    top: -3px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-  }
-  .mint {
-    left: calc(var(--R) * 0.24);
-    background: var(--mint);
-  }
-  .lilac {
-    left: calc(var(--R) * 0.18);
-    background: var(--lilac);
-  }
-  .orbit .peach {
-    left: calc(var(--R) * 0.3);
-    top: -2.5px;
-    width: 5px;
-    height: 5px;
-    background: var(--sun-soft);
-  }
-  .lock {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--ink);
-  }
-  .lock .sym {
-    font-size: calc(var(--R) * 0.26);
-  }
-  .chips {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    max-width: 820px;
-  }
-  .chips li {
-    height: 44px;
-    padding: 0 18px 0 14px;
-    border-radius: 99px;
-    border: 0.5px solid rgba(243, 238, 231, 0.14);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 15px;
-  }
-  .chips .sym {
-    font-size: 19px;
+  .fact .sym {
+    font-size: 28px;
     color: var(--sun-soft);
   }
-  .more {
+  .fact-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 26px;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  .fact-line {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink2);
+    text-wrap: pretty;
+  }
+  .terminal {
+    border-radius: 24px;
+    background: rgba(10, 8, 18, 0.55);
+    border: 0.5px solid rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: #fbf4ec;
+  }
+  .chrome {
+    height: 44px;
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+  }
+  .light {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+  }
+  .grow {
+    flex: 1;
+  }
+  .repo {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 15px;
-    color: var(--ink-75);
+    font-size: 12px;
+    color: rgba(251, 244, 236, 0.7);
     text-decoration: none;
-    transition: color 0.2s;
   }
-  .more:hover {
+  .repo:hover {
     color: var(--sun-soft);
   }
-  .more .sym {
-    font-size: 18px;
+  .repo .sym {
+    font-size: 15px;
   }
-
-  @keyframes probe {
-    0% { transform: translateX(min(250px, 40vw)); opacity: 0; }
-    25% { opacity: 0.9; }
-    52% { transform: translateX(min(158px, 26vw)); opacity: 0.9; }
-    58% { transform: translateX(min(170px, 28vw)); opacity: 0.35; }
-    80%, 100% { transform: translateX(min(230px, 38vw)); opacity: 0; }
+  .lines {
+    padding: 24px 22px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: clamp(12px, 1.2vw, 14px);
+    line-height: 1.5;
+    overflow: hidden;
   }
-  @keyframes flash {
-    0%, 50% { opacity: 0; transform: scale(0.4); }
-    54% { opacity: 1; transform: scale(1.4); }
-    70%, 100% { opacity: 0; transform: scale(1.8); }
+  .prompt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+  }
+  .dollar {
+    color: var(--sun);
+  }
+  .typed {
+    --w: 30ch;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    animation: type 7s steps(30) infinite both;
+  }
+  .caret {
+    width: 8px;
+    height: 1.2em;
+    background: #fbf4ec;
+    animation: blink 1s steps(1) infinite;
+  }
+  .out {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: rgba(251, 244, 236, 0.62);
+    animation: lineIn 7s infinite both;
+  }
+  .ok {
+    color: #a8dcb8;
+  }
+  .dim {
+    color: rgba(251, 244, 236, 0.38);
+  }
+  /* Held still, the clone has finished. */
+  @media (prefers-reduced-motion: reduce) {
+    .typed,
+    .out {
+      animation: none !important;
+    }
+  }
+  @keyframes type {
+    0% { width: 0; }
+    40%, 88% { width: var(--w); }
+    96%, 100% { width: 0; }
+  }
+  @keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+  @keyframes lineIn {
+    0%, 44% { opacity: 0; transform: translateY(6px); }
+    50%, 88% { opacity: 1; transform: none; }
+    96%, 100% { opacity: 0; transform: none; }
   }
 </style>

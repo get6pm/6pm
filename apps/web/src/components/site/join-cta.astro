@@ -4,7 +4,7 @@ import { siteCopy, type SiteLang } from '../../data/site/copy';
 
 interface Props {
   lang: SiteLang;
-  /** `hero` sits on the bare page; `final` is a touch taller, over the sunset. */
+  /** `hero` sits left-aligned in the morning; `final` is centred, a touch taller, at midnight. */
   size: 'hero' | 'final';
 }
 
@@ -15,11 +15,17 @@ const id = `email-${size}`;
 
 {
   ctaMode === 'store' ? (
-    <a class:list={['store pill-btn', size]} href={appStoreUrl}>
-      <span class="sym" aria-hidden="true">
-        phone_iphone
+    <a class:list={['badge', size]} href={appStoreUrl} aria-label={t.storeLabel}>
+      <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true">
+        <path
+          fill="#fff"
+          d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"
+        />
+      </svg>
+      <span class="badge-words">
+        <span class="badge-top">{t.badgeTop}</span>
+        <span class="badge-name">App Store</span>
       </span>
-      {t.store}
     </a>
   ) : (
     <div class:list={['join', size]} data-join>
@@ -56,20 +62,19 @@ const id = `email-${size}`;
 <style>
   .join {
     width: 100%;
+    max-width: 460px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 26px;
+    gap: 10px;
   }
   .final {
+    align-items: center;
     gap: 12px;
   }
   .form {
     width: 100%;
-    max-width: 460px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 10px;
   }
   .form[hidden] {
@@ -78,44 +83,53 @@ const id = `email-${size}`;
   input {
     flex: 1 1 220px;
     min-width: 0;
-    height: 52px;
+    height: 54px;
     box-sizing: border-box;
     padding: 0 20px;
     border-radius: 99px;
-    border: 0.5px solid rgba(243, 238, 231, 0.2);
-    background: rgba(243, 238, 231, 0.05);
+    border: 0.5px solid var(--line);
+    background: var(--glass);
     color: var(--ink);
     font-family: inherit;
     font-size: 16px;
     outline: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
   }
+  input:focus,
   input:focus-visible {
-    border-color: rgba(255, 176, 138, 0.7);
+    border-color: var(--sun);
+    box-shadow: 0 0 0 3px rgba(255, 133, 82, 0.28);
     outline: none;
   }
   .final input {
     height: 56px;
     padding: 0 22px;
-    background: rgba(13, 11, 16, 0.6);
+    background: rgba(10, 8, 18, 0.45);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
   button {
-    height: 52px;
+    height: 54px;
     padding: 0 24px;
     font-size: 15px;
-  }
-  button[aria-busy='true'] {
-    opacity: 0.7;
-    cursor: progress;
   }
   .final button {
     height: 56px;
     padding: 0 26px;
   }
+  button[aria-busy='true'] {
+    opacity: 0.7;
+    cursor: progress;
+  }
   .sent {
     display: flex;
     align-items: center;
     gap: 12px;
-    height: 52px;
+    height: 54px;
     font-size: 16px;
   }
   .sent[hidden] {
@@ -127,25 +141,73 @@ const id = `email-${size}`;
   }
   .sent .sym {
     font-size: 22px;
+    color: var(--acc);
+  }
+  .final .sent .sym {
     color: var(--sun);
   }
   .note {
     font-size: 13.5px;
-    color: var(--ink-55);
+    padding-left: 20px;
+    color: var(--ink2);
+  }
+  .final .note {
+    padding-left: 0;
   }
   .note[data-error] {
     color: var(--error);
   }
-  .store {
-    height: 56px;
-    padding: 0 26px 0 20px;
-    font-size: 16px;
+  .badge {
+    align-self: flex-start;
+    height: 60px;
+    box-sizing: border-box;
+    padding: 0 24px 0 18px;
+    border-radius: 14px;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    box-shadow:
+      0 0 0 1px #a6a6a6,
+      0 10px 28px -10px rgba(0, 0, 0, 0.5);
+    font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', var(--font-text);
+    transition:
+      transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.2s;
   }
-  .store.final {
-    height: 58px;
-    padding: 0 28px 0 22px;
+  .badge.final {
+    align-self: center;
   }
-  .store .sym {
-    font-size: 22px;
+  .badge:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow:
+      0 0 0 1px #a6a6a6,
+      0 18px 40px -12px rgba(0, 0, 0, 0.55);
+  }
+  .badge:active {
+    transform: scale(0.97);
+  }
+  .badge svg {
+    flex-shrink: 0;
+    display: block;
+  }
+  .badge-words {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    line-height: 1;
+  }
+  .badge-top {
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .badge-name {
+    font-size: 25px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
   }
 </style>

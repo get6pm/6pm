@@ -1,0 +1,121 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import { duoKinds, duoMoney, duoRows } from '../../data/site/duo-data';
+
+/** Today's spends on a Duo screen. Open, each one is a button that shows its details beside it. */
+interface Props {
+  lang: SiteLang;
+  open?: boolean;
+}
+
+const { lang, open = false } = Astro.props;
+const t = siteCopy[lang].duo.screen;
+const Row = open ? 'button' : 'div';
+---
+
+<div class:list={['rows', { open }]}>
+  {
+    duoRows.map(([kind, amount], i) => {
+      const [tile, glyph, icon] = duoKinds[kind];
+      return (
+        <Row
+          class="row"
+          type={open ? 'button' : undefined}
+          tabindex={open ? -1 : undefined}
+          data-duo-row={open ? i : undefined}
+        >
+          <span class="d-tile tile" style={`background:${tile};color:${glyph}`}>
+            <span class="sym sym-fill">{icon}</span>
+          </span>
+          <span class:list={['body', { first: i === 0 }]}>
+            <span class="words">
+              <span class="name d-ellipsis">{t.rows[i]?.[0]}</span>
+              <span class="meta d-muted d-ellipsis">{t.rows[i]?.[1]}</span>
+            </span>
+            <span class="amt">{duoMoney(lang, amount)}</span>
+            {open && <span class="sym chevron">chevron_right</span>}
+          </span>
+        </Row>
+      );
+    })
+  }
+</div>
+
+<style>
+  .rows {
+    border-radius: 24px;
+    background: #fffdf9;
+    box-shadow:
+      0 1px 2px rgba(70, 45, 30, 0.06),
+      0 10px 26px rgba(70, 45, 30, 0.08);
+    overflow: hidden;
+  }
+  .rows.open {
+    box-shadow: 0 10px 26px rgba(40, 20, 40, 0.18);
+  }
+  .row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 14px;
+    border: none;
+    background: transparent;
+    color: #1b1e2e;
+    text-align: left;
+    transition: background 0.2s;
+  }
+  button.row {
+    cursor: pointer;
+  }
+  button.row:active {
+    transform: none;
+  }
+  .row[aria-pressed='true'] {
+    background: rgba(255, 133, 82, 0.14);
+  }
+  .tile {
+    width: 38px;
+    height: 38px;
+    border-radius: 13px;
+  }
+  .tile .sym {
+    font-size: 21px;
+  }
+  .body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    border-top: 0.5px solid rgba(27, 30, 46, 0.08);
+  }
+  .body.first {
+    border-top: none;
+  }
+  .words {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .name {
+    font-size: 15.5px;
+    font-weight: 550;
+  }
+  .meta {
+    font-size: 12.5px;
+  }
+  .amt {
+    flex-shrink: 0;
+    font-size: 15.5px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .chevron {
+    font-size: 20px;
+    opacity: 0.35;
+  }
+</style>

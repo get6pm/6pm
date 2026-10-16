@@ -10,9 +10,8 @@ const t = siteCopy[lang].beliefs;
 const last = t.phrases.length - 1;
 ---
 
-<section class="wrap beliefs">
-  <span class="kicker" data-reveal="0">{t.kicker}</span>
-  <p data-reveal="60">
+<section class="sec beliefs" data-hour="20.1">
+  <p data-reveal="0">
     {
       t.phrases.map((phrase, i) => (
         <span class:list={{ last: i === last }} style={`animation-delay:${i * 2}s`}>
@@ -24,68 +23,47 @@ const last = t.phrases.length - 1;
 </section>
 
 <style>
-  .beliefs {
-    padding-top: clamp(120px, 14vw, 200px);
-    padding-bottom: clamp(120px, 14vw, 200px);
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-  }
   p {
     margin: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 0 0.28em;
+    gap: 0 0.26em;
     font-family: var(--font-display);
     font-weight: 500;
     font-variation-settings:
       'opsz' 96,
-      'wdth' 92;
-    font-size: clamp(44px, 7vw, 108px);
-    line-height: 1.02;
+      'wdth' 88;
+    font-size: clamp(44px, 7vw, 112px);
+    line-height: calc(1 + var(--hlx));
     letter-spacing: -0.05em;
   }
   /* Each phrase lights up in turn; the last one in the sunset colour. */
-  span:not(.kicker) {
-    color: rgba(243, 238, 231, 0.16);
+  span {
+    color: rgba(251, 244, 236, 0.18);
     animation: lit 12s ease-in-out infinite;
   }
   span.last {
-    color: rgba(255, 133, 82, 0.22);
+    color: rgba(255, 133, 82, 0.25);
     animation-name: litAccent;
   }
+  /* Held still, every phrase stays lit. */
   @media (prefers-reduced-motion: reduce) {
-    span:not(.kicker) {
-      color: var(--ink);
+    span {
+      animation: none !important;
+      color: #fbf4ec;
     }
     span.last {
       color: var(--sun);
     }
   }
   @keyframes lit {
-    0%,
-    100% {
-      color: rgba(243, 238, 231, 0.16);
-    }
-    5%,
-    22% {
-      color: #f3eee7;
-    }
-    32% {
-      color: rgba(243, 238, 231, 0.16);
-    }
+    0%, 100% { color: rgba(251, 244, 236, 0.18); }
+    5%, 22% { color: #fbf4ec; }
+    32% { color: rgba(251, 244, 236, 0.18); }
   }
   @keyframes litAccent {
-    0%,
-    100% {
-      color: rgba(255, 133, 82, 0.22);
-    }
-    5%,
-    22% {
-      color: #ff8552;
-    }
-    32% {
-      color: rgba(255, 133, 82, 0.22);
-    }
+    0%, 100% { color: rgba(255, 133, 82, 0.25); }
+    5%, 22% { color: #ff8552; }
+    32% { color: rgba(255, 133, 82, 0.25); }
   }
 </style>

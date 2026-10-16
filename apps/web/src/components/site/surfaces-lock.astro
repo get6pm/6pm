@@ -1,0 +1,187 @@
+---
+import type { SurfacesCopy } from '../../data/site/surfaces-copy';
+import SurfacesLockAlerts from './surfaces-lock-alerts.astro';
+
+interface Props {
+  t: SurfacesCopy;
+}
+
+const { t } = Astro.props;
+const lock = t.lock;
+---
+
+<div class="card" data-reveal="0">
+  <span class="label mono">{lock.label}</span>
+  <div class="frame" aria-hidden="true">
+    <div class="glass">
+      <div class="sun"></div>
+      <span class="island"></span>
+      <span class="date">{lock.date}</span>
+      <span class="time">17:52</span>
+      <div class="widgets">
+        <div class="ring">
+          <div class="ring-arc"></div>
+          <span class="ring-num">{t.safe}</span><span class="ring-left">{lock.left}</span>
+        </div>
+        <div class="rect">
+          <span class="small">{lock.widgetTop}</span>
+          <span class="rect-num">{t.safe}</span>
+          <span class="small">{lock.widgetBottom}</span>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <SurfacesLockAlerts t={t} />
+    </div>
+  </div>
+</div>
+
+<style>
+  .card {
+    flex: 1 1 330px;
+    min-width: 0;
+    position: relative;
+    border-radius: 32px;
+    overflow: hidden;
+    background: linear-gradient(170deg, #2c2758 0%, #6e3c6e 55%, #d07a58 100%);
+    padding: 28px 20px 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    color: #fff;
+    min-height: 640px;
+  }
+  .label {
+    align-self: flex-start;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .frame {
+    position: relative;
+    width: 290px;
+    max-width: 100%;
+    flex: 1;
+    min-height: 580px;
+    box-sizing: border-box;
+    padding: 10px 10px 0;
+    border-radius: 52px 52px 0 0;
+    background: #0f0e12;
+    box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.2), 0 -10px 60px rgba(0, 0, 0, 0.3);
+  }
+  .glass {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 42px 42px 0 0;
+    background: linear-gradient(180deg, #2c2758 0%, #7a3f72 48%, #e0855a 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 46px 12px 0;
+    box-sizing: border-box;
+    font-family: -apple-system, 'SF Pro Text', var(--font-text);
+  }
+  .sun {
+    position: absolute;
+    left: 50%;
+    bottom: -90px;
+    width: 200px;
+    height: 200px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff1d6 0%, #ffcf9a 40%, #ff9d6a 100%);
+    filter: blur(3px);
+    box-shadow: 0 0 120px 60px rgba(255, 160, 100, 0.35);
+  }
+  .island {
+    position: absolute;
+    left: 50%;
+    top: 10px;
+    width: 88px;
+    height: 26px;
+    margin-left: -44px;
+    border-radius: 20px;
+    background: #000;
+  }
+  .date {
+    position: relative;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0.9;
+  }
+  .time {
+    position: relative;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 84px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .widgets {
+    position: relative;
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .ring,
+  .rect {
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .ring {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .ring-arc {
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: conic-gradient(#fff 0 58%, rgba(255, 255, 255, 0.25) 58% 100%);
+    -webkit-mask: radial-gradient(circle, transparent 21px, #000 21.5px);
+    mask: radial-gradient(circle, transparent 21px, #000 21.5px);
+  }
+  .ring-num {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .ring-left {
+    font-size: 8.5px;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+  .rect {
+    width: 124px;
+    height: 56px;
+    border-radius: 16px;
+    padding: 7px 11px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1px;
+  }
+  .small {
+    font-size: 10px;
+    font-weight: 600;
+    opacity: 0.75;
+  }
+  .rect-num {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 21px;
+    line-height: 1;
+  }
+  .spacer {
+    flex: 1;
+  }
+</style>

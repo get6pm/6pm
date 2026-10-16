@@ -1,0 +1,264 @@
+---
+/*
+ * The sky behind the whole page: a gradient, stars, the sun and its haze, a horizon line, and on
+ * top of everything a vignette, a light leak and film grain. `scripts/site/sky.ts` repaints it as
+ * the page scrolls from nine in the morning to midnight; without the script it stays at nine.
+ */
+---
+
+<div class="sky" aria-hidden="true" data-sky></div>
+<div class="stars" aria-hidden="true" data-stars></div>
+<div class="sun-field" aria-hidden="true">
+  <div class="sun" data-sun>
+    <div class="halo"></div>
+    <div class="glow"></div>
+    <div class="disc"></div>
+    <div class="streak"></div>
+    <div class="streak-soft"></div>
+    <div class="bands"></div>
+    <div class="flare"></div>
+    <div class="flare-dot"></div>
+  </div>
+</div>
+<div class="haze" aria-hidden="true" data-haze></div>
+<div class="horizon" aria-hidden="true" data-horizon></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="leak" aria-hidden="true" data-leak></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="scratch" aria-hidden="true"></div>
+
+<style>
+  .sky,
+  .stars,
+  .haze,
+  .vignette,
+  .leak,
+  .scratch {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+  }
+  .sky {
+    z-index: 0;
+    background: linear-gradient(180deg, #8fd0c6 0%, #e4efcf 52%, #fff1cf 100%);
+  }
+  .stars {
+    z-index: 0;
+    opacity: 0;
+    background-image:
+      radial-gradient(circle, rgba(255, 250, 240, 0.9) 0.8px, transparent 1.4px),
+      radial-gradient(circle, rgba(255, 250, 240, 0.6) 0.6px, transparent 1.2px);
+    background-size:
+      97px 83px,
+      53px 61px;
+    background-position:
+      0 0,
+      21px 37px;
+    -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent 86%);
+    mask-image: linear-gradient(180deg, #000 30%, transparent 86%);
+  }
+  .sun-field {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 86vh;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .sun {
+    --sun: #fff07a;
+    --rim: #ffd23f;
+    --haze: 0;
+    position: absolute;
+    right: 7vw;
+    top: 14vh;
+    width: clamp(150px, 19vw, 260px);
+    aspect-ratio: 1;
+  }
+  .sun > div {
+    position: absolute;
+  }
+  .halo {
+    inset: -260%;
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in oklab, var(--sun) 34%, transparent) 0%,
+      color-mix(in oklab, var(--rim) 14%, transparent) 38%,
+      transparent 100%
+    );
+    mix-blend-mode: screen;
+  }
+  .glow {
+    inset: -60%;
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in oklab, #fff8e6 70%, transparent) 0%,
+      color-mix(in oklab, var(--sun) 40%, transparent) 45%,
+      transparent 100%
+    );
+    filter: blur(8px);
+  }
+  .disc {
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 50% 50%,
+      #fffdf4 0%,
+      #fff6dc 30%,
+      var(--sun) 72%,
+      var(--rim) 100%
+    );
+    filter: blur(2.5px);
+    box-shadow: 0 0 30px 6px color-mix(in oklab, var(--sun) 70%, transparent);
+  }
+  .streak {
+    left: -180%;
+    right: -180%;
+    top: 50%;
+    height: 3px;
+    margin-top: -1.5px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--sun) 50%, transparent) 30%,
+      rgba(255, 252, 240, 0.85) 50%,
+      color-mix(in oklab, var(--sun) 50%, transparent) 70%,
+      transparent
+    );
+    filter: blur(1.5px);
+    mix-blend-mode: screen;
+  }
+  .streak-soft {
+    left: -120%;
+    right: -120%;
+    top: 50%;
+    height: 40px;
+    margin-top: -20px;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in oklab, var(--sun) 30%, transparent),
+      transparent
+    );
+    filter: blur(6px);
+    mix-blend-mode: screen;
+  }
+  .bands {
+    left: -30%;
+    right: -30%;
+    top: 58%;
+    bottom: -10%;
+    opacity: var(--haze);
+    background: repeating-linear-gradient(
+      180deg,
+      transparent 0 9px,
+      color-mix(in oklab, var(--rim) 55%, #3a1c5a) 9px 13px
+    );
+    -webkit-mask-image: radial-gradient(closest-side, #000 40%, transparent);
+    mask-image: radial-gradient(closest-side, #000 40%, transparent);
+    filter: blur(1.5px);
+  }
+  .flare {
+    left: calc(-130% - 30px);
+    top: 210%;
+    width: 34%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 240, 210, 0.18);
+    background: radial-gradient(
+      closest-side,
+      transparent 60%,
+      rgba(160, 220, 255, 0.08) 80%,
+      rgba(255, 200, 150, 0.12) 95%,
+      transparent
+    );
+    mix-blend-mode: screen;
+  }
+  .flare-dot {
+    left: -210%;
+    top: 330%;
+    width: 14%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: rgba(255, 220, 180, 0.14);
+    filter: blur(1px);
+    mix-blend-mode: screen;
+  }
+  .haze {
+    z-index: 0;
+    background:
+      radial-gradient(120% 60% at 50% 100%, rgba(255, 214, 170, 0.35), transparent 60%),
+      radial-gradient(80% 50% at 10% 0%, rgba(40, 30, 90, 0.18), transparent 70%);
+  }
+  .horizon {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 86vh;
+    bottom: 0;
+    z-index: 0;
+    opacity: 0;
+    pointer-events: none;
+    border-top: 1px solid rgba(255, 206, 170, 0.7);
+    background: linear-gradient(180deg, rgba(255, 140, 90, 0.35), rgba(20, 10, 30, 0.2) 60%, transparent);
+  }
+  .vignette {
+    z-index: 40;
+    background: radial-gradient(130% 100% at 50% 45%, transparent 55%, rgba(18, 8, 24, 0.34) 100%);
+  }
+  .leak {
+    z-index: 40;
+    mix-blend-mode: screen;
+    opacity: 0.5;
+    background:
+      radial-gradient(40% 70% at 100% 20%, rgba(255, 120, 60, 0.22), transparent 70%),
+      radial-gradient(30% 50% at 0% 85%, rgba(255, 80, 120, 0.12), transparent 70%);
+    animation: leak 14s ease-in-out infinite;
+  }
+  .grain {
+    position: fixed;
+    inset: -100%;
+    z-index: 41;
+    pointer-events: none;
+    opacity: 0.16;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain 0.9s steps(1) infinite;
+  }
+  .scratch {
+    z-index: 41;
+    opacity: 0.05;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0 137px,
+      rgba(255, 255, 255, 0.6) 137px 138px,
+      transparent 138px 311px
+    );
+    animation: scratch 7s steps(1) infinite;
+  }
+  @keyframes leak {
+    0%, 100% { opacity: 0.35; transform: translateX(0); }
+    50% { opacity: 0.6; transform: translateX(-2%); }
+  }
+  @keyframes grain {
+    0% { transform: translate(0, 0); }
+    10% { transform: translate(-5%, -8%); }
+    20% { transform: translate(-12%, 4%); }
+    30% { transform: translate(6%, -14%); }
+    40% { transform: translate(-4%, 16%); }
+    50% { transform: translate(-14%, 6%); }
+    60% { transform: translate(12%, 0); }
+    70% { transform: translate(0, 12%); }
+    80% { transform: translate(2%, 22%); }
+    90% { transform: translate(-8%, 8%); }
+  }
+  @keyframes scratch {
+    0% { transform: translateX(0); opacity: 0.05; }
+    30% { transform: translateX(-41px); opacity: 0; }
+    55% { transform: translateX(83px); opacity: 0.06; }
+    80% { transform: translateX(17px); opacity: 0; }
+  }
+</style>

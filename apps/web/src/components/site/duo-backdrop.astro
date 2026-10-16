@@ -1,0 +1,98 @@
+---
+/** The dusk behind a Duo screen: two glows, a setting sun on the horizon, a vignette and grain. */
+interface Props {
+  /** Where the sun stands across the screen, as a CSS left. */
+  sunLeft: string;
+  /** Where the horizon sits, in px from the top. */
+  horizon: number;
+  /** How far the sun's ray reaches up. */
+  ray?: number;
+}
+
+const { sunLeft, horizon, ray = 124 } = Astro.props;
+---
+
+<div class="backdrop" aria-hidden="true" style={`--x:${sunLeft};--h:${horizon}px;--ray:${ray}px`}>
+  <div class="warm"></div>
+  <div class="cool"></div>
+  <div class="ray"></div>
+  <div class="sun"></div>
+  <div class="glare"></div>
+  <div class="line"></div>
+  <div class="vignette"></div>
+  <div class="noise"></div>
+</div>
+
+<style>
+  .backdrop {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .backdrop > div {
+    position: absolute;
+  }
+  .warm {
+    left: -30%;
+    top: var(--h);
+    width: 440px;
+    height: 440px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ff9a6a 0%, transparent 70%);
+    opacity: 0.32;
+  }
+  .cool {
+    right: -30%;
+    top: -80px;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #6a4cc0 0%, transparent 70%);
+    opacity: 0.42;
+  }
+  .ray {
+    left: var(--x);
+    top: calc(var(--h) - 140px);
+    width: 1px;
+    height: var(--ray);
+    background: linear-gradient(180deg, transparent, rgba(255, 214, 170, 0.5));
+    opacity: 0.6;
+  }
+  .sun {
+    left: var(--x);
+    top: var(--h);
+    width: 72px;
+    height: 72px;
+    margin: -36px 0 0 -36px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 42%, #fff4dc 0%, #ffc983 55%, #ff9a5c 100%);
+    box-shadow:
+      0 0 36px 10px rgba(255, 170, 100, 0.45),
+      0 0 140px 50px rgba(255, 120, 80, 0.22);
+  }
+  .glare {
+    left: -20%;
+    right: -20%;
+    top: calc(var(--h) - 17px);
+    height: 34px;
+    background: linear-gradient(90deg, transparent, rgba(255, 200, 150, 0.55), transparent);
+    opacity: 0.5;
+  }
+  .line {
+    left: -10%;
+    right: -10%;
+    top: calc(var(--h) - 1px);
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 226, 190, 0.9), transparent);
+  }
+  .vignette {
+    inset: 0;
+    background: radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(10, 4, 20, 0.35) 100%);
+  }
+  .noise {
+    inset: 0;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+</style>

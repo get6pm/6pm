@@ -1,6 +1,7 @@
 ---
 import { ctaMode } from '../../data/site/config';
 import { siteCopy, type SiteLang } from '../../data/site/copy';
+import Buddy from './buddy.astro';
 import JoinCta from './join-cta.astro';
 
 interface Props {
@@ -13,14 +14,13 @@ const hero = siteCopy[lang].hero;
 const store = ctaMode === 'store';
 ---
 
-<section id="join" class="band final">
-  <div class="glow" aria-hidden="true"></div>
-  <div class="dusk" aria-hidden="true"><div class="sun"></div></div>
-  <div class="horizon" aria-hidden="true"></div>
+<section id="join" class="final" data-hour="23.9">
+  <div data-reveal="0"><Buddy size={88} mood="sleepy" /></div>
   <span class="mono kick" data-reveal="0" data-countdown={store ? undefined : ''}>
     {store ? t.storeKicker : hero.kickWait}
   </span>
   <h2 data-reveal="60">{t.a} <span class="accent">{t.b}</span></h2>
+  <p data-reveal="90">{t.sub}</p>
   <div class="cta" data-reveal="120">
     <JoinCta lang={lang} size="final" />
   </div>
@@ -28,76 +28,19 @@ const store = ctaMode === 'store';
 
 <style>
   .final {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
     box-sizing: border-box;
-    padding: clamp(120px, 15vw, 180px) var(--pad-x) clamp(200px, 24vw, 300px);
+    padding: clamp(100px, 13vw, 170px) var(--pad-x) clamp(110px, 14vw, 180px);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     gap: 26px;
   }
-  .glow {
-    position: absolute;
-    z-index: -1;
-    left: 50%;
-    bottom: 0;
-    width: min(1100px, 170vw);
-    height: min(600px, 100vw);
-    transform: translate(-50%, 50%);
-    background: radial-gradient(
-      closest-side,
-      rgba(255, 133, 82, 0.3),
-      rgba(255, 133, 82, 0.06) 60%,
-      transparent
-    );
-    pointer-events: none;
-  }
-  .dusk {
-    position: absolute;
-    z-index: -1;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: clamp(200px, 24vw, 300px);
-    overflow: hidden;
-    pointer-events: none;
-  }
-  /* The sun sinks slowly behind the horizon, then rises to sink again. */
-  .sun {
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    width: min(280px, 56vw);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle at 50% 35%,
-      #ffe2bf 0%,
-      #ffa06a 34%,
-      #e45f3e 66%,
-      #a43d4c 100%
-    );
-    box-shadow: 0 0 100px 24px rgba(255, 120, 80, 0.35);
-    transform: translate(-50%, 40%);
-    animation: sink 16s cubic-bezier(0.4, 0, 0.6, 1) infinite both;
-  }
-  .horizon {
-    position: absolute;
-    z-index: -1;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 5%, rgba(255, 196, 160, 0.7) 50%, transparent 95%);
-  }
   .kick {
     font-size: 12px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--ink-62);
+    color: var(--ink2);
   }
   h2 {
     margin: 0;
@@ -105,14 +48,22 @@ const store = ctaMode === 'store';
     font-weight: 500;
     font-variation-settings:
       'opsz' 96,
-      'wdth' 92;
-    font-size: clamp(60px, 10vw, 160px);
-    line-height: 0.88;
+      'wdth' 88;
+    font-size: clamp(64px, 10.5vw, 170px);
+    line-height: calc(0.86 + var(--hlx));
     letter-spacing: -0.06em;
     text-wrap: balance;
   }
   .accent {
     color: var(--sun);
+  }
+  p {
+    margin: 0;
+    max-width: 440px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--ink2);
+    text-wrap: balance;
   }
   .cta {
     width: 100%;
@@ -120,23 +71,6 @@ const store = ctaMode === 'store';
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 8px;
-  }
-  @keyframes sink {
-    0% {
-      transform: translate(-50%, 18%);
-      opacity: 0;
-    }
-    8% {
-      opacity: 1;
-    }
-    82% {
-      transform: translate(-50%, 72%);
-      opacity: 1;
-    }
-    100% {
-      transform: translate(-50%, 86%);
-      opacity: 0;
-    }
+    margin-top: 6px;
   }
 </style>

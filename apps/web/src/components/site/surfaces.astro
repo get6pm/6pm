@@ -1,0 +1,90 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import Mark from './mark.astro';
+import SurfacesGlance from './surfaces-glance.astro';
+import SurfacesLock from './surfaces-lock.astro';
+import SurfacesVoice from './surfaces-voice.astro';
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].surfaces;
+---
+
+<section id="surfaces" class="sec surfaces" data-hour="16.6">
+  <div class="head" data-reveal="0">
+    <div class="stack title">
+      <Mark time="17:52" label={t.mark} />
+      <h2 class="h2">{t.title}</h2>
+    </div>
+    <p class="lede">{t.sub}</p>
+  </div>
+  <div class="cards">
+    <SurfacesLock t={t} />
+    <div class="grid">
+      <SurfacesGlance t={t} />
+      <SurfacesVoice t={t} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .surfaces {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(36px, 4vw, 56px);
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px 64px;
+  }
+  .title {
+    max-width: 760px;
+  }
+  .head .lede {
+    max-width: 360px;
+  }
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: stretch;
+  }
+  .grid {
+    flex: 2 1 580px;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 18px;
+  }
+  /* The cards inside share one look: a dusk panel with a mono label and a soft note. */
+  .grid :global(.panel) {
+    border-radius: 32px;
+    padding: 24px 22px 26px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .grid :global(.panel-label) {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .grid :global(.panel-note) {
+    font-size: 13px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.72);
+  }
+  .grid :global(.column) {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+</style>

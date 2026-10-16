@@ -1,0 +1,43 @@
+---
+/** A section's place in the day: its hour, a rule, and what happens then. */
+interface Props {
+  time: string;
+  label: string;
+  /** The hour in the sunset colour, for six o'clock itself. */
+  accent?: boolean;
+}
+
+const { time, label, accent = false } = Astro.props;
+---
+
+<div class="mark mono">
+  <span class:list={['time', { accent }]}>{time}</span><span class="rule"></span><span
+    class="label">{label}</span
+  >
+</div>
+
+<style>
+  .mark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    color: var(--ink2);
+  }
+  .time {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .time.accent {
+    color: var(--sun);
+  }
+  .rule {
+    width: 36px;
+    height: 1px;
+    background: var(--line);
+  }
+  .label {
+    text-transform: uppercase;
+  }
+</style>

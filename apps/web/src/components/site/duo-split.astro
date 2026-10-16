@@ -1,0 +1,176 @@
+---
+import { siteCopy, type SiteLang } from '../../data/site/copy';
+import DuoBackdrop from './duo-backdrop.astro';
+import DuoMonth from './duo-month.astro';
+import DuoRows from './duo-rows.astro';
+import DuoToday from './duo-today.astro';
+
+/** The inner screen, open flat: Today on the left page, October (or a spend) on the right. */
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const t = siteCopy[lang].duo.screen;
+const tabIcons = ['today', 'calendar_month', 'auto_stories'];
+---
+
+<div class="duo-screen split">
+  <DuoBackdrop sunLeft="34%" horizon={300} />
+  <div class="fold"></div>
+  <div class="left">
+    <DuoToday lang={lang} wide />
+    <div class="cards">
+      <div class="close">
+        <div class="tile-dusk"><span class="sym sym-fill">wb_twilight</span></div>
+        <div class="close-words">
+          <div class="close-title d-face">{t.closeTitle}</div>
+          <div class="close-sub d-muted">{t.foldHint}</div>
+        </div>
+        <button type="button" class="close-btn" tabindex="-1">{t.closeShort}</button>
+      </div>
+      <DuoRows lang={lang} open />
+    </div>
+  </div>
+  <div class="pane">
+    <DuoMonth lang={lang} />
+  </div>
+  <div class="rail">
+    <span class="d-camera ring"></span>
+    <div class="d-time time"><div>18</div><div>07</div></div>
+    <span class="d-round d-white"><span class="sym" style="font-size:26px">add</span></span>
+    <span class="d-round d-white"><span class="sym" style="font-size:22px">tune</span></span>
+    <div class="grow"></div>
+    <div class="d-tabs">
+      {
+        t.tabs.map((label, i) => (
+          <div class:list={['d-tab', { on: i === 0 }]}>
+            <span class="sym">{tabIcons[i]}</span>
+            <span>{label}</span>
+          </div>
+        ))
+      }
+    </div>
+    <span class="d-round d-scan"><span class="sym" style="font-size:28px">qr_code_scanner</span></span>
+  </div>
+</div>
+
+<style>
+  .split {
+    width: 951px;
+    height: 669px;
+    border-radius: 40px;
+    background: linear-gradient(180deg, #2c2758 0%, #7a3f72 48%, #e0855a 100%);
+  }
+  .fold {
+    position: absolute;
+    left: 475px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      rgba(255, 255, 255, 0.08) 30%,
+      rgba(255, 255, 255, 0.08) 70%,
+      transparent
+    );
+    pointer-events: none;
+  }
+  .left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 475px;
+    overflow: hidden;
+  }
+  .cards {
+    padding: 0 28px 28px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .close {
+    border-radius: 24px;
+    background: #fffdf9;
+    box-shadow: 0 10px 26px rgba(40, 20, 40, 0.18);
+    padding: 14px 14px 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .tile-dusk {
+    width: 44px;
+    height: 44px;
+    border-radius: 15px;
+    flex-shrink: 0;
+    background: #ffe2cc;
+    color: #a4481f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tile-dusk .sym {
+    font-size: 25px;
+  }
+  .close-words {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .close-title {
+    font-weight: 500;
+    font-size: 19px;
+    line-height: 1.15;
+  }
+  .close-sub {
+    font-size: 13px;
+  }
+  .close-btn {
+    height: 44px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 99px;
+    background: #1b1e2e;
+    color: #fbf4ec;
+    font-weight: 650;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .pane {
+    position: absolute;
+    left: 489px;
+    top: 14px;
+    bottom: 14px;
+    width: 376px;
+    border-radius: 32px;
+    background: #f6f0e7;
+    box-shadow: 0 20px 50px rgba(20, 8, 30, 0.25);
+    overflow: hidden;
+  }
+  .rail {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 72px;
+    box-sizing: border-box;
+    padding: 16px 0 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .ring {
+    box-shadow: 0 0 0 5px #000;
+  }
+  .time {
+    padding-top: 4px;
+  }
+  .grow {
+    flex: 1;
+  }
+</style>

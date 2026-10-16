@@ -4,19 +4,22 @@ import '../../styles/site.css';
 import { siteBackground } from '../../data/site/config';
 import { homePath, siteCopy, type SiteLang } from '../../data/site/copy';
 import PageLayout from '../../layouts/page-layout.astro';
+import Ask from './ask.astro';
+import BankStrip from './bank-strip.astro';
 import Beliefs from './beliefs.astro';
 import Capture from './capture.astro';
+import Close from './close.astro';
+import Duo from './duo.astro';
 import Faq from './faq.astro';
 import FinalCta from './final-cta.astro';
 import Hero from './hero.astro';
-import Intelligence from './intelligence.astro';
 import OneNumber from './one-number.astro';
-import OpenSource from './open-source.astro';
 import Pricing from './pricing.astro';
 import Privacy from './privacy.astro';
-import Ritual from './ritual.astro';
 import SiteFoot from './site-foot.astro';
 import SiteNav from './site-nav.astro';
+import Sky from './sky.astro';
+import Surfaces from './surfaces.astro';
 import Together from './together.astro';
 
 interface Props {
@@ -24,7 +27,7 @@ interface Props {
 }
 
 const { lang } = Astro.props;
-const { meta } = siteCopy[lang];
+const { meta, capture } = siteCopy[lang];
 ---
 
 <PageLayout
@@ -52,16 +55,19 @@ const { meta } = siteCopy[lang];
     })();
   </script>
   <div class="site" data-site>
+    <Sky />
     <SiteNav lang={lang} />
     <main>
       <Hero lang={lang} />
-      <Ritual lang={lang} />
       <Capture lang={lang} />
+      {capture.bankStrip && <BankStrip label={capture.bankStrip} />}
+      <Surfaces lang={lang} />
+      <Close lang={lang} />
       <OneNumber lang={lang} />
       <Beliefs lang={lang} />
-      <Intelligence lang={lang} />
+      <Ask lang={lang} />
+      <Duo lang={lang} />
       <Privacy lang={lang} />
-      <OpenSource lang={lang} />
       <Together lang={lang} />
       <Pricing lang={lang} />
       <Faq lang={lang} />

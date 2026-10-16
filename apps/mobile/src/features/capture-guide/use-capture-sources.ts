@@ -5,9 +5,18 @@ import { useI18n } from '../../i18n/i18n';
 import { useHomeCurrency } from '../../money/use-money-format';
 import { useAiMode } from '../privacy/use-ai-mode';
 import { useReceiptAddress } from '../receipt-email/receipt-address';
+import { nativeReach } from '../surfaces/native-reach';
 import { useSpendLabels } from '../today/use-spend-rows';
 import { GUIDES, type GuideContent } from './guide-content';
 import { onCount, sourceStatuses, type CaptureSource, type SourceStatus } from './source-status';
+
+/** The native piece each way needs; a phone without it does not list that way. */
+const NEEDS: Readonly<Partial<Record<CaptureSource, boolean>>> = {
+  share: nativeReach.share,
+  scan: nativeReach.scan,
+  wallet: nativeReach.wallet,
+  widgets: nativeReach.widgets,
+};
 
 export interface CaptureSourceView extends SourceStatus {
   readonly guide: GuideContent;
@@ -22,6 +31,7 @@ export interface CaptureSourceView extends SourceStatus {
 export function useCaptureSources(): {
   readonly sources: readonly CaptureSourceView[];
   readonly summary: string;
+  /** Whether the Wallet automation is on, or not offered on this phone: no banner asks for it. */
   readonly walletOn: boolean;
   /** This phone's receipt email address, once the server has given one. */
   readonly emailAddress: string | null;
@@ -35,7 +45,9 @@ export function useCaptureSources(): {
   const labels = useSpendLabels();
   const home = useHomeCurrency();
   return useMemo(() => {
-    const statuses = sourceStatuses([...cycleSpends, ...waitingBefore], home.code);
+    const statuses = sourceStatuses([...cycleSpends, ...waitingBefore], home.code).filter(
+      (status) => NEEDS[status.source] !== false,
+    );
     const sources = statuses.map((status): CaptureSourceView => {
       const guide = GUIDES[status.source];
       const last = status.last
@@ -58,7 +70,7 @@ export function useCaptureSources(): {
       on: onCount(statuses),
       total: statuses.length,
     });
-    const walletOn = statuses.some((s) => s.source === 'wallet' && s.on);
+    const walletOn = !nativeReach.wallet || statuses.some((s) => s.source === 'wallet' && s.on);
     return { sources, summary, walletOn, emailAddress, emailAvailable };
   }, [cycleSpends, waitingBefore, t, labels, emailAddress, emailAvailable, home]);
 }

@@ -64,11 +64,56 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @6pm/mobile test
       - run: pnpm --filter @6pm/mobile exec expo export --platform ios --output-dir "$RUNNER_TEMP/export"
+      - run: pnpm --filter @6pm/mobile exec expo export --platform android --output-dir "$RUNNER_TEMP/export-android"
+
+  # Android is built and kept green, not released: the debug app is compiled whenever something
+  # native could have changed (and on every push to main). JavaScript alone cannot break it, and
+  # the Android bundle is proven by the job above.
+  android:
+    name: android build
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with: { fetch-depth: 2 }
+      - name: Did anything native change
+        id: native
+        run: |
+          if [ "${{ github.event_name }}" != pull_request ]; then
+            echo "build=true" >>"$GITHUB_OUTPUT"; exit 0
+          fi
+          changed=$(git diff --name-only HEAD^1 HEAD)
+          echo "$changed"
+          if echo "$changed" | grep -qE '^(pnpm-lock\.yaml|pnpm-workspace\.yaml|\.github/workflows/ci\.yml|apps/mobile/(package\.json|app\.config\.ts|plugins/|modules/|locales/|assets/))'; then
+            echo "build=true" >>"$GITHUB_OUTPUT"
+          else
+            echo "build=false" >>"$GITHUB_OUTPUT"
+          fi
+      - if: steps.native.outputs.build == 'true'
+        uses: pnpm/action-setup@v6
+      - if: steps.native.outputs.build == 'true'
+        uses: actions/setup-node@v7
+        with: { node-version: 24, cache: pnpm }
+      - if: steps.native.outputs.build == 'true'
+        uses: actions/setup-java@v6
+        with: { distribution: temurin, java-version: 17 }
+      - if: steps.native.outputs.build == 'true'
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+      - if: steps.native.outputs.build == 'true'
+        run: pnpm install --frozen-lockfile
+      - if: steps.native.outputs.build == 'true'
+        run: pnpm --filter @6pm/mobile exec expo prebuild -p android --clean --no-install
+      # One architecture keeps the native compile to a quarter; the code is the same for each.
+      - if: steps.native.outputs.build == 'true'
+        working-directory: apps/mobile/android
+        run: ./gradlew assembleDebug -PreactNativeArchitectures=x86_64 --console=plain -Dorg.gradle.jvmargs="-Xmx6g -XX:MaxMetaspaceSize=2g"
 
   # The single required check for merging.
   ci-passed:
     if: always()
-    needs: [checks, test, api, mobile]
+    needs: [checks, test, api, mobile, android]
     runs-on: ubuntu-latest
     steps:
       - run: |

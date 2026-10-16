@@ -32,15 +32,18 @@ const screenIn = new Keyframe({
 }).duration(350);
 
 /** One way's guide: its status, three steps, what lands in the Inbox, a tip and its actions. */
-export function CaptureGuideSheet({ source }: { readonly source: CaptureSource }) {
+export function CaptureGuideSheet({ source: asked }: { readonly source: CaptureSource }) {
   const { palette } = useTheme();
   const { t } = useI18n();
   const router = useRouter();
   const { sources, emailAddress, emailAvailable } = useCaptureSources();
+  // A way this phone does not offer (a link or Ask naming the Wallet on Android) opens the first
+  // way it does.
+  const view = sources.find((s) => s.source === asked) ?? sources[0];
+  const source = view?.source ?? asked;
   // In on-device mode receipt email does not exist: the guide says why instead of how.
   const emailOff = source === 'email' && !emailAvailable;
   const colours = captureColours(palette);
-  const view = sources.find((s) => s.source === source);
   const actions = useGuideActions(source, view?.on ?? false, emailAddress);
   // Receipt email's first step shows the address itself; tapping it offers the share sheet.
   const addressChip: LiveChip | null =
@@ -54,7 +57,7 @@ export function CaptureGuideSheet({ source }: { readonly source: CaptureSource }
           },
         }
       : null;
-  // Every way is always listed; this only satisfies the type.
+  // Receipt email is listed on every phone; this only satisfies the type.
   if (!view) return null;
   const { guide } = view;
 

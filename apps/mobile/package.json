@@ -71,6 +71,15 @@
     "jest-expo": "catalog:",
     "typescript": "catalog:"
   },
+  "expo": {
+    "autolinking": {
+      "android": {
+        "buildFromSource": [
+          ".*"
+        ]
+      }
+    }
+  },
   "jest": {
     "preset": "jest-expo",
     "transformIgnorePatterns": [

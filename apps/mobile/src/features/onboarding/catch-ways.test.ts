@@ -16,4 +16,12 @@ describe('the ways onboarding shows', () => {
     expect(readyWays(ways)).toBe(4);
     expect(catchWaysFor(currencyOf('USD'), 'device')).toEqual(['share', 'wallet', 'add', 'lock']);
   });
+
+  it('leaves out the ways a phone without their native piece cannot do', () => {
+    const android = { scan: false, share: false, wallet: false, widgets: false };
+    const ways = catchWaysFor(VND, 'server', android);
+    expect(ways).toEqual(['email', 'add']);
+    expect(readyWays(ways)).toBe(1);
+    expect(catchWaysFor(VND, 'device', android)).toEqual(['add']);
+  });
 });

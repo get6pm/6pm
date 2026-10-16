@@ -87,3 +87,5 @@ Not declared (changed 12 Oct 2026): Keychain sharing (the database key and the b
   ```
 
   `tools/design/sim-shot.sh` then drives the dev build to a fixture and screenshots it for design-beside-device checks.
+
+- Android (built, not released): `expo prebuild -p android --clean`, then from `apps/mobile/android` `./gradlew assembleDebug -PreactNativeArchitectures=arm64-v8a` for the emulator (`sixpm-pixel`, Android 36, in `~/Library/Android/sdk`). CI compiles the debug app whenever something native changed (16 Oct 2026). Every Expo module is built from source on Android (`expo.autolinking.android.buildFromSource` in `apps/mobile/package.json`): the prebuilt AARs Expo 58 ships were compiled against an older expo-modules-core than the app resolves, and calling one failed (expo-haptics' `impactAsync` threw `NoSuchMethodError`). Android draws a variable font by its file name, `BricolageGrotesque-Variable`, where iOS uses the family name (`variableFamily` in `src/ui/type/faces.ts`).

@@ -8,6 +8,7 @@ import type { CompanionMood } from '../../ui/companion/companion-mood';
 import { useDesignInsets } from '../../ui/layout/design-insets';
 import type { AiMode } from '../privacy/ai-mode';
 import { useAiMode } from '../privacy/use-ai-mode';
+import { nativeReach } from '../surfaces/native-reach';
 import { catchWaysFor, readyWays } from './catch-ways';
 import { CompanionLine, OnboardingCta, OnboardingHeader } from './onboarding-chrome';
 import { stepEntering } from './onboarding-motion';
@@ -61,7 +62,7 @@ function stepLine(o: Onboarding, i18n: I18n, mode: AiMode): string | null {
     case AI_STEP:
       return t(mode === 'device' ? 'onboarding.line.aiDevice' : 'onboarding.line.aiServer');
     case 6: {
-      const ways = catchWaysFor(o.currency, mode);
+      const ways = catchWaysFor(o.currency, mode, nativeReach);
       return t('onboarding.line.catch', { count: readyWays(ways), total: ways.length });
     }
     case CLOSE_STEP:

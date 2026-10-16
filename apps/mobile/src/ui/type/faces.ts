@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 /**
  * Every face the looks name, by the first family of the look's CSS font stack, as the app ships it
  * (tools/fonts/build_fonts.py): a variable file with the axes it keeps, a static family with one
@@ -15,11 +17,19 @@ export type Face =
     }
   | { readonly kind: 'static'; readonly byWeight: (weight: number) => string };
 
+/**
+ * The name a variable file is drawn by: iOS registers it under its family name, Android finds it
+ * by its file name in assets/fonts (`BricolageGrotesque-Variable.ttf`).
+ */
+export function variableFamily(family: string): string {
+  return Platform.OS === 'ios' ? family : `${family}-Variable`;
+}
+
 const variable = (
   family: string,
   wght: readonly [number, number],
   opsz: readonly [number, number] | null = null,
-): Face => ({ kind: 'variable', family, wght, opsz });
+): Face => ({ kind: 'variable', family: variableFamily(family), wght, opsz });
 
 /** A static family: the cut nearest the weight asked for (the heavier one on a tie). */
 function cuts(byWeight: Readonly<Record<number, string>>): Face {

@@ -29,6 +29,7 @@ import { SettingsMaxCard } from '../features/settings/settings-max-card';
 import { SettingRow, SettingsSection } from '../features/settings/setting-rows';
 import { SettingsBanksRow } from '../features/settings/settings-banks-row';
 import { useCloseTimeDraft } from '../features/settings/use-close-time-draft';
+import { nativeReach } from '../features/surfaces/native-reach';
 import { TravelRow } from '../features/travel/travel-row';
 import { useI18n } from '../i18n/i18n';
 import { haptics } from '../ui/haptics';
@@ -174,15 +175,17 @@ export default function Settings() {
             router.push('/language');
           }}
         />
-        <SettingRow
-          icon="widgets"
-          label={t('capture.settings.widgets')}
-          value={t('capture.settings.widgetsValue')}
-          onPress={() => {
-            haptics.tick();
-            router.push({ pathname: '/capture-guide', params: { source: 'widgets' } });
-          }}
-        />
+        {nativeReach.widgets ? (
+          <SettingRow
+            icon="widgets"
+            label={t('capture.settings.widgets')}
+            value={t('capture.settings.widgetsValue')}
+            onPress={() => {
+              haptics.tick();
+              router.push({ pathname: '/capture-guide', params: { source: 'widgets' } });
+            }}
+          />
+        ) : null}
         <TravelRow />
       </SettingsSection>
 

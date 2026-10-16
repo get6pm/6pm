@@ -31,6 +31,7 @@ import {
 const SNAP = { duration: durations.snap, easing: Easing.bezier(...curves.snap) };
 /** CSS `perspective(320px)` on each row. */
 const PERSPECTIVE = 320;
+const TEXT_ALIGN = { center: 'center', 'flex-start': 'left', 'flex-end': 'right' } as const;
 
 export interface WheelProps {
   readonly items: readonly string[];
@@ -86,16 +87,14 @@ function Row({
   });
   return (
     <Animated.View
-      style={[
-        { height: rowHeight, justifyContent: 'center', paddingHorizontal: padX },
-        align === 'center' ? null : { alignItems: align },
-        look,
-      ]}
+      style={[{ height: rowHeight, justifyContent: 'center', paddingHorizontal: padX }, look]}
     >
+      {/* The text spans the row and aligns inside it: text sized to its own width is measured
+          short on Android under negative tracking, and cut to an ellipsis. */}
       <Animated.Text
         numberOfLines={1}
         allowFontScaling={false}
-        style={[textStyle, align === 'center' ? { textAlign: 'center' } : null]}
+        style={[textStyle, { textAlign: TEXT_ALIGN[align ?? 'center'] }]}
       >
         {label}
       </Animated.Text>

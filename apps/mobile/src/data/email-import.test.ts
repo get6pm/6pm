@@ -102,6 +102,64 @@ describe('importEmailCaptures', () => {
     expect((await store.tables.spends.get(receipt().id))?.categoryId).toBe('shopping');
   });
 
+  it('files under what the server read it was for, ahead of the merchant’s name', async () => {
+    await run(server([receipt({ merchant: 'Grab', category: 'food' })]).source);
+    expect((await store.tables.spends.get(receipt().id))?.categoryId).toBe('food');
+  });
+
+  it('keeps a card charge in dollars as a foreign amount waiting for its rate', async () => {
+    await run(server([receipt({ amount: 9_900, currency: 'USD', merchant: 'Apple' })]).source);
+    expect(await store.tables.spends.get(receipt().id)).toMatchObject({
+      amount: 0,
+      foreignAmount: { currency: 'USD', amount: 99 },
+    });
+  });
+
+  it('merges a dollar charge tapped with Apple Pay with the bank’s email for it', async () => {
+    const tapped = await actions.captureSpend({
+      amount: 0,
+      foreignAmount: { currency: 'USD', amount: 99, rate: 0 },
+      categoryId: 'shopping',
+      merchant: 'Apple',
+      source: 'applePay',
+      status: 'caught',
+      at: new Date(2026, 9, 11, 10, 25),
+    });
+    const emailed = receipt({
+      amount: 9_900,
+      currency: 'USD',
+      merchant: 'Apple',
+      from: 'info@info.vietcombank.com.vn',
+      at: new Date(2026, 9, 11, 10, 26).toISOString(),
+    });
+    await run(server([emailed]).source);
+    const spends = store.getSnapshot().cycleSpends;
+    expect(spends).toHaveLength(1);
+    expect(spends[0]?.id).toBe(tapped.row.id);
+  });
+
+  it('makes one spend of the bank’s alert and the shop’s receipt for one payment', async () => {
+    const at = (s: number) => new Date(2026, 9, 11, 10, 25, s).toISOString();
+    const alert = receipt({
+      id: 'YmFuay1hbGVydC1mb3Itb25lLXBheW1lbnQ',
+      amount: 607_790,
+      merchant: '',
+      from: 'info@info.vietcombank.com.vn',
+      at: at(31),
+    });
+    const shop = receipt({
+      id: 'c2hvcC1yZWNlaXB0LWZvci1vbmUtcGF5bWVu',
+      amount: 607_790,
+      merchant: 'meo.petshop',
+      from: 'info@mail.shopee.vn',
+      at: at(35),
+    });
+    expect(await run(server([alert, shop]).source)).toEqual({ saved: 2, acknowledged: 2 });
+    const spends = store.getSnapshot().cycleSpends;
+    expect(spends).toHaveLength(1);
+    expect(spends[0]).toMatchObject({ id: alert.id, merchant: 'meo.petshop' });
+  });
+
   it('saves a receipt once when the acknowledgement was lost and it comes again', async () => {
     const remote = server([receipt()]);
     remote.source.failAck = true;

@@ -3,7 +3,6 @@ import {
   emailCaptureSchema,
   handleOfRecipient,
   parseForwardingConfirmation,
-  parseReceiptEmail,
   type ReceiptEmail,
 } from '@6pm/domain';
 import PostalMime from 'postal-mime';
@@ -11,6 +10,7 @@ import PostalMime from 'postal-mime';
 import type { Bindings } from '../env';
 import { storeForwardingCheck } from './forwarding-checks';
 import { deviceOfHandle } from './handles';
+import { readSpend } from './read-spend';
 import { sealCapture, sealKeyOf } from './seal';
 
 /** A receipt is a few kilobytes; anything near this is mostly pictures and is turned away. */
@@ -67,9 +67,10 @@ function instantOrNull(value: string | undefined): string | null {
 
 /**
  * Takes one email sent to `<handle>@<host>`. Mail to an address no phone holds, or larger than a
- * receipt can be, is refused (the sender gets a bounce). Mail to a real handle is read in memory:
- * when it holds a payment, only what was read is kept, sealed, for the phone to fetch; the email
- * itself is never stored or forwarded, and nothing from it is logged. Anything that is not a
+ * receipt can be, is refused (the sender gets a bounce). Mail to a real handle is read in memory,
+ * by the model when it answers and by the rules when it does not (`readSpend`): when it holds a
+ * payment, only what was read is kept, sealed, for the phone to fetch; the email itself is never
+ * stored, and goes nowhere but to the model, and nothing from it is logged. Anything that is not a
  * receipt is dropped without a bounce, so a forwarding filter is never turned off by one. A mail
  * service's "confirm forwarding" email is read first: its code and confirm link are kept, sealed,
  * for the phone to show, since forwarding cannot start until the person uses one of them.
@@ -129,7 +130,7 @@ export async function receiveEmail(
     return kept ? 'forwarding_check' : 'not_a_receipt';
   }
 
-  const read = parseReceiptEmail(email, { receivedAt: now.toISOString() });
+  const read = await readSpend(email, env, deviceHash, now);
   if (read === null) return 'not_a_receipt';
   const capture = emailCaptureSchema.safeParse({
     id: await captureIdOf(deviceHash, messageId, read),
@@ -140,6 +141,8 @@ export async function receiveEmail(
     bank: read.bank?.slice(0, 60) ?? null,
     code: read.code?.slice(0, 40) ?? null,
     memo: read.memo,
+    currency: read.currency,
+    category: read.category,
   });
   if (!capture.success) return 'not_a_receipt';
 

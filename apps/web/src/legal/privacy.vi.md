@@ -79,7 +79,7 @@ Trong Cài đặt → AI, bạn có thể giữ AI của 6pm trên iPhone. Khi �
 
 6pm cấp cho điện thoại của bạn một địa chỉ riêng, kiểu k7m2qx@at6pm.app. Nếu bạn để ngân hàng gửi email, hoặc tự chuyển tiếp email của ngân hàng, tới địa chỉ đó, các khoản thanh toán sẽ vào Hộp thư của bạn.
 
-Máy chủ của chúng tôi đọc từng email khi nó đến. Nếu email có một khoản thanh toán, máy chủ chỉ giữ những gì đọc được: số tiền, nơi nhận tiền, thời gian và địa chỉ người gửi. Thông tin này được khoá bằng mã hoá cho đến khi điện thoại của bạn lấy về, rồi bị xoá. Bản thân email không bao giờ được lưu, chuyển tiếp hay ghi nhật ký, và thư nào không phải biên lai đều bị bỏ đi. Biên lai nào điện thoại chưa lấy về sau 30 ngày sẽ bị xoá mà không đọc.
+Máy chủ của chúng tôi đọc từng email khi nó đến. Email nào có ghi một số tiền sẽ được gửi tới Anthropic, một dịch vụ AI, để phân biệt một khoản thanh toán với chuyển tiền giữa các tài khoản của chính bạn, tiền hoàn hay quảng cáo, và đọc bạn đã trả cho ai, cho việc gì, bao nhiêu; email không có số tiền nào bị bỏ đi mà không đọc. Nếu email có một khoản thanh toán, máy chủ chỉ giữ những gì đọc được: số tiền và loại tiền, nơi nhận tiền, danh mục, thời gian, địa chỉ người gửi và nội dung chuyển tiền. Thông tin này được khoá bằng mã hoá cho đến khi điện thoại của bạn lấy về, rồi bị xoá. Bản thân email không bao giờ được 6pm lưu hay ghi nhật ký, và không được gửi cho ai ngoài Anthropic; Anthropic không dùng email để huấn luyện mô hình, và xoá nó trong vòng 30 ngày (lâu hơn chỉ khi bị đánh dấu vi phạm chính sách sử dụng của Anthropic, hoặc khi luật đòi hỏi). Thư nào không phải biên lai đều bị bỏ đi. Biên lai nào điện thoại chưa lấy về sau 30 ngày sẽ bị xoá mà không đọc.
 
 Địa chỉ này gắn với mã thiết bị ẩn danh của bạn, không gắn với tên bạn. Thư từ bất kỳ ai gửi tới đều được đọc như nhau, nên bạn chỉ nên đưa địa chỉ này cho ngân hàng.
 
@@ -143,7 +143,7 @@ Các công ty này vận hành những phần của dịch vụ đã nêu ở tr
 - **RevenueCat** ghi lại trạng thái mua hàng. [Chính sách quyền riêng tư của RevenueCat](https://www.revenuecat.com/privacy).
 - **Cloudflare** lưu trữ trang web và máy chủ của chúng tôi. [Chính sách quyền riêng tư của Cloudflare](https://www.cloudflare.com/privacypolicy/).
 - **Sentry** nhận báo cáo lỗi. [Chính sách quyền riêng tư của Sentry](https://sentry.io/privacy/).
-- **Anthropic** đọc câu hỏi bạn hỏi, viết lời của bạn đồng hành từ những thông tin về ngày của bạn mô tả ở trên, gợi ý biểu tượng cho danh mục từ tên danh mục, gọi tên nơi nhận tiền từ các dòng biên lai đã bỏ số, và đọc ảnh biên lai mà điện thoại không đọc được. [Chính sách quyền riêng tư của Anthropic](https://www.anthropic.com/legal/privacy).
+- **Anthropic** đọc câu hỏi bạn hỏi, viết lời của bạn đồng hành từ những thông tin về ngày của bạn mô tả ở trên, gợi ý biểu tượng cho danh mục từ tên danh mục, gọi tên nơi nhận tiền từ các dòng biên lai đã bỏ số, đọc ảnh biên lai mà điện thoại không đọc được, và đọc email ngân hàng, cửa hàng bạn chuyển tới địa chỉ nhận biên lai. [Chính sách quyền riêng tư của Anthropic](https://www.anthropic.com/legal/privacy).
 - **Deepgram** chuyển giọng nói thành chữ khi bạn đọc một khoản chi. [Chính sách quyền riêng tư của Deepgram](https://deepgram.com/privacy).
 - **ElevenLabs** có thể làm việc đó thay Deepgram. [Chính sách quyền riêng tư của ElevenLabs](https://elevenlabs.io/privacy-policy).
 - **Hugging Face** cung cấp các mô hình bạn tải về cho chế độ trên máy. [Chính sách quyền riêng tư của Hugging Face](https://huggingface.co/privacy).
@@ -157,7 +157,7 @@ Chúng tôi chỉ dùng họ cho những mục đích này.
 - **Mã thiết bị.** Chừng nào ứng dụng còn được dùng trên thiết bị đó.
 - **Báo cáo lỗi.** Tối đa 90 ngày, sau đó bị xoá.
 - **Biên lai qua email.** Cho đến khi điện thoại lấy biên lai về, và không bao giờ quá 30 ngày. Địa chỉ nhận biên lai tồn tại chừng nào mã thiết bị còn.
-- **Câu hỏi, thông tin để viết lời và dòng biên lai.** Chúng tôi không giữ. Anthropic xoá trong vòng 30 ngày, như mô tả ở trên.
+- **Câu hỏi, thông tin để viết lời, dòng biên lai và email chuyển tới.** Chúng tôi không giữ. Anthropic xoá trong vòng 30 ngày, như mô tả ở trên.
 - **Ảnh biên lai.** Chúng tôi không giữ. Anthropic xoá trong vòng 30 ngày, như mô tả ở trên.
 - **Giọng nói.** Chúng tôi không giữ. Deepgram chỉ xử lý trong lúc bạn nói; ElevenLabs giữ theo chính sách của họ.
 - **Sao lưu.** Cho đến khi bạn xoá. Khi bạn xoá, chúng tôi xoá dữ liệu mã hoá khỏi máy chủ.

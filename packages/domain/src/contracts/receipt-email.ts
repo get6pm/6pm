@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
+import type { StarterCategoryId } from '../capture/spoken-spend';
 import { MEMO_MAX } from './local-rows';
+import { currencyCodeSchema } from './receipt-read';
 
 /**
  * Receipt email. Each phone gets a random handle; mail to `<handle>@<host>` reaches the API
@@ -18,6 +20,14 @@ export const EMAIL_HANDLE_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
 export const EMAIL_HANDLE_LENGTH = 6;
 export const emailHandlePattern = /^(?:[a-km-np-z2-9]{6}|[a-km-np-z2-9]{10})$/;
 
+/**
+ * The query parameter a phone fetches its receipts with to say whether it has Max (`max`) or not
+ * (`free`): the server reads email with no phone at hand, and needs to know the day's allowance.
+ */
+export const EMAIL_PLAN_PARAM = 'plan';
+export const EMAIL_PLANS = ['free', 'max'] as const;
+export type EmailPlan = (typeof EMAIL_PLANS)[number];
+
 /** What a phone may hold at once and fetch in one go. */
 export const EMAIL_CAPTURES_MAX_PENDING = 100;
 export const EMAIL_CAPTURES_PAGE = 50;
@@ -29,6 +39,21 @@ export const emailHandleResponseSchema = z.object({
   handle: z.string().regex(emailHandlePattern),
 });
 export type EmailHandleResponse = z.infer<typeof emailHandleResponseSchema>;
+
+/** The categories a receipt read from email can be filed under: every month starts with them. */
+export const EMAIL_CATEGORY_IDS = [
+  'food',
+  'drinks',
+  'transport',
+  'groceries',
+  'shopping',
+  'fun',
+  'health',
+  'home',
+  'family',
+  'gifts',
+] as const satisfies readonly StarterCategoryId[];
+export type EmailCategoryId = (typeof EMAIL_CATEGORY_IDS)[number];
 
 /** One receipt read from an email: what the phone saves, and nothing of the email itself. */
 export const emailCaptureSchema = z.object({
@@ -44,6 +69,10 @@ export const emailCaptureSchema = z.object({
   code: z.string().max(40).nullable(),
   /** The transfer's own words ("Nội dung"), where a repayment is named; absent before it was kept. */
   memo: z.string().max(MEMO_MAX).nullable().optional(),
+  /** The currency `amount` is counted in (a card charged in dollars); absent means đồng. */
+  currency: currencyCodeSchema.optional(),
+  /** What it was for, when the email says; absent before it was read. */
+  category: z.enum(EMAIL_CATEGORY_IDS).nullable().optional(),
 });
 export type EmailCapture = z.infer<typeof emailCaptureSchema>;
 

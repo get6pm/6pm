@@ -127,6 +127,7 @@ export function moneyActions(store: MoneyStore) {
     const next: SpendRow = {
       ...twin,
       status: mergedStatus(twin.status, input.status),
+      merchant: twin.merchant || input.merchant,
       note: twin.note ?? input.note ?? null,
       wallet: twin.wallet ?? input.wallet ?? null,
       memo: twin.memo ?? input.memo ?? null,
@@ -159,6 +160,8 @@ export function moneyActions(store: MoneyStore) {
         source: input.source,
         status: input.status,
         at: at.toISOString(),
+        detail: input.detail ?? null,
+        foreignAmount: input.foreignAmount ?? null,
       },
       snap.cycleSpends,
     );

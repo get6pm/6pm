@@ -136,6 +136,56 @@ describe('onboarding maths', () => {
   });
 });
 
+describe('spent since payday on the first number', () => {
+  const month = {
+    income: 15_000_000,
+    payday: { kind: 'sameDay', day: 31 },
+    bills: 5_000_000,
+    futureYou: 2_000_000,
+  } as const;
+
+  it('prefills the estimate, so leaving it gives the same number', () => {
+    const day = firstDay(month, '2026-10-20');
+    // 8tr free, 20 of the cycle's 32 days gone: 5tr went before.
+    expect(day.joined).toBe(true);
+    expect(day.since).toBe('2026-09-30');
+    expect(day.spentSincePayday).toBe(5_000_000);
+    expect(firstDay({ ...month, spentSincePayday: null }, '2026-10-20')).toEqual(day);
+  });
+
+  it('counts the answer: (15 − 5 − 2 − 6)tr over 12 days', () => {
+    const day = firstDay({ ...month, spentSincePayday: 6_000_000 }, '2026-10-20');
+    expect(day.free).toBe(2_000_000);
+    expect(day.line).toBe(166_000);
+    expect(day.offerFutureYouAtPayday).toBe(false);
+  });
+
+  it('offers to start Future you at payday only when the cycle starts overspent', () => {
+    const over = firstDay({ ...month, spentSincePayday: 9_000_000 }, '2026-10-20');
+    expect(over.overspent).toBe(true);
+    expect(over.line).toBe(0);
+    expect(over.offerFutureYouAtPayday).toBe(true);
+    const skipped = firstDay(
+      { ...month, spentSincePayday: 9_000_000, futureYouAtPayday: true },
+      '2026-10-20',
+    );
+    expect(skipped.futureYouSkipped).toBe(true);
+    expect(skipped.free).toBe(1_000_000);
+    expect(skipped.overspent).toBe(false);
+    // A smaller answer takes the offer away, and the choice with it.
+    const fits = firstDay(
+      { ...month, spentSincePayday: 1_000_000, futureYouAtPayday: true },
+      '2026-10-20',
+    );
+    expect(fits.offerFutureYouAtPayday).toBe(false);
+    expect(fits.futureYouSkipped).toBe(false);
+  });
+
+  it('asks nothing when joining on payday', () => {
+    expect(firstDay(month, '2026-10-31').joined).toBe(false);
+  });
+});
+
 describe('bill deck', () => {
   it('deals an amount card after each yes and each picked option', () => {
     const answers: BillAnswers = {

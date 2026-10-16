@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { DEFAULT_CLOSE_AT } from '@6pm/domain';
+import { DEFAULT_CLOSE_AT, type JoinedAnswers } from '@6pm/domain';
 
 import type { SqlDatabase } from './table';
 
@@ -23,6 +23,14 @@ export const planSettingsSchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .optional(),
   /**
+   * In the pay cycle the user set 6pm up in: what they said they spent between payday and that
+   * day, not counting bills. Counted in place of the even-pace estimate; a plan saved before 6pm
+   * asked has none and keeps the estimate.
+   */
+  spentSincePayday: z.number().int().nonnegative().optional(),
+  /** "Start Future you at payday": the cycle the user joined sets nothing aside for Future you. */
+  futureYouAtPayday: z.boolean().optional(),
+  /**
    * The home currency (ISO 4217), from the phone when the month was first set up. A plan saved
    * before 6pm counted other currencies has none, and is in đồng.
    */
@@ -32,6 +40,15 @@ export const planSettingsSchema = z.object({
     .optional(),
 });
 export type PlanSettings = z.infer<typeof planSettingsSchema>;
+
+/** What the plan says about the cycle the user joined, as the domain reads it. */
+export function joinedAnswersOf(plan: PlanSettings | null): JoinedAnswers {
+  return {
+    on: plan?.startedOn ?? null,
+    spentSincePayday: plan?.spentSincePayday ?? null,
+    futureYouAtPayday: plan?.futureYouAtPayday === true,
+  };
+}
 
 export const DEFAULT_PLAN: PlanSettings = {
   income: 0,

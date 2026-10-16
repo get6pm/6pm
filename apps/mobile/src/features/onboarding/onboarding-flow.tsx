@@ -172,6 +172,8 @@ export function OnboardingFlow({ startStep = 0 }: { readonly startStep?: number 
             closeAt={o.closeAt}
             reminded={o.reminders !== false}
             leaving={o.leaving}
+            onSpentSincePayday={o.setSpentSincePayday}
+            onFutureYouAtPayday={o.setFutureYouAtPayday}
           />
         );
     }

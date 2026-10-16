@@ -1,12 +1,12 @@
 import {
-  joinedShare,
+  cycleFutureYou,
   type AskContext,
   type AskLedger,
   type AskPot,
   type SpendRow,
 } from '@6pm/domain';
 
-import { dayOf, type MoneySnapshot } from '../../data/money-store';
+import { dailyInputOf, dayOf, type MoneySnapshot } from '../../data/money-store';
 import { homeCurrencyOf } from '../../money/use-money-format';
 import { goalViews, occasionViews } from '../plan/plan-view';
 import { insightInputOf, previousCycleStartOf } from '../wording/insight-input';
@@ -29,15 +29,17 @@ function askPots(snap: MoneySnapshot): AskPot[] {
  * the pots, all read from the store as it stands now. Null before the month is set up.
  */
 export function askContextOf(snap: MoneySnapshot): AskContext | null {
+  const input = dailyInputOf(snap);
   const day = dayOf(snap);
-  if (day === null || snap.plan === null) return null;
+  if (input === null || day === null || snap.plan === null) return null;
   return {
     today: snap.today,
     day,
     daysLeft: snap.cycle.daysLeft,
     payday: snap.cycle.payday,
     futureYou: snap.plan.futureYou,
-    share: joinedShare(snap.cycle, snap.plan.startedOn ?? null),
+    futureYouThisCycle: cycleFutureYou(input),
+    share: input.share ?? 1,
     pots: askPots(snap),
     currency: homeCurrencyOf(snap.plan),
   };

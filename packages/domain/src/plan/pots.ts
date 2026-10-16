@@ -102,6 +102,11 @@ export function dueSetAsides(input: {
   readonly moves: readonly PotMove[];
   /** Future you's monthly amount, shared between the goals. */
   readonly futureYou: Vnd;
+  /**
+   * Cycles that start before this day set nothing aside for Future you, as when the person chose
+   * to start it at payday (`futureYouStartsOn`). Null or left out: every cycle does.
+   */
+  readonly futureYouFrom?: LocalDate | null;
   readonly payday: Payday;
   readonly today: LocalDate;
   /** The phone's day an instant falls on; passed in so the domain holds no time zone. */
@@ -109,7 +114,7 @@ export function dueSetAsides(input: {
   /** The home currency; đồng when not given. */
   readonly currency?: Currency;
 }): SetAsideRecord[] {
-  const { moves, payday, today, futureYou, currency = VND } = input;
+  const { moves, payday, today, futureYou, futureYouFrom, currency = VND } = input;
   const current = payCycleOn(today, payday);
   const out: SetAsideRecord[] = [];
   for (const pot of input.pots) {
@@ -132,7 +137,7 @@ export function dueSetAsides(input: {
       const amount = potSetAside({
         pot,
         savedBefore: savedBefore(moves, pot.id, cycle.start) + added,
-        futureYou,
+        futureYou: futureYouFrom != null && cycle.start < futureYouFrom ? 0 : futureYou,
         cycle,
         currency,
       });

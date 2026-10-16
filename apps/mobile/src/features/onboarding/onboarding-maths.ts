@@ -2,8 +2,11 @@ import {
   CLOSE_TIME_OPTIONS,
   dailyNumber,
   designAmount,
+  joinedCycle,
   joinedShare,
   payCycleOn,
+  spentSincePaydayEstimate,
+  spentSincePaydayPresets,
   steps,
   VND,
   type Currency,
@@ -150,15 +153,35 @@ export interface FirstDayInput {
   readonly payday: Payday;
   readonly bills: number;
   readonly futureYou: number;
+  /** "Since payday, about how much have you spent?": null until the person changes the prefill. */
+  readonly spentSincePayday?: number | null;
+  /** "Start Future you at payday" was chosen. */
+  readonly futureYouAtPayday?: boolean;
 }
 
 export interface FirstDay {
   /** Today's line: safe to spend today, and each day after if nothing is spent. */
   readonly line: number;
-  /** Money in less bills and Future you, for the month. */
+  /** What is left to spend until payday: money in less bills, Future you and what went before. */
   readonly free: number;
   /** Days the money covers, today through payday. */
   readonly days: number;
+  /** The payday the cycle began on; joining after it asks what went since. */
+  readonly since: LocalDate;
+  /** The payday that ends it, when Future you starts if it starts at payday. */
+  readonly payday: LocalDate;
+  /** Joining part-way through a pay cycle: the "spent since payday" line shows. */
+  readonly joined: boolean;
+  /** The person's answer, or the prefill when there is none. */
+  readonly spentSincePayday: number;
+  /** Amounts to pick from beside the keypad. */
+  readonly presets: readonly number[];
+  /** The cycle starts with more spent than its free money. */
+  readonly overspent: boolean;
+  /** "Start Future you at payday" is offered: the cycle would start overspent with Future you. */
+  readonly offerFutureYouAtPayday: boolean;
+  /** Future you is skipped this cycle. */
+  readonly futureYouSkipped: boolean;
 }
 
 /** The first day's number from the domain engine, as Home will show it once onboarding ends. */
@@ -169,21 +192,50 @@ export function firstDay(
 ): FirstDay {
   const cycle = payCycleOn(today, input.payday);
   const { daysLeft } = cycle;
-  const day = dailyNumber({
-    plan: {
-      income: input.income,
-      bills: input.bills,
-      futureYou: input.futureYou,
-      occasions: 0,
-      topUps: 0,
-    },
-    spentBefore: 0,
-    today: [],
-    notDaily: new Set(),
-    daysLeft,
-    // Joining today: only the days left of this pay cycle's money is still to spend.
-    share: joinedShare(cycle, today),
-    currency,
-  });
-  return { line: Math.max(0, day.line), free: day.startFree, days: daysLeft + 1 };
+  const day = (futureYouAtPayday: boolean) => {
+    // Joining today: what went since payday is the person's answer, or the even-pace estimate.
+    const joined = joinedCycle(cycle, {
+      on: today,
+      spentSincePayday: input.spentSincePayday ?? null,
+      futureYouAtPayday,
+    });
+    return {
+      joined,
+      day: dailyNumber({
+        plan: {
+          income: input.income,
+          bills: input.bills,
+          futureYou: input.futureYou,
+          occasions: 0,
+          topUps: 0,
+        },
+        spentBefore: 0,
+        today: [],
+        notDaily: new Set(),
+        daysLeft,
+        share: joined.share,
+        beforeJoining: joined.beforeJoining,
+        futureYouSkipped: joined.futureYouSkipped,
+        currency,
+      }),
+    };
+  };
+  const whole = day(false);
+  const offer = whole.joined.joined && whole.day.overspent && input.futureYou > 0;
+  const { joined, day: shown } = day(offer && input.futureYouAtPayday === true);
+  const planned = input.income - input.bills - input.futureYou;
+  const estimate = spentSincePaydayEstimate(planned, joinedShare(cycle, today), currency);
+  return {
+    line: Math.max(0, shown.line),
+    free: shown.startFree,
+    days: daysLeft + 1,
+    since: cycle.start,
+    payday: cycle.payday,
+    joined: joined.joined,
+    spentSincePayday: joined.beforeJoining ?? estimate,
+    presets: spentSincePaydayPresets(planned, estimate, currency),
+    overspent: shown.overspent,
+    offerFutureYouAtPayday: offer,
+    futureYouSkipped: joined.futureYouSkipped,
+  };
 }

@@ -20,6 +20,13 @@ export interface OnboardingAnswers {
   readonly wallets: readonly string[];
   /** 'HH:MM', one of the close times the app offers. */
   readonly closeAt: string;
+  /**
+   * Joining part-way through a pay cycle: what the person said they spent since payday, not
+   * counting bills. Null when they left the estimate as it was.
+   */
+  readonly spentSincePayday?: number | null;
+  /** "Start Future you at payday" was chosen for the cycle they joined. */
+  readonly futureYouAtPayday?: boolean;
 }
 
 export interface OnboardingBill {
@@ -74,9 +81,17 @@ async function setUp(
   const { db, tables } = store;
   await db.withTransactionAsync(async () => {
     const existing = await readPlan(db);
+    const {
+      spentSincePayday: _answer,
+      futureYouAtPayday: _skip,
+      ...kept
+    } = existing ?? DEFAULT_PLAN;
+    const answer = answers.spentSincePayday;
     await writePlan(db, {
       ...DEFAULT_PLAN,
-      ...existing,
+      ...kept,
+      ...(answer == null ? {} : { spentSincePayday: Math.max(0, Math.round(answer)) }),
+      ...(answers.futureYouAtPayday === true ? { futureYouAtPayday: true } : {}),
       income: Math.max(0, Math.round(answers.income)),
       payday: answers.payday,
       futureYou: Math.max(0, Math.round(answers.futureYou)),

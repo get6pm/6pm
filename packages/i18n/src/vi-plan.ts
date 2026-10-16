@@ -126,6 +126,12 @@ export const viPlan: { readonly [Key in keyof typeof enPlan]: Entry } = {
   'plan.pot.tpl.course': 'Khoá học',
   'plan.river.before': 'Trước khi dùng 6pm',
   'plan.river.beforeNote': 'Đã tiêu trước khi bạn dùng 6pm. Mình tính là tiêu đều mỗi ngày.',
+  'plan.river.beforeNoteAnswered': 'Số bạn đã tiêu từ ngày lương tới khi dùng 6pm.',
+  'plan.river.beforeEdit': 'Chạm để sửa.',
+  'plan.sincePayday.title': 'Trước khi dùng 6pm',
+  'plan.sincePayday.question':
+    'Từ ngày lương {date}, bạn đã tiêu khoảng bao nhiêu? Không tính hoá đơn.',
+  'plan.sincePayday.save': 'Lưu',
   'plan.month.edit': 'Sửa thu nhập và ngày lương',
   'plan.month.title': 'Tháng của bạn',
   'plan.month.income': 'Tiền vào mỗi tháng',

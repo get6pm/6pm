@@ -47,6 +47,8 @@ export function useOnboarding(startStep = 0) {
   const [wallets, setWallets] = useState<readonly string[]>([]);
   const [closeAt, setCloseAt] = useState(DEFAULT_CLOSE_AT);
   const [reminders, setReminders] = useState<boolean | null>(null);
+  const [spentSincePayday, setSpentSincePayday] = useState<number | null>(null);
+  const [futureYouAtPayday, setFutureYouAtPayday] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const busy = useRef(false);
 
@@ -54,7 +56,11 @@ export function useOnboarding(startStep = 0) {
   const bills = chosenBills(deck, answers);
   const billSum = billTotal(bills);
   const futureYou = futureYouOf(income, percent, currency);
-  const first = firstDay({ income, payday, bills: billSum, futureYou }, today, currency);
+  const first = firstDay(
+    { income, payday, bills: billSum, futureYou, spentSincePayday, futureYouAtPayday },
+    today,
+    currency,
+  );
   const dailyHint = firstDay({ income, payday, bills: 0, futureYou: 0 }, today, currency).line;
 
   const finish = async () => {
@@ -79,6 +85,8 @@ export function useOnboarding(startStep = 0) {
           })),
           wallets,
           closeAt,
+          spentSincePayday: first.joined ? spentSincePayday : null,
+          futureYouAtPayday: first.futureYouSkipped,
         },
         { today, language: i18n.language },
       );
@@ -160,6 +168,11 @@ export function useOnboarding(startStep = 0) {
       setWallets((w) => (w.includes(id) ? w.filter((x) => x !== id) : [...w, id]));
     },
     setCloseAt,
+    setSpentSincePayday,
+    setFutureYouAtPayday: (on: boolean) => {
+      haptics.tap();
+      setFutureYouAtPayday(on);
+    },
   };
 }
 

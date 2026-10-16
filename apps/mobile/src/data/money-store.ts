@@ -1,7 +1,8 @@
 import {
   currencyOf,
   dailyNumber,
-  joinedShare,
+  futureYouStartsOn,
+  joinedCycle,
   occasionsOf,
   payCycleOn,
   potTotals,
@@ -21,7 +22,7 @@ import {
 
 import { createQueue } from './store-queue';
 import { openMoneyTables, type MoneyTables } from './money-tables';
-import { planCurrencyCode, readPlan, type PlanSettings } from './plan-settings';
+import { joinedAnswersOf, planCurrencyCode, readPlan, type PlanSettings } from './plan-settings';
 import { readPotMoves, recordDueSetAsides } from './pot-moves';
 import type { SqlDatabase } from './table';
 import { togetherTopUps } from './together-moves';
@@ -86,6 +87,7 @@ export function dailyInputOf(snapshot: MoneySnapshot): DailyNumberInput | null {
   );
   const bills = snapshot.bills.reduce((sum, b) => sum + b.amount, 0);
   const occasions = occasionsOf(snapshot.pots, snapshot.setAsideThisCycle);
+  const joined = joinedCycle(snapshot.cycle, joinedAnswersOf(plan));
   return {
     plan: {
       income: plan.income,
@@ -98,7 +100,9 @@ export function dailyInputOf(snapshot: MoneySnapshot): DailyNumberInput | null {
     today: snapshot.cycleSpends.filter((s) => s.day === today).map(counted),
     notDaily,
     daysLeft: snapshot.cycle.daysLeft,
-    share: joinedShare(snapshot.cycle, plan.startedOn ?? null),
+    share: joined.share,
+    beforeJoining: joined.beforeJoining,
+    futureYouSkipped: joined.futureYouSkipped,
     currency: currencyOf(planCurrencyCode(plan)),
   };
 }
@@ -184,6 +188,7 @@ export function createMoneyStore(db: SqlDatabase, today: LocalDate): MoneyStore 
           pots,
           moves: recorded,
           futureYou: plan.futureYou,
+          futureYouFrom: futureYouStartsOn(plan.payday, joinedAnswersOf(plan)),
           payday: plan.payday,
           today: day,
           currency: currencyOf(planCurrencyCode(plan)),

@@ -163,27 +163,39 @@ function Chip({
 /**
  * "Money in this month": the stacked money river (Bills, Future you, Occasions, Spent, Free; and
  * "Before 6pm" in the cycle the user joined) and its legend. Tapping a colour or a chip selects that segment: the others dim, it stands taller,
- * and the header tells what it holds. Widths follow the numbers with the entrance curve.
+ * and the header tells what it holds; "Before 6pm" also opens its amount while it can change.
+ * Widths follow the numbers with the entrance curve.
  */
 export function MoneyRiverCard({
   income,
   river,
   colours,
   copy,
+  onEditBefore,
 }: {
   readonly income: Vnd;
   readonly river: Readonly<Record<RiverSegment, Vnd>>;
   readonly colours: PlanColours;
   readonly copy: RiverCopy;
+  /** While the cycle the user joined lasts: "Before 6pm" opens what they spent since payday. */
+  readonly onEditBefore?: (() => void) | undefined;
 }) {
   const { palette } = useTheme();
   const money = useMoneyFormat();
   const [selected, setSelected] = useState<RiverSegment | null>(null);
-  // "Before 6pm" exists only in the cycle the user joined; every other cycle shows the five.
-  const segments = RIVER_SEGMENTS.filter((id) => id !== 'before' || river.before > 0);
+  // "Before 6pm" exists only in the cycle the user joined; every other cycle shows the five. While
+  // it can be changed it stays, even at nothing, so the answer can always be reached.
+  const segments = RIVER_SEGMENTS.filter(
+    (id) => id !== 'before' || river.before > 0 || onEditBefore !== undefined,
+  );
   const shown = selected !== null && !segments.includes(selected) ? null : selected;
   const pick = (id: RiverSegment) => {
     haptics.tick();
+    if (id === 'before' && onEditBefore) {
+      setSelected(id);
+      onEditBefore();
+      return;
+    }
     setSelected((current) => (current === id ? null : id));
   };
   const label = shown ? copy.label[shown] : copy.total;

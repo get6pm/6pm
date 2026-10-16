@@ -120,6 +120,12 @@ export const enPlan = {
   'plan.pot.tpl.course': 'Course',
   'plan.river.before': 'Before 6pm',
   'plan.river.beforeNote': 'Gone before you started with 6pm. I assume it went at an even pace.',
+  'plan.river.beforeNoteAnswered': 'What you spent between payday and starting 6pm.',
+  'plan.river.beforeEdit': 'Tap to change it.',
+  'plan.sincePayday.title': 'Before 6pm',
+  'plan.sincePayday.question':
+    'Since payday on {date}, about how much have you spent? Not counting bills.',
+  'plan.sincePayday.save': 'Save',
   'plan.month.edit': 'Edit income and payday',
   'plan.month.title': 'Your month',
   'plan.month.income': 'Money in each month',

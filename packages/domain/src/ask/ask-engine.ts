@@ -28,11 +28,16 @@ export interface AskContext {
   /** Future you each month, as the plan stands. */
   readonly futureYou: Vnd;
   /**
-   * The part of the cycle's free money still to come (`joinedShare`): 1 except in the cycle the
+   * The part of the cycle's free money still to come (`joinedCycle`): 1 except in the cycle the
    * user joined. Money taken out of the plan's monthly amounts (more to Future you) comes out of
    * free money only by this share, as the daily number itself does.
    */
   readonly share: number;
+  /**
+   * Future you as this cycle counts it (`cycleFutureYou`): nothing when the cycle the user joined
+   * starts it at payday, so saving more changes nothing until then. `futureYou` when not given.
+   */
+  readonly futureYouThisCycle?: Vnd;
   readonly pots: readonly AskPot[];
   /** The home currency; đồng when not given. */
   readonly currency?: Currency;
@@ -140,12 +145,15 @@ export function answerAsk(intent: AskIntent, ctx: AskContext): AskAnswer {
       return { kind: 'weekend', days, total: days.reduce((sum, d) => sum + d.amount, 0) };
     }
     case 'saveMore': {
-      const taken = Math.round(intent.amount * ctx.share);
+      const thisCycle = ctx.futureYouThisCycle ?? ctx.futureYou;
+      // A cycle that sets nothing aside for Future you takes nothing more out of free money.
+      const skipped = thisCycle === 0 && ctx.futureYou > 0;
+      const taken = skipped ? 0 : Math.round(intent.amount * ctx.share);
       const after = Math.max(0, lineFrom(day.free - taken, daysLeft, currency));
       return {
         kind: 'saveMore',
         amount: intent.amount,
-        futureYou: ctx.futureYou,
+        futureYou: thisCycle,
         perDay: day.tomorrow - after,
         bars: { before: day.tomorrow, after },
       };

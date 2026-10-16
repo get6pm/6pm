@@ -53,6 +53,7 @@ export async function recordDueSetAsides(
     readonly pots: readonly PotRow[];
     readonly moves: readonly PotMove[];
     readonly futureYou: number;
+    readonly futureYouFrom: LocalDate | null;
     readonly payday: Payday;
     readonly today: LocalDate;
     readonly currency: Currency;

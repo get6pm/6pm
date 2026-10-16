@@ -6,11 +6,12 @@ import {
   cycleMonth,
   designAmount,
   suggestCategoryIcon,
-  joinedShare,
+  cycleFutureYou,
   potSetAside,
 } from '@6pm/domain';
 
 import { useMoney } from '../data/money-provider';
+import { dailyInputOf } from '../data/money-store';
 import { usePlanActions } from '../data/plan-actions';
 import { useCompanionToast } from '../features/companion/use-companion-toast';
 import { useRunAction } from '../features/companion/use-run-action';
@@ -24,6 +25,9 @@ import { useMoneyFormat } from '../money/use-money-format';
 import { haptics } from '../ui/haptics';
 
 const SHARE_STEP = 5;
+
+/** What a pot's set-aside is worked out from, Future you apart. */
+type SetAsideTerms = Omit<Parameters<typeof potSetAside>[0], 'futureYou'>;
 
 /**
  * New pot, or New goal (`?kind=goal`) for Future you: name it (or start from a template), pick
@@ -90,17 +94,19 @@ export default function NewPot() {
   const change = (patch: Partial<PotFields>) => setDraft((d) => ({ ...d, ...patch }));
   const futureYou = snap.plan?.futureYou ?? 0;
   const share = percent / 100;
-  const monthly = potSetAside({
+  const terms: SetAsideTerms = {
     pot: { kind, goal: draft.goal, neededBy: month, share, paused: false },
     savedBefore: opening,
-    futureYou,
     cycle: snap.cycle,
     currency,
-  });
+  };
+  const monthly = potSetAside({ ...terms, futureYou });
+  // A day's cost is this cycle's: nothing for a goal while the joined cycle skips Future you.
+  const input = dailyInputOf(snap);
   const perDay = aboutPerDay(
-    monthly,
+    input ? potSetAside({ ...terms, futureYou: cycleFutureYou(input) }) : monthly,
     snap.cycle.daysLeft,
-    joinedShare(snap.cycle, snap.plan?.startedOn ?? null),
+    input?.share ?? 1,
     currency,
   );
 

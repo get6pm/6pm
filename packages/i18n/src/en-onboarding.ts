@@ -163,6 +163,13 @@ export const enOnboarding = {
     other: '{income} in, minus bills and future you, spread over the {count} days to payday.',
   },
   'onboarding.reveal.open': 'Open 6pm',
+  'onboarding.reveal.sincePayday': 'Since payday on {date}, spent about {amount}',
+  'onboarding.reveal.sincePaydayEdit': 'Change what you spent since payday',
+  'onboarding.reveal.sincePaydayHint': 'Not counting bills. About is fine.',
+  'onboarding.reveal.sincePaydayDone': 'Done',
+  'onboarding.reveal.futureAtPayday': 'Start Future you at payday',
+  'onboarding.reveal.futureAtPaydayNote':
+    'This month is already spent. Future you starts on {date}.',
   'onboarding.leave.kicker': 'Safe to spend today',
 
   'onboarding.line.paydayDay': 'The {day}. Noted.',

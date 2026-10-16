@@ -6,6 +6,7 @@ export * from './plan/goal-entry';
 export * from './plan/joined-cycle';
 export * from './plan/needed-by';
 export * from './plan/bills';
+export * from './plan/cycle-pace';
 export * from './plan/pay-cycle';
 export * from './plan/plan-river';
 export * from './plan/pots';

@@ -25,6 +25,7 @@ import { TopNav } from './top-nav';
  * meter as a 3 pt line; on Plan and Diary, the page title and its context line.
  */
 export const HomeTopNav = memo(function HomeTopNav({
+  edge,
   tab,
   day,
   onPressTop,
@@ -32,6 +33,8 @@ export const HomeTopNav = memo(function HomeTopNav({
   planSection,
   onPlanSection,
 }: {
+  /** What the bar leaves clear on the right (see `TopNav`). */
+  readonly edge: number;
   readonly tab: HomeTab;
   readonly day: DailyNumber;
   readonly onPressTop: () => void;
@@ -53,7 +56,7 @@ export const HomeTopNav = memo(function HomeTopNav({
 
   if (tab === 'today') {
     return (
-      <TopNav onPressTop={onPressTop}>
+      <TopNav onPressTop={onPressTop} edge={edge}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 44 }}>
           <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
             <Text style={{ ...body(12, 600), color: palette.inkSoft }}>
@@ -113,7 +116,7 @@ export const HomeTopNav = memo(function HomeTopNav({
     year: 'numeric',
   }).format(dayDate);
   return (
-    <TopNav onPressTop={onPressTop}>
+    <TopNav onPressTop={onPressTop} edge={edge}>
       <View style={{ alignItems: 'center', justifyContent: 'center', gap: 1, minHeight: 40 }}>
         <Text style={{ ...body(17, 650, -0.01), color: palette.ink }}>
           {t(tab === 'plan' ? 'tabs.plan' : 'tabs.diary')}

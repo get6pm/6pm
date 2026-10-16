@@ -18,16 +18,15 @@ const cache = new Map<string, BakedRain | null>();
  * neighbouring cells are painted too, so strokes running over an edge, and the soft layer's blur,
  * wrap round and the tile repeats without a seam. Returns null when no surface can be made.
  */
-export function bakeRainTile(
-  tile: RainTile,
-  spec: RainLayerSpec,
-  scale: number,
-): BakedRain | null {
+export function bakeRainTile(tile: RainTile, spec: RainLayerSpec, scale: number): BakedRain | null {
   const [tw, th] = spec.tile;
   const key = `${JSON.stringify(tile)}|${tw}x${th}|${spec.blur}@${scale}`;
   const kept = cache.get(key);
   if (kept !== undefined) return kept;
-  const pixels: [number, number] = [Math.max(1, Math.round(tw * scale)), Math.max(1, Math.round(th * scale))];
+  const pixels: [number, number] = [
+    Math.max(1, Math.round(tw * scale)),
+    Math.max(1, Math.round(th * scale)),
+  ];
   const surface = Skia.Surface.Make(pixels[0], pixels[1]);
   if (!surface) {
     cache.set(key, null);

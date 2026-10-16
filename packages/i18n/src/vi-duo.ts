@@ -13,4 +13,8 @@ export const viDuo: { readonly [Key in keyof typeof enDuo]: Entry } = {
   'duo.ask.from': 'xem trước từ Hỏi',
   'duo.ask.spent': 'đã tiêu {spent} · thêm ~{amount}',
   'duo.ask.left': 'còn {left}',
+  'duo.close.kept': 'Đã giữ hôm nay',
+  'duo.close.ofLine': 'trên {line} hôm nay · còn {left} là của bạn',
+  'duo.close.foldLater': 'Chọn từng khoản, rồi gập máy lại để chốt ngày.',
+  'duo.close.foldNow': 'Gập máy lại để chốt ngày.',
 };

@@ -8,7 +8,13 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { dayBarFraction, dayBarScale, whatIfDaily, type DailyNumberInput } from '@6pm/domain';
+import {
+  dayBarFraction,
+  dayBarScale,
+  whatIfDaily,
+  whatIfOver,
+  type DailyNumberInput,
+} from '@6pm/domain';
 import { curves } from '@6pm/theme';
 
 import { usePlanActions } from '../../data/plan-actions';
@@ -84,6 +90,8 @@ export function DailyCard({
   useEffect(() => setCandidate(committed), [committed]);
 
   const daily = whatIfDaily(input, candidate);
+  // Past the plan, the card says by how much rather than "0 a day" until payday.
+  const over = whatIfOver(input, candidate);
   const change = daily - whatIfDaily(input, baseline);
   const scale = dayBarScale(input);
   const fraction = dayBarFraction(daily, scale);
@@ -116,10 +124,10 @@ export function DailyCard({
             flexShrink: 0.01,
           }}
         >
-          {money.short(daily)}
+          {money.short(over > 0 ? over : daily)}
         </Text>
         <Text style={{ ...body(15), color: palette.inkSoft, flexShrink: 1, minWidth: LABEL_MIN }}>
-          {t('plan.daily.perDay', { count: daysLeft })}
+          {t(over > 0 ? 'plan.daily.pastPlan' : 'plan.daily.perDay', { count: daysLeft })}
         </Text>
       </View>
       <View style={{ flexDirection: 'row', gap: 3, height: ROW, alignItems: 'flex-end' }}>

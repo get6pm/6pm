@@ -29,6 +29,7 @@ export const viPlan: { readonly [Key in keyof typeof enPlan]: Entry } = {
   'plan.river.spentNote': 'Mọi khoản bạn đã giữ, từ {from} tới {to}.',
   'plan.river.freeNote': 'Của bạn hết, chia đều tới ngày lương.',
   'plan.daily.perDay': { other: 'mỗi ngày · còn {count} ngày' },
+  'plan.daily.pastPlan': { other: 'vượt kế hoạch · còn {count} ngày' },
   'plan.daily.payday': 'Lương về {day}',
   'plan.whatIf.title': 'Nếu bạn của tương lai nhận',
   'plan.whatIf.same': 'Đó là kế hoạch của bạn. Kéo thử để thấy được mất.',

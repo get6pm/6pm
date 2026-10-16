@@ -83,6 +83,17 @@ export function whatIfDaily(input: DailyNumberInput, candidate: Vnd): Vnd {
 }
 
 /**
+ * How far past the plan the cycle would be with `candidate` as Future you: what was spent beyond
+ * its free money, or 0 while it still has some. The daily card shows it in place of "0 a day".
+ */
+export function whatIfOver(input: DailyNumberInput, candidate: Vnd): Vnd {
+  return Math.max(
+    0,
+    -dailyNumber({ ...input, plan: { ...input.plan, futureYou: candidate } }).free,
+  );
+}
+
+/**
  * How a day changes per extra amount set aside now: "about 5k a day" for 100k over 22 days. A pot
  * that sets money aside out of the cycle's free money takes only the joined `share` of it.
  */

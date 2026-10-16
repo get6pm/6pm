@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { Text, View, type LayoutChangeEvent } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   FadeInDown,
@@ -8,7 +8,6 @@ import Animated, {
   useSharedValue,
   withSpring,
   withTiming,
-  type SharedValue,
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
@@ -19,47 +18,24 @@ import { Symbol } from '../../ui/icons/symbol';
 import { easeOut } from '../../ui/motion/curves';
 import { release, rubberband } from '../../ui/motion/physics';
 import { unband } from '../../ui/motion/use-drag-dismiss';
-import type { SymbolName } from '../../ui/icons/symbols.generated';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { BalancedText } from '../../ui/type/balanced-text';
 import { body, display, leading, mono } from '../../ui/type/fonts';
 import { cardFling } from './card-fling';
-import { CloseCard, type CloseCardContent } from './close-card';
+import { BackCard, CloseCard, MIN_HEIGHT, type CloseCardContent } from './close-card';
+import { CARD_BUTTON_HEIGHT, CloseCardButton } from './close-card-button';
 
 /** Off the screen to the right (kept) and below (not mine). */
 const AWAY_X = 560;
 const AWAY_Y = 820;
-/** The card's height: how far above home it can be pulled before it stops giving. */
+/** The stack's height on a phone: the 340 pt card and the cards peeking under it. */
 const STACK = 390;
+/** What the cards behind take below the top card. */
+const PEEK = STACK - 340;
+const BUTTONS_GAP = 20;
 const COMMIT_MS = 300;
 const reduceMotion = ReduceMotion.System;
-
-/** A card behind the top one: it rises and grows as the top card is dragged away. */
-function BackCard({
-  content,
-  index,
-  dx,
-  dy,
-}: {
-  readonly content: CloseCardContent;
-  readonly index: number;
-  readonly dx: SharedValue<number>;
-  readonly dy: SharedValue<number>;
-}) {
-  const lift = useAnimatedStyle(() => {
-    const prog = Math.min(1, Math.hypot(dx.get(), dy.get()) / 140);
-    const k = index - prog;
-    return { transform: [{ translateY: k * 14 }, { scale: 1 - k * 0.045 }] };
-  });
-  return (
-    <Animated.View
-      style={[{ position: 'absolute', left: 4, right: 4, top: 0, zIndex: 10 - index }, lift]}
-    >
-      <CloseCard content={content} dx={dx} dy={dy} top={false} />
-    </Animated.View>
-  );
-}
 
 export interface CloseCardsProps {
   readonly cards: readonly CloseCardContent[];
@@ -84,8 +60,11 @@ function CardStack({
   buttons,
   onDecide,
   onEdit,
-}: Pick<CloseCardsProps, 'cards' | 'buttons' | 'onDecide' | 'onEdit'>) {
-  const { palette } = useTheme();
+  stack,
+}: Pick<CloseCardsProps, 'cards' | 'buttons' | 'onDecide' | 'onEdit'> & {
+  /** The stack's height, which is how far above home the card can be pulled before it stops. */
+  readonly stack: number;
+}) {
   const top = cards[0];
   const dx = useSharedValue(0);
   const dy = useSharedValue(0);
@@ -121,12 +100,12 @@ function CardStack({
           // A card caught mid-flight is picked up where it is.
           const y = dy.get();
           startX.set(dx.get() - e.translationX);
-          startY.set((y < 0 ? unband(y, STACK) : y) - e.translationY);
+          startY.set((y < 0 ? unband(y, stack) : y) - e.translationY);
         })
         .onUpdate((e) => {
           const y = startY.get() + e.translationY;
           dx.set(startX.get() + e.translationX);
-          dy.set(y >= 0 ? y : rubberband(y, STACK));
+          dy.set(y >= 0 ? y : rubberband(y, stack));
         })
         .onEnd((e) => {
           const verdict = cardFling(dx.get(), dy.get(), e.velocityX, e.velocityY);
@@ -152,7 +131,7 @@ function CardStack({
             dy.set(withSpring(AWAY_Y, { ...away, velocity: e.velocityY }, done));
           }
         }),
-    [dx, dy, startX, startY, settle, edit, decide],
+    [dx, dy, startX, startY, settle, edit, decide, stack],
   );
 
   // The buttons have no finger speed to carry, so the card leaves on the house ease-out.
@@ -181,39 +160,21 @@ function CardStack({
     ],
   }));
 
-  const button = (icon: SymbolName, label: string, primary: boolean, onPress: () => void) => (
-    <View key={label} style={{ alignItems: 'center', gap: 7 }}>
-      <PressScale
-        accessibilityRole="button"
-        accessibilityLabel={label}
-        onPress={onPress}
-        style={{
-          width: 60,
-          height: 60,
-          borderRadius: 30,
-          backgroundColor: primary ? palette.accent : palette.glass,
-          borderWidth: 0.5,
-          borderColor: primary ? 'rgba(255,255,255,.45)' : palette.glassBorder,
-          boxShadow: primary
-            ? `0 10px 26px ${palette.accentGlow}, inset 0 1px 0 rgba(255,255,255,.5)`
-            : 'none',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Symbol name={icon} size={28} color={primary ? palette.accentFg : palette.ink} />
-      </PressScale>
-      <Text style={{ ...body(12, 600), color: palette.inkSoft }}>{label}</Text>
-    </View>
-  );
-
+  const cardHeight = stack - PEEK;
   return (
     <>
-      <View style={{ height: STACK }}>
+      <View style={{ height: stack }}>
         {cards
           .slice(1, 3)
           .map((card, i) => (
-            <BackCard key={card.row.id} content={card} index={i + 1} dx={dx} dy={dy} />
+            <BackCard
+              key={card.row.id}
+              content={card}
+              index={i + 1}
+              dx={dx}
+              dy={dy}
+              height={cardHeight}
+            />
           ))
           .reverse()}
         {top ? (
@@ -221,16 +182,26 @@ function CardStack({
             <Animated.View
               style={[{ position: 'absolute', left: 4, right: 4, top: 0, zIndex: 10 }, topStyle]}
             >
-              <CloseCard content={top} dx={dx} dy={dy} top />
+              <CloseCard content={top} dx={dx} dy={dy} height={cardHeight} top />
             </Animated.View>
           </GestureDetector>
         ) : null}
       </View>
 
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 30 }}>
-        {button('edit', buttons.edit, false, () => press('edit'))}
-        {button('south', buttons.notMine, false, () => press('notMine'))}
-        {button('check', buttons.keep, true, () => press('kept'))}
+        <CloseCardButton
+          icon="edit"
+          label={buttons.edit}
+          primary={false}
+          onPress={() => press('edit')}
+        />
+        <CloseCardButton
+          icon="south"
+          label={buttons.notMine}
+          primary={false}
+          onPress={() => press('notMine')}
+        />
+        <CloseCardButton icon="check" label={buttons.keep} primary onPress={() => press('kept')} />
       </View>
     </>
   );
@@ -242,6 +213,14 @@ function CardStack({
  */
 export function CloseCards(props: CloseCardsProps) {
   const { palette } = useTheme();
+  // The room under the header for the cards and their buttons. A phone always has the full
+  // stack; a short screen shrinks the card. Measured here, above the keyed stack, so a new top
+  // card never waits a frame for it.
+  const [room, setRoom] = useState<number | null>(null);
+  const stack =
+    room === null
+      ? STACK
+      : Math.min(STACK, Math.max(MIN_HEIGHT + PEEK, room - BUTTONS_GAP - CARD_BUTTON_HEIGHT));
   return (
     <View style={{ flex: 1, gap: 20, paddingTop: 22 }}>
       <View style={{ gap: 6 }}>
@@ -282,13 +261,19 @@ export function CloseCards(props: CloseCardsProps) {
           <Text style={{ ...body(15), lineHeight: 32, color: palette.inkSoft }}>{props.hint}</Text>
         )}
       </View>
-      <CardStack
-        key={props.cards[0]?.row.id ?? 'none'}
-        cards={props.cards}
-        buttons={props.buttons}
-        onDecide={props.onDecide}
-        onEdit={props.onEdit}
-      />
+      <View
+        onLayout={(e: LayoutChangeEvent) => setRoom(e.nativeEvent.layout.height)}
+        style={{ flex: 1, gap: BUTTONS_GAP, opacity: room === null ? 0 : 1 }}
+      >
+        <CardStack
+          key={props.cards[0]?.row.id ?? 'none'}
+          cards={props.cards}
+          buttons={props.buttons}
+          onDecide={props.onDecide}
+          onEdit={props.onEdit}
+          stack={stack}
+        />
+      </View>
     </View>
   );
 }

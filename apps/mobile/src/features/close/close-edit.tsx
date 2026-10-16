@@ -18,6 +18,9 @@ import { useDragDismiss } from '../../ui/motion/use-drag-dismiss';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, tabular } from '../../ui/type/fonts';
 
+/** The design phone's width: the sheet keeps it on a wider screen. */
+const SHEET_WIDTH = 402;
+
 /**
  * Edit one caught spend without leaving the close: nudge the amount by 5k (five steps of the home
  * currency: 5.000₫, $5), pick the category,
@@ -41,7 +44,7 @@ export function CloseEdit({
   readonly onCancel: () => void;
 }) {
   const { palette } = useTheme();
-  const { bottom } = useDesignInsets();
+  const { bottom, rail } = useDesignInsets();
   const { height } = useWindowDimensions();
   const sheet = useDragDismiss({ area: height, onDismissed: onCancel, enter: false });
   const money = useMoneyFormat();
@@ -84,12 +87,15 @@ export function CloseEdit({
         entering={SlideInDown.springify().damping(24).stiffness(240)}
         exiting={SlideOutDown.duration(220).easing(easeOut)}
         onLayout={sheet.onLayout}
-        style={{ position: 'absolute', left: 0, right: 0, bottom: 0 }}
+        // A phone's width at most, clear of the iPhone Duo's side rail.
+        style={{ position: 'absolute', left: 0, right: rail, bottom: 0, alignItems: 'center' }}
       >
         <GestureDetector gesture={sheet.drag}>
           <Animated.View
             style={[
               {
+                width: '100%',
+                maxWidth: SHEET_WIDTH,
                 borderTopLeftRadius: 32,
                 borderTopRightRadius: 32,
                 backgroundColor: palette.sheetSolid,

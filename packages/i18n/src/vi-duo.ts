@@ -6,4 +6,7 @@ export const viDuo: { readonly [Key in keyof typeof enDuo]: Entry } = {
   'duo.month.fast': 'Tiêu hơi nhanh hơn số ngày.',
   'duo.month.paceLine': 'Đã dùng {used}% tiền {month}, thời gian đã qua {gone}%.',
   'duo.month.daily': 'Con số mỗi ngày',
+  'duo.day.ofLine': 'trên {line} của ngày đó',
+  'duo.day.previous': 'Ngày trước',
+  'duo.day.next': 'Ngày sau',
 };

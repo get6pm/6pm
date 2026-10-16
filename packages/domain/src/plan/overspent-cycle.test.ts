@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { dailyNumber, type DailyNumberInput } from './daily-number';
 import { joinedShare, payCycleOn } from './pay-cycle';
-import { moneyRiver } from './plan-river';
+import { moneyRiver, whatIfDaily, whatIfOver } from './plan-river';
 
 /** 4tr free for the cycle, 22 days after today. */
 const base: DailyNumberInput = {
@@ -93,5 +93,22 @@ describe('the joined cycle when bills take more than the income', () => {
     });
     expect(river.before).toBe(0);
     expect(river.spent).toBe(200_000);
+  });
+});
+
+describe('the daily card in an overspent cycle', () => {
+  it('shows how far past the plan it is, and nothing past it once Future you makes room', () => {
+    const over = { ...base, spentBefore: base.plan.income };
+    const now = dailyNumber(over);
+    expect(now.overspent).toBe(true);
+    expect(whatIfOver(over, over.plan.futureYou)).toBe(-now.free);
+    expect(whatIfDaily(over, over.plan.futureYou)).toBe(0);
+    expect(whatIfOver(base, base.plan.futureYou)).toBe(0);
+  });
+
+  it('shrinks as Future you is lowered', () => {
+    const over = { ...base, spentBefore: base.plan.income - base.plan.bills - 1_000_000 };
+    const at = (futureYou: number) => whatIfOver(over, futureYou);
+    expect(at(over.plan.futureYou)).toBeGreaterThan(at(over.plan.futureYou - 500_000));
   });
 });

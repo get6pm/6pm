@@ -24,6 +24,10 @@ export const enPlan = {
   'plan.river.spentNote': 'Everything you kept, {from} to {to}.',
   'plan.river.freeNote': 'Yours to spend, split evenly to payday.',
   'plan.daily.perDay': { one: 'a day · {count} day left', other: 'a day · {count} days left' },
+  'plan.daily.pastPlan': {
+    one: 'past the plan · {count} day left',
+    other: 'past the plan · {count} days left',
+  },
   'plan.daily.payday': 'Payday {day}',
   'plan.whatIf.title': 'What if Future you got',
   'plan.whatIf.same': 'That’s your plan. Slide to feel the trade-off.',

@@ -3,6 +3,9 @@ import { crc16CcittFalse } from './crc16';
 import { ACCOUNT, BIN, NAPAS_GUID } from './parse-vietqr';
 import { encodeTlv } from './tlv';
 
+/** Tag 54 holds at most 13 digits: the most a QR can ask for that `parseVietQR` reads back. */
+const MAX_AMOUNT = 9_999_999_999_999;
+
 export interface VietQRInput {
   /** NAPAS BIN of the receiving bank. */
   bin: string;
@@ -25,8 +28,11 @@ export function encodeVietQR(input: VietQRInput): string {
   const { bin, account, amount } = input;
   if (!BIN.test(bin)) throw new RangeError('A VietQR BIN is six digits');
   if (!ACCOUNT.test(account)) throw new RangeError('A VietQR account is 1–19 letters or digits');
-  if (amount !== undefined && !(Number.isSafeInteger(amount) && amount > 0)) {
-    throw new RangeError('A VietQR amount is a positive whole number of đồng');
+  if (
+    amount !== undefined &&
+    !(Number.isSafeInteger(amount) && amount > 0 && amount <= MAX_AMOUNT)
+  ) {
+    throw new RangeError('A VietQR amount is a whole number of đồng, at most 13 digits');
   }
   const note = clean(input.note);
   const merchantName = clean(input.merchantName);

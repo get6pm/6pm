@@ -68,11 +68,32 @@ describe('backupSnapshotSchema', () => {
 
   it('takes a snapshot of this version and refuses another version, or a setting it does not carry', () => {
     expect(backupSnapshotSchema.safeParse(empty).success).toBe(true);
-    expect(backupSnapshotSchema.safeParse({ ...empty, version: 2 }).success).toBe(false);
+    expect(backupSnapshotSchema.safeParse({ ...empty, version: 0 }).success).toBe(false);
+    expect(
+      backupSnapshotSchema.safeParse({ ...empty, version: BACKUP_SNAPSHOT_VERSION + 1 }).success,
+    ).toBe(false);
     expect(
       backupSnapshotSchema.safeParse({ ...empty, settings: { purchases: '{}' } }).success,
     ).toBe(false);
     expect(backupSnapshotSchema.safeParse({ ...empty, extra: [] }).success).toBe(false);
+  });
+
+  it('reads an older snapshot without Budget together history, and a newer one with it', () => {
+    expect(backupSnapshotSchema.safeParse({ ...empty, version: 1 }).success).toBe(true);
+    const move = {
+      id: 'together-1',
+      potId: 'shared-1',
+      potName: 'Đà Lạt',
+      amount: 300_000,
+      cycle: '2026-09-25',
+      at: '2026-10-05T00:00:00.000Z',
+    };
+    expect(backupSnapshotSchema.safeParse({ ...empty, togetherMoves: [move] }).success).toBe(true);
+    for (const amount of [0, -1, 1.5]) {
+      expect(
+        backupSnapshotSchema.safeParse({ ...empty, togetherMoves: [{ ...move, amount }] }).success,
+      ).toBe(false);
+    }
   });
 
   it('counts what a person made and would miss', () => {

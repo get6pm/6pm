@@ -18,20 +18,16 @@ export const togetherPotCreateRoute: RouteDefinition = {
     const pot = await readBody(c, createSharedPotRequestSchema, { maxBytes: 2048 });
     const db = c.env.DB;
     const pairId = await ensurePair(db, user.id);
-    const count = await db
-      .prepare('SELECT COUNT(*) AS n FROM together_pots WHERE pair_id = ?')
-      .bind(pairId)
-      .first<{ n: number }>();
-    if ((count?.n ?? 0) >= MAX_SHARED_POTS) {
-      throw new ApiError('bad_request', 'Too many shared pots', { reason: 'too_many' });
-    }
     const now = new Date().toISOString();
-    await db
+    // The cap is checked in the insert itself, so two pots made at once cannot both take the
+    // last place.
+    const made = await db
       .prepare(
         `INSERT INTO together_pots
            (id, pair_id, name, icon, hue, goal, currency, needed_by, created_by, created_at,
             updated_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?10)
+         SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?10
+         WHERE (SELECT COUNT(*) FROM together_pots WHERE pair_id = ?2) < ?11
          ON CONFLICT (id) DO NOTHING`,
       )
       .bind(
@@ -45,8 +41,18 @@ export const togetherPotCreateRoute: RouteDefinition = {
         pot.neededBy,
         user.id,
         now,
+        MAX_SHARED_POTS,
       )
       .run();
+    if (made.meta.changes === 0) {
+      const taken = await db
+        .prepare('SELECT 1 AS ok FROM together_pots WHERE id = ?')
+        .bind(pot.id)
+        .first();
+      if (taken === null) {
+        throw new ApiError('bad_request', 'Too many shared pots', { reason: 'too_many' });
+      }
+    }
     // An id another pair already holds is not this pair's to see.
     await requirePot(db, pairId, pot.id);
     return answerState(c, user);

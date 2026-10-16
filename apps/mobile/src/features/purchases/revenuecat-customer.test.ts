@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
 import { parseCustomer, serializeCustomer } from './customer-memory';
-import { FREE_CUSTOMER, type CustomerState } from './purchases-port';
+import { FREE_CUSTOMER, NO_MAX, type CustomerState } from './purchases-port';
 import {
   customerFromStore,
   type StoreCustomer,
@@ -117,6 +117,18 @@ describe('the customer kept between launches', () => {
 
   it('round-trips', () => {
     expect(parseCustomer(serializeCustomer(customer))).toEqual(customer);
+  });
+
+  it('ends a kept Max that will not renew once its end has passed, and keeps the looks', () => {
+    const ending: CustomerState = {
+      ...customer,
+      max: { ...customer.max, renewsAt: null, endsAt: 1_000, willRenew: false },
+    };
+    const kept = serializeCustomer(ending);
+    expect(parseCustomer(kept, 999)).toEqual(ending);
+    expect(parseCustomer(kept, 1_000)).toEqual({ max: NO_MAX, ownedLooks: ['cafe', 'paper'] });
+    // One that renews has no end to pass: only the store can say it lapsed.
+    expect(parseCustomer(serializeCustomer(customer), 10_000)).toEqual(customer);
   });
 
   it('reads nothing, bad JSON and the wrong shape as the free customer', () => {

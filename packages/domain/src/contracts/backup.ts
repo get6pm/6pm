@@ -18,8 +18,13 @@ import {
 
 /** Wire format of the sealed envelope. A phone refuses any version it does not know. */
 export const BACKUP_FORMAT_VERSION = 1;
-/** Format of the snapshot inside the envelope. Bumped when a table or field changes meaning. */
-export const BACKUP_SNAPSHOT_VERSION = 1;
+/**
+ * Format of the snapshot inside the envelope. Bumped when a table or field changes meaning, and
+ * when a table is added: the snapshot is a strict object, so a phone that does not know the new
+ * table must say "update 6pm" rather than call the backup damaged. A phone reads every version up
+ * to its own.
+ */
+export const BACKUP_SNAPSHOT_VERSION = 2;
 
 /** AES-GCM: a 12-byte nonce in front of the ciphertext, a 16-byte tag behind it. */
 export const BACKUP_IV_BYTES = 12;
@@ -113,12 +118,27 @@ export const potMoveRowSchema = z.object({
 export type PotMoveRow = z.infer<typeof potMoveRowSchema>;
 
 /**
+ * Money this phone's person put into a Budget together pot, from `together_moves`. It is kept in
+ * the home currency and counts like a top-up in its pay cycle, so it has to come back with the
+ * rest or the daily number rises after a restore.
+ */
+export const togetherMoveRowSchema = z.object({
+  id: z.string().min(1),
+  potId: z.string().min(1),
+  potName: z.string(),
+  amount: z.number().int().positive(),
+  cycle: z.string().min(1),
+  at: z.string().min(20),
+});
+export type TogetherMoveRow = z.infer<typeof togetherMoveRowSchema>;
+
+/**
  * Everything the app keeps, as plain JSON. Rows are exactly the rows of the phone's database, so
  * a restore puts back what was there. Spend sightings come from `spend_sightings` and have no
  * contract elsewhere; the field names here are the camel-case of its columns.
  */
 export const backupSnapshotSchema = z.strictObject({
-  version: z.literal(BACKUP_SNAPSHOT_VERSION),
+  version: z.number().int().min(1).max(BACKUP_SNAPSHOT_VERSION),
   /** When the phone took it, ISO 8601 UTC. */
   takenAt: z.string().min(20),
   settings: z.strictObject({
@@ -134,6 +154,8 @@ export const backupSnapshotSchema = z.strictObject({
   bills: z.array(billRowSchema),
   pots: z.array(potRowSchema),
   potMoves: z.array(potMoveRowSchema),
+  /** Absent in backups taken before Budget together history was carried. */
+  togetherMoves: z.array(togetherMoveRowSchema).optional(),
   closedDays: z.array(closedDayRowSchema),
 });
 export type BackupSnapshot = z.infer<typeof backupSnapshotSchema>;

@@ -26,4 +26,8 @@ export const viDuo: { readonly [Key in keyof typeof enDuo]: Entry } = {
   'duo.scan.stand': 'Dựng máy trên quầy và đưa mã QR của quán lên nửa trên.',
   'duo.scan.to': 'cho {payee}',
   'duo.scan.paid': 'Đã trả',
+  'duo.drop.title': 'Thả một dòng ngân hàng vào đây',
+  'duo.drop.sub': '6pm đọc tên chỗ trả và số tiền, rồi xếp vào đúng mục.',
+  'duo.drop.caught': 'Đã bắt {merchant} · {amount}. Nó chờ đến lúc chốt.',
+  'duo.drop.unread': 'Dòng đó không có số tiền.',
 };

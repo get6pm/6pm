@@ -21,4 +21,9 @@ export const viDuo: { readonly [Key in keyof typeof enDuo]: Entry } = {
   'duo.market.left': 'Hôm nay còn',
   'duo.market.add': 'Thêm',
   'duo.market.leave': 'Rời quầy',
+  'duo.scan.camera': 'Camera trong',
+  'duo.scan.looking': 'Đang tìm mã QR',
+  'duo.scan.stand': 'Dựng máy trên quầy và đưa mã QR của quán lên nửa trên.',
+  'duo.scan.to': 'cho {payee}',
+  'duo.scan.paid': 'Đã trả',
 };

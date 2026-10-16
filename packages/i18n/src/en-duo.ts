@@ -19,4 +19,9 @@ export const enDuo = {
   'duo.market.left': 'Left for today',
   'duo.market.add': 'Add',
   'duo.market.leave': 'Leave the counter',
+  'duo.scan.camera': 'Inner camera',
+  'duo.scan.looking': 'Looking for a QR',
+  'duo.scan.stand': 'Stand me on the counter and hold their QR up to the top.',
+  'duo.scan.to': 'to {payee}',
+  'duo.scan.paid': 'Paid',
 } as const;

@@ -1,4 +1,5 @@
 import type { Stack } from 'expo-router';
+import { Platform } from 'react-native';
 import type { ComponentProps } from 'react';
 
 type ScreenOptions = Extract<
@@ -13,9 +14,11 @@ type ScreenOptions = Extract<
  * prototype's 874 pt screen, 4 pt below the prototype's 58 (iOS will not raise a sheet higher).
  * iOS dims the page behind without shrinking it, so the sky stays above the sheet. Each sheet paints its own colour
  * (`SheetFrame`), and draws the prototype's grabber instead of the system one.
+ * On iPad a form sheet is a small card in the middle of the screen, too short for a pinned footer
+ * and its scroll, so there it is the page sheet: nearly the screen's height, as Mail composes.
  */
 export const sheet: ScreenOptions = {
-  presentation: 'formSheet',
+  presentation: Platform.OS === 'ios' && Platform.isPad ? 'pageSheet' : 'formSheet',
   sheetAllowedDetents: [1],
   sheetCornerRadius: 40,
   sheetGrabberVisible: false,

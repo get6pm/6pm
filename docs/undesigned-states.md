@@ -330,3 +330,4 @@ fakes behaviour the app cannot fake. Founder review.
 | Scan | A receipt that cannot be read | The Scan alert card: "Couldn't read that photo", Type it or Try again | Same shape as the unreadable QR |
 | Scan | Changing a foreign total | Change types the amount in the home currency and drops the foreign total it replaces | The keypad has no currency key on this card yet; Quick add keeps foreign entry |
 | Scan · iPhone Duo | Closing | Scan fills the screen (a sheet would float as a card on the Duo's wide screens) and follows the finger when swiped right, leaving past the sheet's dismiss distance | No sheet to pull down there |
+| Every sheet · iPad | Presentation | The iOS page sheet, nearly the screen's height, instead of the form sheet the iPhone uses | On iPad a form sheet is a small centred card, which leaves the Max sheet's pinned plans and button covering its scroll |

@@ -12,6 +12,9 @@ import * as routes from '../src/routes/index.generated';
 import { sentBody } from './anthropic-stand-in';
 import { call, freshIp, registerDevice, wireErrorOf } from './support';
 
+/** Deepgram chosen, whatever the test environment picks. */
+const DEEPGRAM: Partial<Bindings> = { VOICE_PROVIDER: 'deepgram', DEEPGRAM_API_KEY: 'dg-key' };
+
 /** Asks for a voice token with the given bindings on top of the test environment's. */
 async function mint(
   token: string,
@@ -63,7 +66,7 @@ describe('POST /v1/voice/token', () => {
 
   it('turns away a language it does not transcribe', async () => {
     const token = await registerDevice();
-    const response = await mint(token, { DEEPGRAM_API_KEY: 'dg' }, { language: 'fr' });
+    const response = await mint(token, DEEPGRAM, { language: 'fr' });
     expect(response.status).toBe(400);
   });
 
@@ -85,7 +88,7 @@ describe('POST /v1/voice/token', () => {
     const vendor = vi
       .spyOn(globalThis, 'fetch')
       .mockResolvedValue(Response.json({ access_token: 'jwt-test', expires_in: 30 }));
-    const response = await mint(token, { DEEPGRAM_API_KEY: 'dg-key' });
+    const response = await mint(token, DEEPGRAM);
     expect(response.status).toBe(200);
     const answer = voiceTokenResponseSchema.parse(await response.json());
     expect(answer).toMatchObject({
@@ -114,7 +117,7 @@ describe('POST /v1/voice/token', () => {
     ]);
   });
 
-  it('mints a single-use ElevenLabs token when ElevenLabs is chosen', async () => {
+  it('mints a single-use ElevenLabs token that leaves the language to the transcriber', async () => {
     const token = await registerDevice();
     const vendor = vi
       .spyOn(globalThis, 'fetch')
@@ -132,11 +135,12 @@ describe('POST /v1/voice/token', () => {
       url: 'wss://api.elevenlabs.io/v1/speech-to-text/realtime',
       params: {
         model_id: 'scribe_v2_realtime',
-        language_code: 'vi',
         audio_format: 'pcm_16000',
         commit_strategy: 'vad',
       },
     });
+    // Named, it would hear only the app's language; unnamed, it hears whichever the user speaks.
+    expect(answer.params['language_code']).toBeUndefined();
     // Logging stays on until the account has zero retention.
     expect(answer.params['enable_logging']).toBeUndefined();
     const [url, init] = vendor.mock.calls[0] ?? [];
@@ -164,7 +168,7 @@ describe('POST /v1/voice/token', () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       Response.json({ err_msg: 'Invalid credentials' }, { status: 401 }),
     );
-    const response = await mint(token, { DEEPGRAM_API_KEY: 'dg-key' });
+    const response = await mint(token, DEEPGRAM);
     expect(response.status).toBe(503);
     const error = await wireErrorOf(response);
     expect(error).toMatchObject({ code: 'model_unavailable', detail: { reason: 'status_401' } });
@@ -185,7 +189,7 @@ describe('POST /v1/voice/token', () => {
       ),
     );
     const vendor = vi.spyOn(globalThis, 'fetch');
-    const response = await mint(token, { DEEPGRAM_API_KEY: 'dg-key' });
+    const response = await mint(token, DEEPGRAM);
     expect(response.status).toBe(429);
     expect(vendor).not.toHaveBeenCalled();
   });
@@ -209,11 +213,11 @@ describe('POST /v1/voice/token', () => {
     );
 
     await fill(midnight - 1);
-    const yesterday = await mint(token, { DEEPGRAM_API_KEY: 'dg-key' }, undefined, inVietnam);
+    const yesterday = await mint(token, DEEPGRAM, undefined, inVietnam);
     expect(yesterday.status).toBe(200);
 
     await fill(midnight);
-    const today = await mint(token, { DEEPGRAM_API_KEY: 'dg-key' }, undefined, inVietnam);
+    const today = await mint(token, DEEPGRAM, undefined, inVietnam);
     expect(today.status).toBe(429);
   });
 });

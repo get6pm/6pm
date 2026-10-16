@@ -30,7 +30,7 @@
       "vars": {
         "ENVIRONMENT": "dev",
         "COMMIT_SHA": "local",
-        "VOICE_PROVIDER": "deepgram",
+        "VOICE_PROVIDER": "elevenlabs",
         "ELEVENLABS_ZERO_RETENTION": "false",
       },
       // Exchange rates in đồng, four times a day: the travel currencies every run, the rest of the
@@ -102,7 +102,7 @@
       "vars": {
         "ENVIRONMENT": "prd",
         "COMMIT_SHA": "local",
-        "VOICE_PROVIDER": "deepgram",
+        "VOICE_PROVIDER": "elevenlabs",
         "ELEVENLABS_ZERO_RETENTION": "false",
       },
       "triggers": { "crons": ["20 */6 * * *"] },

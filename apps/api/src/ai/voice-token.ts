@@ -92,15 +92,12 @@ async function deepgram(key: string, language: 'en' | 'vi'): Promise<MintedVoice
 }
 
 /**
- * ElevenLabs Scribe v2 Realtime. The single-use token goes in the socket's query. Its voice
+ * ElevenLabs Scribe v2 Realtime. The single-use token goes in the socket's query. No language is
+ * named, so it hears whichever the user speaks, Vietnamese in an English app included. Its voice
  * detector commits each phrase after a pause. Logging can only be turned off on an account with
  * zero retention, which `zeroRetention` says it has.
  */
-async function elevenLabs(
-  key: string,
-  language: 'en' | 'vi',
-  zeroRetention: boolean,
-): Promise<MintedVoiceToken> {
+async function elevenLabs(key: string, zeroRetention: boolean): Promise<MintedVoiceToken> {
   const answer = (await post(
     'https://api.elevenlabs.io/v1/single-use-token/realtime_scribe',
     { 'xi-api-key': key },
@@ -117,7 +114,6 @@ async function elevenLabs(
       url: 'wss://api.elevenlabs.io/v1/speech-to-text/realtime',
       params: {
         model_id: 'scribe_v2_realtime',
-        language_code: language,
         audio_format: 'pcm_16000',
         commit_strategy: 'vad',
         vad_silence_threshold_secs: '1.2',
@@ -127,14 +123,17 @@ async function elevenLabs(
   };
 }
 
-/** A short-lived token for the configured transcriber; `model_unavailable` without its key. */
+/**
+ * A short-lived token for the configured transcriber; `model_unavailable` without its key. Only
+ * Deepgram is held to `language`: its own detection does not know Vietnamese.
+ */
 export async function mintVoiceToken(
   config: VoiceConfig,
   language: 'en' | 'vi',
 ): Promise<MintedVoiceToken> {
   if (voiceProviderOf(config) === 'elevenlabs') {
     if (!config.elevenLabsKey) throw unavailable('no_key');
-    return elevenLabs(config.elevenLabsKey, language, config.elevenLabsZeroRetention === 'true');
+    return elevenLabs(config.elevenLabsKey, config.elevenLabsZeroRetention === 'true');
   }
   if (!config.deepgramKey) throw unavailable('no_key');
   return deepgram(config.deepgramKey, language);

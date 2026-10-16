@@ -22,12 +22,26 @@ import { useAsk } from './use-ask';
 /** How long the screen settles before a question it was opened with is sent (the prototype's 350). */
 const OPEN_WITH_DELAY_MS = 350;
 
+/** How long the iPhone Duo's page takes to slide in before the caret goes into the composer. */
+const PAGE_IN_MS = 320;
+
 /**
  * Ask 6pm: a chat about what fits. `question` is sent as soon as the screen is up, for the entry
- * points that open it with a question already chosen.
+ * points that open it with a question already chosen. In its sheet it closes the sheet; on the
+ * iPhone Duo's right page (`onClose`) it turns the page back, and says what the latest "can I
+ * afford" question was for, so the left page can show it on today's meter (`onAfford`).
  */
-export function AskScreen({ question }: { readonly question: string | null }) {
+export function AskScreen({
+  question,
+  onClose,
+  onAfford,
+}: {
+  readonly question: string | null;
+  readonly onClose?: () => void;
+  readonly onAfford?: (amount: number | null) => void;
+}) {
   const router = useRouter();
+  const onPage = onClose !== undefined;
   const { palette, serious } = useTheme();
   const { t } = useI18n();
   const chat = useAsk();
@@ -49,7 +63,23 @@ export function AskScreen({ question }: { readonly question: string | null }) {
 
   // Opened to type: the keyboard comes up behind the sheet. Opened with a question, the answer
   // is what to read, so the keyboard stays down.
-  useFocusOnPresent(input, question === null);
+  useFocusOnPresent(input, question === null && !onPage);
+  // On the page there is no sheet to wait for: the caret goes in once the page has slid in.
+  useEffect(() => {
+    if (!onPage || question !== null) return;
+    const timer = setTimeout(() => input.current?.focus(), PAGE_IN_MS);
+    return () => clearTimeout(timer);
+  }, [onPage, question]);
+
+  let affording: number | null = null;
+  for (const message of chat.messages) {
+    if (message.kind === 'answer' && message.query?.kind === 'afford')
+      affording = message.query.amount;
+  }
+  useEffect(() => {
+    onAfford?.(affording);
+  }, [onAfford, affording]);
+  useEffect(() => () => onAfford?.(null), [onAfford]);
 
   // Sent once, a moment after the screen opens; closing the screen first cancels it.
   const send = useRef(chat.send);
@@ -64,17 +94,21 @@ export function AskScreen({ question }: { readonly question: string | null }) {
     <View style={{ flex: 1, experimental_backgroundImage: palette.skyDeep }}>
       {/* A native sheet like the others: the grabber on top, Done on the right, and a drag down
           anywhere or from the top of the conversation puts it away. */}
-      <View style={{ paddingTop: 8, paddingHorizontal: 16, paddingBottom: 10, gap: 6 }}>
-        <View
-          style={{
-            alignSelf: 'center',
-            width: 36,
-            height: 5,
-            borderRadius: 9,
-            backgroundColor: palette.inkSoft,
-            opacity: 0.35,
-          }}
-        />
+      <View
+        style={{ paddingTop: onPage ? 16 : 8, paddingHorizontal: 16, paddingBottom: 10, gap: 6 }}
+      >
+        {onPage ? null : (
+          <View
+            style={{
+              alignSelf: 'center',
+              width: 36,
+              height: 5,
+              borderRadius: 9,
+              backgroundColor: palette.inkSoft,
+              opacity: 0.35,
+            }}
+          />
+        )}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
           {serious ? null : <Companion size={44} mood={chat.mood} />}
           <View style={{ flex: 1, gap: 1 }}>
@@ -83,7 +117,7 @@ export function AskScreen({ question }: { readonly question: string | null }) {
           </View>
           <PressScale
             accessibilityRole="button"
-            onPress={() => router.back()}
+            onPress={() => (onClose ? onClose() : router.back())}
             hitSlop={8}
             style={{ paddingVertical: 8, paddingHorizontal: 2 }}
           >

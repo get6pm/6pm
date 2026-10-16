@@ -7,4 +7,8 @@ export const enDuo = {
   'duo.day.ofLine': 'of {line} that day',
   'duo.day.previous': 'Day before',
   'duo.day.next': 'Day after',
+  'duo.ask.title': 'If you spend {amount}',
+  'duo.ask.from': 'preview from Ask',
+  'duo.ask.spent': '{spent} spent · ~{amount} more',
+  'duo.ask.left': '{left} left',
 } as const;

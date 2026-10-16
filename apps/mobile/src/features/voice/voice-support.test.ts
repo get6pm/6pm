@@ -61,19 +61,31 @@ describe('spokenCategory', () => {
 });
 
 describe('spokenChips', () => {
-  it('shows name, amount and category', () => {
+  const drinks = { name: 'Drinks', icon: 'local_cafe' };
+
+  it('shows name, amount and category, the name with its category icon', () => {
     expect(
-      spokenChips({ name: 'Trà sữa', amount: 45_000, categoryHint: 'drinks' }, 'Drinks', vnd),
-    ).toEqual(['Trà sữa', '45.000₫', 'Drinks']);
+      spokenChips({ name: 'Trà sữa', amount: 45_000, categoryHint: 'drinks' }, drinks, vnd),
+    ).toEqual([
+      { icon: 'local_cafe', label: 'Trà sữa' },
+      { icon: 'payments', label: '45.000₫' },
+      { icon: 'category', label: 'Drinks' },
+    ]);
   });
 
   it('shows only what was heard', () => {
     expect(spokenChips({ name: '', amount: 20_000, categoryHint: null }, null, vnd)).toEqual([
-      '20.000₫',
+      { icon: 'payments', label: '20.000₫' },
     ]);
-    expect(spokenChips({ name: 'Phở', amount: null, categoryHint: 'food' }, 'Food', vnd)).toEqual([
-      'Phở',
-      'Food',
+    expect(
+      spokenChips(
+        { name: 'Phở', amount: null, categoryHint: 'food' },
+        { name: 'Food', icon: 'x' },
+        vnd,
+      ),
+    ).toEqual([
+      { icon: 'receipt_long', label: 'Phở' },
+      { icon: 'category', label: 'Food' },
     ]);
   });
 });

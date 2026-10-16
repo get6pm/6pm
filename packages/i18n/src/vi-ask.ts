@@ -8,8 +8,10 @@ export const viAsk: { readonly [Key in keyof typeof enAsk]: Entry } = {
   'ask.intro':
     'Hỏi mình xem khoản nào vừa túi, một khoản lớn đổi những ngày sau ra sao, hay khi nào hũ đầy. Mình sẽ cho bạn xem phép tính.',
   'ask.try': 'Thử hỏi',
-  'ask.placeholder': 'Mình mua nổi…',
+  'ask.placeholder': 'Hỏi, hoặc cứ nói…',
   'ask.send': 'Gửi',
+  'ask.speak': 'Hỏi bằng giọng nói',
+  'ask.listening': 'Đang nghe…',
   'ask.suggest.afford': 'Thứ Bảy ăn tối {amount} được không?',
   'ask.suggest.weekend': 'Cuối tuần này chi được bao nhiêu?',
   'ask.suggest.spend': 'Nếu mua áo khoác {amount} thì sao?',

@@ -7,6 +7,8 @@ import {
 } from '@6pm/domain';
 import type { Language } from '@6pm/i18n';
 
+import { symbolCodepoints, type SymbolName } from '../../ui/icons/symbols.generated';
+
 /** The dictation language for the app language. */
 export function speechLocale(language: Language): 'vi-VN' | 'en-US' {
   return language === 'vi' ? 'vi-VN' : 'en-US';
@@ -51,15 +53,30 @@ export function spendIn(spend: SpokenSpend, text: string, currency: Currency): S
   return { ...spend, amount: spoken ? spokenAmount(spoken, currency) : null };
 }
 
-/** The chips under the transcript: what it was, how much, its category; each only when heard. */
+/** One thing read from what was said, with its icon. */
+export interface VoiceChip {
+  readonly icon: SymbolName;
+  readonly label: string;
+}
+
+/**
+ * The chips under the transcript: what it was (with its category's icon), how much, its category;
+ * each only when heard.
+ */
 export function spokenChips(
   spend: SpokenSpend,
-  categoryName: string | null,
+  category: { readonly name: string; readonly icon: string } | null,
   money: Pick<MoneyFormat, 'full'>,
-): string[] {
-  const chips: string[] = [];
-  if (spend.name !== '') chips.push(spend.name);
-  if (spend.amount !== null) chips.push(money.full(spend.amount));
-  if (categoryName) chips.push(categoryName);
+): VoiceChip[] {
+  const chips: VoiceChip[] = [];
+  if (spend.name !== '') {
+    const icon =
+      category && category.icon in symbolCodepoints
+        ? (category.icon as SymbolName)
+        : 'receipt_long';
+    chips.push({ icon, label: spend.name });
+  }
+  if (spend.amount !== null) chips.push({ icon: 'payments', label: money.full(spend.amount) });
+  if (category) chips.push({ icon: 'category', label: category.name });
   return chips;
 }

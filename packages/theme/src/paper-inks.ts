@@ -112,3 +112,12 @@ export const shareCardInk = {
   shadow: 'rgba(10,5,20,.25)',
   scrim: 'rgba(10,6,18,.28)',
 } as const;
+
+/**
+ * Voice's fixed inks, the same in every look: the status dot once a spend is heard, and the glow
+ * under the microphone while it listens.
+ */
+export const voiceInk = {
+  heard: '#3cb371',
+  listeningGlow: '0 10px 26px rgba(255,120,70,.4)',
+} as const;

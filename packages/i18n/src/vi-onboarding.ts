@@ -164,6 +164,13 @@ export const viOnboarding: { readonly [Key in keyof typeof enOnboarding]: Entry 
       '{income} tiền vào, trừ hoá đơn và bạn của tương lai, chia đều cho {count} ngày tới ngày lương.',
   },
   'onboarding.reveal.open': 'Mở 6pm',
+  'onboarding.reveal.sincePayday': 'Từ ngày lương {date}, đã tiêu khoảng {amount}',
+  'onboarding.reveal.sincePaydayEdit': 'Sửa số đã tiêu từ ngày lương',
+  'onboarding.reveal.sincePaydayHint': 'Không tính hoá đơn. Khoảng chừng là được.',
+  'onboarding.reveal.sincePaydayDone': 'Xong',
+  'onboarding.reveal.futureAtPayday': 'Để dành cho bạn của tương lai từ ngày lương',
+  'onboarding.reveal.futureAtPaydayNote':
+    'Tháng này đã tiêu hết rồi. Bạn của tương lai bắt đầu từ {date}.',
   'onboarding.leave.kicker': 'Hôm nay tiêu được',
 
   'onboarding.line.paydayDay': 'Ngày {day}. Ghi rồi nha.',

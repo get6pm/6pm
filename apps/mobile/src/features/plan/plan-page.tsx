@@ -32,7 +32,15 @@ import { planColours } from './plan-colours';
 import { usePlanFormat, type PlanFormat } from './plan-format';
 import { SectionHeader } from './plan-parts';
 import { planRoutes } from './plan-routes';
-import { billViews, goalViews, newPotLocked, occasionViews, riverOf } from './plan-view';
+import {
+  beforeEditable,
+  beforeNote,
+  billViews,
+  goalViews,
+  newPotLocked,
+  occasionViews,
+  riverOf,
+} from './plan-view';
 import { Reveal } from './reveal';
 import { useCycleTopUps } from './use-cycle-top-ups';
 import { usePlanSections, type PlanSectionsHandle } from './use-plan-sections';
@@ -192,6 +200,9 @@ function PlanContent({
           river={river}
           colours={colours}
           copy={riverCopy(snap, topUps?.goal ?? 0, format, t, money)}
+          onEditBefore={
+            beforeEditable(snap) ? () => router.push(planRoutes.sincePayday) : undefined
+          }
         />
       </View>
 
@@ -284,7 +295,7 @@ function riverCopy(
             })
           : t('plan.river.futureNote'),
       occasions: t('plan.river.occasionsNote'),
-      before: t('plan.river.beforeNote'),
+      before: beforeNote(snap, t),
       spent: t('plan.river.spentNote', {
         from: format.dayFrom(snap.cycle.start, snap.today),
         to: format.dayLongMonth(snap.today),

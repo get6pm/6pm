@@ -14,7 +14,7 @@ import {
   parts,
   type LocalDate,
 } from '../time/local-date';
-import { countedFree, dailyNumber, type DailyNumberInput } from './daily-number';
+import { dailyNumber, joinedFree, type DailyNumberInput } from './daily-number';
 import { cycleMonth, type PayCycle } from './pay-cycle';
 
 /**
@@ -46,6 +46,8 @@ export interface RiverInput {
   readonly free: Vnd;
   /** The share of the cycle's free money still to come (`joinedShare`); 1 outside the joined cycle. */
   readonly share?: number;
+  /** What the person said went before they joined (`joinedCycle`), in place of the estimate. */
+  readonly beforeJoining?: Vnd | null;
 }
 
 /**
@@ -58,9 +60,9 @@ export function moneyRiver(input: RiverInput): Readonly<Record<RiverSegment, Vnd
   const futureYou = input.futureYou + input.goalTopUps;
   const occasions = input.occasions + input.occasionTopUps;
   const planned = input.income - input.bills - input.futureYou - input.occasions;
-  // What the engine leaves out of the cycle's free money was spent before joining; a shortfall it
-  // counts whole, so none of it was before.
-  const before = planned - countedFree(planned, share);
+  // What the engine leaves out of the cycle's free money was spent before joining: the person's
+  // own answer, or the estimate, which counts a shortfall whole, so none of it was before.
+  const before = planned - joinedFree(planned, share, input.beforeJoining);
   return {
     bills: input.bills,
     futureYou,

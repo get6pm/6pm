@@ -5,7 +5,7 @@ import { Text } from 'react-native';
 import {
   aboutPerDay,
   cycleMonth,
-  joinedShare,
+  cycleFutureYou,
   openingOf,
   potSetAside,
   savedBefore,
@@ -14,6 +14,7 @@ import {
 } from '@6pm/domain';
 
 import { useMoney, useMoneyStore } from '../../data/money-provider';
+import { dailyInputOf } from '../../data/money-store';
 import { usePlanActions, type PotPatch } from '../../data/plan-actions';
 import { readPotMoves } from '../../data/pot-moves';
 import { useRunAction } from '../../features/companion/use-run-action';
@@ -111,17 +112,19 @@ export default function EditPot() {
     moves === null
       ? null
       : withOpening(savedBefore(moves, id ?? '', startOfCycle), moves, id ?? '', opening ?? 0);
-  const monthly = potSetAside({
+  const terms = {
     pot: { kind: pot?.kind ?? 'occasion', goal, neededBy: month, share, paused },
     savedBefore: held ?? 0,
-    futureYou,
     cycle: snap.cycle,
     currency: money.currency,
-  });
+  } as const;
+  const monthly = potSetAside({ ...terms, futureYou });
+  // A day's cost is this cycle's: nothing for a goal while the joined cycle skips Future you.
+  const input = dailyInputOf(snap);
   const perDay = aboutPerDay(
-    monthly,
+    input ? potSetAside({ ...terms, futureYou: cycleFutureYou(input) }) : monthly,
     snap.cycle.daysLeft,
-    joinedShare(snap.cycle, snap.plan?.startedOn ?? null),
+    input?.share ?? 1,
     money.currency,
   );
   const { cost, fitsFrom, goalHint } = usePotCost({

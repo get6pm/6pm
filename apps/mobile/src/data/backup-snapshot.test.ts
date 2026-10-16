@@ -12,6 +12,7 @@ import {
   SnapshotRefused,
 } from './backup-snapshot';
 import { openMoneyTables } from './money-tables';
+import { planSettingsSchema, readPlan, writePlan } from './plan-settings';
 
 const TAKEN = '2026-10-11T12:00:00.000Z';
 
@@ -208,6 +209,28 @@ describe('the snapshot of the phone', () => {
     };
     await expect(restoreSnapshot(phone, broken)).rejects.toThrow();
     expect(await buildSnapshot(phone, TAKEN)).toEqual(before);
+  });
+
+  it('carries what was spent since payday, and an older plan comes back without it', async () => {
+    const source = openMemoryDb();
+    await seedMoney(source);
+    const plan = JSON.parse((await settingsOf(source)).plan ?? '{}') as Record<string, unknown>;
+    const answered = { ...plan, spentSincePayday: 6_000_000, futureYouAtPayday: true };
+    await writePlan(source, planSettingsSchema.parse(answered));
+    const snapshot = await buildSnapshot(source, TAKEN);
+    const phone = openMemoryDb();
+    await restoreSnapshot(phone, snapshot);
+    expect(await readPlan(phone)).toMatchObject({
+      spentSincePayday: 6_000_000,
+      futureYouAtPayday: true,
+    });
+
+    const older = { ...snapshot, settings: { ...snapshot.settings, plan: JSON.stringify(plan) } };
+    const again = openMemoryDb();
+    await restoreSnapshot(again, older);
+    const restored = await readPlan(again);
+    expect(restored?.spentSincePayday).toBeUndefined();
+    expect(restored?.futureYouAtPayday).toBeUndefined();
   });
 
   it('refuses unusable settings before it clears anything', async () => {

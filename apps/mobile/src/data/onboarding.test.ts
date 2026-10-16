@@ -99,6 +99,32 @@ describe('completeOnboarding', () => {
     expect(dayOf(snap)?.line).toBe(309_000);
   });
 
+  it('counts what the person said they spent since payday in place of the estimate', async () => {
+    const store = openStore('2026-10-10');
+    await completeOnboarding(
+      store,
+      { ...answers, spentSincePayday: 6_000_000 },
+      { today: '2026-10-10', language: 'vi' },
+    );
+    const snap = store.getSnapshot();
+    expect(snap.plan?.spentSincePayday).toBe(6_000_000);
+    // (15.500.000 − 4.000.000 − 1.900.000 − 6.000.000) ÷ 16 days = 225.000.
+    expect(dayOf(snap)?.line).toBe(225_000);
+  });
+
+  it('starts Future you at payday: nothing set aside for it in the cycle joined', async () => {
+    const store = openStore('2026-10-10');
+    await completeOnboarding(
+      store,
+      { ...answers, spentSincePayday: 12_000_000, futureYouAtPayday: true },
+      { today: '2026-10-10', language: 'vi' },
+    );
+    const snap = store.getSnapshot();
+    expect(snap.plan?.futureYouAtPayday).toBe(true);
+    // 15.500.000 − 4.000.000 − 12.000.000: still past the plan, but by 500.000 not 2.400.000.
+    expect(dayOf(snap)).toMatchObject({ startFree: -500_000, line: 0, overspent: true });
+  });
+
   it('counts in the phone’s currency, and a month set up again keeps the first one', async () => {
     mockPhoneCurrency = 'USD';
     try {

@@ -30,6 +30,13 @@ export interface DailyNumberInput {
    * cycle the user joined (see `joinedShare`).
    */
   readonly share?: number;
+  /**
+   * What the person said they spent between payday and joining, not counting bills: counted in
+   * place of the `share`'s estimate. Null or left out in every other cycle (see `joinedCycle`).
+   */
+  readonly beforeJoining?: Vnd | null;
+  /** This cycle sets nothing aside for Future you: it starts at payday (see `joinedCycle`). */
+  readonly futureYouSkipped?: boolean;
   /** The home currency: lines floor to its step. Đồng when not given. */
   readonly currency?: Currency;
 }
@@ -73,6 +80,21 @@ export function countedFree(planned: Vnd, share: number): Vnd {
   return planned > 0 ? Math.round(planned * cleanShare(share)) : planned;
 }
 
+/** Future you as this cycle's number counts it: nothing in a cycle that starts it at payday. */
+export function cycleFutureYou(input: Pick<DailyNumberInput, 'plan' | 'futureYouSkipped'>): Vnd {
+  return input.futureYouSkipped === true ? 0 : input.plan.futureYou;
+}
+
+/**
+ * The joined cycle's free money as the engine counts it: the planned free money less what the
+ * person said went before they joined, or, with no answer, its `countedFree` estimate (M2a). An
+ * answer larger than the free money leaves it below zero, so the cycle starts overspent.
+ */
+export function joinedFree(planned: Vnd, share: number, beforeJoining?: Vnd | null): Vnd {
+  if (beforeJoining == null || !Number.isFinite(beforeJoining)) return countedFree(planned, share);
+  return planned - Math.max(0, Math.round(beforeJoining));
+}
+
 /**
  * The one number. Free money is split evenly across the days left, today included, and rounded
  * down to a whole step (1.000₫, $1) so the promise is always kept. Once the cycle's free money is
@@ -81,8 +103,10 @@ export function countedFree(planned: Vnd, share: number): Vnd {
 export function dailyNumber(input: DailyNumberInput): DailyNumber {
   const { plan, share = 1, currency = VND } = input;
   const daysLeft = Number.isFinite(input.daysLeft) ? Math.max(0, input.daysLeft) : 0;
-  const planned = plan.income - plan.bills - plan.futureYou - plan.occasions;
-  const startFree = countedFree(planned, share) - plan.topUps - input.spentBefore;
+  const futureYou = cycleFutureYou(input);
+  const planned = plan.income - plan.bills - futureYou - plan.occasions;
+  const startFree =
+    joinedFree(planned, share, input.beforeJoining) - plan.topUps - input.spentBefore;
   const line = Math.max(0, floorToStep(startFree / (daysLeft + 1), currency));
   const spent = sumCounted(input.today, input.notDaily);
   const free = startFree - spent;

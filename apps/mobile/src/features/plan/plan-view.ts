@@ -7,7 +7,8 @@ import {
   diffDays,
   goalMonthly,
   goalPlan,
-  joinedShare,
+  futureYouIn,
+  joinedCycle,
   moneyRiver,
   occasionsOf,
   potTopUpStep,
@@ -25,6 +26,8 @@ import {
 
 import type { CycleTopUps } from '../../data/pot-moves';
 import type { MoneySnapshot } from '../../data/money-store';
+import { joinedAnswersOf } from '../../data/plan-settings';
+import type { I18n } from '../../i18n/i18n';
 
 /**
  * The what-if slider: Future you from 0 to 4tr in 250k steps (further when the plan is above).
@@ -75,16 +78,30 @@ export function riverOf(
 ): Readonly<Record<RiverSegment, Vnd>> {
   // Until the split is read, every top-up shows under Occasions; the total is right either way.
   const goalTopUps = topUps?.goal ?? 0;
+  const joined = joinedCycle(snap.cycle, joinedAnswersOf(snap.plan));
   return moneyRiver({
     income: snap.plan?.income ?? 0,
     bills: snap.bills.reduce((sum, b) => sum + b.amount, 0),
-    futureYou: snap.plan?.futureYou ?? 0,
+    futureYou: futureYouIn(snap.plan?.futureYou ?? 0, joined),
     occasions: occasionsMonthly(snap),
     goalTopUps,
     occasionTopUps: snap.topUpsThisCycle - goalTopUps,
     free: day.free,
-    share: joinedShare(snap.cycle, snap.plan?.startedOn ?? null),
+    share: joined.share,
+    beforeJoining: joined.beforeJoining,
   });
+}
+
+/** Whether "Before 6pm" can be changed: only while the cycle the user joined lasts. */
+export function beforeEditable(snap: MoneySnapshot): boolean {
+  return joinedCycle(snap.cycle, joinedAnswersOf(snap.plan)).joined;
+}
+
+/** "Before 6pm"'s note: the person's own amount or the even-pace estimate, and how to change it. */
+export function beforeNote(snap: MoneySnapshot, t: I18n['t']): string {
+  const answered = snap.plan?.spentSincePayday != null;
+  const said = t(answered ? 'plan.river.beforeNoteAnswered' : 'plan.river.beforeNote');
+  return beforeEditable(snap) ? `${said} ${t('plan.river.beforeEdit')}` : said;
 }
 
 export interface BillView {

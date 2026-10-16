@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { dailyNumber, type DailyNumber, type DailyNumberInput } from '../plan/daily-number';
+import {
+  cycleFutureYou,
+  dailyNumber,
+  type DailyNumber,
+  type DailyNumberInput,
+} from '../plan/daily-number';
 import { whatIfDaily } from '../plan/plan-river';
 import { answerAsk, type AskContext } from './ask-engine';
 import { readIntent } from './ask-intent';
@@ -113,6 +118,37 @@ describe('answerAsk', () => {
       { ...ctx, day: now, daysLeft: 9, share: 0.5 },
     );
     expect(asked).toMatchObject({ kind: 'saveMore', bars: { after: slider } });
+  });
+
+  it('changes nothing this cycle when the joined cycle starts Future you at payday', () => {
+    const input: DailyNumberInput = {
+      plan: { income: 20_000_000, bills: 5_000_000, futureYou: 2_000_000, occasions: 0, topUps: 0 },
+      spentBefore: 0,
+      today: [],
+      notDaily: new Set(),
+      daysLeft: 9,
+      beforeJoining: 4_000_000,
+      futureYouSkipped: true,
+    };
+    const now = dailyNumber(input);
+    const asked = answerAsk(
+      { kind: 'saveMore', amount: 500_000 },
+      {
+        ...ctx,
+        day: now,
+        daysLeft: 9,
+        futureYou: 2_000_000,
+        futureYouThisCycle: cycleFutureYou(input),
+      },
+    );
+    // The slider agrees: Future you is not taken from this cycle, whatever its monthly amount.
+    expect(whatIfDaily(input, 2_500_000)).toBe(now.tomorrow);
+    expect(asked).toMatchObject({
+      kind: 'saveMore',
+      futureYou: 0,
+      perDay: 0,
+      bars: { before: now.tomorrow, after: now.tomorrow },
+    });
   });
 
   it('works out when a pot fills', () => {

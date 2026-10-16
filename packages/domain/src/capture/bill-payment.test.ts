@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { payCycleOn } from '../plan/pay-cycle';
 import {
+  billChoicesFor,
   billPaymentAsks,
   namesRepayment,
   REPAYMENT,
@@ -136,5 +137,41 @@ describe('billPaymentAsks', () => {
   it('matches only spends inside the cycle to its bills', () => {
     const before = spend({ id: 'a', amount: 5_000_000, day: '2026-09-20' });
     expect(billPaymentAsks([before], [bill({ id: 'rent', dueDay: 25 })], cycle)).toEqual([]);
+  });
+});
+
+describe('billChoicesFor', () => {
+  const bills = [
+    bill({ id: 'rent' }),
+    bill({ id: 'card', paidCycle: cycle.start }),
+    bill({ id: 'phone' }),
+  ];
+
+  it('offers not a bill, each bill still to pay, then a card or loan', () => {
+    const fresh = spend({ id: 'a', amount: 250_000 });
+    expect(billChoicesFor(fresh, bills, cycle)).toEqual([null, 'rent', 'phone', REPAYMENT]);
+  });
+
+  it('never steps onto a bill another payment already paid this cycle', () => {
+    const marked = spend({ id: 'a', amount: 250_000, paysBill: 'rent' });
+    expect(billChoicesFor(marked, bills, cycle)).not.toContain('card');
+  });
+
+  it('keeps the bill the spend itself pays in its place', () => {
+    const paying = spend({ id: 'a', amount: 3_500_000, paysBill: 'card' });
+    expect(billChoicesFor(paying, bills, cycle)).toEqual([
+      null,
+      'rent',
+      'card',
+      'phone',
+      REPAYMENT,
+    ]);
+  });
+
+  it('offers only its own bill for a spend from before this cycle', () => {
+    const old = spend({ id: 'a', amount: 250_000, day: '2026-09-20', paysBill: 'phone' });
+    expect(billChoicesFor(old, bills, cycle)).toEqual([null, 'phone', REPAYMENT]);
+    const plain = spend({ id: 'b', amount: 250_000, day: '2026-09-20' });
+    expect(billChoicesFor(plain, bills, cycle)).toEqual([null, REPAYMENT]);
   });
 });

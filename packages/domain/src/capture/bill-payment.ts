@@ -76,6 +76,28 @@ export interface BillAsk {
   readonly billId: string | null;
 }
 
+/**
+ * What "This was a bill" offers for a spend, in tap order: not a bill, then each of this cycle's
+ * bills still to pay (only for a spend in this cycle), then a card or loan with no bill. A bill
+ * already paid by something else is left out, so tapping past it never puts it back to due; the
+ * bill the spend itself pays stays in, in its place.
+ */
+export function billChoicesFor(
+  spend: { readonly day: LocalDate; readonly paysBill?: string | null | undefined },
+  bills: readonly Pick<PayableBill, 'id' | 'paidCycle'>[],
+  cycle: Pick<PayCycle, 'start'>,
+): (string | null)[] {
+  const paysBill = spend.paysBill ?? null;
+  const own = paysBill !== null && paysBill !== REPAYMENT ? paysBill : null;
+  const open =
+    spend.day >= cycle.start
+      ? bills.filter((b) => b.id === own || b.paidCycle !== cycle.start).map((b) => b.id)
+      : own === null
+        ? []
+        : [own];
+  return [null, ...open, REPAYMENT];
+}
+
 /** Whether a payee or note says it paid off a card, an instalment, a debt or a loan. */
 export function namesRepayment(text: string): boolean {
   const folded = foldWords(text);

@@ -11,4 +11,8 @@ export const enDuo = {
   'duo.ask.from': 'preview from Ask',
   'duo.ask.spent': '{spent} spent · ~{amount} more',
   'duo.ask.left': '{left} left',
+  'duo.close.kept': 'Kept so far today',
+  'duo.close.ofLine': 'of {line} today · {left} still yours',
+  'duo.close.foldLater': 'Decide each one, then fold it shut to close the day.',
+  'duo.close.foldNow': 'Fold it shut to close the day.',
 } as const;

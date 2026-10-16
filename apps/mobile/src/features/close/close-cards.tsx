@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type RefObject } from 'react';
 import { Text, View, type LayoutChangeEvent } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -48,6 +48,11 @@ export interface CloseCardsProps {
   readonly onDecide: (id: string, verdict: Exclude<CardVerdict, 'edited'>) => void;
   readonly onEdit: (id: string) => void;
   readonly onUndo: () => void;
+  /**
+   * The iPhone Duo opened: the three choices are drawn big on the right page, so the stack draws
+   * none under itself and hands its press to `pressRef`.
+   */
+  readonly pressRef?: RefObject<((choice: 'kept' | 'notMine' | 'edit') => void) | null> | undefined;
 }
 
 /**
@@ -61,7 +66,8 @@ function CardStack({
   onDecide,
   onEdit,
   stack,
-}: Pick<CloseCardsProps, 'cards' | 'buttons' | 'onDecide' | 'onEdit'> & {
+  pressRef,
+}: Pick<CloseCardsProps, 'cards' | 'buttons' | 'onDecide' | 'onEdit' | 'pressRef'> & {
   /** The stack's height, which is how far above home the card can be pulled before it stops. */
   readonly stack: number;
 }) {
@@ -151,6 +157,10 @@ function CardStack({
     if (verdict === 'kept') dx.set(withTiming(AWAY_X, leave, done));
     else dy.set(withTiming(AWAY_Y, leave, done));
   };
+  // The big choices on the iPhone Duo's right page press this card, whichever card is on top.
+  useEffect(() => {
+    if (pressRef) pressRef.current = top ? press : null;
+  });
 
   const topStyle = useAnimatedStyle(() => ({
     transform: [
@@ -188,21 +198,28 @@ function CardStack({
         ) : null}
       </View>
 
-      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 30 }}>
-        <CloseCardButton
-          icon="edit"
-          label={buttons.edit}
-          primary={false}
-          onPress={() => press('edit')}
-        />
-        <CloseCardButton
-          icon="south"
-          label={buttons.notMine}
-          primary={false}
-          onPress={() => press('notMine')}
-        />
-        <CloseCardButton icon="check" label={buttons.keep} primary onPress={() => press('kept')} />
-      </View>
+      {pressRef ? null : (
+        <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 30 }}>
+          <CloseCardButton
+            icon="edit"
+            label={buttons.edit}
+            primary={false}
+            onPress={() => press('edit')}
+          />
+          <CloseCardButton
+            icon="south"
+            label={buttons.notMine}
+            primary={false}
+            onPress={() => press('notMine')}
+          />
+          <CloseCardButton
+            icon="check"
+            label={buttons.keep}
+            primary
+            onPress={() => press('kept')}
+          />
+        </View>
+      )}
     </>
   );
 }
@@ -220,7 +237,13 @@ export function CloseCards(props: CloseCardsProps) {
   const stack =
     room === null
       ? STACK
-      : Math.min(STACK, Math.max(MIN_HEIGHT + PEEK, room - BUTTONS_GAP - CARD_BUTTON_HEIGHT));
+      : Math.min(
+          STACK,
+          Math.max(
+            MIN_HEIGHT + PEEK,
+            room - (props.pressRef ? 0 : BUTTONS_GAP + CARD_BUTTON_HEIGHT),
+          ),
+        );
   return (
     <View style={{ flex: 1, gap: 20, paddingTop: 22 }}>
       <View style={{ gap: 6 }}>
@@ -272,6 +295,7 @@ export function CloseCards(props: CloseCardsProps) {
           onDecide={props.onDecide}
           onEdit={props.onEdit}
           stack={stack}
+          pressRef={props.pressRef}
         />
       </View>
     </View>

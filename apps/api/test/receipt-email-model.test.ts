@@ -163,4 +163,31 @@ describe('receipt email read by the model', () => {
     expect(await receiveEmail(inbound(address, mbAlert), withKey, NOW)).toBe('stored');
     expect(model).not.toHaveBeenCalled();
   });
+
+  it('keeps reading with the model past the free allowance while the phone says it has Max', async () => {
+    const { token, address, hash } = await phone();
+    const insert = env.DB.prepare(
+      `INSERT INTO ai_usage (route, model, input_tokens, output_tokens, device_hash, created_at)
+       VALUES ('email.read', 'claude-haiku-5-5', 1, 1, ?, ?)`,
+    );
+    await env.DB.batch(
+      Array.from({ length: EMAIL_MODEL_READS_PER_DAY }, () =>
+        insert.bind(hash, new Date().toISOString()),
+      ),
+    );
+    expect((await call('/api/v1/email/captures?plan=max', { token })).status).toBe(200);
+    const model = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(anthropicAnswer(reading({ kind: 'promo' })));
+    expect(await receiveEmail(inbound(address, cardAlert), withKey, new Date())).toBe(
+      'not_a_receipt',
+    );
+    expect(model).toHaveBeenCalledTimes(1);
+
+    model.mockRestore();
+    expect((await call('/api/v1/email/captures?plan=free', { token })).status).toBe(200);
+    const again = vi.spyOn(globalThis, 'fetch');
+    await receiveEmail(inbound(address, cardAlert), withKey, new Date());
+    expect(again).not.toHaveBeenCalled();
+  });
 });

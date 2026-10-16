@@ -1,13 +1,15 @@
-import { EMAIL_CAPTURES_PAGE, type EmailCapture } from '@6pm/domain';
+import { EMAIL_CAPTURES_PAGE, EMAIL_PLAN_PARAM, type EmailCapture } from '@6pm/domain';
 
 import { ApiError } from '../errors';
+import { rememberPlan } from '../receipt-email/read-spend';
 import { openCapture, sealKeyOf } from '../receipt-email/seal';
 import type { RouteDefinition } from '../route';
 
 /**
  * The receipts waiting for this phone, oldest first, at most a page of them. Nothing is deleted
  * here: the phone saves them, then acknowledges. A row that no longer opens (the seal key was
- * replaced) can never be read, so it is deleted instead of being sent.
+ * replaced) can never be read, so it is deleted instead of being sent. The phone says whether it
+ * has Max (`?plan=max|free`), which sets how much of its mail the model reads in a day.
  */
 export const emailCapturesGetRoute: RouteDefinition = {
   method: 'GET',
@@ -17,6 +19,7 @@ export const emailCapturesGetRoute: RouteDefinition = {
     const secret = sealKeyOf(c.env);
     if (secret === null) throw new ApiError('internal', 'Receipt email is not set up');
     const deviceHash = c.var.device.hash;
+    await rememberPlan(c.env.DB, deviceHash, c.req.query(EMAIL_PLAN_PARAM), new Date());
     const { results } = await c.env.DB.prepare(
       `SELECT id, sealed FROM email_captures WHERE device_hash = ?
        ORDER BY received_at, id LIMIT ?`,

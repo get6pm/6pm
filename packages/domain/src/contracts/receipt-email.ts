@@ -20,6 +20,14 @@ export const EMAIL_HANDLE_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
 export const EMAIL_HANDLE_LENGTH = 6;
 export const emailHandlePattern = /^(?:[a-km-np-z2-9]{6}|[a-km-np-z2-9]{10})$/;
 
+/**
+ * The query parameter a phone fetches its receipts with to say whether it has Max (`max`) or not
+ * (`free`): the server reads email with no phone at hand, and needs to know the day's allowance.
+ */
+export const EMAIL_PLAN_PARAM = 'plan';
+export const EMAIL_PLANS = ['free', 'max'] as const;
+export type EmailPlan = (typeof EMAIL_PLANS)[number];
+
 /** What a phone may hold at once and fetch in one go. */
 export const EMAIL_CAPTURES_MAX_PENDING = 100;
 export const EMAIL_CAPTURES_PAGE = 50;

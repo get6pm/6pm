@@ -124,6 +124,24 @@ describe('findDuplicate', () => {
     expect(findDuplicate({ ...fromShop, detail: null }, [alert])).toBeNull();
   });
 
+  it('matches two sightings of one charge abroad by the amount paid, before either is priced', () => {
+    const tapped = {
+      ...base,
+      source: 'applePay' as const,
+      status: 'caught' as const,
+      amount: 0,
+      foreignAmount: { currency: 'USD', amount: 99 },
+    };
+    const emailed = { amount: 0, source: 'email' as const, at: at(30_000) };
+    const usd = (amount: number) => ({ ...emailed, foreignAmount: { currency: 'USD', amount } });
+    expect(findDuplicate(usd(99), [tapped])?.id).toBe('a');
+    expect(findDuplicate(usd(99.5), [tapped])).toBeNull();
+    expect(
+      findDuplicate({ ...emailed, foreignAmount: { currency: 'SGD', amount: 99 } }, [tapped]),
+    ).toBe(null);
+    expect(findDuplicate(emailed, [tapped])).toBeNull();
+  });
+
   it('never merges cash, which no other source can have seen', () => {
     expect(findDuplicate({ amount: 45_000, source: 'cash', at: at(0) }, [base])).toBeNull();
     const cash = { ...base, source: 'cash' as const, status: 'kept' as const };

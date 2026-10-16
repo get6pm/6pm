@@ -161,6 +161,7 @@ export function moneyActions(store: MoneyStore) {
         status: input.status,
         at: at.toISOString(),
         detail: input.detail ?? null,
+        foreignAmount: input.foreignAmount ?? null,
       },
       snap.cycleSpends,
     );

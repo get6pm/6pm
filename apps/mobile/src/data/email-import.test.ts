@@ -115,6 +115,29 @@ describe('importEmailCaptures', () => {
     });
   });
 
+  it('merges a dollar charge tapped with Apple Pay with the bank’s email for it', async () => {
+    const tapped = await actions.captureSpend({
+      amount: 0,
+      foreignAmount: { currency: 'USD', amount: 99, rate: 0 },
+      categoryId: 'shopping',
+      merchant: 'Apple',
+      source: 'applePay',
+      status: 'caught',
+      at: new Date(2026, 9, 11, 10, 25),
+    });
+    const emailed = receipt({
+      amount: 9_900,
+      currency: 'USD',
+      merchant: 'Apple',
+      from: 'info@info.vietcombank.com.vn',
+      at: new Date(2026, 9, 11, 10, 26).toISOString(),
+    });
+    await run(server([emailed]).source);
+    const spends = store.getSnapshot().cycleSpends;
+    expect(spends).toHaveLength(1);
+    expect(spends[0]?.id).toBe(tapped.row.id);
+  });
+
   it('makes one spend of the bank’s alert and the shop’s receipt for one payment', async () => {
     const at = (s: number) => new Date(2026, 9, 11, 10, 25, s).toISOString();
     const alert = receipt({

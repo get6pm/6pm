@@ -29,6 +29,14 @@ export interface SightedSpend {
   readonly at: string;
   /** Who told 6pm: for an email, the address it came from. */
   readonly detail?: string | null;
+  /** The amount in the currency it was paid in, when that is not the home currency. */
+  readonly foreignAmount?: ForeignSighting | null;
+}
+
+/** An amount paid in another currency, in its major units (99 for $99.00). */
+export interface ForeignSighting {
+  readonly currency: string;
+  readonly amount: number;
 }
 
 export interface NewSighting {
@@ -39,12 +47,29 @@ export interface NewSighting {
   readonly status?: SpendStatus;
   /** Who told 6pm: for an email, the address it came from. */
   readonly detail?: string | null;
+  readonly foreignAmount?: ForeignSighting | null;
 }
 
 interface Sighting {
   readonly source: SpendSource;
   readonly status?: SpendStatus | undefined;
   readonly at: number;
+}
+
+/**
+ * The same amount: in the currency it was paid in when both were paid abroad (one may still wait
+ * for its rate, at 0 in the home currency), else in the home currency.
+ */
+function sameAmount(
+  a: { readonly amount: number; readonly foreignAmount?: ForeignSighting | null | undefined },
+  b: { readonly amount: number; readonly foreignAmount?: ForeignSighting | null | undefined },
+): boolean {
+  const x = a.foreignAmount;
+  const y = b.foreignAmount;
+  if (x && y) {
+    return x.currency === y.currency && Math.round(x.amount * 100) === Math.round(y.amount * 100);
+  }
+  return a.amount > 0 && a.amount === b.amount;
 }
 
 /**
@@ -75,12 +100,11 @@ function closeEnough(a: Sighting, b: Sighting): boolean {
 }
 
 /**
- * The spend a new capture is the same payment as: same amount, a different capture source (QR,
- * shared receipt, email, Apple Pay) or an email from another sender, within three minutes (the
- * nearest in time wins). A QR scan
- * still pending is also matched by a bank receipt, shared receipt or Apple Pay from its tap up to
- * twenty minutes after it, never before. Skipped and
- * deleted spends never absorb a capture. A spend the user typed (Quick add, voice, cash) is never
+ * The spend a new capture is the same payment as: same amount (in the currency paid, abroad), a
+ * different capture source (QR, shared receipt, email, Apple Pay) or an email from another sender,
+ * within three minutes (the nearest in time wins). A QR scan still pending is also matched by a
+ * bank receipt, shared receipt or Apple Pay from its tap up to twenty minutes after it, never
+ * before. Skipped and deleted spends never absorb a capture. A spend the user typed (Quick add, voice, cash) is never
  * merged with anything: each was entered on purpose, and no other source can have seen cash.
  */
 export function findDuplicate(
@@ -88,13 +112,14 @@ export function findDuplicate(
   existing: readonly SightedSpend[],
 ): SightedSpend | null {
   const at = Date.parse(incoming.at);
-  if (Number.isNaN(at) || incoming.amount <= 0) return null;
+  const foreign = incoming.foreignAmount;
+  if (Number.isNaN(at) || (incoming.amount <= 0 && !(foreign && foreign.amount > 0))) return null;
   const arriving: Sighting = { source: incoming.source, status: incoming.status, at };
   let best: SightedSpend | null = null;
   let bestGap = Infinity;
   for (const spend of existing) {
     if (spend.status === 'skipped' || spend.status === 'deleted') continue;
-    if (spend.amount !== incoming.amount || !differentWitnesses(spend, incoming)) continue;
+    if (!sameAmount(spend, incoming) || !differentWitnesses(spend, incoming)) continue;
     if (!OBSERVED.has(spend.source) || !OBSERVED.has(incoming.source)) continue;
     const seen: Sighting = { source: spend.source, status: spend.status, at: Date.parse(spend.at) };
     const gap = Math.abs(seen.at - at);

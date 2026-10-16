@@ -82,26 +82,31 @@ export function WheelBand({
   );
 }
 
-/** Lays `items` out in rows of three equal columns, like the prototype's 3-column grids. */
-export function Grid3<T>({
+/**
+ * Lays `items` out in rows of equal columns: three, like the prototype's grids, unless told
+ * otherwise (two, for labels too long to share a row three ways).
+ */
+export function Grid<T>({
   items,
   gap,
+  columns = 3,
   render,
 }: {
   readonly items: readonly T[];
   readonly gap: number;
+  readonly columns?: 2 | 3;
   readonly render: (item: T) => ReactNode;
 }) {
   const rows: T[][] = [];
   items.forEach((item, i) => {
-    if (i % 3 === 0) rows.push([]);
+    if (i % columns === 0) rows.push([]);
     rows[rows.length - 1]?.push(item);
   });
   return (
     <View style={{ gap }}>
       {rows.map((row, r) => (
         <View key={r} style={{ flexDirection: 'row', gap }}>
-          {[0, 1, 2].map((c) => (
+          {Array.from({ length: columns }, (_, c) => (
             <View key={c} style={{ flex: 1, minWidth: 0 }}>
               {row[c] !== undefined ? render(row[c]) : null}
             </View>

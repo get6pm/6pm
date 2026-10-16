@@ -17,6 +17,7 @@ export interface DeckNav {
 
 export const DECK_START: DeckNav = { index: 0, from: null, direction: 1, moves: 0 };
 
+/** A question card's height in the design; a longer question or more rows grow it to fit. */
 const DECK_HEIGHT = 340;
 /**
  * An amount card holds its question and three wheel rows (126 pt) above its buttons: 372 pt fits a
@@ -128,9 +129,11 @@ export function BillDeckView({
   const left = deck.length - nav.index;
   const reduceMotion = useReducedMotion();
   const tall = deck[nav.index]?.type === 'amount';
-  const [amountHeight, setAmountHeight] = useState(AMOUNT_DECK_HEIGHT);
+  // What the top card measured it needs, kept with its index so one card's never sizes the next.
+  const [fit, setFit] = useState<{ readonly index: number; readonly height: number } | null>(null);
+  const needed = fit?.index === nav.index ? fit.height : 0;
   const height = useAnimatedStyle(() => {
-    const target = tall ? Math.max(AMOUNT_DECK_HEIGHT, amountHeight) : DECK_HEIGHT;
+    const target = Math.max(tall ? AMOUNT_DECK_HEIGHT : DECK_HEIGHT, needed);
     return {
       height: reduceMotion ? target : withTiming(target, { duration: 420, easing: ease.card }),
     };
@@ -140,7 +143,7 @@ export function BillDeckView({
       {...card}
       item={deck[index] ?? null}
       deckIndex={index}
-      {...(top ? { onHeight: setAmountHeight } : {})}
+      {...(top ? { onHeight: (h: number) => setFit({ index, height: h }) } : {})}
     />
   );
   return (

@@ -89,6 +89,23 @@ describe('a capture that is cancelled', () => {
     expect(await ctx.store.tables.spends.get(email.id)).toMatchObject({ status: 'caught' });
   });
 
+  it('keeps the bank’s memo when its email merges into a scan already there', async () => {
+    const at = new Date(2026, 9, 11, 12, 0);
+    const scan = await ctx.actions.addSpend(spend({ source: 'qr', status: 'pending', at }));
+    const email = await ctx.actions.captureSpend(
+      spend({
+        source: 'email',
+        status: 'caught',
+        at: new Date(at.getTime() + 60_000),
+        memo: 'Thanh toan the tin dung',
+      }),
+    );
+    expect(email.merged).toBe(true);
+    expect(await ctx.store.tables.spends.get(scan.id)).toMatchObject({
+      memo: 'Thanh toan the tin dung',
+    });
+  });
+
   it('keeps what the user did to a merged payment since, and still drops the sighting', async () => {
     const at = new Date(2026, 9, 11, 12, 0);
     const email = await ctx.actions.addSpend(spend({ source: 'email', status: 'caught', at }));

@@ -126,10 +126,13 @@ export function useCompanionLine(
   const latest = useRef({ fact, values, voiceName, language, surface, form, say, waitMs, moment });
   latest.current = { fact, values, voiceName, language, surface, form, say, waitMs, moment };
 
-  // A model's line for this fact: kept already, arriving, or given up on after `waitMs`.
+  // A model's line for this fact, as worded (its slots unfilled): kept already, arriving, or given
+  // up on after `waitMs`.
   const [arrived, setArrived] = useState<{ key: string; line: CompanionLine | null } | null>(null);
-  // The line first shown for a fact stays: a late model line is kept for next time instead.
-  const shown = useRef<{ key: string; line: CompanionLine } | null>(null);
+  // The wording first shown for a fact stays (a late model line is kept for next time instead),
+  // but its slots are filled from today's numbers each time, so a plan change shows at once.
+  // A null wording is the catalogue's.
+  const shown = useRef<{ key: string; wording: CompanionLine | null } | null>(null);
   const today = snap.today;
   useEffect(() => {
     const now = latest.current;
@@ -168,10 +171,7 @@ export function useCompanionLine(
         if (line === null) return;
         writeVoice(db, withLine(readVoice(db), key, line, today));
         if (live) {
-          setArrived({
-            key,
-            line: { text: fillLine(line.text, now.values), mood: line.mood },
-          });
+          setArrived({ key, line: { text: line.text, mood: line.mood } });
         }
       })
       .catch(() => undefined)
@@ -185,17 +185,17 @@ export function useCompanionLine(
   if (!enabled) return null;
   if (!ready) return undefined;
   if (fact === null || key === null) return null;
-  if (shown.current?.key === key) return shown.current.line;
-  const kept = readVoice(db).lines[key];
-  let line: CompanionLine | undefined;
-  if (kept !== undefined) {
-    line = { text: fillLine(kept.text, values), mood: kept.mood };
-  } else if (arrived?.key === key) {
-    line = arrived.line ?? {
-      text: catalogueLine(fact, voiceName, variantOf(fact.key + snap.today), words, values),
-      mood: null,
-    };
+  if (shown.current?.key !== key) {
+    const kept = readVoice(db).lines[key];
+    if (kept !== undefined) shown.current = { key, wording: { text: kept.text, mood: kept.mood } };
+    else if (arrived?.key === key) shown.current = { key, wording: arrived.line };
+    else return undefined;
   }
-  if (line !== undefined) shown.current = { key, line };
-  return line;
+  const { wording } = shown.current;
+  return wording === null
+    ? {
+        text: catalogueLine(fact, voiceName, variantOf(fact.key + snap.today), words, values),
+        mood: null,
+      }
+    : { text: fillLine(wording.text, values), mood: wording.mood };
 }

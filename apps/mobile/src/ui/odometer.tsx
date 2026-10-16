@@ -1,11 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Text, View, type TextStyle } from 'react-native';
 import Animated, {
   Easing,
+  LayoutAnimationConfig,
+  LinearTransition,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withTiming,
+  type EntryAnimationsValues,
+  type ExitAnimationsValues,
+  type LayoutAnimation,
 } from 'react-native-reanimated';
 
 import { curves, durations } from '@6pm/theme';
@@ -22,6 +27,33 @@ const NO_GLOWS: readonly TextStyle[] = [];
 /** How fast a resting digit's glow comes back once its column stops rolling. */
 const GLOW_IN_MS = 300;
 
+/**
+ * A column the number grows (99 → 100, 0 → 45.000) opens from nothing to its width while it
+ * fades in and rolls up from 0; one it loses closes and fades. The columns beside it glide to
+ * their new places on the same curve, so the number never jumps.
+ */
+const widthTiming = { duration: durations.screen, easing: ease };
+const slide = LinearTransition.duration(durations.screen).easing(ease);
+
+function columnIn(values: EntryAnimationsValues): LayoutAnimation {
+  'worklet';
+  return {
+    initialValues: { width: 0, opacity: 0 },
+    animations: {
+      width: withTiming(values.targetWidth, widthTiming),
+      opacity: withTiming(1, widthTiming),
+    },
+  };
+}
+
+function columnOut(values: ExitAnimationsValues): LayoutAnimation {
+  'worklet';
+  return {
+    initialValues: { width: values.currentWidth, opacity: 1 },
+    animations: { width: withTiming(0, widthTiming), opacity: withTiming(0, widthTiming) },
+  };
+}
+
 function DigitColumn({
   digit,
   height,
@@ -29,8 +61,11 @@ function DigitColumn({
   textStyle,
   glows,
   bleed,
+  rollIn,
 }: {
   readonly digit: number;
+  /** A column the number grew: it rolls up from 0 instead of starting on its digit. */
+  readonly rollIn: boolean;
   readonly height: number;
   /** Points the column reaches above and below its line, so a tall face is never cut off. */
   readonly bleed: number;
@@ -38,11 +73,15 @@ function DigitColumn({
   readonly textStyle: TextStyle;
   readonly glows: readonly TextStyle[];
 }) {
-  const offset = useSharedValue(-digit * height);
-  const lit = useSharedValue(1);
+  const offset = useSharedValue(rollIn ? 0 : -digit * height);
+  const lit = useSharedValue(rollIn ? 0 : 1);
   useEffect(() => {
     const duration = durations.odometerBase + position * durations.odometerStep;
-    if (offset.value === -digit * height) return;
+    if (offset.value === -digit * height) {
+      // A column that grew in on its own digit (a 0) has nothing to roll: its glow comes back.
+      if (lit.value < 1) lit.value = withTiming(1, { duration: GLOW_IN_MS });
+      return;
+    }
     offset.value = withTiming(-digit * height, { duration, easing: ease });
     // A glow would be cut off at the column's edges while it rolls: it rests with the digit.
     lit.value = 0;
@@ -91,7 +130,8 @@ function DigitColumn({
  * A rolling amount: each digit is a column that scrolls to its value, the leftmost taking longest
  * (1000 ms + 80 ms per position), with the currency symbol small and raised beside it (after it for
  * ₫ and "12,50 €", before it for "$"). Columns are keyed by position from the right, so a number
- * that grows a digit keeps its other columns rolling smoothly. The amount is drawn without its
+ * that grows a digit keeps its other columns rolling smoothly, and the column it gains opens and
+ * rolls in (the one it loses closes) while the rest glide aside. The amount is drawn without its
  * sign; a hero puts it in `FitWidth` so a long one shrinks to its row.
  */
 export function Odometer({
@@ -141,51 +181,101 @@ export function Odometer({
   );
   const chars = parts.number.split('');
   const n = chars.length;
+  // Columns drawn on the first render stand on their digits; any the number grows later roll in.
+  const mounted = useRef(false);
+  useEffect(() => {
+    mounted.current = true;
+  }, []);
   return (
     <View
       accessible
       accessibilityLabel={money.spoken(Math.abs(value))}
       style={{ flexDirection: 'row', alignItems: 'flex-start', height: line }}
     >
-      {before ? <Text style={[symbol, { marginRight: size * 0.05 }]}>{before}</Text> : null}
-      {chars.map((c, i) => {
-        const position = n - i;
-        return /\d/.test(c) ? (
-          <DigitColumn
-            key={`p${position}`}
-            digit={Number(c)}
-            height={height}
-            position={position}
-            textStyle={textStyle}
-            glows={glows}
-            bleed={bleed}
-          />
-        ) : (
-          <View key={`p${position}sep`} style={{ marginTop: -bleed }}>
-            {glows.map((glow, g) => (
-              <Text
-                key={g}
-                style={[
-                  textStyle,
-                  glow,
-                  {
-                    position: 'absolute',
-                    left: -shadowRoom(glow),
-                    top: -shadowRoom(glow),
-                    padding: shadowRoom(glow),
-                    height: height + 2 * shadowRoom(glow),
-                    lineHeight: height,
-                  },
-                ]}
-              >
-                {c}
-              </Text>
-            ))}
-            <Text style={[textStyle, { height, lineHeight: height }]}>{c}</Text>
-          </View>
-        );
-      })}
-      {after ? <Text style={[symbol, { marginLeft: size * 0.05 }]}>{after}</Text> : null}
+      <LayoutAnimationConfig skipEntering skipExiting>
+        {before ? (
+          <Animated.Text layout={slide} style={[symbol, { marginRight: size * 0.05 }]}>
+            {before}
+          </Animated.Text>
+        ) : null}
+        {chars.map((c, i) => {
+          const position = n - i;
+          const digit = /\d/.test(c);
+          return (
+            <Animated.View
+              key={digit ? `p${position}` : `p${position}sep`}
+              entering={columnIn}
+              exiting={columnOut}
+              layout={slide}
+            >
+              {digit ? (
+                <DigitColumn
+                  digit={Number(c)}
+                  height={height}
+                  position={position}
+                  textStyle={textStyle}
+                  glows={glows}
+                  bleed={bleed}
+                  rollIn={mounted.current}
+                />
+              ) : (
+                <Separator
+                  char={c}
+                  height={height}
+                  bleed={bleed}
+                  textStyle={textStyle}
+                  glows={glows}
+                />
+              )}
+            </Animated.View>
+          );
+        })}
+        {after ? (
+          <Animated.Text layout={slide} style={[symbol, { marginLeft: size * 0.05 }]}>
+            {after}
+          </Animated.Text>
+        ) : null}
+      </LayoutAnimationConfig>
+    </View>
+  );
+}
+
+/** A group or decimal mark between digit columns, glowing as the digits do. */
+function Separator({
+  char,
+  height,
+  bleed,
+  textStyle,
+  glows,
+}: {
+  readonly char: string;
+  readonly height: number;
+  readonly bleed: number;
+  readonly textStyle: TextStyle;
+  readonly glows: readonly TextStyle[];
+}) {
+  return (
+    <View style={{ marginTop: -bleed }}>
+      {glows.map((glow, g) => (
+        <Text
+          key={g}
+          style={[
+            textStyle,
+            glow,
+            {
+              position: 'absolute',
+              left: -shadowRoom(glow),
+              top: -shadowRoom(glow),
+              padding: shadowRoom(glow),
+              height: height + 2 * shadowRoom(glow),
+              lineHeight: height,
+            },
+          ]}
+        >
+          {char}
+        </Text>
+      ))}
+      <Text style={[textStyle, { height, lineHeight: height }]}>{char}</Text>
     </View>
   );
 }

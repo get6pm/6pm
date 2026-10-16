@@ -5,10 +5,14 @@ import type { enPlan } from './en-plan';
 // "bạn của tương lai".
 export const viPlan: { readonly [Key in keyof typeof enPlan]: Entry } = {
   'plan.kicker': '{month} · lương về {payday}',
-  'plan.lede':
-    'Hoá đơn đã để riêng, bạn của tương lai cũng nhận phần trước rồi. {free} còn lại là của bạn: {daily} mỗi ngày tới ngày lương.',
-  'plan.ledeNoFuture':
-    'Hoá đơn đã để riêng. {free} còn lại là của bạn: {daily} mỗi ngày tới ngày lương.',
+  'plan.lede.futureYou': 'Hoá đơn đã để riêng, bạn của tương lai cũng nhận phần trước rồi.',
+  'plan.lede.futureYouAtPayday':
+    'Hoá đơn đã để riêng, còn bạn của tương lai bắt đầu từ ngày lương.',
+  'plan.lede.billsOnly': 'Hoá đơn đã để riêng.',
+  'plan.lede.daily': '{free} còn lại là của bạn: {daily} mỗi ngày tới ngày lương.',
+  'plan.lede.untilPayday': '{free} còn lại là của bạn tới ngày lương.',
+  'plan.lede.allSpent': 'Tiền chi tiêu kỳ này đã dùng hết. Lương về là bắt đầu lại.',
+  'plan.lede.pastPlan': 'Kỳ này đã vượt kế hoạch {over}. Lương về là bắt đầu lại.',
   'plan.section.overview': 'Tổng quan',
   'plan.river.total': 'Tiền vào tháng này',
   'plan.river.hint': 'Chạm vào một màu để xem tiền đi đâu.',

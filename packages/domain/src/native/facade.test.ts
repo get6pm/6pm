@@ -85,6 +85,7 @@ describe('shareCard', () => {
       decimalEntry: false,
       currencies: [],
       needsCheck: false,
+      memo: 'NGUYEN VAN AN chuyen tien',
     });
   });
 
@@ -147,6 +148,7 @@ describe('shareItem', () => {
         code: 'FT26282917400',
         namingLines: expect.any(Array) as string[],
         payeeSure: false,
+        memo: 'NGUYEN VAN AN chuyen tien',
       },
     });
   });

@@ -68,6 +68,7 @@ export async function importEmailCaptures(deps: EmailImportDeps): Promise<EmailI
         source: 'email',
         status: 'caught',
         detail: capture.from,
+        memo: capture.memo ?? null,
         at: new Date(capture.at),
       });
       saved += 1;

@@ -1,6 +1,6 @@
 import type { Vnd } from '../money/format';
 import { BANKS } from '../vietqr/bank-catalogue';
-import { parseBankReceipt, readReceiptTime } from './bank-receipt';
+import { cleanMemo, parseBankReceipt, readReceiptTime } from './bank-receipt';
 import { htmlToLines, readForwarded, textToLines, type EmailSender } from './email-body';
 import { foldWords } from './spoken-spend';
 
@@ -28,6 +28,8 @@ export interface EmailReceipt {
   readonly from: string | null;
   readonly bank: string | null;
   readonly code: string | null;
+  /** The transfer's own words ("Nội dung: Thanh toan the tin dung"); null when it printed none. */
+  readonly memo: string | null;
 }
 
 export interface ReceiptEmailOptions {
@@ -133,6 +135,15 @@ const NOTE_LINE =
   /^(?:nội dung|noi dung|nd|description|details|diễn giải|dien giai)\s*[:\t]\s*(.+)$/iu;
 const PAID_AT = /(?:^|\s)(?:tại|tai|at|tới|toi|to)\s+([^\d]+?)\s*(?:[-–.,;]|\d|$)/iu;
 
+/** The transfer's words on a "Nội dung:" line, as the receipt printed them. */
+function noteIn(lines: readonly string[]): string | null {
+  for (const line of lines) {
+    const note = cleanMemo(NOTE_LINE.exec(line)?.[1]);
+    if (note !== null) return note;
+  }
+  return null;
+}
+
 /** "Nội dung: Thanh toan QR tai HIGHLANDS COFFEE" → "HIGHLANDS COFFEE", for a payee no label names. */
 function payeeInNote(lines: readonly string[]): string {
   for (const line of lines) {
@@ -203,5 +214,6 @@ export function parseReceiptEmail(
     from: sender?.address ?? null,
     bank: bankOf(sender) ?? receipt.bank,
     code: receipt.code,
+    memo: receipt.memo ?? noteIn(lines),
   };
 }

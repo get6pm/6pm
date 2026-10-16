@@ -117,5 +117,6 @@ export function mergeLook(
     at,
     code: read?.code ?? null,
     bank: read?.bank ?? null,
+    memo: read?.memo ?? null,
   };
 }

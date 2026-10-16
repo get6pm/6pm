@@ -1,4 +1,4 @@
-import { addDays, payCycleOn, type DailyNumber, type LocalDate } from '@6pm/domain';
+import { addDays, payCycleOn, replanWorded, type DailyNumber, type LocalDate } from '@6pm/domain';
 
 import { useMoney } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
@@ -28,13 +28,14 @@ export function CloseRevealStep({
   const monthDays = monthDots(day, snap.closedDays);
   // Companion keys are composed from the event and persona; every one takes the same placeholders.
   const lineFor = t as unknown as (key: string, params: Record<string, string | number>) => string;
-  // A day that takes the cycle past its plan never hears that the month still lands.
+  // A day that takes the cycle past its plan never hears that the month still lands, and a
+  // tomorrow that reads the same as today ("43k, not 43k") is not news.
   const event =
     number.spent === 0
       ? 'zero'
       : number.overspent
         ? 'pastPlan'
-        : number.replan
+        : number.replan && replanWorded(number, (amount) => money.short(amount))
           ? 'replan'
           : 'reveal';
 

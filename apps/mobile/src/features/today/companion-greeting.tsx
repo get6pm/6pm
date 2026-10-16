@@ -7,7 +7,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { type DailyNumber } from '@6pm/domain';
+import { replanWorded, type DailyNumber } from '@6pm/domain';
 import { curves } from '@6pm/theme';
 
 import type { PlanSettings } from '../../data/plan-settings';
@@ -52,12 +52,15 @@ export function CompanionGreeting({
   const { t } = useI18n();
   const money = useMoneyFormat();
   const { hour } = useClock();
+  // "Tomorrow's 43k, not 43k" says nothing: a day whose lines read the same is a calm one.
+  const said =
+    event === 'replan' && !replanWorded(day, (amount) => money.short(amount)) ? 'idle' : event;
   // A longer line (three or four lines from a model) grows the row; the sheet makes room under it.
   const room = useSharedValue(ROOM);
   const roomStyle = useAnimatedStyle(() => ({ height: room.value }));
   // A calm day says something about the user's own days; the other events keep their lines.
-  const own = useCompanionLine(event === 'closedIdle' ? 'close' : 'today', 'bubble', {
-    enabled: !serious && (event === 'idle' || event === 'closedIdle'),
+  const own = useCompanionLine(said === 'closedIdle' ? 'close' : 'today', 'bubble', {
+    enabled: !serious && (said === 'idle' || said === 'closedIdle'),
   });
   if (serious) return null;
   const mood = companionMood({
@@ -65,11 +68,11 @@ export function CompanionGreeting({
     serious,
     safe: day.safe,
     toast: false,
-    closed: event === 'closedIdle',
+    closed: said === 'closedIdle',
   });
   const line =
     own?.text ??
-    t(`companion.${event}.${plan.persona}` as 'companion.replan.cheeky', {
+    t(`companion.${said}.${plan.persona}` as 'companion.replan.cheeky', {
       t: money.short(day.tomorrow),
       b: money.short(day.line),
     });

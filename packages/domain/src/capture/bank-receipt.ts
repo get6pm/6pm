@@ -1,3 +1,4 @@
+import { MEMO_MAX } from '../contracts/local-rows';
 import type { Vnd } from '../money/format';
 import { BANKS } from '../vietqr/bank-catalogue';
 import { readReceiptTime } from './receipt-time';
@@ -35,6 +36,17 @@ export interface BankReceipt {
   readonly code: string | null;
   /** The sending bank's short name from the VietQR catalogue: "Vietcombank", "MoMo". */
   readonly bank: string | null;
+  /**
+   * The transfer's own words as printed ("Nội dung: Thanh toan the tin dung"), where a repayment
+   * is usually named. Null when the receipt prints none.
+   */
+  readonly memo: string | null;
+}
+
+/** A memo as kept: one line, spaces collapsed, cut to `MEMO_MAX`; null when it says nothing. */
+export function cleanMemo(value: string | null | undefined): string | null {
+  const memo = (value ?? '').replace(/\s+/g, ' ').trim().slice(0, MEMO_MAX).trim();
+  return /\p{L}/u.test(memo) ? memo : null;
 }
 
 export type Field =
@@ -59,7 +71,9 @@ const LABELS: Readonly<Record<Field, string>> = {
   account:
     'so tai khoan, tai khoan, tai khoan nhan, tai khoan thu huong, tai khoan nguoi huong, ' +
     'tai khoan nguon, tu tai khoan, so dien thoai, account, account number, from account',
-  note: 'noi dung, loi nhan, message, description, details, remark, dien giai',
+  note:
+    'noi dung, noi dung chuyen tien, noi dung chuyen khoan, noi dung giao dich, loi nhan, ' +
+    'message, description, details, details of payment, payment details, remark, dien giai',
   fee: 'phi, phi giao dich, tong phi, fee, transaction fee',
   balance: 'so du, so du kha dung, balance, available balance',
 };
@@ -239,6 +253,7 @@ export function parseBankReceipt(lines: readonly ReceiptLine[]): BankReceipt | n
     null;
   const code = readCode(fields.get('code')?.value, allText);
   const bank = readBank(rows, rowFields);
+  const memo = cleanMemo(fields.get('note')?.value);
   if (amount === null && named === '' && code === null && at === null) return null;
   return {
     amount: amount !== null && amount > 0 ? amount : null,
@@ -247,5 +262,6 @@ export function parseBankReceipt(lines: readonly ReceiptLine[]): BankReceipt | n
     at,
     code,
     bank,
+    memo,
   };
 }

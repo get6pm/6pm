@@ -100,6 +100,7 @@ describe('parseReceiptEmail', () => {
       from: 'vcbdigibank@info.vietcombank.com.vn',
       bank: 'Vietcombank',
       code: 'FT26282917400',
+      memo: 'MUA HANG',
     });
   });
 
@@ -111,6 +112,7 @@ describe('parseReceiptEmail', () => {
       from: 'thongbao@mbbank.com.vn',
       bank: 'MB Bank',
       code: null,
+      memo: 'CHUYEN TIEN TOI PHO HOA',
     });
   });
 

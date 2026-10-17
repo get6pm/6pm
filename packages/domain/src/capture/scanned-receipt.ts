@@ -1,11 +1,12 @@
 import type { InboxSpend, ShareCard, SurfaceContext } from '../contracts/surfaces';
 import type { ReceiptReadResponse } from '../contracts/receipt-read';
-import type { Money } from '../money/currency';
+import type { Currency, Money } from '../money/currency';
 import { contextMoney } from '../native/context-money';
 import { buildShareCard, buildShareItem, cardOf } from '../native/share-card';
 import { mergeLook } from '../native/share-merge';
 import { receiptReadingOrder, type ReceiptLine } from './bank-receipt';
 import { readReceipt } from './read-receipt';
+import { splitPrinted, splitShare } from './receipt-split';
 
 /**
  * A receipt scanned in the app is read exactly as one shared to 6pm: the same card from the
@@ -45,6 +46,9 @@ export interface ScannedEdits {
   readonly amount?: Money;
   readonly payee?: string;
   readonly categoryId?: string;
+  /** Split this many ways: only the user's share is saved, with `note` saying so. */
+  readonly people?: number;
+  readonly note?: string;
 }
 
 /**
@@ -70,7 +74,27 @@ export function scannedReceiptItem(
     id,
     money,
   );
-  if (item === null || typed === null) return item;
+  if (item === null) return null;
+  const read = typed === null ? item : dropForeign({ ...item, amount: typed });
+  return split(read, edits, money.home);
+}
+
+/** A typed home amount replaces the foreign total it was typed over. */
+function dropForeign(item: InboxSpend): InboxSpend {
   const { foreign: _replaced, currencyGuessed: _guess, ...kept } = item;
-  return { ...kept, amount: typed };
+  return kept;
+}
+
+/** The user's share of a split receipt: the amount and the printed total, and the note. */
+function split(item: InboxSpend, edits: ScannedEdits, home: Currency): InboxSpend {
+  const people = edits.people ?? 1;
+  if (people <= 1) return item;
+  return {
+    ...item,
+    amount: item.amount === null ? null : splitShare(item.amount, people, home),
+    ...(item.foreign
+      ? { foreign: { ...item.foreign, amount: splitPrinted(item.foreign.amount, people) } }
+      : {}),
+    ...(edits.note ? { note: edits.note } : {}),
+  };
 }

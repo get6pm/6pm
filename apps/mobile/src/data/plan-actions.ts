@@ -95,10 +95,12 @@ export function planActions(store: MoneyStore) {
       // Ticked by hand, a bill is paid its own amount.
       await putBill({ ...bill, paidCycle: paid ? snap.cycle.start : null, paidAmount: null });
     },
-    addBill: async (input: NewBill) => {
+    /** Adds a bill to the plan; returns its id. */
+    addBill: async (input: NewBill): Promise<string> => {
       const snap = store.getSnapshot();
+      const id = randomUUID();
       await putBill({
-        id: randomUUID(),
+        id,
         ...input,
         amount: Math.round(input.amount),
         paidCycle: null,
@@ -109,6 +111,7 @@ export function planActions(store: MoneyStore) {
         paidAmount: null,
         askedCycle: null,
       });
+      return id;
     },
     updateBill: async (id: string, patch: Partial<NewBill>) => {
       const bill = store.getSnapshot().bills.find((b) => b.id === id);

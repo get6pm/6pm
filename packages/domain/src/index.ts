@@ -35,6 +35,8 @@ export * from './capture/foreign-price';
 export * from './capture/bank-receipt';
 export * from './capture/read-receipt';
 export * from './capture/scanned-receipt';
+export * from './capture/scanned-bill';
+export * from './capture/receipt-split';
 export * from './capture/email-body';
 export * from './capture/email-reading';
 export * from './capture/forwarding-confirmation';

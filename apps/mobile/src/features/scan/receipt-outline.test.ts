@@ -1,6 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
 import {
+  MAX_STRAYS,
   MIN_SHARE,
   nextSteadiness,
   quadOnView,
@@ -8,6 +9,7 @@ import {
   readyToTake,
   STEADY_MS,
   unsteady,
+  type Steadiness,
 } from './receipt-outline';
 
 const square = [0.25, 0.25, 0.75, 0.25, 0.75, 0.75, 0.25, 0.75];
@@ -32,19 +34,39 @@ describe('quadShare', () => {
 });
 
 describe('steadiness', () => {
+  // A receipt 200 pt wide: it may shake 16 pt (8% of its width).
   const quad = [100, 100, 300, 100, 300, 500, 100, 500];
-  const nudged = quad.map((v) => v + 4);
+  const shaken = quad.map((v) => v + 14);
   const moved = quad.map((v) => v + 40);
+  const after = (state: Steadiness, sightings: readonly (readonly number[] | null)[], from = 100) =>
+    sightings.reduce((s, q, i) => nextSteadiness(s, q, from + i * 100), state);
 
-  it('starts when the receipt is seen and holds through small shakes', () => {
+  it('starts when the receipt is seen and holds through a hand’s shake', () => {
     const seen = nextSteadiness(unsteady, quad, 0);
-    expect(nextSteadiness(seen, nudged, 300).since).toBe(0);
+    expect(nextSteadiness(seen, shaken, 300).since).toBe(0);
   });
 
-  it('starts again when the receipt moves, and ends when it is gone', () => {
+  it('lets a stray sighting or a missed one pass, but not the take', () => {
     const seen = nextSteadiness(unsteady, quad, 0);
-    expect(nextSteadiness(seen, moved, 300).since).toBe(300);
-    expect(nextSteadiness(seen, null, 300)).toBe(unsteady);
+    const strayed = after(seen, [moved, null]);
+    expect(strayed.since).toBe(0);
+    expect(readyToTake(strayed, STEADY_MS, 400, 800)).toBe(false);
+    const back = nextSteadiness(strayed, quad, STEADY_MS);
+    expect(back.since).toBe(0);
+    expect(readyToTake(back, STEADY_MS, 400, 800)).toBe(true);
+  });
+
+  it('starts again when the receipt keeps moving, and ends when it stays gone', () => {
+    const seen = nextSteadiness(unsteady, quad, 0);
+    const moving = Array<readonly number[]>(MAX_STRAYS + 1).fill(moved);
+    expect(after(seen, moving).since).toBe(100 * (MAX_STRAYS + 1));
+    expect(after(seen, Array<null>(MAX_STRAYS + 1).fill(null))).toBe(unsteady);
+  });
+
+  it('starts again on a slow drift, measured from where it settled', () => {
+    const seen = nextSteadiness(unsteady, quad, 0);
+    const drift = [6, 12, 18, 24, 30].map((d) => quad.map((v) => v + d));
+    expect(after(seen, drift).since).toBeGreaterThan(0);
   });
 
   it('takes a large receipt held still long enough, never a small one', () => {

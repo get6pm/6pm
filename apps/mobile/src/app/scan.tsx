@@ -157,15 +157,18 @@ export default function Scan() {
   const onReceipt = useCallback(
     ({ corners, aspect }: ReceiptSighting) => {
       if (!looking || size.width === 0) return;
-      if (corners.length !== 8) {
-        if (steadiness.current.quad !== null) letGo();
-        return;
-      }
-      const onView = quadOnView(corners, aspect, size.width, size.height);
       const before = steadiness.current;
       const now = Date.now();
+      const onView =
+        corners.length === 8 ? quadOnView(corners, aspect, size.width, size.height) : null;
       const next = nextSteadiness(before, onView, now);
+      if (next.quad === null) {
+        if (before.quad !== null) letGo();
+        return;
+      }
       steadiness.current = next;
+      // A stray sighting leaves the outline and the countdown where they are.
+      if (onView === null || next.strays > 0) return;
       lastCorners.current = corners;
       quad.set(withTiming([...onView], before.quad === null ? settle : follow));
       if (before.quad === null) {

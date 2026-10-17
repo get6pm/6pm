@@ -37,7 +37,8 @@ final class ScanCameraSession: NSObject, @unchecked Sendable {
 
   // Only on `frames`.
   private var lastRead: CFTimeInterval = 0
-  private var sawReceipt = false
+  /// Looks in a row that found no receipt; it starts as if long gone.
+  private var misses = ScanCameraSession.missesReported + 1
 
   // Only on main.
   private var lastCode: (text: String, at: CFTimeInterval)?
@@ -45,6 +46,9 @@ final class ScanCameraSession: NSObject, @unchecked Sendable {
   /// Seconds between two looks for the receipt: often enough for the outline to follow the
   /// paper, rare enough to leave the phone cool.
   static let receiptInterval: CFTimeInterval = 0.1
+  /// Looks without a receipt still reported after one is lost: Scan lets a miss or two pass as the
+  /// detector's, so it needs to hear the receipt is still gone.
+  static let missesReported = 4
   /// The share of the frame below which a quad is not the receipt.
   static let minimumArea = 0.06
 
@@ -214,9 +218,9 @@ extension ScanCameraSession: AVCaptureVideoDataOutputSampleBufferDelegate {
     lastRead = now
     let handler = VNImageRequestHandler(cvPixelBuffer: pixels, orientation: .up, options: [:])
     let corners = ReceiptPhoto.paper(handler, minimumArea: Self.minimumArea)?.flat ?? []
-    // Nothing to say while there is still no receipt.
-    if corners.isEmpty && !sawReceipt { return }
-    sawReceipt = !corners.isEmpty
+    misses = corners.isEmpty ? min(misses, Self.missesReported) + 1 : 0
+    // Nothing more to say once the receipt has been gone a while.
+    if misses > Self.missesReported { return }
     let aspect = Double(CVPixelBufferGetWidth(pixels)) / Double(CVPixelBufferGetHeight(pixels))
     onReceipt?(corners, aspect)
   }

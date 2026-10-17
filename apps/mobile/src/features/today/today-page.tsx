@@ -1,6 +1,12 @@
 import { useRouter, type Href } from 'expo-router';
-import { View } from 'react-native';
-import Animated, { useAnimatedStyle, type AnimatedRef } from 'react-native-reanimated';
+import { useEffect } from 'react';
+import Animated, {
+  ReduceMotion,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  type AnimatedRef,
+} from 'react-native-reanimated';
 
 import { clockOf, hourOf, type DailyNumber } from '@6pm/domain';
 
@@ -21,11 +27,13 @@ import { todayView, type WeekDay } from './today-view';
 import { useSpendLabels } from './use-spend-rows';
 import { TonightCard } from './tonight-card';
 import { useOpenAsk, useOpenSpend } from '../duo/spread-pane';
+import { useTryingOn } from '../looks/look-settings-provider';
 
 /**
  * Today: the hero over the sky, then the sheet that holds the companion, tonight's card, the week
  * and the list. As the page scrolls the hero drifts at half speed, shrinks a touch toward its
- * bottom edge and fades out by 300 pt, as in the prototype.
+ * bottom edge and fades out by 300 pt, as in the prototype. While a look is tried on the sheet
+ * fades away (`App:155`), so the sky and the number are seen in the look above the Looks sheet.
  */
 export function TodayPage({
   day,
@@ -74,6 +82,15 @@ export function TodayPage({
     transform: [{ translateY: y.value * 0.5 }, { scale: 1 - Math.min(y.value, 320) / 3200 }],
   }));
 
+  const trying = useTryingOn();
+  const sheetShown = useSharedValue(trying ? 0 : 1);
+  useEffect(() => {
+    sheetShown.set(
+      withTiming(trying ? 0 : 1, { duration: 300, reduceMotion: ReduceMotion.System }),
+    );
+  }, [trying, sheetShown]);
+  const sheetFade = useAnimatedStyle(() => ({ opacity: sheetShown.get() }));
+
   return (
     <Animated.ScrollView
       ref={scrollRef}
@@ -86,19 +103,22 @@ export function TodayPage({
       <Animated.View style={parallax}>
         <TodayHero day={day} onSettings={onSettings} onQuickAdd={onQuickAdd} />
       </Animated.View>
-      <View
-        style={{
-          minHeight: 540,
-          borderTopLeftRadius: 40,
-          borderTopRightRadius: 40,
-          backgroundColor: palette.sheet,
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.06)',
-          // The companion's greeting keeps its own room under it.
-          paddingTop: snap.plan ? 20 : 92,
-          paddingHorizontal: 16,
-          paddingBottom: 128,
-          gap: 28,
-        }}
+      <Animated.View
+        style={[
+          {
+            minHeight: 540,
+            borderTopLeftRadius: 40,
+            borderTopRightRadius: 40,
+            backgroundColor: palette.sheet,
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,.06)',
+            // The companion's greeting keeps its own room under it.
+            paddingTop: snap.plan ? 20 : 92,
+            paddingHorizontal: 16,
+            paddingBottom: 128,
+            gap: 28,
+          },
+          sheetFade,
+        ]}
       >
         {snap.plan ? (
           <CompanionGreeting
@@ -155,7 +175,7 @@ export function TodayPage({
             });
           }}
         />
-      </View>
+      </Animated.View>
     </Animated.ScrollView>
   );
 }

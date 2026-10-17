@@ -42,8 +42,8 @@ export const pageSheet: ScreenOptions = {
 
 /**
  * Sheets the native sheet cannot draw, which draw themselves over a transparent modal: the
- * floating card (`CardSheet`, inset from the edges and as tall as its content) and the look
- * detail (lower on the screen, over the undimmed page wearing the look). Below the tallest detent
+ * floating card (`CardSheet`, inset from the edges and as tall as its content) and the Looks
+ * sheet (which sinks low over the undimmed page wearing a look being tried on). Below the tallest detent
  * iOS floats its sheet inset from the edges, so neither shape can be native.
  */
 export const drawnSheet: ScreenOptions = {

@@ -1,65 +1,106 @@
-import { useNavigation, useRouter } from 'expo-router';
-import { useEffect, useMemo } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useEffect, useMemo, type ReactNode } from 'react';
+import { Linking, ScrollView, Text, View } from 'react-native';
+import type Animated from 'react-native-reanimated';
+import type { AnimatedRef, SharedValue } from 'react-native-reanimated';
 
 import type { LookId } from '@6pm/theme';
 
-import { useDay } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
-import { useMoneyFormat } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
-import { SheetFrame } from '../../ui/navigation/sheet-frame';
+import { useDesignInsets } from '../../ui/layout/design-insets';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
-import { useTheme } from '../../ui/theme/theme';
-import { BalancedText } from '../../ui/type/balanced-text';
-import { body, display, leading } from '../../ui/type/fonts';
-import { useCompanionToast } from '../companion/use-companion-toast';
 import { useToast } from '../../ui/toast/toast-host';
+import { useTheme } from '../../ui/theme/theme';
+import { body } from '../../ui/type/fonts';
+import { useCompanionToast } from '../companion/use-companion-toast';
 import { resolveLook } from '../purchases/entitlement';
-import { isPaidLook } from '../purchases/products';
+import { CLASSIC_LOOKS, isPaidLook, LEGAL_LINKS, SCENE_LOOKS } from '../purchases/products';
 import { usePurchases } from '../purchases/purchases-provider';
-import { cardBadge, isScene, SHOP_ORDER } from './look-catalogue';
+import { cardBadge, firstOfTier, SHOP_ORDER, tierOf, type ShopTier } from './look-catalogue';
 import { lookCopy } from './look-copy';
-import { LookCard } from './look-card';
-import { useLookSettings, useLookSettingsStore } from './look-settings-provider';
+import { DaySlider } from './day-slider';
+import { useLookSettings } from './look-settings-provider';
 import { BackSheetHeader } from './sheet-header';
+import type { CardRect } from './shop-card';
 import { ShopMaxCard } from './shop-max-card';
+import { ShopDots, ShopPager, ShopTiers, type CardFace } from './shop-pager';
 
-const GAP = 12;
-
-/** The Looks sheet (prototype `App:857-912`): the Max card, every look drawn live, Restore. */
-export function LooksShop() {
+/**
+ * The Looks shop (prototype `App:868-966`): the three shelves, every look as a card wearing its
+ * real sky, a dot for each, the time of day to see them all at another hour, the Max card,
+ * Restore and the small print. `grab` wraps the header, which drags the sheet.
+ */
+export function LooksShop({
+  listRef,
+  scrollX,
+  focus,
+  shopHour,
+  live,
+  onFocus,
+  onJump,
+  onShopHour,
+  onOpen,
+  onDone,
+  grab,
+}: {
+  readonly listRef: AnimatedRef<Animated.FlatList<LookId>>;
+  readonly scrollX: SharedValue<number>;
+  readonly focus: number;
+  readonly shopHour: number | null;
+  readonly live: boolean;
+  readonly onFocus: (index: number) => void;
+  readonly onJump: (index: number) => void;
+  readonly onShopHour: (hour: number | null) => void;
+  readonly onOpen: (look: LookId, rect: CardRect | null) => void;
+  readonly onDone: () => void;
+  readonly grab: (header: ReactNode) => ReactNode;
+}) {
   const router = useRouter();
   const { palette } = useTheme();
   const { t } = useI18n();
-  const money = useMoneyFormat();
   const { hour } = useClock();
+  const { bottom } = useDesignInsets();
   const toast = useToast();
   const say = useCompanionToast();
-  const day = useDay();
   const { customer, offerings, loadOfferings, busy, restore } = usePurchases();
-  const { look, config, tryOn } = useLookSettings();
-  const store = useLookSettingsStore();
+  const { look, config } = useLookSettings();
   const copy = useMemo(() => lookCopy(t), [t]);
   const worn = resolveLook(look, customer);
-  const safe = money.short(Math.max(0, day?.safe ?? 0));
-
-  // While a look is tried on, the page behind wears it: the shop's sheet stops dimming it.
-  const navigation = useNavigation();
-  useEffect(() => {
-    navigation.setOptions({ sheetLargestUndimmedDetentIndex: tryOn ? 'last' : 'none' });
-  }, [navigation, tryOn]);
+  const shown = shopHour ?? hour;
+  const focused = SHOP_ORDER[focus] ?? worn;
 
   // The offerings load at launch; opening the shop asks again if the store did not answer then.
   useEffect(() => loadOfferings(), [loadOfferings]);
 
-  const open = (id: LookId) => {
-    haptics.tick();
-    // Wear it before the sheet opens so its first frame is already in the look. The try-on takes
-    // the shop's place: a native sheet left underneath would paint over the page wearing the look.
-    store.setTryOn(id);
-    router.replace({ pathname: '/look/[id]', params: { id } });
+  const faces = useMemo(() => {
+    const out = {} as Record<LookId, CardFace>;
+    for (const id of SHOP_ORDER) {
+      const badge = cardBadge(id, worn, customer);
+      const offer = isPaidLook(id) ? offerings?.looks[id] : undefined;
+      const badgeText = badge === 'price' ? (offer?.priceText ?? null) : t(`looks.badge.${badge}`);
+      const cta =
+        badge === 'inUse'
+          ? t('looks.card.customise')
+          : badge === 'price' && offer
+            ? t('looks.card.tryOnPrice', { price: offer.priceText })
+            : t('looks.card.tryOn');
+      out[id] = { badge, badgeText, cta };
+    }
+    return out;
+  }, [worn, customer, offerings, t]);
+
+  const shelfSub = (looks: readonly LookId[]) => {
+    if (customer.max.active) return t('looks.tierSub.max');
+    const first = looks[0];
+    const offer = first && isPaidLook(first) ? offerings?.looks[first] : undefined;
+    return offer ? t('looks.tierSub.each', { price: offer.priceText }) : t('looks.tierSub.once');
+  };
+  const subs: Record<ShopTier, string> = {
+    free: t('looks.tierSub.free'),
+    classic: shelfSub(CLASSIC_LOOKS),
+    scene: shelfSub(SCENE_LOOKS),
   };
 
   const doRestore = async () => {
@@ -70,66 +111,55 @@ export function LooksShop() {
       say('restored');
     } else toast(outcome.kind === 'none' ? t('looks.restore.none') : t('looks.restore.failed'));
   };
-
-  const rows: LookId[][] = [];
-  const classic = SHOP_ORDER.filter((id) => !isScene(id));
-  for (let i = 0; i < classic.length; i += 2) rows.push(classic.slice(i, i + 2));
-  for (const id of SHOP_ORDER.filter(isScene)) rows.push([id]);
-
-  const card = (id: LookId) => (
-    <LookCard
-      key={id}
-      look={id}
-      badge={cardBadge(id, worn, customer)}
-      offer={isPaidLook(id) ? offerings?.looks[id] : undefined}
-      hour={hour}
-      config={config[id]}
-      safe={safe}
-      copy={copy}
-      onPress={() => open(id)}
-    />
-  );
+  const openLink = (url: string) => {
+    Linking.openURL(url).catch(() => toast(t('looks.restore.failed')));
+  };
 
   return (
-    // While a look is tried on its sheet sits over this one; the shop steps out of the way.
-    <View style={{ flex: 1, opacity: tryOn ? 0 : 1 }} pointerEvents={tryOn ? 'none' : 'auto'}>
-      <SheetFrame
-        header={
-          <BackSheetHeader
-            title={t('looks.title')}
-            backLabel={t('looks.back')}
-            onBack={() => {
-              haptics.tap();
-              router.replace('/settings');
-            }}
-            onDone={() => {
-              haptics.tap();
-              router.dismissAll();
-            }}
-          />
-        }
-      >
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{
-            paddingTop: 4,
-            paddingHorizontal: 16,
-            paddingBottom: 44,
-            gap: 20,
+    <View style={{ flex: 1 }}>
+      {grab(
+        <BackSheetHeader
+          title={t('looks.title')}
+          backLabel={t('looks.back')}
+          onBack={() => {
+            haptics.tap();
+            router.replace('/settings');
           }}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={{ paddingTop: 4, paddingHorizontal: 6, gap: 8 }}>
-            <BalancedText
-              accessibilityRole="header"
-              style={{ ...leading(display(31, 500, -0.01), 32.9), color: palette.ink }}
-            >
-              {t('looks.heading')}
-            </BalancedText>
-            <Text style={{ ...body(14.5), lineHeight: 21, color: palette.inkSoft }}>
-              {t('looks.intro')}
-            </Text>
-          </View>
+          onDone={() => {
+            haptics.tap();
+            onDone();
+          }}
+        />,
+      )}
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingTop: 2, paddingBottom: bottom(44), gap: 18 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <ShopTiers tier={tierOf(focused)} subs={subs} onTier={(k) => onJump(firstOfTier(k))} />
+        <View style={{ gap: 14 }}>
+          <ShopPager
+            listRef={listRef}
+            scrollX={scrollX}
+            focus={focus}
+            hour={shown}
+            configs={config}
+            faces={faces}
+            copy={copy}
+            live={live}
+            onFocus={onFocus}
+            onOpen={onOpen}
+          />
+          <ShopDots hour={hour} configs={config} scrollX={scrollX} copy={copy} onJump={onJump} />
+        </View>
+        <DaySlider
+          look={focused}
+          config={config[focused]}
+          now={hour}
+          hour={shopHour}
+          onHour={onShopHour}
+        />
+        <View style={{ paddingTop: 6, paddingHorizontal: 22, gap: 18 }}>
           <ShopMaxCard
             customer={customer}
             offerings={offerings}
@@ -140,28 +170,53 @@ export function LooksShop() {
               router.push({ pathname: '/max', params: { from: 'looks' } });
             }}
           />
-          <View style={{ gap: GAP }}>
-            {rows.map((row) => (
-              <View key={row.join()} style={{ flexDirection: 'row', gap: GAP }}>
-                {row.map(card)}
-              </View>
-            ))}
+          <View style={{ alignItems: 'center', gap: 8 }}>
+            <PressScale
+              accessibilityRole="button"
+              disabled={busy}
+              scaleTo={0.95}
+              onPress={() => void doRestore()}
+              style={{ height: 40, paddingHorizontal: 14, justifyContent: 'center' }}
+            >
+              <Text style={{ ...body(14, 600), color: palette.ink }}>{t('looks.restore')}</Text>
+            </PressScale>
+            <Text
+              style={{
+                ...body(12),
+                lineHeight: 17.4,
+                textAlign: 'center',
+                color: palette.inkSoft,
+                paddingHorizontal: 8,
+              }}
+            >
+              {t('looks.legal')}
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 14 }}>
+              {[
+                { label: t('max.terms'), url: LEGAL_LINKS.terms },
+                { label: t('max.privacy'), url: LEGAL_LINKS.privacy },
+              ].map(({ label, url }) => (
+                <PressScale
+                  key={url}
+                  accessibilityRole="link"
+                  hitSlop={8}
+                  onPress={() => openLink(url)}
+                >
+                  <Text
+                    style={{
+                      ...body(12, 600),
+                      color: palette.inkSoft,
+                      textDecorationLine: 'underline',
+                    }}
+                  >
+                    {label}
+                  </Text>
+                </PressScale>
+              ))}
+            </View>
           </View>
-          <PressScale
-            accessibilityRole="button"
-            disabled={busy}
-            onPress={() => void doRestore()}
-            style={{
-              alignSelf: 'center',
-              height: 40,
-              paddingHorizontal: 14,
-              justifyContent: 'center',
-            }}
-          >
-            <Text style={{ ...body(14, 600), color: palette.inkSoft }}>{t('looks.restore')}</Text>
-          </PressScale>
-        </ScrollView>
-      </SheetFrame>
+        </View>
+      </ScrollView>
     </View>
   );
 }

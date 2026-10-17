@@ -79,4 +79,32 @@ describe('describeAction', () => {
     expect(budget.pending).toBeNull();
     expect(budget.card.text).toContain('Con số mỗi ngày chính là ngân sách');
   });
+
+  it('opens a guide this phone has when it lacks the way asked about', () => {
+    const picks = {
+      categoryId: '',
+      potLocked: false,
+      reach: { share: false, scan: true, wallet: false, widgets: false },
+    };
+    const guideOf = (topic: 'ways' | 'share' | 'wallet' | 'scan') =>
+      describeAction({ kind: 'howTo', topic }, env('en'), picks).pending;
+    expect(guideOf('ways')).toEqual({
+      kind: 'open',
+      pathname: '/capture-guide',
+      params: { source: 'scan' },
+    });
+    expect(guideOf('share')).toEqual({
+      kind: 'open',
+      pathname: '/capture-guide',
+      params: { source: 'scan' },
+    });
+    expect(guideOf('wallet')).toEqual({
+      kind: 'open',
+      pathname: '/capture-guide',
+      params: { source: 'email' },
+    });
+    const widgets = describeAction({ kind: 'howTo', topic: 'widgets' }, env('en'), picks);
+    expect(widgets.pending).toEqual({ kind: 'open', pathname: '/quick-add' });
+    expect(widgets.card.actions?.[0]?.label).toBe('Open Quick add');
+  });
 });

@@ -1,5 +1,5 @@
 import type { Vnd } from '../money/format';
-import type { IosApp } from './bank-catalogue';
+import { appStoreUrl, marketUrl, playStoreUrl, type BankInfo, type IosApp } from './bank-catalogue';
 import { encodeVietQR, type VietQRInput } from './encode-vietqr';
 import type { VietQR } from './parse-vietqr';
 import { utf8 } from './utf8';
@@ -51,6 +51,43 @@ export function transferLink(app: IosApp, qr: VietQR, amount: Vnd): string | nul
 /** What 6pm opens: the filled-in transfer for a verified bank, else the app's home. */
 export function handoffUrl(app: IosApp, qr: VietQR, amount: Vnd): string {
   return (app.verified ? transferLink(app, qr, amount) : null) ?? app.scheme;
+}
+
+/** How a payment is handed to a bank app on a phone. */
+export interface HandoffPlan {
+  /** Opened first: the bank's own link. Null when only the store can find the app. */
+  readonly open: string | null;
+  /** The bank opens with the payment filled in, so its QR need not be saved for it. */
+  readonly filledIn: boolean;
+  /** Tried in turn when `open` fails or is null: the app's store page. */
+  readonly store: readonly string[];
+}
+
+/**
+ * What to open to hand a payment to a bank, on iOS or Android; null when 6pm has no way to its app.
+ * iOS opens the bank's scheme (filled in for a verified bank) and falls back to the App Store.
+ * Android tries the same scheme at the app's home, since no bank's transfer link has been seen to
+ * open filled in there, then the app's Play Store page, which opens it when installed.
+ */
+export function handoffPlan(
+  bank: BankInfo | null,
+  os: 'ios' | 'android',
+  qr: VietQR,
+  amount: Vnd,
+): HandoffPlan | null {
+  const ios = bank?.ios ?? null;
+  if (os === 'ios') {
+    if (ios === null) return null;
+    const open = handoffUrl(ios, qr, amount);
+    return { open, filledIn: open !== ios.scheme, store: [appStoreUrl(ios)] };
+  }
+  const android = bank?.android ?? null;
+  if (android === null) return null;
+  return {
+    open: ios?.scheme ?? null,
+    filledIn: false,
+    store: [marketUrl(android), playStoreUrl(android)],
+  };
 }
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';

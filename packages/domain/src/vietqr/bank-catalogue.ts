@@ -21,6 +21,12 @@ export interface IosApp {
   verified: boolean;
 }
 
+/** How to find a bank's Android app. */
+export interface AndroidApp {
+  /** Play Store package name, e.g. "com.mbmobile". */
+  package: string;
+}
+
 export interface BankInfo {
   /** Stable code, upper case: a VietQR code ("MB", "MOMO"), or a country's ("US.CHASE"). */
   id: string;
@@ -36,6 +42,7 @@ export interface BankInfo {
   /** Monogram colour (sRGB hex), or null for a neutral monogram. */
   color: string | null;
   ios: IosApp | null;
+  android: AndroidApp | null;
 }
 
 const WALLETS = new Set(['MOMO', 'VTLMONEY', 'VNPTMONEY', 'ZALOPAY']);
@@ -138,6 +145,59 @@ const IOS_APPS: Readonly<Record<string, IosApp>> = {
   ZALOPAY: plain('zalopay://', '1112407590'),
 };
 
+/**
+ * Play Store packages, each read from the bank's own listing on Google Play (its title and
+ * developer checked against the bank, 2026-10-17). Every bank with an iOS app above has one.
+ */
+const ANDROID_PACKAGES: Readonly<Record<string, string>> = {
+  MB: 'com.mbmobile',
+  VCB: 'com.VCB',
+  VBA: 'com.vnpay.Agribank3g',
+  TCB: 'vn.com.techcombank.bb.app',
+  VPB: 'com.vnpay.vpbankonline',
+  ACB: 'mobile.acb.com.vn',
+  BIDV: 'com.vnpay.bidv',
+  ICB: 'com.vietinbank.ipay',
+  STB: 'com.sacombank.ewallet',
+  TPB: 'com.tpb.mb.gprsandroid',
+  VIB: 'com.vib.myvib2',
+  SHB: 'vn.shb.saha.mbanking',
+  MSB: 'vn.com.msb.smartBanking',
+  OCB: 'vn.com.ocb.awe',
+  SEAB: 'vn.com.seabank.mb1',
+  HDB: 'com.vnpay.hdbank',
+  EIB: 'com.vnpay.EximBankOmni',
+  LPB: 'vn.com.lpbank.digibank',
+  PVCB: 'com.pvcombank.retail',
+  ABB: 'vn.abbank.retail',
+  VCCB: 'vn.banvietbank.mobilebanking',
+  PGB: 'pgbankApp.pgbank.com.vn',
+  VAB: 'com.vn.vietaomni',
+  VIETBANK: 'com.vn.vietbankomni',
+  MBV: 'com.mbv.mobilebanking',
+  WVN: 'vn.com.woori.smart',
+  KBANK: 'com.kasikornbank.kplus.vn',
+  NAB: 'ops.namabank.com.vn',
+  CAKE: 'xyz.be.cake',
+  TIMO: 'io.lifestyle.plus',
+  SHBVN: 'com.shinhan.global.vn.bank',
+  NCB: 'com.ncb.bank',
+  SCB: 'com.vnpay.SCB',
+  KLB: 'com.sunshine.ksbank',
+  CIMB: 'vn.cimbbank.octo',
+  SGICB: 'com.vnpay.sgbank',
+  BVB: 'com.vnpay.bvbank',
+  COOPBANK: 'com.vnpay.coopbank',
+  PBVN: 'com.vnpay.publicbank',
+  MOMO: 'com.mservice.momotransfer',
+  ZALOPAY: 'vn.com.vng.zalopay',
+};
+
+function androidApp(id: string): AndroidApp | null {
+  const found = ANDROID_PACKAGES[id];
+  return found === undefined ? null : { package: found };
+}
+
 function readDirectory(): BankInfo[] {
   return BANK_DIRECTORY.trim()
     .split('\n')
@@ -152,6 +212,7 @@ function readDirectory(): BankInfo[] {
         kind: WALLETS.has(id) ? 'wallet' : 'bank',
         color: COLORS[id] ?? null,
         ios: IOS_APPS[id] ?? null,
+        android: androidApp(id),
       };
     });
 }
@@ -170,6 +231,7 @@ function readWorld(): BankInfo[] {
         kind: kind === 'wallet' ? 'wallet' : 'bank',
         color: null,
         ios: null,
+        android: null,
       };
     });
 }
@@ -207,4 +269,14 @@ export function findBank(id: string): BankInfo | null {
 /** App Store page for a bank's app, for when it is not on this phone. */
 export function appStoreUrl(app: IosApp): string {
   return `https://apps.apple.com/vn/app/id${app.appStoreId}`;
+}
+
+/** The Play Store app's page for a bank's app: it opens the app if it is there, or installs it. */
+export function marketUrl(app: AndroidApp): string {
+  return `market://details?id=${app.package}`;
+}
+
+/** Google Play's web page for a bank's app, for a phone without the Play Store app. */
+export function playStoreUrl(app: AndroidApp): string {
+  return `https://play.google.com/store/apps/details?id=${app.package}`;
 }

@@ -5,10 +5,16 @@ import { oklchSrgbHex, type LookConfig, type LookId } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
 import { body } from '../../ui/type/fonts';
-import { tileOrder, tileRows, type MaxFrom } from './max-context';
+import { nativeReach } from '../surfaces/native-reach';
+import { MAX_TILES, tileOrder, tileRows, type MaxFrom } from './max-context';
 import { TileArt } from './max-tile-art';
 import { PAID_LOOKS, SCENE_LOOKS } from './products';
 import { MAX_CREAM, MAX_GOLD } from './max-colours';
+
+/** The tiles this phone has the feature for: widgets only where 6pm has widgets. */
+const TILES: readonly MaxFrom[] = nativeReach.widgets
+  ? MAX_TILES
+  : MAX_TILES.filter((tile) => tile !== 'widgets');
 
 /** Each tile's own colour, glowing from its top right corner. */
 const HUE: Readonly<Record<MaxFrom, number>> = {
@@ -49,7 +55,7 @@ export function MaxTiles({
   readonly safe: string;
 }) {
   const { t } = useI18n();
-  const rows = useMemo(() => tileRows(tileOrder(from)), [from]);
+  const rows = useMemo(() => tileRows(tileOrder(from, TILES)), [from]);
 
   const tile = (id: MaxFrom) => {
     const hot = !on && id === from;

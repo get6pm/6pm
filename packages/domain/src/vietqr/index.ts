@@ -5,11 +5,20 @@ export {
   banksOf,
   findBank,
   findBankByBin,
+  marketUrl,
+  playStoreUrl,
+  type AndroidApp,
   type BankInfo,
   type HandoffLink,
   type IosApp,
 } from './bank-catalogue';
-export { handoffUrl, payloadFor, transferLink } from './handoff-link';
+export {
+  handoffPlan,
+  handoffUrl,
+  payloadFor,
+  transferLink,
+  type HandoffPlan,
+} from './handoff-link';
 export { crc16CcittFalse } from './crc16';
 export { encodeQR, type QrMatrix, type QrOptions } from './encode-qr';
 export type { QrLevel } from './qr-tables';

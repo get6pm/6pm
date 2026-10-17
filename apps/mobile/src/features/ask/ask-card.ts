@@ -18,6 +18,7 @@ import type { SlotWords, Voice } from '../wording/fact-words';
 import type { ModelChoice } from '../wording/model-choice';
 import { localExplanation } from '../local-model/local-tiers';
 import { readAiMode, type AiModeSettings } from '../privacy/ai-mode';
+import { nativeReach } from '../surfaces/native-reach';
 import { wordWithModel } from '../wording/word-chain';
 import { describeAction, type PendingAction } from './ask-action-words';
 import { askContextOf } from './ask-context';
@@ -148,6 +149,7 @@ export async function cardOf(
     return describeAction(action, wordsEnv, {
       categoryId,
       potLocked: newPotLocked(snap.pots, deps.max),
+      reach: nativeReach,
     });
   }
   const described = describeLedgerAnswer(

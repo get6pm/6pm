@@ -31,6 +31,11 @@ export function setDisplayFont(cssFont: string) {
   currentDisplay = faceOf(cssFont, 'display');
 }
 
+/** How much the look's display face closes up its tabular figures, in em (0 for most faces). */
+export function figureTracking(): number {
+  return currentDisplay.kind === 'variable' ? (currentDisplay.figureTracking ?? 0) : 0;
+}
+
 /**
  * Sets the interface face to the look's (`palette.uiFont`): SF Pro for the looks that keep the
  * system's type (Basic, Golden Hour, serious mode), the look's own text face for the rest.

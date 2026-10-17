@@ -73,87 +73,91 @@ function PlanCard({
 }) {
   const fg = selected ? MAX_INK : MAX_CREAM;
   const skel = selected ? 'rgba(22,19,28,.14)' : 'rgba(246,239,230,.14)';
+  // The saving badge stands half above the card, so it sits beside it rather than in it: the card
+  // clips what reaches past its edge.
   return (
-    <PressScale
-      accessibilityRole="radio"
-      accessibilityState={{ selected, disabled: price === null }}
-      accessibilityLabel={[label, price, sub].filter(Boolean).join(', ')}
-      scaleTo={0.97}
-      onPress={onPress}
-      style={{
-        flex: 1,
-        minHeight: 74,
-        paddingTop: 12,
-        paddingRight: 12,
-        paddingBottom: 11,
-        paddingLeft: 14,
-        borderRadius: 18,
-        backgroundColor: selected ? MAX_CREAM : 'rgba(255,255,255,.06)',
-        boxShadow: selected
-          ? `0 0 0 1.5px ${MAX_CREAM}`
-          : 'inset 0 0 0 0.5px rgba(255,255,255,.12)',
-        justifyContent: 'space-between',
-        gap: 6,
-      }}
-    >
-      <View
+    <View style={{ flex: 1 }}>
+      <PressScale
+        accessibilityRole="radio"
+        accessibilityState={{ selected, disabled: price === null }}
+        accessibilityLabel={[label, price, sub].filter(Boolean).join(', ')}
+        scaleTo={0.97}
+        onPress={onPress}
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
+          flexGrow: 1,
+          minHeight: 74,
+          paddingTop: 12,
+          paddingRight: 12,
+          paddingBottom: 11,
+          paddingLeft: 14,
+          borderRadius: 18,
+          backgroundColor: selected ? MAX_CREAM : 'rgba(255,255,255,.06)',
+          boxShadow: selected
+            ? `0 0 0 1.5px ${MAX_CREAM}`
+            : 'inset 0 0 0 0.5px rgba(255,255,255,.12)',
           justifyContent: 'space-between',
           gap: 6,
         }}
       >
-        <Text numberOfLines={1} style={{ ...body(12, 700, 0.02), color: fg }}>
-          {label}
-        </Text>
         <View
           style={{
-            width: 16,
-            height: 16,
-            borderRadius: 8,
-            borderWidth: 1.5,
-            borderColor: fg,
-            opacity: selected ? 1 : 0.5,
+            flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'space-between',
+            gap: 6,
           }}
         >
-          {selected ? (
-            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: fg }} />
-          ) : null}
+          <Text numberOfLines={1} style={{ ...body(12, 700, 0.02), color: fg }}>
+            {label}
+          </Text>
+          <View
+            style={{
+              width: 16,
+              height: 16,
+              borderRadius: 8,
+              borderWidth: 1.5,
+              borderColor: fg,
+              opacity: selected ? 1 : 0.5,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {selected ? (
+              <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: fg }} />
+            ) : null}
+          </View>
         </View>
-      </View>
-      <View style={{ gap: 1 }}>
-        {loading ? (
-          <>
-            <Shimmer width={96} height={16} color={skel} />
-            <Shimmer width={72} height={9} color={skel} delay={150} />
-          </>
-        ) : (
-          <>
-            <Text
-              numberOfLines={1}
-              adjustsFontSizeToFit
-              style={{
-                ...body(19, 700, -0.01),
-                lineHeight: 22,
-                minHeight: 22,
-                color: fg,
-                fontVariant: ['tabular-nums'],
-              }}
-            >
-              {price ?? ''}
-            </Text>
-            <Text
-              numberOfLines={1}
-              style={{ ...body(11.5), lineHeight: 15, color: fg, opacity: 0.7 }}
-            >
-              {sub ?? ''}
-            </Text>
-          </>
-        )}
-      </View>
+        <View style={{ gap: 1 }}>
+          {loading ? (
+            <>
+              <Shimmer width={96} height={16} color={skel} />
+              <Shimmer width={72} height={9} color={skel} delay={150} />
+            </>
+          ) : (
+            <>
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                style={{
+                  ...body(19, 700, -0.01),
+                  lineHeight: 22,
+                  minHeight: 22,
+                  color: fg,
+                  fontVariant: ['tabular-nums'],
+                }}
+              >
+                {price ?? ''}
+              </Text>
+              <Text
+                numberOfLines={1}
+                style={{ ...body(11.5), lineHeight: 15, color: fg, opacity: 0.7 }}
+              >
+                {sub ?? ''}
+              </Text>
+            </>
+          )}
+        </View>
+      </PressScale>
       {saving ? (
         <View
           style={{
@@ -170,7 +174,7 @@ function PlanCard({
           <Text style={{ ...body(10, 800, 0.06), color: MAX_INK }}>{saving}</Text>
         </View>
       ) : null}
-    </PressScale>
+    </View>
   );
 }
 

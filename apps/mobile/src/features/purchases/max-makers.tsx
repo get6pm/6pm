@@ -58,7 +58,7 @@ export function MaxMakers({ onSource }: { readonly onSource: () => void }) {
       <Text style={{ ...body(13.5), lineHeight: 19.6, color: 'rgba(246,239,230,.8)' }}>
         {t('max.makers.body')}
       </Text>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <PressScale
           accessibilityRole="link"
           scaleTo={0.96}
@@ -79,19 +79,27 @@ export function MaxMakers({ onSource }: { readonly onSource: () => void }) {
           }}
         >
           <Symbol name="code" size={18} color={MAX_CREAM} />
-          <Text style={{ ...body(13, 700), color: MAX_CREAM }}>{t('max.makers.source')}</Text>
+          <Text numberOfLines={1} style={{ ...body(13, 700), color: MAX_CREAM }}>
+            {t('max.makers.source')}
+          </Text>
         </PressScale>
         <View
           style={{
+            flexShrink: 1,
             height: 38,
-            paddingHorizontal: 14,
+            paddingHorizontal: 10,
             flexDirection: 'row',
             alignItems: 'center',
             gap: 6,
           }}
         >
           <Symbol name="task_alt" size={18} color={MAX_GOLD} />
-          <Text style={{ ...body(13, 600), color: 'rgba(246,239,230,.7)' }}>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.85}
+            style={{ ...body(13, 600), flexShrink: 1, color: 'rgba(246,239,230,.7)' }}
+          >
             {t('max.makers.noAds')}
           </Text>
         </View>

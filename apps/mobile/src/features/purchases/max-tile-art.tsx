@@ -17,6 +17,13 @@ import type { MaxFrom } from './max-context';
 import { SCENE_LOOKS } from './products';
 import { MAX_CREAM, MAX_INK } from './max-colours';
 
+/** The widget's number lifts off a dark sky; on a light one it is the look's own ink. */
+export const WIDGET_GLOW = {
+  textShadowColor: 'rgba(0,0,0,.4)',
+  textShadowOffset: { width: 0, height: 1 },
+  textShadowRadius: 4,
+} as const;
+
 /** The tiles' dark well, behind discs that overlap. */
 const WELL = '#1a1822';
 const ok = oklchSrgbHex;
@@ -219,10 +226,10 @@ export function TileArt({
       );
     case 'pots':
       return (
-        <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8 }}>
-          <Jar fill={0.7} hue={150} width={34} height={46} radius={[8, 11]} />
-          <Jar fill={0.4} hue={60} width={34} height={46} radius={[8, 11]} light={0.82} />
-          <Jar fill={0.9} hue={300} width={34} height={46} radius={[8, 11]} light={0.8} />
+        <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6 }}>
+          <Jar fill={0.7} hue={150} width={28} height={46} radius={[8, 11]} />
+          <Jar fill={0.4} hue={60} width={28} height={46} radius={[8, 11]} light={0.82} />
+          <Jar fill={0.9} hue={300} width={28} height={46} radius={[8, 11]} light={0.8} />
           <View
             style={{
               marginLeft: 2,
@@ -365,10 +372,12 @@ export function TileArt({
             }}
           >
             <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
               style={{
                 ...body(7, 700, 0.06),
                 textTransform: 'uppercase',
-                color: 'rgba(255,255,255,.75)',
+                color: palette.inkSoft,
               }}
             >
               {t('max.tile.safe')}
@@ -378,10 +387,8 @@ export function TileArt({
               adjustsFontSizeToFit
               style={{
                 ...leading(display(16, 600), 16),
-                color: '#ffffff',
-                textShadowColor: 'rgba(0,0,0,.4)',
-                textShadowOffset: { width: 0, height: 1 },
-                textShadowRadius: 4,
+                color: palette.ink,
+                ...(palette.dark ? WIDGET_GLOW : null),
               }}
             >
               {safe}

@@ -1,4 +1,5 @@
-import { ScrollView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import type { LookControl, LookId } from '@6pm/theme';
 

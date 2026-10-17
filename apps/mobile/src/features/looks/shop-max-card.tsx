@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Text, View } from 'react-native';
 
 import type { LookConfig, LookId } from '@6pm/theme';
@@ -18,7 +19,7 @@ import { MAX_CREAM, MAX_FONT, MAX_INK, MAX_PAGE } from '../purchases/max-colours
  * promise in the look's face, and what Max costs as the store says it. A price or a trial the
  * store has not told us is left out.
  */
-export function ShopMaxCard({
+export const ShopMaxCard = memo(function ShopMaxCard({
   customer,
   offerings,
   hour,
@@ -153,4 +154,4 @@ export function ShopMaxCard({
       </View>
     </PressScale>
   );
-}
+});

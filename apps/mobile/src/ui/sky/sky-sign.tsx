@@ -29,27 +29,18 @@ export function SkySign({
     color: typeof atm.signC === 'string' ? atm.signC : 'transparent',
   };
   const words = String(atm.signText);
+  // Every copy, the lit words included, sits in the same padded box: iOS lays a padded line out a
+  // little lower than a bare one, and copies that differ show their letters' feet under the sign.
+  const room = layers.reduce((most, shadow) => Math.max(most, shadowRoom(shadow)), 0);
+  const box = { position: 'absolute', left: -room, top: -room, padding: room } as const;
   return (
     <View style={styles.sign}>
       {layers.map((shadow, i) => (
-        <Text
-          key={i}
-          style={[
-            style,
-            shadow,
-            {
-              position: 'absolute',
-              left: -shadowRoom(shadow),
-              top: -shadowRoom(shadow),
-              padding: shadowRoom(shadow),
-            },
-          ]}
-          numberOfLines={1}
-        >
+        <Text key={i} style={[style, shadow, box]} numberOfLines={1}>
           {words}
         </Text>
       ))}
-      <Text style={style} numberOfLines={1}>
+      <Text style={[style, box]} numberOfLines={1}>
         {words}
       </Text>
     </View>

@@ -1,5 +1,5 @@
-import { Canvas, Group } from '@shopify/react-native-skia';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { Canvas, Group, type CanvasRef } from '@shopify/react-native-skia';
+import { memo, useEffect, useMemo, useState, type RefObject } from 'react';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import {
   Easing,
@@ -65,6 +65,8 @@ export interface SkyProps {
    * tilt is left out.
    */
   readonly preview?: { readonly width: number; readonly height: number };
+  /** The canvas, for a still picture of the sky (a look card flying to the try-on). */
+  readonly canvasRef?: RefObject<CanvasRef | null>;
 }
 
 /**
@@ -128,6 +130,7 @@ function SkyView({
   showSun = true,
   active,
   preview,
+  canvasRef,
 }: SkyProps) {
   const { width, height } = useWindowDimensions();
   const scale = preview ? preview.width / width : 1;
@@ -140,7 +143,11 @@ function SkyView({
     [look, config, hour, serious, closed],
   );
   const shownSun = useMemo(() => skyFrame({ ...base, showSun: true, tab: 'today' }), [base]);
-  const hiddenSun = useMemo(() => skyFrame({ ...base, showSun: false, tab: 'away' }), [base]);
+  // A preview always shows its sun, so it never needs the frame without one.
+  const hiddenSun = useMemo(
+    () => (preview ? shownSun : skyFrame({ ...base, showSun: false, tab: 'away' })),
+    [base, preview, shownSun],
+  );
   // The layout only changes with the look; keep it stable so layers don't rebuild every minute.
   const layoutKey = useMemo(() => JSON.stringify(shownSun.layout), [shownSun]);
   const layout = useMemo(() => JSON.parse(layoutKey) as SkyLayout, [layoutKey]);
@@ -201,6 +208,7 @@ function SkyView({
     >
       {senses ? <SceneMotionDriver motion={motion} time={time} /> : null}
       <Canvas
+        {...(canvasRef ? { ref: canvasRef } : {})}
         style={preview ? { width: preview.width, height: preview.height } : StyleSheet.absoluteFill}
       >
         <Group transform={shrink}>

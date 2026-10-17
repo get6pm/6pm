@@ -21,7 +21,7 @@ import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, leading, mono } from '../../ui/type/fonts';
 import type { MaxFrom } from './max-context';
-import { Coin, ICON_SAMPLES, LockRing, SPINES } from './max-tile-art';
+import { Coin, ICON_SAMPLES, LockRing, SPINES, WIDGET_GLOW } from './max-tile-art';
 import { MAX_CREAM, MAX_FONT, MAX_GOLD, MAX_INK } from './max-colours';
 
 const DEEP = '0 18px 36px rgba(0,0,0,.45)';
@@ -441,7 +441,7 @@ export function HeroArt({
                 style={{
                   ...body(11, 700, 0.06),
                   textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,.8)',
+                  color: palette.inkSoft,
                 }}
               >
                 {t('looks.safeToday')}
@@ -451,10 +451,8 @@ export function HeroArt({
                 adjustsFontSizeToFit
                 style={{
                   ...leading(display(38, 600), 38, true),
-                  color: '#ffffff',
-                  textShadowColor: 'rgba(0,0,0,.4)',
-                  textShadowOffset: { width: 0, height: 1 },
-                  textShadowRadius: 6,
+                  color: palette.ink,
+                  ...(palette.dark ? { ...WIDGET_GLOW, textShadowRadius: 6 } : null),
                 }}
               >
                 {safe}

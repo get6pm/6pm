@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import type { SkImage } from '@shopify/react-native-skia';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import { Text, useWindowDimensions, View } from 'react-native';
 import Animated, {
   Extrapolation,
@@ -22,7 +23,7 @@ import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
 import { SHOP_ORDER, SHOP_TIERS, tierOf, type CardBadge, type ShopTier } from './look-catalogue';
 import type { LookCopy } from './look-copy';
-import { ShopCard, type CardRect } from './shop-card';
+import { ShopCard, type CardHandle, type CardRect } from './shop-card';
 
 /** The prototype's card is 346 × 520 on a 402 pt screen: 28 pt in from each side. */
 const SIDE = 28;
@@ -61,6 +62,8 @@ export function ShopPager({
   live,
   onFocus,
   onOpen,
+  hidden,
+  register,
 }: {
   readonly listRef: AnimatedRef<Animated.FlatList<LookId>>;
   readonly scrollX: SharedValue<number>;
@@ -72,24 +75,39 @@ export function ShopPager({
   /** Whether the shop is showing: off, every sky holds still. */
   readonly live: boolean;
   readonly onFocus: (index: number) => void;
-  readonly onOpen: (look: LookId, rect: CardRect | null) => void;
+  readonly onOpen: (
+    look: LookId,
+    rect: CardRect | null,
+    cta: string,
+    image: SkImage | null,
+  ) => void;
+  /** The look whose card is flying, kept out of the pager meanwhile. */
+  readonly hidden: LookId | null;
+  readonly register: (look: LookId, card: CardHandle | null) => void;
 }) {
   const m = usePagerMetrics();
   const last = useSharedValue(focus);
   useEffect(() => last.set(focus), [focus, last]);
 
+  // The page in front is reported once the pager comes to rest, never mid-swipe: the dots follow
+  // the offset on the UI thread, and nothing on the JS thread competes with the swipe.
+  const settle = (x: number) => {
+    'worklet';
+    const at = Math.min(SHOP_ORDER.length - 1, Math.max(0, Math.round(x / m.step)));
+    if (at !== last.get()) {
+      last.set(at);
+      scheduleOnRN(onFocus, at);
+    }
+  };
   const onScroll = useAnimatedScrollHandler({
     onScroll: (e) => {
       scrollX.set(e.contentOffset.x);
-      const at = Math.min(
-        SHOP_ORDER.length - 1,
-        Math.max(0, Math.round(e.contentOffset.x / m.step)),
-      );
-      if (at !== last.get()) {
-        last.set(at);
-        scheduleOnRN(onFocus, at);
-      }
     },
+    onEndDrag: (e) => {
+      // A drag let go exactly on a card has no momentum to end.
+      if (Math.abs(e.velocity?.x ?? 0) < 0.05) settle(e.contentOffset.x);
+    },
+    onMomentumEnd: (e) => settle(e.contentOffset.x),
   });
 
   const getItemLayout = useCallback(
@@ -113,10 +131,13 @@ export function ShopPager({
       disableIntervalMomentum
       initialScrollIndex={focus}
       getItemLayout={getItemLayout}
-      initialNumToRender={1}
-      maxToRenderPerBatch={1}
-      windowSize={3}
-      extraData={{ focus, hour, configs, faces, live }}
+      // Every card stays mounted once drawn, so a swipe never builds a sky mid-scroll: the first
+      // three come with the sheet, the rest a couple at a time while it settles.
+      initialNumToRender={3}
+      maxToRenderPerBatch={2}
+      updateCellsBatchingPeriod={120}
+      windowSize={SHOP_ORDER.length * 2 + 1}
+      extraData={{ focus, hour, configs, faces, live, hidden }}
       onScroll={onScroll}
       scrollEventThrottle={16}
       contentContainerStyle={{ paddingHorizontal: m.side, paddingTop: 4, paddingBottom: 26 }}
@@ -137,11 +158,40 @@ export function ShopPager({
               cta={face.cta}
               copy={copy}
               onOpen={onOpen}
+              hidden={hidden === item}
+              register={register}
             />
           </View>
         );
       }}
     />
+  );
+}
+
+/**
+ * The card in front as its sky alone, where the pager will be: what the sheet carries while it
+ * slides up, before the live cards are built.
+ */
+export function PagerPlaceholder({
+  look,
+  hour,
+  config,
+}: {
+  readonly look: LookId;
+  readonly hour: number;
+  readonly config: Partial<LookConfig> | undefined;
+}) {
+  const m = usePagerMetrics();
+  const sky = useMemo(
+    () => paletteFor({ look, hour, serious: false, config: config ?? {} }).sky,
+    [look, hour, config],
+  );
+  return (
+    <View
+      style={{ paddingHorizontal: m.side, paddingTop: 4, paddingBottom: 26, marginBottom: -14 }}
+    >
+      <View style={{ width: m.card, height: m.height, borderRadius: 32, backgroundImage: sky }} />
+    </View>
   );
 }
 
@@ -289,7 +339,7 @@ function Dot({
 }
 
 /** Every look as a dot in its own sky, a little apart shelf by shelf; a tap goes to it. */
-export function ShopDots({
+export const ShopDots = memo(function ShopDots({
   hour,
   configs,
   scrollX,
@@ -345,4 +395,4 @@ export function ShopDots({
       ))}
     </View>
   );
-}
+});

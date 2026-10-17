@@ -143,7 +143,7 @@ export const viLooks: { readonly [Key in keyof typeof enLooks]: Entry } = {
   'max.makers.body':
     'Chốt ngày, ghi chép và quyền riêng tư luôn miễn phí cho mọi người. Max là thứ giữ cho điều đó tiếp tục: không quảng cáo, không bán dữ liệu của bạn, không nhà đầu tư nào phải chiều. Cảm ơn bạn đã ở đây.',
   'max.makers.source': 'Mã nguồn trên GitHub',
-  'max.makers.noAds': 'Không bao giờ có quảng cáo',
+  'max.makers.noAds': 'Không quảng cáo',
   'max.privacy': 'Quyền riêng tư',
   'max.manage': 'Quản lý đăng ký',
   'max.failed': 'Chưa thành công. Bạn chưa bị tính phí.',

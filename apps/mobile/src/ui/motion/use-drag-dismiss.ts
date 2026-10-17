@@ -116,6 +116,5 @@ export function useDragDismiss({ area, onDismissed, enter = true }: DragDismissO
   }));
   const dismiss = useCallback(() => leave(0), [leave]);
 
-  // `y` for a panel that adds its own movement to the drag's.
-  return { drag, panel, backdrop, onLayout, dismiss, y, travel };
+  return { drag, panel, backdrop, onLayout, dismiss };
 }

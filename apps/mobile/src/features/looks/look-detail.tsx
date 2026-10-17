@@ -1,12 +1,15 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
+import { GestureDetector } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
 
 import { configFor, lookById, type LookId } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
 import { useDesignInsets } from '../../ui/layout/design-insets';
+import type { ScrollDismiss } from '../../ui/motion/use-sheet-drag';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useToast } from '../../ui/toast/toast-host';
 import { useTheme } from '../../ui/theme/theme';
@@ -34,6 +37,7 @@ export function LookDetail({
   onStep,
   onDone,
   grab,
+  scroll,
 }: {
   readonly look: LookId;
   readonly onBack: () => void;
@@ -41,6 +45,8 @@ export function LookDetail({
   /** The look is worn: the sheet goes. */
   readonly onDone: () => void;
   readonly grab: (header: ReactNode) => ReactNode;
+  /** The scroll pulls the sheet down from its top. */
+  readonly scroll: ScrollDismiss;
 }) {
   const router = useRouter();
   const { palette } = useTheme();
@@ -114,102 +120,113 @@ export function LookDetail({
     <View style={{ flex: 1 }}>
       {grab(<DetailHeader position={positionOf(look)} onBack={onBack} onStep={onStep} />)}
 
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingTop: 12,
-          paddingHorizontal: 18,
-          paddingBottom: 10,
-          gap: 14,
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
-          <View style={{ flex: 1, gap: 5 }}>
-            <Text
-              numberOfLines={1}
-              style={{
-                ...body(11.5, 600, 0.08),
-                textTransform: 'uppercase',
-                color: palette.inkSoft,
-              }}
-            >
-              {t('look.tryingOn', { tier: t(`look.tier.${tierOf(look)}`) })}
-            </Text>
-            <Text
-              accessibilityRole="header"
-              style={{
-                ...leading(display(34, 500, -0.015, def.font), 34, true),
-                color: palette.ink,
-              }}
-            >
-              {copy.name(look)}
-            </Text>
+      <GestureDetector gesture={scroll.gesture}>
+        <Animated.ScrollView
+          ref={scroll.ref}
+          onScroll={scroll.onScroll}
+          scrollEventThrottle={16}
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+            paddingTop: 12,
+            paddingHorizontal: 18,
+            paddingBottom: 10,
+            gap: 14,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
+            <View style={{ flex: 1, gap: 5 }}>
+              <Text
+                numberOfLines={1}
+                style={{
+                  ...body(11.5, 600, 0.08),
+                  textTransform: 'uppercase',
+                  color: palette.inkSoft,
+                }}
+              >
+                {t('look.tryingOn', { tier: t(`look.tier.${tierOf(look)}`) })}
+              </Text>
+              <Text
+                accessibilityRole="header"
+                style={{
+                  ...leading(display(34, 500, -0.015, def.font), 34, true),
+                  color: palette.ink,
+                }}
+              >
+                {copy.name(look)}
+              </Text>
+            </View>
+            {badgeText ? (
+              <View
+                style={{
+                  marginTop: 2,
+                  height: 24,
+                  paddingHorizontal: 10,
+                  borderRadius: 99,
+                  backgroundColor: badgeBg,
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={{ ...body(11.5, 700), color: badgeFg }}>{badgeText}</Text>
+              </View>
+            ) : null}
           </View>
-          {badgeText ? (
+
+          <VariantPicker
+            look={look}
+            names={def.variants.map((_, i) => copy.variant(look, i))}
+            selected={settings.v}
+            onPick={(v) => store.setConfig(look, { v })}
+          />
+
+          <View style={{ gap: 4 }}>
             <View
               style={{
-                marginTop: 2,
-                height: 24,
-                paddingHorizontal: 10,
-                borderRadius: 99,
-                backgroundColor: badgeBg,
-                justifyContent: 'center',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'baseline',
               }}
             >
-              <Text style={{ ...body(11.5, 700), color: badgeFg }}>{badgeText}</Text>
+              <Text
+                style={{
+                  ...body(12, 600, 0.05),
+                  textTransform: 'uppercase',
+                  color: palette.inkSoft,
+                }}
+              >
+                {copy.intensity(look)}
+              </Text>
+              <Text
+                style={{ ...body(13.5, 650), color: palette.ink, fontVariant: ['tabular-nums'] }}
+              >
+                {`${shownK}%`}
+              </Text>
             </View>
-          ) : null}
-        </View>
-
-        <VariantPicker
-          look={look}
-          names={def.variants.map((_, i) => copy.variant(look, i))}
-          selected={settings.v}
-          onPick={(v) => store.setConfig(look, { v })}
-        />
-
-        <View style={{ gap: 4 }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'baseline',
-            }}
-          >
-            <Text
-              style={{ ...body(12, 600, 0.05), textTransform: 'uppercase', color: palette.inkSoft }}
-            >
-              {copy.intensity(look)}
-            </Text>
-            <Text style={{ ...body(13.5, 650), color: palette.ink, fontVariant: ['tabular-nums'] }}>
-              {`${shownK}%`}
-            </Text>
+            <IntensitySlider
+              value={settings.k}
+              accent={palette.accent}
+              trackColor={palette.chipBg}
+              accessibilityLabel={copy.intensity(look)}
+              onChange={(k) => {
+                setShownK(k);
+                store.setConfig(look, { k }, { persist: false });
+              }}
+              onCommit={(k) => {
+                haptics.tick();
+                store.setConfig(look, { k });
+              }}
+            />
           </View>
-          <IntensitySlider
-            value={settings.k}
-            accent={palette.accent}
-            trackColor={palette.chipBg}
-            accessibilityLabel={copy.intensity(look)}
-            onChange={(k) => {
-              setShownK(k);
-              store.setConfig(look, { k }, { persist: false });
-            }}
-            onCommit={(k) => {
-              haptics.tick();
-              store.setConfig(look, { k });
-            }}
-          />
-        </View>
 
-        <EffectChips
-          look={look}
-          controls={def.ctl}
-          values={settings}
-          copy={copy}
-          onToggle={(key, on) => store.setConfig(look, { [key]: on })}
-        />
-      </ScrollView>
+          <EffectChips
+            look={look}
+            controls={def.ctl}
+            values={settings}
+            copy={copy}
+            onToggle={(key, on) => store.setConfig(look, { [key]: on })}
+          />
+        </Animated.ScrollView>
+      </GestureDetector>
 
       {/* Pinned under the scroll so the button stays on screen whatever the phone's height. */}
       <View style={{ paddingTop: 10, paddingHorizontal: 16, paddingBottom: bottom(30), gap: 4 }}>

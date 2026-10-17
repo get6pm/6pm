@@ -294,13 +294,14 @@ export default function Scan() {
           top={top}
           receipt={receipt.phase.receipt}
           card={receipt.phase.card}
+          bill={receipt.phase.bill}
           looking={receipt.phase.looking}
           onRetake={receipt.retake}
-          onSave={(edits) => {
+          onSave={(edits, bill) => {
             if (answering.current) return;
             answering.current = true;
             receipt
-              .save(edits)
+              .save(edits, bill)
               .then((outcome) => {
                 if (outcome === 'empty') return;
                 if (outcome === 'saved') {

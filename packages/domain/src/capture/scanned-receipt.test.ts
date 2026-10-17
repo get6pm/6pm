@@ -51,6 +51,15 @@ describe('a scanned receipt', () => {
     expect(item?.foreign).toBeUndefined();
   });
 
+  it('saves only the user’s share of a split receipt, with its note', () => {
+    const card = scannedReceiptCard(grabfood, context, now);
+    const item = scannedReceiptItem(card, { people: 2, note: 'Split 2 ways' }, 'd', context);
+    expect(item).toMatchObject({ amount: 51_000, note: 'Split 2 ways' });
+    const abroad = scannedReceiptCard(coffeeBean, context, now);
+    const share = scannedReceiptItem(abroad, { people: 2 }, 'e', context);
+    expect(Number(share?.foreign?.amount)).toBeCloseTo(Number(abroad.foreign?.amount) / 2, 1);
+  });
+
   it('has no item while there is no amount', () => {
     const card = scannedReceiptCard([], context, now);
     expect(card.needsCheck).toBe(true);

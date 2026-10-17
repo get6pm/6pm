@@ -6,7 +6,9 @@ import Animated, { FadeIn, useAnimatedStyle, ZoomIn } from 'react-native-reanima
 import {
   homeKeypad,
   keypadHomeMinor,
+  offersSplit,
   pressKey,
+  splitShare,
   type ScannedCard,
   type ScannedEdits,
 } from '@6pm/domain';
@@ -24,8 +26,10 @@ import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, leading, tabular } from '../../ui/type/fonts';
 import { homeDecimalMark } from '../quick-add/typed-amount';
+import { BillChip, SplitRow } from './receipt-extras';
 import { CardButton, ScanCard } from './scan-card';
 import { scanColours as c } from './scan-colours';
+import type { BillChoice, ReceiptBill } from './use-receipt-scan';
 
 /** A category to file the receipt under: its tile over its name, outlined in ink when picked. */
 function CategoryChip({
@@ -78,12 +82,15 @@ function CategoryChip({
  * The receipt as read, to check and save: the cut-out paper above, and on the paper card the shop,
  * the total (typed on the keypad when it could not be read, or changed), the category, and Retake
  * or Save. While the server takes a closer look it says so; its reading lands on the card when it
- * comes, unless the user has typed an amount of their own.
+ * comes, unless the user has typed an amount of their own. A paper bill offers to pay the plan
+ * bill it matched (on) or to add the bill it reads as (off); a big shop bill offers a split, and
+ * then shows and saves the user's share.
  */
 export function ReceiptCard({
   top,
   receipt,
   card,
+  bill,
   looking,
   onRetake,
   onSave,
@@ -92,9 +99,10 @@ export function ReceiptCard({
   readonly top: number;
   readonly receipt: ScannedReceipt;
   readonly card: ScannedCard;
+  readonly bill: ReceiptBill;
   readonly looking: boolean;
   readonly onRetake: () => void;
-  readonly onSave: (edits: ScannedEdits) => void;
+  readonly onSave: (edits: ScannedEdits, bill: BillChoice) => void;
 }) {
   const { t } = useI18n();
   const { categories } = useMoney();
@@ -106,13 +114,24 @@ export function ReceiptCard({
   const [keys, setKeys] = useState(() => homeKeypad(money.currency));
   const [typing, setTyping] = useState(false);
   const [cardHeight, setCardHeight] = useState(0);
+  // Off until tapped for a bill it only reads as; on for a plan bill it matched.
+  const [billOn, setBillOn] = useState<boolean | null>(null);
+  const [people, setPeople] = useState(1);
 
   const unread = card.amount === null && card.foreign === null;
   const keypadOpen = typing || (unread && !looking);
   const typed = keypadHomeMinor(keys);
   const usingTyped = keypadOpen && typed > 0;
-  const parts = usingTyped ? money.parts(typed) : card.amountParts;
-  const label = usingTyped ? money.full(typed) : card.amountText;
+  const total = usingTyped ? typed : card.amount;
+  const billFace = bill.pays ?? bill.add;
+  const paysBill = billOn ?? bill.pays !== null;
+  const splits = billFace === null && card.kind === 'shop' && offersSplit(total, money.currency);
+  const share =
+    splits && people > 1 && total !== null ? splitShare(total, people, money.currency) : null;
+  const totalText = usingTyped ? money.full(typed) : card.amountText;
+  const parts =
+    share !== null ? money.parts(share) : usingTyped ? money.parts(typed) : card.amountParts;
+  const label = share !== null ? money.full(share) : totalText;
   const canSave = usingTyped || !unread;
   const picked = categoryId ?? card.categoryId ?? categories[0]?.id ?? null;
   const category = categories.find((x) => x.id === picked);
@@ -232,7 +251,11 @@ export function ReceiptCard({
               />
             ) : null}
           </View>
-          {card.inHomeText && !usingTyped ? (
+          {share !== null ? (
+            <Text style={{ ...body(14), ...tabular, color: c.cardSoft }}>
+              {t('scan.receipt.splitShare', { total: totalText })}
+            </Text>
+          ) : card.inHomeText && !usingTyped ? (
             <Text style={{ ...body(14), ...tabular, color: c.cardSoft }}>{card.inHomeText}</Text>
           ) : null}
           {looking ? (
@@ -247,6 +270,18 @@ export function ReceiptCard({
             <Text style={{ ...body(14), color: c.cardSoft }}>{t('scan.receipt.noTotal')}</Text>
           ) : null}
         </View>
+        {billFace !== null && !keypadOpen ? (
+          <BillChip
+            label={t(bill.pays ? 'scan.receipt.billPays' : 'scan.receipt.billAdd', {
+              bill: billFace.name,
+            })}
+            icon={billFace.icon}
+            hue={billFace.hue}
+            on={paysBill}
+            onPress={() => setBillOn(!paysBill)}
+          />
+        ) : null}
+        {splits && !keypadOpen ? <SplitRow people={people} onChange={setPeople} /> : null}
         {keypadOpen ? (
           <Keypad
             onPress={(key) => setKeys((k) => pressKey(k, key))}
@@ -287,11 +322,21 @@ export function ReceiptCard({
               onPress={() => {
                 if (!canSave) return;
                 haptics.tap();
-                onSave({
-                  ...(usingTyped ? { amount: typed } : {}),
-                  ...(payee !== null ? { payee } : {}),
-                  ...(picked !== null ? { categoryId: picked } : {}),
-                });
+                const split = share !== null;
+                onSave(
+                  {
+                    ...(usingTyped ? { amount: typed } : {}),
+                    ...(payee !== null ? { payee } : {}),
+                    ...(picked !== null ? { categoryId: picked } : {}),
+                    ...(split
+                      ? {
+                          people,
+                          note: t('scan.receipt.splitNote', { count: people, total: totalText }),
+                        }
+                      : {}),
+                  },
+                  paysBill && billFace !== null ? (bill.pays ? 'pays' : 'add') : null,
+                );
               }}
             />
           </View>

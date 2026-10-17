@@ -63,7 +63,7 @@ export async function importInbox(deps: InboxImportDeps): Promise<InboxImportRes
     const item = parsed.data;
     if (item.kind === 'paid') {
       if (await markPaid(deps, item)) saved += 1;
-    } else if (await saveInboxSpend(deps, item)) {
+    } else if ((await saveInboxSpend(deps, item)) !== null) {
       saved += 1;
     }
     await remove(file.id);
@@ -99,18 +99,19 @@ export async function alreadyImported(
 
 /**
  * Saves one spend as the inbox does: never twice (a repeat tap or the same receipt again is
- * skipped, and false returned), named first when it is a receipt, then filed and captured with the
- * duplicate merge. Scan saves the receipts it reads through here too.
+ * skipped, and null returned), named first when it is a receipt, then filed and captured with the
+ * duplicate merge. Returns the spend it was saved as (the one it merged into, when it did). Scan
+ * saves the receipts it reads through here too.
  */
 export async function saveInboxSpend(
   deps: Pick<InboxImportDeps, 'store' | 'actions' | 'enrich' | 'home'>,
   incoming: InboxSpend,
-): Promise<boolean> {
+): Promise<string | null> {
   const { store, actions } = deps;
-  if (await alreadyImported(store, incoming)) return false;
+  if (await alreadyImported(store, incoming)) return null;
   const snap = store.getSnapshot();
   const recent = [...snap.cycleSpends, ...snap.waitingBefore].filter((s) => s.status !== 'deleted');
-  if (recent.some((s) => isRepeatTap(incoming, s) || isSameReceipt(incoming, s))) return false;
+  if (recent.some((s) => isRepeatTap(incoming, s) || isSameReceipt(incoming, s))) return null;
 
   const item = incoming.source === 'shared' ? await deps.enrich(incoming) : incoming;
   const categoryIds = new Set(snap.categories.map((c) => c.id));
@@ -122,8 +123,7 @@ export async function saveInboxSpend(
     categoryIds,
     ...(deps.home ? { home: deps.home } : {}),
   });
-  await actions.captureSpend(draft);
-  return true;
+  return (await actions.captureSpend(draft)).row.id;
 }
 
 /** A waiting payment the Live Activity says went through; anything already answered stays. */

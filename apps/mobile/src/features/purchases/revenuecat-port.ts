@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import Purchases, {
   PRODUCT_CATEGORY,
   type CustomerInfo,
@@ -8,6 +9,7 @@ import {
   LOOK_PRODUCT_IDS,
   MAX_PLANS,
   MAX_PRODUCTS,
+  daysOfPeriod,
   lookOfProduct,
   maxPlanOfProduct,
   type MaxPlan,
@@ -28,8 +30,16 @@ import { customerFromStore } from './revenuecat-customer';
 
 const DAYS_IN: Readonly<Record<string, number>> = { DAY: 1, WEEK: 7, MONTH: 30, YEAR: 365 };
 
-/** The free trial the store lists on a product, in days; null when the intro price is not free. */
+/**
+ * The free trial the store lists on a product, in days; null when it has none. Google Play lists
+ * it as the default offer's free phase; the App Store as an intro price of nothing.
+ */
 function trialDaysOf(product: PurchasesStoreProduct): number | null {
+  const free = product.defaultOption?.freePhase;
+  if (free) {
+    const days = daysOfPeriod(free.billingPeriod.iso8601);
+    return days === null ? null : days * Math.max(1, free.billingCycleCount ?? 1);
+  }
   const intro = product.introPrice;
   if (!intro || intro.price !== 0) return null;
   const perUnit = DAYS_IN[intro.periodUnit];
@@ -37,12 +47,19 @@ function trialDaysOf(product: PurchasesStoreProduct): number | null {
 }
 
 /**
- * Which of the products this Apple ID can still take the free trial on. A product carries its
- * trial whoever asks, so the store is asked about the person; anything but a clear yes is a no.
+ * Which of the products this person can still take the free trial on. A product carries its
+ * trial whoever asks, so the App Store is asked about the person; anything but a clear yes is a
+ * no. Google Play only offers a trial to someone who can take it, so there a listed trial is open.
  */
-async function trialsOpenFor(productIds: readonly string[]): Promise<ReadonlySet<string>> {
+async function trialsOpenFor(
+  products: readonly PurchasesStoreProduct[],
+): Promise<ReadonlySet<string>> {
+  if (Platform.OS === 'android') {
+    return new Set(products.filter((p) => p.defaultOption?.freePhase).map((p) => p.identifier));
+  }
+  const productIds = products.map((p) => p.identifier);
   try {
-    const answers = await Purchases.checkTrialOrIntroductoryPriceEligibility([...productIds]);
+    const answers = await Purchases.checkTrialOrIntroductoryPriceEligibility(productIds);
     return new Set(
       productIds.filter(
         (id) =>
@@ -93,7 +110,7 @@ export function revenueCatPurchases(apiKey: string | undefined): PurchasesPort {
         load(subscriptions, PRODUCT_CATEGORY.SUBSCRIPTION),
         load(LOOK_PRODUCT_IDS, PRODUCT_CATEGORY.NON_SUBSCRIPTION),
       ]);
-      const open = await trialsOpenFor(plans.map((p) => p.identifier));
+      const open = await trialsOpenFor(plans);
       const looks: Partial<Record<PaidLookId, LookOffer>> = {};
       for (const product of singles) {
         const look = lookOfProduct(product.identifier);

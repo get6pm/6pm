@@ -26,6 +26,9 @@
       "ios": {
         "simulator": true,
         "image": "latest"
+      },
+      "android": {
+        "buildType": "apk"
       }
     },
     "dev": {
@@ -54,10 +57,18 @@
   },
   "submit": {
     "dev": {
-      "ios": {}
+      "ios": {},
+      "android": {
+        "track": "internal",
+        "releaseStatus": "draft"
+      }
     },
     "prd": {
-      "ios": {}
+      "ios": {},
+      "android": {
+        "track": "internal",
+        "releaseStatus": "draft"
+      }
     }
   }
 }

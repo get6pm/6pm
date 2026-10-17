@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import Animated, {
   ReduceMotion,
@@ -6,6 +6,8 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+
+import { barGlass } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
@@ -35,6 +37,7 @@ export const TabRail = memo(function TabRail({
   readonly onReselect: () => void;
 }) {
   const { palette } = useTheme();
+  const fill = useMemo(() => barGlass(palette), [palette]);
   const { t } = useI18n();
   const activeIndex = HOME_TABS.indexOf(active);
   const index = useSharedValue(activeIndex);
@@ -61,7 +64,7 @@ export const TabRail = memo(function TabRail({
         padding: PAD,
         gap: GAP,
         borderRadius: 99,
-        backgroundColor: palette.glass,
+        backgroundColor: fill,
         boxShadow: palette.glassShadow,
       }}
     >

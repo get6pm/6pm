@@ -1,3 +1,4 @@
+export * from './bar-glass';
 export * from './look-engine';
 export * from './look-types';
 export * from './motion';

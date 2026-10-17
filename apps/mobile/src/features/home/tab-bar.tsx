@@ -12,6 +12,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
+import { barGlass } from '@6pm/theme';
+
 import { useI18n } from '../../i18n/i18n';
 import { haptics } from '../../ui/haptics';
 import { Symbol } from '../../ui/icons/symbol';
@@ -45,6 +47,7 @@ export const TabBar = memo(function TabBar({
   readonly onReselect: () => void;
 }) {
   const { palette } = useTheme();
+  const fill = useMemo(() => barGlass(palette), [palette]);
   const { t } = useI18n();
   const { barMin } = useHomeScroll();
   const [width, setWidth] = useState(0);
@@ -155,7 +158,7 @@ export const TabBar = memo(function TabBar({
               left: 0,
               bottom: 0,
               borderRadius: 99,
-              backgroundColor: palette.glass,
+              backgroundColor: fill,
               boxShadow: palette.glassShadow,
             },
             glass,

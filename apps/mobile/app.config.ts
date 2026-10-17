@@ -73,15 +73,19 @@ const variant = VARIANTS[appVariant];
  * `tools/scripts/generate-native.ts`, which this config cannot import. The plugins below take
  * them so no plugin writes its own default; each language's file then localises them.
  */
-const PERMISSION = JSON.parse(readFileSync(join(__dirname, 'locales/en.json'), 'utf8')) as Record<
-  | 'NSCameraUsageDescription'
-  | 'NSMicrophoneUsageDescription'
-  | 'NSSpeechRecognitionUsageDescription'
-  | 'NSPhotoLibraryUsageDescription'
-  | 'NSPhotoLibraryAddUsageDescription'
-  | 'NSLocationWhenInUseUsageDescription',
-  string
->;
+const PERMISSION = (
+  JSON.parse(readFileSync(join(__dirname, 'locales/en.json'), 'utf8')) as {
+    ios: Record<
+      | 'NSCameraUsageDescription'
+      | 'NSMicrophoneUsageDescription'
+      | 'NSSpeechRecognitionUsageDescription'
+      | 'NSPhotoLibraryUsageDescription'
+      | 'NSPhotoLibraryAddUsageDescription'
+      | 'NSLocationWhenInUseUsageDescription',
+      string
+    >;
+  }
+).ios;
 
 /**
  * The companions' Home Screen icons, which the picker can switch to; the sun is the app's own

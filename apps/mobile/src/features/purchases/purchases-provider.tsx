@@ -52,12 +52,14 @@ const PurchasesContext = createContext<PurchasesValue | null>(null);
 
 let defaultPort: PurchasesPort | null = null;
 
-/** RevenueCat on an iPhone build that has its public key; otherwise the port that says no. */
+/** RevenueCat with the platform's public SDK key; without one, the port that says no. */
 function appPort(): PurchasesPort {
   defaultPort ??=
     Platform.OS === 'ios'
       ? revenueCatPurchases(process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY)
-      : unavailablePurchases;
+      : Platform.OS === 'android'
+        ? revenueCatPurchases(process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY)
+        : unavailablePurchases;
   return defaultPort;
 }
 

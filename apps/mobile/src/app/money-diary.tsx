@@ -53,7 +53,6 @@ export default function MoneyDiary() {
   const header = (
     <View
       style={{
-        backgroundColor: tint,
         paddingTop: 8,
         paddingHorizontal: 20,
         paddingBottom: 4,
@@ -93,9 +92,11 @@ export default function MoneyDiary() {
   );
 
   return (
-    <SheetFrame header={header}>
+    // The header sits on the same grained paper as the pages, so the two read as one sheet.
+    <SheetFrame background={tint}>
       <View style={{ flex: 1, backgroundColor: tint }}>
         <ZineGrain />
+        {header}
         {zine ? (
           <Animated.View entering={FadeIn.duration(250)} style={{ flex: 1 }}>
             <ScrollView

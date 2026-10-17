@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native';
+import { Text, useWindowDimensions, View } from 'react-native';
 
 import { configFor, lookById, swatchesFor } from '@6pm/theme';
 
@@ -9,23 +9,27 @@ import { useClock } from '../../ui/theme/clock';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, leading } from '../../ui/type/fonts';
 import { useLookCardLines } from '../looks/look-card-lines';
-import { LookPreview, SHOP_PREVIEW } from '../looks/look-preview';
+import { LookSkyPreview } from '../looks/look-sky-preview';
 import { useLookSettings } from '../looks/look-settings-provider';
 import { resolveLook } from '../purchases/entitlement';
 import { useEntitlement } from '../purchases/purchases-provider';
 
-/** Settings' card for the look worn: its sky (108 pt, sun at 64%), its name in its own face. */
-const CARD_PREVIEW = { ...SHOP_PREVIEW, sunLeft: '64%', sunTop: 26, sunSize: 44 } as const;
+/** The card's sky band, and where in the screen's sky it looks: the sign, the date and the clock. */
+const SKY_HEIGHT = 150;
+const SKY_LIFT = 175;
+/** Settings' rows sit 16 pt in from each side. */
+const SIDE = 16;
 
 /**
- * The look in use (prototype `App:794-810`): a strip of its sky with the "In use" badge, then
- * "LOOK", its name in its face, three swatches of its variant and "Saigon · 7 more in the shop".
- * Opens the Looks shop.
+ * The look in use (prototype `App:794-810`): a band of its real sky, as the Looks shop's cards
+ * draw it, with the date, the clock and the "In use" badge; then "LOOK", its name in its face,
+ * three swatches of its variant and "Saigon · 7 more in the shop". Opens the Looks shop.
  */
 export function SettingsLookCard({ onPress }: { readonly onPress: () => void }) {
   const { palette } = useTheme();
   const { t } = useI18n();
   const { hour } = useClock();
+  const { width } = useWindowDimensions();
   const { customer } = useEntitlement();
   const { look, config } = useLookSettings();
   const { name, line } = useLookCardLines();
@@ -47,23 +51,30 @@ export function SettingsLookCard({ onPress }: { readonly onPress: () => void }) 
         boxShadow: palette.cardShadow,
       }}
     >
-      <View style={{ height: 108 }}>
-        <LookPreview look={worn} hour={hour} config={lookConfig} metrics={CARD_PREVIEW}>
-          <View
-            style={{
-              position: 'absolute',
-              left: 14,
-              top: 12,
-              height: 22,
-              paddingHorizontal: 9,
-              borderRadius: 99,
-              backgroundColor: '#ffffff',
-              justifyContent: 'center',
-            }}
-          >
-            <Text style={{ ...body(11, 700), color: '#16131c' }}>{t('looks.badge.inUse')}</Text>
-          </View>
-        </LookPreview>
+      <View style={{ height: SKY_HEIGHT }}>
+        <LookSkyPreview
+          look={worn}
+          hour={hour}
+          config={lookConfig}
+          width={width - SIDE * 2}
+          height={SKY_HEIGHT}
+          running={false}
+          lift={SKY_LIFT}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            left: 14,
+            top: 12,
+            height: 22,
+            paddingHorizontal: 9,
+            borderRadius: 99,
+            backgroundColor: '#ffffff',
+            justifyContent: 'center',
+          }}
+        >
+          <Text style={{ ...body(11, 700), color: '#16131c' }}>{t('looks.badge.inUse')}</Text>
+        </View>
       </View>
       <View
         style={{

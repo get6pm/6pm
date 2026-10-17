@@ -1,5 +1,6 @@
 import type { ActionAnswer, HowToTopic } from '@6pm/domain';
 
+import type { NativeReach } from '../surfaces/native-reach';
 import type { AskCard } from './ask-words';
 import type { LedgerWordsEnv } from './ask-ledger-words';
 
@@ -26,6 +27,34 @@ export interface ActionCard {
 export interface ActionPicks {
   readonly categoryId: string;
   readonly potLocked: boolean;
+  /** The native pieces the capture guides need; every one of them when left out. */
+  readonly reach?: GuideReach;
+}
+
+/** The capture ways that need a native piece, and whether this phone has it. */
+export type GuideReach = Pick<NativeReach, 'share' | 'scan' | 'wallet' | 'widgets'>;
+
+const FULL_REACH: GuideReach = { share: true, scan: true, wallet: true, widgets: true };
+
+/**
+ * The guide a phone without a way's native piece is shown instead: a receipt picture is chosen in
+ * Scan, and a card's receipts come by email. Widgets have no stand-in; Quick add is offered.
+ */
+const STAND_IN: Readonly<Partial<Record<keyof GuideReach, string>>> = {
+  share: 'scan',
+  wallet: 'email',
+};
+
+function needsReach(guide: string): guide is keyof GuideReach {
+  return guide in FULL_REACH;
+}
+
+/** The guide to open on this phone, or null when it has neither the way nor a stand-in. */
+function guideOn(guide: string, reach: GuideReach): string | null {
+  if (!needsReach(guide) || reach[guide]) return guide;
+  const standIn = STAND_IN[guide];
+  if (standIn === undefined) return null;
+  return !needsReach(standIn) || reach[standIn] ? standIn : null;
 }
 
 type Say = (key: string, params?: Readonly<Record<string, string | number>>) => string;
@@ -105,9 +134,18 @@ export function describeAction(
       const guide = GUIDED[topic];
       if (guide !== undefined) {
         const text = topic === 'ways' ? say('ask.howTo.ways') : say(`capture.${topic}.headline`);
+        const shown = guideOn(guide, picks.reach ?? FULL_REACH);
+        if (shown === null) {
+          return {
+            card: card(text, 'think', [
+              { id: 'go', label: say('ask.action.openQuickAdd'), primary: true },
+            ]),
+            pending: { kind: 'open', pathname: '/quick-add' },
+          };
+        }
         return {
           card: card(text, 'think', [{ id: 'go', label: say('ask.action.showMe'), primary: true }]),
-          pending: { kind: 'open', pathname: '/capture-guide', params: { source: guide } },
+          pending: { kind: 'open', pathname: '/capture-guide', params: { source: shown } },
         };
       }
       if (topic === 'quickAdd') {

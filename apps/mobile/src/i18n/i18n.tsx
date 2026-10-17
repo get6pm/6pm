@@ -5,11 +5,12 @@ import { createContext, use, useMemo, useState, type ReactNode } from 'react';
 import {
   isLanguage,
   pickLanguage,
-  t,
   type Language,
   type ParamsArgument,
   type StringKey,
 } from '@6pm/i18n';
+
+import { translate } from './translate';
 
 export interface I18n {
   readonly language: Language;
@@ -43,7 +44,7 @@ function make(language: Language, chosen: Language | null, setLanguage: I18n['se
   return {
     language,
     chosen,
-    t: (key, ...params) => t(language, key, ...params),
+    t: (key, ...params) => translate(language, key, ...params),
     weekday: (date) => weekday.format(date),
     weekdayDate: (date) => weekdayDate.format(date),
     dayMonth: (date) => dayMonth.format(date),

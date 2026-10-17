@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { BANKS, appStoreUrl, findBank, findBankByBin } from './bank-catalogue';
+import { BANKS, appStoreUrl, findBank, findBankByBin, playStoreUrl } from './bank-catalogue';
 
 describe('bank catalogue', () => {
   it.each([
@@ -59,5 +59,18 @@ describe('bank catalogue', () => {
     for (const id of ['VCB', 'TCB', 'VPB', 'ACB', 'BIDV', 'ICB', 'VBA', 'TPB', 'CAKE', 'TIMO']) {
       expect(findBank(id)?.ios?.scheme).toMatch(/^[a-z][a-z0-9.+-]*:\/\/$/);
     }
+  });
+
+  it('knows the Android app of every bank it can open on iOS, by a Play Store package', () => {
+    for (const bank of BANKS) {
+      expect(bank.android !== null).toBe(bank.ios !== null);
+      if (bank.android) expect(bank.android.package).toMatch(/^[A-Za-z][\w]*(\.[A-Za-z][\w]*)+$/);
+    }
+    const packages = BANKS.flatMap((b) => (b.android ? [b.android.package] : []));
+    expect(new Set(packages).size).toBe(packages.length);
+    const mb = findBank('MB')?.android;
+    expect(mb && playStoreUrl(mb)).toBe(
+      'https://play.google.com/store/apps/details?id=com.mbmobile',
+    );
   });
 });

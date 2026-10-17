@@ -27,6 +27,18 @@ describe('the feature tiles', () => {
     expect(tileRows(tileOrder('looks')).at(-1)).toEqual(['buddy']);
   });
 
+  it('shows only the tiles a phone has, the reason first when it is one of them', () => {
+    const noWidgets = MAX_TILES.filter((tile) => tile !== 'widgets');
+    expect(tileOrder('backup', noWidgets)).toEqual([
+      'backup',
+      ...noWidgets.slice(0, 5),
+      'icons',
+      'buddy',
+    ]);
+    expect(tileOrder('widgets', noWidgets)).toEqual(noWidgets);
+    expect(tileRows(tileOrder('looks', noWidgets)).at(-1)).toEqual(['icons', 'buddy']);
+  });
+
   it('places every tile once', () => {
     for (const from of MAX_TILES) {
       expect(tileRows(tileOrder(from)).flat().sort()).toEqual([...MAX_TILES].sort());

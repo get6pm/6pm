@@ -44,9 +44,16 @@ export const MAX_TILES = [
   'buddy',
 ] as const satisfies readonly MaxFrom[];
 
-/** The tile that opened the sheet comes first; the rest keep their order. */
-export function tileOrder(from: MaxFrom): readonly MaxFrom[] {
-  return [from, ...MAX_TILES.filter((tile) => tile !== from)];
+/**
+ * The tile that opened the sheet comes first; the rest keep their order. `tiles` are the ones this
+ * phone shows (a phone without widgets is not sold them).
+ */
+export function tileOrder(
+  from: MaxFrom,
+  tiles: readonly MaxFrom[] = MAX_TILES,
+): readonly MaxFrom[] {
+  if (!tiles.includes(from)) return tiles;
+  return [from, ...tiles.filter((tile) => tile !== from)];
 }
 
 /** Lays the tiles out two to a row, in order; an odd last tile sits alone on the left. */

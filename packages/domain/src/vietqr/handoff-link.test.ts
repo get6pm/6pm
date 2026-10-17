@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { findBank } from './bank-catalogue';
 import { encodeVietQR } from './encode-vietqr';
-import { handoffUrl, payloadFor, transferLink } from './handoff-link';
+import { handoffPlan, handoffUrl, payloadFor, transferLink } from './handoff-link';
 import { parseVietQR, type VietQR } from './parse-vietqr';
 
 function scan(payload: string): VietQR {
@@ -99,5 +99,40 @@ describe('handoffUrl', () => {
 
   it('opens the home of a bank with no link', () => {
     expect(handoffUrl(app('VCB'), transfer, 10_000)).toBe('vietcombankmobile://');
+  });
+});
+
+describe('handoffPlan', () => {
+  it('opens a verified bank filled in on iOS, with its App Store page behind it', () => {
+    expect(handoffPlan(findBank('MB'), 'ios', transfer, 10_000)).toEqual({
+      open: transferLink(app('MB'), transfer, 10_000),
+      filledIn: true,
+      store: ['https://apps.apple.com/vn/app/id1205807363'],
+    });
+  });
+
+  it("opens an unverified bank's home on iOS, not filled in", () => {
+    expect(handoffPlan(findBank('TCB'), 'ios', transfer, 10_000)).toMatchObject({
+      open: 'tcb://',
+      filledIn: false,
+    });
+  });
+
+  it('opens the app at its home on Android, then its Play Store page', () => {
+    expect(handoffPlan(findBank('MB'), 'android', transfer, 10_000)).toEqual({
+      open: 'mbbank://',
+      filledIn: false,
+      store: [
+        'market://details?id=com.mbmobile',
+        'https://play.google.com/store/apps/details?id=com.mbmobile',
+      ],
+    });
+  });
+
+  it('has nothing to open for a bank without an app, or no bank', () => {
+    const viettel = findBank('VTLMONEY');
+    expect(handoffPlan(viettel, 'ios', transfer, 10_000)).toBeNull();
+    expect(handoffPlan(viettel, 'android', transfer, 10_000)).toBeNull();
+    expect(handoffPlan(null, 'android', transfer, 10_000)).toBeNull();
   });
 });

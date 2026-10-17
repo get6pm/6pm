@@ -1,9 +1,10 @@
 import { getLocales } from 'expo-localization';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { pickLanguage, t } from '@6pm/i18n';
+import { pickLanguage } from '@6pm/i18n';
 import { DEFAULT_LOOK, paletteFor } from '@6pm/theme';
 
+import { translate as t } from '../i18n/translate';
 import { PressScale } from './primitives/press-scale';
 import { families } from './type/fonts';
 

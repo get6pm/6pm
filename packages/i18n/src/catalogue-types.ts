@@ -39,3 +39,14 @@ export type ParamsOf<Key extends StringKey> = {
 export type ParamsArgument<Key extends StringKey> = [keyof ParamsOf<Key>] extends [never]
   ? []
   : [params: ParamsOf<Key>];
+
+/** The phones 6pm runs on. The catalogues are written for iPhone; Android words a few keys its own way. */
+export const platforms = ['ios', 'android'] as const;
+export type Platform = (typeof platforms)[number];
+
+/**
+ * A platform's own wording for the keys that would not be true on it as the catalogue writes them
+ * (the iPhone by name, Apple's services, places 6pm cannot reach there). Every other key reads as
+ * the catalogue has it.
+ */
+export type Variants = { readonly [Key in StringKey]?: Entry };

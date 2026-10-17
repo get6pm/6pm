@@ -84,3 +84,33 @@ export function findCatalogueProblems(
   }
   return problems;
 }
+
+/**
+ * Everything wrong with a platform's wording measured against the catalogue it varies, in one
+ * language: a key the catalogue lacks, a plural shape or parameters that differ, an empty string,
+ * or wording no different from the catalogue's.
+ */
+export function findVariantProblems(catalogue: LooseCatalogue, variants: LooseCatalogue): string[] {
+  const problems: string[] = [];
+  for (const [key, entry] of Object.entries(variants)) {
+    const base = catalogue[key];
+    if (base === undefined) {
+      problems.push(`${key}: not in the catalogue`);
+      continue;
+    }
+    if ((typeof entry === 'string') !== (typeof base === 'string')) {
+      problems.push(`${key}: plural in one of them only`);
+      continue;
+    }
+    const expected = paramNames(base).join(', ');
+    const actual = paramNames(entry).join(', ');
+    if (expected !== actual) {
+      problems.push(`${key}: parameters differ ({${expected}} against {${actual}})`);
+    }
+    if (texts(entry).some((text) => text.trim() === '')) problems.push(`${key}: empty wording`);
+    if (texts(entry).join('\n') === texts(base).join('\n')) {
+      problems.push(`${key}: the same as the catalogue`);
+    }
+  }
+  return problems;
+}

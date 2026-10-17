@@ -54,11 +54,13 @@ function text(catalogue: Catalogue, key: string): string {
 }
 
 function permissionLocale(catalogue: Catalogue): string {
-  const entries = Object.entries(PERMISSION_KEYS).map(([name, plistKey]) => [
+  const entries = Object.entries(PERMISSION_KEYS).map(([name, plistKey]): [string, string] => [
     plistKey,
     text(catalogue, `native.permission.${name}`),
   ]);
-  return `${JSON.stringify(Object.fromEntries(entries), null, 2)}\n`;
+  // Under `ios` only: Android has its own permission wording, and these keys copied into its
+  // per-language strings with no default fail the release build's lint.
+  return `${JSON.stringify({ ios: Object.fromEntries(entries) }, null, 2)}\n`;
 }
 
 const stringsLiteral = (value: string) =>

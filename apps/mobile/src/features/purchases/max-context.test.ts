@@ -18,20 +18,13 @@ describe('the feature tiles', () => {
     expect(tileOrder('travel')).toHaveLength(MAX_TILES.length);
   });
 
-  it('lays the looks across a whole row', () => {
-    expect(tileRows(tileOrder('looks')).slice(0, 3)).toEqual([
-      ['looks'],
-      ['ask', 'pots'],
-      ['travel', 'diary'],
+  it('lays the tiles two to a row in order, the reason first', () => {
+    expect(tileRows(tileOrder('looks')).slice(0, 2)).toEqual([
+      ['looks', 'ask'],
+      ['pots', 'travel'],
     ]);
-  });
-
-  it('fills the gap beside a first small tile with the next one, the looks below', () => {
-    expect(tileRows(tileOrder('ask')).slice(0, 3)).toEqual([
-      ['ask', 'pots'],
-      ['looks'],
-      ['travel', 'diary'],
-    ]);
+    expect(tileRows(tileOrder('backup'))[0]).toEqual(['backup', 'looks']);
+    expect(tileRows(tileOrder('looks')).at(-1)).toEqual(['buddy']);
   });
 
   it('places every tile once', () => {

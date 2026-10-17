@@ -1,7 +1,15 @@
-import type { Ref } from 'react';
+import { useEffect, useRef, type Ref } from 'react';
 import { ScrollView, Text, type TextInputInstance, View } from 'react-native';
 import { useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
-import Animated, { FadeIn, useAnimatedStyle, useDerivedValue } from 'react-native-reanimated';
+import Animated, {
+  Easing,
+  FadeIn,
+  ReduceMotion,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
@@ -15,6 +23,11 @@ import type { AskChat } from './use-ask';
 
 /** The gap between the input and the top of the keyboard while it is up. */
 const KEYBOARD_GAP = 8;
+/** How long the suggestions stay when Ask opens, unless a finger touches them. */
+const SUGGESTIONS_FOR_MS = 5000;
+/** A chip's height, and the gap the composer leaves under the row. */
+const CHIP = 34;
+const ROW_GAP = 10;
 
 /**
  * Where the composer sits with the keyboard down (its bottom padding), how much of the keyboard's
@@ -103,6 +116,10 @@ function LockedBar({ total, onPress }: { readonly total: number; readonly onPres
   );
 }
 
+/**
+ * The suggestion chips. They show for five seconds when Ask opens and then fold away, the input
+ * sliding down into their place; a touch on them (a scroll, a press) keeps them for good.
+ */
 function Chips({
   suggestions,
   onPick,
@@ -111,31 +128,60 @@ function Chips({
   readonly onPick: (question: string) => void;
 }) {
   const { palette } = useTheme();
+  const shown = useSharedValue(1);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    timer.current = setTimeout(() => {
+      shown.set(
+        withTiming(0, {
+          duration: 320,
+          easing: Easing.bezier(0.23, 1, 0.32, 1),
+          reduceMotion: ReduceMotion.System,
+        }),
+      );
+    }, SUGGESTIONS_FOR_MS);
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+    };
+  }, [shown]);
+  const keep = () => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+  };
+  // The row's height and the gap under it close together, so the input moves as one.
+  const fold = useAnimatedStyle(() => ({
+    height: CHIP * shown.get(),
+    marginBottom: -ROW_GAP * (1 - shown.get()),
+    opacity: shown.get(),
+  }));
+  if (suggestions.length === 0) return null;
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      keyboardShouldPersistTaps="handled"
-      style={{ marginHorizontal: -12, flexGrow: 0 }}
-      contentContainerStyle={{ gap: 6, paddingHorizontal: 12 }}
-    >
-      {suggestions.map((label) => (
-        <PressScale
-          key={label}
-          accessibilityRole="button"
-          onPress={() => onPick(label)}
-          style={{
-            height: 34,
-            paddingHorizontal: 13,
-            borderRadius: 17,
-            backgroundColor: palette.chipBg,
-            justifyContent: 'center',
-          }}
-        >
-          <Text style={{ ...body(13, 600), color: palette.ink }}>{label}</Text>
-        </PressScale>
-      ))}
-    </ScrollView>
+    <Animated.View style={[{ overflow: 'hidden' }, fold]} onTouchStart={keep}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        style={{ marginHorizontal: -12, flexGrow: 0 }}
+        contentContainerStyle={{ gap: 6, paddingHorizontal: 12 }}
+      >
+        {suggestions.map((label) => (
+          <PressScale
+            key={label}
+            accessibilityRole="button"
+            onPress={() => onPick(label)}
+            style={{
+              height: 34,
+              paddingHorizontal: 13,
+              borderRadius: 17,
+              backgroundColor: palette.chipBg,
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ ...body(13, 600), color: palette.ink }}>{label}</Text>
+          </PressScale>
+        ))}
+      </ScrollView>
+    </Animated.View>
   );
 }
 

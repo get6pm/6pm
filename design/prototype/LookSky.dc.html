@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:transparent}
+a{color:inherit}
+a:hover{color:inherit}
+</style>
+</helmet>
+<div style="position:relative; width:402px; height:874px; overflow:hidden; color: {{ pv.ink }}; text-shadow: {{ pv.textGlow }}; font-family: {{ pv.uiFont }}; -webkit-font-smoothing:antialiased;">
+      <div style="position:absolute; inset:0; background: {{ pv.sky }}; transition: background 1s;"></div>
+      <div style="position:absolute; inset:0; overflow:hidden; pointer-events:none;"><sc-for list="{{ pv.atm.back }}" as="z" hint-placeholder-count="0"><div style="position:absolute; left: {{ z.l }}; top: {{ z.t }}; width: {{ z.w }}; height: {{ z.h }}; background: {{ z.bg }}; border-radius: {{ z.r }}; box-shadow: {{ z.sh }}; border: {{ z.bd }}; box-sizing:border-box; opacity: {{ z.op }}; transform: {{ z.tf }}; transform-origin: {{ z.to }}; rotate: {{ z.rot }}; translate: {{ z.tr }}; filter: {{ z.fl }}; mix-blend-mode: {{ z.bl }}; -webkit-mask-image: {{ z.mk }}; mask-image: {{ z.mk }}; animation: {{ z.an }}; transition: opacity 1s, left 1s, top 1s;"></div></sc-for></div>
+      <div style="position:absolute; inset:0; overflow:hidden; pointer-events:none; opacity: {{ pv.atm.bloomOp }}; mix-blend-mode: {{ pv.atm.blend }}; transition: opacity 1s;">
+        <div style="position:absolute; left:-30%; top:300px; width:440px; height:440px; border-radius:50%; background: {{ pv.atm.bloomA }}; filter: {{ pv.atm.blurA }}; animation:drift1 19s ease-in-out infinite alternate;"></div>
+        <div style="position:absolute; right:-35%; top:-60px; width:400px; height:400px; border-radius:50%; background: {{ pv.atm.bloomB }}; filter: {{ pv.atm.blurB }}; animation:drift2 23s ease-in-out infinite alternate;"></div>
+        <div style="position:absolute; left:30%; top:560px; width:300px; height:300px; border-radius:50%; background: {{ pv.atm.bloomB }}; filter: {{ pv.atm.blurB }}; opacity:.6; animation:drift1 27s ease-in-out infinite alternate-reverse;"></div>
+      </div>
+      <div style="position:absolute; left: {{ pv.sun.left }}; top:0; width:1px; height: {{ pv.sun.threadH }}; background: {{ pv.sun.thread }}; opacity: {{ pv.sun.threadOp }}; transform:translateY(calc(var(--sy, 0) * -.35px)); transition: left 1s, height 1s, opacity 1s; pointer-events:none;"></div>
+      <div style="position:absolute; left: {{ pv.sun.left }}; top: {{ pv.sun.top }}; width: {{ pv.sun.size }}; height: {{ pv.sun.size }}; border-radius:50%; background: {{ pv.sun.color }}; box-shadow: {{ pv.sun.glow }}; -webkit-mask-image: {{ pv.sun.mask }}; mask-image: {{ pv.sun.mask }}; opacity: {{ pv.sun.opacity }}; transform:translate(-50%, calc(-50% - var(--sy, 0) * .35px)); transition: left 1s, top 1s, width 1s, height 1s, opacity 1s, background 1s; pointer-events:none;"></div>
+      <div style="position:absolute; left: {{ pv.sun.left }}; top: {{ pv.sun.top }}; width: {{ pv.sun.size }}; height: {{ pv.sun.size }}; border-radius:50%; background: {{ pv.sun.ghost }}; opacity: {{ pv.sun.ghostOp }}; mix-blend-mode:multiply; transform:translate(calc(-50% + {{ pv.sun.gx }}), calc(-50% - var(--sy, 0) * .35px + {{ pv.sun.gy }})); transition: left 1s, top 1s, width 1s, height 1s, opacity 1s; pointer-events:none;"></div>
+      <div style="position:absolute; left:-20%; right:-20%; top: {{ pv.sun.top }}; height:34px; transform:translateY(calc(-50% - var(--sy, 0) * .35px)); background: {{ pv.atm.streak }}; filter:blur(12px); opacity: {{ pv.atm.streakSoft }}; mix-blend-mode:screen; transition: top 1s, opacity 1s; pointer-events:none;"></div>
+      <div style="position:absolute; left:-10%; right:-10%; top: {{ pv.sun.top }}; height:2px; transform:translateY(calc(-50% - var(--sy, 0) * .35px)); background: {{ pv.atm.streak }}; filter:blur(.6px); opacity: {{ pv.atm.streakOp }}; mix-blend-mode:screen; transition: top 1s, opacity 1s; pointer-events:none;"></div>
+      <div style="position:absolute; left:78%; top:124px; width:26px; height:26px; border-radius:50%; background: {{ pv.atm.moonBg }}; box-shadow: {{ pv.atm.moonSh }}; opacity: {{ pv.moonOp }}; transition: opacity 1s; pointer-events:none;"></div>
+      <div style="position:absolute; inset:0; pointer-events:none; opacity: {{ pv.atm.bokehOp }}; transition: opacity 1s; mix-blend-mode:screen; transform:translateY(calc(var(--sy, 0) * -.2px));">
+        <sc-for list="{{ pv.atm.bokeh }}" as="b" hint-placeholder-count="0">
+          <div style="position:absolute; left: {{ b.l }}; top: {{ b.t }}; width: {{ b.s }}; height: {{ b.s }}; border-radius:50%; background: {{ b.c }}; box-shadow: {{ b.glow }}; filter:blur(2px); animation: twinkle {{ b.d }} ease-in-out infinite alternate;"></div>
+        </sc-for>
+      </div>
+      <div style="position:absolute; left:0; right:0; top:220px; height:280px; pointer-events:none; opacity: {{ pv.atm.dotOp }}; background-image:radial-gradient(circle, {{ pv.atm.dot }} 0.9px, transparent 1.5px); background-size: {{ pv.atm.dotSize }}; mix-blend-mode: {{ pv.atm.dotBlend }}; -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 45%, #000 60%, transparent 100%); mask-image:linear-gradient(180deg, transparent 0%, #000 45%, #000 60%, transparent 100%); transform:translateY(calc(var(--sy, 0) * -.35px)); transition: opacity 1s;"></div>
+      <div style="position:absolute; inset:0; pointer-events:none; opacity: {{ pv.atm.leakOp }}; mix-blend-mode:screen; transition: opacity 1s;"><div style="position:absolute; inset:0; background: {{ pv.atm.leak }}; animation:leak 9s ease-in-out infinite alternate;"></div></div>
+      <sc-if value="{{ pv.atm.rainOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; overflow:hidden; pointer-events:none; opacity: {{ pv.atm.rainOp }}; transition: opacity 1s;"><div style="position:absolute; left:-30%; right:-30%; top:-20%; bottom:-20%; transform:rotate(14deg); background-image: {{ pv.atm.rainTile }}; background-size: {{ pv.atm.rainSize }}; animation:rainfall .5s linear infinite;"></div><div style="position:absolute; left:-30%; right:-30%; top:-20%; bottom:-20%; transform:rotate(14deg); background-image: {{ pv.atm.rainTile }}; background-size: {{ pv.atm.rainSize2 }}; opacity:.55; filter:blur(.8px); animation:rainfall2 .8s linear infinite;"></div></div></sc-if>
+      <sc-if value="{{ pv.atm.fogOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; overflow:hidden; pointer-events:none; opacity: {{ pv.atm.fogOp }}; transition: opacity 1s;"><div style="position:absolute; left:-50%; width:200%; top:250px; height:170px; background:radial-gradient(50% 50% at 50% 50%, {{ pv.atm.fog }} 0%, transparent 70%); filter:blur(18px); animation:fogDrift 34s ease-in-out infinite alternate;"></div><div style="position:absolute; left:-50%; width:200%; top:470px; height:220px; background:radial-gradient(50% 50% at 40% 50%, {{ pv.atm.fog }} 0%, transparent 70%); filter:blur(24px); animation:fogDrift 46s ease-in-out infinite alternate-reverse;"></div></div></sc-if>
+      <sc-if value="{{ pv.atm.flashOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; pointer-events:none; background:#dfeeff; mix-blend-mode:screen; opacity:0; animation:flash 11s linear 2s infinite;"></div></sc-if>
+      <sc-if value="{{ pv.atm.holoOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; overflow:hidden; pointer-events:none; opacity: {{ pv.atm.holoOp }}; mix-blend-mode:overlay; transition: opacity 1s;"><div style="position:absolute; left:50%; top:45%; width:1100px; height:1100px; margin:-550px 0 0 -550px; background:conic-gradient(from 0deg, #ff8fd0, #ffd88f, #a8ff9a, #8fe8ff, #b49aff, #ff8fd0); filter:blur(24px); animation:spin {{ pv.atm.holoSpeed }} linear infinite;"></div></div></sc-if>
+      <sc-if value="{{ pv.atm.sheenOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; overflow:hidden; pointer-events:none; opacity: {{ pv.atm.sheenOp }}; mix-blend-mode:screen; transition: opacity 1s;"><div style="position:absolute; top:0; bottom:0; left:-60%; width:220%; background: {{ pv.atm.sheen }}; animation:sheen 9s ease-in-out infinite;"></div></div></sc-if>
+      <div style="position:absolute; inset:0; pointer-events:none; opacity: {{ pv.atm.glintsOp }}; transform:translateY(calc(var(--sy, 0) * -.15px));">
+        <sc-for list="{{ pv.atm.glints }}" as="g" hint-placeholder-count="0">
+          <div style="position:absolute; left: {{ g.l }}; top: {{ g.t }}; width: {{ g.w }}; height: {{ g.h }}; transform:rotate({{ g.rot }});"><div style="width:100%; height:100%; border-radius: {{ g.radius }}; background: {{ g.bg }}; box-shadow: {{ g.glow }}; animation:twinkle {{ g.d }} ease-in-out {{ g.delay }} infinite alternate;"></div></div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ pv.atm.starsOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; overflow:hidden; pointer-events:none; opacity: {{ pv.atm.starsOp }}; transition: opacity 1s;">
+        <sc-for list="{{ pv.atm.trails }}" as="tr" hint-placeholder-count="0"><div style="position:absolute; left: {{ pv.atm.poleX }}; top: {{ pv.atm.poleY }}; width:1700px; height:1700px; margin:-850px 0 0 -850px; border-radius:50%; background: {{ tr.bg }}; -webkit-mask-image: {{ tr.mask }}; mask-image: {{ tr.mask }}; animation:spin 160s linear infinite;"></div></sc-for>
+        <div style="position:absolute; left: {{ pv.atm.poleX }}; top: {{ pv.atm.poleY }}; width:3px; height:3px; margin:-1.5px; border-radius:50%; background:#ffffff; box-shadow:0 0 6px 2px rgba(255,255,255,.6);"></div>
+      </div></sc-if>
+      <sc-if value="{{ pv.atm.trafficOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; left:-20%; right:-20%; top:356px; height:120px; pointer-events:none; opacity: {{ pv.atm.trafficOp }}; mix-blend-mode:screen; transform:rotate(-7deg) translateY(calc(var(--sy, 0) * -.3px)); transition: opacity 1s;">
+        <div style="position:absolute; inset:0; background: {{ pv.atm.lanes }}; filter:blur(.8px);"></div>
+        <sc-for list="{{ pv.atm.cars }}" as="cr" hint-placeholder-count="0"><div style="position:absolute; left:0; top: {{ cr.y }}; width: {{ cr.w }}; height: {{ cr.h }}; border-radius:99px; background: {{ cr.bg }}; box-shadow: {{ cr.glow }}; animation: {{ cr.anim }} {{ cr.d }} linear {{ cr.delay }} infinite;"></div></sc-for>
+      </div></sc-if>
+      <sc-if value="{{ pv.atm.paperOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; overflow:hidden; pointer-events:none;">
+        <sc-for list="{{ pv.atm.clouds }}" as="cl" hint-placeholder-count="0"><div style="position:absolute; left: {{ cl.l }}; top: {{ cl.t }}; width: {{ cl.w }}; height: {{ cl.h }}; border-radius:99px; background: {{ pv.atm.cloud }}; box-shadow:0 6px 10px rgba(40,30,20,.16), inset 0 -3px 0 rgba(0,0,0,.05); animation:fogDrift {{ cl.d }} ease-in-out infinite alternate;"></div></sc-for>
+        <sc-for list="{{ pv.atm.hills }}" as="hl" hint-placeholder-count="0"><div style="position:absolute; inset:0; filter: {{ hl.sh }}; transform:translateY(calc(var(--sy, 0) * {{ hl.f }}px)); translate: calc(var(--tx, 0) * {{ hl.dx }}px) calc(var(--ty, 0) * {{ hl.dy }}px);">
+          <sc-for list="{{ hl.items }}" as="it" hint-placeholder-count="0"><div style="position:absolute; left: {{ it.l }}; top: {{ it.t }}; width: {{ it.w }}; height: {{ it.h }}; border-radius: {{ it.r }}; background: {{ it.bg }};"></div></sc-for>
+        </div></sc-for>
+      </div></sc-if>
+      <sc-if value="{{ pv.atm.lanternOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; overflow:hidden; pointer-events:none; transform:translateY(calc(var(--sy, 0) * -.2px));">
+        <sc-if value="{{ pv.atm.riverOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; left:0; right:0; top:388px; height:160px; translate: calc(var(--tx, 0) * 10px) 0; opacity: {{ pv.atm.riverOp }}; -webkit-mask-image:linear-gradient(180deg, transparent, #000 30%, #000 65%, transparent); mask-image:linear-gradient(180deg, transparent, #000 30%, #000 65%, transparent);"><div style="position:absolute; inset:0; background: {{ pv.atm.river }}; -webkit-mask-image:repeating-linear-gradient(180deg, #000 0 2px, transparent 2px 5px); mask-image:repeating-linear-gradient(180deg, #000 0 2px, transparent 2px 5px); animation:ripple 3.6s ease-in-out infinite alternate;"></div></div></sc-if>
+        <sc-for list="{{ pv.atm.floats }}" as="fl" hint-placeholder-count="0"><div style="position:absolute; left:0; top: {{ fl.t }}; width:10px; height:6px; border-radius:2px 2px 4px 4px; background: {{ fl.c }}; box-shadow: {{ fl.glow }}; animation:floatX {{ fl.d }} linear {{ fl.delay }} infinite;"></div></sc-for>
+        <sc-for list="{{ pv.atm.wires }}" as="w" hint-placeholder-count="0"><div style="position:absolute; left: {{ w.l }}; top: {{ w.t }}; width: {{ w.w }}; height:1px; background: {{ pv.atm.wire }}; transform-origin:0 50%; transform:rotate({{ w.rot }});"></div></sc-for>
+        <sc-for list="{{ pv.atm.bulbs }}" as="bu" hint-placeholder-count="0"><div style="position:absolute; left: {{ bu.l }}; top: {{ bu.t }}; width:4px; height:4px; margin:-2px; border-radius:50%; background: {{ bu.c }}; box-shadow: {{ bu.glow }}; animation:twinkle {{ bu.d }} ease-in-out infinite alternate;"></div></sc-for>
+        <sc-for list="{{ pv.atm.lanterns }}" as="ln" hint-placeholder-count="0"><div style="position:absolute; left: {{ ln.l }}; top: {{ ln.t }}; width: {{ ln.w }}; opacity: {{ ln.op }}; transform-origin:50% 0; rotate: {{ ln.pk }}; animation: {{ ln.anim }}; display:flex; flex-direction:column; align-items:center;">
+          <div style="width:1px; height: {{ ln.cord }}; background:rgba(40,20,10,.55);"></div>
+          <div style="width:56%; height:4px; border-radius:2px; background:#3a2014;"></div>
+          <div style="width:100%; height: {{ ln.h }}; border-radius:42% / 50%; background: {{ ln.bg }}; box-shadow: {{ ln.glow }};"></div>
+          <div style="width:56%; height:4px; border-radius:2px; background:#3a2014;"></div>
+          <div style="width:2px; height: {{ ln.tas }}; border-radius:1px; background: {{ ln.tc }};"></div>
+        </div></sc-for>
+      </div></sc-if>
+      <div style="position:absolute; inset:0; overflow:hidden; pointer-events:none;"><sc-for list="{{ pv.atm.front }}" as="z" hint-placeholder-count="0"><div style="position:absolute; left: {{ z.l }}; top: {{ z.t }}; width: {{ z.w }}; height: {{ z.h }}; background: {{ z.bg }}; border-radius: {{ z.r }}; box-shadow: {{ z.sh }}; border: {{ z.bd }}; box-sizing:border-box; opacity: {{ z.op }}; transform: {{ z.tf }}; transform-origin: {{ z.to }}; rotate: {{ z.rot }}; translate: {{ z.tr }}; filter: {{ z.fl }}; mix-blend-mode: {{ z.bl }}; -webkit-mask-image: {{ z.mk }}; mask-image: {{ z.mk }}; animation: {{ z.an }}; transition: opacity 1s, left 1s, top 1s;"></div></sc-for></div>
+      <sc-if value="{{ pv.atm.signOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; left:20px; top:110px; font-family: {{ pv.dispFont }}; font-size:42px; line-height:1; letter-spacing:.03em; white-space:nowrap; color: {{ pv.atm.signC }}; text-shadow: {{ pv.atm.signSh }}; animation: {{ pv.atm.signAn }}; pointer-events:none; transition: color .6s, text-shadow .6s;">{{ pv.atm.signText }}</div></sc-if>
+      <div style="position:absolute; inset:0; pointer-events:none; background: {{ pv.atm.vignette }};"></div>
+      <div style="position:absolute; inset:0; pointer-events:none; opacity: {{ pv.atm.grainOp }}; mix-blend-mode: {{ pv.atm.grainBlend }}; animation:grain .8s steps(1) infinite; background-image:url(data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27180%27 height=%27180%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%272%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27180%27 height=%27180%27 filter=%27url%28%23n%29%27/%3E%3C/svg%3E);"></div>
+      <div style="position:absolute; left:26px; top:238px; display:flex; flex-direction:column; gap:12px;">
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color: {{ pv.inkSoft }};">Friday · 9 October</div>
+        <div style="font-family: {{ pv.dispFont }}; font-weight:400; font-size:64px; letter-spacing:-.02em; line-height:1; white-space:nowrap; font-variant-numeric:tabular-nums;">{{ pv.clock }}</div>
+      </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;pv&quot;:{&quot;editor&quot;:null,&quot;default&quot;:null,&quot;tsType&quot;:&quot;object&quot;},&quot;safe&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;1,2tr&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() { return { pv: this.props.pv || { atm: {}, sun: {}, path: [], ticks: [] } }; }
+}
+</script>
+</body>
+</html>

@@ -14,6 +14,11 @@ export type Face =
       readonly wght: readonly [number, number];
       /** The optical-size range, for faces that have the axis. */
       readonly opsz: readonly [number, number] | null;
+      /**
+       * Tracking, in em, that closes up the face's tabular figures where they are set far apart
+       * for their shapes (the odometer's columns).
+       */
+      readonly figureTracking?: number;
     }
   | { readonly kind: 'static'; readonly byWeight: (weight: number) => string };
 
@@ -29,7 +34,14 @@ const variable = (
   family: string,
   wght: readonly [number, number],
   opsz: readonly [number, number] | null = null,
-): Face => ({ kind: 'variable', family: variableFamily(family), wght, opsz });
+  figureTracking?: number,
+): Face => ({
+  kind: 'variable',
+  family: variableFamily(family),
+  wght,
+  opsz,
+  ...(figureTracking === undefined ? {} : { figureTracking }),
+});
 
 /** A static family: the cut nearest the weight asked for (the heavier one on a tie). */
 function cuts(byWeight: Readonly<Record<number, string>>): Face {
@@ -61,14 +73,18 @@ const viet = (prefix: string) =>
 const DISPLAY: Readonly<Record<string, Face>> = {
   'Bricolage Grotesque': BRICOLAGE,
   'Be Vietnam Pro': cuts({ 500: 'BeVietnamPro-Medium', 600: 'BeVietnamPro-SemiBold' }),
-  'Bodoni Moda': variable('BodoniModa', [400, 700], [6, 96]),
+  // Sơn Mài names Bodoni Moda, which has no Vietnamese (ơ, ư, ầ…): Prata, a Didone that does, draws it.
+  'Bodoni Moda': cuts({ 400: 'Prata-Regular' }),
   Newsreader: variable('Newsreader', [400, 700], [6, 72]),
   'Dela Gothic One': cuts({ 400: 'DelaGothicOne-Regular' }),
   'Darker Grotesque': variable('DarkerGrotesque', [400, 800]),
   Alegreya: variable('Alegreya', [400, 800]),
   'Tilt Neon': cuts({ 400: 'TiltNeon' }),
-  'Barlow Condensed': cuts({ 500: 'BarlowCondensed-Medium', 600: 'BarlowCondensed-SemiBold' }),
-  'Baloo 2': variable('Baloo2', [500, 700]),
+  // Long Exposure and Paper Diorama name Barlow Condensed and Baloo 2; the app draws them in
+  // newer faces with Vietnamese, Big Shoulders Display and Grandstander.
+  'Barlow Condensed': variable('BigShouldersDisplay', [400, 800]),
+  // Grandstander's tabular figures stand wide apart for their shapes; the odometer closes them up.
+  'Baloo 2': variable('Grandstander', [400, 800], null, -0.07),
   Spectral: cuts({ 400: 'Spectral-Regular', 500: 'Spectral-Medium', 600: 'Spectral-SemiBold' }),
   'IBM Plex Mono': cuts({
     400: 'IBMPlexMono-Regular',
@@ -90,8 +106,9 @@ const UI: Readonly<Record<string, Face>> = {
     800: 'AlegreyaSans-ExtraBold',
   }),
   'Bai Jamjuree': viet('BaiJamjuree'),
-  Barlow: viet('Barlow'),
-  Nunito: variable('Nunito', [400, 800]),
+  // Long Exposure's Barlow and Paper Diorama's Nunito are drawn in Geist and Lexend.
+  Barlow: variable('Geist', [400, 800]),
+  Nunito: variable('Lexend', [400, 800]),
   'Be Vietnam Pro': viet('BeVietnamPro'),
 };
 

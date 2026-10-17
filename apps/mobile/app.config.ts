@@ -115,15 +115,14 @@ const FONTS = [
   'PatrickHand-Regular',
   'MaterialSymbolsRounded-Variable',
   // The looks' display faces.
-  'BodoniModa-Variable',
+  'Prata-Regular',
   'Newsreader-Variable',
   'DelaGothicOne-Regular',
   'DarkerGrotesque-Variable',
   'Alegreya-Variable',
   'TiltNeon',
-  'BarlowCondensed-Medium',
-  'BarlowCondensed-SemiBold',
-  'Baloo2-Variable',
+  'BigShouldersDisplay-Variable',
+  'Grandstander-Variable',
   'Spectral-Regular',
   'Spectral-Medium',
   'Spectral-SemiBold',
@@ -140,11 +139,8 @@ const FONTS = [
   'BaiJamjuree-Medium',
   'BaiJamjuree-SemiBold',
   'BaiJamjuree-Bold',
-  'Barlow-Regular',
-  'Barlow-Medium',
-  'Barlow-SemiBold',
-  'Barlow-Bold',
-  'Nunito-Variable',
+  'Geist-Variable',
+  'Lexend-Variable',
 ].map((name) => `./assets/fonts/${name}.ttf`);
 
 export default ({ config }: ConfigContext): ExpoConfig => ({

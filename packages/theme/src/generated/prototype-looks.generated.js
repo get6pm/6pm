@@ -70,15 +70,6 @@ export const prototypeLooks = {
           { name: 'Hội An', accent: '#ffa94d', K: [[6, '#d9c2b8', '#f2d6b8', '#ffe9c2', '#ffb36b', '#f2d48a'], [12, '#f0c98a', '#f7e2bd', '#fff3dc', '#ffd27a', '#ffb38a'], [16.5, '#c9775a', '#f0a868', '#ffd08a', '#ffb347', '#ff8a5b'], [18.2, '#4a1f2e', '#a8382f', '#f08a2c', '#ffc53d', '#ff5a36'], [20, '#1e0d14', '#3b1520', '#6a2a1e', '#ffb347', '#ff5a36'], [24, '#0c0608', '#1a0b0e', '#2c130f', '#e09a3a', '#b8432a']] },
           { name: 'Đà Lạt', accent: '#e7a6d8', K: [[6, '#c7d3d6', '#e3e6e0', '#f2ecdf', '#cfe3d0', '#e6c9e8'], [12, '#9fc2bf', '#d9e6dc', '#f1efe4', '#bfe0c0', '#d4c4f0'], [16.5, '#6f8fa0', '#c9b8d4', '#f2c9b8', '#e6b0d8', '#a8d8c0'], [18.2, '#232a4a', '#6a4a7a', '#d47a8a', '#f0a0c8', '#7fd0c0'], [20, '#0e1424', '#1c2438', '#2a3a40', '#9a7ad0', '#4fb8a0'], [24, '#060a12', '#0c1420', '#142226', '#6a5ab0', '#2f8a78']] }
         ] },
-      v1: { name: 'Original', tag: 'Where 6pm started. Black, white and the numbers. Nothing else.', price: 0, dark: 0, font: "-apple-system, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif", kName: 'Contrast',
-        ctl: [{ key: 'dots', label: 'Dot grid', sub: 'The 1.0 dotted texture behind everything', def: true }, { key: 'sun', label: 'Clock dot', sub: 'A small white sun keeps the hour', def: true }],
-        variants: [
-          { name: 'Black', accent: '#f4f4f5', K: [[6, '#0c0c0d', '#0e0e0f', '#111113', '#3a3a3e', '#2a2a2e'], [24, '#0a0a0b', '#0c0c0d', '#0f0f10', '#34343a', '#26262a']], sw: ['#0b0b0c', '#1c1c1f', '#f4f4f5'] },
-          { name: 'Graphite', accent: '#f4f4f5', K: [[6, '#161618', '#19191b', '#1d1d20', '#44444a', '#36363c'], [24, '#131315', '#161618', '#1a1a1d', '#3e3e44', '#303036']], sw: ['#18181b', '#2a2a2e', '#f4f4f5'] },
-          { name: 'Receipt', dark: 99, accent: '#111113', K: [[6, '#efeeea', '#f2f1ed', '#f5f4f0', '#d4d3ce', '#dcdbd6'], [24, '#eceae6', '#efeeea', '#f3f2ee', '#d0cfca', '#d8d7d2']], sw: ['#f4f3ef', '#d4d3ce', '#111113'] }
-        ],
-        over: (p, st, V, dark) => dark ? ({ sky: `linear-gradient(180deg, ${st[0]} 0%, ${st[1]} 52%, ${st[2]} 100%)`, ink: '#f4f4f5', inkSoft: 'rgba(244,244,245,.6)', cell: m(st[1], '#ffffff', .055), sheet: st[1], sheetSolid: st[1], glass: m(st[1], '#ffffff', .09), cardShadow: 'inset 0 0 0 0.5px rgba(255,255,255,.09)', glassShadow: 'inset 0 0 0 0.5px rgba(255,255,255,.12)', btnBg: '#f4f4f5', btnFg: '#0b0b0c', bubbleBg: '#f4f4f5', bubbleFg: '#0b0b0c', hair: 'rgba(255,255,255,.09)', chipBg: 'rgba(255,255,255,.07)', tabActive: 'rgba(255,255,255,.12)', textGlow: 'none', accent: V.accent, accentFg: '#0b0b0c' })
-          : ({ sky: `linear-gradient(180deg, ${st[0]} 0%, ${st[1]} 52%, ${st[2]} 100%)`, ink: '#111113', inkSoft: 'rgba(17,17,19,.6)', cell: '#ffffff', sheet: '#f4f3ef', sheetSolid: '#f4f3ef', glass: '#ffffff', cardShadow: 'inset 0 0 0 0.5px rgba(17,17,19,.1)', glassShadow: 'inset 0 0 0 0.5px rgba(17,17,19,.14)', btnBg: '#111113', btnFg: '#f4f3ef', bubbleBg: '#111113', bubbleFg: '#f4f3ef', hair: 'rgba(17,17,19,.1)', chipBg: 'rgba(17,17,19,.06)', tabActive: 'rgba(17,17,19,.1)', textGlow: 'none', accent: V.accent, accentFg: '#f4f3ef' }) },
       lacquer: { name: 'Sơn Mài', tag: 'Black lacquer and gold leaf, sanded back by hand until it glows.', price: 49000, dark: 0, font: F.bodoni, ui: F.literata, kName: 'Depth',
         ctl: [{ key: 'leaf', label: 'Gold leaf', sub: 'A gilded horizon, laid flake by flake', def: true }, { key: 'sheen', label: 'Lacquer sheen', sub: 'Light rolls slowly across the surface', def: true }],
         variants: [
@@ -159,10 +150,10 @@ export const prototypeLooks = {
   cfgOf(id) { const TH = this.themes(), T = TH[id] || TH.golden, b = { v: 0, k: 70 }; T.ctl.forEach(c => { b[c.key] = c.def; }); return Object.assign(b, (this.state.tcfg || {})[T.id]); },
   themeOf(tid) { const TH = this.themes(), T = TH[tid || this.activeId()] || TH.golden, cfg = this.cfgOf(T.id); return { T, V: T.variants[cfg.v] || T.variants[0], cfg }; },
   swOf(V) { if (V.sw) return V.sw; const r = V.K[Math.floor(V.K.length / 2)]; return [r[1], r[4], r[5]]; },
-  sunFx(sun, pal, hour, serious) {
+  sunFx(sun, pal, hour, serious, tid) {
     Object.assign(sun, { mask: 'none', ghost: 'transparent', ghostOp: 0, gx: '0px', gy: '0px', thread: 'transparent', threadOp: 0 });
     if (!serious) {
-      const { T, V, cfg } = this.themeOf(), st = pal.st, m = (a, b, t) => this.mix(a, b, t);
+      const { T, V, cfg } = this.themeOf(tid), st = pal.st, m = (a, b, t) => this.mix(a, b, t);
       if (T.id === 'lacquer') Object.assign(sun, { color: this.leaf(V.metal, 24), glow: `0 0 0 0.5px ${V.metal}88, 0 0 70px 18px ${V.metal}2e` });
       else if (T.id === 'glaze') { const c = V.cob, w = '#f7f8fb'; Object.assign(sun, hour < 16.8 ? { color: `radial-gradient(closest-side, ${c} 0 49%, ${c}00 53% 63%, ${c} 66% 72%, ${c}00 75%)`, glow: 'none' } : { color: `radial-gradient(closest-side, ${c} 0 28%, ${w} 31% 57%, ${c} 60% 67%, ${w} 70% 100%)`, glow: `0 0 0 0.5px ${c}40, 0 8px 18px ${c}38` }); }
       else if (T.id === 'riso') Object.assign(sun, { color: V.i1, glow: 'none', ghost: V.i2, ghostOp: cfg.mis ? sun.opacity * 0.9 : 0, gx: '7px', gy: '-5px' });
@@ -194,8 +185,8 @@ export const prototypeLooks = {
       default: return [`radial-gradient(circle at 25% 88%, ${st[3]}99 0%, ${st[3]}00 45%), radial-gradient(circle at 88% 12%, ${st[4]}77 0%, ${st[4]}00 40%)`, 'auto', `radial-gradient(circle at 50% 38%, #fff4dc 0%, #ffc46b 48%, ${st[3]} 100%)`, `0 0 30px 8px ${st[3]}88`];
     }
   },
-  atm(pal, hour, serious, sunOp) {
-    const cl = v => Math.max(0, Math.min(1, v)), m = (a, b, t) => this.mix(a, b, t), { T, V, cfg } = this.themeOf();
+  atm(pal, hour, serious, sunOp, tid) {
+    const cl = v => Math.max(0, Math.min(1, v)), m = (a, b, t) => this.mix(a, b, t), { T, V, cfg } = this.themeOf(tid);
     const id = serious ? 'serious' : T.id, k = serious ? 0 : cfg.k / 70, k1 = Math.min(1, k), d = pal.dark, b1 = pal.b1, b2 = pal.b2, st = pal.st, today = this.state.tab === 'today';
     const dusk = cl((hour - 15.5) / 2.5) * (1 - cl((hour - 19.5) / 1.5));
     const soft = c => `radial-gradient(circle, ${c} 0%, ${c}00 70%)`;

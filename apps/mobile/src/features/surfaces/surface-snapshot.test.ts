@@ -223,10 +223,10 @@ describe('surfaceSnapshot', () => {
     expect(max.palettes[18]?.tokens).toMatchObject(
       widgetTokens(paletteFor({ look: 'paper', hour: 18, serious: false })),
     );
-    expect(max.strings['font.display']).toBe('Baloo2');
+    expect(max.strings['font.display']).toBe('Grandstander');
     expect(free.strings['font.display']).toBe('BricolageGrotesque');
     const face = (look: 'lacquer' | 'basic') => displayFamily({ look, serious: false });
-    expect([face('lacquer'), face('basic')]).toEqual(['BodoniModa', SYSTEM_DISPLAY]);
+    expect([face('lacquer'), face('basic')]).toEqual(['Prata-Regular', SYSTEM_DISPLAY]);
   });
 
   it('uses the serious palette in serious mode', () => {

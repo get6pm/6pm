@@ -1,4 +1,5 @@
 import { Text, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import { swatchesFor, type LookId } from '@6pm/theme';
 
@@ -7,7 +8,10 @@ import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
 
-/** A look's three variants as swatch triples; the chosen one is ringed (prototype `App:937-945`). */
+/**
+ * A look's variants as a row of pills, each with its colours swept into one disc; the chosen one
+ * is filled and ringed (prototype `App:988-995`). The row scrolls sideways when the names are long.
+ */
 export function VariantPicker({
   look,
   names,
@@ -22,54 +26,62 @@ export function VariantPicker({
 }) {
   const { palette } = useTheme();
   return (
-    <View accessibilityRole="radiogroup" style={{ flexDirection: 'row', gap: 8 }}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      accessibilityRole="radiogroup"
+      // The chosen pill's ring reaches 4 pt out; the row leaves it room and takes it back.
+      style={{ marginHorizontal: -18, marginVertical: -3, flexGrow: 0 }}
+      contentContainerStyle={{ paddingHorizontal: 18, paddingVertical: 6, gap: 6 }}
+    >
       {names.map((name, index) => {
         const on = index === selected;
-        const colours = swatchesFor(look, index);
+        const [a, b, c] = swatchesFor(look, index);
         return (
           <PressScale
             key={name}
             accessibilityRole="radio"
             accessibilityState={{ selected: on }}
             accessibilityLabel={name}
+            scaleTo={0.96}
+            inScroll
             onPress={() => {
               haptics.tick();
               onPick(index);
             }}
             style={{
-              flex: 1,
-              minHeight: 72,
-              paddingTop: 12,
-              paddingHorizontal: 6,
-              paddingBottom: 10,
-              borderRadius: 16,
-              backgroundColor: palette.cell,
-              boxShadow: on ? `0 0 0 2px ${palette.ink}` : `inset 0 0 0 0.5px ${palette.hair}`,
+              height: 38,
+              paddingVertical: 3,
+              paddingLeft: 3,
+              paddingRight: 12,
+              borderRadius: 99,
+              backgroundColor: on ? palette.btnBg : palette.chipBg,
+              boxShadow: on
+                ? `0 0 0 2px ${palette.sheetSolid}, 0 0 0 4px ${palette.ink}`
+                : `inset 0 0 0 0.5px ${palette.hair}`,
+              flexDirection: 'row',
               alignItems: 'center',
               gap: 8,
             }}
           >
-            <View style={{ flexDirection: 'row' }}>
-              {colours.slice(0, 3).map((colour, i) => (
-                <View
-                  key={i}
-                  style={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: 10,
-                    marginLeft: i === 0 ? 0 : -6,
-                    backgroundColor: colour,
-                    boxShadow: `0 0 0 2px ${palette.cell}`,
-                  }}
-                />
-              ))}
-            </View>
-            <Text numberOfLines={1} style={{ ...body(12.5, on ? 700 : 500), color: palette.ink }}>
+            <View
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 16,
+                backgroundImage: `linear-gradient(135deg, ${a} 0%, ${b} 55%, ${c} 100%)`,
+                boxShadow: 'inset 0 0 0 0.5px rgba(0,0,0,.12)',
+              }}
+            />
+            <Text
+              numberOfLines={1}
+              style={{ ...body(13, on ? 700 : 500), color: on ? palette.btnFg : palette.ink }}
+            >
               {name}
             </Text>
           </PressScale>
         );
       })}
-    </View>
+    </ScrollView>
   );
 }

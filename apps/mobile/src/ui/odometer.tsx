@@ -16,7 +16,7 @@ import Animated, {
 import { curves, durations } from '@6pm/theme';
 
 import { useMoneyFormat } from '../money/use-money-format';
-import { display, tabular, withOpticalSize } from './type/fonts';
+import { display, figureTracking, tabular, withOpticalSize } from './type/fonts';
 import { symbolStyle } from './type/symbol-face';
 import { shadowRoom } from './type/text-shadow';
 
@@ -162,7 +162,7 @@ export function Odometer({
   const bleed = Math.round(size * 0.16);
   const height = line + 2 * bleed;
   const textStyle: TextStyle = {
-    ...withOpticalSize(display(size, weight, letterSpacingEm), opsz),
+    ...withOpticalSize(display(size, weight, letterSpacingEm + figureTracking()), opsz),
     ...tabular,
     color,
   };

@@ -2,21 +2,20 @@ import { Asset } from 'expo-asset';
 import { File } from 'expo-file-system';
 
 import ALEGREYA from '../../../assets/fonts/Alegreya-Variable.ttf';
-import BALOO from '../../../assets/fonts/Baloo2-Variable.ttf';
-import BARLOW_MEDIUM from '../../../assets/fonts/BarlowCondensed-Medium.ttf';
-import BARLOW_SEMIBOLD from '../../../assets/fonts/BarlowCondensed-SemiBold.ttf';
+import BIG_SHOULDERS from '../../../assets/fonts/BigShouldersDisplay-Variable.ttf';
 import VIET_MEDIUM from '../../../assets/fonts/BeVietnamPro-Medium.ttf';
 import VIET_SEMIBOLD from '../../../assets/fonts/BeVietnamPro-SemiBold.ttf';
-import BODONI from '../../../assets/fonts/BodoniModa-Variable.ttf';
 import BRICOLAGE from '../../../assets/fonts/BricolageGrotesque-Variable.ttf';
 import DARKER from '../../../assets/fonts/DarkerGrotesque-Variable.ttf';
 import DELA from '../../../assets/fonts/DelaGothicOne-Regular.ttf';
+import GRANDSTANDER from '../../../assets/fonts/Grandstander-Variable.ttf';
 import MONO_MEDIUM from '../../../assets/fonts/IBMPlexMono-Medium.ttf';
 import MONO from '../../../assets/fonts/IBMPlexMono-Regular.ttf';
 import MONO_SEMIBOLD from '../../../assets/fonts/IBMPlexMono-SemiBold.ttf';
 import SYMBOLS from '../../../assets/fonts/MaterialSymbolsRounded-Variable.ttf';
 import NEWSREADER from '../../../assets/fonts/Newsreader-Variable.ttf';
 import HAND from '../../../assets/fonts/PatrickHand-Regular.ttf';
+import PRATA from '../../../assets/fonts/Prata-Regular.ttf';
 import SPECTRAL_MEDIUM from '../../../assets/fonts/Spectral-Medium.ttf';
 import SPECTRAL from '../../../assets/fonts/Spectral-Regular.ttf';
 import SPECTRAL_SEMIBOLD from '../../../assets/fonts/Spectral-SemiBold.ttf';
@@ -49,12 +48,11 @@ const DISPLAY: Readonly<Record<string, readonly Face[]>> = {
     { family: 'Be Vietnam Pro', weight: '500', asset: VIET_MEDIUM },
     { family: 'Be Vietnam Pro', weight: '600', asset: VIET_SEMIBOLD },
   ],
-  'Barlow Condensed': [
-    { family: 'Barlow Condensed', weight: '500', asset: BARLOW_MEDIUM },
-    { family: 'Barlow Condensed', weight: '600', asset: BARLOW_SEMIBOLD },
-  ],
-  'Baloo 2': [{ family: 'Baloo 2', weight: '400 800', asset: BALOO }],
-  'Bodoni Moda': [{ family: 'Bodoni Moda', weight: '400 700', asset: BODONI }],
+  // Drawn in Big Shoulders Display and Grandstander, which have Vietnamese.
+  'Barlow Condensed': [{ family: 'Barlow Condensed', weight: '400 800', asset: BIG_SHOULDERS }],
+  'Baloo 2': [{ family: 'Baloo 2', weight: '400 800', asset: GRANDSTANDER }],
+  // Sơn Mài's Bodoni Moda is drawn in Prata, which has Vietnamese.
+  'Bodoni Moda': [{ family: 'Bodoni Moda', weight: '400 700', asset: PRATA }],
   Newsreader: [{ family: 'Newsreader', weight: '400 700', asset: NEWSREADER }],
   'Dela Gothic One': [{ family: 'Dela Gothic One', weight: '400', asset: DELA }],
   'Darker Grotesque': [{ family: 'Darker Grotesque', weight: '400 800', asset: DARKER }],

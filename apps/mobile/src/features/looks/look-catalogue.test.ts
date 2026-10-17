@@ -1,12 +1,21 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { cardBadge, isScene, neighbour, positionOf, shopSub, SHOP_ORDER } from './look-catalogue';
+import {
+  cardBadge,
+  firstOfTier,
+  isScene,
+  neighbour,
+  positionOf,
+  shopSub,
+  SHOP_ORDER,
+  tierOf,
+} from './look-catalogue';
 import { FREE_CUSTOMER, NO_MAX, type CustomerState } from '../purchases/purchases-port';
 
 const max: CustomerState = { max: { ...NO_MAX, active: true, plan: 'yearly' }, ownedLooks: [] };
 
 describe('the shop’s order', () => {
-  it('lists the classic looks first and the three living scenes last', () => {
+  it('lists the free looks, then the classic looks, then the three living scenes', () => {
     expect(SHOP_ORDER).toEqual([
       'basic',
       'golden',
@@ -21,6 +30,18 @@ describe('the shop’s order', () => {
       'lantern',
     ]);
     expect(SHOP_ORDER.filter(isScene)).toEqual(['expo', 'paper', 'lantern']);
+  });
+
+  it('puts each look on its shelf and knows where each shelf starts', () => {
+    expect(SHOP_ORDER.map(tierOf)).toEqual([
+      'free',
+      'free',
+      ...Array<string>(6).fill('classic'),
+      'scene',
+      'scene',
+      'scene',
+    ]);
+    expect([firstOfTier('free'), firstOfTier('classic'), firstOfTier('scene')]).toEqual([0, 2, 8]);
   });
 
   it('steps round the catalogue in both directions', () => {

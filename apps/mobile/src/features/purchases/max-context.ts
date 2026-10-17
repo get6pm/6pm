@@ -49,21 +49,10 @@ export function tileOrder(from: MaxFrom): readonly MaxFrom[] {
   return [from, ...MAX_TILES.filter((tile) => tile !== from)];
 }
 
-/**
- * Lays tiles out two to a row, the Looks tile across both, filling any gap with the next small
- * tile (CSS `grid-auto-flow: dense`).
- */
+/** Lays the tiles out two to a row, in order; an odd last tile sits alone on the left. */
 export function tileRows(order: readonly MaxFrom[]): MaxFrom[][] {
   const rows: MaxFrom[][] = [];
-  for (const tile of order) {
-    if (tile === 'looks') {
-      rows.push([tile]);
-      continue;
-    }
-    const open = rows.find((row) => row.length === 1 && row[0] !== 'looks');
-    if (open) open.push(tile);
-    else rows.push([tile]);
-  }
+  for (let i = 0; i < order.length; i += 2) rows.push(order.slice(i, i + 2));
   return rows;
 }
 

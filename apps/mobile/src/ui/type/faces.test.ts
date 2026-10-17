@@ -43,10 +43,22 @@ describe('look faces', () => {
   });
 
   it('sets the nearest static cut, and clamps a variable weight to the file', () => {
-    const barlow = faceOf("'Barlow', system-ui, sans-serif", 'ui');
-    expect(barlow.kind === 'static' && barlow.byWeight(650)).toBe('Barlow-Bold');
-    expect(barlow.kind === 'static' && barlow.byWeight(550)).toBe('Barlow-SemiBold');
+    const bai = faceOf("'Bai Jamjuree', system-ui, sans-serif", 'ui');
+    expect(bai.kind === 'static' && bai.byWeight(650)).toBe('BaiJamjuree-Bold');
+    expect(bai.kind === 'static' && bai.byWeight(550)).toBe('BaiJamjuree-SemiBold');
     const alegreya = faceOf("'Alegreya Sans', system-ui, sans-serif", 'ui');
     expect(alegreya.kind === 'static' && alegreya.byWeight(600)).toBe('AlegreyaSans-Bold');
+  });
+
+  it('draws the faces with no Vietnamese, and the dated ones, in their replacements', () => {
+    expect(faceOf("'Bodoni Moda', Didot, serif", 'display')).toMatchObject({ kind: 'static' });
+    const sonMai = faceOf("'Bodoni Moda', Didot, serif", 'display');
+    expect(sonMai.kind === 'static' && sonMai.byWeight(500)).toBe('Prata-Regular');
+    expect(faceOf("'Barlow Condensed', sans-serif", 'display')).toMatchObject({
+      family: 'BigShouldersDisplay',
+    });
+    expect(faceOf("'Baloo 2', sans-serif", 'display')).toMatchObject({ family: 'Grandstander' });
+    expect(faceOf("'Barlow', sans-serif", 'ui')).toMatchObject({ family: 'Geist' });
+    expect(faceOf("'Nunito', sans-serif", 'ui')).toMatchObject({ family: 'Lexend' });
   });
 });

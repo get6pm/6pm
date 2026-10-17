@@ -50,6 +50,15 @@ export function useLookSettings(): LookSnapshot {
   );
 }
 
+/** Whether a look is being tried on; re-renders only when that changes. */
+export function useTryingOn(): boolean {
+  const store = useLookSettingsStore();
+  return useSyncExternalStore(
+    (listener) => store.subscribe(listener),
+    () => store.getSnapshot().tryOn !== null,
+  );
+}
+
 /**
  * The look the whole app wears, as the root `ThemeProvider`'s props: the look being tried on, else
  * the chosen look (Golden Hour when it is no longer the customer's), with that look's own

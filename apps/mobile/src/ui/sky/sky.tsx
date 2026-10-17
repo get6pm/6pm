@@ -1,5 +1,5 @@
-import { Canvas, Group } from '@shopify/react-native-skia';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { Canvas, Group, type CanvasRef } from '@shopify/react-native-skia';
+import { memo, useEffect, useMemo, useState, type RefObject } from 'react';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import {
   Easing,
@@ -59,6 +59,14 @@ export interface SkyProps {
   readonly showSun?: boolean | SunFlag;
   /** The sky's clock runs only while this is true (a screen under a takeover is not showing it). */
   readonly active?: SharedValue<boolean>;
+  /**
+   * Draws the whole screen's sky shrunk into a smaller box (a look card), `width` wide and cut at
+   * `height`. The canvas is only that big, so a preview costs a preview's pixels; the phone's
+   * tilt is left out.
+   */
+  readonly preview?: { readonly width: number; readonly height: number };
+  /** The canvas, for a still picture of the sky (a look card flying to the try-on). */
+  readonly canvasRef?: RefObject<CanvasRef | null>;
 }
 
 /**
@@ -121,8 +129,12 @@ function SkyView({
   scrollY,
   showSun = true,
   active,
+  preview,
+  canvasRef,
 }: SkyProps) {
   const { width, height } = useWindowDimensions();
+  const scale = preview ? preview.width / width : 1;
+  const shrink = useMemo(() => [{ scale }], [scale]);
   const sun = useSunSwitch(showSun);
   // The sun's two states are both prepared; the flag picks one on the UI thread, so a tab switch
   // never rebuilds the sky.
@@ -131,7 +143,11 @@ function SkyView({
     [look, config, hour, serious, closed],
   );
   const shownSun = useMemo(() => skyFrame({ ...base, showSun: true, tab: 'today' }), [base]);
-  const hiddenSun = useMemo(() => skyFrame({ ...base, showSun: false, tab: 'away' }), [base]);
+  // A preview always shows its sun, so it never needs the frame without one.
+  const hiddenSun = useMemo(
+    () => (preview ? shownSun : skyFrame({ ...base, showSun: false, tab: 'away' })),
+    [base, preview, shownSun],
+  );
   // The layout only changes with the look; keep it stable so layers don't rebuild every minute.
   const layoutKey = useMemo(() => JSON.stringify(shownSun.layout), [shownSun]);
   const layout = useMemo(() => JSON.parse(layoutKey) as SkyLayout, [layoutKey]);
@@ -148,7 +164,8 @@ function SkyView({
 
   const lookConfig = useMemo(() => configFor(look, config), [look, config]);
   const motion = useSceneMotionValues();
-  const senses = !serious && lookById(look).tier === 'premium' && lookConfig['sense'] === true;
+  const senses =
+    !preview && !serious && lookById(look).tier === 'premium' && lookConfig['sense'] === true;
 
   const current = sun.on ? shownSun : hiddenSun;
   const v = current.values;
@@ -181,45 +198,66 @@ function SkyView({
   const boxes = { width, height, time, motion };
 
   return (
-    <View style={[StyleSheet.absoluteFill, styles.passThrough]}>
+    <View
+      style={[
+        preview
+          ? { width: preview.width, height: preview.height, overflow: 'hidden' }
+          : StyleSheet.absoluteFill,
+        styles.passThrough,
+      ]}
+    >
       {senses ? <SceneMotionDriver motion={motion} time={time} /> : null}
-      <Canvas style={StyleSheet.absoluteFill}>
-        <SkyGradient frame={frame} width={width} height={height} />
-        <LivingBackdrop {...scene} />
-        <AtmBoxes raw={current.atm.back} {...boxes} />
-        {shown.blooms && <SkyBlooms {...props} />}
-        <Group transform={sunLift}>
-          {shown.sun && <SkySun frame={frame} width={width} />}
-          {shown.flare && <SkyFlare frame={frame} layout={layout} width={width} />}
-        </Group>
-        <BoxSun look={look} sun={current.sun} lift={sunLift} {...boxes} />
-        {shown.moon && <BoxMoon atm={current.atm} opacity={moonOp} {...boxes} />}
-        {shown.bokeh && (
-          <Group transform={bokehLift}>
-            <SkyBokeh frame={frame} layout={layout} time={time} width={width} />
-          </Group>
-        )}
-        {shown.dots && (
+      <Canvas
+        {...(canvasRef ? { ref: canvasRef } : {})}
+        style={preview ? { width: preview.width, height: preview.height } : StyleSheet.absoluteFill}
+      >
+        <Group transform={shrink}>
+          <SkyGradient frame={frame} width={width} height={height} />
+          <LivingBackdrop {...scene} />
+          <AtmBoxes raw={current.atm.back} {...boxes} />
+          {shown.blooms && <SkyBlooms {...props} />}
           <Group transform={sunLift}>
-            <SkyHalftone frame={frame} layout={layout} width={width} />
+            {shown.sun && <SkySun frame={frame} width={width} />}
+            {shown.flare && <SkyFlare frame={frame} layout={layout} width={width} />}
           </Group>
-        )}
-        {shown.leak && <SkyLeak {...props} />}
-        <WeatherMiddle {...scene} />
-        <SurfaceMiddle {...scene} />
-        <LivingMiddle {...scene} />
-        <AtmBoxes raw={current.atm.front} {...boxes} />
-        {shown.vignette && (
-          <SkyVignette frame={frame} layout={layout} width={width} height={height} />
-        )}
-        {shown.grain && <SkyGrain {...props} />}
-        <WeatherTop {...scene} />
+          <BoxSun look={look} sun={current.sun} lift={sunLift} {...boxes} />
+          {shown.moon && <BoxMoon atm={current.atm} opacity={moonOp} {...boxes} />}
+          {shown.bokeh && (
+            <Group transform={bokehLift}>
+              <SkyBokeh frame={frame} layout={layout} time={time} width={width} />
+            </Group>
+          )}
+          {shown.dots && (
+            <Group transform={sunLift}>
+              <SkyHalftone frame={frame} layout={layout} width={width} />
+            </Group>
+          )}
+          {shown.leak && <SkyLeak {...props} />}
+          <WeatherMiddle {...scene} />
+          <SurfaceMiddle {...scene} />
+          <LivingMiddle {...scene} />
+          <AtmBoxes raw={current.atm.front} {...boxes} />
+          {shown.vignette && (
+            <SkyVignette frame={frame} layout={layout} width={width} height={height} />
+          )}
+          {shown.grain && <SkyGrain {...props} />}
+          <WeatherTop {...scene} />
+        </Group>
       </Canvas>
-      <SkySign atm={current.atm} dispFont={current.palette.dispFont} />
+      {preview ? (
+        <View style={[styles.shrunk, { width, height, transform: [{ scale }] }]}>
+          <SkySign atm={current.atm} dispFont={current.palette.dispFont} />
+        </View>
+      ) : (
+        <SkySign atm={current.atm} dispFont={current.palette.dispFont} />
+      )}
     </View>
   );
 }
 
-const styles = StyleSheet.create({ passThrough: { pointerEvents: 'none' } });
+const styles = StyleSheet.create({
+  passThrough: { pointerEvents: 'none' },
+  shrunk: { position: 'absolute', left: 0, top: 0, transformOrigin: '0 0' },
+});
 
 export const Sky = memo(SkyView);

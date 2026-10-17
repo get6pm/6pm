@@ -2,11 +2,8 @@ import { Redirect, useLocalSearchParams } from 'expo-router';
 
 import { isLookId } from '@6pm/theme';
 
-import { LookDetail } from '../../features/looks/look-detail';
-
-/** A look's try-on sheet. An id that is not a look goes back to the shop. */
+/** A look's try-on lives in the Looks sheet: this address opens the sheet on it. */
 export default function LookRoute() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  if (!isLookId(id)) return <Redirect href="/looks" />;
-  return <LookDetail look={id} />;
+  return <Redirect href={isLookId(id) ? { pathname: '/looks', params: { look: id } } : '/looks'} />;
 }

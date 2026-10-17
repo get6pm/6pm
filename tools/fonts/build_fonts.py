@@ -5,11 +5,11 @@
 Sources (fetched once, outside the repo): google/fonts ofl/bricolagegrotesque (variable),
 ofl/bevietnampro, ofl/ibmplexmono, ofl/patrickhand, and google/material-design-icons
 variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf + .codepoints. The looks'
-faces, display and interface (`--only looks` builds just these): ofl/baloo2, ofl/bodonimoda,
+faces, display and interface (`--only looks` builds just these): ofl/grandstander, ofl/lexend,
+ofl/bigshouldersdisplay, ofl/geist, ofl/prata,
 ofl/newsreader, ofl/darkergrotesque, ofl/alegreya, ofl/literata, ofl/epilogue, ofl/archivo,
-ofl/plusjakartasans, ofl/nunito and ofl/tiltneon (variable), and the static cuts of
-ofl/barlowcondensed, ofl/delagothicone, ofl/spectral, ofl/alegreyasans, ofl/baijamjuree and
-ofl/barlow named in LOOK_STATIC_FACES.
+ofl/plusjakartasans and ofl/tiltneon (variable), and the static cuts of ofl/delagothicone,
+ofl/spectral, ofl/alegreyasans and ofl/baijamjuree named in LOOK_STATIC_FACES.
 
 Bricolage Grotesque, Material Symbols and most look faces ship as variable fonts: React Native applies
 `fontVariationSettings` on iOS and Android, so the app sets the same axes the browser does
@@ -118,8 +118,12 @@ def build_static(src: Path) -> None:
 # The default instance is the weight the face is set at most (500 for display, 400 for text).
 LOOK_VARIABLE_FACES = (
     # (source, family, axes)
-    ("Baloo2[wght].ttf", "Baloo2", {"wght": (500, 500, 700)}),
-    ("BodoniModa[opsz,wght].ttf", "BodoniModa", {"wght": (400, 500, 700), "opsz": (6, 28, 96)}),
+    # Paper Diorama and Long Exposure: newer faces than the prototype's Baloo 2, Nunito,
+    # Barlow Condensed and Barlow, every one with Vietnamese.
+    ("Grandstander[wght].ttf", "Grandstander", {"wght": (400, 500, 800)}),
+    ("Lexend[wght].ttf", "Lexend", {"wght": (400, 400, 800)}),
+    ("BigShouldersDisplay[wght].ttf", "BigShouldersDisplay", {"wght": (400, 500, 800)}),
+    ("Geist[wght].ttf", "Geist", {"wght": (400, 400, 800)}),
     ("Newsreader[opsz,wght].ttf", "Newsreader", {"wght": (400, 500, 700), "opsz": (6, 28, 72)}),
     ("DarkerGrotesque[wght].ttf", "DarkerGrotesque", {"wght": (400, 500, 800)}),
     ("Alegreya[wght].ttf", "Alegreya", {"wght": (400, 500, 800)}),
@@ -127,14 +131,13 @@ LOOK_VARIABLE_FACES = (
     ("Epilogue[wght].ttf", "Epilogue", {"wght": (400, 400, 800)}),
     ("Archivo[wdth,wght].ttf", "Archivo", {"wght": (400, 400, 800), "wdth": 100}),
     ("PlusJakartaSans[wght].ttf", "PlusJakartaSans", {"wght": (400, 400, 800)}),
-    ("Nunito[wght].ttf", "Nunito", {"wght": (400, 400, 800)}),
     ("TiltNeon[XROT,YROT].ttf", "TiltNeon", {"XROT": 0, "YROT": 0}),
 )
 
 # Faces Google ships only as static cuts, one file per weight the app sets.
 LOOK_STATIC_FACES = (
-    "BarlowCondensed-Medium",
-    "BarlowCondensed-SemiBold",
+    # Sơn Mài's display face: the prototype's Bodoni Moda has no Vietnamese (ơ, ư, ầ…).
+    "Prata-Regular",
     "DelaGothicOne-Regular",
     "Spectral-Regular",
     "Spectral-Medium",
@@ -147,10 +150,6 @@ LOOK_STATIC_FACES = (
     "BaiJamjuree-Medium",
     "BaiJamjuree-SemiBold",
     "BaiJamjuree-Bold",
-    "Barlow-Regular",
-    "Barlow-Medium",
-    "Barlow-SemiBold",
-    "Barlow-Bold",
 )
 
 

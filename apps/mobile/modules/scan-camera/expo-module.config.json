@@ -1,6 +1,9 @@
 {
-  "platforms": ["apple"],
+  "platforms": ["apple", "android"],
   "apple": {
     "modules": ["ScanCameraModule"]
+  },
+  "android": {
+    "modules": ["ai.sixpm.scancamera.ScanCameraModule"]
   }
 }

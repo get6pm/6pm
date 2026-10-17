@@ -2,7 +2,10 @@ import { requireNativeView, requireOptionalNativeModule } from 'expo';
 import type { ComponentType, Ref } from 'react';
 import type { NativeSyntheticEvent, ViewProps } from 'react-native';
 
-/** One recognised line of a receipt, as Vision read it (box origin bottom left, normalised). */
+/**
+ * One recognised line of a receipt, as Vision read it (box origin bottom left, normalised); Android
+ * hands ML Kit's lines over in the same convention.
+ */
 export interface ScannedLine {
   readonly text: string;
   readonly box?: { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
@@ -59,8 +62,8 @@ interface ScanCameraNative {
 }
 
 /**
- * Scan's reader (`modules/scan-camera/ios`): a picture read as a QR code or a receipt, or null
- * where it is not built in: tests, and other platforms.
+ * Scan's reader (`modules/scan-camera/ios` and `android`): a picture read as a QR code or a
+ * receipt, or null where it is not built in: tests, and the web.
  */
 export const scanCamera = requireOptionalNativeModule<ScanCameraNative>('ScanCamera');
 

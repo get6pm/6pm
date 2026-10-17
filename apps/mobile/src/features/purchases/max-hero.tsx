@@ -1,29 +1,22 @@
-import { useEffect, type ReactNode } from 'react';
 import { Text, View } from 'react-native';
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useReducedMotion,
-  useSharedValue,
-  withRepeat,
-  withSequence,
-  withTiming,
-} from 'react-native-reanimated';
 
 import type { LookConfig, LookId } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
 import { Companion } from '../../ui/companion/companion';
-import type { CompanionForm } from '../../ui/companion/companion-mood';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { body, display, leading } from '../../ui/type/fonts';
-import { LookPreview, MAX_PREVIEW } from '../looks/look-preview';
+import { LookSkyPreview } from '../looks/look-sky-preview';
+import type { MaxFrom } from './max-context';
 import { MaxGlow } from './max-glow';
+import { Floating, HeroArt } from './max-hero-art';
 import { SCENE_LOOKS } from './products';
 import { MAX_CREAM, MAX_FONT, MAX_INK, MAX_PAGE } from './max-colours';
 
-const CARD = { width: 112, height: 168 };
+const CARD = { width: 116, height: 174 };
+/** How far the glow reaches down the page behind the headline and the tiles. */
+const GLOW = 560;
 
 /** The three living scenes fan out above the wordmark: x, y, tilt, stacking, and float period. */
 const FAN = [
@@ -32,46 +25,19 @@ const FAN = [
   { look: SCENE_LOOKS[2], x: 98, y: 16, rotate: 10, z: 1, seconds: 5.8 },
 ] as const;
 
-/** Rises 8 pt and settles, over `seconds`, for ever: the card floats. Still with Reduce Motion. */
-function Floating({
-  seconds,
-  children,
-}: {
-  readonly seconds: number;
-  readonly children: ReactNode;
-}) {
-  const reduce = useReducedMotion();
-  const lift = useSharedValue(0);
-  useEffect(() => {
-    if (reduce) return;
-    const ease = Easing.bezier(0.42, 0, 0.58, 1);
-    const half = (seconds * 1000) / 2;
-    lift.value = withRepeat(
-      withSequence(
-        withTiming(-8, { duration: half, easing: ease }),
-        withTiming(0, { duration: half, easing: ease }),
-      ),
-      -1,
-    );
-  }, [lift, reduce, seconds]);
-  const style = useAnimatedStyle(() => ({ transform: [{ translateY: lift.value }] }));
-  return <Animated.View style={[{ flex: 1 }, style]}>{children}</Animated.View>;
-}
-
 /**
- * The top of the Max sheet (prototype `App:983-1009`): the paid skies blurred into a glow, three
- * living scenes floating over it, the companion, and the wordmark. `children` draw over it
- * (the grabber and close button belong to the sheet).
+ * The top of the Max sheet (prototype `App:1048-1079`): the paid skies blurred into a glow that
+ * fades down behind the page, a picture of the reason it was opened (the living scenes, live,
+ * with the companion, for the looks), the grabber, the close button and the wordmark.
  */
 export function MaxHero({
+  from,
   hour,
   configs,
   safe,
   onClose,
-  companion,
 }: {
-  /** The Max companion the sheet was opened for; otherwise the one worn. */
-  readonly companion?: CompanionForm | undefined;
+  readonly from: MaxFrom;
   readonly hour: number;
   readonly configs: Readonly<Partial<Record<LookId, Partial<LookConfig>>>>;
   readonly safe: string;
@@ -79,17 +45,36 @@ export function MaxHero({
 }) {
   const { t } = useI18n();
   return (
-    <View style={{ height: 304, overflow: 'hidden' }}>
-      <MaxGlow hour={hour} configs={configs} blur={38} saturation={1.3} opacity={0.75} inset={50} />
+    <View style={{ height: 300, zIndex: 0 }}>
+      <View
+        pointerEvents="none"
+        style={{ position: 'absolute', left: -50, right: -50, top: -50, height: GLOW }}
+      >
+        <MaxGlow hour={hour} configs={configs} blur={44} saturation={1.3} opacity={0.7} inset={0} />
+      </View>
       <View
         pointerEvents="none"
         style={{
           position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
           left: 0,
-          backgroundImage: `radial-gradient(90% 75% at 50% 35%, rgba(15,12,20,0) 0%, rgba(15,12,20,.55) 60%, ${MAX_PAGE} 100%)`,
+          right: 0,
+          top: 0,
+          height: GLOW,
+          backgroundImage:
+            'radial-gradient(80% 45% at 50% 22%, rgba(15,12,20,0) 0%, rgba(15,12,20,.4) 100%)',
+        }}
+      />
+      {/* The prototype masks the glow out from halfway down; on the page's own colour that is
+          the page colour coming in. */}
+      <View
+        pointerEvents="none"
+        style={{
+          position: 'absolute',
+          left: -50,
+          right: -50,
+          top: -50,
+          height: GLOW,
+          backgroundImage: `linear-gradient(180deg, rgba(15,12,20,0) 45%, ${MAX_PAGE} 100%)`,
         }}
       />
       <View
@@ -125,63 +110,72 @@ export function MaxHero({
       >
         <Symbol name="close" size={19} color="#ffffff" />
       </PressScale>
-      <View
-        pointerEvents="none"
-        style={{ position: 'absolute', left: '50%', top: 40, width: 0, height: 0 }}
-      >
-        {FAN.map(({ look, x, y, rotate, z, seconds }) => (
+
+      {from === 'looks' ? (
+        <>
           <View
-            key={look}
-            style={{
-              position: 'absolute',
-              left: x - CARD.width / 2,
-              top: y,
-              width: CARD.width,
-              height: CARD.height,
-              zIndex: z,
-              transform: [{ rotate: `${rotate}deg` }],
-            }}
+            pointerEvents="none"
+            style={{ position: 'absolute', left: '50%', top: 36, width: 0, height: 0 }}
           >
-            <Floating seconds={seconds}>
+            {FAN.map(({ look, x, y, rotate, z, seconds }) => (
               <View
+                key={look}
                 style={{
-                  flex: 1,
-                  borderRadius: 22,
-                  overflow: 'hidden',
-                  boxShadow: '0 22px 44px rgba(0,0,0,.55)',
+                  position: 'absolute',
+                  left: x - CARD.width / 2,
+                  top: y,
+                  width: CARD.width,
+                  height: CARD.height,
+                  zIndex: z,
+                  transform: [{ rotate: `${rotate}deg` }],
                 }}
               >
-                <LookPreview
-                  look={look}
-                  hour={hour}
-                  config={configs[look]}
-                  safe={safe}
-                  label={t('looks.safeToday')}
-                  metrics={MAX_PREVIEW}
-                />
-                <View
-                  pointerEvents="none"
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                    bottom: 0,
-                    left: 0,
-                    borderRadius: 22,
-                    boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.16)',
-                  }}
-                />
+                <Floating seconds={seconds} style={{ flex: 1 }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      borderRadius: 24,
+                      overflow: 'hidden',
+                      boxShadow: '0 22px 44px rgba(0,0,0,.55)',
+                    }}
+                  >
+                    <LookSkyPreview
+                      look={look}
+                      hour={hour}
+                      config={configs[look]}
+                      width={CARD.width}
+                      height={CARD.height}
+                      running
+                      lift={40}
+                    />
+                    <View
+                      pointerEvents="none"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        bottom: 0,
+                        left: 0,
+                        borderRadius: 24,
+                        boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.16)',
+                      }}
+                    />
+                  </View>
+                </Floating>
               </View>
-            </Floating>
+            ))}
           </View>
-        ))}
-      </View>
-      <View
-        pointerEvents="none"
-        style={{ position: 'absolute', left: '50%', bottom: 46, marginLeft: -44, zIndex: 3 }}
-      >
-        <Companion size={88} mood="happy" {...(companion ? { form: companion } : {})} />
-      </View>
+          <View
+            pointerEvents="none"
+            style={{ position: 'absolute', left: '50%', bottom: 44, marginLeft: -44, zIndex: 3 }}
+          >
+            <Companion size={88} mood="happy" form="max" />
+          </View>
+        </>
+      ) : (
+        <HeroArt from={from} safe={safe} />
+      )}
+
       <View
         pointerEvents="none"
         style={{

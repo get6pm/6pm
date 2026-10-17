@@ -33,19 +33,6 @@ export const SHOP_PREVIEW: PreviewMetrics = {
   numberSpacing: -0.01,
 };
 
-/** The floating cards on the Max sheet (prototype `App:1007-1012`). */
-export const MAX_PREVIEW: PreviewMetrics = {
-  sunLeft: '56%',
-  sunTop: 26,
-  sunSize: 28,
-  cellInset: 8,
-  cellRadius: 12,
-  cellPadding: [6, 8, 7],
-  labelSize: 7.5,
-  numberSize: 19,
-  numberSpacing: 0,
-};
-
 /** One look's palette and signature at an hour, with that look's own saved settings. */
 export function useLookPreview(
   look: LookId,

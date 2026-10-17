@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0f0d12}
+a{color:#f3b27a}
+a:hover{color:#ffd2a8}
+</style>
+</helmet>
+<div style="background:#0f0d12; color:#efe9e1; font-family:'Bricolage Grotesque', system-ui, sans-serif; padding:72px 72px 120px; display:flex; flex-direction:column; gap:64px; width:max-content; min-width:100%; box-sizing:border-box; -webkit-font-smoothing:antialiased;">
+  <header style="display:flex; flex-direction:column; gap:16px; max-width:820px;">
+    <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.16em; color:rgba(239,233,225,.6);">6PM · MAX SHEET · STATES</div>
+    <div style="font-size:88px; font-weight:600; line-height:.92; letter-spacing:-.035em;">One sheet, every answer the store can give.</div>
+    <div style="font-size:19px; line-height:1.45; color:rgba(239,233,225,.74); text-wrap:pretty; max-width:720px;">Prices, the trial and the yearly saving are read from the App Store, never hard-coded. The billed amount is always the prominent price (App Review 3.1.2(c)). What the store hasn’t said is left out, and the button waits.</div>
+  </header>
+
+  <sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+    <section data-screen-label="{{ g.title }}" style="display:flex; flex-direction:column; gap:28px;">
+      <div style="display:flex; align-items:baseline; gap:20px; border-top:1px solid rgba(239,233,225,.14); padding-top:22px;">
+        <div style="font-size:30px; font-weight:600; letter-spacing:-.015em;">{{ g.title }}</div>
+        <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; letter-spacing:.12em; color:rgba(239,233,225,.6);">{{ g.sub }}</div>
+      </div>
+      <div style="display:flex; gap:48px; align-items:flex-start;">
+        <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+          <article style="width:402px; display:flex; flex-direction:column; gap:18px;">
+            <div style="display:flex; flex-direction:column; gap:6px; min-height:84px;">
+              <div style="font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; letter-spacing:.12em; color:rgba(239,233,225,.6);">{{ it.no }}</div>
+              <div style="font-size:26px; font-weight:600; line-height:1.1; letter-spacing:-.01em;">{{ it.title }}</div>
+              <div style="font-size:14.5px; line-height:1.4; color:rgba(239,233,225,.7); text-wrap:pretty;">{{ it.note }}</div>
+            </div>
+            <dc-import name="6pm App v2" bare="{{ true }}" view="6pm Max" max-from="{{ it.from }}" max-on="{{ it.on }}" max-plan="{{ it.plan }}" store-state="{{ it.store }}" start-hour="{{ it.hour }}" hint-size="402px,874px"></dc-import>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const mk = (no, title, note, o) => Object.assign({ no, title, note, from: 'looks', on: false, plan: 'year', store: 'ready', hour: 18.12 }, o);
+    return {
+      groups: [
+        { title: 'Store states', sub: 'WHAT THE APP STORE HAS TOLD US', items: [
+          mk('01 · LOADING', 'Waiting for prices', 'Plan cards show shimmer bars, the button says “Waiting for the App Store…” and nothing can be tapped yet.', { store: 'loading' }),
+          mk('02 · READY · YEARLY', 'Yearly preselected', 'The billed amount leads: 599.000₫/yr with SAVE 36% from the store’s two prices. Terms spell out the trial and the renewal.', {}),
+          mk('03 · READY · MONTHLY', 'Monthly chosen', '78.000₫/mo. Same trial, terms switch to the monthly renewal.', { plan: 'month' }),
+          mk('04 · UNAVAILABLE', 'Store not answering', 'No prices, “Subscribe to Max” dimmed, and a line saying why. Restore still works.', { store: 'unavailable' })
+        ] },
+        { title: 'Membership', sub: 'ONCE MAX IS ON', items: [
+          mk('05 · MAX ON', 'You’re on Max', 'Plan cards gone; status line from the store (“Renews 10 November.”), Done and Manage subscription.', { on: true }),
+          mk('06 · MAX ON · NIGHT', 'Same sheet after dark', 'The hero glow and the living-scene previews follow the real clock.', { on: true, hour: 21.5 })
+        ] },
+        { title: 'Opened for a reason', sub: 'EACH GATE GETS ITS OWN HERO, AND LEADS THE TILES', items: [
+          mk('07 · FROM ASK', 'Ask as much as you like.', 'A real exchange with the companion thinking it over.', { from: 'ask' }),
+          mk('08 · FROM POTS', 'As many pots as plans.', 'Three jars filling, with +100k and auto chips.', { from: 'pots' }),
+          mk('09 · FROM BUDGET TOGETHER', 'Budget together.', 'Two people, one shared pot.', { from: 'shared' }),
+          mk('10 · FROM TRAVEL', 'Travel mode, anywhere.', 'Currency coins and a live “฿559 left” line.', { from: 'travel' }),
+          mk('11 · FROM YEAR BOOK', 'Your year, bound.', 'A shelf of diaries and the 2026 book.', { from: 'diary' }),
+          mk('12 · FROM BACKUP', 'Keep every day, forever.', 'The cloud tile, locked and counted.', { from: 'backup' }),
+          mk('13 · FROM WIDGETS', '6pm on your Home Screen.', 'The Home widget in your look beside the Lock Screen ring.', { from: 'widgets' }),
+          mk('14 · FROM ICONS', '180 icons for every category.', 'A scatter of category tiles.', { from: 'icons' }),
+          mk('15 · FROM COMPANIONS', 'Meet your Max companions.', 'Both Max forms, large.', { from: 'buddy' })
+        ] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

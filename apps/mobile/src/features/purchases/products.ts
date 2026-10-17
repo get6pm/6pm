@@ -60,4 +60,6 @@ export function maxPlanOfProduct(productId: string): MaxPlan | null {
 export const LEGAL_LINKS = {
   terms: 'https://at6pm.app/terms',
   privacy: 'https://at6pm.app/privacy',
+  /** 6pm's source, open under the Apache License 2.0. */
+  source: 'https://github.com/at6pm/6pm',
 } as const;

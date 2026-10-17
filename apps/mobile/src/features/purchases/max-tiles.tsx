@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Text, View } from 'react-native';
 
-import type { LookConfig, LookId } from '@6pm/theme';
+import { oklchSrgbHex, type LookConfig, type LookId } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
 import { body } from '../../ui/type/fonts';
@@ -10,9 +10,30 @@ import { TileArt } from './max-tile-art';
 import { PAID_LOOKS, SCENE_LOOKS } from './products';
 import { MAX_CREAM, MAX_GOLD } from './max-colours';
 
+/** Each tile's own colour, glowing from its top right corner. */
+const HUE: Readonly<Record<MaxFrom, number>> = {
+  looks: 30,
+  ask: 300,
+  pots: 150,
+  travel: 210,
+  diary: 50,
+  backup: 190,
+  widgets: 80,
+  icons: 330,
+  buddy: 60,
+};
+
+/** `oklch(0.36 0.07 h / a)` as CSS hex with alpha. */
+function glow(hue: number, alpha: number): string {
+  const a = Math.round(alpha * 255)
+    .toString(16)
+    .padStart(2, '0');
+  return `${oklchSrgbHex(0.36, 0.07, hue)}${a}`;
+}
+
 /**
- * The feature tiles (prototype `App:1014-1042`), two to a row with the Looks across both. The one
- * that Max was opened for comes first, ringed in gold while Max is off.
+ * Everything Max adds, two tiles to a row, each with its own picture (prototype `App:1085-1100`).
+ * The one Max was opened for comes first, ringed in gold with a dot by its name while Max is off.
  */
 export function MaxTiles({
   from,
@@ -32,36 +53,48 @@ export function MaxTiles({
 
   const tile = (id: MaxFrom) => {
     const hot = !on && id === from;
+    const note =
+      id === 'looks'
+        ? t('max.tile.looksNote', { looks: PAID_LOOKS.length, scenes: SCENE_LOOKS.length })
+        : t(`max.note.${id}`);
     return (
       <View
         key={id}
         style={{
           flex: 1,
-          minHeight: 108,
+          minHeight: 140,
           padding: 14,
-          borderRadius: 20,
-          backgroundColor: hot ? 'rgba(255,210,122,.1)' : 'rgba(255,255,255,.05)',
-          ...(hot ? { boxShadow: `0 0 0 2px ${MAX_GOLD}` } : {}),
-          flexDirection: id === 'looks' ? 'row' : 'column',
+          borderRadius: 22,
+          overflow: 'hidden',
+          backgroundImage: `radial-gradient(130% 110% at 100% 0%, ${glow(HUE[id], hot ? 0.75 : 0.55)} 0%, rgba(255,255,255,.04) 70%)`,
+          boxShadow: hot
+            ? `0 0 0 1.5px ${MAX_GOLD}, inset 0 0 0 0.5px rgba(255,255,255,.08)`
+            : 'inset 0 0 0 0.5px rgba(255,255,255,.08)',
           justifyContent: 'space-between',
-          gap: 12,
+          gap: 14,
         }}
       >
-        <View style={id === 'looks' ? { justifyContent: 'center' } : undefined}>
-          <TileArt tile={id} hour={hour} configs={configs} safe={safe} />
-        </View>
-        <View style={{ gap: 2, justifyContent: 'flex-end' }}>
-          <Text style={{ ...body(14.5, 650), lineHeight: 17.4, color: MAX_CREAM }}>
-            {t(`max.tile.${id}`)}
-          </Text>
-          {id === 'looks' ? (
-            <Text style={{ ...body(12), color: 'rgba(246,239,230,.6)' }}>
-              {t('max.tile.looksNote', {
-                looks: PAID_LOOKS.length,
-                scenes: SCENE_LOOKS.length,
-              })}
+        <TileArt tile={id} hour={hour} configs={configs} safe={safe} />
+        <View style={{ gap: 2 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Text style={{ ...body(15, 650), lineHeight: 18, color: MAX_CREAM, flexShrink: 1 }}>
+              {t(`max.tile.${id}`)}
             </Text>
-          ) : null}
+            {hot ? (
+              <View
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: 4,
+                  backgroundColor: MAX_GOLD,
+                  boxShadow: '0 0 0 3px rgba(255,210,122,.25)',
+                }}
+              />
+            ) : null}
+          </View>
+          <Text style={{ ...body(12), lineHeight: 16.2, color: 'rgba(246,239,230,.62)' }}>
+            {note}
+          </Text>
         </View>
       </View>
     );
@@ -72,7 +105,7 @@ export function MaxTiles({
       {rows.map((row) => (
         <View key={row.join()} style={{ flexDirection: 'row', gap: 10 }}>
           {row.map(tile)}
-          {row.length === 1 && row[0] !== 'looks' ? <View style={{ flex: 1 }} /> : null}
+          {row.length === 1 ? <View style={{ flex: 1 }} /> : null}
         </View>
       ))}
     </View>

@@ -1,20 +1,16 @@
-import { memo, useEffect, useRef } from 'react';
-import { StyleSheet, Text, useWindowDimensions, View, type HostInstance } from 'react-native';
+import { memo, useRef } from 'react';
+import { StyleSheet, Text, View, type HostInstance } from 'react-native';
 
-import { useSharedValue } from 'react-native-reanimated';
-
-import { clockOf } from '@6pm/domain';
 import { configFor, lookById, swatchesFor, type LookConfig, type LookId } from '@6pm/theme';
 
 import { useI18n } from '../../i18n/i18n';
 import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
-import { Sky } from '../../ui/sky/sky';
-import { useClock } from '../../ui/theme/clock';
-import { body, display, leading, mono } from '../../ui/type/fonts';
+import { body, display, leading } from '../../ui/type/fonts';
 import { useLookPreview } from './look-preview';
 import { isScene, type CardBadge } from './look-catalogue';
 import type { LookCopy } from './look-copy';
+import { LookSkyPreview } from './look-sky-preview';
 
 /** A card's place on the screen, for the sky that grows out of it. */
 export interface CardRect {
@@ -62,19 +58,13 @@ export const ShopCard = memo(function ShopCard({
   readonly copy: LookCopy;
   readonly onOpen: (look: LookId, rect: CardRect | null) => void;
 }) {
-  const { t, weekday, dayMonth } = useI18n();
-  const { dayDate } = useClock();
-  const screen = useWindowDimensions();
+  const { t } = useI18n();
   const { palette: own } = useLookPreview(look, hour, config);
   const def = lookById(look);
   const variant = configFor(look, config).v;
   const swatches = swatchesFor(look, variant);
   const colours = badgeColours(badge, own.accent);
   const name = copy.name(look);
-  const scale = width / screen.width;
-
-  const active = useSharedValue(focused);
-  useEffect(() => active.set(focused), [active, focused]);
 
   const frame = useRef<HostInstance>(null);
   const open = () => {
@@ -96,45 +86,16 @@ export const ShopCard = memo(function ShopCard({
       <View
         ref={frame}
         collapsable={false}
-        style={{ flex: 1, borderRadius: 32, overflow: 'hidden', backgroundImage: own.sky }}
+        style={{ flex: 1, borderRadius: 32, overflow: 'hidden' }}
       >
-        <Sky
+        <LookSkyPreview
           look={look}
           hour={hour}
-          serious={false}
-          active={active}
-          preview={{ width, height }}
-          {...(config ? { config } : {})}
+          config={config}
+          width={width}
+          height={height}
+          running={focused}
         />
-        {/* The date and the clock where Today has them, shrunk with the sky. */}
-        <View
-          pointerEvents="none"
-          style={[
-            styles.screen,
-            { width: screen.width, height: screen.height, transform: [{ scale }] },
-          ]}
-        >
-          <View style={{ position: 'absolute', left: 26, top: 238, gap: 12 }}>
-            <Text
-              style={{
-                ...mono(12, 400, 0.14),
-                textTransform: 'uppercase',
-                color: own.inkSoft,
-              }}
-            >
-              {`${weekday(dayDate)} · ${dayMonth(dayDate)}`}
-            </Text>
-            <Text
-              style={{
-                ...leading(display(64, 400, -0.02, own.dispFont), 64, true),
-                fontVariant: ['tabular-nums'],
-                color: own.ink,
-              }}
-            >
-              {clockOf(hour)}
-            </Text>
-          </View>
-        </View>
 
         <View pointerEvents="none" style={styles.top}>
           {badgeText ? (
@@ -239,7 +200,6 @@ export const ShopCard = memo(function ShopCard({
 });
 
 const styles = StyleSheet.create({
-  screen: { position: 'absolute', left: 0, top: 0, transformOrigin: '0 0' },
   top: {
     position: 'absolute',
     left: 16,

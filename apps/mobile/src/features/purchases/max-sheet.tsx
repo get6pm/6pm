@@ -6,7 +6,6 @@ import { useDay } from '../../data/money-provider';
 import { useI18n } from '../../i18n/i18n';
 import { useMoneyFormat } from '../../money/use-money-format';
 import { haptics } from '../../ui/haptics';
-import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useClock } from '../../ui/theme/clock';
 import { useToast } from '../../ui/toast/toast-host';
@@ -19,17 +18,18 @@ import { canUseCompanion, canUseLook } from './entitlement';
 import { MaxHero } from './max-hero';
 import { parseMaxCompanion, parseMaxFrom } from './max-context';
 import { MaxFooter } from './max-footer';
+import { MaxMakers } from './max-makers';
 import { MaxTiles } from './max-tiles';
 import { trialDaysFor, yearlySavingPercent } from './max-pricing';
 import { MaxSheetFrame } from './max-sheet-frame';
 import { LEGAL_LINKS, MAX_PLANS, PAID_LOOKS, PRESELECTED_MAX_PLAN, type MaxPlan } from './products';
 import { usePurchases } from './purchases-provider';
 import { useMaxStatusLine } from './use-max-status-line';
-import { MAX_CREAM, MAX_FONT, MAX_GOLD, MAX_SOFT } from './max-colours';
+import { MAX_CREAM, MAX_FONT, MAX_SOFT } from './max-colours';
 
 /**
- * The 6pm Max sheet (prototype `App:994-1068`). It opens for a reason (`from`), which leads the
- * tiles and the headline. Prices, the yearly saving and the trial all come from the store; what
+ * The 6pm Max sheet (prototype `App:1044-1134`, its states in `Max States`). It opens for a
+ * reason (`from`), which picks the hero's picture and the headline and leads the tiles. Prices, the yearly saving and the trial all come from the store; what
  * the store has not told us is left out, and the button waits.
  */
 export function MaxSheet() {
@@ -73,6 +73,7 @@ export function MaxSheet() {
   const offer = offerings?.max[plan];
   const trial = offerings ? trialDaysFor(offerings, plan) : null;
   const saving = offerings ? yearlySavingPercent(offerings) : null;
+  const loading = !offerings && (offeringsStatus === 'idle' || offeringsStatus === 'loading');
 
   const close = () => {
     haptics.tap();
@@ -124,7 +125,7 @@ export function MaxSheet() {
 
   const cta = on
     ? t('max.cta.done')
-    : busy
+    : busy || loading
       ? t('max.cta.waiting')
       : trial !== null
         ? t('max.cta.trial', { count: trial })
@@ -155,8 +156,8 @@ export function MaxSheet() {
           bounces={false}
           showsVerticalScrollIndicator={false}
         >
-          <MaxHero companion={wanted} hour={hour} configs={config} safe={safe} onClose={close} />
-          <View style={{ paddingTop: 10, paddingHorizontal: 18, paddingBottom: 20, gap: 20 }}>
+          <MaxHero from={from} hour={hour} configs={config} safe={safe} onClose={close} />
+          <View style={{ paddingTop: 8, paddingHorizontal: 18, paddingBottom: 24, gap: 18 }}>
             <View style={{ alignItems: 'center', gap: 6 }}>
               <BalancedText
                 accessibilityRole="header"
@@ -181,34 +182,32 @@ export function MaxSheet() {
               </Text>
             </View>
             <MaxTiles from={from} on={on} hour={hour} configs={config} safe={safe} />
+            <MaxMakers onSource={() => open(LEGAL_LINKS.source)} />
             <View
               style={{
                 flexDirection: 'row',
-                gap: 10,
-                alignItems: 'center',
                 justifyContent: 'center',
-                paddingHorizontal: 12,
+                alignItems: 'center',
+                gap: 4,
+                paddingTop: 2,
               }}
             >
-              <Symbol name="favorite" size={16} fill={1} color={MAX_GOLD} />
-              <Text
-                style={{
-                  ...body(12.5),
-                  lineHeight: 17.5,
-                  textAlign: 'center',
-                  color: 'rgba(246,239,230,.6)',
-                  flexShrink: 1,
-                }}
-              >
-                {t('max.free')}
-              </Text>
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 4 }}>
               {[
-                { label: t('max.restore'), onPress: () => void doRestore() },
+                { label: t('looks.restore'), onPress: () => void doRestore() },
                 { label: t('max.terms'), onPress: () => open(LEGAL_LINKS.terms) },
                 { label: t('max.privacy'), onPress: () => open(LEGAL_LINKS.privacy) },
-              ].map(({ label, onPress }) => (
+              ].map(({ label, onPress }, i) => [
+                i > 0 ? (
+                  <View
+                    key={`dot-${label}`}
+                    style={{
+                      width: 3,
+                      height: 3,
+                      borderRadius: 1.5,
+                      backgroundColor: 'rgba(246,239,230,.3)',
+                    }}
+                  />
+                ) : null,
                 <PressScale
                   key={label}
                   accessibilityRole="link"
@@ -217,8 +216,8 @@ export function MaxSheet() {
                   style={{ height: 34, paddingHorizontal: 10, justifyContent: 'center' }}
                 >
                   <Text style={{ ...body(12.5, 600), color: 'rgba(246,239,230,.5)' }}>{label}</Text>
-                </PressScale>
-              ))}
+                </PressScale>,
+              ])}
             </View>
           </View>
         </ScrollView>
@@ -231,6 +230,7 @@ export function MaxSheet() {
             on={on}
             plan={plan}
             offerings={offerings}
+            loading={loading}
             saving={saving}
             cta={cta}
             ctaOff={ctaOff}

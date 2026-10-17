@@ -24,6 +24,37 @@ export function offersLocale(locales: readonly string[], locale: string): boolea
   });
 }
 
+/** Android before 13 has no recogniser that is held to the phone: it may send the audio away. */
+const ANDROID_ON_DEVICE_API = 33;
+
+/**
+ * Whether the phone's own recogniser can hear the locale without a server. iOS answers for any
+ * language it lists. On Android only a language pack already downloaded counts, from Android 13:
+ * the list also holds languages heard online or still to download, and an older recogniser only
+ * prefers to stay offline. On-device mode must never send audio off the phone.
+ */
+export function hearsOnPhone({
+  os,
+  apiLevel,
+  onDevice,
+  supported,
+  locale,
+}: {
+  readonly os: 'ios' | 'android';
+  readonly apiLevel: number;
+  /** What the recogniser says about on-device recognition at all. */
+  readonly onDevice: boolean;
+  readonly supported: {
+    readonly locales: readonly string[];
+    readonly installedLocales: readonly string[];
+  };
+  readonly locale: string;
+}): boolean {
+  if (!onDevice) return false;
+  if (os === 'ios') return offersLocale(supported.locales, locale);
+  return apiLevel >= ANDROID_ON_DEVICE_API && offersLocale(supported.installedLocales, locale);
+}
+
 /** Words the recogniser should expect: the user's categories and the ways amounts are said. */
 export function contextualStrings(categoryNames: readonly string[]): string[] {
   return [...new Set([...categoryNames, 'k', 'nghìn', 'triệu'])];

@@ -1,6 +1,9 @@
 import { requireOptionalNativeModule, type EventSubscription } from 'expo';
 
-/** Why the microphone stopped by itself: iOS took it away (a call, Siri, a headset change). */
+/**
+ * Why the microphone stopped by itself: the system took it away (a call, Siri, another app's
+ * audio or recording, a headset change on iOS).
+ */
 export type MicStopReason = 'interrupted';
 
 interface MicStreamNative {
@@ -17,6 +20,7 @@ interface MicStreamNative {
 
 /**
  * The microphone as 16 kHz mono 16-bit PCM, base64 chunks of about 100 ms
- * (`modules/mic-stream/ios`), or null where it is not built in: tests, and other platforms.
+ * (`modules/mic-stream/ios`, `modules/mic-stream/android`), or null where it is not built in:
+ * tests, and web.
  */
 export const micStream = requireOptionalNativeModule<MicStreamNative>('MicStream');

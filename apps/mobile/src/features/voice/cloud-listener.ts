@@ -94,7 +94,8 @@ export function listenInCloud({
     if (session) session.send(chunk);
     else if (!stopped) early.push(chunk);
   });
-  // iOS took the microphone (a call, Siri): end with what was heard, as a lifted finger would.
+  // The system took the microphone (a call, Siri): end with what was heard, as a lifted finger
+  // would.
   const interrupted = micStream?.addListener('onStop', stop);
 
   const run = async () => {

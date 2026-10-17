@@ -1,6 +1,7 @@
 import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-speech-recognition';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Platform } from 'react-native';
 
 import { allowanceDayOf } from '@6pm/domain';
 import type { Language } from '@6pm/i18n';
@@ -22,9 +23,9 @@ import {
   type DictationEvent,
   type DictationState,
 } from './dictation-state';
-import { offersLocale, speechLocale } from './voice-support';
+import { hearsOnPhone, speechLocale } from './voice-support';
 
-/** Locales that failed to start on this iPhone without a server; asked again on the next launch. */
+/** Locales that failed to start on this phone without a server; asked again on the next launch. */
 const failedLocales = new Set<string>();
 
 export interface Dictation {
@@ -48,8 +49,9 @@ export interface Dictation {
 /**
  * Speech to a spend. In server mode the audio streams to the cloud transcriber (Free: ten a day);
  * in on-device mode, offline, past the allowance, or when the cloud fails before any words,
- * Apple's recogniser hears it on this iPhone, told it must not use a server. `hold` listens for as
- * long as the finger is down; otherwise listening stops by itself after a pause.
+ * the phone's own recogniser hears it (Apple's, or Android's with the language downloaded), told
+ * it must not use a server. `hold` listens for as long as the finger is down; otherwise listening
+ * stops by itself after a pause.
  */
 export function useDictation({
   language,
@@ -80,7 +82,7 @@ export function useDictation({
   /** Who is hearing the words now. */
   const source = useRef<'apple' | 'cloud' | null>(null);
   const cloud = useRef<CloudListener | null>(null);
-  /** Whether Apple's recogniser can hear this language on this iPhone without a server. */
+  /** Whether the phone's own recogniser can hear this language without a server. */
   const appleReady = useRef(false);
   const read = useRef(onRead);
   const words = useRef(contextualStrings);
@@ -112,10 +114,17 @@ export function useDictation({
   useEffect(() => {
     let on = true;
     const check = async () => {
+      const onDevice = ExpoSpeechRecognitionModule.supportsOnDeviceRecognition();
       const ready =
         !failedLocales.has(locale) &&
-        ExpoSpeechRecognitionModule.supportsOnDeviceRecognition() &&
-        offersLocale((await ExpoSpeechRecognitionModule.getSupportedLocales({})).locales, locale);
+        onDevice &&
+        hearsOnPhone({
+          os: Platform.OS === 'android' ? 'android' : 'ios',
+          apiLevel: typeof Platform.Version === 'number' ? Platform.Version : 0,
+          onDevice,
+          supported: await ExpoSpeechRecognitionModule.getSupportedLocales({}),
+          locale,
+        });
       if (!on) return;
       appleReady.current = ready;
       // The cloud transcriber hears what Apple's cannot, in server mode.

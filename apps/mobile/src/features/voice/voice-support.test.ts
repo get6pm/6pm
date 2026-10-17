@@ -4,6 +4,7 @@ import { currencyOf, formatVnd, parseSpokenSpend, VND } from '@6pm/domain';
 
 import {
   contextualStrings,
+  hearsOnPhone,
   offersLocale,
   speechLocale,
   spendIn,
@@ -30,6 +31,39 @@ describe('offersLocale', () => {
   it('refuses a language the recogniser does not list', () => {
     expect(offersLocale(['en-US', 'en-GB', 'fr-FR'], 'vi-VN')).toBe(false);
     expect(offersLocale([], 'en-US')).toBe(false);
+  });
+});
+
+describe('hearsOnPhone', () => {
+  const vi = { locales: ['en-US', 'vi-VN'], installedLocales: ['en-US'] };
+
+  it('takes any language iOS lists', () => {
+    expect(
+      hearsOnPhone({ os: 'ios', apiLevel: 0, onDevice: true, supported: vi, locale: 'vi-VN' }),
+    ).toBe(true);
+  });
+
+  it('takes only a downloaded language on Android', () => {
+    const base = { os: 'android', apiLevel: 36, onDevice: true, supported: vi } as const;
+    expect(hearsOnPhone({ ...base, locale: 'en-US' })).toBe(true);
+    expect(hearsOnPhone({ ...base, locale: 'vi-VN' })).toBe(false);
+  });
+
+  it('never uses an Android recogniser that may send the audio away', () => {
+    const supported = { locales: ['vi-VN'], installedLocales: ['vi-VN'] };
+    expect(
+      hearsOnPhone({ os: 'android', apiLevel: 32, onDevice: true, supported, locale: 'vi-VN' }),
+    ).toBe(false);
+  });
+
+  it('refuses when the phone has no on-device recognition', () => {
+    const supported = { locales: ['vi-VN'], installedLocales: ['vi-VN'] };
+    expect(
+      hearsOnPhone({ os: 'ios', apiLevel: 0, onDevice: false, supported, locale: 'vi-VN' }),
+    ).toBe(false);
+    expect(
+      hearsOnPhone({ os: 'android', apiLevel: 36, onDevice: false, supported, locale: 'vi-VN' }),
+    ).toBe(false);
   });
 });
 

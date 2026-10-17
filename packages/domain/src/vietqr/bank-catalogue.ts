@@ -86,8 +86,9 @@ function untried(scheme: string, appStoreId: string, link: HandoffLink = QR_PAY)
  * Zalo signs its links; MB opened 6pm's unsigned link filled in and a transfer completed, so MB is
  * the one verified bank. Vietcombank and Agribank take only a token their partner issues, so they
  * open as is. Apps outside that list keep their VietQR hand-off scheme
- * (https://api.vietqr.io/v2/ios-app-deeplinks, 2026-10-10). MoMo, ZaloPay and ViettelMoney have
- * no published link.
+ * (https://api.vietqr.io/v2/ios-app-deeplinks, 2026-10-10); the banks that list sends only to its
+ * own pages open as is, with the scheme those pages open (2026-10-17). MoMo and ZaloPay open as is
+ * by the schemes their payment SDKs query; ViettelMoney and VNPT Money publish none.
  */
 const IOS_APPS: Readonly<Record<string, IosApp>> = {
   MB: { scheme: 'mbbank://', appStoreId: '1205807363', link: QR_PAY, verified: true },
@@ -122,6 +123,16 @@ const IOS_APPS: Readonly<Record<string, IosApp>> = {
   TIMO: untried('timo://', '1521230347'),
   // Zalo lists Shinhan's app but no link to it was seen, so it opens as is.
   SHBVN: plain('shinhanglbvnbank://', '1071033810'),
+  NCB: plain('ncbizimobile://', '1465217154'),
+  SCB: plain('scbmobilebanking://', '954973621'),
+  KLB: plain('kienlongbankmobilebanking://', '1562823941'),
+  CIMB: plain('cimb://', '1318127958'),
+  SGICB: plain('saigonbankmobilebanking://', '1481832587'),
+  BVB: plain('baovietmobile://', '1504422967'),
+  COOPBANK: plain('coopbankmobile://', '1578445811'),
+  PBVN: plain('publicbankmobile://', '1573736472'),
+  MOMO: plain('momo://', '918751511'),
+  ZALOPAY: plain('zalopay://', '1112407590'),
 };
 
 function readDirectory(): BankInfo[] {

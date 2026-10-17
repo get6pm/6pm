@@ -40,7 +40,7 @@ describe('payOptions', () => {
 
   it('sends a merchant QR to the first bank 6pm can open, since only a bank app can pay it', () => {
     const merchant: VietQR = { ...vcb, service: 'merchant' };
-    const options = payOptions(merchant, ['MOMO', 'TCB']);
+    const options = payOptions(merchant, ['VTLMONEY', 'TCB']);
     expect(options.mode).toBe('bankApp');
     expect(options.mode === 'bankApp' && options.bank?.id).toBe('TCB');
   });
@@ -52,7 +52,7 @@ describe('payOptions', () => {
 
   it('still offers a merchant QR when none of the user’s wallets can be opened', () => {
     const merchant: VietQR = { ...vcb, service: 'merchant' };
-    expect(payOptions(merchant, ['MOMO'])).toEqual({ mode: 'bankApp', bank: null });
+    expect(payOptions(merchant, ['VTLMONEY'])).toEqual({ mode: 'bankApp', bank: null });
   });
 });
 

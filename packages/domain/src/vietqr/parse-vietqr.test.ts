@@ -31,6 +31,12 @@ const QR = {
     '00020101021126410014A000000615000101065016640209123456789520499995303458540510.005802MY5909QRCSDNBHD6005BANGI6304FFC7',
   khqr: '00020101021129200016coffee_shop@aclb5204599953031165802KH5911COFFEE SHOP6010PHNOM PENH6304BF10',
   japan: '00020101021126260013JP.CO.EXAMPLE01051234553033925802JP6304707E',
+  korea: '00020101021126260013KR.CO.EXAMPLE01051234553034105802KR6304FFF3',
+  qris: '00020101021226370011ID.DANA.WWW011893600915302259148151440014ID.CO.QRIS.WWW0215ID10200176114730303UMI5204581253033605405250005802ID5912TOKO BU SITI6007JAKARTA6304C844',
+  pix: '00020126580014br.gov.bcb.pix0136123e4567-e12b-12d1-a456-426655440000520400005303986540510.505802BR5915Padaria Central6009SAO PAULO62070503***63044966',
+  fps: '00020101021126270012hk.com.hkicl020712345675204000053033445802HK5912DAI PAI DONG6002HK6304EC71',
+  qrph: '00020101021128460011ph.ppmi.p2m0111GXCHPHM2XXX03122150000001235204581253036085802PH5910CARINDERIA6006MANILA6304AC2E',
+  laos: '00020101021138320016A0052662846625770108277104185204581253034185802LA5908FEU SHOP6009VIENTIANE63041D2F',
   vnOther: '00020101021126280010A0000007750110MERCHANT0153037045802VN5908QUAN COM630491A3',
   wrongFormat:
     '00020201021138540010A00000072701240006970436011010233348210208QRIBFTTA53037045802VN63041733',
@@ -186,13 +192,27 @@ describe('parseVietQR', () => {
       ['Singapore PayNow', QR.paynow, 'SG', 'paynow'],
       ['Malaysia DuitNow', QR.duitnow, 'MY', 'duitnow'],
       ['Cambodia KHQR', QR.khqr, 'KH', 'khqr'],
+      ['Indonesia QRIS', QR.qris, 'ID', 'qris'],
+      ['Brazil Pix', QR.pix, 'BR', 'pix'],
+      ['Hong Kong FPS', QR.fps, 'HK', 'fps'],
+      ['Philippines QR Ph', QR.qrph, 'PH', 'qrph'],
+      ['Laos LAOQR, by its country', QR.laos, 'LA', 'laoqr'],
+      ['Japan JPQR, by its country', QR.japan, 'JP', 'jpqr'],
     ])('a %s QR', (_name, payload, country, scheme) => {
       expect(parseVietQR(payload)).toMatchObject({ ok: false, reason: 'foreign', country, scheme });
     });
 
+    it('keeps the amount and currency of a scheme from further away', () => {
+      expect(parseVietQR(QR.pix)).toMatchObject({
+        amount: '10.50',
+        currency: '986',
+        merchantName: 'Padaria Central',
+      });
+    });
+
     it('any other country by its country code, without a scheme', () => {
-      const result = parseVietQR(QR.japan);
-      expect(result).toMatchObject({ ok: false, reason: 'foreign', country: 'JP' });
+      const result = parseVietQR(QR.korea);
+      expect(result).toMatchObject({ ok: false, reason: 'foreign', country: 'KR' });
       expect(result).not.toHaveProperty('scheme');
     });
   });

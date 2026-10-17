@@ -45,6 +45,13 @@ describe('bank catalogue', () => {
     expect(findBankByBin('970999')).toBeNull();
   });
 
+  it('opens the wallets and the smaller banks as they are, with no transfer link', () => {
+    for (const id of ['MOMO', 'ZALOPAY', 'NCB', 'SCB', 'KLB', 'CIMB', 'SGICB', 'BVB', 'COOPBANK']) {
+      expect(findBank(id)?.ios).toMatchObject({ link: null, verified: false });
+      expect(findBank(id)?.ios?.scheme).toMatch(/^[a-z][a-z0-9.+-]*:\/\/$/);
+    }
+  });
+
   it('gives an iOS hand-off for the big retail banks, and an App Store fallback', () => {
     const mb = findBank('MB');
     expect(mb?.ios?.scheme).toBe('mbbank://');

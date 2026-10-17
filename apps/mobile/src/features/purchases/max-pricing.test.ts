@@ -1,12 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import {
-  anyTrialDays,
-  fromPerMonthText,
-  perMonthText,
-  trialDaysFor,
-  yearlySavingPercent,
-} from './max-pricing';
+import { anyTrialDays, quotedOffer, trialDaysFor, yearlySavingPercent } from './max-pricing';
 import { maxStatus } from './max-status';
 import type { MaxOffer, Offerings } from './purchases-port';
 
@@ -42,14 +36,10 @@ describe('Max pricing from the store’s prices', () => {
     ).toBeNull();
   });
 
-  it('shows the store’s per-month text, and none when the store gave none', () => {
-    expect(perMonthText(yearly)).toBe('66.583₫');
-    expect(perMonthText(monthly)).toBe('99.000₫');
-    expect(perMonthText({ ...yearly, perMonthText: null })).toBeNull();
-    expect(perMonthText(undefined)).toBeNull();
-    expect(fromPerMonthText(both)).toBe('66.583₫');
-    expect(fromPerMonthText({ looks: {}, max: { monthly } })).toBe('99.000₫');
-    expect(fromPerMonthText({ looks: {}, max: {} })).toBeNull();
+  it('quotes the yearly plan at its billed price, else the monthly one, else nothing', () => {
+    expect(quotedOffer(both)).toBe(yearly);
+    expect(quotedOffer({ looks: {}, max: { monthly } })).toBe(monthly);
+    expect(quotedOffer({ looks: {}, max: {} })).toBeNull();
   });
 
   it('promises a trial only when the store offers this Apple ID one', () => {

@@ -13,15 +13,12 @@ export function yearlySavingPercent(offerings: Offerings): number | null {
   return percent > 0 ? percent : null;
 }
 
-/** The plan's price over a month, in the store's own text: yearly is the store's per-month figure. */
-export function perMonthText(offer: MaxOffer | undefined): string | null {
-  if (!offer) return null;
-  return offer.plan === 'yearly' ? offer.perMonthText : offer.priceText;
-}
-
-/** The lowest monthly figure Max is sold at, for the line on the shop's Max card. */
-export function fromPerMonthText(offerings: Offerings): string | null {
-  return perMonthText(offerings.max.yearly) ?? perMonthText(offerings.max.monthly);
+/**
+ * The plan the shop's Max card quotes, at the amount it is billed: yearly when the store sells it.
+ * The billed amount is always the price shown, never a per-month figure worked out from it.
+ */
+export function quotedOffer(offerings: Offerings): MaxOffer | null {
+  return offerings.max.yearly ?? offerings.max.monthly ?? null;
 }
 
 /** The free trial the plan offers this Apple ID, in days; null when it offers none. */

@@ -8,7 +8,7 @@ import { Symbol } from '../../ui/icons/symbol';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body, display, leading } from '../../ui/type/fonts';
-import { anyTrialDays, fromPerMonthText } from '../purchases/max-pricing';
+import { anyTrialDays, quotedOffer } from '../purchases/max-pricing';
 import { useMaxStatusLine } from '../purchases/use-max-status-line';
 import { CLASSIC_LOOKS, PAID_LOOKS } from '../purchases/products';
 import type { CustomerState, Offerings } from '../purchases/purchases-port';
@@ -45,12 +45,16 @@ export function ShopMaxCard({
   );
 
   const trial = offerings ? anyTrialDays(offerings) : null;
-  const from = offerings ? fromPerMonthText(offerings) : null;
+  const quoted = offerings ? quotedOffer(offerings) : null;
   const priceLine = on
     ? statusLine
     : [
         trial === null ? null : t('looks.maxCard.trial', { count: trial }),
-        from === null ? null : t('looks.maxCard.from', { price: from }),
+        quoted === null
+          ? null
+          : quoted.plan === 'yearly'
+            ? t('looks.maxCard.year', { price: quoted.priceText })
+            : t('looks.maxCard.month', { price: quoted.priceText }),
       ]
         .filter((part): part is string => part !== null)
         .join(' · ');

@@ -1,4 +1,5 @@
 import { BANK_DIRECTORY } from './bank-directory';
+import { WORLD_DIRECTORY } from './world-banks';
 
 /**
  * The link a bank's app takes to open a transfer already filled in.
@@ -21,13 +22,15 @@ export interface IosApp {
 }
 
 export interface BankInfo {
-  /** Stable VietQR code, upper case: "MB", "VCB", "MOMO". */
+  /** Stable code, upper case: a VietQR code ("MB", "MOMO"), or a country's ("US.CHASE"). */
   id: string;
+  /** Where it banks (ISO 3166-1 alpha-2), or null for a wallet used everywhere ("PAYPAL"). */
+  country: string | null;
   /** Six-digit NAPAS BIN (acquirer id in a VietQR), or null for wallets outside NAPAS. */
   bin: string | null;
   /** What the interface shows: "MB Bank", "Vietcombank". */
   shortName: string;
-  /** Registered name, in Vietnamese. */
+  /** Registered name, in the country's own words. */
   name: string;
   kind: 'bank' | 'wallet';
   /** Monogram colour (sRGB hex), or null for a neutral monogram. */
@@ -142,6 +145,7 @@ function readDirectory(): BankInfo[] {
       const [bin = '', id = '', short = '', name = ''] = line.split('|');
       return {
         id,
+        country: 'VN',
         bin: bin === '' ? null : bin,
         shortName: SHORT_NAMES[id] ?? short,
         name,
@@ -152,18 +156,50 @@ function readDirectory(): BankInfo[] {
     });
 }
 
+function readWorld(): BankInfo[] {
+  return WORLD_DIRECTORY.trim()
+    .split('\n')
+    .map((line): BankInfo => {
+      const [country = '', id = '', short = '', name = '', kind = ''] = line.split('|');
+      return {
+        id,
+        country: country === '*' ? null : country,
+        bin: null,
+        shortName: short,
+        name,
+        kind: kind === 'wallet' ? 'wallet' : 'bank',
+        color: null,
+        ios: null,
+      };
+    });
+}
+
 /** Every Vietnamese bank and wallet 6pm knows, in the directory's order. */
 export const BANKS: readonly BankInfo[] = readDirectory();
 
+/** The main banks and wallets of other countries, most used first in each; then those of everywhere. */
+export const WORLD_BANKS: readonly BankInfo[] = readWorld();
+
 const BY_BIN = new Map(BANKS.flatMap((b) => (b.bin ? [[b.bin, b] as const] : [])));
-const BY_ID = new Map(BANKS.map((b) => [b.id, b] as const));
+const BY_ID = new Map([...BANKS, ...WORLD_BANKS].map((b) => [b.id, b] as const));
+
+/**
+ * The banks and wallets of a country (ISO 3166-1 alpha-2), most used first, with the wallets used
+ * everywhere after a country's own; empty for a country 6pm has no list for. Vietnam's is `BANKS`.
+ */
+export function banksOf(country: string): BankInfo[] {
+  const code = country.toUpperCase();
+  if (code === 'VN') return [...BANKS];
+  const own = WORLD_BANKS.filter((b) => b.country === code);
+  return own.length === 0 ? [] : [...own, ...WORLD_BANKS.filter((b) => b.country === null)];
+}
 
 /** The bank a NAPAS BIN belongs to, or null when 6pm does not know it. */
 export function findBankByBin(bin: string): BankInfo | null {
   return BY_BIN.get(bin) ?? null;
 }
 
-/** A bank or wallet by its code ("MB", "MOMO"), case-insensitive. */
+/** A bank or wallet by its code ("MB", "MOMO", "US.CHASE"), case-insensitive. */
 export function findBank(id: string): BankInfo | null {
   return BY_ID.get(id.toUpperCase()) ?? null;
 }

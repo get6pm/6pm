@@ -1,3 +1,5 @@
+import { banksOf } from '@6pm/domain';
+
 import { isNamedBank } from './named-bank';
 
 /** The wallet code for money that never touches a bank. */
@@ -66,6 +68,17 @@ const CURRENCY_COUNTRY: Readonly<Record<string, string>> = {
   HKD: 'HK',
   USD: 'US',
   RUB: 'RU',
+  CAD: 'CA',
+  AUD: 'AU',
+  NZD: 'NZ',
+  IDR: 'ID',
+  PHP: 'PH',
+  KHR: 'KH',
+  LAK: 'LA',
+  JPY: 'JP',
+  CNY: 'CN',
+  TWD: 'TW',
+  INR: 'IN',
 };
 
 const ZONE_COUNTRY: Readonly<Record<string, string>> = {
@@ -78,6 +91,39 @@ const ZONE_COUNTRY: Readonly<Record<string, string>> = {
   'Europe/London': 'GB',
   'Asia/Hong_Kong': 'HK',
   'Europe/Moscow': 'RU',
+  'America/New_York': 'US',
+  'America/Chicago': 'US',
+  'America/Denver': 'US',
+  'America/Phoenix': 'US',
+  'America/Los_Angeles': 'US',
+  'America/Anchorage': 'US',
+  'Pacific/Honolulu': 'US',
+  'America/Toronto': 'CA',
+  'America/Vancouver': 'CA',
+  'America/Edmonton': 'CA',
+  'America/Winnipeg': 'CA',
+  'America/Halifax': 'CA',
+  'Europe/Dublin': 'IE',
+  'Europe/Berlin': 'DE',
+  'Europe/Paris': 'FR',
+  'Europe/Amsterdam': 'NL',
+  'Europe/Madrid': 'ES',
+  'Europe/Rome': 'IT',
+  'Australia/Sydney': 'AU',
+  'Australia/Melbourne': 'AU',
+  'Australia/Brisbane': 'AU',
+  'Australia/Perth': 'AU',
+  'Australia/Adelaide': 'AU',
+  'Pacific/Auckland': 'NZ',
+  'Asia/Jakarta': 'ID',
+  'Asia/Manila': 'PH',
+  'Asia/Phnom_Penh': 'KH',
+  'Asia/Vientiane': 'LA',
+  'Asia/Tokyo': 'JP',
+  'Asia/Shanghai': 'CN',
+  'Asia/Taipei': 'TW',
+  'Asia/Kolkata': 'IN',
+  'Asia/Calcutta': 'IN',
 };
 
 /** What the phone says about where its owner is from and where it is, without asking for location. */
@@ -114,24 +160,41 @@ const MAX_HOME = 3;
 
 /**
  * Whether the person banks in Vietnam: home is đồng, or the phone points at Vietnam at all (its
- * region, currency or clock). Every bank 6pm knows is Vietnamese, the branches of foreign banks
- * included, so only then are there banks to suggest.
+ * region, currency or clock). Only then are Vietnam's banks suggested.
  */
 export function banksInVietnam(device: DeviceRegion, homeCurrency: string): boolean {
   return homeCurrency.toUpperCase() === 'VND' || countrySignals(device).has('VN');
 }
 
 /**
+ * Outside Vietnam, the country whose banks the person uses: the one the phone points at most
+ * strongly that 6pm has a list for (a tie goes to the phone's region, then its currency, then its
+ * clock), or null when there is none.
+ */
+export function bankCountry(device: DeviceRegion): string | null {
+  const signals = [...countrySignals(device)].sort((a, b) => b[1] - a[1]);
+  return signals.map(([country]) => country).find((c) => banksOf(c).length > 0) ?? null;
+}
+
+/**
  * The banks to suggest, best first. In Vietnam: the local branches of banks from the countries
  * the phone points at (strongest signal first, then their own order), then Vietnam's most used
- * banks and wallets. Elsewhere none: 6pm knows no bank there, and never offers Vietnam's instead.
+ * banks and wallets. Elsewhere: that country's most used banks and wallets, never Vietnam's; none
+ * for a country 6pm has no list for.
  */
 export function suggestedBanks(
   device: DeviceRegion,
   count: number,
   homeCurrency: string,
 ): string[] {
-  if (!banksInVietnam(device, homeCurrency)) return [];
+  if (!banksInVietnam(device, homeCurrency)) {
+    const country = bankCountry(device);
+    return country === null
+      ? []
+      : banksOf(country)
+          .map((b) => b.id)
+          .slice(0, count);
+  }
   const signals = [...countrySignals(device)].sort((a, b) => b[1] - a[1]);
   const home = signals.flatMap(([country]) => HOME_BANKS[country] ?? []).slice(0, MAX_HOME);
   return [...new Set([...home, ...POPULAR])].slice(0, count);
@@ -144,7 +207,7 @@ const MIN_TILES = 6;
 /**
  * The quick-pick grid at the top of the picker: cash, the banks already chosen (so they are in
  * reach when changing them later, typed names included), then suggestions, filling whole rows of
- * three. With nothing to suggest (outside Vietnam) it is cash and what was chosen. Taken once when
+ * three. With nothing to suggest (a country 6pm has no list for) it is cash and what was chosen. Taken once when
  * the picker opens, so tiles never move under the finger.
  */
 export function quickPicks(

@@ -36,6 +36,9 @@ on:
       EXPO_ASC_ISSUER_ID:
         description: App Store Connect API issuer id (dev)
         required: false
+      SENTRY_AUTH_TOKEN:
+        description: Sentry org token (org:ci) that uploads debug symbols and source maps (dev, prd)
+        required: false
 
 env:
   EAS_CLI: eas-cli@24.8.0

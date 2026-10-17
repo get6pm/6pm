@@ -348,3 +348,4 @@ fakes behaviour the app cannot fake. Founder review.
 | Max sheet | Budget together tile and hero | Left out | Budget together is free (decided 2026-10-14); the design still sells it |
 | Max sheet · from pots | The “auto” chip on the hero, “plus auto-rules” in the line | Left out | Pots have no auto-rules |
 | Max sheet · from backup | “284 days” on the hero and the tile | “Every day · encrypted end to end” on the hero, “Encrypted” on the tile | A made-up count would read as the person's own |
+| Sơn Mài (every screen in the look) | Its display type | Set in Prata, a Didone of the same high contrast | The prototype's Bodoni Moda has no Vietnamese letters (ơ, ư, ầ…), so iOS filled them in from another face letter by letter |

@@ -226,7 +226,7 @@ describe('surfaceSnapshot', () => {
     expect(max.strings['font.display']).toBe('Baloo2');
     expect(free.strings['font.display']).toBe('BricolageGrotesque');
     const face = (look: 'lacquer' | 'basic') => displayFamily({ look, serious: false });
-    expect([face('lacquer'), face('basic')]).toEqual(['BodoniModa', SYSTEM_DISPLAY]);
+    expect([face('lacquer'), face('basic')]).toEqual(['Prata-Regular', SYSTEM_DISPLAY]);
   });
 
   it('uses the serious palette in serious mode', () => {

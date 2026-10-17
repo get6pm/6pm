@@ -61,7 +61,8 @@ const viet = (prefix: string) =>
 const DISPLAY: Readonly<Record<string, Face>> = {
   'Bricolage Grotesque': BRICOLAGE,
   'Be Vietnam Pro': cuts({ 500: 'BeVietnamPro-Medium', 600: 'BeVietnamPro-SemiBold' }),
-  'Bodoni Moda': variable('BodoniModa', [400, 700], [6, 96]),
+  // Sơn Mài names Bodoni Moda, which has no Vietnamese (ơ, ư, ầ…): Prata, a Didone that does, draws it.
+  'Bodoni Moda': cuts({ 400: 'Prata-Regular' }),
   Newsreader: variable('Newsreader', [400, 700], [6, 72]),
   'Dela Gothic One': cuts({ 400: 'DelaGothicOne-Regular' }),
   'Darker Grotesque': variable('DarkerGrotesque', [400, 800]),

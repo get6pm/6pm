@@ -7,7 +7,6 @@ import BARLOW_MEDIUM from '../../../assets/fonts/BarlowCondensed-Medium.ttf';
 import BARLOW_SEMIBOLD from '../../../assets/fonts/BarlowCondensed-SemiBold.ttf';
 import VIET_MEDIUM from '../../../assets/fonts/BeVietnamPro-Medium.ttf';
 import VIET_SEMIBOLD from '../../../assets/fonts/BeVietnamPro-SemiBold.ttf';
-import BODONI from '../../../assets/fonts/BodoniModa-Variable.ttf';
 import BRICOLAGE from '../../../assets/fonts/BricolageGrotesque-Variable.ttf';
 import DARKER from '../../../assets/fonts/DarkerGrotesque-Variable.ttf';
 import DELA from '../../../assets/fonts/DelaGothicOne-Regular.ttf';
@@ -17,6 +16,7 @@ import MONO_SEMIBOLD from '../../../assets/fonts/IBMPlexMono-SemiBold.ttf';
 import SYMBOLS from '../../../assets/fonts/MaterialSymbolsRounded-Variable.ttf';
 import NEWSREADER from '../../../assets/fonts/Newsreader-Variable.ttf';
 import HAND from '../../../assets/fonts/PatrickHand-Regular.ttf';
+import PRATA from '../../../assets/fonts/Prata-Regular.ttf';
 import SPECTRAL_MEDIUM from '../../../assets/fonts/Spectral-Medium.ttf';
 import SPECTRAL from '../../../assets/fonts/Spectral-Regular.ttf';
 import SPECTRAL_SEMIBOLD from '../../../assets/fonts/Spectral-SemiBold.ttf';
@@ -54,7 +54,8 @@ const DISPLAY: Readonly<Record<string, readonly Face[]>> = {
     { family: 'Barlow Condensed', weight: '600', asset: BARLOW_SEMIBOLD },
   ],
   'Baloo 2': [{ family: 'Baloo 2', weight: '400 800', asset: BALOO }],
-  'Bodoni Moda': [{ family: 'Bodoni Moda', weight: '400 700', asset: BODONI }],
+  // Sơn Mài's Bodoni Moda is drawn in Prata, which has Vietnamese.
+  'Bodoni Moda': [{ family: 'Bodoni Moda', weight: '400 700', asset: PRATA }],
   Newsreader: [{ family: 'Newsreader', weight: '400 700', asset: NEWSREADER }],
   'Dela Gothic One': [{ family: 'Dela Gothic One', weight: '400', asset: DELA }],
   'Darker Grotesque': [{ family: 'Darker Grotesque', weight: '400 800', asset: DARKER }],

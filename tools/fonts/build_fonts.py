@@ -5,7 +5,7 @@
 Sources (fetched once, outside the repo): google/fonts ofl/bricolagegrotesque (variable),
 ofl/bevietnampro, ofl/ibmplexmono, ofl/patrickhand, and google/material-design-icons
 variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf + .codepoints. The looks'
-faces, display and interface (`--only looks` builds just these): ofl/baloo2, ofl/bodonimoda,
+faces, display and interface (`--only looks` builds just these): ofl/baloo2, ofl/prata,
 ofl/newsreader, ofl/darkergrotesque, ofl/alegreya, ofl/literata, ofl/epilogue, ofl/archivo,
 ofl/plusjakartasans, ofl/nunito and ofl/tiltneon (variable), and the static cuts of
 ofl/barlowcondensed, ofl/delagothicone, ofl/spectral, ofl/alegreyasans, ofl/baijamjuree and
@@ -119,7 +119,6 @@ def build_static(src: Path) -> None:
 LOOK_VARIABLE_FACES = (
     # (source, family, axes)
     ("Baloo2[wght].ttf", "Baloo2", {"wght": (500, 500, 700)}),
-    ("BodoniModa[opsz,wght].ttf", "BodoniModa", {"wght": (400, 500, 700), "opsz": (6, 28, 96)}),
     ("Newsreader[opsz,wght].ttf", "Newsreader", {"wght": (400, 500, 700), "opsz": (6, 28, 72)}),
     ("DarkerGrotesque[wght].ttf", "DarkerGrotesque", {"wght": (400, 500, 800)}),
     ("Alegreya[wght].ttf", "Alegreya", {"wght": (400, 500, 800)}),
@@ -133,6 +132,8 @@ LOOK_VARIABLE_FACES = (
 
 # Faces Google ships only as static cuts, one file per weight the app sets.
 LOOK_STATIC_FACES = (
+    # Sơn Mài's display face: the prototype's Bodoni Moda has no Vietnamese (ơ, ư, ầ…).
+    "Prata-Regular",
     "BarlowCondensed-Medium",
     "BarlowCondensed-SemiBold",
     "DelaGothicOne-Regular",

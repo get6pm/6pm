@@ -115,7 +115,7 @@ const FONTS = [
   'PatrickHand-Regular',
   'MaterialSymbolsRounded-Variable',
   // The looks' display faces.
-  'BodoniModa-Variable',
+  'Prata-Regular',
   'Newsreader-Variable',
   'DelaGothicOne-Regular',
   'DarkerGrotesque-Variable',

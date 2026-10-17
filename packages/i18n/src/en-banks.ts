@@ -11,4 +11,6 @@ export const enBanks = {
   'banks.yoursOnly': 'Yours',
   'banks.typeHint': 'Search for your bank or wallet, or type its name to add it.',
   'banks.byName': 'Add by its name',
+  'banks.kind.bank': 'Bank',
+  'banks.kind.wallet': 'Wallet',
 } as const;

@@ -53,6 +53,7 @@ const REVEAL = { duration: 260, easing: Easing.out(Easing.quad), reduceMotion };
 const COVER = { duration: 140, easing: Easing.out(Easing.quad), reduceMotion };
 /** Where the try-on's sheet starts on the prototype's screen (`App:3455`). */
 const TRY_ON_TOP = 400;
+const SHEET_RADIUS = 40;
 
 /** A card's sky on its way out to the page, or back into its card. */
 interface Flight {
@@ -112,7 +113,6 @@ export function LooksFlow({ initial }: { readonly initial: LookId | null }) {
   }, []);
   /** The card stays in the pager until its picture starts to move. */
   const [flying, setFlying] = useState(false);
-  const scrollX = useSharedValue(focus * metrics.step);
   const mode = useSharedValue(initial ? 1 : 0);
   const detailShown = useSharedValue(initial ? 1 : 0);
   const fly = useSharedValue(0);
@@ -121,7 +121,16 @@ export function LooksFlow({ initial }: { readonly initial: LookId | null }) {
   const flyOpacity = useSharedValue(0);
 
   const close = useCallback(() => router.back(), [router]);
-  const sheet = useSheetDrag({ area: height, onDismissed: close });
+  // In a try-on, pulling the sheet down goes back to the shop; from the shop it closes.
+  const inTryOn = useSharedValue(initial !== null);
+  const backRef = useRef<() => void>(() => undefined);
+  const stepBack = useCallback(() => backRef.current(), []);
+  const sheet = useSheetDrag({
+    area: height,
+    onDismissed: close,
+    stepBack: inTryOn,
+    onStepBack: stepBack,
+  });
   const shopScroll = useScrollDismiss(sheet);
   const detailScroll = useScrollDismiss(sheet);
 
@@ -227,6 +236,11 @@ export function LooksFlow({ initial }: { readonly initial: LookId | null }) {
     setFlying(false);
   }, []);
 
+  backRef.current = back;
+  useEffect(() => {
+    inTryOn.set(trying !== null && flight === null);
+  }, [inTryOn, trying, flight]);
+
   const takeOff = useCallback(() => setTrying(null), []);
 
   // Starts a flight once its picture is laid out (its layout changes every frame after). The look
@@ -256,13 +270,15 @@ export function LooksFlow({ initial }: { readonly initial: LookId | null }) {
             scheduleOnRN(takeOff);
             // A push to start with, so the shrink sets off at once instead of easing out of rest.
             mode.set(withSpring(0, { ...FLIGHT, velocity: -1.6 }));
+            // A sheet pulled down to come back rises with the rest.
+            sheet.y.set(withSpring(0, FLIGHT));
             landing.set(-1);
             fly.set(withSpring(0, { ...FLIGHT, velocity: -1.6 }));
           }),
         );
       }
     });
-  }, [flight, fly, flyOpacity, mode, detailShown, landing, takeOff]);
+  }, [flight, fly, flyOpacity, mode, detailShown, landing, takeOff, sheet.y]);
 
   // A flight lands once it is nearly there: out, the sky gives way to the page and the try-on;
   // back, the card takes its place.
@@ -340,10 +356,8 @@ export function LooksFlow({ initial }: { readonly initial: LookId | null }) {
             right: 0,
             top: shopTop,
             height: height - shopTop,
-            borderTopLeftRadius: 40,
-            borderTopRightRadius: 40,
-            borderTopWidth: 0.5,
-            borderColor: palette.glassBorder,
+            borderTopLeftRadius: SHEET_RADIUS,
+            borderTopRightRadius: SHEET_RADIUS,
             boxShadow: '0 -20px 60px rgba(10,5,20,.35)',
             overflow: 'hidden',
             backgroundColor: shopBg.current,
@@ -361,7 +375,6 @@ export function LooksFlow({ initial }: { readonly initial: LookId | null }) {
         >
           <LooksShop
             listRef={listRef}
-            scrollX={scrollX}
             focus={focus}
             shopHour={shopHour}
             live={inShop}
@@ -406,7 +419,8 @@ export function LooksFlow({ initial }: { readonly initial: LookId | null }) {
           cta={flight.cta}
           copy={copy}
           card={flight.card}
-          to={{ x: 0, y: 0, width, height: lookTop }}
+          // Down past the sheet's top so the sky, not the page, shows in its rounded corners.
+          to={{ x: 0, y: 0, width, height: lookTop + SHEET_RADIUS }}
           image={flight.image}
           progress={fly}
           opacity={flyOpacity}

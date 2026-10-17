@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react
 import { Linking, Text, View } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
-import type { AnimatedRef, SharedValue } from 'react-native-reanimated';
+import type { AnimatedRef } from 'react-native-reanimated';
 
 import type { LookId } from '@6pm/theme';
 
@@ -28,7 +28,7 @@ import { useLookSettings } from './look-settings-provider';
 import { BackSheetHeader } from './sheet-header';
 import type { CardHandle, CardRect } from './shop-card';
 import { ShopMaxCard } from './shop-max-card';
-import { PagerPlaceholder, ShopDots, ShopPager, ShopTiers, type CardFace } from './shop-pager';
+import { PagerPlaceholder, ShopPager, ShopTiers, type CardFace } from './shop-pager';
 
 /**
  * The Looks shop (prototype `App:868-966`): the three shelves, every look as a card wearing its
@@ -37,7 +37,6 @@ import { PagerPlaceholder, ShopDots, ShopPager, ShopTiers, type CardFace } from 
  */
 export function LooksShop({
   listRef,
-  scrollX,
   focus,
   shopHour,
   live,
@@ -53,7 +52,6 @@ export function LooksShop({
   settled,
 }: {
   readonly listRef: AnimatedRef<Animated.FlatList<LookId>>;
-  readonly scrollX: SharedValue<number>;
   readonly focus: number;
   readonly shopHour: number | null;
   readonly live: boolean;
@@ -183,7 +181,6 @@ export function LooksShop({
               {settled ? (
                 <ShopPager
                   listRef={listRef}
-                  scrollX={scrollX}
                   focus={focus}
                   hour={shown}
                   configs={config}
@@ -199,7 +196,6 @@ export function LooksShop({
                 <PagerPlaceholder look={focused} hour={shown} config={config[focused]} />
               )}
             </View>
-            <ShopDots hour={hour} configs={config} scrollX={scrollX} copy={copy} onJump={onJump} />
           </View>
           <DaySlider
             look={focused}

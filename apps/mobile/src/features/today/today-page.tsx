@@ -85,8 +85,12 @@ export function TodayPage({
   const trying = useTryingOn();
   const sheetShown = useSharedValue(trying ? 0 : 1);
   useEffect(() => {
+    // Out quickly, so it has gone before the look's sky lands over it; back in at ease.
     sheetShown.set(
-      withTiming(trying ? 0 : 1, { duration: 300, reduceMotion: ReduceMotion.System }),
+      withTiming(trying ? 0 : 1, {
+        duration: trying ? 150 : 300,
+        reduceMotion: ReduceMotion.System,
+      }),
     );
   }, [trying, sheetShown]);
   const sheetFade = useAnimatedStyle(() => ({ opacity: sheetShown.get() }));

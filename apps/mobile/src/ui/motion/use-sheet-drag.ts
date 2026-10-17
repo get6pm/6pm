@@ -47,9 +47,17 @@ export interface SheetDrag {
 export function useSheetDrag({
   area,
   onDismissed,
+  stepBack,
+  onStepBack,
 }: {
   readonly area: number;
   readonly onDismissed: () => void;
+  /**
+   * While true, a pull that would close the sheet goes back a step instead (a try-on returns to
+   * the shop): `onStepBack` runs, and brings the sheet home itself.
+   */
+  readonly stepBack?: ReturnType<typeof useSharedValue<boolean>>;
+  readonly onStepBack?: () => void;
 }): SheetDrag {
   const y = useSharedValue(area);
   const travel = useSharedValue(area);
@@ -58,6 +66,9 @@ export function useSheetDrag({
   const dismissed = useRef(onDismissed);
   dismissed.current = onDismissed;
   const done = useCallback(() => dismissed.current(), []);
+  const steppedBack = useRef(onStepBack);
+  steppedBack.current = onStepBack;
+  const back = useCallback(() => steppedBack.current?.(), []);
 
   const leave = useCallback(
     (velocity: number) => {
@@ -81,12 +92,17 @@ export function useSheetDrag({
       const reach = Math.min(gestures.sheetDismiss, travel.get() * 0.4);
       if (at + project(velocity) > reach) {
         scheduleOnRN(haptics.tap);
+        if (stepBack?.get()) {
+          // The sheet stays where the finger left it: the step back carries it home.
+          scheduleOnRN(back);
+          return;
+        }
         leave(velocity);
         return;
       }
       y.set(withSpring(0, { ...release.sheet, velocity, reduceMotion }));
     },
-    [leaving, y, travel, leave],
+    [leaving, y, travel, leave, stepBack, back],
   );
 
   const header = useMemo(

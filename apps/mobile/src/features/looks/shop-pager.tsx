@@ -1,16 +1,13 @@
 import type { SkImage } from '@shopify/react-native-skia';
-import { memo, useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Text, useWindowDimensions, View } from 'react-native';
 import Animated, {
-  Extrapolation,
-  interpolate,
   ReduceMotion,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
   type AnimatedRef,
-  type SharedValue,
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
@@ -21,7 +18,7 @@ import { haptics } from '../../ui/haptics';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { useTheme } from '../../ui/theme/theme';
 import { body } from '../../ui/type/fonts';
-import { SHOP_ORDER, SHOP_TIERS, tierOf, type CardBadge, type ShopTier } from './look-catalogue';
+import { SHOP_ORDER, SHOP_TIERS, type CardBadge, type ShopTier } from './look-catalogue';
 import type { LookCopy } from './look-copy';
 import { ShopCard, type CardHandle, type CardRect } from './shop-card';
 
@@ -29,6 +26,9 @@ import { ShopCard, type CardHandle, type CardRect } from './shop-card';
 const SIDE = 28;
 const GAP = 12;
 const RATIO = 520 / 346;
+/** The cards' shadows reach this far above and below them. */
+const SHADOW_TOP = 30;
+const SHADOW_BOTTOM = 56;
 
 /** The pager's measures on this screen. */
 export function usePagerMetrics() {
@@ -53,7 +53,6 @@ export interface CardFace {
  */
 export function ShopPager({
   listRef,
-  scrollX,
   focus,
   hour,
   configs,
@@ -66,7 +65,6 @@ export function ShopPager({
   register,
 }: {
   readonly listRef: AnimatedRef<Animated.FlatList<LookId>>;
-  readonly scrollX: SharedValue<number>;
   readonly focus: number;
   readonly hour: number;
   readonly configs: Readonly<Partial<Record<LookId, Partial<LookConfig>>>>;
@@ -100,9 +98,6 @@ export function ShopPager({
     }
   };
   const onScroll = useAnimatedScrollHandler({
-    onScroll: (e) => {
-      scrollX.set(e.contentOffset.x);
-    },
     onEndDrag: (e) => {
       // A drag let go exactly on a card has no momentum to end.
       if (Math.abs(e.velocity?.x ?? 0) < 0.05) settle(e.contentOffset.x);
@@ -140,8 +135,13 @@ export function ShopPager({
       extraData={{ focus, hour, configs, faces, live, hidden }}
       onScroll={onScroll}
       scrollEventThrottle={16}
-      contentContainerStyle={{ paddingHorizontal: m.side, paddingTop: 4, paddingBottom: 26 }}
-      style={{ marginBottom: -14, flexGrow: 0 }}
+      // Room for the cards' shadows, taken back out of the layout so the cards sit where they did.
+      contentContainerStyle={{
+        paddingHorizontal: m.side,
+        paddingTop: SHADOW_TOP,
+        paddingBottom: SHADOW_BOTTOM,
+      }}
+      style={{ marginTop: 4 - SHADOW_TOP, marginBottom: 12 - SHADOW_BOTTOM, flexGrow: 0 }}
       renderItem={({ item, index }) => {
         const face = faces[item];
         return (
@@ -187,9 +187,7 @@ export function PagerPlaceholder({
     [look, hour, config],
   );
   return (
-    <View
-      style={{ paddingHorizontal: m.side, paddingTop: 4, paddingBottom: 26, marginBottom: -14 }}
-    >
+    <View style={{ paddingHorizontal: m.side, paddingTop: 4, paddingBottom: 12 }}>
       <View style={{ width: m.card, height: m.height, borderRadius: 32, backgroundImage: sky }} />
     </View>
   );
@@ -280,119 +278,3 @@ export function ShopTiers({
     </View>
   );
 }
-
-/** A dot in the look's sky; its ring follows the pager's offset on the UI thread. */
-function Dot({
-  index,
-  sky,
-  gapBefore,
-  label,
-  scrollX,
-  step,
-  onPress,
-}: {
-  readonly index: number;
-  readonly sky: string;
-  readonly gapBefore: boolean;
-  readonly label: string;
-  readonly scrollX: SharedValue<number>;
-  readonly step: number;
-  readonly onPress: () => void;
-}) {
-  const { palette } = useTheme();
-  const near = (x: number) => {
-    'worklet';
-    return interpolate(Math.abs(x / step - index), [0, 1], [1, 0], Extrapolation.CLAMP);
-  };
-  const ring = useAnimatedStyle(() => ({ opacity: near(scrollX.get()) }));
-  const dot = useAnimatedStyle(() => ({ opacity: 0.7 + 0.3 * near(scrollX.get()) }));
-  return (
-    <PressScale
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      scaleTo={0.9}
-      hitSlop={6}
-      onPress={onPress}
-      style={{ width: 14, height: 14, marginLeft: gapBefore ? 10 : 0 }}
-    >
-      <Animated.View
-        style={[{ width: 14, height: 14, borderRadius: 7, backgroundImage: sky }, dot]}
-      />
-      <Animated.View
-        pointerEvents="none"
-        style={[
-          {
-            position: 'absolute',
-            left: -3.5,
-            top: -3.5,
-            width: 21,
-            height: 21,
-            borderRadius: 10.5,
-            borderWidth: 1.5,
-            borderColor: palette.ink,
-          },
-          ring,
-        ]}
-      />
-    </PressScale>
-  );
-}
-
-/** Every look as a dot in its own sky, a little apart shelf by shelf; a tap goes to it. */
-export const ShopDots = memo(function ShopDots({
-  hour,
-  configs,
-  scrollX,
-  copy,
-  onJump,
-}: {
-  readonly hour: number;
-  readonly configs: Readonly<Partial<Record<LookId, Partial<LookConfig>>>>;
-  readonly scrollX: SharedValue<number>;
-  readonly copy: LookCopy;
-  readonly onJump: (index: number) => void;
-}) {
-  const { t } = useI18n();
-  const m = usePagerMetrics();
-  // The dots' skies move on the hour, not with the slider, so scrubbing redraws only the cards.
-  const whole = Math.floor(hour);
-  const skies = useMemo(
-    () =>
-      SHOP_ORDER.map(
-        (look) =>
-          paletteFor({ look, hour: whole, serious: false, config: configs[look] ?? {} }).sky,
-      ),
-    [whole, configs],
-  );
-  return (
-    <View
-      style={{
-        minHeight: 22,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-      }}
-    >
-      {SHOP_ORDER.map((look, i) => (
-        <Dot
-          key={look}
-          index={i}
-          sky={skies[i] ?? ''}
-          gapBefore={i > 0 && tierOf(look) !== tierOf(SHOP_ORDER[i - 1] ?? look)}
-          label={t('looks.card.position', {
-            name: copy.name(look),
-            index: i + 1,
-            total: SHOP_ORDER.length,
-          })}
-          scrollX={scrollX}
-          step={m.step}
-          onPress={() => {
-            haptics.tick();
-            onJump(i);
-          }}
-        />
-      ))}
-    </View>
-  );
-});

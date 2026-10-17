@@ -30,8 +30,9 @@ export function VariantPicker({
       horizontal
       showsHorizontalScrollIndicator={false}
       accessibilityRole="radiogroup"
-      style={{ marginHorizontal: -18, flexGrow: 0 }}
-      contentContainerStyle={{ paddingHorizontal: 18, paddingVertical: 3, gap: 6 }}
+      // The chosen pill's ring reaches 4 pt out; the row leaves it room and takes it back.
+      style={{ marginHorizontal: -18, marginVertical: -3, flexGrow: 0 }}
+      contentContainerStyle={{ paddingHorizontal: 18, paddingVertical: 6, gap: 6 }}
     >
       {names.map((name, index) => {
         const on = index === selected;

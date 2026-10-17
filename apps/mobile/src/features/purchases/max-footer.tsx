@@ -5,7 +5,6 @@ import { haptics } from '../../ui/haptics';
 import { useDesignInsets } from '../../ui/layout/design-insets';
 import { PressScale } from '../../ui/primitives/press-scale';
 import { body } from '../../ui/type/fonts';
-import { perMonthText } from './max-pricing';
 import type { MaxPlan } from './products';
 import type { Offerings } from './purchases-port';
 import { MAX_CREAM, MAX_INK } from './max-colours';
@@ -66,7 +65,8 @@ export function MaxFooter({
         >
           {(['yearly', 'monthly'] as const).map((p) => {
             const selected = p === plan;
-            const price = perMonthText(offerings?.max[p]);
+            // The billed amount is the tile's big figure (App Store guideline 3.1.2(c)).
+            const price = offerings?.max[p]?.priceText ?? null;
             return (
               <PressScale
                 key={p}
@@ -108,7 +108,11 @@ export function MaxFooter({
                     fontVariant: ['tabular-nums'],
                   }}
                 >
-                  {price === null ? '' : t('max.perMonth', { price })}
+                  {price === null
+                    ? ''
+                    : p === 'yearly'
+                      ? t('max.perYear', { price })
+                      : t('max.perMonth', { price })}
                 </Text>
               </PressScale>
             );

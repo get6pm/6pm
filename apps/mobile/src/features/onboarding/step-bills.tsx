@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
 
 import { useI18n } from '../../i18n/i18n';
@@ -95,32 +95,45 @@ export function StepBills({
         ? t('onboarding.bills.endTotal', { count, amount: money.short(total) })
         : t('onboarding.bills.endCount', { count });
   return (
-    <View style={{ flex: 1, gap: 14 }}>
+    <View style={{ flex: 1, minHeight: 0, gap: 14 }}>
       <StepHeading title={t('onboarding.bills.title')} sub={t('onboarding.bills.sub')} pal={pal} />
-      <BillDeckView deck={deck} nav={nav} card={{ answers, pal, endTitle, onAnswers, onGo }} />
-      <View style={{ flex: 1 }} />
-      <Card pal={pal} radius={22} style={{ paddingVertical: 12, paddingHorizontal: 14, gap: 10 }}>
-        <View
-          style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
-        >
-          <Text style={{ ...body(14, 600), color: pal.inkSoft }}>
-            {count ? t('onboarding.bills.trayCount', { count }) : t('onboarding.bills.trayNone')}
-          </Text>
-          <Odometer value={total} size={24} weight={600} letterSpacingEm={-0.02} color={pal.ink} />
-        </View>
-        {count > 0 ? (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-            {bills.map((bill) => (
-              <TrayChip
-                key={bill.key}
-                bill={bill}
-                pal={pal}
-                onPress={() => onGo(bill.deckIndex, -1)}
-              />
-            ))}
+      {/* The tray grows a chip per bill; with many it scrolls, and while it fits it sits low. */}
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ flexGrow: 1, gap: 14, paddingBottom: 24 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <BillDeckView deck={deck} nav={nav} card={{ answers, pal, endTitle, onAnswers, onGo }} />
+        <View style={{ flex: 1 }} />
+        <Card pal={pal} radius={22} style={{ paddingVertical: 12, paddingHorizontal: 14, gap: 10 }}>
+          <View
+            style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+          >
+            <Text style={{ ...body(14, 600), color: pal.inkSoft }}>
+              {count ? t('onboarding.bills.trayCount', { count }) : t('onboarding.bills.trayNone')}
+            </Text>
+            <Odometer
+              value={total}
+              size={24}
+              weight={600}
+              letterSpacingEm={-0.02}
+              color={pal.ink}
+            />
           </View>
-        ) : null}
-      </Card>
+          {count > 0 ? (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+              {bills.map((bill) => (
+                <TrayChip
+                  key={bill.key}
+                  bill={bill}
+                  pal={pal}
+                  onPress={() => onGo(bill.deckIndex, -1)}
+                />
+              ))}
+            </View>
+          ) : null}
+        </Card>
+      </ScrollView>
     </View>
   );
 }

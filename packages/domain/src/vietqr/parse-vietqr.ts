@@ -2,6 +2,7 @@ import type { Vnd } from '../money/format';
 import { findBankByBin, type BankInfo } from './bank-catalogue';
 import { crc16CcittFalse } from './crc16';
 import { detectForeign, merchantGuids, type ForeignScheme } from './foreign-scheme';
+import { readOtherPayment } from './other-payment';
 import { parseTlv, type LengthUnit, type TlvFields } from './tlv';
 
 /** NAPAS's globally unique id in the VietQR merchant account template (tag 38). */
@@ -54,7 +55,10 @@ export interface VietQRFailure {
   scheme?: ForeignScheme;
   /** For a foreign QR, so it can be logged by hand: amount as written, in its own currency. */
   amount?: string;
-  /** ISO 4217 numeric currency from the QR, e.g. "764" for baht. */
+  /**
+   * ISO 4217 currency from the QR: numeric from an EMV QR's tag 53 ("764" for baht), alphabetic
+   * from a code of another kind ("INR").
+   */
   currency?: string;
   merchantName?: string;
 }
@@ -75,12 +79,16 @@ export function maskAccount(account: string): string {
 
 /**
  * Reads a scanned QR payload. Accepts VietQR (NAPAS 247, EMVCo merchant-presented mode) and
- * tells everything else apart: not an EMV payload, a broken checksum, a foreign national scheme
- * (PromptPay, PayNow, DuitNow, KHQR), an EMV QR 6pm cannot pay, or a damaged one.
+ * tells everything else apart: not a payment code, a broken checksum, another country's payment
+ * QR (an EMV scheme such as PromptPay or QRIS, or a code of its own such as UPI or a SEPA
+ * transfer), an EMV QR 6pm cannot pay, or a damaged one.
  */
 export function parseVietQR(input: string): VietQRResult {
   const raw = input.trim();
-  if (!raw.startsWith('0002')) return fail('not_emv');
+  if (!raw.startsWith('0002')) {
+    const other = readOtherPayment(raw);
+    return other ? { ok: false, reason: 'foreign', ...other } : fail('not_emv');
+  }
   if (!raw.startsWith('000201')) return fail('malformed');
   const tail = CRC_TAIL.exec(raw);
   if (!tail?.[1]) return fail('malformed');

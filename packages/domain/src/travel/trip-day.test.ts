@@ -37,6 +37,14 @@ describe('the currency of a place', () => {
     expect(currencyOfForeignQr({ currency: '999' })).toBeNull();
   });
 
+  it('prices schemes from further away, by numeric or alphabetic code', () => {
+    expect(currencyOfNumeric('986')?.code).toBe('BRL');
+    expect(currencyOfForeignQr({ scheme: 'pix' })?.code).toBe('BRL');
+    expect(currencyOfForeignQr({ scheme: 'qris' })?.code).toBe('IDR');
+    expect(currencyOfForeignQr({ currency: 'INR', scheme: 'upi' })?.code).toBe('INR');
+    expect(currencyOfForeignQr({ currency: 'EUR', scheme: 'swissqr' })?.code).toBe('EUR');
+  });
+
   it('has no currency for home, or for a place with no rate', () => {
     expect(currencyOfCountry('VN')).toBeNull();
     expect(currencyOfCountry('ZZ')).toBeNull();

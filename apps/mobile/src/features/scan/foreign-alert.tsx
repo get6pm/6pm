@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { currencyOfForeignQr, tripCurrencyOf, type FxRate } from '@6pm/domain';
+import { currencyOfForeignQr, paidFromVietnam, tripCurrencyOf, type FxRate } from '@6pm/domain';
 
 import { useI18n } from '../../i18n/i18n';
 import { phoneNumberStyle } from '../../money/device-money';
@@ -14,8 +14,8 @@ import type { ScanPhase } from './use-scan';
 /**
  * A QR from another country's scheme: named, not payable from 6pm, and loggable by hand. With
  * Travel mode on and a rate for its currency, it is paid the way people pay there (from a đồng
- * home, Vietnamese banks take the region's QRs) and kept here in that currency with home
- * underneath.
+ * home, Vietnamese banks take the QRs of the countries NAPAS links with) and kept here in that
+ * currency with home underneath.
  */
 export function ForeignAlert({
   phase,
@@ -34,6 +34,8 @@ export function ForeignAlert({
   const { on, locked, rates, refreshRates } = useTravel();
   const { failure } = phase;
   const scheme = t(`scan.scheme.${failure.scheme ?? 'other'}`);
+  const title =
+    failure.scheme === undefined ? t('scan.abroad.titleOther') : t('scan.abroad.title', { scheme });
   const qrCurrency = currencyOfForeignQr(failure);
   // Named apart from home's own symbol ("USD" for a Canadian, not a second "$").
   const currency =
@@ -50,9 +52,9 @@ export function ForeignAlert({
     return (
       <ScanAlert
         icon="public"
-        title={t('scan.abroad.title', { scheme })}
+        title={title}
         body={
-          home.code === 'VND'
+          home.code === 'VND' && paidFromVietnam(failure.country)
             ? t('travel.scan.body', { symbol: currency.symbol })
             : t('travel.scan.bodyAway', { symbol: currency.symbol, home: home.symbol })
         }
@@ -68,7 +70,7 @@ export function ForeignAlert({
   return (
     <ScanAlert
       icon="public"
-      title={t('scan.abroad.title', { scheme })}
+      title={title}
       body={t('scan.abroad.body', { symbol: home.symbol })}
       secondary={{ label: t('scan.tryAgain'), onPress: onRetry }}
       primary={{

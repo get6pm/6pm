@@ -68,12 +68,87 @@ export const FX_CURRENCY_CODES: readonly string[] = [
 
 const PRICED = new Set(FX_CURRENCY_CODES);
 
-/** The national QR schemes Scan recognises, by the currency their codes are paid in. */
+/** The payment QR schemes Scan recognises, by the currency their codes are paid in. */
 const SCHEME_CURRENCY: Readonly<Record<ForeignScheme, string>> = {
   promptpay: 'THB',
   paynow: 'SGD',
+  sgqr: 'SGD',
   duitnow: 'MYR',
   khqr: 'KHR',
+  laoqr: 'LAK',
+  qris: 'IDR',
+  qrph: 'PHP',
+  mmqr: 'MMK',
+  fps: 'HKD',
+  jpqr: 'JPY',
+  bharatqr: 'INR',
+  lankaqr: 'LKR',
+  banglaqr: 'BDT',
+  pix: 'BRL',
+  upi: 'INR',
+  epc: 'EUR',
+  swissqr: 'CHF',
+  spayd: 'CZK',
+  alipay: 'CNY',
+  wechat: 'CNY',
+  twqr: 'TWD',
+  paypay: 'JPY',
+};
+
+/**
+ * ISO 4217 numeric codes of the currencies 6pm prices outside the travel table, for an EMV QR's
+ * tag 53 from further away ("986" is the Brazilian real).
+ */
+const NUMERIC_CODES: Readonly<Record<string, string>> = {
+  '756': 'CHF',
+  '124': 'CAD',
+  '554': 'NZD',
+  '104': 'MMK',
+  '356': 'INR',
+  '586': 'PKR',
+  '144': 'LKR',
+  '524': 'NPR',
+  '050': 'BDT',
+  '784': 'AED',
+  '682': 'SAR',
+  '634': 'QAR',
+  '414': 'KWD',
+  '048': 'BHD',
+  '512': 'OMR',
+  '400': 'JOD',
+  '376': 'ILS',
+  '949': 'TRY',
+  '818': 'EGP',
+  '504': 'MAD',
+  '788': 'TND',
+  '710': 'ZAR',
+  '566': 'NGN',
+  '404': 'KES',
+  '936': 'GHS',
+  '484': 'MXN',
+  '986': 'BRL',
+  '032': 'ARS',
+  '152': 'CLP',
+  '170': 'COP',
+  '604': 'PEN',
+  '858': 'UYU',
+  '752': 'SEK',
+  '578': 'NOK',
+  '208': 'DKK',
+  '352': 'ISK',
+  '985': 'PLN',
+  '203': 'CZK',
+  '348': 'HUF',
+  '946': 'RON',
+  '975': 'BGN',
+  '941': 'RSD',
+  '980': 'UAH',
+  '643': 'RUB',
+  '398': 'KZT',
+  '860': 'UZS',
+  '981': 'GEL',
+  '364': 'IRR',
+  '368': 'IQD',
 };
 
 /** Symbols shared by several currencies, written the way travellers tell them apart. */
@@ -144,7 +219,10 @@ export function currencyOfCountry(country: string, home: Currency = VND): Travel
 
 /** The currency of an EMV QR's tag 53 ("764" → THB). */
 export function currencyOfNumeric(numeric: string): TravelCurrency | null {
-  return Object.values(TRAVEL_CURRENCIES).find((c) => c.numeric === numeric) ?? null;
+  const travel = Object.values(TRAVEL_CURRENCIES).find((c) => c.numeric === numeric);
+  if (travel) return travel;
+  const code = NUMERIC_CODES[numeric];
+  return code === undefined ? null : travelCurrencyOf(code);
 }
 
 /** The currency a foreign QR is paid in: its tag 53 if it has one, else its scheme's or country's. */
@@ -154,9 +232,11 @@ export function currencyOfForeignQr(qr: {
   readonly country?: string | undefined;
 }): TravelCurrency | null {
   if (qr.currency !== undefined) {
-    const byNumeric = currencyOfNumeric(qr.currency);
-    if (byNumeric !== null) return byNumeric;
+    const named = /^[A-Za-z]{3}$/.test(qr.currency)
+      ? travelCurrencyOf(qr.currency)
+      : currencyOfNumeric(qr.currency);
+    if (named !== null) return named;
   }
-  if (qr.scheme !== undefined) return travelCurrency(SCHEME_CURRENCY[qr.scheme]);
+  if (qr.scheme !== undefined) return travelCurrencyOf(SCHEME_CURRENCY[qr.scheme]);
   return qr.country === undefined ? null : currencyOfCountry(qr.country);
 }

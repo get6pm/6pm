@@ -54,7 +54,7 @@ function text(catalogue: Catalogue, key: string): string {
 }
 
 function permissionLocale(catalogue: Catalogue): string {
-  const entries = Object.entries(PERMISSION_KEYS).map(([name, plistKey]) => [
+  const entries = Object.entries(PERMISSION_KEYS).map(([name, plistKey]): [string, string] => [
     plistKey,
     text(catalogue, `native.permission.${name}`),
   ]);
